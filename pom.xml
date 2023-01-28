@@ -14,6 +14,21 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <repository>
+      <id>oss-sonatype</id>
+      <name>oss-sonatype</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -24,22 +39,22 @@
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-core</artifactId>
-      <version>6.0</version>
+      <version>6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-algorithm</artifactId>
-      <version>6.0</version>
+      <version>6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-auto</artifactId>
-      <version>6.0</version>
+      <version>6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-component</artifactId>
-      <version>6.0</version>
+      <version>6.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
