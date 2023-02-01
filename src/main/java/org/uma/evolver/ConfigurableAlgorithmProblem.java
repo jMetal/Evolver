@@ -13,10 +13,12 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+
 
 public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   private AutoConfigurableAlgorithm algorithm ;
@@ -25,7 +27,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   //private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate = new DynamicReferenceFrontUpdate<>();
 
   public ConfigurableAlgorithmProblem() {
-    this(null, List.of(new Epsilon(), new PISAHypervolume())) ;
+    this(null, List.of(new Epsilon(), new Spread())) ;
   }
 
   public ConfigurableAlgorithmProblem(AutoConfigurableAlgorithm algorithm, List<QualityIndicator> indicators) {
@@ -138,10 +140,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
       mutationConfiguration = "";
 
     String[] parameters =
-        ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 "
+        ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT4 "
             + "--randomGeneratorSeed 15 "
             + "--referenceFrontFileName "+ referenceFrontFileName + " "
-            + "--maximumNumberOfEvaluations 5000 "
+            + "--maximumNumberOfEvaluations 15000 "
             + "--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize " + offspringPopulationSize + " "
@@ -173,7 +175,11 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    double[][] front = getMatrixWithObjectiveValues(nsgaII.getResult()) ;
+
+    NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
+    nonDominatedSolutions.addAll(nsgaII.getResult()) ;
+
+    double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
 
     double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
     double[][] normalizedFront =
@@ -197,7 +203,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     indicators.get(1).setReferenceFront(normalizedReferenceFront);
 
     solution.objectives()[0] = indicators.get(0).compute(normalizedFront)  ;
-    solution.objectives()[1] = indicators.get(1).compute(normalizedFront)  * -1.0 ;
+    solution.objectives()[1] = indicators.get(1).compute(normalizedFront)   ;
 
     return solution ;
   }
