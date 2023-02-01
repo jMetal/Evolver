@@ -63,6 +63,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     lowerLimit.add(5.0) ;
     upperLimit.add(400.0) ;
 
+    // 4.  Create initial solutions: 0.0 - 1.0
+    lowerLimit.add(0.0) ;
+    upperLimit.add(1.0) ;
+
     variableBounds(lowerLimit, upperLimit);
   }
 
@@ -86,6 +90,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     return "AutoNSGAII";
   }
 
+  private static String getFromProbability(Object[] values, double probability) {
+    int index = (int) Math.floor(probability* values.length);
+    return values[index].toString();
+  }
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
@@ -93,6 +101,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     int tournamentSize = (int)Math.round(solution.variables().get(1));
     double sbxDistributionIndex = solution.variables().get(2);
     double polynomialMutationDistributionIndex = solution.variables().get(3);
+    String createInitialSolutions = getFromProbability(CreateInitialSolutions.values(), solution.variables().get(4));
 
     String referenceFrontFileName = "resources/ZDT1.csv" ;
 
@@ -104,7 +113,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             + "--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize " + offspringPopulationSize + " "
-            + "--createInitialSolutions random "
+            + "--createInitialSolutions " + createInitialSolutions + " "
             + "--variation crossoverAndMutationVariation "
             + "--selection tournament "
             + "--selectionTournamentSize " + tournamentSize + " "
