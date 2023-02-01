@@ -5,40 +5,31 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
+public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends AbstractDoubleProblem {
   private AutoConfigurableAlgorithm algorithm ;
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
-  //private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate = new DynamicReferenceFrontUpdate<>();
+  private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate = new DynamicReferenceFrontUpdate<>();
 
-  public ConfigurableAlgorithmProblem() {
-    this(null, List.of(new Epsilon(), new Spread())) ;
+  public ConfigurableAlgorithmProblemComputingTheReferenceFront() {
+    this(null, List.of(new Epsilon(), new PISAHypervolume())) ;
   }
 
-  public ConfigurableAlgorithmProblem(AutoConfigurableAlgorithm algorithm, List<QualityIndicator> indicators) {
+  public ConfigurableAlgorithmProblemComputingTheReferenceFront(AutoConfigurableAlgorithm algorithm, List<QualityIndicator> indicators) {
     this.algorithm = algorithm ;
     this.indicators = indicators ;
     parameters = null ;
@@ -97,10 +88,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     String referenceFrontFileName = "resources/ZDT1.csv" ;
 
     String[] parameters =
-        ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT4 "
+        ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 "
             + "--randomGeneratorSeed 15 "
             + "--referenceFrontFileName "+ referenceFrontFileName + " "
-            + "--maximumNumberOfEvaluations 15000 "
+            + "--maximumNumberOfEvaluations 5000 "
             + "--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize " + offspringPopulationSize + " "
@@ -135,31 +126,24 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
     nonDominatedSolutions.addAll(nsgaII.getResult()) ;
 
-    double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
-
-    double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
-    double[][] normalizedFront =
-        NormalizeUtils.normalize(
-            front,
-            NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-            NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
-
-    /*
-    referenceFrontUpdate.update(nsgaII.getResult());
+    referenceFrontUpdate.update(nonDominatedSolutions.solutions());
     System.out.println("RS: " + referenceFrontUpdate.referenceFront().length) ;
-    double[][] front = getMatrixWithObjectiveValues(nsgaII.getResult()) ;
+
+
+    double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
+    double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
 
     double[][] normalizedFront =
         NormalizeUtils.normalize(
             front,
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()));
-     */
+
     indicators.get(0).setReferenceFront(normalizedReferenceFront) ;
     indicators.get(1).setReferenceFront(normalizedReferenceFront);
 
     solution.objectives()[0] = indicators.get(0).compute(normalizedFront)  ;
-    solution.objectives()[1] = indicators.get(1).compute(normalizedFront)   ;
+    solution.objectives()[1] = indicators.get(1).compute(normalizedFront)  * -1.0 ;
 
     return solution ;
   }
