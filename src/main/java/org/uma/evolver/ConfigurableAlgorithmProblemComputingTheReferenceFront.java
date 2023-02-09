@@ -23,15 +23,15 @@ public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends Abst
   private AutoConfigurableAlgorithm algorithm ;
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
-  private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate = new DynamicReferenceFrontUpdate<>();
+  private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate ;
 
-  public ConfigurableAlgorithmProblemComputingTheReferenceFront() {
-    this(null, List.of(new Epsilon(), new PISAHypervolume())) ;
-  }
-
-  public ConfigurableAlgorithmProblemComputingTheReferenceFront(AutoConfigurableAlgorithm algorithm, List<QualityIndicator> indicators) {
+  public ConfigurableAlgorithmProblemComputingTheReferenceFront(
+      AutoConfigurableAlgorithm algorithm,
+      List<QualityIndicator> indicators,
+      DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate) {
     this.algorithm = algorithm ;
     this.indicators = indicators ;
+    this.referenceFrontUpdate =  referenceFrontUpdate ;
     parameters = null ;
 
     // Parameters to configure
@@ -116,22 +116,15 @@ public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends Abst
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.create();
     nsgaII.run();
 
-    double[][] referenceFront = null;
-    try {
-      referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
     nonDominatedSolutions.addAll(nsgaII.getResult()) ;
 
-    referenceFrontUpdate.update(nonDominatedSolutions.solutions());
-    System.out.println("RS: " + referenceFrontUpdate.referenceFront().length) ;
-
+    if (referenceFrontUpdate.referenceFront() == null) {
+      referenceFrontUpdate.update(nonDominatedSolutions.solutions());
+    }
 
     double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
-    double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
+    double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFrontUpdate.referenceFront());
 
     double[][] normalizedFront =
         NormalizeUtils.normalize(

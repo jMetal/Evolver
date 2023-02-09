@@ -12,8 +12,8 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
 public class DynamicReferenceFrontUpdate<S extends Solution<?>> implements ReferenceFrontUpdate<S> {
 
-  private double[][] referenceFront;
-  private double[][] normalizedReferenceFront;
+  private double[][] referenceFront = null;
+  private double[][] normalizedReferenceFront = null;
 
   private NonDominatedSolutionListArchive<S> nonDominatedSolutionListArchive;
 
