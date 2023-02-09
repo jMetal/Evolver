@@ -5,28 +5,20 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
+
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.bounds.Bounds;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+
 
 public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   private AutoConfigurableAlgorithm algorithm ;
@@ -47,32 +39,17 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     List<Double> lowerLimit = new ArrayList<>();
     List<Double> upperLimit = new ArrayList<>();
 
-    // 1. Offspring population size: 1 - 200
-    lowerLimit.add(1.0) ;
-    upperLimit.add(200.0) ;
-
-    // 2. Tournament size: 2 - 8
-    lowerLimit.add(2.0) ;
-    upperLimit.add(8.0) ;
-
-    // 3. SBX crossover distribution index: 5.0 - 400.0
-    lowerLimit.add(5.0) ;
-    upperLimit.add(400.0) ;
-
-    // 3. Polynomial mutation distribution index: 5.0 - 400.0
-    lowerLimit.add(5.0) ;
-    upperLimit.add(400.0) ;
-
-    // 4.  Create initial solutions: 0.0 - 1.0
-    lowerLimit.add(0.0) ;
-    upperLimit.add(1.0) ;
+    for (int i = 0; i<numberOfVariables(); i++) {
+      lowerLimit.add(0.0) ;
+      upperLimit.add(1.0) ;
+    }
 
     variableBounds(lowerLimit, upperLimit);
   }
 
   @Override
   public int numberOfVariables() {
-    return 4 ;
+    return 11 ;
   }
 
   @Override
@@ -90,20 +67,77 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     return "AutoNSGAII";
   }
 
-  private static String getFromProbability(Object[] values, double probability) {
-    int index = (int) Math.floor(probability* values.length);
-    return values[index].toString();
-  }
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    int offspringPopulationSize = (int)Math.round(solution.variables().get(0));
-    int tournamentSize = (int)Math.round(solution.variables().get(1));
-    double sbxDistributionIndex = solution.variables().get(2);
-    double polynomialMutationDistributionIndex = solution.variables().get(3);
-    String createInitialSolutions = getFromProbability(CreateInitialSolutions.values(), solution.variables().get(4));
+    int offspringPopulationSize = ParameterValues.minMaxIntegerFromProbability(
+            ParameterValues.offspringPopulationSize,
+            solution.variables().get(0)
+    );
+    int tournamentSize = ParameterValues.minMaxIntegerFromProbability(
+            ParameterValues.tournamentSize,
+            solution.variables().get(1)
+    );
+    double sbxDistributionIndex = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.sbxCrossoverDistributionIndexRange,
+            solution.variables().get(2)
+    );
+    double blxAlphaCrossoverValue = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.blxAlphaCrossoverValueRange,
+            solution.variables().get(3)
+    );
+    double polynomialMutationDistributionIndex = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.polynomialMutationDistributionIndexRange,
+            solution.variables().get(4)
+    );
+    double linkedPolynomialMutationDistributionIndex = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.linkedPolynomialMutationDistributionIndexRange,
+            solution.variables().get(5)
+    );
+    double uniformMutationPerturbation = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.uniformMutationPerturbationRange,
+            solution.variables().get(6)
+    );
+    double nonUniformMutationPerturbation = ParameterValues.minMaxDoubleFromProbability(
+            ParameterValues.nonUniformMutationPerturbationRange,
+            solution.variables().get(7)
+    );
+    String createInitialSolutions = ParameterValues.getFromProbability(
+            ParameterValues.createInitialSolutions,
+            solution.variables().get(8)
+    );
+
+    String crossover = ParameterValues.getFromProbability(
+            ParameterValues.crossover,
+            solution.variables().get(9)
+    );
+
+    String mutation = ParameterValues.getFromProbability(
+            ParameterValues.mutation,
+            solution.variables().get(10)
+    );
 
     String referenceFrontFileName = "resources/ZDT1.csv" ;
+
+    String crossoverConfiguration;
+    if (crossover.equals("SBX"))
+      crossoverConfiguration = "--sbxDistributionIndex " + sbxDistributionIndex + " ";
+    else if (crossover.equals("BLX_ALPHA"))
+      crossoverConfiguration = "--blxAlphaCrossoverAlphaValue " + blxAlphaCrossoverValue + " ";
+    else // wholeArithmetic
+      crossoverConfiguration = "";
+
+    String mutationConfiguration;
+    if (mutation.equals("polynomial"))
+      mutationConfiguration = "--polynomialMutationDistributionIndex " + polynomialMutationDistributionIndex + " ";
+    else if (mutation.equals("linkedPolynomial"))
+      mutationConfiguration = "--linkedPolynomialMutationDistributionIndex " + linkedPolynomialMutationDistributionIndex + " ";
+    else if (mutation.equals("uniform"))
+      mutationConfiguration = "--uniformMutationPerturbation " + uniformMutationPerturbation + " ";
+    else if (mutation.equals("nonUniform"))
+      mutationConfiguration = "--nonUniformMutationPerturbation " + nonUniformMutationPerturbation + " ";
+    else //Not posible
+      mutationConfiguration = "";
 
     String[] parameters =
         ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT4 "
@@ -119,14 +153,15 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             + "--selectionTournamentSize " + tournamentSize + " "
             + "--rankingForSelection dominanceRanking "
             + "--densityEstimatorForSelection crowdingDistance "
-            + "--crossover SBX "
+            + "--crossover " + crossover + " "
             + "--crossoverProbability 0.9 "
             + "--crossoverRepairStrategy bounds "
-            + "--sbxDistributionIndex " + sbxDistributionIndex + " "
-            + "--mutation polynomial "
+            + crossoverConfiguration
+            + "--mutation " + mutation + " "
             + "--mutationProbabilityFactor 1.0 "
             + "--mutationRepairStrategy bounds "
-            + "--polynomialMutationDistributionIndex " + polynomialMutationDistributionIndex + " ")
+            + mutationConfiguration
+        )
             .split("\\s+");
 
     AutoNSGAII autoNSGAII = new AutoNSGAII();
