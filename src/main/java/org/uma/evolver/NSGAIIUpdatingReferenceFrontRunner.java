@@ -91,7 +91,7 @@ public class NSGAIIUpdatingReferenceFrontRunner {
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II", 80, 1, null);
+            "NSGA-II", 80, 100, null);
 
     nsgaII.getObservable().register(evaluationObserver);
     nsgaII.getObservable().register(runTimeChartObserver);
@@ -100,7 +100,7 @@ public class NSGAIIUpdatingReferenceFrontRunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaII.getTotalComputingTime()); ;
 
-    new SolutionListOutput(nsgaII.getResult())
+    new SolutionListOutput(nsgaII.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();

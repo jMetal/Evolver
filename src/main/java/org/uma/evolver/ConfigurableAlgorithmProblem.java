@@ -13,6 +13,8 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
@@ -27,7 +29,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   //private DynamicReferenceFrontUpdate<DoubleSolution> referenceFrontUpdate = new DynamicReferenceFrontUpdate<>();
 
   public ConfigurableAlgorithmProblem() {
-    this(null, List.of(new Epsilon(), new Spread())) ;
+    this(null, List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume())) ;
   }
 
   public ConfigurableAlgorithmProblem(AutoConfigurableAlgorithm algorithm, List<QualityIndicator> indicators) {
@@ -177,7 +179,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     }
 
     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
-    nonDominatedSolutions.addAll(nsgaII.getResult()) ;
+    nonDominatedSolutions.addAll(nsgaII.result()) ;
 
     double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
 
@@ -188,19 +190,8 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    /*
-    referenceFrontUpdate.update(nsgaII.getResult());
-    System.out.println("RS: " + referenceFrontUpdate.referenceFront().length) ;
-    double[][] front = getMatrixWithObjectiveValues(nsgaII.getResult()) ;
-
-    double[][] normalizedFront =
-        NormalizeUtils.normalize(
-            front,
-            NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()),
-            NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()));
-     */
-    indicators.get(0).setReferenceFront(normalizedReferenceFront) ;
-    indicators.get(1).setReferenceFront(normalizedReferenceFront);
+    indicators.get(0).referenceFront(normalizedReferenceFront) ;
+    indicators.get(1).referenceFront(normalizedReferenceFront);
 
     solution.objectives()[0] = indicators.get(0).compute(normalizedFront)  ;
     solution.objectives()[1] = indicators.get(1).compute(normalizedFront)   ;

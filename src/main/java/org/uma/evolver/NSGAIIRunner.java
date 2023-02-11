@@ -52,7 +52,7 @@ public class NSGAIIRunner {
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.create() ;
     nsgaII.setEvaluation(new MultiThreadedEvaluation<>(8, nsgaII.getEvaluation().problem()));
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
+    EvaluationObserver evaluationObserver = new EvaluationObserver(10);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
             "NSGA-II", 80, 1, null);
@@ -64,7 +64,7 @@ public class NSGAIIRunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaII.getTotalComputingTime()); ;
 
-    new SolutionListOutput(nsgaII.getResult())
+    new SolutionListOutput(nsgaII.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();

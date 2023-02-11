@@ -117,7 +117,7 @@ public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends Abst
     nsgaII.run();
 
     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
-    nonDominatedSolutions.addAll(nsgaII.getResult()) ;
+    nonDominatedSolutions.addAll(nsgaII.result()) ;
 
     if (referenceFrontUpdate.referenceFront() == null) {
       referenceFrontUpdate.update(nonDominatedSolutions.solutions());
@@ -132,8 +132,8 @@ public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends Abst
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFrontUpdate.referenceFront()));
 
-    indicators.get(0).setReferenceFront(normalizedReferenceFront) ;
-    indicators.get(1).setReferenceFront(normalizedReferenceFront);
+    indicators.get(0).referenceFront(normalizedReferenceFront) ;
+    indicators.get(1).referenceFront(normalizedReferenceFront);
 
     solution.objectives()[0] = indicators.get(0).compute(normalizedFront)  ;
     solution.objectives()[1] = indicators.get(1).compute(normalizedFront)  * -1.0 ;
