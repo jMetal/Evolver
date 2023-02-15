@@ -1,6 +1,6 @@
-package org.uma.evolver;
+package org.uma.evolver.problem;
 
-import static org.uma.evolver.ParameterValues.decodeParameter;
+import static org.uma.evolver.util.ParameterValues.decodeParameter;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
 import java.io.IOException;

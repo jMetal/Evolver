@@ -1,7 +1,7 @@
 package org.uma.evolver;
 
 import java.util.List;
-import org.uma.evolver.algorithm.EvolverAutoNSGAII;
+import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
@@ -19,8 +19,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value> and the {@link EvolverAutoNSGAII}
- * class.
+ * Class configuring NSGA-II using arguments in the form <key, value> and the
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
