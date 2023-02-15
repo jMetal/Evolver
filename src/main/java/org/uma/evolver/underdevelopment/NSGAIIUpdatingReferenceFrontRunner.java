@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
-import org.uma.evolver.underdevelopment.ConfigurableAlgorithmProblemComputingTheReferenceFront;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;

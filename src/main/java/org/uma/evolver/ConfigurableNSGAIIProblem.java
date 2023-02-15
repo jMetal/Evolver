@@ -6,7 +6,6 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.Parameter;

@@ -1,13 +1,11 @@
 package org.uma.evolver;
 
 import java.util.List;
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.P;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.auto.parameter.RealParameter;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-import scala.annotation.meta.param;
 
 public class ParameterValues {
 

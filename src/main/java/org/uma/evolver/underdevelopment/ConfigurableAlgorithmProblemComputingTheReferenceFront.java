@@ -2,7 +2,6 @@ package org.uma.evolver.underdevelopment;
 
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
@@ -12,11 +11,8 @@ import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
-import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
 public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends AbstractDoubleProblem {

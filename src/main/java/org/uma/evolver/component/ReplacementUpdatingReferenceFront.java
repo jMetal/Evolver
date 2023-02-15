@@ -1,6 +1,5 @@
 package org.uma.evolver.component;
 
-import java.sql.Ref;
 import java.util.List;
 import org.uma.evolver.referencefrontupdate.ReferenceFrontUpdate;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
