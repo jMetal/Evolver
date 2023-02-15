@@ -1,4 +1,4 @@
-package org.uma.evolver;
+package org.uma.evolver.underdevelopment;
 
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
@@ -112,7 +112,7 @@ public class ConfigurableAlgorithmProblemComputingTheReferenceFront extends Abst
             .split("\\s+");
 
     AutoNSGAII autoNSGAII = new AutoNSGAII();
-    autoNSGAII.parseAndCheckParameters(parameters);
+    autoNSGAII.parse(parameters);
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.create();
     nsgaII.run();
 

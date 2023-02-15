@@ -2,16 +2,14 @@ package org.uma.evolver;
 
 import java.util.List;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -33,7 +31,8 @@ public class AsyncNSGAIIRunner {
     int maxEvaluations = 25000;
     int numberOfCores = 20;
 
-    DoubleProblem problem = new ConfigurableAlgorithmProblem() ;
+    var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
+    var problem = new ConfigurableNSGAIIProblem(indicators);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -53,7 +52,7 @@ public class AsyncNSGAIIRunner {
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
             "NSGA-II",
-            80, 100, null, "NHV", "IGD+");
+            80, 100, null, "IGD+", "HV");
 
     nsgaii.getObservable().register(evaluationObserver);
     nsgaii.getObservable().register(runTimeChartObserver);
@@ -70,5 +69,6 @@ public class AsyncNSGAIIRunner {
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
     System.exit(0);
+
   }
 }

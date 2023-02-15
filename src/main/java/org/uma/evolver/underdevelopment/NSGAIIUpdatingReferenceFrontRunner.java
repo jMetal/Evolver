@@ -1,13 +1,13 @@
-package org.uma.evolver;
+package org.uma.evolver.underdevelopment;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
+import org.uma.evolver.underdevelopment.ConfigurableAlgorithmProblemComputingTheReferenceFront;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
-import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;

@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
+import org.uma.evolver.algorithm.EvolverAutoNSGAII;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 
@@ -13,10 +13,7 @@ class ConfigurableAlgorithmProblemTest {
   @Test
   void theConstructorCreatesAValidInstanceUsingAQualityIndicator() {
     String[] parameters =
-        ("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 "
-            + "--randomGeneratorSeed 12 "
-            + "--referenceFrontFileName ZDT1.csv "
-            + "--maximumNumberOfEvaluations 25000 "
+        ("--maximumNumberOfEvaluations 25000 "
             + "--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize 100 "
@@ -36,14 +33,14 @@ class ConfigurableAlgorithmProblemTest {
             + "--polynomialMutationDistributionIndex 20.0 ")
             .split("\\s+");
 
-    AutoConfigurableAlgorithm algorithm = new AutoNSGAII() ;
-    algorithm.parseAndCheckParameters(parameters);
+    var algorithm = new EvolverAutoNSGAII(new ZDT1(), "ZDT1.csv") ;
+    algorithm.parse(parameters);
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume()) ;
 
-    var problem = new ConfigurableAlgorithmProblem(algorithm, indicators) ;
+    var problem = new ConfigurableNSGAIIProblem(indicators) ;
 
-    assertEquals(5, problem.numberOfVariables()) ;
+    assertEquals(21, problem.numberOfVariables()) ;
     assertEquals(1, problem.numberOfObjectives()) ;
     assertEquals(0, problem.numberOfConstraints()) ;
   }
