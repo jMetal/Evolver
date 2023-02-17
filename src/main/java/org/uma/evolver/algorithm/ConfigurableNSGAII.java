@@ -54,7 +54,6 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
   private List<Parameter<?>> fixedParameterList = new ArrayList<>();
   private StringParameter problemNameParameter;
   public StringParameter referenceFrontFilename;
-  private PositiveIntegerValue randomGeneratorSeedParameter;
   private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -80,7 +79,6 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
 
   private void configure() {
     problemNameParameter = new StringParameter("problemName");
-    randomGeneratorSeedParameter = new PositiveIntegerValue("randomGeneratorSeed");
     referenceFrontFilename = new StringParameter("referenceFrontFileName");
     maximumNumberOfEvaluationsParameter =
         new PositiveIntegerValue("maximumNumberOfEvaluations");
@@ -91,7 +89,6 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
     fixedParameterList.add(problemNameParameter);
     fixedParameterList.add(referenceFrontFilename);
     fixedParameterList.add(maximumNumberOfEvaluationsParameter);
-    fixedParameterList.add(randomGeneratorSeedParameter);
 
 
     algorithmResult();
@@ -99,7 +96,6 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
     selection();
     variation();
 
-    //configurableParameterList.add(populationSizeParameter);
     configurableParameterList.add(algorithmResultParameter);
     configurableParameterList.add(createInitialSolutionsParameter);
     configurableParameterList.add(variationParameter);
@@ -211,8 +207,6 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
    * @return
    */
   public EvolutionaryAlgorithm<DoubleSolution> create() {
-    JMetalRandom.getInstance().setSeed(randomGeneratorSeedParameter.value());
-
     Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value());
 
     Archive<DoubleSolution> archive = null;

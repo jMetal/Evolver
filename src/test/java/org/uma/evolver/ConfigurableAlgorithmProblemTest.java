@@ -12,12 +12,8 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 class ConfigurableAlgorithmProblemTest {
   @Test
   void theConstructorCreatesAValidInstanceUsingAQualityIndicator() {
-    String[] parameters =
-        ("--maximumNumberOfEvaluations 25000 "
-            + "--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 "
-            + "--randomGeneratorSeed 12 "
-            + "--referenceFrontFileName " + "resources/ZDT1.csv" + " "
-            + "--algorithmResult population "
+    String configurableParameters =
+        ("--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize 100 "
             + "--createInitialSolutions random "
@@ -33,15 +29,20 @@ class ConfigurableAlgorithmProblemTest {
             + "--mutation polynomial "
             + "--mutationProbabilityFactor 1.0 "
             + "--mutationRepairStrategy bounds "
-            + "--polynomialMutationDistributionIndex 20.0 ")
-            .split("\\s+");
+            + "--polynomialMutationDistributionIndex 20.0 ");
+
+    var nonConfigurableParameterString = new StringBuilder() ;
+    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 10000 " ) ;
+    nonConfigurableParameterString.append("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 " ) ;
+    nonConfigurableParameterString.append("--populationSize 100 " ) ;
+    nonConfigurableParameterString.append("--referenceFrontFileName resources/ZDT1.csv " ) ;
 
     var algorithm = new ConfigurableNSGAII() ;
-    algorithm.parse(parameters);
+    algorithm.parse((configurableParameters+nonConfigurableParameterString).split("\\s+"));
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume()) ;
 
-    var problem = new ConfigurableNSGAIIProblem(indicators) ;
+    var problem = new ConfigurableNSGAIIProblem(indicators, nonConfigurableParameterString) ;
 
     assertEquals(20, problem.numberOfVariables()) ;
     assertEquals(1, problem.numberOfObjectives()) ;

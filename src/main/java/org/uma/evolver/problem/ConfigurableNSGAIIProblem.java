@@ -18,15 +18,17 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import smile.stat.Hypothesis.F;
 
 
 public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
+  private final StringBuilder nonConfigurableParameterString ;
 
-  public ConfigurableNSGAIIProblem(List<QualityIndicator> indicators) {
+  public ConfigurableNSGAIIProblem(List<QualityIndicator> indicators,
+      StringBuilder nonConfigurableParameterString) {
     var algorithm = new ConfigurableNSGAII() ;
+    this.nonConfigurableParameterString = nonConfigurableParameterString ;
     this.indicators = indicators ;
     parameters = AutoConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
 
@@ -71,11 +73,7 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     StringBuilder parameterString = new StringBuilder() ;
     decodeParameters(solution, parameterString);
 
-    parameterString.append("--maximumNumberOfEvaluations 10000 " ) ;
-    parameterString.append("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 " ) ;
-    parameterString.append("--populationSize 100 " ) ;
-    parameterString.append("--randomGeneratorSeed 4 " ) ;
-    parameterString.append("--referenceFrontFileName resources/ZDT1.csv " ) ;
+    parameterString.append(nonConfigurableParameterString) ;
 
     String[] parameters = parameterString.toString().split("\\s+") ;
 

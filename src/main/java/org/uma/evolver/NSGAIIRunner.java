@@ -28,8 +28,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class NSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
+    var nonConfigurableParameterString = new StringBuilder() ;
+    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
+    nonConfigurableParameterString.append("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 " ) ;
+    nonConfigurableParameterString.append("--populationSize 100 " ) ;
+    nonConfigurableParameterString.append("--referenceFrontFileName resources/ZDT1.csv " ) ;
+
     var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
-    var problem = new ConfigurableNSGAIIProblem(indicators);
+    var problem = new ConfigurableNSGAIIProblem(indicators, nonConfigurableParameterString);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
