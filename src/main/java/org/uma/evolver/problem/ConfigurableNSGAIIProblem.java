@@ -3,7 +3,9 @@ package org.uma.evolver.problem;
 import static org.uma.evolver.util.ParameterValues.decodeParameter;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
@@ -16,6 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import smile.stat.Hypothesis.F;
 
 
 public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
@@ -66,14 +69,9 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
     StringBuilder parameterString = new StringBuilder() ;
-    for (int i = 0; i < parameters.size(); i++) {
-      String parameterName = parameters.get(i).name();
-      String value = decodeParameter(parameters.get(i), solution.variables().get(i)) ;
+    decodeParameters(solution, parameterString);
 
-      parameterString.append("--" + parameterName + " " + value + " ") ;
-    }
-
-    parameterString.append("--maximumNumberOfEvaluations 8000 " ) ;
+    parameterString.append("--maximumNumberOfEvaluations 10000 " ) ;
     parameterString.append("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 " ) ;
     parameterString.append("--populationSize 100 " ) ;
     parameterString.append("--randomGeneratorSeed 4 " ) ;
@@ -113,5 +111,27 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     solution.objectives()[1] = indicators.get(1).compute(normalizedFront)   ;
 
     return solution ;
+  }
+
+  private void decodeParameters(DoubleSolution solution, StringBuilder parameterString) {
+    for (int i = 0; i < parameters.size(); i++) {
+      String parameterName = parameters.get(i).name();
+      String value = decodeParameter(parameters.get(i), solution.variables().get(i)) ;
+
+      parameterString.append("--").append(parameterName).append(" ").append(value).append(" ");
+    }
+  }
+
+  public void writeDecodedSolutionsFoFile(List<DoubleSolution> solutions, String fileName)
+      throws IOException {
+    FileWriter fileWriter = new FileWriter(fileName) ;
+    PrintWriter printWriter = new PrintWriter(fileWriter) ;
+    for (DoubleSolution solution: solutions) {
+      StringBuilder parameterString = new StringBuilder() ;
+      decodeParameters(solution, parameterString);
+
+      printWriter.println(parameterString);
+    }
+    printWriter.close();
   }
 }

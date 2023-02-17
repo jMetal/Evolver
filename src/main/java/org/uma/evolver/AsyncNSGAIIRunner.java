@@ -31,7 +31,7 @@ public class AsyncNSGAIIRunner {
     MutationOperator<DoubleSolution> mutation;
 
     int populationSize = 100;
-    int maxEvaluations = 25000;
+    int maxEvaluations = 1000;
     int numberOfCores = 20;
 
     var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());

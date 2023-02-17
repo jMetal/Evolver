@@ -1,5 +1,6 @@
 package org.uma.evolver;
 
+import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -13,6 +14,7 @@ import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -25,7 +27,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  */
 public class NSGAIIRunner {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
     var problem = new ConfigurableNSGAIIProblem(indicators);
 
@@ -37,10 +39,10 @@ public class NSGAIIRunner {
     double mutationDistributionIndex = 20.0;
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-    int populationSize = 50;
-    int offspringPopulationSize = populationSize;
+    int populationSize = 100;
+    int offspringPopulationSize = 100;
 
-    Termination termination = new TerminationByEvaluations(25000);
+    Termination termination = new TerminationByEvaluations(5000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         problem,
@@ -55,7 +57,7 @@ public class NSGAIIRunner {
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II to be optimized", 80, 1, null,
+            "NSGA-II - ZDT1", 80, 100, null,
             indicators.get(0).name(),
             indicators.get(1).name());
 
@@ -66,9 +68,15 @@ public class NSGAIIRunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaii.getTotalComputingTime());
 
-    new SolutionListOutput(nsgaii.result())
+    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
+    nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
+    new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
+
+    problem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR.Conf.csv");
+
+    //System.exit(0) ;
   }
 }
