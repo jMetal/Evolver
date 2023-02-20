@@ -10,7 +10,6 @@ import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.auto.parameter.PositiveIntegerValue;
 import org.uma.jmetal.auto.parameter.RealParameter;
-import org.uma.jmetal.auto.parameter.StringParameter;
 import org.uma.jmetal.auto.parameter.catalogue.CreateInitialSolutionsParameter;
 import org.uma.jmetal.auto.parameter.catalogue.CrossoverParameter;
 import org.uma.jmetal.auto.parameter.catalogue.ExternalArchiveParameter;
@@ -31,8 +30,6 @@ import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityE
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.ProblemFactory;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
@@ -40,7 +37,6 @@ import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
@@ -52,8 +48,6 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private List<Parameter<?>> fixedParameterList = new ArrayList<>();
-  private StringParameter problemNameParameter;
-  public StringParameter referenceFrontFilename;
   private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -73,21 +67,21 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
     return fixedParameterList;
   }
 
-  public ConfigurableNSGAII() {
+  private DoubleProblem problem ;
+
+  public ConfigurableNSGAII(DoubleProblem problem) {
+
+    this.problem = problem;
     this.configure();
   }
 
   private void configure() {
-    problemNameParameter = new StringParameter("problemName");
-    referenceFrontFilename = new StringParameter("referenceFrontFileName");
     maximumNumberOfEvaluationsParameter =
         new PositiveIntegerValue("maximumNumberOfEvaluations");
 
     populationSizeParameter = new PositiveIntegerValue("populationSize");
 
     fixedParameterList.add(populationSizeParameter);
-    fixedParameterList.add(problemNameParameter);
-    fixedParameterList.add(referenceFrontFilename);
     fixedParameterList.add(maximumNumberOfEvaluationsParameter);
 
 
@@ -197,18 +191,12 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
   }
 
 
-  protected Problem<DoubleSolution> problem() {
-    return ProblemFactory.loadProblem(problemNameParameter.value());
-  }
-
   /**
    * Creates an instance of NSGA-II from the parsed parameters
    *
    * @return
    */
   public EvolutionaryAlgorithm<DoubleSolution> create() {
-    Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value());
-
     Archive<DoubleSolution> archive = null;
 
     if (algorithmResultParameter.value().equals("externalArchive")) {
@@ -228,7 +216,7 @@ public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
 
     var initialSolutionsCreation =
         (SolutionsCreation<DoubleSolution>) createInitialSolutionsParameter.getParameter(
-            (DoubleProblem) problem,
+            problem,
             populationSizeParameter.value());
 
     MutationParameter mutationParameter = (MutationParameter) variationParameter.findSpecificParameter(

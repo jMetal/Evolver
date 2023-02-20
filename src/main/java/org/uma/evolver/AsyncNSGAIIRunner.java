@@ -9,6 +9,7 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -40,9 +41,9 @@ public class AsyncNSGAIIRunner {
     nonConfigurableParameterString.append("--populationSize 100 " ) ;
     nonConfigurableParameterString.append("--referenceFrontFileName resources/ZDT1.csv " ) ;
 
-
     var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
-    var problem = new ConfigurableNSGAIIProblem(indicators, nonConfigurableParameterString);
+    var problem = new ConfigurableNSGAIIProblem(new ZDT1(), "resources/ZDT1.csv",
+        indicators, nonConfigurableParameterString);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

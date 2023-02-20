@@ -61,5 +61,11 @@
       <artifactId>jmetal-parallel</artifactId>
       <version>6.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math4-core</artifactId>
+      <version>4.0-beta1</version>
+    </dependency>
+
   </dependencies>
 </project>
