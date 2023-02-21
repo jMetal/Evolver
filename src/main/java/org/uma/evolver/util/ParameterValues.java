@@ -14,6 +14,9 @@ public class ParameterValues {
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       var index = (int) Math.floor(value * categoricalParameter.validValues().size());
+      if ((index == 2) && (categoricalParameter.validValues().size() <= 2)){
+        int a = 0 ;
+      }
       result = categoricalParameter.validValues().get(index);
     } else if (parameter instanceof RealParameter) {
       RealParameter realParameter = (RealParameter) parameter;

@@ -55,7 +55,7 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
 
     for (int i = 0; i<parameters.size(); i++) {
       lowerLimit.add(0.0) ;
-      upperLimit.add(1.0) ;
+      upperLimit.add(0.99999) ;
     }
 
     computeNormalizedReferenceFront(referenceFrontFileName) ;
@@ -185,6 +185,7 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     PrintWriter printWriter = new PrintWriter(fileWriter) ;
     for (DoubleSolution solution: solutions) {
       StringBuilder parameterString = new StringBuilder() ;
+      parameterString.append(nonConfigurableParameterString) ;
       decodeParameters(solution, parameterString);
 
       printWriter.println(parameterString);
