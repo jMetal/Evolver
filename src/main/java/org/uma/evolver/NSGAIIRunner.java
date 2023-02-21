@@ -10,7 +10,14 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -31,17 +38,18 @@ public class NSGAIIRunner {
   public static void main(String[] args) throws IOException {
     var nonConfigurableParameterString = new StringBuilder() ;
     nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
-    nonConfigurableParameterString.append("--populationSize 100 " ) ;
+    nonConfigurableParameterString.append("--populationSize 50 " ) ;
 
-    var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
-    var problem = new ConfigurableNSGAIIProblem(new ZDT1(), "resources/ZDT1.csv",
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT6() ;
+    var configurableNSGAIIProblem = new ConfigurableNSGAIIProblem(problemWhoseConfigurationIsSearchedFor, "resources/ZDT6.csv",
         indicators, nonConfigurableParameterString);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     var crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.numberOfVariables();
+    double mutationProbability = 1.0 / configurableNSGAIIProblem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
@@ -51,19 +59,19 @@ public class NSGAIIRunner {
     Termination termination = new TerminationByEvaluations(5000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
-        problem,
+        configurableNSGAIIProblem,
         populationSize,
         offspringPopulationSize,
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, problem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableNSGAIIProblem))
         .build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II - ZDT1", 80, 100, null,
+            "NSGA-II - " + problemWhoseConfigurationIsSearchedFor.name(), 80, 100, null,
             indicators.get(0).name(),
             indicators.get(1).name());
 
@@ -77,11 +85,11 @@ public class NSGAIIRunner {
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
     nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemWhoseConfigurationIsSearchedFor.name()+".csv", ","))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemWhoseConfigurationIsSearchedFor.name()+".csv", ","))
         .print();
 
-    problem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR.Conf.csv");
+    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ problemWhoseConfigurationIsSearchedFor.name()+".Conf.csv");
 
     //System.exit(0) ;
   }

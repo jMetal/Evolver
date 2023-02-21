@@ -2,12 +2,14 @@ package org.uma.evolver.problem;
 
 import static org.uma.evolver.util.ParameterValues.decodeParameter;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
+import static smile.math.MathEx.median;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -30,12 +32,20 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
   private double[][] normalizedReferenceFront ;
   private double[][] referenceFront ;
 
+  private int numberOfIndependentRuns ;
+
   public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
       StringBuilder nonConfigurableParameterString) {
+    this(problem, referenceFrontFileName, indicators, nonConfigurableParameterString, 1) ;
+  }
+
+  public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
+      StringBuilder nonConfigurableParameterString, int numberOfIndependentRuns) {
     var algorithm = new ConfigurableNSGAII(problem) ;
     this.nonConfigurableParameterString = nonConfigurableParameterString ;
     this.indicators = indicators ;
     this.problem = problem ;
+    this.numberOfIndependentRuns = numberOfIndependentRuns ;
     this.referenceFrontFileName = referenceFrontFileName ;
     parameters = AutoConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
 
@@ -119,15 +129,46 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     solution.objectives()[0] = indicators.get(0).compute(normalizedFront)  ;
     solution.objectives()[1] = indicators.get(1).compute(normalizedFront)   ;
 
+   /*
+    double[] objectives = computeIndependentRuns(numberOfIndependentRuns, algorithm) ;
+    solution.objectives()[0] = objectives[0] ;
+    solution.objectives()[1] = objectives[1] ;
+   */
     return solution ;
   }
 
-  /*
-  private double[] computeIndependentRuns(int numberOfRuns, EvolutionaryAlgorithm<DoubleSolution> algorithm) {
+  private double[] computeIndependentRuns(int numberOfRuns, ConfigurableNSGAII algorithm) {
+    double[] medianIndicatorValues = new double[indicators.size()] ;
+    double[] valuesFirstIndicator = new double[numberOfRuns];
+    double[] valuesSecondIndicator = new double[numberOfRuns] ;
 
+    for (int i = 0; i < numberOfIndependentRuns; i++) {
+      EvolutionaryAlgorithm<DoubleSolution> nsgaII = algorithm.create();
+      nsgaII.run();
 
+      NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
+      nonDominatedSolutions.addAll(nsgaII.result()) ;
+
+      double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
+
+      double[][] normalizedFront =
+          NormalizeUtils.normalize(
+              front,
+              NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
+              NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+
+      indicators.get(0).referenceFront(normalizedReferenceFront) ;
+      indicators.get(1).referenceFront(normalizedReferenceFront) ;
+
+      valuesFirstIndicator[0] = indicators.get(0).compute(normalizedFront) ;
+      valuesSecondIndicator[1] = indicators.get(1).compute(normalizedFront) ;
+    }
+
+    medianIndicatorValues[0] = median(valuesFirstIndicator) ;
+    medianIndicatorValues[1] = median(valuesSecondIndicator) ;
+
+    return medianIndicatorValues ;
   }
-  */
 
   private void decodeParameters(DoubleSolution solution, StringBuilder parameterString) {
     for (int i = 0; i < parameters.size(); i++) {
