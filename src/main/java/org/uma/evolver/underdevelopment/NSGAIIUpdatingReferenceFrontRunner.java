@@ -67,7 +67,7 @@ public class NSGAIIUpdatingReferenceFrontRunner {
             new MultiComparator<>(
                 Arrays.asList(
                     Comparator.comparing(ranking::getRank),
-                    Comparator.comparing(densityEstimator::getValue).reversed())));
+                    Comparator.comparing(densityEstimator::value).reversed())));
 
     var termination = new TerminationByEvaluations(2500);
 
@@ -82,8 +82,8 @@ public class NSGAIIUpdatingReferenceFrontRunner {
       @Override
       protected void updateProgress() {
         super.updateProgress();
-        referenceFrontUpdate.update(this.getPopulation());
-        getEvaluation().evaluate(getPopulation()) ;
+        referenceFrontUpdate.update(this.population());
+        evaluation().evaluate(population()) ;
       }
     } ;
 
@@ -92,12 +92,12 @@ public class NSGAIIUpdatingReferenceFrontRunner {
         new RunTimeChartObserver<>(
             "NSGA-II", 80, 100, null);
 
-    nsgaII.getObservable().register(evaluationObserver);
-    nsgaII.getObservable().register(runTimeChartObserver);
+    nsgaII.observable().register(evaluationObserver);
+    nsgaII.observable().register(runTimeChartObserver);
 
     nsgaII.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaII.getTotalComputingTime()); ;
+    JMetalLogger.logger.info("Total computing time: " + nsgaII.totalComputingTime()); ;
 
     new SolutionListOutput(nsgaII.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))

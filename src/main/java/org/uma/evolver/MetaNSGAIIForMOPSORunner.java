@@ -79,7 +79,7 @@ public class MetaNSGAIIForMOPSORunner {
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
     nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
-    String problemDescription = nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
+    String problemDescription = "MOPSO" + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))

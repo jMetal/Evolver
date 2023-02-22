@@ -95,7 +95,7 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
 
   @Override
   public String name() {
-    return "AutoNSGAII";
+    return "AutoMOPSO";
   }
 
 

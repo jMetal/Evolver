@@ -55,12 +55,12 @@ public class MetaSMPSORunner {
             indicators.get(0).name(),
             indicators.get(1).name());
 
-    smpso.getObservable().register(evaluationObserver);
-    smpso.getObservable().register(runTimeChartObserver);
+    smpso.observable().register(evaluationObserver);
+    smpso.observable().register(runTimeChartObserver);
 
     smpso.run();
 
-    JMetalLogger.logger.info("Total computing time: " + smpso.getTotalComputingTime());
+    JMetalLogger.logger.info("Total computing time: " + smpso.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
     nonDominatedSolutionsArchive.addAll(smpso.result()) ;

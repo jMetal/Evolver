@@ -70,16 +70,16 @@ public class MetaNSGAIIRunner {
             indicators.get(0).name(),
             indicators.get(1).name());
 
-    nsgaii.getObservable().register(evaluationObserver);
-    nsgaii.getObservable().register(runTimeChartObserver);
+    nsgaii.observable().register(evaluationObserver);
+    nsgaii.observable().register(runTimeChartObserver);
 
     nsgaii.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaii.getTotalComputingTime());
+    JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
     nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
-    String problemDescription = nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
+    String problemDescription = "NSGA-II" + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
