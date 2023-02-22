@@ -45,7 +45,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableNSGAII implements AutoConfigurableAlgorithm {
+public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private List<Parameter<?>> fixedParameterList = new ArrayList<>();
   private PositiveIntegerValue maximumNumberOfEvaluationsParameter;

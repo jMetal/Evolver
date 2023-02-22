@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableMOPSO;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -22,7 +24,7 @@ import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
-public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
+public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
   private final StringBuilder nonConfigurableParameterString ;
@@ -34,14 +36,14 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
 
   private int numberOfIndependentRuns ;
 
-  public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
+  public ConfigurableMOPSOProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
       StringBuilder nonConfigurableParameterString) {
     this(problem, referenceFrontFileName, indicators, nonConfigurableParameterString, 1) ;
   }
 
-  public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
+  public ConfigurableMOPSOProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
       StringBuilder nonConfigurableParameterString, int numberOfIndependentRuns) {
-    var algorithm = new ConfigurableNSGAII(problem) ;
+    var algorithm = new ConfigurableMOPSO(problem) ;
     this.nonConfigurableParameterString = nonConfigurableParameterString ;
     this.indicators = indicators ;
     this.problem = problem ;
@@ -106,14 +108,14 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
 
     String[] parameters = parameterString.toString().split("\\s+") ;
 
-    var algorithm = new ConfigurableNSGAII(problem) ;
+    var algorithm = new ConfigurableMOPSO(problem) ;
     algorithm.parse(parameters);
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = algorithm.create();
-    nsgaII.run();
+    ParticleSwarmOptimizationAlgorithm mopso = algorithm.create();
+    mopso.run();
 
     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>() ;
-    nonDominatedSolutions.addAll(nsgaII.result()) ;
+    nonDominatedSolutions.addAll(mopso.result()) ;
 
     double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions()) ;
 
@@ -160,8 +162,8 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
       indicators.get(0).referenceFront(normalizedReferenceFront) ;
       indicators.get(1).referenceFront(normalizedReferenceFront) ;
 
-      valuesFirstIndicator[i] = indicators.get(0).compute(normalizedFront) ;
-      valuesSecondIndicator[i] = indicators.get(1).compute(normalizedFront) ;
+      valuesFirstIndicator[0] = indicators.get(0).compute(normalizedFront) ;
+      valuesSecondIndicator[1] = indicators.get(1).compute(normalizedFront) ;
     }
 
     medianIndicatorValues[0] = median(valuesFirstIndicator) ;
