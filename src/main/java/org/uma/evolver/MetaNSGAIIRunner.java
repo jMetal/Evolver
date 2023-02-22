@@ -10,19 +10,9 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
-import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3_2D;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG6;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -37,7 +27,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIRunner {
+public class MetaNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
     var nonConfigurableParameterString = new StringBuilder() ;
@@ -88,12 +78,13 @@ public class NSGAIIRunner {
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
     nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
+    String problemDescription = nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+".csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+".csv", ","))
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
         .print();
 
-    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ nsgaii.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+".Conf.csv");
+    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ problemDescription + ".Conf.csv");
 
     //System.exit(0) ;
   }
