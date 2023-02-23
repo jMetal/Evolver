@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.uma.evolver.parameter.VariationParameter;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.BooleanParameter;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
@@ -21,7 +22,6 @@ import org.uma.jmetal.auto.parameter.catalogue.MutationParameter;
 import org.uma.jmetal.auto.parameter.catalogue.ProbabilityParameter;
 import org.uma.jmetal.auto.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
 import org.uma.jmetal.auto.parameter.catalogue.SelectionParameter;
-import org.uma.jmetal.auto.parameter.catalogue.VariationParameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
@@ -46,16 +46,11 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 
 /**
- * Class to configure NSGA-II with an argument string using class {@link EvolutionaryAlgorithm}
- *
  * @autor Antonio J. Nebro
  */
 public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();
   public List<Parameter<?>> fixedParameterList = new ArrayList<>();
-  private StringParameter problemNameParameter;
-  public StringParameter referenceFrontFilenameParameter;
-  private PositiveIntegerValue randomGeneratorSeedParameter;
   private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -80,25 +75,21 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     return fixedParameterList;
   }
 
-  public ConfigurableMOEAD() {
+  private DoubleProblem problem ;
+
+  public ConfigurableMOEAD(DoubleProblem problem) {
+    this.problem = problem ;
     this.configure() ;
   }
 
   public void configure() {
-    problemNameParameter = new StringParameter("problemName");
-    randomGeneratorSeedParameter = new PositiveIntegerValue("randomGeneratorSeed") ;
     maximumNumberOfEvaluationsParameter =
         new PositiveIntegerValue("maximumNumberOfEvaluations");
-
-    referenceFrontFilenameParameter = new StringParameter("referenceFrontFileName");
 
     populationSizeParameter = new PositiveIntegerValue("populationSize");
 
     fixedParameterList.add(populationSizeParameter);
-    fixedParameterList.add(problemNameParameter);
-    fixedParameterList.add(referenceFrontFilenameParameter);
     fixedParameterList.add(maximumNumberOfEvaluationsParameter);
-    fixedParameterList.add(randomGeneratorSeedParameter) ;
 
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
 
@@ -182,12 +173,13 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     deCrossoverParameter.addGlobalParameter(fParameter);
 
     offspringPopulationSizeParameter = new PositiveIntegerValue("offspringPopulationSize") ;
+    offspringPopulationSizeParameter.value(1);
 
     variationParameter =
         new VariationParameter(List.of("crossoverAndMutationVariation", "differentialEvolutionVariation"));
     variationParameter.addSpecificParameter("crossoverAndMutationVariation", crossoverParameter);
     variationParameter.addSpecificParameter("crossoverAndMutationVariation", mutationParameter);
-    variationParameter.addSpecificParameter("crossoverAndMutationVariation", offspringPopulationSizeParameter);
+    variationParameter.addNonConfigurableParameter("offspringPopulationSize", 1);
     variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
     variationParameter.addSpecificParameter("differentialEvolutionVariation", deCrossoverParameter);
   }
@@ -224,19 +216,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     }
   }
 
-  protected Problem<DoubleSolution> problem() {
-    return ProblemFactory.loadProblem(problemNameParameter.value());
-  }
-
   /**
    * Creates an instance of NSGA-II from the parsed parameters
    *
    * @return
    */
   public EvolutionaryAlgorithm<DoubleSolution> create() {
-    JMetalRandom.getInstance().setSeed(randomGeneratorSeedParameter.value());
-
-    Problem<DoubleSolution> problem = problem() ;
 
     Archive<DoubleSolution> archive = null;
     Evaluation<DoubleSolution> evaluation ;

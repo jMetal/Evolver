@@ -25,7 +25,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MetaSMPSORunner {
+public class MetaSMPSOForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
     var nonConfigurableParameterString = new StringBuilder() ;

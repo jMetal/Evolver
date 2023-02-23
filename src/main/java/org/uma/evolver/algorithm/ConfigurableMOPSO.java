@@ -116,7 +116,8 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   private void configure() {
     algorithmResultParameter =
         new CategoricalParameter("algorithmResult",
-            List.of("unboundedArchive", "leaderArchive"));
+            List.of("leaderArchive"));
+            //List.of("unboundedArchive", "leaderArchive"));
 
     maximumNumberOfEvaluationsParameter =
         new PositiveIntegerValue("maximumNumberOfEvaluations");

@@ -1,6 +1,7 @@
 package org.uma.evolver.util;
 
 import java.util.List;
+import org.uma.jmetal.auto.parameter.BooleanParameter;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -14,8 +15,8 @@ public class ParameterValues {
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       var index = (int) Math.floor(value * categoricalParameter.validValues().size());
-      if ((index == 2) && (categoricalParameter.validValues().size() <= 2)){
-        int a = 0 ;
+      if ((index == 2) && (categoricalParameter.validValues().size() <= 2)) {
+        int a = 0;
       }
       result = categoricalParameter.validValues().get(index);
     } else if (parameter instanceof RealParameter) {
@@ -28,6 +29,11 @@ public class ParameterValues {
       IntegerParameter integerParameter = (IntegerParameter) parameter;
       int min = integerParameter.validValues().get(0);
       int max = integerParameter.validValues().get(1);
+      int decodedValue = min + (int) Math.floor(value * (max - min));
+      return "" + decodedValue;
+    } else if (parameter instanceof BooleanParameter) {
+      int min = 0;
+      int max = 1;
       int decodedValue = min + (int) Math.floor(value * (max - min));
       return "" + decodedValue;
     } else {
