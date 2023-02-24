@@ -5,6 +5,7 @@ import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -20,13 +21,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOPSORunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/ZDT1.csv";
+    String referenceFrontFileName = "resources/DTLZ3.2D.csv";
 
     String[] parameters =
-        ("--maximumNumberOfEvaluations 25000 --archiveSize 100 --swarmSize 36 --leaderArchive hypervolumeArchive --algorithmResult leaderArchive --swarmInitialization latinHypercubeSampling --velocityInitialization SPSO2007VelocityInitialization --perturbation frequencySelectionMutationBasedPerturbation --mutation polynomial --mutationProbabilityFactor 0.6694349585541994 --mutationRepairStrategy random --polynomialMutationDistributionIndex 237.87903868398354 --linkedPolynomialMutationDistributionIndex 83.6615133121268 --uniformMutationPerturbation 0.24743610468327507 --nonUniformMutationPerturbation 0.4434974481270127 --frequencyOfApplicationOfMutationOperator 8 --inertiaWeightComputingStrategy linearDecreasingValue --weight 0.9531985222162719 --weightMin 0.4468438347552981 --weightMax 0.7022321092754226 --weightMin 0.1938456512652309 --weightMax 0.7508062530789632 --weightMin 0.29872798492369435 --weightMax 0.7876425851551943 --velocityUpdate defaultVelocityUpdate --c1Min 1.3955986855971776 --c1Max 2.251920493366374 --c2Min 1.3343628297621377 --c2Max 2.045489954826703 --localBestInitialization defaultLocalBestInitialization --globalBestInitialization defaultGlobalBestInitialization --globalBestSelection tournament --selectionTournamentSize 3 --globalBestUpdate defaultGlobalBestUpdate --localBestUpdate defaultLocalBestUpdate --positionUpdate defaultPositionUpdate --velocityChangeWhenLowerLimitIsReached 0.9450011413627195 --velocityChangeWhenUpperLimitIsReached -0.3602172883291481  \n ")
+        ("--maximumNumberOfEvaluations 25000 --archiveSize 100 --swarmSize 166 --leaderArchive spatialSpreadDeviationArchive --algorithmResult leaderArchive --swarmInitialization random --velocityInitialization SPSO2011VelocityInitialization --perturbation frequencySelectionMutationBasedPerturbation --mutation nonUniform --mutationProbabilityFactor 0.6535087976642939 --mutationRepairStrategy round --polynomialMutationDistributionIndex 290.7122682710519 --linkedPolynomialMutationDistributionIndex 150.21175814927582 --uniformMutationPerturbation 0.51829880791445 --nonUniformMutationPerturbation 0.8837873661929366 --frequencyOfApplicationOfMutationOperator 7 --inertiaWeightComputingStrategy linearDecreasingValue --weight 0.4103755328778371 --weightMin 0.22863537762127273 --weightMax 0.6608909675571271 --weightMin 0.2115875974823963 --weightMax 0.9321889662543317 --weightMin 0.23217246832810945 --weightMax 0.6419441984370655 --velocityUpdate constrainedVelocityUpdate --c1Min 1.4794190000496916 --c1Max 2.306806012637101 --c2Min 1.8826036747392838 --c2Max 2.044331146102894 --localBestInitialization defaultLocalBestInitialization --globalBestInitialization defaultGlobalBestInitialization --globalBestSelection tournament --selectionTournamentSize 4 --globalBestUpdate defaultGlobalBestUpdate --localBestUpdate defaultLocalBestUpdate --positionUpdate defaultPositionUpdate --velocityChangeWhenLowerLimitIsReached 0.4678704645071452 --velocityChangeWhenUpperLimitIsReached 0.48918946084622594 \n ")
             .split("\\s+");
 
-    var autoMOPSO = new ConfigurableMOPSO(new ZDT1());
+    var autoMOPSO = new ConfigurableMOPSO(new DTLZ3_2D());
     autoMOPSO.parse(parameters);
 
     AutoMOPSO.print(autoMOPSO.fixedParameterList());

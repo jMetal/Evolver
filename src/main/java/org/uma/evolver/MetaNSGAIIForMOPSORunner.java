@@ -12,7 +12,10 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -31,13 +34,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaNSGAIIForMOPSORunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
-    nonConfigurableParameterString.append("--archiveSize 100 " ) ;
+    var nonConfigurableParameterString = new StringBuilder();
+    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 ");
+    nonConfigurableParameterString.append("--archiveSize 100 ");
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1() ;
-    var configurableProblem = new ConfigurableMOPSOProblem(problemWhoseConfigurationIsSearchedFor, "resources/ZDT1.csv",
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3_2D();
+    var configurableProblem = new ConfigurableMOPSOProblem(problemWhoseConfigurationIsSearchedFor,
+        "resources/DTLZ3.2D.csv",
         indicators, nonConfigurableParameterString, 1);
 
     double crossoverProbability = 0.9;
@@ -77,15 +81,21 @@ public class MetaNSGAIIForMOPSORunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
 
-    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
-    nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
-    String problemDescription = "MOPSO" + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
+    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
+    nonDominatedSolutionsArchive.addAll(nsgaii.result());
+    String problemDescription = "MOPSO" + "." + problemWhoseConfigurationIsSearchedFor.name() + "."
+        + indicators.get(0).name() + "." + indicators.get(1).name() + "."
+        + problemWhoseConfigurationIsSearchedFor.numberOfObjectives();
+
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
+        .setVarFileOutputContext(
+            new DefaultFileOutputContext("VAR." + problemDescription + ".csv", ","))
+        .setFunFileOutputContext(
+            new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
         .print();
 
-    configurableProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ problemDescription + ".Conf.csv");
+    configurableProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),
+        "VAR." + problemDescription + ".Conf.csv");
 
     //System.exit(0) ;
   }

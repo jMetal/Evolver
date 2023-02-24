@@ -60,7 +60,7 @@ public class MetaNSGAIIForMOEADRunner {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
+        //.setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);

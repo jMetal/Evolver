@@ -12,8 +12,10 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
@@ -30,13 +32,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaNSGAIIForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
-    nonConfigurableParameterString.append("--populationSize 100 " ) ;
+    var nonConfigurableParameterString = new StringBuilder();
+    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 ");
+    nonConfigurableParameterString.append("--populationSize 100 ");
 
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1() ;
-    var configurableNSGAIIProblem = new ConfigurableNSGAIIProblem(problemWhoseConfigurationIsSearchedFor, "resources/ZDT1.csv",
+    var indicators = List.of(new Epsilon(), new Spread());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT2();
+    var configurableNSGAIIProblem = new ConfigurableNSGAIIProblem(
+        problemWhoseConfigurationIsSearchedFor, "resources/ZDT2.csv",
         indicators, nonConfigurableParameterString, 1);
 
     double crossoverProbability = 0.9;
@@ -76,15 +79,21 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
 
-    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
-    nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
-    String problemDescription = "NSGA-II" + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
+    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
+    nonDominatedSolutionsArchive.addAll(nsgaii.result());
+    String problemDescription =
+        "NSGA-II" + "." + problemWhoseConfigurationIsSearchedFor.name() + "."
+            + indicators.get(0).name() + "." + indicators.get(1).name() + "."
+            + problemWhoseConfigurationIsSearchedFor.numberOfObjectives();
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
+        .setVarFileOutputContext(
+            new DefaultFileOutputContext("VAR." + problemDescription + ".csv", ","))
+        .setFunFileOutputContext(
+            new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
         .print();
 
-    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ problemDescription + ".Conf.csv");
+    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),
+        "VAR." + problemDescription + ".Conf.csv");
 
     //System.exit(0) ;
   }
