@@ -53,7 +53,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(3000);
+    Termination termination = new TerminationByEvaluations(2000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableNSGAIIProblem,
@@ -94,6 +94,8 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.csv");
+    configurableNSGAIIProblem.writeDecodedSolutionsDoubleValuesFoFile(nonDominatedSolutionsArchive.solutions(),
+        "VAR." + problemDescription + ".Conf.DoubleValues.csv");
 
     //System.exit(0) ;
   }

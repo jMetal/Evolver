@@ -1,6 +1,7 @@
 package org.uma.evolver.problem;
 
 import static org.uma.evolver.util.ParameterValues.decodeParameter;
+import static org.uma.evolver.util.ParameterValues.decodeParameterToDoubleValues;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -62,8 +63,9 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
 
     variableBounds(lowerLimit, upperLimit);
     for (var parameter: parameters) {
-      System.out.println(parameter.name()) ;
+      System.out.print(parameter.name() + " ") ;
     }
+    System.out.println();
   }
 
   private void computeNormalizedReferenceFront(String referenceFrontFileName) {
@@ -179,6 +181,15 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     }
   }
 
+  private void decodeParametersToDoubleValues(DoubleSolution solution, StringBuilder parameterString) {
+    for (int i = 0; i < parameters.size(); i++) {
+      String parameterName = parameters.get(i).name();
+      double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i)); ;
+
+      parameterString.append(value).append(" ");
+    }
+  }
+
   public void writeDecodedSolutionsFoFile(List<DoubleSolution> solutions, String fileName)
       throws IOException {
     FileWriter fileWriter = new FileWriter(fileName) ;
@@ -187,6 +198,19 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
       StringBuilder parameterString = new StringBuilder() ;
       parameterString.append(nonConfigurableParameterString) ;
       decodeParameters(solution, parameterString);
+
+      printWriter.println(parameterString);
+    }
+    printWriter.close();
+  }
+
+  public void writeDecodedSolutionsDoubleValuesFoFile(List<DoubleSolution> solutions, String fileName)
+      throws IOException {
+    FileWriter fileWriter = new FileWriter(fileName) ;
+    PrintWriter printWriter = new PrintWriter(fileWriter) ;
+    for (DoubleSolution solution: solutions) {
+      StringBuilder parameterString = new StringBuilder() ;
+      decodeParametersToDoubleValues(solution, parameterString);
 
       printWriter.println(parameterString);
     }
