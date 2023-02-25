@@ -36,9 +36,9 @@ public class MetaNSGAIIForMOPSORunner {
 
   public static void main(String[] args) throws IOException {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3_2D();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     var configurableProblem = new ConfigurableMOPSOProblem(problemWhoseConfigurationIsSearchedFor,
-        "resources/DTLZ3.2D.csv",
+        "resources/ZDT1.csv",
         indicators, 100, 5000, 1);
 
     double crossoverProbability = 0.9;
@@ -76,7 +76,7 @@ public class MetaNSGAIIForMOPSORunner {
 
     nsgaii.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
+    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(nsgaii.result());

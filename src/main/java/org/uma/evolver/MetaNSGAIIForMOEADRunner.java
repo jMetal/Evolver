@@ -36,7 +36,7 @@ public class MetaNSGAIIForMOEADRunner {
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     var configurableProblem = new ConfigurableMOEADProblem(problemWhoseConfigurationIsSearchedFor,
         "resources/ZDT1.csv",
-        indicators, 100, 10000, 1);
+        indicators, 100, 5000, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -73,7 +73,7 @@ public class MetaNSGAIIForMOEADRunner {
 
     nsgaii.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
+    JMetalLogger.logger.info(() ->"Total computing time: " + nsgaii.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(nsgaii.result());
@@ -93,6 +93,7 @@ public class MetaNSGAIIForMOEADRunner {
         configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");
+
     //System.exit(0) ;
   }
 }

@@ -76,7 +76,7 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     nsgaii.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
+    JMetalLogger.logger.info(() ->"Total computing time: " + nsgaii.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(nsgaii.result());

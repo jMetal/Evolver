@@ -50,6 +50,5 @@ public class ConfigurableNSGAIIRunner {
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
-
   }
 }

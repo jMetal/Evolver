@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.ConfigurableMOPSO;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
@@ -52,7 +53,7 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.numberOfIndependentRuns = numberOfIndependentRuns ;
     this.referenceFrontFileName = referenceFrontFileName ;
-    parameters = AutoConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
+    parameters = ConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
 
     // Parameters to configure
     List<Double> lowerLimit = new ArrayList<>();
