@@ -300,7 +300,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
 
     if (positionUpdateParameter.value().equals("defaultPositionUpdate")) {
       positionUpdateParameter.addNonConfigurableParameter("positionBounds",
-          ((DoubleProblem) problem).variableBounds());
+          problem.variableBounds());
     }
 
     PositionUpdate positionUpdate = positionUpdateParameter.getParameter();
@@ -311,7 +311,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
 
     SolutionsCreation<DoubleSolution> swarmInitialization =
         (SolutionsCreation<DoubleSolution>) swarmInitializationParameter.getParameter(
-            (DoubleProblem) problem,
+            problem,
             swarmSizeParameter.value());
 
     class ParticleSwarmOptimizationAlgorithmWithArchive extends ParticleSwarmOptimizationAlgorithm {

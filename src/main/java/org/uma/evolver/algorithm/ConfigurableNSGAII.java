@@ -155,7 +155,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
         new CategoricalParameter("algorithmResult", List.of("externalArchive", "population"));
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
-    externalArchiveParameter = new ExternalArchiveParameter(
+    externalArchiveParameter = new ExternalArchiveParameter<>(
         List.of("crowdingDistanceArchive", "unboundedArchive"));
     algorithmResultParameter.addSpecificParameter(
         "externalArchive", populationSizeWithArchiveParameter);
@@ -170,7 +170,6 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
       parameter.parse(arguments).check();
     }
   }
-
 
   /**
    * Creates an instance of NSGA-II from the parsed parameters

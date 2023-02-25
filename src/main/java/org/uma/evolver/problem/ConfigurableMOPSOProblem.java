@@ -30,8 +30,8 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
   private double[][] normalizedReferenceFront ;
   private double[][] referenceFront ;
 
-  private int numberOfIndependentRuns ;
-  private int archiveSize ;
+  private final int numberOfIndependentRuns ;
+  private final int archiveSize ;
   private final int maximumNumberOfEvaluations ;
 
 

@@ -183,7 +183,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   private void algorithmResult() {
     algorithmResultParameter =
         new CategoricalParameter("algorithmResult", List.of("externalArchive", "population"));
-    externalArchiveParameter = new ExternalArchiveParameter(List.of("crowdingDistanceArchive", "unboundedArchive"));
+    externalArchiveParameter = new ExternalArchiveParameter<>(List.of("crowdingDistanceArchive", "unboundedArchive"));
 
     algorithmResultParameter.addSpecificParameter(
         "externalArchive", externalArchiveParameter);
@@ -202,7 +202,6 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
    * @return
    */
   public EvolutionaryAlgorithm<DoubleSolution> create() {
-
     Archive<DoubleSolution> archive = null;
     Evaluation<DoubleSolution> evaluation ;
     if (algorithmResultParameter.value().equals("externalArchive")) {
@@ -214,7 +213,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     }
 
     var initialSolutionsCreation =
-        (SolutionsCreation<DoubleSolution>) createInitialSolutionsParameter.getParameter((DoubleProblem) problem,
+        (SolutionsCreation<DoubleSolution>) createInitialSolutionsParameter.getParameter(problem,
             populationSize);
 
     Termination termination =
