@@ -50,11 +50,8 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
  */
 public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();
-  public List<Parameter<?>> fixedParameterList = new ArrayList<>();
-  private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
-  private PositiveIntegerValue populationSizeParameter;
   private PositiveIntegerValue offspringPopulationSizeParameter;
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
   private SelectionParameter<DoubleSolution> selectionParameter;
@@ -64,33 +61,24 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   private IntegerParameter maximumNumberOfReplacedSolutionsParameter;
   private AggregationFunctionParameter aggregativeFunctionParameter;
   private BooleanParameter normalizeObjectivesParameter ;
+  private int populationSize ;
+  private int maximumNumberOfEvaluations;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
     return autoConfigurableParameterList;
   }
 
-  @Override
-  public List<Parameter<?>> fixedParameterList() {
-    return fixedParameterList;
-  }
-
   private DoubleProblem problem ;
 
-  public ConfigurableMOEAD(DoubleProblem problem) {
+  public ConfigurableMOEAD(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations) {
     this.problem = problem ;
+    this.populationSize = populationSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.configure() ;
   }
 
   public void configure() {
-    maximumNumberOfEvaluationsParameter =
-        new PositiveIntegerValue("maximumNumberOfEvaluations");
-
-    populationSizeParameter = new PositiveIntegerValue("populationSize");
-
-    fixedParameterList.add(populationSizeParameter);
-    fixedParameterList.add(maximumNumberOfEvaluationsParameter);
-
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
 
     neighborhoodSizeParameter = new IntegerParameter("neighborhoodSize",5, 50);
@@ -208,9 +196,6 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
 
   @Override
   public void parse(String[] arguments) {
-    for (Parameter<?> parameter : fixedParameterList) {
-      parameter.parse(arguments).check();
-    }
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -226,7 +211,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     Archive<DoubleSolution> archive = null;
     Evaluation<DoubleSolution> evaluation ;
     if (algorithmResultParameter.value().equals("externalArchive")) {
-      externalArchiveParameter.setSize(populationSizeParameter.value());
+      externalArchiveParameter.setSize(populationSize);
       archive = externalArchiveParameter.getParameter();
       evaluation = new SequentialEvaluationWithArchive<>(problem, archive);
     } else {
@@ -235,10 +220,10 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
 
     var initialSolutionsCreation =
         (SolutionsCreation<DoubleSolution>) createInitialSolutionsParameter.getParameter((DoubleProblem) problem,
-            populationSizeParameter.value());
+            populationSize);
 
     Termination termination =
-        new TerminationByEvaluations(maximumNumberOfEvaluationsParameter.value());
+        new TerminationByEvaluations(maximumNumberOfEvaluations);
 
     MutationParameter mutationParameter = (MutationParameter) variationParameter.findSpecificParameter(
         "mutation");
@@ -246,9 +231,9 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
         problem.numberOfVariables());
 
     if (mutationParameter.value().equals("nonUniform")) {
-      mutationParameter.addSpecificParameter("nonUniform", maximumNumberOfEvaluationsParameter);
+      mutationParameter.addNonConfigurableParameter("nonUniformMutationPerturbation", maximumNumberOfEvaluations);
       mutationParameter.addNonConfigurableParameter("maxIterations",
-          maximumNumberOfEvaluationsParameter.value() / populationSizeParameter.value());
+          maximumNumberOfEvaluations / populationSize);
     }
 
     Neighborhood<DoubleSolution> neighborhood = null ;
@@ -256,12 +241,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     if (problem.numberOfObjectives() == 2) {
       neighborhood =
           new WeightVectorNeighborhood<>(
-              populationSizeParameter.value(), neighborhoodSizeParameter.value());
+              populationSize, neighborhoodSizeParameter.value());
     } else {
       try {
         neighborhood =
             new WeightVectorNeighborhood<>(
-                populationSizeParameter.value(),
+                populationSize,
                 problem.numberOfObjectives(),
                 neighborhoodSizeParameter.value(),
                 "resources/weightVectorFiles/moead");
@@ -270,7 +255,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
       }
     }
 
-    var subProblemIdGenerator = new IntegerPermutationGenerator(populationSizeParameter.value());
+    var subProblemIdGenerator = new IntegerPermutationGenerator(populationSize);
     selectionParameter.addNonConfigurableParameter("neighborhood", neighborhood);
     selectionParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
 

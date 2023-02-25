@@ -1,6 +1,7 @@
 package org.uma.evolver.problem;
 
 import static org.uma.evolver.util.ParameterManagement.decodeParameter;
+import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -25,24 +26,24 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 public class ConfigurableMOEADProblem extends AbstractDoubleProblem {
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
-  private final StringBuilder nonConfigurableParameterString ;
-
   private DoubleProblem problem ;
   String referenceFrontFileName ;
   private double[][] normalizedReferenceFront ;
   private double[][] referenceFront ;
-
   private int numberOfIndependentRuns ;
+  private int populationSize ;
+  private final int maximumNumberOfEvaluations ;
 
   public ConfigurableMOEADProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString) {
-    this(problem, referenceFrontFileName, indicators, nonConfigurableParameterString, 1) ;
+      int populationSize, int maximumNumberOfEvaluations) {
+    this(problem, referenceFrontFileName, indicators, populationSize, maximumNumberOfEvaluations, 1) ;
   }
 
   public ConfigurableMOEADProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString, int numberOfIndependentRuns) {
-    var algorithm = new ConfigurableMOEAD(problem) ;
-    this.nonConfigurableParameterString = nonConfigurableParameterString ;
+      int populationSize, int maximumNumberOfEvaluations, int numberOfIndependentRuns) {
+    var algorithm = new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations) ;
+    this.populationSize = populationSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.indicators = indicators ;
     this.problem = problem ;
     this.numberOfIndependentRuns = numberOfIndependentRuns ;
@@ -102,14 +103,11 @@ public class ConfigurableMOEADProblem extends AbstractDoubleProblem {
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    StringBuilder parameterString = new StringBuilder() ;
-    decodeParameters(solution, parameterString);
-
-    parameterString.append(nonConfigurableParameterString) ;
+    StringBuilder parameterString = decodeParametersToString(parameters, solution.variables()) ;
 
     String[] parameters = parameterString.toString().split("\\s+") ;
 
-    var algorithm = new ConfigurableMOEAD(problem) ;
+    var algorithm = new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations) ;
     algorithm.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> moead = algorithm.create();
@@ -171,28 +169,5 @@ public class ConfigurableMOEADProblem extends AbstractDoubleProblem {
     medianIndicatorValues[1] = median(valuesSecondIndicator) ;
 
     return medianIndicatorValues ;
-  }
-
-  private void decodeParameters(DoubleSolution solution, StringBuilder parameterString) {
-    for (int i = 0; i < parameters.size(); i++) {
-      String parameterName = parameters.get(i).name();
-      String value = decodeParameter(parameters.get(i), solution.variables().get(i)) ;
-
-      parameterString.append("--").append(parameterName).append(" ").append(value).append(" ");
-    }
-  }
-
-  public void writeDecodedSolutionsFoFile(List<DoubleSolution> solutions, String fileName)
-      throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
-    for (DoubleSolution solution: solutions) {
-      StringBuilder parameterString = new StringBuilder() ;
-      parameterString.append(nonConfigurableParameterString) ;
-      decodeParameters(solution, parameterString);
-
-      printWriter.println(parameterString);
-    }
-    printWriter.close();
   }
 }

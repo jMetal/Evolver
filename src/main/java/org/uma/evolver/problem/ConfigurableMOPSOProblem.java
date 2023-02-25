@@ -1,6 +1,7 @@
 package org.uma.evolver.problem;
 
 import static org.uma.evolver.util.ParameterManagement.decodeParameter;
+import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -26,7 +27,6 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
-  private final StringBuilder nonConfigurableParameterString ;
 
   private DoubleProblem problem ;
   String referenceFrontFileName ;
@@ -34,18 +34,22 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
   private double[][] referenceFront ;
 
   private int numberOfIndependentRuns ;
+  private int archiveSize ;
+  private final int maximumNumberOfEvaluations ;
+
 
   public ConfigurableMOPSOProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString) {
-    this(problem, referenceFrontFileName, indicators, nonConfigurableParameterString, 1) ;
+      int archiveSize, int maximumNumberOfEvaluations) {
+    this(problem, referenceFrontFileName, indicators, archiveSize, maximumNumberOfEvaluations, 1) ;
   }
 
   public ConfigurableMOPSOProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString, int numberOfIndependentRuns) {
-    var algorithm = new ConfigurableMOPSO(problem) ;
-    this.nonConfigurableParameterString = nonConfigurableParameterString ;
+      int archiveSize, int maximumNumberOfEvaluations, int numberOfIndependentRuns) {
+    var algorithm = new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
     this.indicators = indicators ;
     this.problem = problem ;
+    this.archiveSize = archiveSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.numberOfIndependentRuns = numberOfIndependentRuns ;
     this.referenceFrontFileName = referenceFrontFileName ;
     parameters = AutoConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
@@ -103,14 +107,11 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    StringBuilder parameterString = new StringBuilder() ;
-    decodeParameters(solution, parameterString);
-
-    parameterString.append(nonConfigurableParameterString) ;
+    StringBuilder parameterString = decodeParametersToString(parameters, solution.variables()) ;
 
     String[] parameters = parameterString.toString().split("\\s+") ;
 
-    var algorithm = new ConfigurableMOPSO(problem) ;
+    var algorithm = new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
     algorithm.parse(parameters);
 
     ParticleSwarmOptimizationAlgorithm mopso = algorithm.create();
@@ -172,28 +173,5 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
     medianIndicatorValues[1] = median(valuesSecondIndicator) ;
 
     return medianIndicatorValues ;
-  }
-
-  private void decodeParameters(DoubleSolution solution, StringBuilder parameterString) {
-    for (int i = 0; i < parameters.size(); i++) {
-      String parameterName = parameters.get(i).name();
-      String value = decodeParameter(parameters.get(i), solution.variables().get(i)) ;
-
-      parameterString.append("--").append(parameterName).append(" ").append(value).append(" ");
-    }
-  }
-
-  public void writeDecodedSolutionsFoFile(List<DoubleSolution> solutions, String fileName)
-      throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
-    for (DoubleSolution solution: solutions) {
-      StringBuilder parameterString = new StringBuilder() ;
-      parameterString.append(nonConfigurableParameterString) ;
-      decodeParameters(solution, parameterString);
-
-      printWriter.println(parameterString);
-    }
-    printWriter.close();
   }
 }

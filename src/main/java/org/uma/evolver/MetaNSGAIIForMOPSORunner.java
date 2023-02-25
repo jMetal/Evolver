@@ -35,15 +35,11 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaNSGAIIForMOPSORunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder();
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 ");
-    nonConfigurableParameterString.append("--archiveSize 100 ");
-
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3_2D();
     var configurableProblem = new ConfigurableMOPSOProblem(problemWhoseConfigurationIsSearchedFor,
         "resources/DTLZ3.2D.csv",
-        indicators, nonConfigurableParameterString, 1);
+        indicators, 100, 5000, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

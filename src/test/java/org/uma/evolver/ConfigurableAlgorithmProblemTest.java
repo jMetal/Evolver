@@ -32,17 +32,13 @@ class ConfigurableAlgorithmProblemTest {
             + "--mutationRepairStrategy bounds "
             + "--polynomialMutationDistributionIndex 20.0 ");
 
-    var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 10000 " ) ;
-    nonConfigurableParameterString.append("--populationSize 100 " ) ;
-
-    var algorithm = new ConfigurableNSGAII(new ZDT1()) ;
-    algorithm.parse((configurableParameters+nonConfigurableParameterString).split("\\s+"));
+    var algorithm = new ConfigurableNSGAII(new ZDT1(), 100, 10000) ;
+    algorithm.parse((configurableParameters).split("\\s+"));
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume()) ;
 
     var problem = new ConfigurableNSGAIIProblem(new ZDT1(), "resources/ZDT1.csv",
-        indicators, nonConfigurableParameterString) ;
+        indicators, 100, 1000) ;
 
     assertEquals(20, problem.numberOfVariables()) ;
     assertEquals(1, problem.numberOfObjectives()) ;

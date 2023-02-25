@@ -28,14 +28,10 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaSMPSOForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
-    nonConfigurableParameterString.append("--populationSize 50 " ) ;
-
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3_2D() ;
     var configurableNSGAIIProblem = new ConfigurableNSGAIIProblem(problemWhoseConfigurationIsSearchedFor, "resources/DTLZ3.2D.csv",
-        indicators, nonConfigurableParameterString);
+        indicators, 100, 5000);
 
     Termination termination = new TerminationByEvaluations(5000);
 

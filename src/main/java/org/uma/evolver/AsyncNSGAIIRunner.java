@@ -36,14 +36,10 @@ public class AsyncNSGAIIRunner {
     int numberOfCores = 20;
 
     var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 10000 " ) ;
-    nonConfigurableParameterString.append("--problemName org.uma.jmetal.problem.multiobjective.zdt.ZDT1 " ) ;
-    nonConfigurableParameterString.append("--populationSize 100 " ) ;
-    nonConfigurableParameterString.append("--referenceFrontFileName resources/ZDT1.csv " ) ;
 
     var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
     var problem = new ConfigurableNSGAIIProblem(new ZDT1(), "resources/ZDT1.csv",
-        indicators, nonConfigurableParameterString);
+        indicators, 100, 5000);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

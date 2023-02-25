@@ -10,7 +10,6 @@ import org.uma.jmetal.auto.parameter.Parameter;
 public interface ConfigurableAlgorithm {
   void parse(String[] args) ;
   List<Parameter<?>> configurableParameterList() ;
-  List<Parameter<?>> fixedParameterList() ;
 
   /**
    * Given a list of parameters, returns a list with of all of them and all of their sub-parameters

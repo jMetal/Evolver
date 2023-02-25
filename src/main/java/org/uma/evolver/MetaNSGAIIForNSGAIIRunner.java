@@ -34,15 +34,12 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaNSGAIIForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder();
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 ");
-    nonConfigurableParameterString.append("--populationSize 100 ");
 
     var indicators = List.of(new Epsilon(), new Spread());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
     var configurableProblem = new ConfigurableNSGAIIProblem(
         problemWhoseConfigurationIsSearchedFor, "resources/ZDT3.csv",
-        indicators, nonConfigurableParameterString, 1);
+        indicators, 100,  5000 , 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

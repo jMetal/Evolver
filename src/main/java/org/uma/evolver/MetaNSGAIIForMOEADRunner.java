@@ -32,14 +32,11 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class MetaNSGAIIForMOEADRunner {
 
   public static void main(String[] args) throws IOException {
-    var nonConfigurableParameterString = new StringBuilder() ;
-    nonConfigurableParameterString.append("--maximumNumberOfEvaluations 5000 " ) ;
-    nonConfigurableParameterString.append("--populationSize 100 " ) ;
-
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1() ;
-    var configurableProblem = new ConfigurableMOEADProblem(problemWhoseConfigurationIsSearchedFor, "resources/ZDT1.csv",
-        indicators, nonConfigurableParameterString, 1);
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
+    var configurableProblem = new ConfigurableMOEADProblem(problemWhoseConfigurationIsSearchedFor,
+        "resources/ZDT1.csv",
+        indicators, 100, 10000, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -78,12 +75,15 @@ public class MetaNSGAIIForMOEADRunner {
 
     JMetalLogger.logger.info("Total computing time: " + nsgaii.totalComputingTime());
 
-    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>() ;
-    nonDominatedSolutionsArchive.addAll(nsgaii.result()) ;
-    String problemDescription = "MOEAD" + "." + problemWhoseConfigurationIsSearchedFor.name()+"."+problemWhoseConfigurationIsSearchedFor.numberOfObjectives() ;
+    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
+    nonDominatedSolutionsArchive.addAll(nsgaii.result());
+    String problemDescription = "MOEAD" + "." + problemWhoseConfigurationIsSearchedFor.name() + "."
+        + problemWhoseConfigurationIsSearchedFor.numberOfObjectives();
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + problemDescription +".csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
+        .setVarFileOutputContext(
+            new DefaultFileOutputContext("VAR." + problemDescription + ".csv", ","))
+        .setFunFileOutputContext(
+            new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
         .print();
 
     ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),

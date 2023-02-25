@@ -26,28 +26,30 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
   private List<QualityIndicator> indicators ;
   private List<Parameter<?>> parameters ;
-  private final StringBuilder nonConfigurableParameterString ;
-
   private DoubleProblem problem ;
   String referenceFrontFileName ;
   private double[][] normalizedReferenceFront ;
   private double[][] referenceFront ;
 
-  private int numberOfIndependentRuns ;
+  private final int populationSize ;
+  private final int maximumNumberOfEvaluations ;
+  private final int numberOfIndependentRuns ;
 
   public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString) {
-    this(problem, referenceFrontFileName, indicators, nonConfigurableParameterString, 1) ;
+      int populationSize, int maximumNumberOfEvaluations) {
+    this(problem, referenceFrontFileName, indicators, populationSize, maximumNumberOfEvaluations, 1) ;
   }
 
   public ConfigurableNSGAIIProblem(DoubleProblem problem, String referenceFrontFileName, List<QualityIndicator> indicators,
-      StringBuilder nonConfigurableParameterString, int numberOfIndependentRuns) {
-    var algorithm = new ConfigurableNSGAII(problem) ;
-    this.nonConfigurableParameterString = nonConfigurableParameterString ;
+      int populationSize, int maximumNumberOfIterations, int numberOfIndependentRuns) {
+    var algorithm = new ConfigurableNSGAII(problem, populationSize, maximumNumberOfIterations) ;
     this.indicators = indicators ;
     this.problem = problem ;
     this.numberOfIndependentRuns = numberOfIndependentRuns ;
     this.referenceFrontFileName = referenceFrontFileName ;
+    this.populationSize = populationSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfIterations ;
+
     parameters = AutoConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
 
     // Parameters to configure
@@ -105,13 +107,10 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
     StringBuilder parameterString = decodeParametersToString(parameters, solution.variables()) ;
-    //decodeParameters(solution, parameterString);
-
-    parameterString.append(nonConfigurableParameterString) ;
 
     String[] parameters = parameterString.toString().split("\\s+") ;
 
-    var algorithm = new ConfigurableNSGAII(problem) ;
+    var algorithm = new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
     algorithm.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = algorithm.create();

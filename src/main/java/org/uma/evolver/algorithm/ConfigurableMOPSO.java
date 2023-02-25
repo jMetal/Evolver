@@ -64,8 +64,6 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   public ExternalArchiveParameter<DoubleSolution> leaderArchiveParameter;
   private CategoricalParameter algorithmResultParameter;
   public VelocityInitializationParameter velocityInitializationParameter;
-  private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
-  private PositiveIntegerValue archiveSizeParameter;
   private IntegerParameter swarmSizeParameter;
   private CreateInitialSolutionsParameter swarmInitializationParameter;
   private LocalBestInitializationParameter localBestInitializationParameter;
@@ -91,23 +89,20 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
     return configurableParameterList;
   }
 
-  @Override
-  public List<Parameter<?>> fixedParameterList() {
-    return fixedParameterList;
-  }
+  private int archiveSize ;
+  private int maximumNumberOfEvaluations ;
 
   private DoubleProblem problem ;
 
-  public ConfigurableMOPSO(DoubleProblem problem) {
+  public ConfigurableMOPSO(DoubleProblem problem, int archiveSize, int maximumNumberOfEvaluations) {
     this.problem = problem ;
+    this.archiveSize = archiveSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.configure();
   }
 
   @Override
   public void parse(String[] arguments) {
-    for (Parameter<?> parameter : fixedParameterList) {
-      parameter.parse(arguments).check();
-    }
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -118,14 +113,6 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
         new CategoricalParameter("algorithmResult",
             List.of("leaderArchive"));
             //List.of("unboundedArchive", "leaderArchive"));
-
-    maximumNumberOfEvaluationsParameter =
-        new PositiveIntegerValue("maximumNumberOfEvaluations");
-
-    archiveSizeParameter = new PositiveIntegerValue("archiveSize");
-
-    fixedParameterList.add(archiveSizeParameter);
-    fixedParameterList.add(maximumNumberOfEvaluationsParameter);
 
     swarmSizeParameter = new IntegerParameter("swarmSize", 10, 200);
 
@@ -267,7 +254,6 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
    */
   public ParticleSwarmOptimizationAlgorithm create() {
     int swarmSize = swarmSizeParameter.value();
-    int maximumNumberOfEvaluations = maximumNumberOfEvaluationsParameter.value();
 
     Evaluation<DoubleSolution> evaluation;
     Archive<DoubleSolution> unboundedArchive = null;
@@ -281,7 +267,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
 
     var termination = new TerminationByEvaluations(maximumNumberOfEvaluations);
 
-    leaderArchiveParameter.setSize(archiveSizeParameter.value());
+    leaderArchiveParameter.setSize(archiveSize);
     BoundedArchive<DoubleSolution> leaderArchive = (BoundedArchive<DoubleSolution>) leaderArchiveParameter.getParameter();
 
     var velocityInitialization = velocityInitializationParameter.getParameter();
@@ -294,7 +280,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
     if ((inertiaWeightComputingParameter.value().equals("linearIncreasingValue") ||
         inertiaWeightComputingParameter.value().equals("linearDecreasingValue"))) {
       inertiaWeightComputingParameter.addNonConfigurableParameter("maxIterations",
-          maximumNumberOfEvaluationsParameter.value() / swarmSizeParameter.value());
+          maximumNumberOfEvaluations / swarmSizeParameter.value());
       inertiaWeightComputingParameter.addNonConfigurableParameter("swarmSize",
           swarmSizeParameter.value());
     }
@@ -311,9 +297,9 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
         problem.numberOfVariables());
 
     if (mutationParameter.value().equals("nonUniform")) {
-      mutationParameter.addSpecificParameter("nonUniform", maximumNumberOfEvaluationsParameter);
+      mutationParameter.addNonConfigurableParameter("nonUniformMutationPerturbation", maximumNumberOfEvaluations);
       mutationParameter.addNonConfigurableParameter("maxIterations",
-          maximumNumberOfEvaluationsParameter.value() / swarmSizeParameter.value());
+          maximumNumberOfEvaluations / swarmSizeParameter.value());
     }
 
     var perturbation = perturbationParameter.getParameter();

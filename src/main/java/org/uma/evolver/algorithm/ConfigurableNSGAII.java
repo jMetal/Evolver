@@ -47,11 +47,8 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  */
 public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
-  private List<Parameter<?>> fixedParameterList = new ArrayList<>();
-  private PositiveIntegerValue maximumNumberOfEvaluationsParameter;
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
-  private PositiveIntegerValue populationSizeParameter;
   private IntegerParameter populationSizeWithArchiveParameter;
   private IntegerParameter offspringPopulationSizeParameter;
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
@@ -62,29 +59,18 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   public List<Parameter<?>> configurableParameterList() {
     return configurableParameterList;
   }
-  @Override
-  public List<Parameter<?>> fixedParameterList() {
-    return fixedParameterList;
-  }
-
   private DoubleProblem problem ;
+  private int populationSize ;
+  private int maximumNumberOfEvaluations;
 
-  public ConfigurableNSGAII(DoubleProblem problem) {
-
+  public ConfigurableNSGAII(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations) {
     this.problem = problem;
+    this.populationSize = populationSize ;
+    this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
     this.configure();
   }
 
   private void configure() {
-    maximumNumberOfEvaluationsParameter =
-        new PositiveIntegerValue("maximumNumberOfEvaluations");
-
-    populationSizeParameter = new PositiveIntegerValue("populationSize");
-
-    fixedParameterList.add(populationSizeParameter);
-    fixedParameterList.add(maximumNumberOfEvaluationsParameter);
-
-
     algorithmResult();
     createInitialSolution();
     selection();
@@ -182,9 +168,6 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
 
   @Override
   public void parse(String[] arguments) {
-    for (Parameter<?> parameter : fixedParameterList) {
-      parameter.parse(arguments).check();
-    }
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -200,9 +183,9 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
     Archive<DoubleSolution> archive = null;
 
     if (algorithmResultParameter.value().equals("externalArchive")) {
-      externalArchiveParameter.setSize(populationSizeParameter.value());
+      externalArchiveParameter.setSize(populationSize);
       archive = externalArchiveParameter.getParameter();
-      populationSizeParameter.value(populationSizeWithArchiveParameter.value());
+      populationSize = populationSizeWithArchiveParameter.value();
     }
 
     Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>(
@@ -217,7 +200,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
     var initialSolutionsCreation =
         (SolutionsCreation<DoubleSolution>) createInitialSolutionsParameter.getParameter(
             problem,
-            populationSizeParameter.value());
+            populationSize);
 
     MutationParameter mutationParameter = (MutationParameter) variationParameter.findSpecificParameter(
         "mutation");
@@ -225,9 +208,9 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
         problem.numberOfVariables());
 
     if (mutationParameter.value().equals("nonUniform")) {
-      mutationParameter.addSpecificParameter("nonUniform", maximumNumberOfEvaluationsParameter);
+      mutationParameter.addNonConfigurableParameter("nonUniformMutationPerturbation", maximumNumberOfEvaluations);
       mutationParameter.addNonConfigurableParameter("maxIterations",
-          maximumNumberOfEvaluationsParameter.value() / populationSizeParameter.value());
+          maximumNumberOfEvaluations / populationSize);
     }
 
     var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
@@ -250,7 +233,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
             Replacement.RemovalPolicy.ONE_SHOT);
 
     Termination termination =
-        new TerminationByEvaluations(maximumNumberOfEvaluationsParameter.value());
+        new TerminationByEvaluations(maximumNumberOfEvaluations);
 
     class EvolutionaryAlgorithmWithArchive extends EvolutionaryAlgorithm<DoubleSolution> {
 
