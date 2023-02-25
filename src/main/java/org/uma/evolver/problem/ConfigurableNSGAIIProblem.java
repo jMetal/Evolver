@@ -63,7 +63,7 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
 
     variableBounds(lowerLimit, upperLimit);
     for (var parameter: parameters) {
-      System.out.print(parameter.name() + " ") ;
+      System.out.print(parameter.name() + ",") ;
     }
     System.out.println();
   }
