@@ -3,6 +3,7 @@ package org.uma.evolver;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
+import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
@@ -13,6 +14,7 @@ import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
@@ -37,32 +39,32 @@ public class MetaNSGAIIForNSGAIIRunner {
     nonConfigurableParameterString.append("--populationSize 100 ");
 
     var indicators = List.of(new Epsilon(), new Spread());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT2();
-    var configurableNSGAIIProblem = new ConfigurableNSGAIIProblem(
-        problemWhoseConfigurationIsSearchedFor, "resources/ZDT2.csv",
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
+    var configurableProblem = new ConfigurableNSGAIIProblem(
+        problemWhoseConfigurationIsSearchedFor, "resources/ZDT3.csv",
         indicators, nonConfigurableParameterString, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     var crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / configurableNSGAIIProblem.numberOfVariables();
+    double mutationProbability = 1.0 / configurableProblem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(2000);
+    Termination termination = new TerminationByEvaluations(200);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
-        configurableNSGAIIProblem,
+        configurableProblem,
         populationSize,
         offspringPopulationSize,
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableNSGAIIProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);
@@ -92,9 +94,12 @@ public class MetaNSGAIIForNSGAIIRunner {
             new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
         .print();
 
-    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),
-        "VAR." + problemDescription + ".Conf.csv");
-    configurableNSGAIIProblem.writeDecodedSolutionsDoubleValuesFoFile(nonDominatedSolutionsArchive.solutions(),
+    ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
+
+    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+        configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");
 
     //System.exit(0) ;

@@ -69,8 +69,6 @@ public class MetaSMPSOForNSGAIIRunner {
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + smpso.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+".csv", ","))
         .print();
 
-    configurableNSGAIIProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ smpso.name() + "." + problemWhoseConfigurationIsSearchedFor.name()+".Conf.csv");
-
     //System.exit(0) ;
   }
 }

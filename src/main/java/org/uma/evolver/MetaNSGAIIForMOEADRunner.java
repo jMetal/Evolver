@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.problem.ConfigurableMOEADProblem;
 import org.uma.evolver.problem.ConfigurableMOPSOProblem;
+import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
@@ -85,8 +86,13 @@ public class MetaNSGAIIForMOEADRunner {
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + problemDescription +".csv", ","))
         .print();
 
-    configurableProblem.writeDecodedSolutionsFoFile(nonDominatedSolutionsArchive.solutions(),"VAR."+ problemDescription + ".Conf.csv");
+    ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
+    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+        configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(),
+        "VAR." + problemDescription + ".Conf.DoubleValues.csv");
     //System.exit(0) ;
   }
 }

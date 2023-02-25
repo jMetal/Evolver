@@ -1,6 +1,6 @@
 package org.uma.evolver.problem;
 
-import static org.uma.evolver.util.ParameterValues.decodeParameter;
+import static org.uma.evolver.util.ParameterManagement.decodeParameter;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -96,6 +96,9 @@ public class ConfigurableMOEADProblem extends AbstractDoubleProblem {
     return "AutoMOEAD";
   }
 
+  public List<Parameter<?>> parameters() {
+    return parameters ;
+  }
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {

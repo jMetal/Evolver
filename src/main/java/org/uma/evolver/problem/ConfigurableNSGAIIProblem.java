@@ -1,7 +1,8 @@
 package org.uma.evolver.problem;
 
-import static org.uma.evolver.util.ParameterValues.decodeParameter;
-import static org.uma.evolver.util.ParameterValues.decodeParameterToDoubleValues;
+import static org.uma.evolver.util.ParameterManagement.decodeParameter;
+import static org.uma.evolver.util.ParameterManagement.decodeParameterToDoubleValues;
+import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -98,11 +98,14 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     return "AutoNSGAII";
   }
 
+  public List<Parameter<?>> parameters() {
+    return parameters ;
+  }
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
-    StringBuilder parameterString = new StringBuilder() ;
-    decodeParameters(solution, parameterString);
+    StringBuilder parameterString = decodeParametersToString(parameters, solution.variables()) ;
+    //decodeParameters(solution, parameterString);
 
     parameterString.append(nonConfigurableParameterString) ;
 
@@ -170,50 +173,5 @@ public class ConfigurableNSGAIIProblem extends AbstractDoubleProblem {
     medianIndicatorValues[1] = median(valuesSecondIndicator) ;
 
     return medianIndicatorValues ;
-  }
-
-  private void decodeParameters(DoubleSolution solution, StringBuilder parameterString) {
-    for (int i = 0; i < parameters.size(); i++) {
-      String parameterName = parameters.get(i).name();
-      String value = decodeParameter(parameters.get(i), solution.variables().get(i)) ;
-
-      parameterString.append("--").append(parameterName).append(" ").append(value).append(" ");
-    }
-  }
-
-  private void decodeParametersToDoubleValues(DoubleSolution solution, StringBuilder parameterString) {
-    for (int i = 0; i < parameters.size(); i++) {
-      String parameterName = parameters.get(i).name();
-      double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i)); ;
-
-      parameterString.append(value).append(" ");
-    }
-  }
-
-  public void writeDecodedSolutionsFoFile(List<DoubleSolution> solutions, String fileName)
-      throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
-    for (DoubleSolution solution: solutions) {
-      StringBuilder parameterString = new StringBuilder() ;
-      parameterString.append(nonConfigurableParameterString) ;
-      decodeParameters(solution, parameterString);
-
-      printWriter.println(parameterString);
-    }
-    printWriter.close();
-  }
-
-  public void writeDecodedSolutionsDoubleValuesFoFile(List<DoubleSolution> solutions, String fileName)
-      throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
-    for (DoubleSolution solution: solutions) {
-      StringBuilder parameterString = new StringBuilder() ;
-      decodeParametersToDoubleValues(solution, parameterString);
-
-      printWriter.println(parameterString);
-    }
-    printWriter.close();
   }
 }

@@ -1,6 +1,6 @@
 package org.uma.evolver.problem;
 
-import static org.uma.evolver.util.ParameterValues.decodeParameter;
+import static org.uma.evolver.util.ParameterManagement.decodeParameter;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.ConfigurableMOPSO;
 import org.uma.evolver.algorithm.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
@@ -98,6 +97,9 @@ public class ConfigurableMOPSOProblem extends AbstractDoubleProblem {
     return "AutoMOPSO";
   }
 
+  public List<Parameter<?>> parameters() {
+    return parameters ;
+  }
 
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
