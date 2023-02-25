@@ -3,13 +3,10 @@ package org.uma.evolver.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
-import org.uma.jmetal.auto.parameter.PositiveIntegerValue;
 import org.uma.jmetal.auto.parameter.RealParameter;
-import org.uma.jmetal.auto.parameter.StringParameter;
 import org.uma.jmetal.auto.parameter.catalogue.CreateInitialSolutionsParameter;
 import org.uma.jmetal.auto.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.jmetal.auto.parameter.catalogue.GlobalBestInitializationParameter;
@@ -41,8 +38,6 @@ import org.uma.jmetal.component.catalogue.pso.perturbation.Perturbation;
 import org.uma.jmetal.component.catalogue.pso.positionupdate.PositionUpdate;
 import org.uma.jmetal.component.catalogue.pso.velocityinitialization.VelocityInitialization;
 import org.uma.jmetal.component.catalogue.pso.velocityupdate.VelocityUpdate;
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.ProblemFactory;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
@@ -50,7 +45,6 @@ import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.BestSolutionsArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class to configure a generic MOPSO with an argument string using class
