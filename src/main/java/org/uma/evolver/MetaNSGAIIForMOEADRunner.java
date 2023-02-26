@@ -36,7 +36,7 @@ public class MetaNSGAIIForMOEADRunner {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1();
     ConfigurableAlgorithm configurableAlgorithm = new ConfigurableMOEAD(
-        problemWhoseConfigurationIsSearchedFor, 100, 5000,
+        problemWhoseConfigurationIsSearchedFor, 91, 5000,
         "resources/weightVectors");
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/DTLZ1.3D.csv",
