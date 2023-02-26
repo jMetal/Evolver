@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.print.DocFlavor.STRING;
 import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.parameter.VariationParameter;
 import org.uma.jmetal.auto.parameter.BooleanParameter;
@@ -59,6 +60,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   private BooleanParameter normalizeObjectivesParameter ;
   private int populationSize ;
   private int maximumNumberOfEvaluations;
+  private String weightVectorFilesDirectory ;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
@@ -67,16 +69,18 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
 
   private DoubleProblem problem ;
 
-  public ConfigurableMOEAD(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations) {
+  public ConfigurableMOEAD(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations,
+  String weightVectorFilesDirectory) {
     this.problem = problem ;
     this.populationSize = populationSize ;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations ;
+    this.weightVectorFilesDirectory = weightVectorFilesDirectory ;
     this.configure() ;
   }
 
   @Override
   public ConfigurableAlgorithm createInstance() {
-    return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations) ;
+    return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
   }
 
   public void configure() {
@@ -251,7 +255,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
                 populationSize,
                 problem.numberOfObjectives(),
                 neighborhoodSizeParameter.value(),
-                "resources/weightVectorFiles/moead");
+                weightVectorFilesDirectory);
       } catch (FileNotFoundException exception) {
         exception.printStackTrace();
       }

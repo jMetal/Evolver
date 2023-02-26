@@ -13,6 +13,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -33,11 +34,12 @@ public class MetaNSGAIIForMOEADRunner {
 
   public static void main(String[] args) throws IOException {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1();
     ConfigurableAlgorithm configurableAlgorithm = new ConfigurableMOEAD(
-        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+        problemWhoseConfigurationIsSearchedFor, 100, 5000,
+        "resources/weightVectors");
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/ZDT1.csv",
+        "resources/referenceFronts/DTLZ1.3D.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;

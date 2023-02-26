@@ -100,11 +100,11 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   public DoubleSolution evaluate(DoubleSolution solution) {
     StringBuilder parameterString = decodeParametersToString(parameters, solution.variables());
 
-    String[] parameters = parameterString.toString().split("\\s+");
+    String[] parameterArray = parameterString.toString().split("\\s+");
 
     var algorithm = configurableAlgorithm
         .createInstance()
-        .parse(parameters)
+        .parse(parameterArray)
         .create() ;
 
     algorithm.run();
