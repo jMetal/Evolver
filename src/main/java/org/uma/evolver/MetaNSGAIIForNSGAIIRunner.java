@@ -14,8 +14,11 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -34,12 +37,12 @@ public class MetaNSGAIIForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
 
-    var indicators = List.of(new Epsilon(), new Spread());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ2_2D();
     ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/ZDT3.csv",
+        "resources/referenceFronts/DTLZ2.2D.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;
@@ -53,7 +56,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(1000);
+    Termination termination = new TerminationByEvaluations(3000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,
