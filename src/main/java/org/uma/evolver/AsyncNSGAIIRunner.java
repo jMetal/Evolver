@@ -1,7 +1,9 @@
 package org.uma.evolver;
 
 import java.util.List;
-import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -9,9 +11,10 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -35,17 +38,19 @@ public class AsyncNSGAIIRunner {
     int maxEvaluations = 1000;
     int numberOfCores = 20;
 
-    var nonConfigurableParameterString = new StringBuilder() ;
-
-    var indicators = List.of(new InvertedGenerationalDistancePlus(), new NormalizedHypervolume());
-    var problem = new ConfigurableNSGAIIProblem(new ZDT1(), "resources/ZDT1.csv",
-        indicators, 100, 5000);
+    var indicators = List.of(new Epsilon(), new Spread());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
+    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
+        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+    var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
+        "resources/ZDT3.csv",
+        indicators, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
-    double mutationProbability = 1.0 / problem.numberOfVariables();
+    double mutationProbability = 1.0 / configurableProblem.numberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
@@ -53,7 +58,7 @@ public class AsyncNSGAIIRunner {
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<DoubleSolution>(
-            numberOfCores, problem, populationSize, crossover, mutation,
+            numberOfCores, configurableProblem, populationSize, crossover, mutation,
             new TerminationByEvaluations(maxEvaluations));
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);

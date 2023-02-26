@@ -1,8 +1,9 @@
-package org.uma.evolver.algorithm;
+package org.uma.evolver.algorithm.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;

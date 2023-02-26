@@ -1,5 +1,6 @@
-package org.uma.evolver.algorithm;
+package org.uma.evolver.algorithm.runner;
 
+import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;

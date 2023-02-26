@@ -1,5 +1,6 @@
-package org.uma.evolver.algorithm;
+package org.uma.evolver.algorithm.runner;
 
+import org.uma.evolver.algorithm.impl.ConfigurableMOPSO;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoMOPSO;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;

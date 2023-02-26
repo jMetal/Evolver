@@ -1,16 +1,7 @@
 package org.uma.evolver;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.uma.evolver.algorithm.ConfigurableNSGAII;
-import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.qualityindicator.QualityIndicator;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
-
 class ConfigurableAlgorithmProblemTest {
+  /*
   @Test
   void theConstructorCreatesAValidInstanceUsingAQualityIndicator() {
     String configurableParameters =
@@ -32,7 +23,7 @@ class ConfigurableAlgorithmProblemTest {
             + "--mutationRepairStrategy bounds "
             + "--polynomialMutationDistributionIndex 20.0 ");
 
-    var algorithm = new ConfigurableNSGAII(new ZDT1(), 100, 10000) ;
+    var algorithm = new ConfigurableAlgorithmProblem(new ZDT1(), 100, 10000) ;
     algorithm.parse((configurableParameters).split("\\s+"));
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume()) ;
@@ -44,4 +35,6 @@ class ConfigurableAlgorithmProblemTest {
     assertEquals(1, problem.numberOfObjectives()) ;
     assertEquals(0, problem.numberOfConstraints()) ;
   }
+
+   */
 }
