@@ -178,7 +178,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   }
 
   private void selection() {
-    selectionParameter = new SelectionParameter<>(Arrays.asList("populationAndNeighborhoodMatingPoolSelection"));
+    selectionParameter = new SelectionParameter<>(List.of("populationAndNeighborhoodMatingPoolSelection"));
     neighborhoodSelectionProbabilityParameter =
         new ProbabilityParameter("neighborhoodSelectionProbability");
     selectionParameter.addSpecificParameter(

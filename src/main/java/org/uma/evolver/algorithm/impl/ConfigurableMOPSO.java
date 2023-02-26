@@ -55,7 +55,6 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  */
 public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
-  private List<Parameter<?>> fixedParameterList = new ArrayList<>();
   public ExternalArchiveParameter<DoubleSolution> leaderArchiveParameter;
   private CategoricalParameter algorithmResultParameter;
   public VelocityInitializationParameter velocityInitializationParameter;
@@ -131,21 +130,21 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
     localBestInitializationParameter = new LocalBestInitializationParameter(
         List.of("defaultLocalBestInitialization"));
     localBestUpdateParameter = new LocalBestUpdateParameter(
-        Arrays.asList("defaultLocalBestUpdate"));
+        List.of("defaultLocalBestUpdate"));
     globalBestInitializationParameter = new GlobalBestInitializationParameter(
         List.of("defaultGlobalBestInitialization"));
 
     globalBestSelectionParameter = new GlobalBestSelectionParameter(
-        Arrays.asList("tournament", "random"));
+        List.of("tournament", "random"));
     IntegerParameter selectionTournamentSize =
         new IntegerParameter("selectionTournamentSize", 2, 10);
     globalBestSelectionParameter.addSpecificParameter("tournament",selectionTournamentSize);
 
     globalBestUpdateParameter = new GlobalBestUpdateParameter(
-        Arrays.asList("defaultGlobalBestUpdate"));
+        List.of("defaultGlobalBestUpdate"));
 
     positionUpdateParameter = new PositionUpdateParameter(
-        Arrays.asList("defaultPositionUpdate"));
+        List.of("defaultPositionUpdate"));
     var velocityChangeWhenLowerLimitIsReachedParameter = new RealParameter(
         "velocityChangeWhenLowerLimitIsReached", -1.0, 1.0);
     var velocityChangeWhenUpperLimitIsReachedParameter = new RealParameter(
@@ -157,7 +156,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
 
     perturbationParameter = configurePerturbation();
 
-    leaderArchiveParameter = new ExternalArchiveParameter("leaderArchive",
+    leaderArchiveParameter = new ExternalArchiveParameter<>("leaderArchive",
         List.of("crowdingDistanceArchive", "hypervolumeArchive", "spatialSpreadDeviationArchive"));
 
     inertiaWeightComputingParameter = new InertiaWeightComputingParameter(

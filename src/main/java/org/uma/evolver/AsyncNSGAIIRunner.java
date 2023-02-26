@@ -62,7 +62,7 @@ public class AsyncNSGAIIRunner {
     long initTime = System.currentTimeMillis();
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
-        new AsynchronousMultiThreadedNSGAII<DoubleSolution>(
+        new AsynchronousMultiThreadedNSGAII<>(
             numberOfCores, configurableProblem, populationSize, crossover, mutation,
             new TerminationByEvaluations(maxEvaluations));
 

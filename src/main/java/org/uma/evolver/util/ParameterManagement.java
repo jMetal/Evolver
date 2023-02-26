@@ -15,7 +15,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class ParameterManagement {
 
   public static String decodeParameter(Parameter<?> parameter, double value) {
-    String result = "";
+    String result ;
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       var index = (int) Math.floor(value * categoricalParameter.validValues().size());
@@ -92,7 +92,7 @@ public class ParameterManagement {
   private static StringBuilder decodeParametersToDoubleValues(List<Parameter<?>> parameters, DoubleSolution solution) {
     StringBuilder parameterString = new StringBuilder() ;
     for (int i = 0; i < parameters.size(); i++) {
-      double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i)); ;
+      double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i));
 
       parameterString.append(value).append(" ");
     }

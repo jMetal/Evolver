@@ -42,7 +42,7 @@ public class ConfigurableMOPSORunner {
 
     mopso.run();
 
-    JMetalLogger.logger.info("Total computing time: " + mopso.totalComputingTime()); ;
+    JMetalLogger.logger.info("Total computing time: " + mopso.totalComputingTime());
 
     new SolutionListOutput(mopso.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))

@@ -22,7 +22,6 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
   private List<QualityIndicator> indicators;
   private List<Parameter<?>> parameters;
-  String referenceFrontFileName;
   private double[][] normalizedReferenceFront;
   private double[][] referenceFront;
   private final int numberOfIndependentRuns;
@@ -39,12 +38,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     this.configurableAlgorithm = configurableAlgorithm;
     this.indicators = indicators;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
-    this.referenceFrontFileName = referenceFrontFileName;
 
     parameters = ConfigurableAlgorithm.parameterFlattening(
         configurableAlgorithm.configurableParameterList());
 
-    // Parameters to configure
     List<Double> lowerLimit = new ArrayList<>();
     List<Double> upperLimit = new ArrayList<>();
 

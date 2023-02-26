@@ -43,7 +43,6 @@ public class ConfigurableMOEADRunner {
     mopso.run();
 
     JMetalLogger.logger.info("Total computing time: " + mopso.totalComputingTime());
-    ;
 
     new SolutionListOutput(mopso.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
