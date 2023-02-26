@@ -96,10 +96,17 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   }
 
   @Override
-  public void parse(String[] arguments) {
+  public ConfigurableAlgorithm createInstance() {
+    return new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
+  }
+
+  @Override
+  public ConfigurableAlgorithm parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
+
+    return this ;
   }
 
   private void configure() {

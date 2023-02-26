@@ -2,6 +2,9 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableNSGAII;
+import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.problem.ConfigurableNSGAIIProblem;
 import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -34,9 +37,11 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     var indicators = List.of(new Epsilon(), new Spread());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
-    var configurableProblem = new ConfigurableNSGAIIProblem(
-        problemWhoseConfigurationIsSearchedFor, "resources/ZDT3.csv",
-        indicators, 100,  5000 , 1);
+    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
+        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+    var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
+        "resources/ZDT3.csv",
+        indicators, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -49,7 +54,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(200);
+    Termination termination = new TerminationByEvaluations(1000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,
@@ -73,7 +78,7 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     nsgaii.run();
 
-    JMetalLogger.logger.info(() ->"Total computing time: " + nsgaii.totalComputingTime());
+    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(nsgaii.result());

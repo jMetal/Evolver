@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
+import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public interface ConfigurableAlgorithm {
-  void parse(String[] args) ;
+  ConfigurableAlgorithm parse(String[] args) ;
   List<Parameter<?>> configurableParameterList() ;
+
+  ConfigurableAlgorithm createInstance() ;
+
+  Algorithm<List<DoubleSolution>> create() ;
 
   /**
    * Given a list of parameters, returns a list with of all of them and all of their sub-parameters

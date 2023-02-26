@@ -73,6 +73,11 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
     this.configure() ;
   }
 
+  @Override
+  public ConfigurableAlgorithm createInstance() {
+    return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations) ;
+  }
+
   public void configure() {
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
 
@@ -190,10 +195,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   }
 
   @Override
-  public void parse(String[] arguments) {
+  public ConfigurableAlgorithm parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
+
+    return this ;
   }
 
   /**

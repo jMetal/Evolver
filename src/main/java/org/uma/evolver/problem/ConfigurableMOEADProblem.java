@@ -47,7 +47,6 @@ public class ConfigurableMOEADProblem extends AbstractDoubleProblem {
     this.referenceFrontFileName = referenceFrontFileName ;
     parameters = ConfigurableAlgorithm.parameterFlattening(algorithm.configurableParameterList()) ;
 
-    // Parameters to configure
     List<Double> lowerLimit = new ArrayList<>();
     List<Double> upperLimit = new ArrayList<>();
 

@@ -68,6 +68,11 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
     this.configure();
   }
 
+  @Override
+  public ConfigurableAlgorithm createInstance() {
+    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
+  }
+
   private void configure() {
     algorithmResult();
     createInitialSolution();
@@ -165,10 +170,12 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   }
 
   @Override
-  public void parse(String[] arguments) {
+  public ConfigurableAlgorithm parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
+
+    return this ;
   }
 
   /**
@@ -176,6 +183,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
    *
    * @return
    */
+  @Override
   public EvolutionaryAlgorithm<DoubleSolution> create() {
     Archive<DoubleSolution> archive = null;
 

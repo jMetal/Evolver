@@ -2,6 +2,10 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
+import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableMOPSO;
+import org.uma.evolver.algorithm.ConfigurableNSGAII;
+import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.problem.ConfigurableMOPSOProblem;
 import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -33,9 +37,11 @@ public class MetaNSGAIIForMOPSORunner {
   public static void main(String[] args) throws IOException {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
-    var configurableProblem = new ConfigurableMOPSOProblem(problemWhoseConfigurationIsSearchedFor,
+    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableMOPSO(
+        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+    var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/ZDT1.csv",
-        indicators, 100, 5000, 1);
+        indicators,1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
