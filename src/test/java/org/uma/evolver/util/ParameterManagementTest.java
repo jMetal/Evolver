@@ -9,8 +9,21 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.RealParameter;
+import org.uma.jmetal.util.errorchecking.exception.ValueOutOfRangeException;
 
 class ParameterManagementTest {
+
+  @Test
+  void parameterValueIsNegative() {
+    CategoricalParameter parameter = new CategoricalParameter("parameter", List.of("Element"));
+    assertThrows(ValueOutOfRangeException.class, () -> ParameterManagement.decodeParameter(parameter, -0.9));
+  }
+
+  @Test
+  void parameterValueIsHigherThanOne() {
+    CategoricalParameter parameter = new CategoricalParameter("parameter", List.of("Element"));
+    assertThrows(ValueOutOfRangeException.class, () -> ParameterManagement.decodeParameter(parameter, 1.001));
+  }
 
   @Nested
   @DisplayName("Unit tests for method decodeParameter()")

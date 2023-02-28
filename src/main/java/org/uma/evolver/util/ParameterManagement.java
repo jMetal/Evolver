@@ -10,11 +10,13 @@ import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.auto.parameter.RealParameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 public class ParameterManagement {
 
   public static String decodeParameter(Parameter<?> parameter, double value) {
+    Check.valueIsInRange(value, 0.0, 1.0);
     String result;
     if (parameter instanceof CategoricalParameter) {
       value = Math.min(value, 0.999999999999) ;
