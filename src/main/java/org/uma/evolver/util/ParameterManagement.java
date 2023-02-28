@@ -15,8 +15,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class ParameterManagement {
 
   public static String decodeParameter(Parameter<?> parameter, double value) {
-    String result ;
+    String result;
     if (parameter instanceof CategoricalParameter) {
+      value = Math.min(value, 0.999999999999) ;
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       var index = (int) Math.floor(value * categoricalParameter.validValues().size());
       result = categoricalParameter.validValues().get(index);
@@ -45,7 +46,7 @@ public class ParameterManagement {
   }
 
   public static double decodeParameterToDoubleValues(Parameter<?> parameter, double value) {
-    double result ;
+    double result;
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       result = (int) Math.floor(value * categoricalParameter.validValues().size());
@@ -60,7 +61,7 @@ public class ParameterManagement {
       int max = integerParameter.validValues().get(1);
       return min + (int) Math.floor(value * (max - min));
     } else if (parameter instanceof BooleanParameter) {
-      return value ;
+      return value;
     } else {
       throw new JMetalException("The parameter is non-configurable: " + parameter.name());
     }
@@ -69,42 +70,45 @@ public class ParameterManagement {
   }
 
   /**
-   * Given a list of parameters and a list of the corresponding encoded parameter values
-   * in the range [0.0, 1.0], returns a string where each parameter is encoded as sequence of
+   * Given a list of parameters and a list of the corresponding encoded parameter values in the
+   * range [0.0, 1.0], returns a string where each parameter is encoded as sequence of
    * "--parameterName parameterValue" pairs
    *
    * @param parameters List of parameters
-   * @param values  List of encoded parameter values in the range [0.0, 1.0]
+   * @param values     List of encoded parameter values in the range [0.0, 1.0]
    * @return A {@link StringBuilder} object
    */
-  public static StringBuilder decodeParametersToString(List<Parameter<?>> parameters, List<Double> values) {
-    StringBuilder parameterString = new StringBuilder() ;
+  public static StringBuilder decodeParametersToString(List<Parameter<?>> parameters,
+      List<Double> values) {
+    StringBuilder parameterString = new StringBuilder();
     for (int i = 0; i < parameters.size(); i++) {
       String parameterName = parameters.get(i).name();
-      String value = decodeParameter(parameters.get(i), values.get(i)) ;
+      String value = decodeParameter(parameters.get(i), values.get(i));
 
       parameterString.append("--").append(parameterName).append(" ").append(value).append(" ");
     }
 
-    return parameterString ;
+    return parameterString;
   }
 
-  private static StringBuilder decodeParametersToDoubleValues(List<Parameter<?>> parameters, DoubleSolution solution) {
-    StringBuilder parameterString = new StringBuilder() ;
+  private static StringBuilder decodeParametersToDoubleValues(List<Parameter<?>> parameters,
+      DoubleSolution solution) {
+    StringBuilder parameterString = new StringBuilder();
     for (int i = 0; i < parameters.size(); i++) {
       double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i));
 
       parameterString.append(value).append(" ");
     }
 
-    return parameterString ;
+    return parameterString;
   }
 
-  public static void writeDecodedSolutionsFoFile(List<Parameter<?>> parameters, List<DoubleSolution> solutions, String fileName)
+  public static void writeDecodedSolutionsFoFile(List<Parameter<?>> parameters,
+      List<DoubleSolution> solutions, String fileName)
       throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
-    for (DoubleSolution solution: solutions) {
+    FileWriter fileWriter = new FileWriter(fileName);
+    PrintWriter printWriter = new PrintWriter(fileWriter);
+    for (DoubleSolution solution : solutions) {
       StringBuilder parameterString = decodeParametersToString(parameters, solution.variables());
 
       printWriter.println(parameterString);
@@ -112,19 +116,20 @@ public class ParameterManagement {
     printWriter.close();
   }
 
-  public static void writeDecodedSolutionsDoubleValuesFoFile(List<Parameter<?>> parameters, List<DoubleSolution> solutions, String fileName)
+  public static void writeDecodedSolutionsDoubleValuesFoFile(List<Parameter<?>> parameters,
+      List<DoubleSolution> solutions, String fileName)
       throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName) ;
-    PrintWriter printWriter = new PrintWriter(fileWriter) ;
+    FileWriter fileWriter = new FileWriter(fileName);
+    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-    StringBuilder csvHeader = new StringBuilder() ;
-    for (var parameter: parameters) {
+    StringBuilder csvHeader = new StringBuilder();
+    for (var parameter : parameters) {
       csvHeader.append(parameter.name()).append(",");
     }
-    csvHeader.deleteCharAt(csvHeader.length()-1) ;
+    csvHeader.deleteCharAt(csvHeader.length() - 1);
     printWriter.println(csvHeader);
 
-    for (DoubleSolution solution: solutions) {
+    for (DoubleSolution solution : solutions) {
       StringBuilder parameterString = decodeParametersToDoubleValues(parameters, solution);
 
       printWriter.println(parameterString);
