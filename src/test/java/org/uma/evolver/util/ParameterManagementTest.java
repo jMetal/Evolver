@@ -3,10 +3,12 @@ package org.uma.evolver.util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
+import org.uma.jmetal.auto.parameter.RealParameter;
 
 class ParameterManagementTest {
 
@@ -17,7 +19,6 @@ class ParameterManagementTest {
     @Nested
     @DisplayName("Tests for categorical parameters")
     class categoricalParameterTests {
-
       @Test
       void decodeAParameterWithASingleValidElementAndAValueOfZeroReturnTheElement() {
         CategoricalParameter parameter = new CategoricalParameter("parameter", List.of("Element"));
@@ -102,6 +103,40 @@ class ParameterManagementTest {
         String actualResult = ParameterManagement.decodeParameter(parameter, 0.6667);
 
         assertEquals(expectedResult, actualResult);
+      }
+    }
+
+    @Nested
+    @DisplayName("Tests for real parameters")
+    class realParameterTests{
+      RealParameter parameter ;
+      double lowerBound = 0.5 ;
+      double upperBound = 6.2 ;
+      @BeforeEach
+      void setup() {
+        parameter = new RealParameter("ParameterName", lowerBound, upperBound) ;
+      }
+
+      @Test
+      void decodeAParameterWithValueZeroReturnTheLowerBound() {
+        String actualValue = ParameterManagement.decodeParameter(parameter, 0.0) ;
+
+        assertEquals(""+lowerBound, actualValue) ;
+      }
+
+      @Test
+      void decodeAParameterWithValueOneReturnTheUpperBound() {
+        String actualValue = ParameterManagement.decodeParameter(parameter, 1.0) ;
+
+        assertEquals(""+upperBound, actualValue) ;
+      }
+
+      @Test
+      void decodeAParameterWithValueZeroPointFiveReturnTheRightValue() {
+        String actualValue = ParameterManagement.decodeParameter(parameter, 0.5) ;
+        double meanValue = (lowerBound + upperBound) /2.0 ;
+
+        assertEquals(""+meanValue, actualValue) ;
       }
     }
   }
