@@ -6,6 +6,7 @@ import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
+import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.SMPSOBuilder;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
@@ -65,8 +66,9 @@ public class MetaSMPSOForNSGAIIRunner {
     JMetalLogger.logger.info("Total computing time: " + smpso.totalComputingTime());
 
     var outputResultsManagement = new OutputResultsManagement("results");
-    outputResultsManagement.writeResultsToFiles(smpso.result(), "NSGA-II", configurableProblem,
-        problemWhoseConfigurationIsSearchedFor, indicators);
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators) ;
+    outputResultsManagement.writeResultsToFiles(smpso.result(), outputResultsManagementParameters);
 
     //System.exit(0) ;
   }

@@ -6,6 +6,7 @@ import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
+import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -80,8 +81,9 @@ public class MetaNSGAIIForMOEADRunner {
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
     var outputResultsManagement = new OutputResultsManagement("results");
-    outputResultsManagement.writeResultsToFiles(nsgaii.result(), "MOEAD", configurableProblem,
-        problemWhoseConfigurationIsSearchedFor, indicators);
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        "MOEAD", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators) ;
+    outputResultsManagement.writeResultsToFiles(nsgaii.result(), outputResultsManagementParameters);
 
     //System.exit(0) ;
   }

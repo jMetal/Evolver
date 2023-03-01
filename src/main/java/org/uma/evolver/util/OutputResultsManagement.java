@@ -1,5 +1,6 @@
 package org.uma.evolver.util;
 
+import com.univocity.parsers.common.record.Record;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
@@ -12,6 +13,13 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 public class OutputResultsManagement {
 
+  public record OutputResultsManagementParameters(
+      String algorithmName,
+      ConfigurableAlgorithmProblem configurableAlgorithmProblem,
+      DoubleProblem problem,
+      List<QualityIndicator> indicators) {
+  }
+
   private final String outputDirectory;
 
   public OutputResultsManagement(String outputDirectory) {
@@ -19,22 +27,19 @@ public class OutputResultsManagement {
   }
 
   public void writeResultsToFiles(List<DoubleSolution> solutions,
-      String algorithmName,
-      ConfigurableAlgorithmProblem configurableAlgorithmProblem,
-      DoubleProblem problem,
-      List<QualityIndicator> indicators)
+      OutputResultsManagementParameters parameters)
       throws IOException {
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(solutions);
     String problemDescription =
-        algorithmName + "." + problem.name() + "."
-            + indicators.get(0).name() + "." + indicators.get(1).name() + "."
-            + problem.numberOfObjectives();
+        parameters.algorithmName + "." + parameters.problem.name() + "."
+            + parameters.indicators.get(0).name() + "." + parameters.indicators.get(1).name() + "."
+            + parameters.problem.numberOfObjectives();
 
     writeFilesWithVariablesAndObjectives(nonDominatedSolutionsArchive, problemDescription);
-    writeDecodedVariables(configurableAlgorithmProblem, nonDominatedSolutionsArchive,
+    writeDecodedVariables(parameters.configurableAlgorithmProblem, nonDominatedSolutionsArchive,
         problemDescription);
-    writeDecodedVariablesAsDoubleValues(configurableAlgorithmProblem, nonDominatedSolutionsArchive,
+    writeDecodedVariablesAsDoubleValues(parameters.configurableAlgorithmProblem, nonDominatedSolutionsArchive,
         problemDescription);
   }
 
