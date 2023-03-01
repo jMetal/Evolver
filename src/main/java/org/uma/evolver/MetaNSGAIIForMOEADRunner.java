@@ -5,6 +5,7 @@ import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
+import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.ParameterManagement;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -76,26 +77,11 @@ public class MetaNSGAIIForMOEADRunner {
 
     nsgaii.run();
 
-    JMetalLogger.logger.info(() ->"Total computing time: " + nsgaii.totalComputingTime());
+    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
-    nonDominatedSolutionsArchive.addAll(nsgaii.result());
-    String problemDescription = "MOEAD" + "." + problemWhoseConfigurationIsSearchedFor.name() + "."
-        + problemWhoseConfigurationIsSearchedFor.numberOfObjectives();
-    new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
-        .setVarFileOutputContext(
-            new DefaultFileOutputContext("VAR." + problemDescription + ".csv", ","))
-        .setFunFileOutputContext(
-            new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
-        .print();
-
-    ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
-        nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
-
-    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
-        configurableProblem.parameters(),
-        nonDominatedSolutionsArchive.solutions(),
-        "VAR." + problemDescription + ".Conf.DoubleValues.csv");
+    var outputResultsManagement = new OutputResultsManagement("results");
+    outputResultsManagement.writeResultsToFiles(nsgaii.result(), "MOEAD", configurableProblem,
+        problemWhoseConfigurationIsSearchedFor, indicators);
 
     //System.exit(0) ;
   }
