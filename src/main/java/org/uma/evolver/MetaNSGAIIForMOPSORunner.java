@@ -80,10 +80,11 @@ public class MetaNSGAIIForMOPSORunner {
 
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    var outputResultsManagement = new OutputResultsManagement("results");
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "MOPSO", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators) ;
-    outputResultsManagement.writeResultsToFiles(nsgaii.result(), outputResultsManagementParameters);
+        "MOPSO", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators, "results") ;
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    outputResultsManagement.writeResultsToFiles(nsgaii.result());
+
     //System.exit(0) ;
   }
 }

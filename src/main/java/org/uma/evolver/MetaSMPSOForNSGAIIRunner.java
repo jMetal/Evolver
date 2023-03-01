@@ -65,10 +65,10 @@ public class MetaSMPSOForNSGAIIRunner {
 
     JMetalLogger.logger.info("Total computing time: " + smpso.totalComputingTime());
 
-    var outputResultsManagement = new OutputResultsManagement("results");
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators) ;
-    outputResultsManagement.writeResultsToFiles(smpso.result(), outputResultsManagementParameters);
+        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators, "results") ;
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    outputResultsManagement.writeResultsToFiles(smpso.result());
 
     //System.exit(0) ;
   }

@@ -1,6 +1,7 @@
 package org.uma.evolver.util;
 
 import com.univocity.parsers.common.record.Record;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
@@ -8,26 +9,34 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 public class OutputResultsManagement {
+  private String suffix = ".csv" ;
 
   public record OutputResultsManagementParameters(
       String algorithmName,
       ConfigurableAlgorithmProblem configurableAlgorithmProblem,
       DoubleProblem problem,
-      List<QualityIndicator> indicators) {
+      List<QualityIndicator> indicators,
+      String outputDirectoryName) {
   }
 
-  private final String outputDirectory;
+  private final OutputResultsManagementParameters parameters;
 
-  public OutputResultsManagement(String outputDirectory) {
-    this.outputDirectory = outputDirectory;
+  public OutputResultsManagement(OutputResultsManagementParameters outputResultsManagementParameters) {
+    this.parameters = outputResultsManagementParameters;
+
+    File outputDirectory = new File(parameters.outputDirectoryName) ;
+    if (!outputDirectory.exists() || !outputDirectory.isDirectory()) {
+      var result = outputDirectory.mkdir() ;
+      Check.notNull(result);
+    }
   }
 
-  public void writeResultsToFiles(List<DoubleSolution> solutions,
-      OutputResultsManagementParameters parameters)
+  public void writeResultsToFiles(List<DoubleSolution> solutions)
       throws IOException {
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(solutions);
@@ -48,7 +57,7 @@ public class OutputResultsManagement {
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) throws IOException {
     var varWithDecodedDoubleValuesSolutionsFileName =
-        outputDirectory + "/VAR." + problemDescription + ".Conf.DoubleValues.csv";
+        parameters.outputDirectoryName + "/VAR." + problemDescription + ".Conf.DoubleValues" + suffix;
     ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableAlgorithmProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), varWithDecodedDoubleValuesSolutionsFileName);
@@ -58,7 +67,7 @@ public class OutputResultsManagement {
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) throws IOException {
     var varWithDecodedSolutionsFileName =
-        outputDirectory + "/VAR." + problemDescription + ".Conf.csv";
+        parameters.outputDirectoryName + "/VAR." + problemDescription + ".Conf" + suffix ;
     ParameterManagement.writeDecodedSolutionsFoFile(configurableAlgorithmProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), varWithDecodedSolutionsFileName);
   }
@@ -66,13 +75,17 @@ public class OutputResultsManagement {
   private void writeFilesWithVariablesAndObjectives(
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) {
-    var varFileName = outputDirectory + "/VAR." + problemDescription + ".csv";
-    var funFileName = outputDirectory + "/FUN." + problemDescription + ".csv";
+    var varFileName = parameters.outputDirectoryName + "/VAR." + problemDescription + suffix;
+    var funFileName = parameters.outputDirectoryName + "/FUN." + problemDescription + suffix;
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
         .setVarFileOutputContext(
             new DefaultFileOutputContext(varFileName, ","))
         .setFunFileOutputContext(
             new DefaultFileOutputContext(funFileName, ","))
         .print();
+  }
+
+  public void updateSuffix(String newSuffix) {
+    this.suffix = newSuffix ;
   }
 }

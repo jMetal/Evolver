@@ -17,6 +17,7 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -37,11 +38,11 @@ public class MetaNSGAIIForNSGAIIRunner {
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ2_2D();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
     ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/DTLZ2.2D.csv",
+        "resources/referenceFronts/ZDT4.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;
@@ -81,10 +82,11 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    var outputResultsManagement = new OutputResultsManagement("results");
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators) ;
-    outputResultsManagement.writeResultsToFiles(nsgaii.result(), outputResultsManagementParameters);
+        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
+        "outputFiles");
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    outputResultsManagement.writeResultsToFiles(nsgaii.result());
 
     //System.exit(0) ;
   }
