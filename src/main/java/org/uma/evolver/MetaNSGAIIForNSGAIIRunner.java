@@ -14,12 +14,9 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
@@ -56,7 +53,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(3000);
+    Termination termination = new TerminationByEvaluations(2000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,
@@ -98,7 +95,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
-    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");

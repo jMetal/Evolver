@@ -94,7 +94,7 @@ public class MetaNSGAIIForMOPSORunner {
     ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
-    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");

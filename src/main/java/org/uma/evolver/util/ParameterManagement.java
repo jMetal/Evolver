@@ -49,6 +49,7 @@ public class ParameterManagement {
 
   public static double decodeParameterToDoubleValues(Parameter<?> parameter, double value) {
     double result;
+    Check.valueIsInRange(value, 0.0, 1.0);
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       result = (int) Math.floor(value * categoricalParameter.validValues().size());
@@ -98,9 +99,10 @@ public class ParameterManagement {
     StringBuilder parameterString = new StringBuilder();
     for (int i = 0; i < parameters.size(); i++) {
       double value = decodeParameterToDoubleValues(parameters.get(i), solution.variables().get(i));
-
-      parameterString.append(value).append(" ");
+      parameterString.append(value).append(",");
     }
+    parameterString.deleteCharAt(parameterString.length() - 1);
+
 
     return parameterString;
   }
@@ -118,7 +120,7 @@ public class ParameterManagement {
     printWriter.close();
   }
 
-  public static void writeDecodedSolutionsDoubleValuesFoFile(List<Parameter<?>> parameters,
+  public static void writeDecodedSolutionsToDoubleValuesFoFile(List<Parameter<?>> parameters,
       List<DoubleSolution> solutions, String fileName)
       throws IOException {
     FileWriter fileWriter = new FileWriter(fileName);

@@ -14,13 +14,10 @@ import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -95,7 +92,7 @@ public class AsyncNSGAIIRunner {
     ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
-    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");

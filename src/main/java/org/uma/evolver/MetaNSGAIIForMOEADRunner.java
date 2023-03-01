@@ -14,7 +14,6 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -93,7 +92,7 @@ public class MetaNSGAIIForMOEADRunner {
     ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
-    ParameterManagement.writeDecodedSolutionsDoubleValuesFoFile(
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         "VAR." + problemDescription + ".Conf.DoubleValues.csv");
