@@ -14,9 +14,11 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
@@ -54,9 +56,9 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
     variableBounds(lowerLimit, upperLimit);
     for (var parameter : parameters) {
-      System.out.print(parameter.name() + ",");
+      JMetalLogger.logger.info(parameter.name() + ",");
     }
-    System.out.println();
+    JMetalLogger.logger.info("");
   }
 
   private void computeNormalizedReferenceFront(String referenceFrontFileName) {
@@ -64,7 +66,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     try {
       referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new JMetalException("The file does not exist", e);
     }
     normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
   }
