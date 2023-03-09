@@ -25,17 +25,17 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
 
   private List<Integer> evaluationsList;
   private OutputResultsManagement outputResultsManagement;
+  private int evaluationsListIndex ;
 
   /**
    * Constructor
    */
-
   public WriteExecutionDataToFilesObserver(List<Integer> evaluationsList,
       OutputResultsManagement outputResultsManagement) {
     this.evaluationsList = evaluationsList;
     this.outputResultsManagement = outputResultsManagement;
+    evaluationsListIndex = 0 ;
   }
-
 
   /**
    * This method gets the population
@@ -44,28 +44,24 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
    */
   @Override
   public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
-
     List<DoubleSolution> population = (List<DoubleSolution>) data.get("POPULATION");
     int evaluations = (int) data.get("EVALUATIONS");
 
-    if (!evaluationsList.isEmpty() && evaluations > evaluationsList.get(0)) {
+    if ((evaluationsListIndex < evaluationsList.size()) && (evaluations > evaluationsList.get(evaluationsListIndex))) {
       try {
-        outputResultsManagement.updateSuffix("" + evaluationsList.get(0) + ".csv");
+        System.out.println("EVAlS -> "+evaluations) ;
+        outputResultsManagement.updateSuffix("." + evaluationsList.get(evaluationsListIndex) + ".csv");
         outputResultsManagement.writeResultsToFiles(population);
+        evaluationsListIndex ++ ;
       } catch (IOException e) {
         throw new JMetalException(e);
       }
-
-      evaluationsList.remove(0);
     }
-  }
-
-  public String name() {
-    return "Write execution data to files observer";
   }
 
   @Override
   public String toString() {
-    return name();
+    return "Observer that writes output files from a list of numbers representing "
+        + "iterations where the outputs are required" ;
   }
 }
