@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.print.DocFlavor.STRING;
 import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.parameter.VariationParameter;
 import org.uma.jmetal.auto.parameter.BooleanParameter;
