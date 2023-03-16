@@ -7,6 +7,7 @@ import static smile.math.MathEx.median;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.ConfigurableAlgorithm;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -31,7 +32,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
   public ConfigurableAlgorithmProblem(ConfigurableAlgorithm configurableAlgorithm,
       String referenceFrontFileName, List<QualityIndicator> indicators) {
-    this(configurableAlgorithm, referenceFrontFileName, indicators,1);
+    this(configurableAlgorithm, referenceFrontFileName, indicators, 1);
   }
 
   public ConfigurableAlgorithmProblem(ConfigurableAlgorithm configurableAlgorithm,
@@ -104,7 +105,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     var algorithm = configurableAlgorithm
         .createInstance()
         .parse(parameterArray)
-        .create() ;
+        .create();
 
     algorithm.run();
 
@@ -119,11 +120,11 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    indicators.get(0).referenceFront(normalizedReferenceFront);
-    indicators.get(1).referenceFront(normalizedReferenceFront);
+    IntStream.range(0, indicators.size()).forEach(i -> {
+      indicators.get(i).referenceFront(normalizedReferenceFront);
+      solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
+    });
 
-    solution.objectives()[0] = indicators.get(0).compute(normalizedFront);
-    solution.objectives()[1] = indicators.get(1).compute(normalizedFront);
 
    /*
     double[] objectives = computeIndependentRuns(numberOfIndependentRuns, algorithm) ;

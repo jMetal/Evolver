@@ -7,7 +7,6 @@ import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
-import org.uma.evolver.util.ParameterManagement;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -20,6 +19,7 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3_2D;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -29,6 +29,7 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
+import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
@@ -41,11 +42,11 @@ public class MetaNSGAIIForNSGAIIRunner {
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3_2D();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/DTLZ3.2D.csv",
+        "resources/referenceFronts/ZDT1.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;
@@ -78,16 +79,14 @@ public class MetaNSGAIIForNSGAIIRunner {
         .build();
 
     var evaluationObserver = new EvaluationObserver(10);
-    var runTimeChartObserver =
-        new RunTimeChartObserver<>(
-            "NSGA-II - " + problemWhoseConfigurationIsSearchedFor.name(), 80, 100, null,
-            indicators.get(0).name(),
-            indicators.get(1).name());
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
+
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
         List.of(2000, 3000, 4000), outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(runTimeChartObserver);
+    nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();
