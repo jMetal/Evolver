@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -28,22 +28,22 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   private double[][] normalizedReferenceFront;
   private double[][] referenceFront;
   private final int numberOfIndependentRuns;
-  private ConfigurableAlgorithm configurableAlgorithm;
+  private ConfigurableAlgorithmBuilder configurableAlgorithm;
 
-  public ConfigurableAlgorithmProblem(ConfigurableAlgorithm configurableAlgorithm,
+  public ConfigurableAlgorithmProblem(ConfigurableAlgorithmBuilder configurableAlgorithm,
       String referenceFrontFileName, List<QualityIndicator> indicators) {
     this(configurableAlgorithm, referenceFrontFileName, indicators, 1);
   }
 
-  public ConfigurableAlgorithmProblem(ConfigurableAlgorithm configurableAlgorithm,
+  public ConfigurableAlgorithmProblem(ConfigurableAlgorithmBuilder configurableAlgorithmBuilder,
       String referenceFrontFileName, List<QualityIndicator> indicators,
       int numberOfIndependentRuns) {
-    this.configurableAlgorithm = configurableAlgorithm;
+    this.configurableAlgorithm = configurableAlgorithmBuilder;
     this.indicators = indicators;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
 
-    parameters = ConfigurableAlgorithm.parameterFlattening(
-        configurableAlgorithm.configurableParameterList());
+    parameters = ConfigurableAlgorithmBuilder.parameterFlattening(
+        configurableAlgorithmBuilder.configurableParameterList());
 
     List<Double> lowerLimit = new ArrayList<>();
     List<Double> upperLimit = new ArrayList<>();
@@ -89,7 +89,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
   @Override
   public String name() {
-    return "AutoNSGAII";
+    return "Configurable algorithm problem";
   }
 
   public List<Parameter<?>> parameters() {
@@ -102,10 +102,11 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
     String[] parameterArray = parameterString.toString().split("\\s+");
 
+    /*
     var algorithm = configurableAlgorithm
-        .createInstance()
+        .createBuilderInstance()
         .parse(parameterArray)
-        .create();
+        .build();
 
     algorithm.run();
 
@@ -124,45 +125,50 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
       indicators.get(i).referenceFront(normalizedReferenceFront);
       solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
     });
+*/
 
+    double[] medianIndicatorValues = computeIndependentRuns(parameterArray) ;
+    IntStream.range(0, indicators.size()).forEach(i -> solution.objectives()[i] = medianIndicatorValues[i]);
 
-   /*
-    double[] objectives = computeIndependentRuns(numberOfIndependentRuns, algorithm) ;
-    solution.objectives()[0] = objectives[0] ;
-    solution.objectives()[1] = objectives[1] ;
-   */
     return solution;
   }
 
-  private double[] computeIndependentRuns(int numberOfRuns, ConfigurableNSGAII algorithm) {
+  private double[] computeIndependentRuns(String[] parameterArray) {
     double[] medianIndicatorValues = new double[indicators.size()];
-    double[] valuesFirstIndicator = new double[numberOfRuns];
-    double[] valuesSecondIndicator = new double[numberOfRuns];
+    double[][] indicatorValues = new double[indicators.size()][];
+    IntStream.range(0, indicators.size()).forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
-    for (int i = 0; i < numberOfIndependentRuns; i++) {
-      EvolutionaryAlgorithm<DoubleSolution> nsgaII = algorithm.create();
-      nsgaII.run();
+    for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
+      var algorithm = configurableAlgorithm
+          .createBuilderInstance()
+          .parse(parameterArray)
+          .build();
+
+      algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-      nonDominatedSolutions.addAll(nsgaII.result());
+      nonDominatedSolutions.addAll(algorithm.result());
 
       double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
-
       double[][] normalizedFront =
           NormalizeUtils.normalize(
               front,
               NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
               NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-      indicators.get(0).referenceFront(normalizedReferenceFront);
-      indicators.get(1).referenceFront(normalizedReferenceFront);
+      IntStream.range(0, indicators.size()).forEach(index -> {
+        indicators.get(index).referenceFront(normalizedReferenceFront);
+      });
 
-      valuesFirstIndicator[i] = indicators.get(0).compute(normalizedFront);
-      valuesSecondIndicator[i] = indicators.get(1).compute(normalizedFront);
+      for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
+        indicators.get(indicatorId).referenceFront(normalizedReferenceFront);
+        indicatorValues[indicatorId][runId] = indicators.get(indicatorId).compute(normalizedFront);
+      }
     }
 
-    medianIndicatorValues[0] = median(valuesFirstIndicator);
-    medianIndicatorValues[1] = median(valuesSecondIndicator);
+    for (int i = 0 ; i < indicators.size(); i++) {
+      medianIndicatorValues[i] = median(indicatorValues[i]) ;
+    }
 
     return medianIndicatorValues;
   }
