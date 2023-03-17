@@ -29,7 +29,7 @@ public class ConfigurableMOEADRunner {
 
     AutoMOPSO.print(autoMOEAD.configurableParameterList());
 
-    EvolutionaryAlgorithm<DoubleSolution> mopso = autoMOEAD.create();
+    EvolutionaryAlgorithm<DoubleSolution> mopso = autoMOEAD.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

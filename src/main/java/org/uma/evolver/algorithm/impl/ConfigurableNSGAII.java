@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -44,7 +44,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableNSGAII implements ConfigurableAlgorithm {
+public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -70,7 +70,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   }
 
   @Override
-  public ConfigurableAlgorithm createInstance() {
+  public ConfigurableAlgorithmBuilder createBuilderInstance() {
     return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
   }
 
@@ -171,7 +171,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
   }
 
   @Override
-  public ConfigurableAlgorithm parse(String[] arguments) {
+  public ConfigurableAlgorithmBuilder parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -185,7 +185,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithm {
    * @return
    */
   @Override
-  public EvolutionaryAlgorithm<DoubleSolution> create() {
+  public EvolutionaryAlgorithm<DoubleSolution> build() {
     Archive<DoubleSolution> archive = null;
 
     if (algorithmResultParameter.value().equals("externalArchive")) {

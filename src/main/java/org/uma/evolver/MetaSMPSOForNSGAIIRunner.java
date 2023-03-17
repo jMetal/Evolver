@@ -2,7 +2,7 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
@@ -31,7 +31,7 @@ public class MetaSMPSOForNSGAIIRunner {
   public static void main(String[] args) throws IOException {
     var indicators = List.of(new Epsilon(), new Spread());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT3();
-    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
+    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/ZDT3.csv",

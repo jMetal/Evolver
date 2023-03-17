@@ -2,7 +2,7 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -35,7 +35,7 @@ public class MetaGAForNSGAIIRunner {
 
     List<QualityIndicator> indicators = List.of(new Epsilon());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
-    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
+    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT4.csv",

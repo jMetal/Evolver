@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.VariationParameter;
 import org.uma.jmetal.auto.parameter.BooleanParameter;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
@@ -44,7 +44,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 /**
  * @autor Antonio J. Nebro
  */
-public class ConfigurableMOEAD implements ConfigurableAlgorithm {
+public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -78,7 +78,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   }
 
   @Override
-  public ConfigurableAlgorithm createInstance() {
+  public ConfigurableAlgorithmBuilder createBuilderInstance() {
     return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
   }
 
@@ -199,7 +199,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
   }
 
   @Override
-  public ConfigurableAlgorithm parse(String[] arguments) {
+  public ConfigurableAlgorithmBuilder parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -212,7 +212,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithm {
    *
    * @return
    */
-  public EvolutionaryAlgorithm<DoubleSolution> create() {
+  public EvolutionaryAlgorithm<DoubleSolution> build() {
     Archive<DoubleSolution> archive = null;
     Evaluation<DoubleSolution> evaluation ;
     if (algorithmResultParameter.value().equals("externalArchive")) {

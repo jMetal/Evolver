@@ -2,7 +2,7 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
@@ -19,6 +19,7 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -35,11 +36,11 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
-    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableNSGAII(
+    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT1.csv",
-        indicators, 1);
+        indicators, 3);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

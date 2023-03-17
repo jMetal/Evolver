@@ -8,13 +8,13 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-public interface ConfigurableAlgorithm {
-  ConfigurableAlgorithm parse(String[] args) ;
+public interface ConfigurableAlgorithmBuilder {
+  ConfigurableAlgorithmBuilder parse(String[] args) ;
   List<Parameter<?>> configurableParameterList() ;
 
-  ConfigurableAlgorithm createInstance() ;
+  ConfigurableAlgorithmBuilder createBuilderInstance() ;
 
-  Algorithm<List<DoubleSolution>> create() ;
+  Algorithm<List<DoubleSolution>> build() ;
 
   /**
    * Given a list of parameters, returns a list with of all of them and all of their sub-parameters

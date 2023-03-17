@@ -29,7 +29,7 @@ public class ConfigurableMOPSORunner {
 
     AutoMOPSO.print(autoMOPSO.configurableParameterList());
 
-    ParticleSwarmOptimizationAlgorithm mopso = autoMOPSO.create();
+    ParticleSwarmOptimizationAlgorithm mopso = autoMOPSO.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

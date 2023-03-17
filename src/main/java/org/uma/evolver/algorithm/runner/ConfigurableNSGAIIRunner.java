@@ -31,7 +31,7 @@ public class ConfigurableNSGAIIRunner {
 
     AutoNSGAII.print(autoNSGAII.configurableParameterList());
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.create();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

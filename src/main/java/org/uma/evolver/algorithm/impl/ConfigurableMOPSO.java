@@ -3,7 +3,7 @@ package org.uma.evolver.algorithm.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -53,7 +53,7 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableMOPSO implements ConfigurableAlgorithm {
+public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   public ExternalArchiveParameter<DoubleSolution> leaderArchiveParameter;
   private CategoricalParameter algorithmResultParameter;
@@ -96,12 +96,12 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   }
 
   @Override
-  public ConfigurableAlgorithm createInstance() {
+  public ConfigurableAlgorithmBuilder createBuilderInstance() {
     return new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
   }
 
   @Override
-  public ConfigurableAlgorithm parse(String[] arguments) {
+  public ConfigurableAlgorithmBuilder parse(String[] arguments) {
     for (Parameter<?> parameter : configurableParameterList()) {
       parameter.parse(arguments).check();
     }
@@ -253,7 +253,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithm {
   /**
    * Create an instance of MOPSO from the parsed parameters
    */
-  public ParticleSwarmOptimizationAlgorithm create() {
+  public ParticleSwarmOptimizationAlgorithm build() {
     int swarmSize = swarmSizeParameter.value();
 
     Evaluation<DoubleSolution> evaluation;

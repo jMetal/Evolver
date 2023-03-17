@@ -2,7 +2,7 @@ package org.uma.evolver;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithm;
+import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
@@ -32,7 +32,7 @@ public class MetaNSGAIIForMOEADRunner {
   public static void main(String[] args) throws IOException {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1();
-    ConfigurableAlgorithm configurableAlgorithm = new ConfigurableMOEAD(
+    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableMOEAD(
         problemWhoseConfigurationIsSearchedFor, 91, 5000,
         "resources/weightVectors");
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
