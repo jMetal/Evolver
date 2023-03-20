@@ -1,14 +1,11 @@
-package org.uma.evolver;
+package org.uma.evolver.picasso;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
-import org.uma.evolver.util.OutputResultsManagement;
-import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.ParameterManagement;
-import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -41,8 +38,8 @@ public class AsyncNSGAIIRunner {
     MutationOperator<DoubleSolution> mutation;
 
     int populationSize = 50;
-    int maxEvaluations = 1000;
-    int numberOfCores = 10;
+    int maxEvaluations = 5000;
+    int numberOfCores = 100;
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
@@ -50,7 +47,7 @@ public class AsyncNSGAIIRunner {
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT1.csv",
-        indicators, 3);
+        indicators, 15);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -60,39 +57,32 @@ public class AsyncNSGAIIRunner {
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-
-    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "asyncOutputFiles");
-    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
-
-    long initTime = System.currentTimeMillis();
-
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(
             numberOfCores, configurableProblem, populationSize, crossover, mutation,
             new TerminationByEvaluations(maxEvaluations));
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(10);
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>(
-            "NSGA-II",
-            80, 100, null, indicators.get(0).name(), indicators.get(1).name());
-
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(2000, 3000, 4000), outputResultsManagement);
-
-    nsgaii.getObservable().register(evaluationObserver);
-    nsgaii.getObservable().register(runTimeChartObserver);
-    nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
-
     nsgaii.run();
 
-    long endTime = System.currentTimeMillis();
+    var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
+    nonDominatedSolutionsArchive.addAll(nsgaii.getResult());
+    String problemDescription =
+        "Async NSGA-II" + "." + problemWhoseConfigurationIsSearchedFor.name() + "."
+            + indicators.get(0).name() + "." + indicators.get(1).name() + "."
+            + problemWhoseConfigurationIsSearchedFor.numberOfObjectives();
+    new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
+        .setVarFileOutputContext(
+            new DefaultFileOutputContext("VAR." + problemDescription + ".csv", ","))
+        .setFunFileOutputContext(
+            new DefaultFileOutputContext("FUN." + problemDescription + ".csv", ","))
+        .print();
 
-    System.out.println("Total computing time: " + (endTime - initTime)) ;
+    ParameterManagement.writeDecodedSolutionsFoFile(configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(), "VAR." + problemDescription + ".Conf.csv");
 
-    outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
-    outputResultsManagement.writeResultsToFiles(nsgaii.getResult());
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
+        configurableProblem.parameters(),
+        nonDominatedSolutionsArchive.solutions(),
+        "VAR." + problemDescription + ".Conf.DoubleValues.csv");
   }
 }
