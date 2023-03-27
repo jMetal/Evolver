@@ -17,6 +17,7 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
@@ -35,12 +36,12 @@ public class MetaNSGAIIForNSGAIIRunner {
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT1.csv",
-        indicators, 3);
+        indicators, 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
