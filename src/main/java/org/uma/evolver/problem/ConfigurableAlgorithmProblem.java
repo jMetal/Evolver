@@ -55,6 +55,10 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
     computeNormalizedReferenceFront(referenceFrontFileName);
 
+    // Configure indicators
+    for (QualityIndicator indicator: indicators)
+      indicator.referenceFront(normalizedReferenceFront);
+
     variableBounds(lowerLimit, upperLimit);
     for (var parameter : parameters) {
       JMetalLogger.logger.info(parameter.name() + ",");
@@ -120,10 +124,8 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    IntStream.range(0, indicators.size()).forEach(i -> {
-      indicators.get(i).referenceFront(normalizedReferenceFront);
-      solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
-    });
+    for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
+      solution.objectives()[indicatorId] = indicators.get(indicatorId).compute(normalizedFront);
 
 
    /*
@@ -136,8 +138,7 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
   private double[] computeIndependentRuns(int numberOfRuns, ConfigurableNSGAII algorithm) {
     double[] medianIndicatorValues = new double[indicators.size()];
-    double[] valuesFirstIndicator = new double[numberOfRuns];
-    double[] valuesSecondIndicator = new double[numberOfRuns];
+    double[][] valuesPerIndicator = new double[indicators.size()][numberOfRuns];
 
     for (int i = 0; i < numberOfIndependentRuns; i++) {
       EvolutionaryAlgorithm<DoubleSolution> nsgaII = algorithm.create();
@@ -154,15 +155,12 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
               NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
               NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-      indicators.get(0).referenceFront(normalizedReferenceFront);
-      indicators.get(1).referenceFront(normalizedReferenceFront);
-
-      valuesFirstIndicator[i] = indicators.get(0).compute(normalizedFront);
-      valuesSecondIndicator[i] = indicators.get(1).compute(normalizedFront);
+      for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
+        valuesPerIndicator[indicatorId][i] = indicators.get(indicatorId).compute(normalizedFront);
     }
 
-    medianIndicatorValues[0] = median(valuesFirstIndicator);
-    medianIndicatorValues[1] = median(valuesSecondIndicator);
+    for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
+      medianIndicatorValues[indicatorId] = median(valuesPerIndicator[indicatorId]);
 
     return medianIndicatorValues;
   }
