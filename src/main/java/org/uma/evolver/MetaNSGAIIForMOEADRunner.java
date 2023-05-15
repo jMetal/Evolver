@@ -7,8 +7,10 @@ import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
+import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
+import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -33,7 +35,7 @@ public class MetaNSGAIIForMOEADRunner {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableMOEAD(
-        problemWhoseConfigurationIsSearchedFor, 91, 5000,
+        problemWhoseConfigurationIsSearchedFor, 91, 30000,
         "resources/weightVectors");
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/DTLZ1.3D.csv",
@@ -50,7 +52,8 @@ public class MetaNSGAIIForMOEADRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(2000);
+    int maxEvaluations = 3000 ;
+    Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,
@@ -59,7 +62,7 @@ public class MetaNSGAIIForMOEADRunner {
         crossover,
         mutation)
         .setTermination(termination)
-        //.setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);
@@ -69,16 +72,23 @@ public class MetaNSGAIIForMOEADRunner {
             indicators.get(0).name(),
             indicators.get(1).name());
 
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        "MOEAD", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
+        "outputFiles");
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
+        List.of(1000, 2000), outputResultsManagement);
+
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(runTimeChartObserver);
+    nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();
 
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "MOEAD", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators, "results") ;
-    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(nsgaii.result());
 
     //System.exit(0) ;

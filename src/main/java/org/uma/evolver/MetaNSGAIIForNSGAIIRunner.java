@@ -60,11 +60,6 @@ public class MetaNSGAIIForNSGAIIRunner {
     int maxEvaluations = 3000 ;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
-    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "outputFiles");
-    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
-
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,
         populationSize,
@@ -78,6 +73,11 @@ public class MetaNSGAIIForNSGAIIRunner {
     var evaluationObserver = new EvaluationObserver(10);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
+
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
+        "outputFiles");
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
         List.of(2000, 3000), outputResultsManagement);

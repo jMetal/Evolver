@@ -3,6 +3,7 @@ package org.uma.evolver.algorithm.runner;
 import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoMOPSO;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -17,14 +18,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADRunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 41 --maximumNumberOfReplacedSolutions 4 --aggregationFunction weightedSum --pbiTheta 37.09405784937688 --normalizeObjectives 0 --algorithmResult externalArchive --externalArchive crowdingDistanceArchive --createInitialSolutions scatterSearch --variation differentialEvolutionVariation --crossover BLX_ALPHA --crossoverProbability 0.12398856205047229 --crossoverRepairStrategy bounds --sbxDistributionIndex 128.30103610901682 --blxAlphaCrossoverAlphaValue 0.09195876308331126 --mutation nonUniform --mutationProbabilityFactor 0.10872669810645894 --mutationRepairStrategy round --polynomialMutationDistributionIndex 235.02566297628192 --linkedPolynomialMutationDistributionIndex 265.2419384945447 --uniformMutationPerturbation 0.7992184102359726 --nonUniformMutationPerturbation 0.44570976889667474 --mutation uniform --mutationProbabilityFactor 0.6283638146514654 --mutationRepairStrategy round --polynomialMutationDistributionIndex 362.01547002572465 --linkedPolynomialMutationDistributionIndex 297.6862984765796 --uniformMutationPerturbation 0.15524189122298251 --nonUniformMutationPerturbation 0.8740478495903546 --differentialEvolutionCrossover RAND_1_BIN --CR 0.4863467818476792 --F 0.964351570706898 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.03298074450258348 \n")
+        ("--neighborhoodSize 43 --maximumNumberOfReplacedSolutions 1 --aggregationFunction penaltyBoundaryIntersection --normalizeObjectives 0 --epsilonParameterForNormalizing 17.46504421386795 --pbiTheta 107.57445663482368 --normalizeObjectives 0 --epsilonParameterForNormalizing 1.4018499168043896 --algorithmResult population --externalArchive unboundedArchive --createInitialSolutions scatterSearch --variation differentialEvolutionVariation --crossover SBX --crossoverProbability 0.5867310325782787 --crossoverRepairStrategy random --sbxDistributionIndex 262.0340226214047 --blxAlphaCrossoverAlphaValue 0.9556552375638893 --mutation polynomial --mutationProbabilityFactor 0.2014306664038843 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 185.0958969084788 --linkedPolynomialMutationDistributionIndex 279.7999403335567 --uniformMutationPerturbation 0.9247582536708376 --nonUniformMutationPerturbation 0.8922611123965717 --mutation nonUniform --mutationProbabilityFactor 1.3221488924923648 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 345.980810876771 --linkedPolynomialMutationDistributionIndex 362.41794589899155 --uniformMutationPerturbation 0.7872365536587279 --nonUniformMutationPerturbation 0.09775886868339138 --differentialEvolutionCrossover RAND_1_EXP --CR 0.2697168926319783 --F 0.49424237086567163 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.7859655676020593 \n")
             .split("\\s+");
 
-    var autoMOEAD = new ConfigurableMOEAD(new ZDT1(), 100, 10000,
-        "resources/weigthVectors");
+    var autoMOEAD = new ConfigurableMOEAD(new DTLZ1(), 91, 30000,
+        "resources/weightVectors");
     autoMOEAD.parse(parameters);
 
     AutoMOPSO.print(autoMOEAD.configurableParameterList());
