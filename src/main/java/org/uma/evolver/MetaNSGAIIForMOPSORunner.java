@@ -36,7 +36,7 @@ public class MetaNSGAIIForMOPSORunner {
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableMOPSO(
         problemWhoseConfigurationIsSearchedFor, 100, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/ZDT1.csv",
+        "resources/referenceFronts/ZDT1.csv",
         indicators,1);
 
     double crossoverProbability = 0.9;
@@ -50,7 +50,7 @@ public class MetaNSGAIIForMOPSORunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    Termination termination = new TerminationByEvaluations(2000);
+    Termination termination = new TerminationByEvaluations(3000);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
         configurableProblem,

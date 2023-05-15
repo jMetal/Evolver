@@ -23,7 +23,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value> and the
+ * Class configuring MOEAD/D using arguments in the form <key, value> and the
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
