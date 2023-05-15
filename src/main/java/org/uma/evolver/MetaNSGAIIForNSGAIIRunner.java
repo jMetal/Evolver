@@ -16,7 +16,10 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -36,11 +39,11 @@ public class MetaNSGAIIForNSGAIIRunner {
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1_2D();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+        problemWhoseConfigurationIsSearchedFor, 50, 20000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/ZDT1.csv",
+        "resources/referenceFronts/DTLZ1.2D.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;
@@ -54,7 +57,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 5000 ;
+    int maxEvaluations = 3000 ;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
@@ -77,7 +80,7 @@ public class MetaNSGAIIForNSGAIIRunner {
         new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(2000, 3000, 4000), outputResultsManagement);
+        List.of(2000, 3000), outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
