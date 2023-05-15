@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.auto.parameter.Parameter;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -54,10 +52,6 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     }
 
     computeNormalizedReferenceFront(referenceFrontFileName);
-
-    // Configure indicators
-    for (QualityIndicator indicator: indicators)
-      indicator.referenceFront(normalizedReferenceFront);
 
     variableBounds(lowerLimit, upperLimit);
     for (var parameter : parameters) {
@@ -125,16 +119,11 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
             NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
             NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-<<<<<<< HEAD
     IntStream.range(0, indicators.size()).forEach(i -> {
       indicators.get(i).referenceFront(normalizedReferenceFront);
       solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
     });
 */
-=======
-    for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
-      solution.objectives()[indicatorId] = indicators.get(indicatorId).compute(normalizedFront);
->>>>>>> feat/improvements
 
     double[] medianIndicatorValues = computeIndependentRuns(parameterArray) ;
     IntStream.range(0, indicators.size()).forEach(i -> solution.objectives()[i] = medianIndicatorValues[i]);
@@ -144,12 +133,8 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
 
   private double[] computeIndependentRuns(String[] parameterArray) {
     double[] medianIndicatorValues = new double[indicators.size()];
-<<<<<<< HEAD
     double[][] indicatorValues = new double[indicators.size()][];
     IntStream.range(0, indicators.size()).forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
-=======
-    double[][] valuesPerIndicator = new double[indicators.size()][numberOfRuns];
->>>>>>> feat/improvements
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm = configurableAlgorithm
@@ -169,7 +154,6 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
               NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
               NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-<<<<<<< HEAD
       IntStream.range(0, indicators.size()).forEach(index -> {
         indicators.get(index).referenceFront(normalizedReferenceFront);
       });
@@ -183,14 +167,6 @@ public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
     for (int i = 0 ; i < indicators.size(); i++) {
       medianIndicatorValues[i] = median(indicatorValues[i]) ;
     }
-=======
-      for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
-        valuesPerIndicator[indicatorId][i] = indicators.get(indicatorId).compute(normalizedFront);
-    }
-
-    for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++)
-      medianIndicatorValues[indicatorId] = median(valuesPerIndicator[indicatorId]);
->>>>>>> feat/improvements
 
     return medianIndicatorValues;
   }
