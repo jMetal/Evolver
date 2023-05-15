@@ -84,6 +84,8 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
   public void configure() {
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
+    RealParameter epsilonParameter = new RealParameter("epsilonParameterForNormalizing", 1.0E-8, 25);
+    normalizeObjectivesParameter.addGlobalParameter(epsilonParameter);
 
     neighborhoodSizeParameter = new IntegerParameter("neighborhoodSize",5, 50);
     neighborhoodSelectionProbabilityParameter =
@@ -95,7 +97,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
             List.of("tschebyscheff", "weightedSum", "penaltyBoundaryIntersection"));
     RealParameter pbiTheta = new RealParameter("pbiTheta",1.0, 200);
     aggregativeFunctionParameter.addSpecificParameter("penaltyBoundaryIntersection", pbiTheta);
-
+    aggregativeFunctionParameter.addGlobalParameter(normalizeObjectivesParameter);
     algorithmResult();
     createInitialSolution();
     selection();
