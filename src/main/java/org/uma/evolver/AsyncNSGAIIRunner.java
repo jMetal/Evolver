@@ -60,7 +60,6 @@ public class AsyncNSGAIIRunner {
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
         "asyncOutputFiles");

@@ -55,7 +55,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   private ProbabilityParameter neighborhoodSelectionProbabilityParameter;
   private IntegerParameter neighborhoodSizeParameter;
   private IntegerParameter maximumNumberOfReplacedSolutionsParameter;
-  private AggregationFunctionParameter aggregativeFunctionParameter;
+  private AggregationFunctionParameter aggregationFunctionParameter;
   private BooleanParameter normalizeObjectivesParameter ;
   private int populationSize ;
   private int maximumNumberOfEvaluations;
@@ -92,12 +92,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
         new ProbabilityParameter("neighborhoodSelectionProbability");
     maximumNumberOfReplacedSolutionsParameter =
         new IntegerParameter("maximumNumberOfReplacedSolutions",1, 5);
-    aggregativeFunctionParameter =
+    aggregationFunctionParameter =
         new AggregationFunctionParameter(
             List.of("tschebyscheff", "weightedSum", "penaltyBoundaryIntersection"));
     RealParameter pbiTheta = new RealParameter("pbiTheta",1.0, 200);
-    aggregativeFunctionParameter.addSpecificParameter("penaltyBoundaryIntersection", pbiTheta);
-    aggregativeFunctionParameter.addGlobalParameter(normalizeObjectivesParameter);
+    aggregationFunctionParameter.addSpecificParameter("penaltyBoundaryIntersection", pbiTheta);
+    aggregationFunctionParameter.addGlobalParameter(normalizeObjectivesParameter);
     algorithmResult();
     createInitialSolution();
     selection();
@@ -105,7 +105,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
     autoConfigurableParameterList.add(neighborhoodSizeParameter);
     autoConfigurableParameterList.add(maximumNumberOfReplacedSolutionsParameter);
-    autoConfigurableParameterList.add(aggregativeFunctionParameter);
+    autoConfigurableParameterList.add(aggregationFunctionParameter);
     autoConfigurableParameterList.add(normalizeObjectivesParameter);
 
     autoConfigurableParameterList.add(algorithmResultParameter);
@@ -276,8 +276,8 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
     int maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutionsParameter.value();
 
-    aggregativeFunctionParameter.normalizedObjectives(normalizeObjectivesParameter.value());
-    AggregationFunction aggregativeFunction = aggregativeFunctionParameter.getParameter();
+    aggregationFunctionParameter.normalizedObjectives(normalizeObjectivesParameter.value());
+    AggregationFunction aggregativeFunction = aggregationFunctionParameter.getParameter();
     var replacement =
         new MOEADReplacement<>(
             selection,

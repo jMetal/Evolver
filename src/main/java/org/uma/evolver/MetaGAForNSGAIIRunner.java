@@ -15,9 +15,11 @@ import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutation
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
@@ -33,15 +35,15 @@ public class MetaGAForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
 
-    List<QualityIndicator> indicators = List.of(new Epsilon());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
+    List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 5000);
+        problemWhoseConfigurationIsSearchedFor, 50, 8000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/ZDT4.csv",
+        "resources/referenceFronts/ZDT4.ReferencePoints.csv",
         indicators, 1);
 
-    int populationSize = 100;
+    int populationSize = 50;
     int offspringPopulationSize = populationSize;
 
     var createInitialPopulation = new RandomSolutionsCreation<>(configurableProblem, populationSize);
@@ -92,6 +94,5 @@ public class MetaGAForNSGAIIRunner {
 
     geneticAlgorithm.run();
 
-    //System.exit(0) ;
   }
 }
