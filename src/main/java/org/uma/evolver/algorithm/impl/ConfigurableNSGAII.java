@@ -74,6 +74,10 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
     return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
   }
 
+  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) {
+    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
+  }
+
   private void configure() {
     algorithmResult();
     createInitialSolution();

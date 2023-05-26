@@ -82,6 +82,10 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
   }
 
+  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) {
+    return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
+  }
+
   public void configure() {
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
     RealParameter epsilonParameter = new RealParameter("epsilonParameterForNormalizing", 1.0E-8, 25);

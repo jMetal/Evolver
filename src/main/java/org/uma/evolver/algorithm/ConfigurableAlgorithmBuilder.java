@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.auto.parameter.Parameter;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public interface ConfigurableAlgorithmBuilder {
@@ -13,6 +14,8 @@ public interface ConfigurableAlgorithmBuilder {
   List<Parameter<?>> configurableParameterList() ;
 
   ConfigurableAlgorithmBuilder createBuilderInstance() ;
+
+  ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) ;
 
   Algorithm<List<DoubleSolution>> build() ;
 
