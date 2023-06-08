@@ -18,10 +18,13 @@ import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GeneralizedSpread;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -38,12 +41,12 @@ public class MetaNSGAIIForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
 
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1_2D();
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 50, 20000);
+        problemWhoseConfigurationIsSearchedFor, 50, 5000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/DTLZ1.2D.csv",
+        "resources/referenceFronts/DTLZ3.3D.csv",
         indicators, 1);
 
     double crossoverProbability = 0.9;
@@ -57,7 +60,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 3000 ;
+    int maxEvaluations = 2000 ;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(

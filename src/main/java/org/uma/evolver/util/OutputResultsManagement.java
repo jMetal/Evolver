@@ -32,6 +32,7 @@ public class OutputResultsManagement {
     this.parameters = outputResultsManagementParameters;
 
     File outputDirectory = new File(parameters.outputDirectoryName) ;
+    /*
     if (outputDirectory.exists()) {
       FileUtils.deleteDirectory(outputDirectory);
     }
@@ -39,6 +40,12 @@ public class OutputResultsManagement {
     boolean result = new File(parameters.outputDirectoryName).mkdirs() ;
     if (!result) {
       throw new JMetalException("Error creating directory " + parameters.outputDirectoryName) ;
+    }*/
+    if (!outputDirectory.exists()) {
+      boolean result = new File(parameters.outputDirectoryName).mkdirs() ;
+      if (!result) {
+        throw new JMetalException("Error creating directory " + parameters.outputDirectoryName) ;
+      }
     }
   }
 
