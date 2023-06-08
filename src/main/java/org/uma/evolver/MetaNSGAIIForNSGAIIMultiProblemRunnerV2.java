@@ -1,9 +1,11 @@
 package org.uma.evolver;
 
+import java.io.IOException;
+import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
-import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
+import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -16,34 +18,38 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Class configuring NSGA-II using arguments in the form <key, value> and the
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MetaNSGAIIForNSGAIIMultiProblemRunner {
+public class MetaNSGAIIForNSGAIIMultiProblemRunnerV2 {
 
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 100);
+        problemWhoseConfigurationIsSearchedFor, 100, 1000);
     var configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithm,
-        List.of(problemWhoseConfigurationIsSearchedFor),
-        List.of("resources/referenceFronts/ZDT1.csv"),
+        List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6()),
+        List.of("resources/referenceFronts/ZDT1.csv",
+            "resources/referenceFronts/ZDT2.csv",
+            "resources/referenceFronts/ZDT3.csv",
+            "resources/referenceFronts/ZDT4.csv",
+            "resources/referenceFronts/ZDT6.csv"),
         indicators,
-        List.of(8000), 1);
+        List.of(2000, 2000, 2000, 2000, 2000), 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -56,7 +62,7 @@ public class MetaNSGAIIForNSGAIIMultiProblemRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 3000 ;
+    int maxEvaluations = 500 ;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
