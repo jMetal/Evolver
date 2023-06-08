@@ -100,7 +100,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
     return new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
   }
 
-  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) {
+  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem, int maximumNumberOfEvaluations) {
     return new ConfigurableMOPSO(problem, archiveSize, maximumNumberOfEvaluations) ;
   }
 

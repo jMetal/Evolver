@@ -82,7 +82,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
   }
 
-  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) {
+  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem, int maximumNumberOfEvaluations) {
     return new ConfigurableMOEAD(problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory) ;
   }
 

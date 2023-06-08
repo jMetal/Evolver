@@ -25,6 +25,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
 
   private final List<DoubleProblem> problems;
   private List<QualityIndicator> indicators;
+  private List<Integer> evaluations;
   private List<Parameter<?>> parameters;
   private List<double[][]> normalizedReferenceFronts;
   private List<double[][]> referenceFronts;
@@ -32,17 +33,28 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
   private ConfigurableAlgorithmBuilder configurableAlgorithm;
 
   public ConfigurableAlgorithmMultiProblem(ConfigurableAlgorithmBuilder configurableAlgorithm, List<DoubleProblem> problems,
-                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators) {
-    this(configurableAlgorithm, problems, referenceFrontFileNames, indicators, 1);
+                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators, List<Integer> evaluations) {
+    this(configurableAlgorithm, problems, referenceFrontFileNames, indicators, evaluations, 1);
   }
 
   public ConfigurableAlgorithmMultiProblem(ConfigurableAlgorithmBuilder configurableAlgorithmBuilder, List<DoubleProblem> problems,
-                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators,
+                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators, List<Integer> evaluations,
                                            int numberOfIndependentRuns) {
+
+    if (problems.size() != referenceFrontFileNames.size()) {
+      System.err.println("There must be the same number of problems as reference fronts: " + problems.size() + " vs " + referenceFrontFileNames.size());
+      System.exit(1);
+    }
+    if (problems.size() != evaluations.size()) {
+      System.err.println("There must be the same number of problems as different evaluations: " + problems.size() + " vs " + evaluations.size());
+      System.exit(1);
+    }
+
     this.configurableAlgorithm = configurableAlgorithmBuilder;
     this.indicators = indicators;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
     this.problems = problems;
+    this.evaluations = evaluations;
 
     parameters = ConfigurableAlgorithmBuilder.parameterFlattening(
         configurableAlgorithmBuilder.configurableParameterList());
@@ -144,7 +156,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
     for (int indicatorIndex = 0 ; indicatorIndex < indicators.size(); indicatorIndex++) {
 
       // Group the indicator values per problem
-      double[] indicatorPerProblem = new double[indicators.size()];
+      double[] indicatorPerProblem = new double[problems.size()];
       for (int problemIndex = 0 ; problemIndex < problems.size(); problemIndex++)
         indicatorPerProblem[problemIndex] = indicatorValuesPerProblem[problemIndex][indicatorIndex];
 
@@ -165,7 +177,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm = configurableAlgorithm
-          .createBuilderInstance(problems.get(problem))
+          .createBuilderInstance(problems.get(problem), evaluations.get(problem))
           .parse(parameterArray)
           .build();
 

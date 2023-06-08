@@ -42,7 +42,8 @@ public class MetaNSGAIIForNSGAIIMultiProblemRunner {
     var configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithm,
         List.of(problemWhoseConfigurationIsSearchedFor),
         List.of("resources/referenceFronts/ZDT1.csv"),
-        indicators, 1);
+        indicators,
+        List.of(8000), 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;

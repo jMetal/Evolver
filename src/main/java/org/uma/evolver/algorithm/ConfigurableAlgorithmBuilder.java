@@ -15,7 +15,7 @@ public interface ConfigurableAlgorithmBuilder {
 
   ConfigurableAlgorithmBuilder createBuilderInstance() ;
 
-  ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem) ;
+  ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem, int maximumNumberOfEvaluations) ;
 
   Algorithm<List<DoubleSolution>> build() ;
 
