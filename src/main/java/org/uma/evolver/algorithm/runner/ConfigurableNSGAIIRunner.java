@@ -3,6 +3,7 @@ package org.uma.evolver.algorithm.runner;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -21,13 +22,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 89 --externalArchive crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --variation crossoverAndMutationVariation --offspringPopulationSize 116 --crossover SBX --crossoverProbability 0.8523883654398052 --crossoverRepairStrategy bounds --sbxDistributionIndex 31.0614324377593 --blxAlphaCrossoverAlphaValue 0.28108270603821034 --mutation linkedPolynomial --mutationProbabilityFactor 0.6418667069098493 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 278.0645176753264 --linkedPolynomialMutationDistributionIndex 24.20202139525661 --uniformMutationPerturbation 0.5307128097708349 --nonUniformMutationPerturbation 0.9655689508580556 --selection tournament --selectionTournamentSize 9 \n ")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 58 --externalArchive unboundedArchive --createInitialSolutions scatterSearch --variation crossoverAndMutationVariation --offspringPopulationSize 130 --crossover SBX --crossoverProbability 0.9421322837028916 --crossoverRepairStrategy random --sbxDistributionIndex 70.47970043926885 --blxAlphaCrossoverAlphaValue 0.2943329839650555 --mutation uniform --mutationProbabilityFactor 0.6999930028979198 --mutationRepairStrategy round --polynomialMutationDistributionIndex 66.93217044933847 --linkedPolynomialMutationDistributionIndex 72.45985785314409 --uniformMutationPerturbation 0.4171820687324503 --nonUniformMutationPerturbation 0.4377666620287536 --selection random --selectionTournamentSize 4 \n")
             .split("\\s+");
 
-    var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 25000);
+    var autoNSGAII = new ConfigurableNSGAII(new DTLZ3(), 100, 40000);
     autoNSGAII.parse(parameters);
 
     AutoNSGAII.print(autoNSGAII.configurableParameterList());
