@@ -97,7 +97,7 @@ public class SwarmIntelligenceStudy10000FinalWith5000 {
         new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("SwarmIntelligenceExperiment10000FinalWith5000")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
-            .setReferenceFrontDirectory("resources/referenceFrontsCSV")
+            .setReferenceFrontDirectory("resources/referenceFronts")
             .setExperimentBaseDirectory(experimentBaseDirectory)
             .setOutputParetoFrontFileName("FUN")
             .setOutputParetoSetFileName("VAR")

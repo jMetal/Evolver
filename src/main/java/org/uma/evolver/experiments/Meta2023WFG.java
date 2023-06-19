@@ -36,18 +36,12 @@ public class Meta2023WFG {
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
 
-    problemList.add(new ExperimentProblem<>(new ZDT1()).setReferenceFront("ZDT1.csv"));
-    problemList.add(new ExperimentProblem<>(new ZDT2()).setReferenceFront("ZDT2.csv"));
-    problemList.add(new ExperimentProblem<>(new ZDT3()).setReferenceFront("ZDT3.csv"));
-    problemList.add(new ExperimentProblem<>(new ZDT4()).setReferenceFront("ZDT4.csv"));
-    problemList.add(new ExperimentProblem<>(new ZDT6()).setReferenceFront("ZDT6.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ1_2D()).setReferenceFront("DTLZ1.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ2_2D()).setReferenceFront("DTLZ2.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ3_2D()).setReferenceFront("DTLZ3.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ4_2D()).setReferenceFront("DTLZ4.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ5_2D()).setReferenceFront("DTLZ5.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ6_2D()).setReferenceFront("DTLZ6.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ7_2D()).setReferenceFront("DTLZ7.2D.csv"));
+    //problemList.add(new ExperimentProblem<>(new ZDT1()).setReferenceFront("ZDT1.csv"));
+    //problemList.add(new ExperimentProblem<>(new ZDT2()).setReferenceFront("ZDT2.csv"));
+    //problemList.add(new ExperimentProblem<>(new ZDT3()).setReferenceFront("ZDT3.csv"));
+    //problemList.add(new ExperimentProblem<>(new ZDT4()).setReferenceFront("ZDT4.csv"));
+    //problemList.add(new ExperimentProblem<>(new ZDT6()).setReferenceFront("ZDT6.csv"));
+
     problemList.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.2D.csv"));
     problemList.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.2D.csv"));
     problemList.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.2D.csv"));
@@ -57,11 +51,18 @@ public class Meta2023WFG {
     problemList.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.2D.csv"));
     problemList.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.2D.csv"));
     problemList.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.2D.csv"));
-    problemList.add(new ExperimentProblem<>(new RE21()).setReferenceFront("RE21.csv"));
-    problemList.add(new ExperimentProblem<>(new RE22()).setReferenceFront("RE22.csv"));
-    problemList.add(new ExperimentProblem<>(new RE23()).setReferenceFront("RE23.csv"));
-    problemList.add(new ExperimentProblem<>(new RE24()).setReferenceFront("RE24.csv"));
-    problemList.add(new ExperimentProblem<>(new RE25()).setReferenceFront("RE25.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ1_2D()).setReferenceFront("DTLZ1.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ2_2D()).setReferenceFront("DTLZ2.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ3_2D()).setReferenceFront("DTLZ3.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ4_2D()).setReferenceFront("DTLZ4.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ5_2D()).setReferenceFront("DTLZ5.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ6_2D()).setReferenceFront("DTLZ6.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new DTLZ7_2D()).setReferenceFront("DTLZ7.2D.csv"));
+    //problemList.add(new ExperimentProblem<>(new RE21()).setReferenceFront("RE21.csv"));
+    //problemList.add(new ExperimentProblem<>(new RE22()).setReferenceFront("RE22.csv"));
+    //problemList.add(new ExperimentProblem<>(new RE23()).setReferenceFront("RE23.csv"));
+    //problemList.add(new ExperimentProblem<>(new RE24()).setReferenceFront("RE24.csv"));
+    //problemList.add(new ExperimentProblem<>(new RE25()).setReferenceFront("RE25.csv"));
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
         configureAlgorithmList(problemList);
 
@@ -75,11 +76,11 @@ public class Meta2023WFG {
             .setOutputParetoSetFileName("VAR")
             .setIndicatorList(Arrays.asList(
                 new Epsilon(),
-                new Spread(),
-                new GenerationalDistance(),
+                //new Spread(),
+                //new GenerationalDistance(),
                 new PISAHypervolume(),
                 new NormalizedHypervolume(),
-                new InvertedGenerationalDistance(),
+                //new InvertedGenerationalDistance(),
                 new InvertedGenerationalDistancePlus()
                             ))
             .setIndependentRuns(INDEPENDENT_RUNS)
@@ -88,10 +89,11 @@ public class Meta2023WFG {
 
     //new ExecuteAlgorithms<>(experiment).run();
 
-    //new ComputeQualityIndicators<>(experiment).run();
-    //new GenerateLatexTablesWithStatistics(experiment).run();
-    //new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-    //new GenerateFriedmanHolmTestTables<>(experiment).run();
+    new ComputeQualityIndicators<>(experiment).run();
+    new GenerateLatexTablesWithStatistics(experiment).run();
+    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+    new GenerateFriedmanHolmTestTables<>(experiment).run();
+    //new GenerateFriedmanTestTables<>(experiment).run();
     //new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).setDisplayNotch().run();
     new GenerateHtmlPages<>(experiment, StudyVisualizer.TYPE_OF_FRONT_TO_SHOW.MEDIAN).run();
   }
@@ -106,10 +108,10 @@ public class Meta2023WFG {
       for (ExperimentProblem<DoubleSolution> experimentProblem : problemList) {
         nsgaII(algorithms, run, experimentProblem);
         smpso(algorithms, run, experimentProblem);
-        omopso(algorithms, run, experimentProblem);
-        autoNSGAII_ZDT_1(algorithms, run, experimentProblem);
-        autoNSGAII_ZDT_2(algorithms, run, experimentProblem);
-        autoNSGAII_WFG_1(algorithms, run, experimentProblem);
+        //omopso(algorithms, run, experimentProblem);
+        //autoNSGAII_ZDT_1(algorithms, run, experimentProblem);
+        //autoNSGAII_ZDT_2(algorithms, run, experimentProblem);
+        //autoNSGAII_WFG_1(algorithms, run, experimentProblem);
         autoNSGAII_WFG_2(algorithms, run, experimentProblem);
       }
     }
@@ -121,7 +123,7 @@ public class Meta2023WFG {
         ("--problemName "+  experimentProblem.getProblem().getClass().getName() + " "
             + "--randomGeneratorSeed 12 "
             + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 5000 "
+            + "--maximumNumberOfEvaluations 25000 "
             + "--algorithmResult population "
             + "--populationSize 100 "
             + "--offspringPopulationSize 100 "
@@ -155,7 +157,7 @@ public class Meta2023WFG {
         ("--problemName " + experimentProblem.getProblem().getClass().getName() + " "
             + "--randomGeneratorSeed 12 "
             + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 5000 "
+            + "--maximumNumberOfEvaluations 25000 "
             + "--algorithmResult leaderArchive "
             + "--swarmSize 100 "
             + "--archiveSize 100 "
@@ -200,7 +202,7 @@ public class Meta2023WFG {
         ("--problemName " + experimentProblem.getProblem().getClass().getName() + " "
             + "--randomGeneratorSeed 12 "
             + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 5000 "
+            + "--maximumNumberOfEvaluations 25000 "
             + "--swarmSize 100 "
             + "--archiveSize 100 "
             + "--algorithmResult leaderArchive "
@@ -257,7 +259,7 @@ public class Meta2023WFG {
     EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.create();
 
     algorithms.add(
-            new ExperimentAlgorithm<>(algorithm, "AUTO-NSGAII-ZDT-1", experimentProblem, run));
+            new ExperimentAlgorithm<>(algorithm, "NSGAIIZDT1", experimentProblem, run));
   }
 
   private static void autoNSGAII_ZDT_2(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
@@ -276,7 +278,7 @@ public class Meta2023WFG {
     EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.create();
 
     algorithms.add(
-            new ExperimentAlgorithm<>(algorithm, "AUTO-NSGAII-ZDT-2", experimentProblem, run));
+            new ExperimentAlgorithm<>(algorithm, "NSGAIIZDT2", experimentProblem, run));
   }
 
   private static void autoNSGAII_WFG_1(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
@@ -295,7 +297,7 @@ public class Meta2023WFG {
     EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.create();
 
     algorithms.add(
-            new ExperimentAlgorithm<>(algorithm, "AUTO-NSGAII-WFG-1", experimentProblem, run));
+            new ExperimentAlgorithm<>(algorithm, "NSGAIIWFG1", experimentProblem, run));
   }
 
   private static void autoNSGAII_WFG_2(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
@@ -314,7 +316,7 @@ public class Meta2023WFG {
     EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.create();
 
     algorithms.add(
-            new ExperimentAlgorithm<>(algorithm, "AUTO-NSGAII-WFG-2", experimentProblem, run));
+            new ExperimentAlgorithm<>(algorithm, "NSGAIIWFG2", experimentProblem, run));
   }
 
 }

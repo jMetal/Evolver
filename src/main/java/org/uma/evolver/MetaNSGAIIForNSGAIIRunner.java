@@ -67,16 +67,16 @@ public class MetaNSGAIIForNSGAIIRunner {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(50, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "outputFiles2");
+        "resultsForMeta/ZDT4withArchive");
 
     var evaluationObserver = new EvaluationObserver(10);
-    //var frontChartObserver =
-    //    new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 100);
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 100);
 
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
@@ -84,7 +84,7 @@ public class MetaNSGAIIForNSGAIIRunner {
         List.of(1000, 2000), outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    //nsgaii.observable().register(frontChartObserver);
+    nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();

@@ -43,7 +43,7 @@ public class AsyncNSGAIIRunner {
 
     int populationSize = 50;
     int maxEvaluations = 3000;
-    int numberOfCores = 128;
+    int numberOfCores = 8;
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
