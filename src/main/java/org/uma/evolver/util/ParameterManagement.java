@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import org.uma.jmetal.auto.parameter.BooleanParameter;
+import org.uma.jmetal.auto.parameter.CategoricalIntegerParameter;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -23,6 +24,11 @@ public class ParameterManagement {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       var index = (int) Math.floor(value * categoricalParameter.validValues().size());
       result = categoricalParameter.validValues().get(index);
+    } else if (parameter instanceof CategoricalIntegerParameter) {
+      value = Math.min(value, 0.999999999999) ;
+      CategoricalIntegerParameter categoricalParameter = (CategoricalIntegerParameter) parameter;
+      var index = (int) Math.floor(value * categoricalParameter.validValues().size());
+      result = String.valueOf(categoricalParameter.validValues().get(index));
     } else if (parameter instanceof RealParameter) {
       RealParameter realParameter = (RealParameter) parameter;
       double min = realParameter.validValues().get(0);
@@ -53,6 +59,9 @@ public class ParameterManagement {
     if (parameter instanceof CategoricalParameter) {
       CategoricalParameter categoricalParameter = (CategoricalParameter) parameter;
       result = (int) Math.floor(value * categoricalParameter.validValues().size());
+    } else if (parameter instanceof CategoricalIntegerParameter) {
+      CategoricalIntegerParameter categoricalParameter = (CategoricalIntegerParameter) parameter;
+      result = Math.floor(value * categoricalParameter.validValues().size());
     } else if (parameter instanceof RealParameter) {
       RealParameter realParameter = (RealParameter) parameter;
       double min = realParameter.validValues().get(0);

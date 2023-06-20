@@ -1,11 +1,9 @@
 package org.uma.evolver;
 
-import java.io.IOException;
-import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
-import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -17,38 +15,35 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.GeneralizedSpread;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Class configuring NSGA-II using arguments in the form <key, value> and the
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MetaNSGAIIForNSGAIIRunner {
+public class MetaNSGAIIForNSGAIIMultiProblemRunner {
 
   public static void main(String[] args) throws IOException {
 
-
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT1();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
-    var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/ZDT4.csv",
-        indicators, 3);
+        problemWhoseConfigurationIsSearchedFor, 100, 100);
+    var configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithm,
+        List.of(problemWhoseConfigurationIsSearchedFor),
+        List.of("resources/referenceFronts/ZDT1.csv"),
+        indicators,
+        List.of(8000), 1);
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -61,7 +56,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 2000 ;
+    int maxEvaluations = 3000 ;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
@@ -74,23 +69,20 @@ public class MetaNSGAIIForNSGAIIRunner {
         .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
+    var evaluationObserver = new EvaluationObserver(10);
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
+
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "resultsForMetaV2/ZDT4WithoutArchive.2");
-
-
-    var evaluationObserver = new EvaluationObserver(50);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 100);
-
+        "outputFiles");
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(1000, 2000), outputResultsManagement);
+        List.of(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
-
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();
@@ -100,6 +92,6 @@ public class MetaNSGAIIForNSGAIIRunner {
     outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(nsgaii.result());
 
-    System.exit(0) ;
+    //System.exit(0) ;
   }
 }

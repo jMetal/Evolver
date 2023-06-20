@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
+import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -19,7 +20,7 @@ public class OutputResultsManagement {
 
   public record OutputResultsManagementParameters(
       String algorithmName,
-      ConfigurableAlgorithmProblem configurableAlgorithmProblem,
+      ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
       DoubleProblem problem,
       List<QualityIndicator> indicators,
       String outputDirectoryName) {
@@ -66,7 +67,7 @@ public class OutputResultsManagement {
   }
 
   private void writeDecodedVariablesAsDoubleValues(
-      ConfigurableAlgorithmProblem configurableAlgorithmProblem,
+      ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) throws IOException {
     var varWithDecodedDoubleValuesSolutionsFileName =
@@ -76,7 +77,7 @@ public class OutputResultsManagement {
         nonDominatedSolutionsArchive.solutions(), varWithDecodedDoubleValuesSolutionsFileName);
   }
 
-  private void writeDecodedVariables(ConfigurableAlgorithmProblem configurableAlgorithmProblem,
+  private void writeDecodedVariables(ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) throws IOException {
     var varWithDecodedSolutionsFileName =

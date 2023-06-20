@@ -19,7 +19,7 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
-public class ConfigurableAlgorithmProblem extends AbstractDoubleProblem {
+public class ConfigurableAlgorithmProblem extends ConfigurableAlgorithmBaseProblem  {
 
   private List<QualityIndicator> indicators;
   private List<Parameter<?>> parameters;

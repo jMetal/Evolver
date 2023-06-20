@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.jmetal.auto.parameter.CategoricalIntegerParameter;
 import org.uma.jmetal.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.auto.parameter.IntegerParameter;
 import org.uma.jmetal.auto.parameter.Parameter;
@@ -49,7 +50,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
   private IntegerParameter populationSizeWithArchiveParameter;
-  private IntegerParameter offspringPopulationSizeParameter;
+  private CategoricalIntegerParameter offspringPopulationSizeParameter;
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
   private SelectionParameter<DoubleSolution> selectionParameter;
   private VariationParameter variationParameter;
@@ -71,6 +72,10 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   @Override
   public ConfigurableAlgorithmBuilder createBuilderInstance() {
+    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
+  }
+
+  public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem, int maximumNumberOfEvaluations) {
     return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations) ;
   }
 
@@ -132,8 +137,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
         new RealParameter("nonUniformMutationPerturbation", 0.0, 1.0);
     mutationParameter.addSpecificParameter("nonUniform", nonUniformMutationPerturbation);
 
-    offspringPopulationSizeParameter = new IntegerParameter("offspringPopulationSize", 1,
-        400);
+    offspringPopulationSizeParameter = new CategoricalIntegerParameter("offspringPopulationSize", List.of(1, 2, 5, 10, 20, 50, 100, 200, 400));
 
     variationParameter =
         new VariationParameter(List.of("crossoverAndMutationVariation"));
@@ -158,7 +162,8 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   private void algorithmResult() {
     algorithmResultParameter =
-        new CategoricalParameter("algorithmResult", List.of("externalArchive", "population"));
+        new CategoricalParameter("algorithmResult", List.of("population", "externalArchive"));
+    new CategoricalParameter("algorithmResult", List.of("externalArchive", "population"));
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
     externalArchiveParameter = new ExternalArchiveParameter<>(
