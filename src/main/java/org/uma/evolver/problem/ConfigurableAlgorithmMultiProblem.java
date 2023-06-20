@@ -1,9 +1,8 @@
 package org.uma.evolver.problem;
 
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.parameter2.Parameter;
+import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;

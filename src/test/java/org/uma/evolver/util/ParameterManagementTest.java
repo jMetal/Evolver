@@ -7,8 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.uma.jmetal.auto.parameter.CategoricalParameter;
-import org.uma.jmetal.auto.parameter.RealParameter;
+
+import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.impl.RealParameter;
 import org.uma.jmetal.util.errorchecking.exception.ValueOutOfRangeException;
 
 class ParameterManagementTest {
