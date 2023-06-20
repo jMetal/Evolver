@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.runner;
 
 import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoMOPSO;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -28,7 +27,7 @@ public class ConfigurableMOEADRunner {
         "resources/weightVectors");
     autoMOEAD.parse(parameters);
 
-    AutoMOPSO.print(autoMOEAD.configurableParameterList());
+    ConfigurableMOEAD.print(autoMOEAD.configurableParameterList());
 
     EvolutionaryAlgorithm<DoubleSolution> mopso = autoMOEAD.build();
 

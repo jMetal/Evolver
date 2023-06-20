@@ -1,16 +1,14 @@
-package org.uma.evolver.parameter;
+package org.uma.evolver.parameterold;
 
 import java.util.List;
-import org.uma.jmetal.auto.parameter.CategoricalParameter;
-import org.uma.jmetal.auto.parameter.catalogue.CrossoverParameter;
-import org.uma.jmetal.auto.parameter.catalogue.DifferentialEvolutionCrossoverParameter;
-import org.uma.jmetal.auto.parameter.catalogue.MutationParameter;
+import org.uma.evolver.parameter2.catalogue.CrossoverParameter;
+import org.uma.evolver.parameter2.catalogue.DifferentialEvolutionCrossoverParameter;
+import org.uma.evolver.parameter2.impl.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
 import org.uma.jmetal.component.catalogue.ea.variation.impl.DifferentialEvolutionCrossoverVariation;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
-import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -41,7 +39,7 @@ public class VariationParameter extends CategoricalParameter {
         MutationParameter mutationParameter = (MutationParameter) findSpecificParameter("mutation");
         CrossoverOperator<DoubleSolution> crossoverOperator = crossoverParameter.getDoubleSolutionParameter();
         MutationOperator<DoubleSolution> mutationOperatorOperator =
-            mutationParameter.getDoubleSolutionParameter();
+            mutationParameter.getParameter();
         result =
             new CrossoverAndMutationVariation<>(
                 offspringPopulationSize, crossoverOperator, mutationOperatorOperator);
@@ -60,33 +58,10 @@ public class VariationParameter extends CategoricalParameter {
             new DifferentialEvolutionCrossoverVariation(
                 1,
                 differentialEvolutionCrossoverParameter.getParameter(),
-                mutationDEParameter.getDoubleSolutionParameter(),
+                mutationDEParameter.getParameter(),
                 subProblemIdGenerator);
       }
       default -> throw new JMetalException("Variation component unknown: " + value());
-    }
-
-    return result;
-  }
-
-  public Variation<? extends BinarySolution> getBinarySolutionParameter() {
-    Variation<BinarySolution> result;
-    int offspringPopulationSize = (Integer)findGlobalParameter("offspringPopulationSize").value() ;
-
-    if ("crossoverAndMutationVariation".equals(value())) {
-      CrossoverParameter crossoverParameter =
-          (CrossoverParameter) findSpecificParameter("crossover");
-      MutationParameter mutationParameter = (MutationParameter) findSpecificParameter("mutation");
-
-      CrossoverOperator<BinarySolution> crossoverOperator = crossoverParameter.getBinarySolutionParameter();
-      MutationOperator<BinarySolution> mutationOperatorOperator =
-          mutationParameter.getBinarySolutionParameter();
-
-      result =
-          new CrossoverAndMutationVariation<>(
-              offspringPopulationSize, crossoverOperator, mutationOperatorOperator);
-    } else {
-      throw new JMetalException("Variation component unknown: " + value());
     }
 
     return result;

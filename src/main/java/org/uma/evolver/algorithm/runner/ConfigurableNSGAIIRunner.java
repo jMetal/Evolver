@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.runner;
 
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
@@ -15,7 +14,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value> and the {@link AutoNSGAII}
+ * Class configuring NSGA-II using arguments in the form <key, value> and the {@link ConfigurableNSGAII}
  * class.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -33,7 +32,7 @@ public class ConfigurableNSGAIIRunner {
     var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 20000);
     autoNSGAII.parse(parameters);
 
-    AutoNSGAII.print(autoNSGAII.configurableParameterList());
+    ConfigurableNSGAII.print(autoNSGAII.configurableParameterList());
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.build();
 

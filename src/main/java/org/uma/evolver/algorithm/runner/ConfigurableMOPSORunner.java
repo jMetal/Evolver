@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.runner;
 
 import org.uma.evolver.algorithm.impl.ConfigurableMOPSO;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoMOPSO;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -28,7 +27,7 @@ public class ConfigurableMOPSORunner {
     var autoMOPSO = new ConfigurableMOPSO(new ZDT4(), 100, 8000);
     autoMOPSO.parse(parameters);
 
-    AutoMOPSO.print(autoMOPSO.configurableParameterList());
+    ConfigurableMOPSO.print(autoMOPSO.configurableParameterList());
 
     ParticleSwarmOptimizationAlgorithm mopso = autoMOPSO.build();
 

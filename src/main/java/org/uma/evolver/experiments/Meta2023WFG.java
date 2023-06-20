@@ -1,8 +1,8 @@
 package org.uma.evolver.experiments;
 
+import org.uma.evolver.algorithm.impl.ConfigurableMOPSO;
+import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoMOPSO;
-import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.lab.experiment.Experiment;
@@ -12,6 +12,7 @@ import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.lab.visualization.StudyVisualizer;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
@@ -112,7 +113,7 @@ public class Meta2023WFG {
         //autoNSGAII_ZDT_1(algorithms, run, experimentProblem);
         //autoNSGAII_ZDT_2(algorithms, run, experimentProblem);
         //autoNSGAII_WFG_1(algorithms, run, experimentProblem);
-        autoNSGAII_WFG_2(algorithms, run, experimentProblem);
+        //autoNSGAII_WFG_2(algorithms, run, experimentProblem);
       }
     }
     return algorithms;
@@ -120,12 +121,8 @@ public class Meta2023WFG {
 
   private static void nsgaII(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
     String[] parameters =
-        ("--problemName "+  experimentProblem.getProblem().getClass().getName() + " "
-            + "--randomGeneratorSeed 12 "
-            + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 25000 "
+        ("--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
             + "--algorithmResult population "
-            + "--populationSize 100 "
             + "--offspringPopulationSize 100 "
             + "--createInitialSolutions random "
             + "--variation crossoverAndMutationVariation "
@@ -143,10 +140,13 @@ public class Meta2023WFG {
             + "--polynomialMutationDistributionIndex 20.0 ")
             .split("\\s+");
 
-    AutoNSGAII autoNSGAII = new AutoNSGAII();
+    int populationSize = 100 ;
+    int maximumNumberOfEvaluations = 25000 ;
+    ConfigurableNSGAII autoNSGAII = new ConfigurableNSGAII(
+        (DoubleProblem) experimentProblem.getProblem(), populationSize, maximumNumberOfEvaluations);
     autoNSGAII.parse(parameters);
 
-    EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.create();
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.build() ;
 
     algorithms.add(
         new ExperimentAlgorithm<>(algorithm, "NSGAII", experimentProblem, run));
@@ -154,12 +154,9 @@ public class Meta2023WFG {
 
   private static void smpso(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
     String[] parameters =
-        ("--problemName " + experimentProblem.getProblem().getClass().getName() + " "
-            + "--randomGeneratorSeed 12 "
-            + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
+        ("--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
             + "--maximumNumberOfEvaluations 25000 "
             + "--algorithmResult leaderArchive "
-            + "--swarmSize 100 "
             + "--archiveSize 100 "
             + "--swarmInitialization random "
             + "--velocityInitialization defaultVelocityInitialization "
@@ -188,61 +185,18 @@ public class Meta2023WFG {
             + "--weight 0.1 ")
             .split("\\s+");
 
-    AutoMOPSO autoMOPSO = new AutoMOPSO();
+    int swarmSize = 100 ;
+    int maximumNumberOfEvaluations = 25000 ;
+    ConfigurableMOPSO autoMOPSO = new ConfigurableMOPSO((DoubleProblem) experimentProblem.getProblem(), swarmSize, maximumNumberOfEvaluations);
     autoMOPSO.parse(parameters);
 
-    ParticleSwarmOptimizationAlgorithm algorithm = autoMOPSO.create();
+    ParticleSwarmOptimizationAlgorithm algorithm = autoMOPSO.build();
 
     algorithms.add(
         new ExperimentAlgorithm<>(algorithm, "SMPSO", experimentProblem, run));
   }
 
-  private static void omopso(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
-    String[] parameters =
-        ("--problemName " + experimentProblem.getProblem().getClass().getName() + " "
-            + "--randomGeneratorSeed 12 "
-            + "--referenceFrontFileName "+ experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 25000 "
-            + "--swarmSize 100 "
-            + "--archiveSize 100 "
-            + "--algorithmResult leaderArchive "
-            + "--swarmInitialization random "
-            + "--velocityInitialization defaultVelocityInitialization "
-            + "--leaderArchive crowdingDistanceArchive "
-            + "--localBestInitialization defaultLocalBestInitialization "
-            + "--globalBestInitialization defaultGlobalBestInitialization "
-            + "--globalBestSelection tournament "
-            + "--selectionTournamentSize 2 "
-            + "--perturbation frequencySelectionMutationBasedPerturbation "
-            + "--frequencyOfApplicationOfMutationOperator 7 "
-            + "--mutation polynomial "
-            + "--mutationProbabilityFactor 1.0 "
-            + "--mutationRepairStrategy round "
-            + "--polynomialMutationDistributionIndex 20.0 "
-            + "--positionUpdate defaultPositionUpdate "
-            + "--velocityChangeWhenLowerLimitIsReached -1.0 "
-            + "--velocityChangeWhenUpperLimitIsReached -1.0 "
-            + "--globalBestUpdate defaultGlobalBestUpdate "
-            + "--localBestUpdate defaultLocalBestUpdate "
-            + "--velocityUpdate defaultVelocityUpdate "
-            + "--inertiaWeightComputingStrategy randomSelectedValue "
-            + "--c1Min 1.5 "
-            + "--c1Max 2.0 "
-            + "--c2Min 1.5 "
-            + "--c2Max 2.0 "
-            + "--weightMin 0.1 "
-            + "--weightMax 0.5 ")
-            .split("\\s+");
-
-    AutoMOPSO autoMOPSO = new AutoMOPSO();
-    autoMOPSO.parse(parameters);
-
-    ParticleSwarmOptimizationAlgorithm algorithm = autoMOPSO.create();
-
-    algorithms.add(
-        new ExperimentAlgorithm<>(algorithm, "OMOPSO", experimentProblem, run));
-  }
-
+  /*
   private static void autoNSGAII_ZDT_1(List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run, ExperimentProblem<DoubleSolution> experimentProblem) {
     String[] parameters =
             ("--problemName "+  experimentProblem.getProblem().getClass().getName() + " "
@@ -318,5 +272,5 @@ public class Meta2023WFG {
     algorithms.add(
             new ExperimentAlgorithm<>(algorithm, "NSGAIIWFG2", experimentProblem, run));
   }
-
+*/
 }
