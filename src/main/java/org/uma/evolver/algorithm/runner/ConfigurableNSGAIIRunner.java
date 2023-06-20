@@ -22,13 +22,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 85 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --variation crossoverAndMutationVariation --offspringPopulationSize 74 --crossover SBX --crossoverProbability 0.8641086005575052 --crossoverRepairStrategy bounds --sbxDistributionIndex 120.8531344541218 --blxAlphaCrossoverAlphaValue 0.9541266366160527 --mutation uniform --mutationProbabilityFactor 0.5237998986795217 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 81.78910013194441 --linkedPolynomialMutationDistributionIndex 170.94690835780114 --uniformMutationPerturbation 0.26576995565553396 --nonUniformMutationPerturbation 0.6661894777805955 --selection tournament --selectionTournamentSize 2 \n")
+        ("--algorithmResult population --populationSizeWithArchive 152 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --variation crossoverAndMutationVariation --offspringPopulationSize 1 --crossover SBX --crossoverProbability 0.9560795158797861 --crossoverRepairStrategy bounds --sbxDistributionIndex 12.10693145206182 --blxAlphaCrossoverAlphaValue 0.8771983328448554 --mutation linkedPolynomial --mutationProbabilityFactor 0.533596410705968 --mutationRepairStrategy round --polynomialMutationDistributionIndex 279.700702608167 --linkedPolynomialMutationDistributionIndex 34.159749312146346 --uniformMutationPerturbation 0.12900944035511847 --nonUniformMutationPerturbation 0.858699996807509 --selection tournament --selectionTournamentSize 9 \n")
             .split("\\s+");
 
-    var autoNSGAII = new ConfigurableNSGAII(new DTLZ3(), 100, 40000);
+    var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 20000);
     autoNSGAII.parse(parameters);
 
     AutoNSGAII.print(autoNSGAII.configurableParameterList());
@@ -38,7 +38,7 @@ public class ConfigurableNSGAIIRunner {
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II", 80, 100,
+            "NSGA-II", 80, 500,
             referenceFrontFileName, "F1", "F2");
 
     nsgaII.observable().register(evaluationObserver);

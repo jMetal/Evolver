@@ -8,7 +8,6 @@ import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
-import org.uma.evolver.util.ParameterManagement;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.auto.autoconfigurablealgorithm.AutoNSGAII;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
@@ -18,15 +17,10 @@ import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
-import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
@@ -35,7 +29,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIRunner {
+public class AsyncNSGAIIRunnerPicasso {
 
   public static void main(String[] args) throws IOException {
     CrossoverOperator<DoubleSolution> crossover;
@@ -43,7 +37,7 @@ public class AsyncNSGAIIRunner {
 
     int populationSize = 50;
     int maxEvaluations = 3000;
-    int numberOfCores = 8;
+    int numberOfCores = 128;
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
@@ -63,7 +57,7 @@ public class AsyncNSGAIIRunner {
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "asyncOutputFiles");
+        "asyncOutputFiles128");
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     long initTime = System.currentTimeMillis();
@@ -73,18 +67,12 @@ public class AsyncNSGAIIRunner {
             numberOfCores, configurableProblem, populationSize, crossover, mutation,
             new TerminationByEvaluations(maxEvaluations));
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(10);
-
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>(
-            "NSGA-II",
-            80, 100, null, indicators.get(0).name(), indicators.get(1).name());
+    EvaluationObserver evaluationObserver = new EvaluationObserver(100);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
         List.of(1000, 2000), outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
-    nsgaii.getObservable().register(runTimeChartObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();

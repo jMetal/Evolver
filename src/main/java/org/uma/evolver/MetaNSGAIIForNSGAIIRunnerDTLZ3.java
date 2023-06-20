@@ -17,14 +17,10 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -34,16 +30,16 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MetaNSGAIIForNSGAIIRunner {
+public class MetaNSGAIIForNSGAIIRunnerDTLZ3 {
 
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
+        problemWhoseConfigurationIsSearchedFor, 100, 20000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
-        "resources/referenceFronts/ZDT4.csv",
+        "resources/referenceFronts/DTLZ3.3D.csv",
         indicators, 3);
 
     double crossoverProbability = 0.9;
@@ -72,10 +68,9 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "resultsForMetaV2/ZDT4WithoutArchive.2");
+        "DTLZ3.Run3");
 
-
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(10);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 100);
 
@@ -86,7 +81,6 @@ public class MetaNSGAIIForNSGAIIRunner {
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
-
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();
