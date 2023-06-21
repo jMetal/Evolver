@@ -90,6 +90,9 @@ public class YamlParameterDescriptionGenerator {
     } else if (parameter instanceof RealParameter) {
       result.append(spaces(tabSize) + "values: ");
       result.append(((RealParameter) parameter).validValues() + "\n");
+    } else if (parameter instanceof BooleanParameter) {
+      result.append(spaces(tabSize) + "values: ");
+      result.append(((BooleanParameter) parameter).validValues() + "\n");
     }
     /*else if (parameter instanceof BooleanParameter) {
       result = ((BooleanParameter) parameter).getValidValues().toString();
@@ -140,7 +143,7 @@ public class YamlParameterDescriptionGenerator {
       result = result.replace("[", "(");
       result = result.replace("]", ")");
     } else if (parameter instanceof BooleanParameter) {
-      result = ((BooleanParameter) parameter).getValidValues().toString();
+      result = ((BooleanParameter) parameter).validValues().toString();
       result = result.replace("[", "(");
       result = result.replace("]", ")");
     } else if (parameter instanceof OrdinalParameter) {

@@ -16,7 +16,7 @@ public class BooleanParameter extends Parameter<Boolean> {
     Check.notNull(name());
   }
 
-  public List<String> getValidValues() {
+  public List<String> validValues() {
     return List.of("TRUE", "FALSE");
   }
 

@@ -130,7 +130,7 @@ public class IraceParameterDescriptionGenerator {
       result = result.replace("[", "(");
       result = result.replace("]", ")");
     } else if (parameter instanceof BooleanParameter) {
-      result = ((BooleanParameter) parameter).getValidValues().toString();
+      result = ((BooleanParameter) parameter).validValues().toString();
       result = result.replace("[", "(");
       result = result.replace("]", ")");
     } else if (parameter instanceof OrdinalParameter) {
