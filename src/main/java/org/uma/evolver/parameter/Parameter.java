@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.evolver.parameter.catalogue.CrossoverParameter;
@@ -134,6 +135,12 @@ public abstract class Parameter<T> {
     this.value = value;
   }
 
+  /**
+   * Finds a global parameter given its name
+   *
+   * @param parameterName
+   * @return
+   */
   public Parameter<?> findGlobalParameter(String parameterName) {
     return globalParameters().stream()
         .filter(parameter -> parameter.name().equals(parameterName))
@@ -141,13 +148,31 @@ public abstract class Parameter<T> {
         .orElse(null);
   }
 
+  /**
+   * Finds a specific parameter given its name
+   * @param parameterName
+   * @return
+   */
   public Parameter<?> findSpecificParameter(String parameterName) {
-    return Objects.requireNonNull(specificParameters().stream()
+    return Objects.requireNonNull(specificParameters()
+            .stream()
             .filter(pair -> pair.getRight().name().equals(parameterName))
             .findFirst()
             .orElse(null))
         .getValue();
   }
+
+  /**
+   * Finds a list of the specific parameters associated to a particular parameter value
+   */
+  public List<Parameter<?>> findSpecificParameters(String parameterValue) {
+    return specificParameters()
+        .stream()
+        .filter(pair -> pair.getLeft().equals(parameterValue))
+        .map(Pair::getRight)
+        .collect(Collectors.toList());
+  }
+
 
   @Override
   public String toString() {

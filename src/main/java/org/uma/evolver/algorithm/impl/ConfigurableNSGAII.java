@@ -162,7 +162,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   private void algorithmResult() {
     algorithmResultParameter =
-        new CategoricalParameter("algorithmResult", List.of("population"));
+        new CategoricalParameter("algorithmResult", List.of("population", "externalArchive"));
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
     externalArchiveParameter = new ExternalArchiveParameter<>(
