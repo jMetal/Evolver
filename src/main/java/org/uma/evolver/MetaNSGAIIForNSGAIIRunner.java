@@ -41,7 +41,6 @@ public class MetaNSGAIIForNSGAIIRunner {
 
   public static void main(String[] args) throws IOException {
 
-
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
@@ -61,7 +60,7 @@ public class MetaNSGAIIForNSGAIIRunner {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 2000 ;
+    int maxEvaluations = 3000;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
@@ -71,26 +70,23 @@ public class MetaNSGAIIForNSGAIIRunner {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(50, configurableProblem))
         .build();
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
-        "resultsForMetaV2/ZDT4WithoutArchive.2");
-
+        "ZDT4Study/ZDT4WithoutArchive.1");
 
     var evaluationObserver = new EvaluationObserver(50);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(), indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 100);
-
+    //var frontChartObserver =
+    //    new FrontPlotObserver<DoubleSolution>("NSGA-II", indicators.get(0).name(),
+    //        indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(1000, 2000), outputResultsManagement);
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25, maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(frontChartObserver);
-
+    //nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();
@@ -100,6 +96,6 @@ public class MetaNSGAIIForNSGAIIRunner {
     outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(nsgaii.result());
 
-    System.exit(0) ;
+    System.exit(0);
   }
 }

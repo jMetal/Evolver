@@ -8,11 +8,13 @@ import org.uma.jmetal.component.catalogue.ea.variation.impl.DifferentialEvolutio
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
 
 public class VariationParameter extends CategoricalParameter {
+  int counter = 0 ;
   public VariationParameter(List<String> variationStrategies) {
     super("variation", variationStrategies);
   }

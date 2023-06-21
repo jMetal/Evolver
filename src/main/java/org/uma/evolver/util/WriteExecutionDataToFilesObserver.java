@@ -3,7 +3,11 @@ package org.uma.evolver.util;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.commons.lang.math.IntRange;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
@@ -32,6 +36,22 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   }
 
   /**
+   * Constructor
+   */
+  public WriteExecutionDataToFilesObserver(int frequency, int evaluationsLimit,
+      OutputResultsManagement outputResultsManagement) {
+    evaluationsList = IntStream.rangeClosed(1, evaluationsLimit)
+        .filter(num -> (num) % frequency == 0)
+        .boxed()
+        .toList() ;
+    //evaluationsList.stream().forEach(i -> System.out.print(i + ", "));
+    //System.out.println() ;
+    this.outputResultsManagement = outputResultsManagement;
+    evaluationsListIndex = 0 ;
+  }
+
+
+  /**
    * This method gets the population
    *
    * @param data Map of pairs (key, value)
@@ -40,10 +60,9 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
     List<DoubleSolution> population = (List<DoubleSolution>) data.get("POPULATION");
     int evaluations = (int) data.get("EVALUATIONS");
-
     if ((evaluationsListIndex < evaluationsList.size()) && (evaluations > evaluationsList.get(evaluationsListIndex))) {
       try {
-        System.out.println("EVAlS -> "+evaluations) ;
+        JMetalLogger.logger.info("EVAlS -> "+evaluations) ;
         outputResultsManagement.updateSuffix("." + evaluationsList.get(evaluationsListIndex) + ".csv");
         outputResultsManagement.writeResultsToFiles(population);
         evaluationsListIndex ++ ;

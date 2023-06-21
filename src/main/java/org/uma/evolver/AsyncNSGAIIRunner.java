@@ -74,16 +74,16 @@ public class AsyncNSGAIIRunner {
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(10);
 
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>(
-            "NSGA-II",
-            80, 100, null, indicators.get(0).name(), indicators.get(1).name());
+    //RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+    //    new RunTimeChartObserver<>(
+    //        "NSGA-II",
+    //        80, 100, null, indicators.get(0).name(), indicators.get(1).name());
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(1000, 2000), outputResultsManagement);
+        25, maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
-    nsgaii.getObservable().register(runTimeChartObserver);
+    //nsgaii.getObservable().register(runTimeChartObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
 
     nsgaii.run();

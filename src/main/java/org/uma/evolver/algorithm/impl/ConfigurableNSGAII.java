@@ -162,8 +162,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   private void algorithmResult() {
     algorithmResultParameter =
-        new CategoricalParameter("algorithmResult", List.of("population", "externalArchive"));
-    new CategoricalParameter("algorithmResult", List.of("externalArchive", "population"));
+        new CategoricalParameter("algorithmResult", List.of("population"));
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
     externalArchiveParameter = new ExternalArchiveParameter<>(
@@ -219,7 +218,6 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
         problem.numberOfVariables());
 
     if (mutationParameter.value().equals("nonUniform")) {
-      mutationParameter.addNonConfigurableParameter("nonUniformMutationPerturbation", maximumNumberOfEvaluations);
       mutationParameter.addNonConfigurableParameter("maxIterations",
           maximumNumberOfEvaluations / populationSize);
     }
@@ -247,7 +245,6 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
         new TerminationByEvaluations(maximumNumberOfEvaluations);
 
     class EvolutionaryAlgorithmWithArchive extends EvolutionaryAlgorithm<DoubleSolution> {
-
       private Archive<DoubleSolution> archive;
 
       /**

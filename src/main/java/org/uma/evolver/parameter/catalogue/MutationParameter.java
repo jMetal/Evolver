@@ -48,7 +48,7 @@ public class MutationParameter extends CategoricalParameter {
                 repairDoubleSolution.getParameter());
         break;
       case "nonUniform":
-        perturbation = (Double) getNonConfigurableParameter("nonUniformMutationPerturbation");
+        perturbation = (Double) findSpecificParameter("nonUniformMutationPerturbation").value();
         int maxIterations = (Integer) getNonConfigurableParameter("maxIterations");
         result =
             new NonUniformMutation(mutationProbability, perturbation, maxIterations,

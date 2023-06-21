@@ -99,31 +99,6 @@ public class ConfigurableAlgorithmProblem extends ConfigurableAlgorithmBaseProbl
 
     String[] parameterArray = parameterString.toString().split("\\s+");
 
-    /*
-    var algorithm = configurableAlgorithm
-        .createBuilderInstance()
-        .parse(parameterArray)
-        .build();
-
-    algorithm.run();
-
-    NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-    nonDominatedSolutions.addAll(algorithm.result());
-
-    double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
-
-    double[][] normalizedFront =
-        NormalizeUtils.normalize(
-            front,
-            NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-            NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
-
-    IntStream.range(0, indicators.size()).forEach(i -> {
-      indicators.get(i).referenceFront(normalizedReferenceFront);
-      solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
-    });
-*/
-
     double[] medianIndicatorValues = computeIndependentRuns(parameterArray) ;
     IntStream.range(0, indicators.size()).forEach(i -> solution.objectives()[i] = medianIndicatorValues[i]);
 
