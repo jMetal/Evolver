@@ -1,6 +1,8 @@
 package org.uma.evolver.parameterdescriptiongenerator.yaml;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
@@ -23,7 +25,7 @@ public class YamlParameterDescriptionGenerator {
     int tabSize = 0;
 
     for (Parameter<?> parameter : parameterList) {
-      parameterStringBuilder = decodeParameter(parameter, parameterStringBuilder, tabSize);
+      parameterStringBuilder = decodeParameter(parameter, parameterStringBuilder, tabSize, false);
       parameterStringBuilder.append("#\n");
     }
 
@@ -31,8 +33,10 @@ public class YamlParameterDescriptionGenerator {
   }
 
   private StringBuilder decodeParameter(Parameter<?> parameter, StringBuilder stringBuilder,
-      int tabSize) {
-    printName(parameter, stringBuilder, tabSize);
+      int tabSize, boolean isList) {
+    printName(parameter, stringBuilder, tabSize, isList);
+    // If the parameter is part of a list, add 2 spaces more to offset the "- "
+    tabSize += (isList?4:2);
     printType(parameter, stringBuilder, tabSize);
 
     stringBuilder.append(decodeValidValuesV2(parameter, tabSize));
@@ -46,8 +50,11 @@ public class YamlParameterDescriptionGenerator {
     );
   }
 
-  private void printName(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
-    stringBuilder.append(spaces(tabSize) + "name: " + parameter.name()).append("\n");
+  private void printName(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize, boolean isList) {
+    stringBuilder.append(spaces(tabSize));
+    if (isList)
+      stringBuilder.append("- ");
+    stringBuilder.append(parameter.name()).append(":\n");
   }
 
 
@@ -67,23 +74,24 @@ public class YamlParameterDescriptionGenerator {
       result.append(spaces(tabSize) + "values: \n");
       List<String> validValues = ((CategoricalParameter) parameter).validValues();
       for (String value : validValues) {
-        result.append(spaces(tabSize));
-        result.append(" - " + value + "\n");
+        result.append(spaces(tabSize + 2));
+        result.append("- " + value + ":\n");
         var specificParameters = parameter.findSpecificParameters(value);
         if (!specificParameters.isEmpty()) {
+          result.append(spaces(tabSize + 6) + "specific_parameter: \n");
           for (Parameter<?> param : specificParameters) {
-            result.append(spaces(tabSize + 6) + "specific_parameter: \n");
-            result.append(decodeParameter(param, new StringBuilder(), tabSize + 9));
+            result.append(decodeParameter(param, new StringBuilder(), tabSize + 8, true));
           }
         }
       }
     } else  if (parameter instanceof CategoricalIntegerParameter) {
-      result.append(spaces(tabSize) + "values: \n");
+      result.append(spaces(tabSize) + "values: [");
       List<Integer> validValues = ((CategoricalIntegerParameter) parameter).validValues();
-      for (int value : validValues) {
-        result.append(spaces(tabSize));
-        result.append(" - " + value + "\n");
-      }
+      String joinedValues = validValues.stream()
+              .map(Object::toString)
+              .collect(Collectors.joining(", "));
+      result.append(joinedValues).append("]\n");
+
     } else if (parameter instanceof IntegerParameter) {
       result.append(spaces(tabSize) + "values: ");
       result.append(((IntegerParameter) parameter).validValues() + "\n");
@@ -113,19 +121,19 @@ public class YamlParameterDescriptionGenerator {
   private String decodeType(Parameter<?> parameter) {
     String result = " ";
     if (parameter instanceof CategoricalParameter) {
-      result = "c";
+      result = "categorical";
     } else if (parameter instanceof CategoricalIntegerParameter) {
-      result = "c";
+      result = "categorical";
     } else if (parameter instanceof BooleanParameter) {
-      result = "c";
+      result = "categorical";
     } else if (parameter instanceof OrdinalParameter) {
-      result = "o";
+      result = "ordinal";
     } else if (parameter instanceof IntegerParameter) {
-      result = "i";
+      result = "integer";
     } else if (parameter instanceof RealParameter) {
-      result = "r";
+      result = "real";
     } else if (parameter != null) {
-      result = "o";
+      result = "ordinal";
     }
 
     return result;
