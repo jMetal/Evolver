@@ -26,10 +26,10 @@ public class ConfigurableNSGAIIRunner {
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
-        ("--algorithmResult population --populationSizeWithArchive 152 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --variation crossoverAndMutationVariation --offspringPopulationSize 1 --crossover SBX --crossoverProbability 0.9560795158797861 --crossoverRepairStrategy bounds --sbxDistributionIndex 12.10693145206182 --blxAlphaCrossoverAlphaValue 0.8771983328448554 --mutation linkedPolynomial --mutationProbabilityFactor 0.533596410705968 --mutationRepairStrategy round --polynomialMutationDistributionIndex 279.700702608167 --linkedPolynomialMutationDistributionIndex 34.159749312146346 --uniformMutationPerturbation 0.12900944035511847 --nonUniformMutationPerturbation 0.858699996807509 --selection tournament --selectionTournamentSize 9 \n")
+        ("--algorithmResult population --createInitialSolutions scatterSearch --variation crossoverAndMutationVariation --offspringPopulationSize 100 --crossover SBX --crossoverProbability 0.7586924998878468 --crossoverRepairStrategy random --sbxDistributionIndex 357.1253878450315 --blxAlphaCrossoverAlphaValue 0.1818400134113788 --mutation polynomial --mutationProbabilityFactor 1.4199046660789936 --mutationRepairStrategy round --polynomialMutationDistributionIndex 41.46528018802304 --linkedPolynomialMutationDistributionIndex 375.84826343324426 --uniformMutationPerturbation 0.5627485497930502 --nonUniformMutationPerturbation 0.14585222100842157 --selection tournament --selectionTournamentSize 9 ")
             .split("\\s+");
 
-    var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 20000);
+    var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 25000);
     autoNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(autoNSGAII.configurableParameterList());

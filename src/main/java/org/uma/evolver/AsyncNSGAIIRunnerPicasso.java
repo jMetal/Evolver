@@ -20,10 +20,9 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value> and the {@link AutoNSGAII}
+ * Class configuring NSGA-II using arguments in the form <key, value> and the {@link ConfigurableNSGAII}
  * class.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -69,7 +68,7 @@ public class AsyncNSGAIIRunnerPicasso {
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(
-        List.of(1000, 2000), outputResultsManagement);
+        100, maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
