@@ -18,8 +18,10 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 
 /**
  * Class configuring NSGA-II using arguments in the form <key, value> and the {@link ConfigurableNSGAII}
@@ -37,10 +39,10 @@ public class AsyncNSGAIIRunnerPicasso {
     int maxEvaluations = 3000;
     int numberOfCores = 128;
 
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
+        problemWhoseConfigurationIsSearchedFor, 100, 18000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT4.csv",
         indicators, 3);
@@ -77,9 +79,11 @@ public class AsyncNSGAIIRunnerPicasso {
 
     long endTime = System.currentTimeMillis();
 
-    System.out.println("Total computing time: " + (endTime - initTime)) ;
+    JMetalLogger.logger.info("Total computing time: " + (endTime - initTime)) ;
 
     outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(nsgaii.getResult());
+
+    System.exit(0) ;
   }
 }

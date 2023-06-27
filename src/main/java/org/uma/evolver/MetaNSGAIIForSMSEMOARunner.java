@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.algorithm.impl.ConfigurableSMSEMOA;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
@@ -17,17 +18,10 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.GeneralizedSpread;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -37,13 +31,13 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MetaNSGAIIForNSGAIIRunner {
+public class MetaNSGAIIForSMSEMOARunner {
 
   public static void main(String[] args) throws IOException {
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
-    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
+    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableSMSEMOA(
         problemWhoseConfigurationIsSearchedFor, 100, 15000);
     var configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithm,
         "resources/referenceFronts/ZDT4.csv",
@@ -74,7 +68,7 @@ public class MetaNSGAIIForNSGAIIRunner {
         .build();
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
+        "SMS-EMOA", configurableProblem, problemWhoseConfigurationIsSearchedFor, indicators,
         "ZDT4Study/ZDT4WithoutArchive.1");
 
     var evaluationObserver = new EvaluationObserver(50);

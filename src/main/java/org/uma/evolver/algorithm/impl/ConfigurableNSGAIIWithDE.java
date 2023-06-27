@@ -45,7 +45,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
+public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
@@ -55,6 +55,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
   private SelectionParameter<DoubleSolution> selectionParameter;
   private VariationParameter variationParameter;
+  private CategoricalParameter modelParameter ;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
@@ -65,7 +66,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private int populationSize;
   private int maximumNumberOfEvaluations;
 
-  public ConfigurableNSGAII(DoubleProblem problem, int populationSize,
+  public ConfigurableNSGAIIWithDE(DoubleProblem problem, int populationSize,
       int maximumNumberOfEvaluations) {
     this.problem = problem;
     this.populationSize = populationSize;
@@ -75,17 +76,20 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   @Override
   public ConfigurableAlgorithmBuilder createBuilderInstance() {
-    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableNSGAIIWithDE(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem,
       int maximumNumberOfEvaluations) {
-    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableNSGAIIWithDE(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   private void configure() {
     offspringPopulationSizeParameter = new CategoricalIntegerParameter("offspringPopulationSize",
-        List.of(1, 2, 5, 10, 20, 50, 100, 200, 400));
+        List.of(2, 5, 10, 20, 50, 100, 200, 400));
+
+    modelParameter = new CategoricalParameter("model", List.of("generational", "steadyState")) ;
+    modelParameter.addSpecificParameter("generational", offspringPopulationSizeParameter);
 
     algorithmResult();
     createInitialSolution();
@@ -94,7 +98,7 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
     configurableParameterList.add(algorithmResultParameter);
     configurableParameterList.add(createInitialSolutionsParameter);
-    configurableParameterList.add(offspringPopulationSizeParameter);
+    configurableParameterList.add(modelParameter);
     configurableParameterList.add(variationParameter);
     configurableParameterList.add(selectionParameter);
   }
@@ -228,10 +232,15 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
           maximumNumberOfEvaluations / populationSize);
     }
 
+    int offspringPopulationSize ;
+    if (modelParameter.value().equals("steadyState")) {
+      offspringPopulationSize = 1 ;
+    } else {
+      offspringPopulationSize = offspringPopulationSizeParameter.value() ;
+    }
     variationParameter.addNonConfigurableParameter("offspringPopulationSize",
-        offspringPopulationSizeParameter.value());
+        offspringPopulationSize);
     var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
-
 
     Selection<DoubleSolution> selection =
         selectionParameter.getParameter(

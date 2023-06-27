@@ -8,7 +8,6 @@ import org.uma.jmetal.component.catalogue.ea.variation.impl.DifferentialEvolutio
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
@@ -28,9 +27,6 @@ public class VariationParameter extends CategoricalParameter {
         if (nonConfigurableParameters().containsKey("offspringPopulationSize")) {
           offspringPopulationSize = (Integer) getNonConfigurableParameter(
               "offspringPopulationSize");
-        } else if (findSpecificParameter("offspringPopulationSize") != null) {
-          offspringPopulationSize = (Integer) findSpecificParameter(
-              "offspringPopulationSize").value();
         } else {
           throw new JMetalException("offspringPopulationSize parameter not found");
         }

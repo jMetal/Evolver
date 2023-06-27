@@ -1,9 +1,8 @@
 package org.uma.evolver.algorithm.runner;
 
 import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.algorithm.impl.ConfigurableSMSEMOA;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -14,32 +13,32 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value> and the {@link ConfigurableNSGAII}
+ * Class configuring SMS-EMOA using arguments in the form <key, value> and the {@link ConfigurableSMSEMOA}
  * class.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class ConfigurableNSGAIIRunner {
+public class ConfigurableSMSEMOARunner {
 
   public static void main(String[] args) {
 
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 24 --externalArchive crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.7706300459118733 --crossoverRepairStrategy bounds --sbxDistributionIndex 222.47374954885674 --blxAlphaCrossoverAlphaValue 0.5971239421519462 --mutation polynomial --mutationProbabilityFactor 0.9429115328245097 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 7.0602623411731695 --linkedPolynomialMutationDistributionIndex 305.5917931481647 --uniformMutationPerturbation 0.49537012520620244 --nonUniformMutationPerturbation 0.7264964475483606 --selection tournament --selectionTournamentSize 2 \n  ")
+        ("--algorithmResult population --populationSizeWithArchive 83 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --model steadyState --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.9266823108855072 --crossoverRepairStrategy bounds --sbxDistributionIndex 103.69370217320794 --blxAlphaCrossoverAlphaValue 0.8961783851503412 --mutation linkedPolynomial --mutationProbabilityFactor 1.0132184971489644 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 158.39649171594044 --linkedPolynomialMutationDistributionIndex 26.565728098862394 --uniformMutationPerturbation 0.8593793632073513 --nonUniformMutationPerturbation 0.9882758308775352 --selection random --selectionTournamentSize 8 \n \n  ")
             .split("\\s+");
 
-    var autoNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 25000);
-    autoNSGAII.parse(parameters);
+    var autoSMSEMOA = new ConfigurableSMSEMOA(new ZDT1(), 100, 25000);
+    autoSMSEMOA.parse(parameters);
 
-    ConfigurableNSGAII.print(autoNSGAII.configurableParameterList());
+    ConfigurableNSGAII.print(autoSMSEMOA.configurableParameterList());
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoSMSEMOA.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II", 80, 500,
+            "SMS-EMOA", 80, 500,
             referenceFrontFileName, "F1", "F2");
 
     nsgaII.observable().register(evaluationObserver);
@@ -53,5 +52,7 @@ public class ConfigurableNSGAIIRunner {
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
+
+    System.exit(0) ;
   }
 }
