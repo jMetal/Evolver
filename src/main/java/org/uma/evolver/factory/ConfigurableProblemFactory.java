@@ -14,7 +14,6 @@ public class ConfigurableProblemFactory {
                     problem, population, maxNumberOfEvaluations);
             case "MOPSO" -> new ConfigurableMOPSO(
                     problem, population, maxNumberOfEvaluations);
-            // TODO: Deal with extra parameter in configurable MOEAD
             case "MOEAD" -> throw new JMetalException("Missing weightVectorFilesDirectory parameter, use alternative factory method.");
             case "SMSEMOA" -> new ConfigurableSMSEMOA(
                     problem, population, maxNumberOfEvaluations);

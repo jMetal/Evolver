@@ -1,5 +1,6 @@
 package org.uma.evolver.factory;
 
+import org.uma.evolver.MetaOptimizer;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -22,24 +23,28 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.comparator.constraintcomparator.impl.OverallConstraintViolationDegreeComparator;
+import org.uma.jmetal.util.observable.Observable;
 
 import java.util.List;
+import java.util.Map;
 
 public class OptimizationAlgorithmFactory {
-    public static EvolutionaryAlgorithm<DoubleSolution> getAlgorithm(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations) {
         // TODO: extract parallelism parameters
-        EvolutionaryAlgorithm<DoubleSolution> optimizationAlgorithm = switch (name) {
+        MetaOptimizer optimizationAlgorithm = switch (name) {
             case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, population, maxNumberOfEvaluations);
             case "ASYNCNSGAII" ->
-                    OptimizationAlgorithmFactory.createAyncNSGAII(problem, population, maxNumberOfEvaluations);
+                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, population, maxNumberOfEvaluations);
             case "GGA" ->
                     OptimizationAlgorithmFactory.createGenericGeneticAlgorithm(problem, population, maxNumberOfEvaluations);
+            case "SMPSO" ->
+                    OptimizationAlgorithmFactory.createSMPSO(problem, population, maxNumberOfEvaluations);
             default -> throw new RuntimeException("Optimization algorithm not found");
         };
         return optimizationAlgorithm;
     }
 
-    private static EvolutionaryAlgorithm<DoubleSolution> createSMPSO(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createSMPSO(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
         int swarmSize = population;
         Termination termination = new TerminationByEvaluations(maxNumberOfEvaluations);
 
@@ -50,10 +55,33 @@ public class OptimizationAlgorithmFactory {
                 .setEvaluation(new MultiThreadedEvaluation<>(8, problem))
                 .build();
 
-        return null;
+        MetaOptimizer smpsoOptimization = new MetaOptimizer() {
+
+            @Override
+            public void run() {
+                smpso.run();
+            }
+
+            @Override
+            public Observable<Map<String, Object>> observable() {
+                return smpso.observable();
+            }
+
+            @Override
+            public long totalComputingTime() {
+                return smpso.totalComputingTime();
+            }
+
+            @Override
+            public List<DoubleSolution> result() {
+                return smpso.result();
+            }
+        };
+
+        return smpsoOptimization;
     }
 
-    private static EvolutionaryAlgorithm<DoubleSolution> createGenericGeneticAlgorithm(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createGenericGeneticAlgorithm(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
 
         int offspringPopulationSize = population;
 
@@ -98,11 +126,33 @@ public class OptimizationAlgorithmFactory {
                 super.updateProgress();
             }
         };
+        MetaOptimizer ggaOptimizer = new MetaOptimizer() {
 
-        return geneticAlgorithm;
+            @Override
+            public void run() {
+                geneticAlgorithm.run();
+            }
+
+            @Override
+            public Observable<Map<String, Object>> observable() {
+                return geneticAlgorithm.observable();
+            }
+
+            @Override
+            public long totalComputingTime() {
+                return geneticAlgorithm.totalComputingTime();
+            }
+
+            @Override
+            public List<DoubleSolution> result() {
+                return geneticAlgorithm.result();
+            }
+        };
+
+        return ggaOptimizer;
     }
 
-    private static EvolutionaryAlgorithm<DoubleSolution> createAyncNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createAsyncNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
@@ -116,10 +166,36 @@ public class OptimizationAlgorithmFactory {
                 new AsynchronousMultiThreadedNSGAII<>(
                         8, problem, population, crossover, mutation,
                         new TerminationByEvaluations(maxNumberOfEvaluations));
-        return null; // TODO AsyncNSGAII is not an EvolutionaryAlgorithm
+
+        MetaOptimizer nsgaiiOptimizer = new MetaOptimizer() {
+            private long computingTime;
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                nsgaii.run();
+                computingTime = System.currentTimeMillis() - start;
+            }
+
+            @Override
+            public Observable<Map<String, Object>> observable() {
+                return nsgaii.getObservable();
+            }
+
+            @Override
+            public long totalComputingTime() {
+                return computingTime;
+            }
+
+            @Override
+            public List<DoubleSolution> result() {
+                return nsgaii.getResult();
+            }
+        };
+
+        return nsgaiiOptimizer;
     }
 
-    private static EvolutionaryAlgorithm<DoubleSolution> createNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
@@ -142,7 +218,29 @@ public class OptimizationAlgorithmFactory {
                 .setTermination(termination)
                 .setEvaluation(new MultiThreadedEvaluation<>(8, problem))
                 .build();
+        MetaOptimizer nsgaiiOptimizer = new MetaOptimizer() {
 
-        return nsgaii;
+            @Override
+            public void run() {
+                nsgaii.run();
+            }
+
+            @Override
+            public Observable<Map<String, Object>> observable() {
+                return nsgaii.observable();
+            }
+
+            @Override
+            public long totalComputingTime() {
+                return nsgaii.totalComputingTime();
+            }
+
+            @Override
+            public List<DoubleSolution> result() {
+                return nsgaii.result();
+            }
+        };
+
+        return nsgaiiOptimizer;
     }
 }

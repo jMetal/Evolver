@@ -43,7 +43,7 @@ public class MetaRunner {
     int independentRuns = 1;
     int externalPopulation = 50;
     int externalMaxEvaluations = 3000;
-    String externalAlgorithm = "GGA";
+    String externalAlgorithm = "SMPSO";
     String outputDirectory = "TEST";
     String weightVectorFilesDirectory = null;
     // End of Parameters
@@ -83,7 +83,7 @@ public class MetaRunner {
     }
 
     // Create external optimization algorithm
-    EvolutionaryAlgorithm<DoubleSolution> externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
+    MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
             externalAlgorithm, configurableProblem,
