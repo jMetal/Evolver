@@ -1,4 +1,4 @@
-package org.uma.evolver;
+package org.uma.evolver.factory;
 
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.uf.*;
@@ -7,11 +7,6 @@ import org.uma.jmetal.problem.multiobjective.glt.*;
 import org.uma.jmetal.problem.multiobjective.lz09.*;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
-import org.uma.jmetal.qualityindicator.QualityIndicator;
-import org.uma.jmetal.util.VectorUtils;
-import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.IOException;
 
 public class ProblemFactory {
     public static DoubleProblem getProblem(String name) {
