@@ -165,8 +165,9 @@ public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
 
   private void algorithmResult() {
     algorithmResultParameter =
-        new CategoricalParameter("algorithmResult", List.of("population", "externalArchive"));
+        new CategoricalParameter("algorithmResult", List.of("population"));
 
+    /*
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
     externalArchiveParameter = new ExternalArchiveParameter<>(
@@ -176,7 +177,7 @@ public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
 
     algorithmResultParameter.addSpecificParameter(
         "externalArchive", externalArchiveParameter);
-
+*/
   }
 
   @Override

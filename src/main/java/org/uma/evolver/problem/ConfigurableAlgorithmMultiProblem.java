@@ -159,7 +159,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
       for (int problemIndex = 0 ; problemIndex < problems.size(); problemIndex++)
         indicatorPerProblem[problemIndex] = indicatorValuesPerProblem[problemIndex][indicatorIndex];
 
-      // Calculate the median per quality index
+      // Calculate the median per quality index, the mean can improve this if there are high values on some of the problems
       medianProblemValues[indicatorIndex] = median(indicatorPerProblem) ;
     }
 

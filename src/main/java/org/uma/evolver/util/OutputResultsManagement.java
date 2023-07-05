@@ -21,7 +21,7 @@ public class OutputResultsManagement {
   public record OutputResultsManagementParameters(
       String algorithmName,
       ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
-      DoubleProblem problem,
+      String problemName,
       List<QualityIndicator> indicators,
       String outputDirectoryName) {
   }
@@ -55,9 +55,8 @@ public class OutputResultsManagement {
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(solutions);
     String problemDescription =
-        parameters.algorithmName + "." + parameters.problem.name() + "."
-            + parameters.indicators.get(0).name() + "." + parameters.indicators.get(1).name() + "."
-            + parameters.problem.numberOfObjectives();
+        parameters.algorithmName + "." + parameters.problemName + "."
+            + parameters.indicators.get(0).name() + "." + parameters.indicators.get(1).name();
 
     writeFilesWithVariablesAndObjectives(nonDominatedSolutionsArchive, problemDescription);
     writeDecodedVariables(parameters.configurableAlgorithmProblem, nonDominatedSolutionsArchive,

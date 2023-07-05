@@ -80,6 +80,11 @@
       <version>6.1-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <groupId>org.uma.jmetal</groupId>
+      <artifactId>jmetal-problem</artifactId>
+      <version>6.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math4-core</artifactId>
       <version>4.0-beta1</version>
