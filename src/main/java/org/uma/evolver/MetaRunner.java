@@ -19,9 +19,13 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +34,24 @@ import java.util.stream.Collectors;
  * @author José Francisco Aldana Martín (jfaldanam@uma.es)
  */
 public class MetaRunner {
+
+  private static String extractValue(String input, String pattern) {
+    Pattern regex = Pattern.compile(pattern, Pattern.DOTALL);
+    Matcher matcher = regex.matcher(input);
+    if (!matcher.find()) {
+      throw new IllegalArgumentException("Missing or malformed parameter " + pattern + ".");
+    }
+
+    return matcher.group(1).replace("\"", "");
+  }
+
+  private static String extractOptionalValue(String input, String pattern) {
+    try {
+      return extractValue(input, pattern);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
 
   public static void main(String[] args) throws IOException {
     /*
@@ -51,25 +73,41 @@ Expected arguments:
    * 11 - weight vector files directory: The directory containing weight vector files. Only used for the MOEAD internal algorithm.
 
      */
+    if (args.length != 1) {
+      System.err.println("Missing configuration file.");
+      System.exit(1);
+    }
+    String filePath = args[0];
 
-    String externalAlgorithm = args[0];
-    String externalPopulationArg = args[1];
-    String externalMaxEvaluationsArg = args[2];
-    String independentRunsArg = args[3];
-    String indicatorsNames = args[4];
-    String outputDirectory = args[5];
+    String configurationParameters;
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+      StringBuilder stringBuilder = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        stringBuilder.append(line).append("\n");
+      }
 
-    String configurableAlgorithm = args[6];
-    String populationArg = args[7];
-    String problemName = args[8];
-    String referenceFrontFileName = args[9];
-    String maxNumberOfEvaluations = args[10];
-    String weightVectorFilesDirectory;
-    if (args.length >= 12)
-      weightVectorFilesDirectory = args[11];
-    else
-      weightVectorFilesDirectory = null;
+      configurationParameters = stringBuilder.toString();
+    }
 
+    JMetalLogger.logger.info("Executing with the following configuration:\n" + configurationParameters);
+
+    // Extract the parameters from the file using regex
+    // Each regex matches the key, a space and a word (\w), a number (\d) and some of them a series or special characters (",/.)
+    String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:\\s+([\\w,\"]+)");
+    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population:\\s+(\\d+)");
+    String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
+    String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
+    String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
+    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"]+)");
+
+    String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
+    String populationArg = extractValue(configurationParameters, "population:\\s+(\\d+)");
+    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"]+)");
+    String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
+    String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
+
+    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+");
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
@@ -82,7 +120,7 @@ Expected arguments:
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
       problem = ProblemFactory.getProblem("ZDT1"); // This is a dummy problem for the multi-problem cases
-      internalMaxEvaluations = -1;
+      internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
       Check.that(!maxNumberOfEvaluations.contains(","), "If there is only one problem, you can't have several maxNumberOfEvaluations");
       Check.that(!referenceFrontFileName.contains(","), "If there is only one problem, you can't have several referenceFrontFileName");
@@ -144,7 +182,7 @@ Expected arguments:
 
     externalOptimizationAlgorithm.run();
 
-    JMetalLogger.logger.info(() -> "Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
+    JMetalLogger.logger.info("Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
 
     outputResultsManagement.updateSuffix("." + externalMaxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(externalOptimizationAlgorithm.result());
