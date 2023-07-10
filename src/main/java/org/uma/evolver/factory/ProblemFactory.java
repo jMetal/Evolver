@@ -18,6 +18,7 @@ public class ProblemFactory {
             case "DTLZ5_2D" -> new DTLZ5_2D();
             case "DTLZ6_2D" -> new DTLZ6_2D();
             case "DTLZ7_2D" -> new DTLZ7_2D();
+            case "DTLZ1" -> new DTLZ1();
             case "GLT1" -> new GLT1();
             case "GLT2" -> new GLT2();
             case "GLT3" -> new GLT3();
