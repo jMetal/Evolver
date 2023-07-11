@@ -95,14 +95,14 @@ Expected arguments:
     // Extract the parameters from the file using regex
     // Each regex matches the key, a space and a word (\w), a number (\d) and some of them a series or special characters (",/.)
     String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:\\s+([\\w,\"]+)");
-    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population:\\s+(\\d+)");
+    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population_size:\\s+(\\d+)");
     String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
     String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
     String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
     String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"]+)");
 
     String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
-    String populationArg = extractValue(configurationParameters, "population:\\s+(\\d+)");
+    String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
     String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"]+)");
     String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
     String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
