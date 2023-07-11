@@ -13,10 +13,11 @@ import java.io.IOException;
 
 public class QualityIndicatorFactory {
     public static QualityIndicator getIndicator(String name) {
+        double[][] array = {{0.0, 0.0}};
         QualityIndicator indicator = QualityIndicatorUtils.getIndicatorFromName(
                 name,
                 // Dummy reference front, is changed later on the execution of each problem
-                QualityIndicatorUtils.getAvailableIndicators(new double[0][0])
+                QualityIndicatorUtils.getAvailableIndicators(array)
         );
 
         return indicator;

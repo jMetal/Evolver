@@ -103,7 +103,7 @@ Expected arguments:
 
     String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
     String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
-    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"]+)");
+    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"\\.]+)");
     String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
     String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
 
@@ -119,7 +119,7 @@ Expected arguments:
     DoubleProblem problem;
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
-      problem = ProblemFactory.getProblem("ZDT1"); // This is a dummy problem for the multi-problem cases
+      problem = ProblemFactory.getProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
       internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
       Check.that(!maxNumberOfEvaluations.contains(","), "If there is only one problem, you can't have several maxNumberOfEvaluations");
