@@ -4,13 +4,13 @@ external_algorithm_arguments:
   meta_optimizer_max_evaluations: 3000
   independent_runs: 1
   indicators_names: "Epsilon,NormalizedHypervolume"
-  output_directory: TEST/MOEAD
+  output_directory: TEST/MOEAD/DTLZ2Minus
 
 internal_algorithm_arguments:
   configurable_algorithm: "MOEAD"
-  population: 91
-  problem_names: DTLZ1
-  reference_front_file_name: "resources/referenceFronts/DTLZ1.3D.csv"
+  population: 100
+  problem_names: DTLZ2Minus
+  reference_front_file_name: "resources/referenceFronts/DTLZ2Minus.csv"
   max_number_of_evaluations: "15000"
 
 optional_specific_arguments:

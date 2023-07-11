@@ -108,7 +108,7 @@ Expected arguments:
 
     String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+");
 
-    int population = Integer.parseInt(populationArg);
+    int population = 91; //Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
