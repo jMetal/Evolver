@@ -16,6 +16,7 @@ import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParam
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.Check;
@@ -112,9 +113,8 @@ Expected arguments:
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
-
-    List<QualityIndicator> indicators = Arrays.asList(
-        QualityIndicatorFactory.getIndicators(indicatorsNames));
+    
+    List<QualityIndicator> indicators = QualityIndicatorUtils.getIndicatorsFromNames(List.of(indicatorsNames.split(",")));
 
     DoubleProblem problem;
     int internalMaxEvaluations;
