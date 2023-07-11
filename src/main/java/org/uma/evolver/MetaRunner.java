@@ -107,7 +107,7 @@ Expected arguments:
     String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
     String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
 
-    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+");
+    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+)");
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
