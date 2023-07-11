@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
 import org.uma.evolver.factory.OptimizationAlgorithmFactory;
-import org.uma.evolver.factory.ProblemFactory;
 import org.uma.evolver.factory.QualityIndicatorFactory;
 import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
@@ -14,6 +13,7 @@ import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.jmetal.problem.ProblemFactory;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
@@ -113,20 +113,20 @@ Expected arguments:
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
-    
+
     List<QualityIndicator> indicators = QualityIndicatorUtils.getIndicatorsFromNames(List.of(indicatorsNames.split(",")));
 
     DoubleProblem problem;
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
-      problem = ProblemFactory.getProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
+      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
       internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
       Check.that(!maxNumberOfEvaluations.contains(","),
           "If there is only one problem, you can't have several maxNumberOfEvaluations");
       Check.that(!referenceFrontFileName.contains(","),
           "If there is only one problem, you can't have several referenceFrontFileName");
-      problem = ProblemFactory.getProblem(problemName);
+      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(problemName);
       internalMaxEvaluations = Integer.parseInt(maxNumberOfEvaluations);
     }
 
@@ -143,12 +143,15 @@ Expected arguments:
     // Depends on the number of problems
     ConfigurableAlgorithmBaseProblem configurableProblem;
     if (problemName.contains(",")) {
-      List<DoubleProblem> problems = List.of(ProblemFactory.getProblems(problemName));
+      //List<DoubleProblem> problems = List.of(org.uma.evolver.factory.ProblemFactory.getProblems(problemName));
+      List<DoubleProblem> problems = Arrays
+          .stream(problemName.split(","))
+          .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(problemName))
+          .toList();
 
       List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(
               maxNumberOfEvaluations.split(","))
-          .map(Integer::parseInt)
-          .collect(Collectors.toList());
+          .map(Integer::parseInt).toList() ;
       configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithmBuilder,
           problems,
           List.of(referenceFrontFileName.split(",")),
