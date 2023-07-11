@@ -146,7 +146,7 @@ Expected arguments:
       //List<DoubleProblem> problems = List.of(org.uma.evolver.factory.ProblemFactory.getProblems(problemName));
       List<DoubleProblem> problems = Arrays
           .stream(problemName.split(","))
-          .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(problemName))
+          .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(name))
           .toList();
 
       List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(
