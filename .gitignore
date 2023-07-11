@@ -1,2 +1,6 @@
 target
 .idea
+__pycache__
+build
+.venv-evolver
+*.egg-info
