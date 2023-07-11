@@ -1,6 +1,7 @@
 package org.uma.evolver.factory;
 
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -12,13 +13,12 @@ import java.io.IOException;
 
 public class QualityIndicatorFactory {
     public static QualityIndicator getIndicator(String name) {
-        QualityIndicator indicator = switch (name) {
-            case "NormalizedHypervolume" -> new NormalizedHypervolume();
-            case "InvertedGenerationalDistancePlus" -> new InvertedGenerationalDistancePlus();
-            case "Epsilon" -> new Epsilon();
-            case "Spread" -> new Spread();
-            default -> throw new RuntimeException("QualityIndicator not found");
-        };
+        double[][] array = {{0.0, 0.0}};
+        QualityIndicator indicator = QualityIndicatorUtils.getIndicatorFromName(
+                name,
+                // Dummy reference front, is changed later on the execution of each problem
+                QualityIndicatorUtils.getAvailableIndicators(array)
+        );
 
         return indicator;
     }

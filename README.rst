@@ -19,3 +19,25 @@ More complex goals:
 - We should cope with the feature of allowing to carry out a number of independent runs, so that the final solution would be that corresponding to the median value of the quality indicator used for performance assessment. 
 - Optionally, we can assume that the reference Pareto front is unknown beforehand, so a reference front can be computed on the fly by using the found solutions in every iteration of the algorithm.
 - Our goal is not to compete against irace, but it could be interesting to make some comparisons.
+
+Sample configuration
+--------------------
+
+The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems.
+
+.. code-block:: yaml
+
+    external_algorithm_arguments:
+      meta_optimizer_algorithm: NSGAII
+      meta_optimizer_population: 50
+      meta_optimizer_max_evaluations: 3000
+      independent_runs: 3
+      indicators_names: NormalizedHypervolume,Epsilon
+      output_directory: TEST/DIRECTORY
+
+    internal_algorithm_arguments:
+      configurable_algorithm: NSGAII
+      population: 100
+      problem_names: ZDT1,ZDT4,DTLZ3
+      reference_front_file_name: resources/referenceFronts/ZDT1.csv,resources/referenceFronts/ZDT4.csv,resources/referenceFronts/ZDT4.csv,resources/referenceFronts/DTLZ3.csv
+      max_number_of_evaluations: 8000,16000,20000

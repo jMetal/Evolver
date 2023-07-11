@@ -94,21 +94,21 @@ Expected arguments:
     // Extract the parameters from the file using regex
     // Each regex matches the key, a space and a word (\w), a number (\d) and some of them a series or special characters (",/.)
     String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:\\s+([\\w,\"]+)");
-    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population:\\s+(\\d+)");
+    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population_size:\\s+(\\d+)");
     String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
     String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
     String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
     String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"]+)");
 
     String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
-    String populationArg = extractValue(configurationParameters, "population:\\s+(\\d+)");
-    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"]+)");
+    String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
+    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"\\.]+)");
     String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
     String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
 
     String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+");
 
-    int population = 91; //Integer.parseInt(populationArg);
+    int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
@@ -119,8 +119,7 @@ Expected arguments:
     DoubleProblem problem;
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
-
-      problem = ProblemFactory.getProblem("ZDT1"); // This is a dummy problem for the multi-problem cases
+      problem = ProblemFactory.getProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
       internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
       Check.that(!maxNumberOfEvaluations.contains(","),
