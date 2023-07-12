@@ -109,6 +109,8 @@ Expected arguments:
 
     String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+)");
 
+    boolean enableGraphs = Boolean.parseBoolean(extractValue(configurationParameters, "enable_progress_graphs:\\s+([\\w\"]+)"));
+
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
@@ -174,21 +176,29 @@ Expected arguments:
         indicators, outputDirectory
     );
 
-    var evaluationObserver = new EvaluationObserver(50);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
-            indicators.get(1).name(),
-            problemName,
-            50);
-    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    // Observers
 
+    // Log progress
+    var evaluationObserver = new EvaluationObserver(50);
+    externalOptimizationAlgorithm.observable().register(evaluationObserver);
+
+    // Plot graphs
+    if (enableGraphs) {
+      var frontChartObserver =
+              new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+                      indicators.get(1).name(),
+                      problemName,
+                      50);
+      externalOptimizationAlgorithm.observable().register(frontChartObserver);
+    }
+
+    // Save results every X evaluations
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
         externalMaxEvaluations, outputResultsManagement);
-
-    externalOptimizationAlgorithm.observable().register(evaluationObserver);
-    externalOptimizationAlgorithm.observable().register(frontChartObserver);
     externalOptimizationAlgorithm.observable().register(writeExecutionDataToFilesObserver);
 
+    // Execute algorithm
     externalOptimizationAlgorithm.run();
 
     JMetalLogger.logger.info("Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
