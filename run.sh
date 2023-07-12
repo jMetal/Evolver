@@ -41,7 +41,7 @@ setup_enviroment() {
 }
 
 build_evolver() {
-  if [ ! -d "target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar" ]; then
+  if [ ! -f "target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar" ]; then
     echo "Building evolver"
 
     if ! command -v mvn &> /dev/null ; then
