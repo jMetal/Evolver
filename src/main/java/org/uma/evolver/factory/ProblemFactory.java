@@ -4,6 +4,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
+@Deprecated
 public class ProblemFactory {
     public static DoubleProblem getProblem(String name) {
         Problem<DoubleSolution> problem = org.uma.jmetal.problem.ProblemFactory.loadProblem(name);

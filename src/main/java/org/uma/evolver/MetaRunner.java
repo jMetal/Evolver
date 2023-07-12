@@ -1,9 +1,10 @@
 package org.uma.evolver;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
 import org.uma.evolver.factory.OptimizationAlgorithmFactory;
-import org.uma.evolver.factory.ProblemFactory;
 import org.uma.evolver.factory.QualityIndicatorFactory;
 import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
@@ -12,8 +13,10 @@ import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.jmetal.problem.ProblemFactory;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.Check;
@@ -24,8 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,6 @@ Expected arguments:
    * 10 - max number of evaluations: The maximum number of evaluations for the internal algorithm. It can be provided as a list of comma separated values E.g.: "8000,16000"
  - Optional specific arguments:
    * 11 - weight vector files directory: The directory containing weight vector files. Only used for the MOEAD internal algorithm.
-
      */
     if (args.length != 1) {
       System.err.println("Missing configuration file.");
@@ -114,67 +114,76 @@ Expected arguments:
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
 
-    List<QualityIndicator> indicators = Arrays.asList(QualityIndicatorFactory.getIndicators(indicatorsNames));
+    List<QualityIndicator> indicators = QualityIndicatorUtils.getIndicatorsFromNames(List.of(indicatorsNames.split(",")));
 
     DoubleProblem problem;
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
-      problem = ProblemFactory.getProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
+      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
       internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
-      Check.that(!maxNumberOfEvaluations.contains(","), "If there is only one problem, you can't have several maxNumberOfEvaluations");
-      Check.that(!referenceFrontFileName.contains(","), "If there is only one problem, you can't have several referenceFrontFileName");
-      problem = ProblemFactory.getProblem(problemName);
+      Check.that(!maxNumberOfEvaluations.contains(","),
+          "If there is only one problem, you can't have several maxNumberOfEvaluations");
+      Check.that(!referenceFrontFileName.contains(","),
+          "If there is only one problem, you can't have several referenceFrontFileName");
+      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(problemName);
       internalMaxEvaluations = Integer.parseInt(maxNumberOfEvaluations);
     }
 
     ConfigurableAlgorithmBuilder configurableAlgorithmBuilder;
-    if (weightVectorFilesDirectory == null)
-      configurableAlgorithmBuilder= ConfigurableProblemFactory.getProblem(configurableAlgorithm,
-              problem, population, internalMaxEvaluations);
-    else
+    if (weightVectorFilesDirectory == null) {
       configurableAlgorithmBuilder = ConfigurableProblemFactory.getProblem(configurableAlgorithm,
-              problem, population, internalMaxEvaluations, weightVectorFilesDirectory);
+          problem, population, internalMaxEvaluations);
+    } else {
+      configurableAlgorithmBuilder = ConfigurableProblemFactory.getProblem(configurableAlgorithm,
+          problem, population, internalMaxEvaluations, weightVectorFilesDirectory);
+    }
 
     // Define configurable problem
     // Depends on the number of problems
     ConfigurableAlgorithmBaseProblem configurableProblem;
     if (problemName.contains(",")) {
-      List<DoubleProblem> problems = List.of(ProblemFactory.getProblems(problemName));
+      //List<DoubleProblem> problems = List.of(org.uma.evolver.factory.ProblemFactory.getProblems(problemName));
+      List<DoubleProblem> problems = Arrays
+          .stream(problemName.split(","))
+          .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(problemName))
+          .toList();
 
-      List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(maxNumberOfEvaluations.split(","))
-              .map(Integer::parseInt)
-              .collect(Collectors.toList());
+      List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(
+              maxNumberOfEvaluations.split(","))
+          .map(Integer::parseInt).toList() ;
       configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithmBuilder,
-              problems,
-              List.of(referenceFrontFileName.split(",")),
-              indicators,
-              maxNumberOfEvaluationsPerProblem,
-              independentRuns);
+          problems,
+          List.of(referenceFrontFileName.split(",")),
+          indicators,
+          maxNumberOfEvaluationsPerProblem,
+          independentRuns);
     } else {
       configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithmBuilder,
-              referenceFrontFileName,
-              indicators, independentRuns);
+          referenceFrontFileName,
+          indicators, independentRuns);
     }
 
     // Create external optimization algorithm
-    MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
+    MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(
+        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-            externalAlgorithm, configurableProblem,
-            problemName,
-            indicators,outputDirectory
-        );
+        externalAlgorithm, configurableProblem,
+        problemName,
+        indicators, outputDirectory
+    );
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
             indicators.get(1).name(),
-                problemName,
-                50);
+            problemName,
+            50);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25, externalMaxEvaluations, outputResultsManagement);
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
+        externalMaxEvaluations, outputResultsManagement);
 
     externalOptimizationAlgorithm.observable().register(evaluationObserver);
     externalOptimizationAlgorithm.observable().register(frontChartObserver);

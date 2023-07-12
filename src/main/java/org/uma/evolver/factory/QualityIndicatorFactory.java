@@ -11,6 +11,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 
 import java.io.IOException;
 
+@Deprecated
 public class QualityIndicatorFactory {
     public static QualityIndicator getIndicator(String name) {
         double[][] array = {{0.0, 0.0}};
