@@ -1,14 +1,10 @@
 from pathlib import Path
 from tempfile import TemporaryFile
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import streamlit as st
-
 from evolver.execute import execute_evolver_streaming
 from evolver.utils import download_link, zip_directory
-
-class JavaException(Exception):
-    pass
 
 # TODO: Extract all this in run.sh and add it as parameter to the dashboard
 meta_optimizers = {
@@ -118,32 +114,56 @@ st.set_page_config(
 st.header("Evolver configuration")
 st.subheader("General configuration")
 config = {}
-config["output_directory"] = st.text_input("Folder to store the results", value="/tmp/evolver")
+config["output_directory"] = st.text_input(
+    "Folder to store the results", value="/tmp/evolver"
+)
 
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Meta-optimizer configuration")
-    meta_optimizer= {}
+    meta_optimizer = {}
     meta_optimizer["algorithm"] = st.selectbox("Algorithm", meta_optimizers.keys())
-    meta_optimizer["population_size"] = st.number_input("Population size", value=50, min_value=1)
-    meta_optimizer["max_evaluations"] = st.number_input("Maximum number of evaluations", value=3000, min_value=1)
-    meta_optimizer["independent_runs"] = st.number_input("number of independent runs", value=3, min_value=1)
-    meta_optimizer["indicators_names"] = st.multiselect("Indicators", quality_indicators.keys(), default=["Normalized Hypervolume", "Epsilon"])
+    meta_optimizer["population_size"] = st.number_input(
+        "Population size", value=50, min_value=1
+    )
+    meta_optimizer["max_evaluations"] = st.number_input(
+        "Maximum number of evaluations", value=3000, min_value=1
+    )
+    meta_optimizer["independent_runs"] = st.number_input(
+        "number of independent runs", value=3, min_value=1
+    )
+    meta_optimizer["indicators_names"] = st.multiselect(
+        "Indicators",
+        quality_indicators.keys(),
+        default=["Normalized Hypervolume", "Epsilon"],
+    )
 with col2:
     st.subheader("Internal configuration")
     internal_configuration = {}
-    internal_configuration["algorithm"] = st.selectbox("Algorithm", configurable_algorithms.keys())
-    internal_configuration["population_size"] = st.number_input("Population size", value=100, min_value=1)
-    internal_configuration["problems"] = st.multiselect("Problems", problems.keys(), default=["ZDT1", "ZDT4"])
+    internal_configuration["algorithm"] = st.selectbox(
+        "Algorithm", configurable_algorithms.keys()
+    )
+    internal_configuration["population_size"] = st.number_input(
+        "Population size", value=100, min_value=1
+    )
+    internal_configuration["problems"] = st.multiselect(
+        "Problems", problems.keys(), default=["ZDT1", "ZDT4"]
+    )
     evaluations = []
     for problem in internal_configuration["problems"]:
-        evaluations.append(st.number_input(f"Maximum number of evaluations for {problem}", value=8000, min_value=1))
+        evaluations.append(
+            st.number_input(
+                f"Maximum number of evaluations for {problem}", value=8000, min_value=1
+            )
+        )
     internal_configuration["max_number_of_evaluations"] = evaluations
 
 
 with st.expander("Manually change configuration"):
-    configuration = st.text_area("config", value=""
-    f"""general_config:
+    configuration = st.text_area(
+        "config",
+        value=""
+        f"""general_config:
     enable_progress_graphs: False # Graphs can be enabled in the dashboard
     output_directory: {config["output_directory"]}
 
@@ -163,9 +183,8 @@ internal_algorithm_arguments:
 
 optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
-    weight_vector_files_directory: resources/weightVectors"""
+    weight_vector_files_directory: resources/weightVectors""",
     )
-
 
 
 # Execute evolver
@@ -177,37 +196,54 @@ if st.button("Execute"):
 
     with open(temp_file, "w") as f:
         f.write(configuration)
-    
+
+    java_class = "org.uma.evolver.MetaRunner"
+    args = [str(temp_file)]
+    logs_block = st.empty()
+    logs = ""
+
+    execution = execute_evolver_streaming(
+        java_class,
+        args=args,
+        jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
+        enable_logs=True,
+    )
+
     with st.spinner("Executing Evolver..."):
-        java_class = "org.uma.evolver.MetaRunner"
-        args = [str(temp_file)]
-        logs_block = st.empty()
-        logs = ""
-        for log_line in execute_evolver_streaming(java_class, args=args, jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"), enable_logs=True):
+        for log_line in execution:
             logs += log_line + "\n"
             with logs_block.container():
                 logs_tail = "\n".join(logs.split("\n")[-20:])
                 st.markdown(f"```\n{logs_tail}```")
-        
+
     st.success("Evolver execution finished!")
+    st.balloons()
+    execution = None
 
     with TemporaryFile() as tmp:
-        with ZipFile(tmp, 'w', ZIP_DEFLATED) as zip_file:
+        with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
             zip_directory(base_path, zip_file)
         tmp.seek(0)
 
-        # The oficial streamlit download button refreshes the page, so we use a custom one
-        # st.download_button("Download artifacts", tmp.read(), file_name="evolver.zip", mime="application/zip")
+        # The oficial streamlit download button refreshes the page,
+        # so we use a custom one
+        # st.download_button(
+        #   "Download artifacts", tmp.read(),
+        #   file_name="evolver.zip", mime="application/zip"
+        # )
+
+        zip_link = download_link(
+            "here", tmp.read(), file_name="evolver.zip", mime="application/zip"
+        )
+
         st.markdown(
-            "##### Execution artifacts can be downloaded "
-            f'{download_link("here", tmp.read(), file_name="evolver.zip", mime="application/zip")}'
-            ".",
+            f"##### Execution artifacts can be downloaded {zip_link}.",
             unsafe_allow_html=True,
         )
+    logs_link = download_link(
+        "here", logs, file_name="evolver-logs.txt", mime="text/plain"
+    )
     st.markdown(
-        "##### Execution logs can be downloaded "
-        f'{download_link("here", logs, file_name="evolver-logs.txt", mime="text/plain")}'
-        ".",
+        f"##### Execution logs can be downloaded {logs_link}.",
         unsafe_allow_html=True,
     )
-    

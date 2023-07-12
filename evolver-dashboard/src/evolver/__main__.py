@@ -7,7 +7,6 @@ from evolver.logs import get_logger
 from evolver.utils import is_installed
 
 
-
 def start_streamlit():
     """
     Start streamlit dashboard.
@@ -19,7 +18,7 @@ def start_streamlit():
     environment = {}
 
     command = [
-        sys.executable, # Run the same python interpreter
+        sys.executable,  # Run the same python interpreter
         "-m",
         "streamlit",
         "run",

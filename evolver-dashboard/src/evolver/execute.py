@@ -2,14 +2,18 @@ import os
 import subprocess
 from pathlib import Path
 
+
 class JavaException(Exception):
     pass
 
-def create_command(java_class: str,
+
+def create_command(
+    java_class: str,
     *,
     jar: Path = None,
     args: list[str] = [],
-    enable_logs: bool = False,):
+    enable_logs: bool = False,
+):
     """
     Prepares the Evolver command to be executed.
 
@@ -40,6 +44,7 @@ def create_command(java_class: str,
     command.extend(args)
 
     return command
+
 
 def execute_evolver(
     java_class: str,
@@ -91,7 +96,9 @@ def execute_evolver_streaming(
     command = create_command(java_class, jar=jar, args=args, enable_logs=enable_logs)
 
     # Run the JAR file using a subprocess
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True) as process:
+    with subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
+    ) as process:
         for line in process.stderr:
             yield line.strip()
 
@@ -100,5 +107,6 @@ def execute_evolver_streaming(
         if process.returncode != 0:
             error_output = process.stderr.read().strip()
             raise JavaException(
-                f"JAR execution failed with return code {process.returncode}. Error message:\n{error_output}"
+                f"JAR execution failed with return code {process.returncode}."
+                f" Error message:\n{error_output}"
             )

@@ -5,14 +5,6 @@ import os
 import warnings
 from zipfile import ZipFile
 
-try:
-    import openpyxl  # noqa: F401 # needed for pd.to_excel
-    import pandas as pd
-
-    HAS_PANDAS = True
-except ImportError:
-    HAS_PANDAS = False
-
 
 def is_installed(module: str) -> bool:
     """Check if a module is installed.
@@ -27,22 +19,24 @@ def is_installed(module: str) -> bool:
         warnings.warn(f"Parent module will be imported: {module}", RuntimeWarning)
     return importlib.util.find_spec(module) is not None
 
+
 def zip_directory(path: str, zip_handler: ZipFile) -> None:
     """Zip a directory recursively."""
     for root, _, files in os.walk(path):
         for file in files:
             zip_handler.write(
-                os.path.join(root, file), 
-                os.path.relpath(os.path.join(root, file), os.path.join(path, '..'))
+                os.path.join(root, file),
+                os.path.relpath(os.path.join(root, file), os.path.join(path, "..")),
             )
+
 
 def download_link(
     label: str,
-    data: str|bytes,
-    file_name: str|None = None,
-    mime: str|None = None,
+    data: str | bytes,
+    file_name: str | None = None,
+    mime: str | None = None,
 ) -> str:
-    """Generates a link to download the given data, suport file-like object and pd.DataFrame.
+    """Generates a link to download the given data, suport file-like object.
 
     Args:
         button_text: text show on page.
@@ -87,12 +81,6 @@ def download_link(
         data.seek(0)
         data_as_bytes = data.read() or b""
         mimetype = mimetype or "application/octet-stream"
-    elif HAS_PANDAS and hasattr(data, "to_excel"):
-        bio = io.BytesIO()
-        data.to_excel(bio)
-        bio.seek(0)
-        data_as_bytes = bio.read()
-        mimetype = mimetype or "application/octet-stream"
     else:
         raise RuntimeError("Invalid binary data format: %s" % type(data))
 
@@ -101,7 +89,7 @@ def download_link(
     dl_link = (
         f'<a class="stDownloadButton" download="{file_name}" '
         f'href="data:{mimetype};base64,{b64}">{label}'
-        '</a>'
+        "</a>"
     )
 
     return dl_link
