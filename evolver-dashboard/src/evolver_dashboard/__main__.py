@@ -1,6 +1,7 @@
 import argparse
 import os
 import subprocess
+import sys
 
 from evolver_dashboard.logs import get_logger
 from evolver_dashboard.utils import is_installed
@@ -18,7 +19,7 @@ def start_streamlit():
     environment = {}
 
     command = [
-        "python",
+        sys.executable, # Run the same python interpreter
         "-m",
         "streamlit",
         "run",
