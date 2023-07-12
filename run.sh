@@ -41,9 +41,6 @@ setup_enviroment() {
 # Virtual environment name as command-line argument
 VENV_NAME="$PWD/.venv-evolver"
 
-# Go to Python's package directory
-cd evolver-dashboard
-
 # Call the function to install dependencies
 setup_enviroment "$VENV_NAME"
 

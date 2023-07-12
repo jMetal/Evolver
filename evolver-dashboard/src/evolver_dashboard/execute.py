@@ -57,7 +57,7 @@ def execute_evolver(
     :param enable_logs: Whether to enable the Evolver logs.
     :return: The output of the JAR file.
     """
-    command = create_command(java_class, jar, args, enable_logs)
+    command = create_command(java_class, jar=jar, args=args, enable_logs=enable_logs)
 
     # Run the JAR file using a subprocess
     try:
@@ -88,7 +88,7 @@ def execute_evolver_streaming(
     :param enable_logs: Whether to enable the Evolver logs.
     :yield: Each line of the JAR file's output.
     """
-    command = create_command(java_class, jar, args, enable_logs)
+    command = create_command(java_class, jar=jar, args=args, enable_logs=enable_logs)
 
     # Run the JAR file using a subprocess
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True) as process:
