@@ -1,4 +1,4 @@
-from evolver_dashboard.logs import configure_logging, get_logger
+from evolver.logs import configure_logging, get_logger
 
 configure_logging()
 

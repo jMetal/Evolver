@@ -47,7 +47,7 @@ def configure_logging(log_file: str = None, config: dict | None = None):
         logging.error(f"Error while configuring logging: {err}")
 
 
-def get_logger(module: str = "evolver-dashboard", name: str = None):
+def get_logger(module: str = "evolver", name: str = None):
     logger_name = module
     if name is not None:
         logger_name += "." + name

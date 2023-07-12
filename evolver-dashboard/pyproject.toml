@@ -3,7 +3,7 @@ requires = ["setuptools >= 64.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "evolver-dashboard"
+name = "evolver"
 version = "1.0.0"
 authors = [
   { name="José F. Aldana Martín", email="jfaldanam@uma.es" },
@@ -36,5 +36,5 @@ dev = [
   "ruff",
 ]
 complete = [
-  "evolver-dashboard[dev]",
+  "evolver[dev]",
 ]

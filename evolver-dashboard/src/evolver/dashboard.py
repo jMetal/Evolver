@@ -4,8 +4,8 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 import streamlit as st
 
-from evolver_dashboard.execute import execute_evolver_streaming
-from evolver_dashboard.utils import download_link, zip_directory
+from evolver.execute import execute_evolver_streaming
+from evolver.utils import download_link, zip_directory
 
 class JavaException(Exception):
     pass

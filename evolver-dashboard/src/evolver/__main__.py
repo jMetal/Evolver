@@ -3,8 +3,8 @@ import os
 import subprocess
 import sys
 
-from evolver_dashboard.logs import get_logger
-from evolver_dashboard.utils import is_installed
+from evolver.logs import get_logger
+from evolver.utils import is_installed
 
 
 

@@ -32,7 +32,7 @@ setup_enviroment() {
     activate_venv "$venv_name"
   else
     activate_venv "$venv_name"
-    echo "Installing evolver-dashboard and dependencies..."
+    echo "Installing evolver and dependencies..."
     pip install -e "."
     echo "Dependencies installed."
   fi
@@ -45,4 +45,4 @@ VENV_NAME="$PWD/.venv-evolver"
 setup_enviroment "$VENV_NAME"
 
 # Run the Python script
-python -m evolver_dashboard
+python -m evolver
