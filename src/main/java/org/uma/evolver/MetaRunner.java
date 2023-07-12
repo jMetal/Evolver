@@ -54,6 +54,30 @@ public class MetaRunner {
     }
   }
 
+  /**
+   * Given a string containing one or more problem names separated by a comma, it returns a string
+   * containing all the problem names (their qualified packages are removed)
+   *
+   * @param problemNames
+   * @return
+   */
+  private static String getProblemNamesFromString(String problemNames) {
+    String names = "" ;
+    String[] namesArray = problemNames.split(",") ;
+
+    for (String name : namesArray) {
+      String[] packageNames = name.split("\\.");
+      if (packageNames.length > 1) {
+        names = names + packageNames[packageNames.length - 1] + ",";
+      } else {
+        names = names + packageNames[0] ;
+      }
+    }
+
+    return names.substring(0, names.length()-1) ;
+  }
+
+
   public static void main(String[] args) throws IOException {
     /*
 Expected arguments:
@@ -170,7 +194,7 @@ Expected arguments:
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         externalAlgorithm, configurableProblem,
-        problemName,
+        getProblemNamesFromString(problemName),
         indicators, outputDirectory
     );
 
@@ -178,7 +202,7 @@ Expected arguments:
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
             indicators.get(1).name(),
-            problemName,
+            getProblemNamesFromString(problemName),
             50);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
