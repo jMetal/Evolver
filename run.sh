@@ -33,10 +33,28 @@ setup_enviroment() {
   else
     activate_venv "$venv_name"
     echo "Installing evolver and dependencies..."
+    cd evolver-dashboard
     pip install -e "."
+    cd ..
     echo "Dependencies installed."
   fi
 }
+
+build_evolver() {
+  if [ ! -d "target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar" ]; then
+    echo "Building evolver"
+
+    if ! command -v mvn &> /dev/null ; then
+      echo "Maven is not installed, please install maven to build Evolver."
+      exit -1
+    fi
+
+    mvn package
+  fi
+}
+
+# Build Evolver if it does not exist
+build_evolver
 
 # Virtual environment name as command-line argument
 VENV_NAME="$PWD/.venv-evolver"
