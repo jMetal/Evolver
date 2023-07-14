@@ -16,8 +16,10 @@ The following example can use a generic NSGAII to auto-design the NSGAII algorit
 
 ```yaml
 general_config:
-    enable_progress_graphs: false
+    dashboard_mode: false
     output_directory: /tmp/evolver
+    cpu_cores: 8
+    plotting_frequency: 10
 
 external_algorithm_arguments:
     meta_optimizer_algorithm: NSGAII
