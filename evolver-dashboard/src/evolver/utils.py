@@ -127,6 +127,7 @@ def extract_plot(text: str) -> dict:
         plot = {
             "data": {"values": data_values},
             "title": {"text": "Front progress of meta-optimizer"},
+            "autosize": {"type": "fit", "resize": True},
             "mark": "point",
             "encoding": {
                 "x": {"field": x_label, "type": "quantitative"},

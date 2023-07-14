@@ -1,3 +1,4 @@
+import multiprocessing
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryFile
@@ -116,12 +117,19 @@ st.subheader("General configuration")
 config = {}
 tmp_folder = st.text_input("Folder to store the results", value="/tmp/evolver")
 config["output_directory"] = Path(tmp_folder) / datetime.now().strftime("%Y%m%d-%H%M%S")
+num_cores = multiprocessing.cpu_count()
+config["cpu_cores"] = st.number_input("Number of CPU cores", value=num_cores, min_value=1)
+config["observer_frequency"] = st.number_input("Observer frequency", value=10, min_value=1)
+st.info("Observer frequency will always be equal or a multiple of the population size")
 
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Meta-optimizer configuration")
     meta_optimizer = {}
     meta_optimizer["algorithm"] = st.selectbox("Algorithm", meta_optimizers.keys())
+    if meta_optimizer["algorithm"] == "Generational Genetic Algorithm":
+        st.warning("GGA is not a parallel algorithm. It will ignore the number of cores.")
+
     meta_optimizer["population_size"] = st.number_input(
         "Population size", value=50, min_value=1
     )
@@ -163,8 +171,10 @@ with st.expander("Manually change configuration"):
         "config",
         value=""
         f"""general_config:
-    enable_progress_graphs: False # Graphs can be enabled in the dashboard
+    dashboard_mode: True # Required to plot graphs in the dashboard
     output_directory: {config["output_directory"]}
+    cpu_cores: {config["cpu_cores"]}
+    observer_frequency: {config["observer_frequency"]}
 
 external_algorithm_arguments:
     meta_optimizer_algorithm: {meta_optimizers[meta_optimizer["algorithm"]]}

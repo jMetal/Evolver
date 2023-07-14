@@ -23,28 +23,32 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.comparator.constraintcomparator.impl.OverallConstraintViolationDegreeComparator;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observable.Observable;
 
 import java.util.List;
 import java.util.Map;
 
 public class OptimizationAlgorithmFactory {
-    public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations) {
-        // TODO: extract parallelism parameters
+    public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations, int numCores) {
+        if (name.equals("GGA") && numCores > 1) {
+            JMetalLogger.logger.warning("GGA is not parallelized");
+        }
+        
         MetaOptimizer optimizationAlgorithm = switch (name) {
-            case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, population, maxNumberOfEvaluations);
+            case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, population, maxNumberOfEvaluations, numCores);
             case "ASYNCNSGAII" ->
-                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, population, maxNumberOfEvaluations);
-            case "GGA" ->
+                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, population, maxNumberOfEvaluations, numCores);
+            case "GGA" -> 
                     OptimizationAlgorithmFactory.createGenericGeneticAlgorithm(problem, population, maxNumberOfEvaluations);
             case "SMPSO" ->
-                    OptimizationAlgorithmFactory.createSMPSO(problem, population, maxNumberOfEvaluations);
+                    OptimizationAlgorithmFactory.createSMPSO(problem, population, maxNumberOfEvaluations, numCores);
             default -> throw new RuntimeException("Optimization algorithm not found");
         };
         return optimizationAlgorithm;
     }
 
-    private static MetaOptimizer createSMPSO(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createSMPSO(DoubleProblem problem, int population, int maxNumberOfEvaluations, int numCores) {
         int swarmSize = population;
         Termination termination = new TerminationByEvaluations(maxNumberOfEvaluations);
 
@@ -52,7 +56,7 @@ public class OptimizationAlgorithmFactory {
                 problem,
                 swarmSize)
                 .setTermination(termination)
-                .setEvaluation(new MultiThreadedEvaluation<>(8, problem))
+                .setEvaluation(new MultiThreadedEvaluation<>(numCores, problem))
                 .build();
 
         MetaOptimizer smpsoOptimization = new MetaOptimizer() {
@@ -152,7 +156,7 @@ public class OptimizationAlgorithmFactory {
         return ggaOptimizer;
     }
 
-    private static MetaOptimizer createAsyncNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createAsyncNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations, int numCores) {
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
@@ -164,7 +168,7 @@ public class OptimizationAlgorithmFactory {
 
         AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
                 new AsynchronousMultiThreadedNSGAII<>(
-                        8, problem, population, crossover, mutation,
+                        numCores, problem, population, crossover, mutation,
                         new TerminationByEvaluations(maxNumberOfEvaluations));
 
         MetaOptimizer nsgaiiOptimizer = new MetaOptimizer() {
@@ -195,7 +199,7 @@ public class OptimizationAlgorithmFactory {
         return nsgaiiOptimizer;
     }
 
-    private static MetaOptimizer createNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createNSGAII(DoubleProblem problem, int population, int maxNumberOfEvaluations, int numCores) {
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
@@ -216,7 +220,7 @@ public class OptimizationAlgorithmFactory {
                 crossover,
                 mutation)
                 .setTermination(termination)
-                .setEvaluation(new MultiThreadedEvaluation<>(8, problem))
+                .setEvaluation(new MultiThreadedEvaluation<>(numCores, problem))
                 .build();
         MetaOptimizer nsgaiiOptimizer = new MetaOptimizer() {
 

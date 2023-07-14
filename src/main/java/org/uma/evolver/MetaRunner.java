@@ -54,24 +54,6 @@ public class MetaRunner {
   }
 
   public static void main(String[] args) throws IOException {
-    /*
-Expected arguments:
- - External algorithm arguments:
-   * 0 - meta-optimizer algorithm: The name of the meta-optimizer algorithm.
-   * 1 - meta-optimizer population: The population size for the meta-optimizer algorithm.
-   * 2 - meta-optimizer max evaluations: The maximum number of evaluations for the meta-optimizer algorithm.
-   * 3 - independent runs: The number of independent runs for the meta-optimizer algorithm.
-   * 4 - indicators names: The names of the indicators used as objectives by the meta-optimizer algorithm.
-   * 5 - output directory: The directory where the output will be saved.
- - Internal algorithm arguments:
-   * 6 - configurable algorithm: The name of the internal configurable algorithm.
-   * 7 - population: The population size for the internal algorithm.
-   * 8 - problem names: The names of the problems to be solved. It can be provided as a list of comma separated values E.g.: "ZDT1,ZDT4"
-   * 9 - reference front file name: The file name of the reference front. It can be provided as a list of comma separated values E.g.: "ZDT1.csv,ZDT4.csv"
-   * 10 - max number of evaluations: The maximum number of evaluations for the internal algorithm. It can be provided as a list of comma separated values E.g.: "8000,16000"
- - Optional specific arguments:
-   * 11 - weight vector files directory: The directory containing weight vector files. Only used for the MOEAD internal algorithm.
-     */
     if (args.length != 1) {
       System.err.println("Missing configuration file.");
       System.exit(1);
@@ -108,7 +90,9 @@ Expected arguments:
 
     String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+)");
 
-    boolean enableGraphs = Boolean.parseBoolean(extractValue(configurationParameters, "enable_progress_graphs:\\s+([\\w\"]+)"));
+    boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:\\s+([\\w\"]+)"));
+    int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:\\s+([\\d,\"]+)"));
+    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "observer_frequency:\\s+([\\d,\"]+)"));
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
@@ -167,7 +151,7 @@ Expected arguments:
 
     // Create external optimization algorithm
     MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(
-        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
+        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations, numCores);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         externalAlgorithm, configurableProblem,
@@ -178,29 +162,28 @@ Expected arguments:
     // Observers
 
     // Log progress
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(observerFrequency);
     externalOptimizationAlgorithm.observable().register(evaluationObserver);
 
     // Dashboard observer
-    var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
-        indicators.get(1).name(),
-        problemName,
-        1);
-    externalOptimizationAlgorithm.observable().register(dashboardFrontObserver);
-
-    // Plot graphs
-    if (enableGraphs) {
+    if (dashboardMode) {
+      var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+          indicators.get(1).name(),
+          problemName,
+          observerFrequency);
+      externalOptimizationAlgorithm.observable().register(dashboardFrontObserver);
+    } else {
       var frontChartObserver =
               new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
                       indicators.get(1).name(),
                       problemName,
-                      50);
+                      observerFrequency);
       externalOptimizationAlgorithm.observable().register(frontChartObserver);
     }
 
     // Save results every X evaluations
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(observerFrequency,
         externalMaxEvaluations, outputResultsManagement);
     externalOptimizationAlgorithm.observable().register(writeExecutionDataToFilesObserver);
 
