@@ -6,8 +6,13 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import streamlit as st
 import streamlit.components.v1 as st_components
+
 from evolver.execute import execute_evolver_streaming
+from evolver.logs import get_logger
 from evolver.utils import download_link, extract_plot, zip_directory
+
+# Configure logger
+logger = get_logger()
 
 # TODO: Extract all this in run.sh and add it as parameter to the dashboard
 meta_optimizers = {
@@ -112,69 +117,106 @@ st.set_page_config(
     menu_items={"About": None},
 )
 
+# State
+if "is_running" not in st.session_state:
+    st.session_state["is_running"] = False
+
+
 st.header("Evolver configuration")
 st.subheader("General configuration")
 config = {}
-tmp_folder = st.text_input("Folder to store the results", value="/tmp/evolver")
+tmp_folder = st.text_input(
+    "Folder to store the results",
+    value="/tmp/evolver",
+    disabled=st.session_state["is_running"],
+)
 config["output_directory"] = Path(tmp_folder) / datetime.now().strftime("%Y%m%d-%H%M%S")
 num_cores = multiprocessing.cpu_count()
-config["cpu_cores"] = st.number_input("Number of CPU cores", value=num_cores, min_value=1)
-config["observer_frequency"] = st.number_input("Observer frequency", value=10, min_value=1)
-st.info("Observer frequency will always be equal or a multiple of the population size")
+config["cpu_cores"] = st.number_input(
+    "Number of CPU cores",
+    value=num_cores,
+    min_value=1,
+    disabled=st.session_state["is_running"],
+)
+config["plotting_frequency"] = st.number_input(
+    "Plotting frequency", value=10, min_value=1, disabled=st.session_state["is_running"]
+)
 
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Meta-optimizer configuration")
     meta_optimizer = {}
-    meta_optimizer["algorithm"] = st.selectbox("Algorithm", meta_optimizers.keys())
+    meta_optimizer["algorithm"] = st.selectbox(
+        "Algorithm", meta_optimizers.keys(), disabled=st.session_state["is_running"]
+    )
     if meta_optimizer["algorithm"] == "Generational Genetic Algorithm":
-        st.warning("GGA is not a parallel algorithm. It will ignore the number of cores.")
+        st.warning(
+            "GGA is not a parallel algorithm. It will ignore the number of cores."
+        )
 
     meta_optimizer["population_size"] = st.number_input(
-        "Population size", value=50, min_value=1
+        "Population size",
+        value=50,
+        min_value=1,
+        disabled=st.session_state["is_running"],
     )
     meta_optimizer["max_evaluations"] = st.number_input(
-        "Maximum number of evaluations", value=3000, min_value=1
+        "Maximum number of evaluations",
+        value=3000,
+        min_value=1,
+        disabled=st.session_state["is_running"],
     )
     meta_optimizer["independent_runs"] = st.number_input(
-        "number of independent runs", value=3, min_value=1
+        "Number of independent runs",
+        value=3,
+        min_value=1,
+        disabled=st.session_state["is_running"],
     )
     meta_optimizer["indicators_names"] = st.multiselect(
         "Indicators",
         quality_indicators.keys(),
         default=["Normalized Hypervolume", "Epsilon"],
+        disabled=st.session_state["is_running"],
     )
 with col2:
     st.subheader("Internal configuration")
     internal_configuration = {}
     internal_configuration["algorithm"] = st.selectbox(
-        "Algorithm", configurable_algorithms.keys()
+        "Algorithm",
+        configurable_algorithms.keys(),
+        disabled=st.session_state["is_running"],
     )
     internal_configuration["population_size"] = st.number_input(
-        "Population size", value=100, min_value=1
+        "Population size",
+        value=100,
+        min_value=1,
+        disabled=st.session_state["is_running"],
     )
     internal_configuration["problems"] = st.multiselect(
-        "Problems", problems.keys(), default=["ZDT1", "ZDT4"]
+        "Problems",
+        problems.keys(),
+        default=["ZDT1", "ZDT4"],
+        disabled=st.session_state["is_running"],
     )
     evaluations = []
     for problem in internal_configuration["problems"]:
         evaluations.append(
             st.number_input(
-                f"Maximum number of evaluations for {problem}", value=8000, min_value=1
+                f"Maximum number of evaluations for {problem}",
+                value=8000,
+                min_value=1,
+                disabled=st.session_state["is_running"],
             )
         )
     internal_configuration["max_number_of_evaluations"] = evaluations
 
 
 with st.expander("Manually change configuration"):
-    configuration = st.text_area(
-        "config",
-        value=""
-        f"""general_config:
+    str_configuration = f"""general_config:
     dashboard_mode: True # Required to plot graphs in the dashboard
     output_directory: {config["output_directory"]}
     cpu_cores: {config["cpu_cores"]}
-    observer_frequency: {config["observer_frequency"]}
+    plotting_frequency: {config["plotting_frequency"]}
 
 external_algorithm_arguments:
     meta_optimizer_algorithm: {meta_optimizers[meta_optimizer["algorithm"]]}
@@ -192,13 +234,27 @@ internal_algorithm_arguments:
 
 optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
-    weight_vector_files_directory: resources/weightVectors""",
+    weight_vector_files_directory: resources/weightVectors"""
+
+    configuration = st.text_area(
+        "MetaRunner configuration",
+        value=str_configuration,
+        disabled=st.session_state["is_running"],
+    )
+    config_link = download_link(
+        "here", str_configuration, file_name="config.yaml", mime="text/yaml"
+    )
+
+    st.markdown(
+        "##### This configuration for the `MetaRunner`"
+        f" can be downloaded {config_link}.",
+        unsafe_allow_html=True,
     )
 
 
 # Execute evolver
 st.header("Execute Evolver")
-if st.button("Execute"):
+if st.button("Execute", disabled=st.session_state["is_running"]):
     base_path = Path(config["output_directory"])
     base_path.mkdir(parents=True, exist_ok=True)
     temp_file = base_path / "evolver-config.yaml"
@@ -209,44 +265,71 @@ if st.button("Execute"):
     java_class = "org.uma.evolver.MetaRunner"
     args = [str(temp_file)]
 
-    execution = execute_evolver_streaming(
-        java_class,
-        args=args,
-        jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
-        enable_logs=True,
-    )
+    if "execution" not in st.session_state:
+        st.session_state["execution"] = execute_evolver_streaming(
+            java_class,
+            args=args,
+            jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
+            enable_logs=True,
+        )
+        st.session_state["is_running"] = True
+        st.experimental_rerun()
+
+if "execution" in st.session_state:
+    spinner_block = st.empty()
+    progress_bar = st.progress(0, "Meta-optimizer progress")
+    # Prepare a block to showcase the results later
+    results_block = st.empty()
 
     # Prepare a block to show progress plot
     plot_block = st.empty()
 
-    # Prepare a block to showcase the results later
-    results_block = st.empty()
+    expander_block = st.empty()
 
     logs = ""
-    with st.spinner("Executing Evolver..."):
-        with st.expander("Execution logs"):
-            logs_block = st.empty()
-            for log_line in execution:
-                if "Evolver dashboard front plot" in log_line:
-                    plot = extract_plot(log_line)
-                    with plot_block.container():
-                        st.vega_lite_chart(plot, use_container_width=True)
-                else:
-                    logs += log_line + "\n"
-                    with logs_block.container():
-                        st_components.html(
-                            f"""<pre>{logs}</pre>""", height=600, scrolling=True
-                        )  # Add it in code block
-                        logs_link = download_link(
-                            "here",
-                            logs,
-                            file_name="evolver-logs.txt",
-                            mime="text/plain",
+    with spinner_block.container():
+        with st.spinner("Executing Evolver..."):
+            with expander_block.container():
+                with st.expander("Execution logs"):
+                    # Prepare a block to show the logs
+                    logs_block = st.empty()
+
+                for log_line in st.session_state["execution"]:
+                    if "Evolver dashboard front plot" in log_line:
+                        plot, progress = extract_plot(log_line)
+                        if progress / meta_optimizer["max_evaluations"] > 1:
+                            logger.warning(
+                                f"Progress is greater than 100%:\n"
+                                f"Progress: {progress}\n"
+                                f"Max evaluations:{meta_optimizer['max_evaluations']}"
+                            )
+                        progress_percentage = min(
+                            progress / meta_optimizer["max_evaluations"], 1
                         )
-                        st.markdown(
-                            f"##### Execution logs can be downloaded {logs_link}.",
-                            unsafe_allow_html=True,
+                        progress_bar.progress(
+                            progress_percentage, "Meta-optimizer progress"
                         )
+                        with plot_block.container():
+                            st.vega_lite_chart(plot, use_container_width=True)
+                    else:
+                        logs += log_line + "\n"
+                        with logs_block.container():
+                            st_components.html(
+                                f"""<pre>{logs}</pre>""", height=600, scrolling=True
+                            )  # Add it in code block
+                            logs_link = download_link(
+                                "here",
+                                logs,
+                                file_name="evolver-logs.txt",
+                                mime="text/plain",
+                            )
+                            st.markdown(
+                                f"##### Execution logs can be downloaded {logs_link}.",
+                                unsafe_allow_html=True,
+                            )
+
+    # Prepare a block to reset the execution
+    reset_block = st.empty()
 
     with results_block.container():
         st.success("Evolver execution finished!")
@@ -254,7 +337,7 @@ if st.button("Execute"):
 
         with TemporaryFile() as tmp:
             with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
-                zip_directory(base_path, zip_file)
+                zip_directory(config["output_directory"], zip_file)
             tmp.seek(0)
 
             # The oficial streamlit download button refreshes the page,
@@ -272,3 +355,9 @@ if st.button("Execute"):
                 f"##### Execution artifacts can be downloaded {zip_link}.",
                 unsafe_allow_html=True,
             )
+        with reset_block.container():
+            st.subheader("Reset execution to run a new one")
+            if st.button("Reset"):
+                st.session_state["is_running"] = False
+                del st.session_state["execution"]
+                st.experimental_rerun()

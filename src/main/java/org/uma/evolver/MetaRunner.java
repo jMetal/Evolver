@@ -92,7 +92,7 @@ public class MetaRunner {
 
     boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:\\s+([\\w\"]+)"));
     int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:\\s+([\\d,\"]+)"));
-    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "observer_frequency:\\s+([\\d,\"]+)"));
+    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "plotting_frequency:\\s+([\\d,\"]+)"));
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);

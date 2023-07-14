@@ -122,11 +122,17 @@ def extract_plot(text: str) -> dict:
         data_values = []
         x_label = plot_data["xAxis"]
         y_label = plot_data["yAxis"]
+        evaluations = plot_data["evaluations"]
+
         for obj1, obj2 in zip(plot_data["xValues"], plot_data["yValues"]):
             data_values.append({x_label: obj1, y_label: obj2})
+
+        # Prepare Vega lite plot
         plot = {
             "data": {"values": data_values},
-            "title": {"text": "Front progress of meta-optimizer"},
+            "title": {
+                "text": f"Front progress of meta-optimizer in {evaluations} evaluations"
+            },
             "autosize": {"type": "fit", "resize": True},
             "mark": "point",
             "encoding": {
@@ -134,6 +140,6 @@ def extract_plot(text: str) -> dict:
                 "y": {"field": y_label, "type": "quantitative"},
             },
         }
-        return plot
+        return plot, evaluations
     else:
         raise ValueError("No JSON found in text", text)
