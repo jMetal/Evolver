@@ -1,5 +1,10 @@
 package org.uma.evolver;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
@@ -18,64 +23,15 @@ import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Class for running a meta-optimizer to auto-design an algorithm for a specific set of problems
  *
  * @author José Francisco Aldana Martín (jfaldanam@uma.es)
  */
-public class MetaRunner {
-
-  private static String extractValue(String input, String pattern) {
-    Pattern regex = Pattern.compile(pattern, Pattern.DOTALL);
-    Matcher matcher = regex.matcher(input);
-    if (!matcher.find()) {
-      throw new IllegalArgumentException("Missing or malformed parameter " + pattern + ".");
-    }
-
-    return matcher.group(1).replace("\"", "");
-  }
-
-  private static String extractOptionalValue(String input, String pattern) {
-    try {
-      return extractValue(input, pattern);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
-  }
-
-  /**
-   * Given a string containing one or more problem names separated by a comma, it returns a string
-   * containing all the problem names (their qualified packages are removed)
-   *
-   * @param problemNames
-   * @return
-   */
-  private static String getProblemNamesFromString(String problemNames) {
-    String names = "" ;
-    String[] namesArray = problemNames.split(",") ;
-
-    for (String name : namesArray) {
-      String[] packageNames = name.split("\\.");
-      if (packageNames.length > 1) {
-        names = names + packageNames[packageNames.length - 1] + ",";
-      } else {
-        names = names + packageNames[0] ;
-      }
-    }
-
-    return names.substring(0, names.length()-1) ;
-  }
-
+public class MetaRunnerV2 {
 
   public static void main(String[] args) throws IOException {
     /*
@@ -96,23 +52,11 @@ Expected arguments:
  - Optional specific arguments:
    * 11 - weight vector files directory: The directory containing weight vector files. Only used for the MOEAD internal algorithm.
      */
-    if (args.length != 1) {
-      System.err.println("Missing configuration file.");
-      System.exit(1);
-    }
+
+    checkCommandLineArguments(args);
     String filePath = args[0];
 
-    String configurationParameters;
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-      StringBuilder stringBuilder = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        stringBuilder.append(line).append("\n");
-      }
-
-      configurationParameters = stringBuilder.toString();
-    }
-
+    String configurationParameters = readConfigurationParameters(filePath);
     JMetalLogger.logger.info("Executing with the following configuration:\n" + configurationParameters);
 
     // Extract the parameters from the file using regex
@@ -166,7 +110,6 @@ Expected arguments:
     // Depends on the number of problems
     ConfigurableAlgorithmBaseProblem configurableProblem;
     if (problemName.contains(",")) {
-      //List<DoubleProblem> problems = List.of(org.uma.evolver.factory.ProblemFactory.getProblems(problemName));
       List<DoubleProblem> problems = Arrays
           .stream(problemName.split(","))
           .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(name))
@@ -191,13 +134,10 @@ Expected arguments:
     MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(
         externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations);
 
-    OutputResultsManagementParameters outputResultsManagementParameters =
-        new OutputResultsManagementParameters(
-        externalAlgorithm,
-        configurableProblem,
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        externalAlgorithm, configurableProblem,
         getProblemNamesFromString(problemName),
-        indicators,
-        outputDirectory
+        indicators, outputDirectory
     );
 
     var evaluationObserver = new EvaluationObserver(50);
@@ -220,11 +160,70 @@ Expected arguments:
     JMetalLogger.logger.info("Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
 
     outputResultsManagement.updateSuffix("." + externalMaxEvaluations + ".csv");
-    List<DoubleSolution> nonDominatedSolutions =
-        new NonDominatedSolutionListArchive<DoubleSolution>()
-            .addAll(externalOptimizationAlgorithm.result()).solutions() ;
-    outputResultsManagement.writeResultsToFiles(nonDominatedSolutions);
+    outputResultsManagement.writeResultsToFiles(externalOptimizationAlgorithm.result());
 
     System.exit(0);
+  }
+
+  private static String readConfigurationParameters(String filePath) throws IOException {
+    String configurationParameters;
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+      StringBuilder stringBuilder = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        stringBuilder.append(line).append("\n");
+      }
+
+      configurationParameters = stringBuilder.toString();
+    }
+    return configurationParameters;
+  }
+
+  private static void checkCommandLineArguments(String[] args) {
+    if (args.length != 1) {
+      System.err.println("Missing configuration file.");
+      System.exit(1);
+    }
+  }
+
+  private static String extractValue(String input, String pattern) {
+    Pattern regex = Pattern.compile(pattern, Pattern.DOTALL);
+    Matcher matcher = regex.matcher(input);
+    if (!matcher.find()) {
+      throw new IllegalArgumentException("Missing or malformed parameter " + pattern + ".");
+    }
+
+    return matcher.group(1).replace("\"", "");
+  }
+
+  private static String extractOptionalValue(String input, String pattern) {
+    try {
+      return extractValue(input, pattern);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Given a string containing one or more problem names separated by a comma, it returns a string
+   * containing all the problem names (their qualified packages are removed)
+   *
+   * @param problemNames
+   * @return
+   */
+  private static String getProblemNamesFromString(String problemNames) {
+    String names = "" ;
+    String[] namesArray = problemNames.split(",") ;
+
+    for (String name : namesArray) {
+      String[] packageNames = name.split("\\.");
+      if (packageNames.length > 1) {
+        names = names + packageNames[packageNames.length - 1] + ",";
+      } else {
+        names = names + packageNames[0] ;
+      }
+    }
+
+    return names.substring(0, names.length()-1) ;
   }
 }

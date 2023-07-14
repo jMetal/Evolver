@@ -82,11 +82,14 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
   public List<Parameter<?>> configurableParameterList() {
     return configurableParameterList;
   }
-
   private int archiveSize ;
   private int maximumNumberOfEvaluations ;
 
   private DoubleProblem problem ;
+
+  public ConfigurableMOPSO() {
+    this.configure() ;
+  }
 
   public ConfigurableMOPSO(DoubleProblem problem, int archiveSize, int maximumNumberOfEvaluations) {
     this.problem = problem ;

@@ -16,8 +16,6 @@ import org.uma.evolver.parameter.impl.RealParameter;
 
 public class YamlParameterDescriptionGenerator {
 
-  private static String formatString = "%-40s %-40s %-7s %-30s %-20s\n";
-
   public String generateConfiguration(ConfigurableAlgorithmBuilder autoConfigurableAlgorithm) {
     List<Parameter<?>> parameterList = autoConfigurableAlgorithm.configurableParameterList();
 
@@ -39,7 +37,7 @@ public class YamlParameterDescriptionGenerator {
     tabSize += (isList?4:2);
     printType(parameter, stringBuilder, tabSize);
 
-    stringBuilder.append(decodeValidValuesV2(parameter, tabSize));
+    stringBuilder.append(decodeValidValues(parameter, tabSize));
 
     return stringBuilder;
   }
@@ -67,7 +65,7 @@ public class YamlParameterDescriptionGenerator {
     return spaces;
   }
 
-  private String decodeValidValuesV2(Parameter<?> parameter, int tabSize) {
+  private String decodeValidValues(Parameter<?> parameter, int tabSize) {
     StringBuilder result = new StringBuilder();
 
     if (parameter instanceof CategoricalParameter) {
@@ -134,40 +132,6 @@ public class YamlParameterDescriptionGenerator {
       result = "real";
     } else if (parameter != null) {
       result = "ordinal";
-    }
-
-    return result;
-  }
-
-  private String decodeValidValues(Parameter<?> parameter) {
-    String result = " ";
-
-    if (parameter instanceof CategoricalParameter) {
-      result = ((CategoricalParameter) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter instanceof CategoricalIntegerParameter) {
-      result = ((CategoricalIntegerParameter) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter instanceof BooleanParameter) {
-      result = ((BooleanParameter) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter instanceof OrdinalParameter) {
-      result = ((OrdinalParameter<?>) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter instanceof IntegerParameter) {
-      result = ((IntegerParameter) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter instanceof RealParameter) {
-      result = ((RealParameter) parameter).validValues().toString();
-      result = result.replace("[", "(");
-      result = result.replace("]", ")");
-    } else if (parameter != null) {
-      result = "(" + parameter.value() + ")";
     }
 
     return result;

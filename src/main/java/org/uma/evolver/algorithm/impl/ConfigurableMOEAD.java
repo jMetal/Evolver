@@ -68,6 +68,10 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
   private DoubleProblem problem ;
 
+  public ConfigurableMOEAD() {
+    this.configure() ;
+  }
+
   public ConfigurableMOEAD(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations,
   String weightVectorFilesDirectory) {
     this.problem = problem ;

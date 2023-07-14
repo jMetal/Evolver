@@ -68,6 +68,10 @@ public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
   private int populationSize;
   private int maximumNumberOfEvaluations;
 
+  public ConfigurableSMSEMOA() {
+    this.configure();
+  }
+
   public ConfigurableSMSEMOA(DoubleProblem problem, int populationSize,
       int maximumNumberOfEvaluations) {
     this.problem = problem;

@@ -15,7 +15,7 @@ public class YamlNSGAIIParameterDescriptionGenerator {
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator();
     String parameterString = parameterFileGenerator.generateConfiguration(
-        new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 20000));
+        new ConfigurableNSGAII());
     System.out.println(parameterString);
   }
 }

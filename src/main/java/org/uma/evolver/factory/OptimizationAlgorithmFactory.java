@@ -29,23 +29,23 @@ import java.util.List;
 import java.util.Map;
 
 public class OptimizationAlgorithmFactory {
-    public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int populationSize, int maxNumberOfEvaluations) {
         // TODO: extract parallelism parameters
         MetaOptimizer optimizationAlgorithm = switch (name) {
-            case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, population, maxNumberOfEvaluations);
+            case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, populationSize, maxNumberOfEvaluations);
             case "ASYNCNSGAII" ->
-                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, population, maxNumberOfEvaluations);
+                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, populationSize, maxNumberOfEvaluations);
             case "GGA" ->
-                    OptimizationAlgorithmFactory.createGenericGeneticAlgorithm(problem, population, maxNumberOfEvaluations);
+                    OptimizationAlgorithmFactory.createGenericGeneticAlgorithm(problem, populationSize, maxNumberOfEvaluations);
             case "SMPSO" ->
-                    OptimizationAlgorithmFactory.createSMPSO(problem, population, maxNumberOfEvaluations);
+                    OptimizationAlgorithmFactory.createSMPSO(problem, populationSize, maxNumberOfEvaluations);
             default -> throw new RuntimeException("Optimization algorithm not found");
         };
         return optimizationAlgorithm;
     }
 
-    private static MetaOptimizer createSMPSO(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
-        int swarmSize = population;
+    private static MetaOptimizer createSMPSO(DoubleProblem problem, int populationSize, int maxNumberOfEvaluations) {
+        int swarmSize = populationSize;
         Termination termination = new TerminationByEvaluations(maxNumberOfEvaluations);
 
         ParticleSwarmOptimizationAlgorithm smpso = new SMPSOBuilder(
@@ -81,11 +81,11 @@ public class OptimizationAlgorithmFactory {
         return smpsoOptimization;
     }
 
-    private static MetaOptimizer createGenericGeneticAlgorithm(DoubleProblem problem, int population, int maxNumberOfEvaluations) {
+    private static MetaOptimizer createGenericGeneticAlgorithm(DoubleProblem problem, int populationSize, int maxNumberOfEvaluations) {
 
-        int offspringPopulationSize = population;
+        int offspringPopulationSize = populationSize;
 
-        var createInitialPopulation = new RandomSolutionsCreation<>(problem, population);
+        var createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
 
         var comparator = new MultiComparator<DoubleSolution>(
                 List.of(new OverallConstraintViolationDegreeComparator<>(),
