@@ -1,7 +1,9 @@
 import base64
 import importlib
 import io
+import json
 import os
+import re
 import warnings
 from zipfile import ZipFile
 
@@ -93,3 +95,44 @@ def download_link(
     )
 
     return dl_link
+
+
+def extract_plot(text: str) -> dict:
+    """Extract JSON from a string extracted from Evolver logs and generate a vega plot.
+
+    Args:
+        text (str): Text to extract JSON from.
+
+    Raises:
+        ValueError: If no JSON is found in the text.
+
+    Returns:
+        dict: Extracted Vega plot.
+    """
+    pattern = r"{(.+?)}"
+    matches = re.findall(pattern, text)
+
+    if matches:
+        json_str = "{" + matches[0] + "}"
+        try:
+            plot_data = json.loads(json_str)
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON found in text", text)
+
+        data_values = []
+        x_label = plot_data["xAxis"]
+        y_label = plot_data["yAxis"]
+        for obj1, obj2 in zip(plot_data["xValues"], plot_data["yValues"]):
+            data_values.append({x_label: obj1, y_label: obj2})
+        plot = {
+            "data": {"values": data_values},
+            "title": {"text": "Front progress of meta-optimizer"},
+            "mark": "point",
+            "encoding": {
+                "x": {"field": x_label, "type": "quantitative"},
+                "y": {"field": y_label, "type": "quantitative"},
+            },
+        }
+        return plot
+    else:
+        raise ValueError("No JSON found in text", text)

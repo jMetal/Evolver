@@ -6,7 +6,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 import streamlit as st
 import streamlit.components.v1 as st_components
 from evolver.execute import execute_evolver_streaming
-from evolver.utils import download_link, zip_directory
+from evolver.utils import download_link, extract_plot, zip_directory
 
 # TODO: Extract all this in run.sh and add it as parameter to the dashboard
 meta_optimizers = {
@@ -101,8 +101,6 @@ quality_indicators = {
     "Inverted Generational Distance Plus": "IGD+",
     "Normalized Hypervolume": "NHV",
     "Generalized Spread": "GSPREAD",
-    "Error Ratio": "ER",
-    "Set Coverage": "SC",
 }
 
 # DASHBOARD
@@ -208,6 +206,10 @@ if st.button("Execute"):
         enable_logs=True,
     )
 
+    # Prepare a block to show progress plot
+    plot_block = st.empty()
+
+    # Prepare a block to showcase the results later
     results_block = st.empty()
 
     logs = ""
@@ -215,18 +217,26 @@ if st.button("Execute"):
         with st.expander("Execution logs"):
             logs_block = st.empty()
             for log_line in execution:
-                logs += log_line + "\n"
-                with logs_block.container():
-                    st_components.html(
-                        f"""<pre>{logs}</pre>""", height=600, scrolling=True
-                    )  # Add it in code block
-                    logs_link = download_link(
-                        "here", logs, file_name="evolver-logs.txt", mime="text/plain"
-                    )
-                    st.markdown(
-                        f"##### Execution logs can be downloaded {logs_link}.",
-                        unsafe_allow_html=True,
-                    )
+                if "Evolver dashboard front plot" in log_line:
+                    plot = extract_plot(log_line)
+                    with plot_block.container():
+                        st.vega_lite_chart(plot, use_container_width=True)
+                else:
+                    logs += log_line + "\n"
+                    with logs_block.container():
+                        st_components.html(
+                            f"""<pre>{logs}</pre>""", height=600, scrolling=True
+                        )  # Add it in code block
+                        logs_link = download_link(
+                            "here",
+                            logs,
+                            file_name="evolver-logs.txt",
+                            mime="text/plain",
+                        )
+                        st.markdown(
+                            f"##### Execution logs can be downloaded {logs_link}.",
+                            unsafe_allow_html=True,
+                        )
 
     with results_block.container():
         st.success("Evolver execution finished!")

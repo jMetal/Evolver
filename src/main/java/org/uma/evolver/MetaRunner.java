@@ -5,11 +5,11 @@ import java.util.regex.Pattern;
 import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
 import org.uma.evolver.factory.OptimizationAlgorithmFactory;
-import org.uma.evolver.factory.QualityIndicatorFactory;
 import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
 import org.uma.evolver.util.EvaluationObserver;
+import org.uma.evolver.util.DashboardFrontObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class for running a meta-optimizer to auto-design an algorithm for a specific set of problems
@@ -181,6 +180,13 @@ Expected arguments:
     // Log progress
     var evaluationObserver = new EvaluationObserver(50);
     externalOptimizationAlgorithm.observable().register(evaluationObserver);
+
+    // Dashboard observer
+    var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+        indicators.get(1).name(),
+        problemName,
+        1);
+    externalOptimizationAlgorithm.observable().register(dashboardFrontObserver);
 
     // Plot graphs
     if (enableGraphs) {
