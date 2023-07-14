@@ -1,8 +1,10 @@
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryFile
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import streamlit as st
+import streamlit.components.v1 as st_components
 from evolver.execute import execute_evolver_streaming
 from evolver.utils import download_link, zip_directory
 
@@ -114,9 +116,8 @@ st.set_page_config(
 st.header("Evolver configuration")
 st.subheader("General configuration")
 config = {}
-config["output_directory"] = st.text_input(
-    "Folder to store the results", value="/tmp/evolver"
-)
+tmp_folder = st.text_input("Folder to store the results", value="/tmp/evolver")
+config["output_directory"] = Path(tmp_folder) / datetime.now().strftime("%Y%m%d-%H%M%S")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -199,8 +200,6 @@ if st.button("Execute"):
 
     java_class = "org.uma.evolver.MetaRunner"
     args = [str(temp_file)]
-    logs_block = st.empty()
-    logs = ""
 
     execution = execute_evolver_streaming(
         java_class,
@@ -209,41 +208,47 @@ if st.button("Execute"):
         enable_logs=True,
     )
 
+    results_block = st.empty()
+
+    logs = ""
     with st.spinner("Executing Evolver..."):
-        for log_line in execution:
-            logs += log_line + "\n"
-            with logs_block.container():
-                logs_tail = "\n".join(logs.split("\n")[-20:])
-                st.markdown(f"```\n{logs_tail}```")
+        with st.expander("Execution logs"):
+            logs_block = st.empty()
+            for log_line in execution:
+                logs += log_line + "\n"
+                with logs_block.container():
+                    st_components.html(
+                        f"""<pre>{logs}</pre>""", height=600, scrolling=True
+                    )  # Add it in code block
+                    logs_link = download_link(
+                        "here", logs, file_name="evolver-logs.txt", mime="text/plain"
+                    )
+                    st.markdown(
+                        f"##### Execution logs can be downloaded {logs_link}.",
+                        unsafe_allow_html=True,
+                    )
 
-    st.success("Evolver execution finished!")
-    st.balloons()
-    execution = None
+    with results_block.container():
+        st.success("Evolver execution finished!")
+        st.balloons()
 
-    with TemporaryFile() as tmp:
-        with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
-            zip_directory(base_path, zip_file)
-        tmp.seek(0)
+        with TemporaryFile() as tmp:
+            with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
+                zip_directory(base_path, zip_file)
+            tmp.seek(0)
 
-        # The oficial streamlit download button refreshes the page,
-        # so we use a custom one
-        # st.download_button(
-        #   "Download artifacts", tmp.read(),
-        #   file_name="evolver.zip", mime="application/zip"
-        # )
+            # The oficial streamlit download button refreshes the page,
+            # so we use a custom one
+            # st.download_button(
+            #   "Download artifacts", tmp.read(),
+            #   file_name="evolver.zip", mime="application/zip"
+            # )
 
-        zip_link = download_link(
-            "here", tmp.read(), file_name="evolver.zip", mime="application/zip"
-        )
+            zip_link = download_link(
+                "here", tmp.read(), file_name="evolver.zip", mime="application/zip"
+            )
 
-        st.markdown(
-            f"##### Execution artifacts can be downloaded {zip_link}.",
-            unsafe_allow_html=True,
-        )
-    logs_link = download_link(
-        "here", logs, file_name="evolver-logs.txt", mime="text/plain"
-    )
-    st.markdown(
-        f"##### Execution logs can be downloaded {logs_link}.",
-        unsafe_allow_html=True,
-    )
+            st.markdown(
+                f"##### Execution artifacts can be downloaded {zip_link}.",
+                unsafe_allow_html=True,
+            )

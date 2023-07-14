@@ -99,7 +99,7 @@ Expected arguments:
     String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
     String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
     String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
-    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"]+)");
+    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"-]+)");
 
     String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
     String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
