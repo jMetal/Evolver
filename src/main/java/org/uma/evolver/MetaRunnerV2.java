@@ -13,6 +13,7 @@ import org.uma.evolver.factory.OptimizationAlgorithmFactory;
 import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
 import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
+import org.uma.evolver.util.DashboardFrontObserver;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -66,7 +67,7 @@ Expected arguments:
     String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
     String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
     String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
-    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"]+)");
+    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"-]+)");
 
     String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
     String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
@@ -74,7 +75,11 @@ Expected arguments:
     String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
     String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
 
-    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+");
+    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+)");
+
+    boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:\\s+([\\w\"]+)"));
+    int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:\\s+([\\d,\"]+)"));
+    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "plotting_frequency:\\s+([\\d,\"]+)"));
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
@@ -132,7 +137,7 @@ Expected arguments:
 
     // Create external optimization algorithm
     MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(
-        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations, 8);
+        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations, numCores);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         externalAlgorithm, configurableProblem,
@@ -140,19 +145,32 @@ Expected arguments:
         indicators, outputDirectory
     );
 
-    var evaluationObserver = new EvaluationObserver(50);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
-            indicators.get(1).name(),
-            getProblemNamesFromString(problemName),
-            50);
-    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    // Observers
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
-        externalMaxEvaluations, outputResultsManagement);
-
+    // Log progress
+    var evaluationObserver = new EvaluationObserver(observerFrequency);
     externalOptimizationAlgorithm.observable().register(evaluationObserver);
-    externalOptimizationAlgorithm.observable().register(frontChartObserver);
+
+    // Dashboard observer
+    if (dashboardMode) {
+      var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+          indicators.get(1).name(),
+          problemName,
+          observerFrequency);
+      externalOptimizationAlgorithm.observable().register(dashboardFrontObserver);
+    } else {
+      var frontChartObserver =
+              new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+                      indicators.get(1).name(),
+                      problemName,
+                      observerFrequency);
+      externalOptimizationAlgorithm.observable().register(frontChartObserver);
+    }
+
+    // Save results every X evaluations
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(observerFrequency,
+        externalMaxEvaluations, outputResultsManagement);
     externalOptimizationAlgorithm.observable().register(writeExecutionDataToFilesObserver);
 
     externalOptimizationAlgorithm.run();
