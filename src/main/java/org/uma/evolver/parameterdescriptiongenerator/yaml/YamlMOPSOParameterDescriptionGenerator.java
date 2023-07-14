@@ -14,7 +14,7 @@ public class YamlMOPSOParameterDescriptionGenerator {
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator();
     String parameterString = parameterFileGenerator.generateConfiguration(
-        new ConfigurableMOPSO(new FakeDoubleProblem(), 100, 20000));
+        new ConfigurableMOPSO());
     System.out.println(parameterString);
   }
 }

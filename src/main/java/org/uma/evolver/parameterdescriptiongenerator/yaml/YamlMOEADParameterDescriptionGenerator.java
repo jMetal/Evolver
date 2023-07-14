@@ -15,7 +15,7 @@ public class YamlMOEADParameterDescriptionGenerator {
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator();
     String parameterString = parameterFileGenerator.generateConfiguration(
-        new ConfigurableMOEAD(new FakeDoubleProblem(), 100, 20000, ""));
+        new ConfigurableMOEAD());
     System.out.println(parameterString);
   }
 }

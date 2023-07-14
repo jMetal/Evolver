@@ -14,6 +14,6 @@ public class IraceMOPSOParameterDescriptionGenerator {
 
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator() ;
-    parameterFileGenerator.generateConfigurationFile(new ConfigurableMOPSO(new FakeDoubleProblem(), 100, 20000)) ;
+    parameterFileGenerator.generateConfigurationFile(new ConfigurableMOPSO()) ;
   }
 }

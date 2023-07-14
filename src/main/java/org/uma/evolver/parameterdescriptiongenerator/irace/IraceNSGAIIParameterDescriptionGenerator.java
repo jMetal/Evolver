@@ -12,6 +12,6 @@ public class IraceNSGAIIParameterDescriptionGenerator {
 
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator() ;
-    parameterFileGenerator.generateConfigurationFile(new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 20000)) ;
+    parameterFileGenerator.generateConfigurationFile(new ConfigurableNSGAII()) ;
   }
 }

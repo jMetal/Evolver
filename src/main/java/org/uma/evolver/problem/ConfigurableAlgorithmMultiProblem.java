@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
+import static org.uma.jmetal.util.SolutionListUtils.findIndexOfBestSolution;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
@@ -31,14 +32,22 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
   private final int numberOfIndependentRuns;
   private ConfigurableAlgorithmBuilder configurableAlgorithm;
 
-  public ConfigurableAlgorithmMultiProblem(ConfigurableAlgorithmBuilder configurableAlgorithm, List<DoubleProblem> problems,
-                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators, List<Integer> evaluations) {
+  public ConfigurableAlgorithmMultiProblem(
+      ConfigurableAlgorithmBuilder configurableAlgorithm,
+      List<DoubleProblem> problems,
+      List<String> referenceFrontFileNames,
+      List<QualityIndicator> indicators,
+      List<Integer> evaluations) {
     this(configurableAlgorithm, problems, referenceFrontFileNames, indicators, evaluations, 1);
   }
 
-  public ConfigurableAlgorithmMultiProblem(ConfigurableAlgorithmBuilder configurableAlgorithmBuilder, List<DoubleProblem> problems,
-                                           List<String> referenceFrontFileNames, List<QualityIndicator> indicators, List<Integer> evaluations,
-                                           int numberOfIndependentRuns) {
+  public ConfigurableAlgorithmMultiProblem(
+      ConfigurableAlgorithmBuilder configurableAlgorithmBuilder,
+      List<DoubleProblem> problems,
+      List<String> referenceFrontFileNames,
+      List<QualityIndicator> indicators,
+      List<Integer> evaluations,
+      int numberOfIndependentRuns) {
 
     if (problems.size() != referenceFrontFileNames.size()) {
       System.err.println("There must be the same number of problems as reference fronts: " + problems.size() + " vs " + referenceFrontFileNames.size());
@@ -82,10 +91,11 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
       try {
         referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
         referenceFronts.add(referenceFront);
+        normalizedReferenceFronts.add(NormalizeUtils.normalize(referenceFront));
       } catch (IOException e) {
         throw new JMetalException("The file does not exist", e);
       }
-      normalizedReferenceFronts.add(NormalizeUtils.normalize(referenceFront));
+      //normalizedReferenceFronts.add(NormalizeUtils.normalize(referenceFront));
     }
   }
 
@@ -119,41 +129,15 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
 
     String[] parameterArray = parameterString.toString().split("\\s+");
 
-    /*
-    var algorithm = configurableAlgorithm
-        .createBuilderInstance()
-        .parse(parameterArray)
-        .build();
-
-    algorithm.run();
-
-    NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-    nonDominatedSolutions.addAll(algorithm.result());
-
-    double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
-
-    double[][] normalizedFront =
-        NormalizeUtils.normalize(
-            front,
-            NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-            NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
-
-    IntStream.range(0, indicators.size()).forEach(i -> {
-      indicators.get(i).referenceFront(normalizedReferenceFront);
-      solution.objectives()[i] = indicators.get(i).compute(normalizedFront);
-    });
-*/
-
     // Run each problem n independent times
     double[][] indicatorValuesPerProblem = new double[problems.size()][indicators.size()];
-    for (int i = 0;i<problems.size();i++) {
-      double[] medianIndicatorValues = computeIndependentRuns(parameterArray, i) ; // Values for each indicator
-      indicatorValuesPerProblem[i] = medianIndicatorValues;
+    for (int problemId = 0;problemId<problems.size();problemId++) {
+      double[] medianIndicatorValues = computeIndependentRuns(parameterArray, problemId) ; // Values for each indicator
+      indicatorValuesPerProblem[problemId] = medianIndicatorValues;
     }
 
     double[] medianProblemValues = new double[indicators.size()];
     for (int indicatorIndex = 0 ; indicatorIndex < indicators.size(); indicatorIndex++) {
-
       // Group the indicator values per problem
       double[] indicatorPerProblem = new double[problems.size()];
       for (int problemIndex = 0 ; problemIndex < problems.size(); problemIndex++)
@@ -169,14 +153,14 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
     return solution;
   }
 
-  private double[] computeIndependentRuns(String[] parameterArray, int problem) {
+  private double[] computeIndependentRuns(String[] parameterArray, int problemId) {
     double[] medianIndicatorValues = new double[indicators.size()];
     double[][] indicatorValues = new double[indicators.size()][];
     IntStream.range(0, indicators.size()).forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm = configurableAlgorithm
-          .createBuilderInstance(problems.get(problem), evaluations.get(problem))
+          .createBuilderInstance(problems.get(problemId), evaluations.get(problemId))
           .parse(parameterArray)
           .build();
 
@@ -186,19 +170,29 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
       nonDominatedSolutions.addAll(algorithm.result());
 
       double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
+      if (front[0].length != referenceFronts.get(problemId)[0].length) {
+        throw new JMetalException("The front dimension: "
+            + front[0].length + " is not equals to the reference front dimension: "
+            + referenceFronts.get(problemId)[0].length) ;
+      }
+
       double[][] normalizedFront =
           NormalizeUtils.normalize(
               front,
-              NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFronts.get(problem)),
-              NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFronts.get(problem)));
+              NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)),
+              NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)));
 
       IntStream.range(0, indicators.size()).forEach(index -> {
-        indicators.get(index).referenceFront(normalizedReferenceFronts.get(problem));
+        indicators.get(index).referenceFront(normalizedReferenceFronts.get(problemId));
       });
 
       for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
         QualityIndicator indicator = indicators.get(indicatorId);
-        indicator.referenceFront(normalizedReferenceFronts.get(problem));
+        indicator.referenceFront(normalizedReferenceFronts.get(problemId));
+        System.out.println("Problem "
+            + problems.get(problemId).name()
+            + ", normalized front length: "
+            + normalizedFront.length);
         indicatorValues[indicatorId][runId] = indicator.compute(normalizedFront);
       }
     }

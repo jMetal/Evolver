@@ -1,0 +1,18 @@
+external_algorithm_arguments:
+  meta_optimizer_algorithm:  "NSGAII"
+  meta_optimizer_population_size: 50
+  meta_optimizer_max_evaluations: 3000
+  independent_runs: 1
+  indicators_names: "EP,NHV"
+  output_directory: TEST/SoftwareX/Goel2007/NSGAII
+
+internal_algorithm_arguments:
+  configurable_algorithm: "NSGAII"
+  internal_population_size: 100
+  problem_names: "org.uma.jmetal.problem.multiobjective.rwa.Goel2007"
+  reference_front_file_name: "resources/referenceFronts/Goel2007.csv"
+  max_number_of_evaluations: "7000"
+
+optional_specific_arguments:
+  # For MOEAD
+  weight_vector_files_directory:

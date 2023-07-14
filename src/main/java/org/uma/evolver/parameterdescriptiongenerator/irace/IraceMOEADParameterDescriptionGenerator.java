@@ -14,6 +14,6 @@ public class IraceMOEADParameterDescriptionGenerator {
 
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator() ;
-    parameterFileGenerator.generateConfigurationFile(new ConfigurableMOEAD(new FakeDoubleProblem(), 100, 20000, "")) ;
+    parameterFileGenerator.generateConfigurationFile(new ConfigurableMOEAD()) ;
   }
 }

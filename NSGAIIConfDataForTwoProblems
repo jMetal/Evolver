@@ -1,0 +1,18 @@
+external_algorithm_arguments:
+  meta_optimizer_algorithm:  "NSGAII"
+  meta_optimizer_population_size: 50
+  meta_optimizer_max_evaluations: 3000
+  independent_runs: 1
+  indicators_names: "EP,NHV"
+  output_directory: TEST/NSGAII/ZDT4
+
+internal_algorithm_arguments:
+  configurable_algorithm: "NSGAII"
+  internal_population_size: 100
+  problem_names: "org.uma.jmetal.problem.multiobjective.zdt.ZDT1,org.uma.jmetal.problem.multiobjective.zdt.ZDT2"
+  reference_front_file_name: "resources/referenceFronts/ZDT1.csv,resources/referenceFronts/ZDT2.csv"
+  max_number_of_evaluations: "3000,3000"
+
+optional_specific_arguments:
+  # For MOEAD
+  weight_vector_files_directory:
