@@ -6,12 +6,17 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import streamlit as st
 import streamlit.components.v1 as st_components
-from streamlit_server_state import no_rerun, server_state, server_state_lock
-
-from evolver.components import configurable_algorithms, meta_optimizers, problems, quality_indicators, referenceFront
+from evolver.components import (
+    configurable_algorithms,
+    meta_optimizers,
+    problems,
+    quality_indicators,
+    referenceFront,
+)
 from evolver.execute import execute_evolver_streaming
 from evolver.logs import get_logger
 from evolver.utils import download_link, extract_plot, github_logo, zip_directory
+from streamlit_server_state import no_rerun, server_state, server_state_lock
 
 # Configure logger
 logger = get_logger()
@@ -32,8 +37,9 @@ with server_state_lock["is_running"]:
 
 with server_state_lock["config"]:
     if "config" not in server_state:
+        date = datetime.now().strftime('%Y%m%d-%H%M%S')
         server_state["config"] = {
-            "output_directory": f"/tmp/evolver/{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            "output_directory": f"/tmp/evolver/{date}",
             "cpu_cores": multiprocessing.cpu_count(),
             "plotting_frequency": 10,
         }
@@ -63,7 +69,11 @@ with server_state_lock["configurable_algorithm"]:
 
 
 st.header("Evolver")
-st.markdown(f"""Evolver's source code and documentation can be found at [{github_logo()} **jMetal/Evolver**](https://github.com/jMetal/Evolver).""", unsafe_allow_html=True)
+st.markdown(
+    f"Evolver's source code and documentation can be found at "
+    f"[{github_logo()} **jMetal/Evolver**](https://github.com/jMetal/Evolver).",
+    unsafe_allow_html=True,
+)
 
 st.subheader("General configuration")
 with server_state_lock["config"]:
@@ -80,18 +90,29 @@ with server_state_lock["config"]:
         disabled=server_state["is_running"],
     )
     server_state["config"]["plotting_frequency"] = st.number_input(
-        "Plotting frequency", value=server_state["config"]["plotting_frequency"], min_value=1, disabled=server_state["is_running"]
+        "Plotting frequency",
+        value=server_state["config"]["plotting_frequency"],
+        min_value=1,
+        disabled=server_state["is_running"],
     )
 
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Meta-optimizer configuration")
     with server_state_lock["meta_optimizer"]:
-        algorithm_key = list(meta_optimizers.keys()).index(server_state["meta_optimizer"]["algorithm"])
-        server_state["meta_optimizer"]["algorithm"] = st.selectbox(
-            "Algorithm", meta_optimizers.keys(), index=algorithm_key, disabled=server_state["is_running"]
+        algorithm_key = list(meta_optimizers.keys()).index(
+            server_state["meta_optimizer"]["algorithm"]
         )
-        if server_state["meta_optimizer"]["algorithm"] == "Generational Genetic Algorithm":
+        server_state["meta_optimizer"]["algorithm"] = st.selectbox(
+            "Algorithm",
+            meta_optimizers.keys(),
+            index=algorithm_key,
+            disabled=server_state["is_running"],
+        )
+        if (
+            server_state["meta_optimizer"]["algorithm"]
+            == "Generational Genetic Algorithm"
+        ):
             st.warning(
                 "GGA is not a parallel algorithm. It will ignore the number of cores."
             )
@@ -121,11 +142,13 @@ with col1:
             disabled=server_state["is_running"],
         )
 with col2:
-    st.subheader("Internal configuration")
+    st.subheader("Meta-optimization problem configuration")
     with server_state_lock["configurable_algorithm"]:
-        configurable_algorithm_key = list(configurable_algorithms.keys()).index(server_state["configurable_algorithm"]["algorithm"])
+        configurable_algorithm_key = list(configurable_algorithms.keys()).index(
+            server_state["configurable_algorithm"]["algorithm"]
+        )
         server_state["configurable_algorithm"]["algorithm"] = st.selectbox(
-            "Algorithm",
+            "Configurable algorithm",
             configurable_algorithms.keys(),
             index=configurable_algorithm_key,
             disabled=server_state["is_running"],
@@ -142,21 +165,36 @@ with col2:
             default=server_state["configurable_algorithm"]["problems"],
             disabled=server_state["is_running"],
         )
+        if (
+            len_evaluations := len(
+                server_state["configurable_algorithm"]["max_number_of_evaluations"]
+            )
+        ) < (len_problems := len(server_state["configurable_algorithm"]["problems"])):
+            for _ in range(len_problems - len_evaluations):
+                server_state["configurable_algorithm"][
+                    "max_number_of_evaluations"
+                ].append(8000)
         evaluations = []
         for i, problem in enumerate(server_state["configurable_algorithm"]["problems"]):
             evaluations.append(
                 st.number_input(
                     f"Maximum number of evaluations for {problem}",
-                    value=server_state["configurable_algorithm"]["max_number_of_evaluations"][i],
+                    value=server_state["configurable_algorithm"][
+                        "max_number_of_evaluations"
+                    ][i],
                     min_value=1,
                     disabled=server_state["is_running"],
                 )
             )
-        server_state["configurable_algorithm"]["max_number_of_evaluations"] = evaluations
+        server_state["configurable_algorithm"][
+            "max_number_of_evaluations"
+        ] = evaluations
 
 
 with st.expander("Manually change configuration"):
-    with server_state_lock["config"], server_state_lock["meta_optimizer"], server_state_lock["configurable_algorithm"]:
+    with server_state_lock["config"], server_state_lock[
+        "meta_optimizer"
+    ], server_state_lock["configurable_algorithm"]:
         str_configuration = f"""general_config:
     dashboard_mode: True # Required to plot graphs in the dashboard
     output_directory: {server_state["config"]["output_directory"]}
@@ -264,14 +302,19 @@ with server_state_lock["execution"]:
                         if "Evolver dashboard front plot" in log_line:
                             plot, progress = extract_plot(log_line)
                             with server_state_lock["meta_optimizer"]:
-                                if progress / server_state["meta_optimizer"]["max_evaluations"] > 1:
+                                max_evals = server_state["meta_optimizer"][
+                                    "max_evaluations"
+                                ]
+                                if progress / max_evals > 1:
                                     logger.warning(
                                         f"Progress is greater than 100%:\n"
                                         f"Progress: {progress}\n"
-                                        f"Max evaluations:{server_state['meta_optimizer']['max_evaluations']}"
+                                        f"Max evaluations:"
+                                        f"{max_evals}"
                                     )
                                 progress_percentage = min(
-                                    progress / server_state["meta_optimizer"]["max_evaluations"], 1
+                                    progress / max_evals,
+                                    1,
                                 )
                                 progress_bar.progress(
                                     progress_percentage, "Meta-optimizer progress"
@@ -281,10 +324,14 @@ with server_state_lock["execution"]:
                         else:
                             with no_rerun:
                                 with server_state_lock["logs"]:
-                                    server_state["logs"] = server_state["logs"] + log_line + "\n"
+                                    server_state["logs"] = (
+                                        server_state["logs"] + log_line + "\n"
+                                    )
                                     with logs_block.container():
                                         st_components.html(
-                                            f"""<pre>{server_state["logs"]}</pre>""", height=600, scrolling=True
+                                            f"""<pre>{server_state["logs"]}</pre>""",
+                                            height=600,
+                                            scrolling=True,
                                         )  # Add it in code block
                                         logs_link = download_link(
                                             "here",
@@ -293,7 +340,8 @@ with server_state_lock["execution"]:
                                             mime="text/plain",
                                         )
                                         st.markdown(
-                                            f"##### Execution logs can be downloaded {logs_link}.",
+                                            "##### Execution logs can be "
+                                            f"downloaded {logs_link}.",
                                             unsafe_allow_html=True,
                                         )
 
@@ -307,7 +355,9 @@ with server_state_lock["execution"]:
             with TemporaryFile() as tmp:
                 with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
                     with server_state_lock["config"]:
-                        zip_directory(server_state["config"]["output_directory"], zip_file)
+                        zip_directory(
+                            server_state["config"]["output_directory"], zip_file
+                        )
                 tmp.seek(0)
 
                 # The oficial streamlit download button refreshes the page,

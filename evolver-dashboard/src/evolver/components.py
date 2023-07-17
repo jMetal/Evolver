@@ -45,6 +45,8 @@ problems = {
     "UF8": "org.uma.jmetal.problem.multiobjective.uf.UF8",
     "UF9": "org.uma.jmetal.problem.multiobjective.uf.UF9",
     "UF10": "org.uma.jmetal.problem.multiobjective.uf.UF10",
+    # Real world problems
+    "Engineering": "org.uma.jmetal.problem.multiobjective.rwa.Goel2007",
 }
 
 referenceFront = {
@@ -79,6 +81,8 @@ referenceFront = {
     "UF8": "resources/referenceFronts/UF8.csv",
     "UF9": "resources/referenceFronts/UF9.csv",
     "UF10": "resources/referenceFronts/UF10.csv",
+    # Real world problems
+    "Engineering": "resources/referenceFronts/Goel2007.csv",
 }
 
 quality_indicators = {

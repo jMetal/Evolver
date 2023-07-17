@@ -144,9 +144,10 @@ def extract_plot(text: str) -> dict:
     else:
         raise ValueError("No JSON found in text", text)
 
+
 def github_logo() -> str:
     """Return the GitHub logo as an SVG.
-    
+
     Returns:
         str: GitHub logo as an SVG.
     """
