@@ -9,7 +9,7 @@ import streamlit.components.v1 as st_components
 
 from evolver.execute import execute_evolver_streaming
 from evolver.logs import get_logger
-from evolver.utils import download_link, extract_plot, zip_directory
+from evolver.utils import download_link, extract_plot, github_logo, zip_directory
 
 # Configure logger
 logger = get_logger()
@@ -122,7 +122,9 @@ if "is_running" not in st.session_state:
     st.session_state["is_running"] = False
 
 
-st.header("Evolver configuration")
+st.header("Evolver")
+st.markdown(f"""Evolver's source code and documentation can be found at [{github_logo()} **jMetal/Evolver**](https://github.com/jMetal/Evolver).""", unsafe_allow_html=True)
+
 st.subheader("General configuration")
 config = {}
 tmp_folder = st.text_input(
@@ -239,6 +241,7 @@ optional_specific_arguments:
     configuration = st.text_area(
         "MetaRunner configuration",
         value=str_configuration,
+        height=600,
         disabled=st.session_state["is_running"],
     )
     config_link = download_link(
@@ -246,7 +249,7 @@ optional_specific_arguments:
     )
 
     st.markdown(
-        "##### This configuration for the `MetaRunner`"
+        "##### This configuration for Evolver's `MetaRunner`"
         f" can be downloaded {config_link}.",
         unsafe_allow_html=True,
     )
