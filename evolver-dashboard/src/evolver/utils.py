@@ -113,7 +113,7 @@ def extract_plot(text: str) -> dict:
     matches = re.findall(pattern, text)
 
     if matches:
-        json_str = "{" + matches[0] + "}"
+        json_str = "{" + matches[-1] + "}"
         try:
             plot_data = json.loads(json_str)
         except json.JSONDecodeError:

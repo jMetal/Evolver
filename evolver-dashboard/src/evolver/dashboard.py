@@ -6,7 +6,9 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import streamlit as st
 import streamlit.components.v1 as st_components
+from streamlit_server_state import no_rerun, server_state, server_state_lock
 
+from evolver.components import configurable_algorithms, meta_optimizers, problems, quality_indicators, referenceFront
 from evolver.execute import execute_evolver_streaming
 from evolver.logs import get_logger
 from evolver.utils import download_link, extract_plot, github_logo, zip_directory
@@ -14,100 +16,6 @@ from evolver.utils import download_link, extract_plot, github_logo, zip_director
 # Configure logger
 logger = get_logger()
 
-# TODO: Extract all this in run.sh and add it as parameter to the dashboard
-meta_optimizers = {
-    "NSGA-II": "NSGAII",
-    "Asynchronous NSGA-II": "ASYNCNSGAII",
-    "Generational Genetic Algorithm": "GGA",
-    "Speed-constrained Multi-objective Particle Swarm Optimization": "SMPSO",
-}
-
-configurable_algorithms = {
-    "NSGA-II": "NSGAII",
-    "NSGA-II with Diferential": "NSGAIIDE",
-    "MOPSO": "MOPSO",
-    "MOEA/D": "MOEAD",
-    "SMS-EMOA": "SMSEMOA",
-}
-
-problems = {
-    "ZDT1": "org.uma.jmetal.problem.multiobjective.zdt.ZDT1",
-    "ZDT2": "org.uma.jmetal.problem.multiobjective.zdt.ZDT2",
-    "ZDT3": "org.uma.jmetal.problem.multiobjective.zdt.ZDT3",
-    "ZDT4": "org.uma.jmetal.problem.multiobjective.zdt.ZDT4",
-    "ZDT6": "org.uma.jmetal.problem.multiobjective.zdt.ZDT6",
-    "DTLZ1": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1",
-    "DTLZ2": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2",
-    "DTLZ3": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3",
-    "DTLZ4": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4",
-    "DTLZ5": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5",
-    "DTLZ6": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6",
-    "DTLZ7": "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7",
-    "WFG1": "org.uma.jmetal.problem.multiobjective.wfg.WFG1",
-    "WFG2": "org.uma.jmetal.problem.multiobjective.wfg.WFG2",
-    "WFG3": "org.uma.jmetal.problem.multiobjective.wfg.WFG3",
-    "WFG4": "org.uma.jmetal.problem.multiobjective.wfg.WFG4",
-    "WFG5": "org.uma.jmetal.problem.multiobjective.wfg.WFG5",
-    "WFG6": "org.uma.jmetal.problem.multiobjective.wfg.WFG6",
-    "WFG7": "org.uma.jmetal.problem.multiobjective.wfg.WFG7",
-    "WFG8": "org.uma.jmetal.problem.multiobjective.wfg.WFG8",
-    "WFG9": "org.uma.jmetal.problem.multiobjective.wfg.WFG9",
-    "UF1": "org.uma.jmetal.problem.multiobjective.uf.UF1",
-    "UF2": "org.uma.jmetal.problem.multiobjective.uf.UF2",
-    "UF3": "org.uma.jmetal.problem.multiobjective.uf.UF3",
-    "UF4": "org.uma.jmetal.problem.multiobjective.uf.UF4",
-    "UF5": "org.uma.jmetal.problem.multiobjective.uf.UF5",
-    "UF6": "org.uma.jmetal.problem.multiobjective.uf.UF6",
-    "UF7": "org.uma.jmetal.problem.multiobjective.uf.UF7",
-    "UF8": "org.uma.jmetal.problem.multiobjective.uf.UF8",
-    "UF9": "org.uma.jmetal.problem.multiobjective.uf.UF9",
-    "UF10": "org.uma.jmetal.problem.multiobjective.uf.UF10",
-}
-
-referenceFront = {
-    "ZDT1": "resources/referenceFronts/ZDT1.csv",
-    "ZDT2": "resources/referenceFronts/ZDT2.csv",
-    "ZDT3": "resources/referenceFronts/ZDT3.csv",
-    "ZDT4": "resources/referenceFronts/ZDT4.csv",
-    "ZDT6": "resources/referenceFronts/ZDT6.csv",
-    "DTLZ1": "resources/referenceFronts/DTLZ1.3D.csv",
-    "DTLZ2": "resources/referenceFronts/DTLZ2.3D.csv",
-    "DTLZ3": "resources/referenceFronts/DTLZ3.3D.csv",
-    "DTLZ4": "resources/referenceFronts/DTLZ4.3D.csv",
-    "DTLZ5": "resources/referenceFronts/DTLZ5.3D.csv",
-    "DTLZ6": "resources/referenceFronts/DTLZ6.3D.csv",
-    "DTLZ7": "resources/referenceFronts/DTLZ7.3D.csv",
-    "WFG1": "resources/referenceFronts/WFG1.2D.csv",
-    "WFG2": "resources/referenceFronts/WFG2.2D.csv",
-    "WFG3": "resources/referenceFronts/WFG3.2D.csv",
-    "WFG4": "resources/referenceFronts/WFG4.2D.csv",
-    "WFG5": "resources/referenceFronts/WFG5.2D.csv",
-    "WFG6": "resources/referenceFronts/WFG6.2D.csv",
-    "WFG7": "resources/referenceFronts/WFG7.2D.csv",
-    "WFG8": "resources/referenceFronts/WFG8.2D.csv",
-    "WFG9": "resources/referenceFronts/WFG9.2D.csv",
-    "UF1": "resources/referenceFronts/UF1.csv",
-    "UF2": "resources/referenceFronts/UF2.csv",
-    "UF3": "resources/referenceFronts/UF3.csv",
-    "UF4": "resources/referenceFronts/UF4.csv",
-    "UF5": "resources/referenceFronts/UF5.csv",
-    "UF6": "resources/referenceFronts/UF6.csv",
-    "UF7": "resources/referenceFronts/UF7.csv",
-    "UF8": "resources/referenceFronts/UF8.csv",
-    "UF9": "resources/referenceFronts/UF9.csv",
-    "UF10": "resources/referenceFronts/UF10.csv",
-}
-
-quality_indicators = {
-    "Hypervolume": "HV",
-    "Epsilon": "EP",
-    "Spread": "SP",
-    "Generational Distance": "GD",
-    "Inverted Generational Distance": "IGD",
-    "Inverted Generational Distance Plus": "IGD+",
-    "Normalized Hypervolume": "NHV",
-    "Generalized Spread": "GSPREAD",
-}
 
 # DASHBOARD
 st.set_page_config(
@@ -117,133 +25,169 @@ st.set_page_config(
     menu_items={"About": None},
 )
 
-# State
-if "is_running" not in st.session_state:
-    st.session_state["is_running"] = False
+# Server-wide State
+with server_state_lock["is_running"]:
+    if "is_running" not in server_state:
+        server_state["is_running"] = False
+
+with server_state_lock["config"]:
+    if "config" not in server_state:
+        server_state["config"] = {
+            "output_directory": f"/tmp/evolver/{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            "cpu_cores": multiprocessing.cpu_count(),
+            "plotting_frequency": 10,
+        }
+
+with server_state_lock["logs"]:
+    if "logs" not in server_state:
+        server_state["logs"] = ""
+
+with server_state_lock["meta_optimizer"]:
+    if "meta_optimizer" not in server_state:
+        server_state["meta_optimizer"] = {
+            "algorithm": "NSGA-II",
+            "population_size": 50,
+            "max_evaluations": 3000,
+            "independent_runs": 3,
+            "indicators_names": ["Normalized Hypervolume", "Epsilon"],
+        }
+
+with server_state_lock["configurable_algorithm"]:
+    if "configurable_algorithm" not in server_state:
+        server_state["configurable_algorithm"] = {
+            "algorithm": "NSGA-II",
+            "population_size": 100,
+            "problems": ["ZDT1", "ZDT4"],
+            "max_number_of_evaluations": [8000, 16000],
+        }
 
 
 st.header("Evolver")
 st.markdown(f"""Evolver's source code and documentation can be found at [{github_logo()} **jMetal/Evolver**](https://github.com/jMetal/Evolver).""", unsafe_allow_html=True)
 
 st.subheader("General configuration")
-config = {}
-tmp_folder = st.text_input(
-    "Folder to store the results",
-    value="/tmp/evolver",
-    disabled=st.session_state["is_running"],
-)
-config["output_directory"] = Path(tmp_folder) / datetime.now().strftime("%Y%m%d-%H%M%S")
-num_cores = multiprocessing.cpu_count()
-config["cpu_cores"] = st.number_input(
-    "Number of CPU cores",
-    value=num_cores,
-    min_value=1,
-    disabled=st.session_state["is_running"],
-)
-config["plotting_frequency"] = st.number_input(
-    "Plotting frequency", value=10, min_value=1, disabled=st.session_state["is_running"]
-)
+with server_state_lock["config"]:
+    tmp_folder = st.text_input(
+        "Folder to store the results",
+        value=server_state["config"]["output_directory"],
+        disabled=server_state["is_running"],
+    )
+    server_state["config"]["output_directory"] = Path(tmp_folder)
+    server_state["config"]["cpu_cores"] = st.number_input(
+        "Number of CPU cores",
+        value=server_state["config"]["cpu_cores"],
+        min_value=1,
+        disabled=server_state["is_running"],
+    )
+    server_state["config"]["plotting_frequency"] = st.number_input(
+        "Plotting frequency", value=server_state["config"]["plotting_frequency"], min_value=1, disabled=server_state["is_running"]
+    )
 
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Meta-optimizer configuration")
-    meta_optimizer = {}
-    meta_optimizer["algorithm"] = st.selectbox(
-        "Algorithm", meta_optimizers.keys(), disabled=st.session_state["is_running"]
-    )
-    if meta_optimizer["algorithm"] == "Generational Genetic Algorithm":
-        st.warning(
-            "GGA is not a parallel algorithm. It will ignore the number of cores."
+    with server_state_lock["meta_optimizer"]:
+        algorithm_key = list(meta_optimizers.keys()).index(server_state["meta_optimizer"]["algorithm"])
+        server_state["meta_optimizer"]["algorithm"] = st.selectbox(
+            "Algorithm", meta_optimizers.keys(), index=algorithm_key, disabled=server_state["is_running"]
         )
+        if server_state["meta_optimizer"]["algorithm"] == "Generational Genetic Algorithm":
+            st.warning(
+                "GGA is not a parallel algorithm. It will ignore the number of cores."
+            )
 
-    meta_optimizer["population_size"] = st.number_input(
-        "Population size",
-        value=50,
-        min_value=1,
-        disabled=st.session_state["is_running"],
-    )
-    meta_optimizer["max_evaluations"] = st.number_input(
-        "Maximum number of evaluations",
-        value=3000,
-        min_value=1,
-        disabled=st.session_state["is_running"],
-    )
-    meta_optimizer["independent_runs"] = st.number_input(
-        "Number of independent runs",
-        value=3,
-        min_value=1,
-        disabled=st.session_state["is_running"],
-    )
-    meta_optimizer["indicators_names"] = st.multiselect(
-        "Indicators",
-        quality_indicators.keys(),
-        default=["Normalized Hypervolume", "Epsilon"],
-        disabled=st.session_state["is_running"],
-    )
+        server_state["meta_optimizer"]["population_size"] = st.number_input(
+            "Population size",
+            value=server_state["meta_optimizer"]["population_size"],
+            min_value=1,
+            disabled=server_state["is_running"],
+        )
+        server_state["meta_optimizer"]["max_evaluations"] = st.number_input(
+            "Maximum number of evaluations",
+            value=server_state["meta_optimizer"]["max_evaluations"],
+            min_value=1,
+            disabled=server_state["is_running"],
+        )
+        server_state["meta_optimizer"]["independent_runs"] = st.number_input(
+            "Number of independent runs",
+            value=server_state["meta_optimizer"]["independent_runs"],
+            min_value=1,
+            disabled=server_state["is_running"],
+        )
+        server_state["meta_optimizer"]["indicators_names"] = st.multiselect(
+            "Indicators",
+            quality_indicators.keys(),
+            default=server_state["meta_optimizer"]["indicators_names"],
+            disabled=server_state["is_running"],
+        )
 with col2:
     st.subheader("Internal configuration")
-    internal_configuration = {}
-    internal_configuration["algorithm"] = st.selectbox(
-        "Algorithm",
-        configurable_algorithms.keys(),
-        disabled=st.session_state["is_running"],
-    )
-    internal_configuration["population_size"] = st.number_input(
-        "Population size",
-        value=100,
-        min_value=1,
-        disabled=st.session_state["is_running"],
-    )
-    internal_configuration["problems"] = st.multiselect(
-        "Problems",
-        problems.keys(),
-        default=["ZDT1", "ZDT4"],
-        disabled=st.session_state["is_running"],
-    )
-    evaluations = []
-    for problem in internal_configuration["problems"]:
-        evaluations.append(
-            st.number_input(
-                f"Maximum number of evaluations for {problem}",
-                value=8000,
-                min_value=1,
-                disabled=st.session_state["is_running"],
-            )
+    with server_state_lock["configurable_algorithm"]:
+        configurable_algorithm_key = list(configurable_algorithms.keys()).index(server_state["configurable_algorithm"]["algorithm"])
+        server_state["configurable_algorithm"]["algorithm"] = st.selectbox(
+            "Algorithm",
+            configurable_algorithms.keys(),
+            index=configurable_algorithm_key,
+            disabled=server_state["is_running"],
         )
-    internal_configuration["max_number_of_evaluations"] = evaluations
+        server_state["configurable_algorithm"]["population_size"] = st.number_input(
+            "Population size",
+            value=server_state["configurable_algorithm"]["population_size"],
+            min_value=1,
+            disabled=server_state["is_running"],
+        )
+        server_state["configurable_algorithm"]["problems"] = st.multiselect(
+            "Problems",
+            problems.keys(),
+            default=server_state["configurable_algorithm"]["problems"],
+            disabled=server_state["is_running"],
+        )
+        evaluations = []
+        for i, problem in enumerate(server_state["configurable_algorithm"]["problems"]):
+            evaluations.append(
+                st.number_input(
+                    f"Maximum number of evaluations for {problem}",
+                    value=server_state["configurable_algorithm"]["max_number_of_evaluations"][i],
+                    min_value=1,
+                    disabled=server_state["is_running"],
+                )
+            )
+        server_state["configurable_algorithm"]["max_number_of_evaluations"] = evaluations
 
 
 with st.expander("Manually change configuration"):
-    str_configuration = f"""general_config:
+    with server_state_lock["config"], server_state_lock["meta_optimizer"], server_state_lock["configurable_algorithm"]:
+        str_configuration = f"""general_config:
     dashboard_mode: True # Required to plot graphs in the dashboard
-    output_directory: {config["output_directory"]}
-    cpu_cores: {config["cpu_cores"]}
-    plotting_frequency: {config["plotting_frequency"]}
+    output_directory: {server_state["config"]["output_directory"]}
+    cpu_cores: {server_state["config"]["cpu_cores"]}
+    plotting_frequency: {server_state["config"]["plotting_frequency"]}
 
 external_algorithm_arguments:
-    meta_optimizer_algorithm: {meta_optimizers[meta_optimizer["algorithm"]]}
-    meta_optimizer_population_size: {meta_optimizer["population_size"]}
-    meta_optimizer_max_evaluations: {meta_optimizer["max_evaluations"]}
-    independent_runs: {meta_optimizer["independent_runs"]}
-    indicators_names: {",".join([quality_indicators[indicator] for indicator in meta_optimizer["indicators_names"]])}
+    meta_optimizer_algorithm: {meta_optimizers[server_state["meta_optimizer"]["algorithm"]]}
+    meta_optimizer_population_size: {server_state["meta_optimizer"]["population_size"]}
+    meta_optimizer_max_evaluations: {server_state["meta_optimizer"]["max_evaluations"]}
+    independent_runs: {server_state["meta_optimizer"]["independent_runs"]}
+    indicators_names: {",".join([quality_indicators[indicator] for indicator in server_state["meta_optimizer"]["indicators_names"]])}
 
 internal_algorithm_arguments:
-    configurable_algorithm: {configurable_algorithms[internal_configuration["algorithm"]]}
-    internal_population_size: {internal_configuration["population_size"]}
-    problem_names: {",".join([problems[problem] for problem in internal_configuration["problems"]])}
-    reference_front_file_name: {",".join([referenceFront[problem] for problem in internal_configuration["problems"]])}
-    max_number_of_evaluations: {",".join([str(num_evaluations) for num_evaluations in internal_configuration["max_number_of_evaluations"]])}
+    configurable_algorithm: {configurable_algorithms[server_state["configurable_algorithm"]["algorithm"]]}
+    internal_population_size: {server_state["configurable_algorithm"]["population_size"]}
+    problem_names: {",".join([problems[problem] for problem in server_state["configurable_algorithm"]["problems"]])}
+    reference_front_file_name: {",".join([referenceFront[problem] for problem in server_state["configurable_algorithm"]["problems"]])}
+    max_number_of_evaluations: {",".join([str(num_evaluations) for num_evaluations in server_state["configurable_algorithm"]["max_number_of_evaluations"]])}
 
 optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
     weight_vector_files_directory: resources/weightVectors"""
 
-    configuration = st.text_area(
-        "MetaRunner configuration",
-        value=str_configuration,
-        height=600,
-        disabled=st.session_state["is_running"],
-    )
+    with server_state_lock["is_running"]:
+        configuration = st.text_area(
+            "MetaRunner configuration",
+            value=str_configuration,
+            height=600,
+            disabled=server_state["is_running"],
+        )
     config_link = download_link(
         "here", str_configuration, file_name="config.yaml", mime="text/yaml"
     )
@@ -257,110 +201,138 @@ optional_specific_arguments:
 
 # Execute evolver
 st.header("Execute Evolver")
-if st.button("Execute", disabled=st.session_state["is_running"]):
-    base_path = Path(config["output_directory"])
-    base_path.mkdir(parents=True, exist_ok=True)
-    temp_file = base_path / "evolver-config.yaml"
+with server_state_lock["is_running"]:
+    if st.button("Execute", disabled=server_state["is_running"]):
+        with server_state_lock["config"]:
+            base_path = Path(server_state["config"]["output_directory"])
+        base_path.mkdir(parents=True, exist_ok=True)
+        temp_file = base_path / "evolver-config.yaml"
 
-    with open(temp_file, "w") as f:
-        f.write(configuration)
+        with open(temp_file, "w") as f:
+            f.write(configuration)
 
-    java_class = "org.uma.evolver.MetaRunner"
-    args = [str(temp_file)]
+        java_class = "org.uma.evolver.MetaRunner"
+        args = [str(temp_file)]
 
-    if "execution" not in st.session_state:
-        st.session_state["execution"] = execute_evolver_streaming(
-            java_class,
-            args=args,
-            jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
-            enable_logs=True,
-        )
-        st.session_state["is_running"] = True
-        st.experimental_rerun()
-
-if "execution" in st.session_state:
-    spinner_block = st.empty()
-    progress_bar = st.progress(0, "Meta-optimizer progress")
-    # Prepare a block to showcase the results later
-    results_block = st.empty()
-
-    # Prepare a block to show progress plot
-    plot_block = st.empty()
-
-    expander_block = st.empty()
-
-    logs = ""
-    with spinner_block.container():
-        with st.spinner("Executing Evolver..."):
-            with expander_block.container():
-                with st.expander("Execution logs"):
-                    # Prepare a block to show the logs
-                    logs_block = st.empty()
-
-                for log_line in st.session_state["execution"]:
-                    if "Evolver dashboard front plot" in log_line:
-                        plot, progress = extract_plot(log_line)
-                        if progress / meta_optimizer["max_evaluations"] > 1:
-                            logger.warning(
-                                f"Progress is greater than 100%:\n"
-                                f"Progress: {progress}\n"
-                                f"Max evaluations:{meta_optimizer['max_evaluations']}"
-                            )
-                        progress_percentage = min(
-                            progress / meta_optimizer["max_evaluations"], 1
-                        )
-                        progress_bar.progress(
-                            progress_percentage, "Meta-optimizer progress"
-                        )
-                        with plot_block.container():
-                            st.vega_lite_chart(plot, use_container_width=True)
-                    else:
-                        logs += log_line + "\n"
-                        with logs_block.container():
-                            st_components.html(
-                                f"""<pre>{logs}</pre>""", height=600, scrolling=True
-                            )  # Add it in code block
-                            logs_link = download_link(
-                                "here",
-                                logs,
-                                file_name="evolver-logs.txt",
-                                mime="text/plain",
-                            )
-                            st.markdown(
-                                f"##### Execution logs can be downloaded {logs_link}.",
-                                unsafe_allow_html=True,
-                            )
-
-    # Prepare a block to reset the execution
-    reset_block = st.empty()
-
-    with results_block.container():
-        st.success("Evolver execution finished!")
-        st.balloons()
-
-        with TemporaryFile() as tmp:
-            with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
-                zip_directory(config["output_directory"], zip_file)
-            tmp.seek(0)
-
-            # The oficial streamlit download button refreshes the page,
-            # so we use a custom one
-            # st.download_button(
-            #   "Download artifacts", tmp.read(),
-            #   file_name="evolver.zip", mime="application/zip"
-            # )
-
-            zip_link = download_link(
-                "here", tmp.read(), file_name="evolver.zip", mime="application/zip"
-            )
-
-            st.markdown(
-                f"##### Execution artifacts can be downloaded {zip_link}.",
-                unsafe_allow_html=True,
-            )
-        with reset_block.container():
-            st.subheader("Reset execution to run a new one")
-            if st.button("Reset"):
-                st.session_state["is_running"] = False
-                del st.session_state["execution"]
+        with server_state_lock["execution"]:
+            if "execution" not in server_state:
+                server_state["execution"] = execute_evolver_streaming(
+                    java_class,
+                    args=args,
+                    jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
+                    enable_logs=True,
+                )
+                server_state["is_running"] = True
                 st.experimental_rerun()
+
+concurrency_warning = st.empty()
+
+# Placeholder to show warning if focus is taken by other instance
+with server_state_lock["is_running"]:
+    if server_state["is_running"]:
+        with concurrency_warning.container():
+            st.warning(
+                "If you can't see the execution logs, "
+                "please check if another instance of Evolver is running.\n"
+                "If there is no other, this will update as soon as the next checkpoint "
+                "is reached."
+            )
+
+with server_state_lock["execution"]:
+    if "execution" in server_state:
+        with concurrency_warning.container():
+            st.empty()
+        spinner_block = st.empty()
+
+        progress_bar = st.progress(0, "Meta-optimizer progress")
+        # Prepare a block to showcase the results later
+        results_block = st.empty()
+
+        # Prepare a block to show progress plot
+        plot_block = st.empty()
+
+        expander_block = st.empty()
+
+        with spinner_block.container():
+            with st.spinner("Executing Evolver..."):
+                with expander_block.container():
+                    with st.expander("Execution logs"):
+                        # Prepare a block to show the logs
+                        logs_block = st.empty()
+
+                    for log_line in server_state["execution"]:
+                        if "Evolver dashboard front plot" in log_line:
+                            plot, progress = extract_plot(log_line)
+                            with server_state_lock["meta_optimizer"]:
+                                if progress / server_state["meta_optimizer"]["max_evaluations"] > 1:
+                                    logger.warning(
+                                        f"Progress is greater than 100%:\n"
+                                        f"Progress: {progress}\n"
+                                        f"Max evaluations:{server_state['meta_optimizer']['max_evaluations']}"
+                                    )
+                                progress_percentage = min(
+                                    progress / server_state["meta_optimizer"]["max_evaluations"], 1
+                                )
+                                progress_bar.progress(
+                                    progress_percentage, "Meta-optimizer progress"
+                                )
+                            with plot_block.container():
+                                st.vega_lite_chart(plot, use_container_width=True)
+                        else:
+                            with no_rerun:
+                                with server_state_lock["logs"]:
+                                    server_state["logs"] = server_state["logs"] + log_line + "\n"
+                                    with logs_block.container():
+                                        st_components.html(
+                                            f"""<pre>{server_state["logs"]}</pre>""", height=600, scrolling=True
+                                        )  # Add it in code block
+                                        logs_link = download_link(
+                                            "here",
+                                            server_state["logs"],
+                                            file_name="evolver-logs.txt",
+                                            mime="text/plain",
+                                        )
+                                        st.markdown(
+                                            f"##### Execution logs can be downloaded {logs_link}.",
+                                            unsafe_allow_html=True,
+                                        )
+
+        # Prepare a block to reset the execution
+        reset_block = st.empty()
+
+        with results_block.container():
+            st.success("Evolver execution finished!")
+            st.balloons()
+
+            with TemporaryFile() as tmp:
+                with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
+                    with server_state_lock["config"]:
+                        zip_directory(server_state["config"]["output_directory"], zip_file)
+                tmp.seek(0)
+
+                # The oficial streamlit download button refreshes the page,
+                # so we use a custom one
+                # st.download_button(
+                #   "Download artifacts", tmp.read(),
+                #   file_name="evolver.zip", mime="application/zip"
+                # )
+
+                zip_link = download_link(
+                    "here", tmp.read(), file_name="evolver.zip", mime="application/zip"
+                )
+
+                st.markdown(
+                    f"##### Execution artifacts can be downloaded {zip_link}.",
+                    unsafe_allow_html=True,
+                )
+            with reset_block.container():
+                st.subheader("Reset execution to run a new one")
+                if st.button("Reset"):
+                    with server_state_lock["is_running"]:
+                        del server_state["is_running"]
+                    with server_state_lock["execution"]:
+                        del server_state["execution"]
+                    with server_state_lock["logs"]:
+                        del server_state["logs"]
+
+                    st.experimental_rerun()
