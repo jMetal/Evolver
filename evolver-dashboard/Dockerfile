@@ -1,4 +1,4 @@
-FROM evolver:latest
+FROM ghcr.io/jmetal/evolver:latest
 
 # Install python3 and pip
 RUN apt update && apt install -y python3 python3-pip
