@@ -7,12 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
-import org.uma.evolver.factory.OptimizationAlgorithmFactory;
-import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
-import org.uma.evolver.problem.ConfigurableAlgorithmMultiProblem;
-import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
+import org.uma.evolver.factory.MetaOptimizerFactory;
+import org.uma.evolver.problem.BaseMetaOptimizationProblem;
+import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problem.MetaOptimizationProblem;
 import org.uma.evolver.util.DashboardFrontObserver;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
@@ -113,7 +113,7 @@ Expected arguments:
 
     // Define configurable problem
     // Depends on the number of problems
-    ConfigurableAlgorithmBaseProblem configurableProblem;
+    BaseMetaOptimizationProblem configurableProblem;
     if (problemName.contains(",")) {
       List<DoubleProblem> problems = Arrays
           .stream(problemName.split(","))
@@ -123,20 +123,20 @@ Expected arguments:
       List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(
               maxNumberOfEvaluations.split(","))
           .map(Integer::parseInt).toList() ;
-      configurableProblem = new ConfigurableAlgorithmMultiProblem(configurableAlgorithmBuilder,
+      configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithmBuilder,
           problems,
           List.of(referenceFrontFileName.split(",")),
           indicators,
           maxNumberOfEvaluationsPerProblem,
           independentRuns);
     } else {
-      configurableProblem = new ConfigurableAlgorithmProblem(configurableAlgorithmBuilder,
+      configurableProblem = new MetaOptimizationProblem(configurableAlgorithmBuilder,
           referenceFrontFileName,
           indicators, independentRuns);
     }
 
     // Create external optimization algorithm
-    MetaOptimizer externalOptimizationAlgorithm = OptimizationAlgorithmFactory.getAlgorithm(
+    MetaOptimizer externalOptimizationAlgorithm = MetaOptimizerFactory.getAlgorithm(
         externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations, numCores);
 
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(

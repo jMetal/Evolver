@@ -3,8 +3,7 @@ package org.uma.evolver.parameterdescriptiongenerator.yaml;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.impl.BooleanParameter;
 import org.uma.evolver.parameter.impl.CategoricalIntegerParameter;

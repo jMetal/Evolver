@@ -29,20 +29,20 @@ import org.uma.jmetal.util.observable.Observable;
 import java.util.List;
 import java.util.Map;
 
-public class OptimizationAlgorithmFactory {
+public class MetaOptimizerFactory {
     public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int populationSize, int maxNumberOfEvaluations, int numCores) {
         if (name.equals("GGA") && numCores > 1) {
             JMetalLogger.logger.warning("GGA is not parallelized");
         }
         
         MetaOptimizer optimizationAlgorithm = switch (name) {
-            case "NSGAII" -> OptimizationAlgorithmFactory.createNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
+            case "NSGAII" -> MetaOptimizerFactory.createNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
             case "ASYNCNSGAII" ->
-                    OptimizationAlgorithmFactory.createAsyncNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
+                    MetaOptimizerFactory.createAsyncNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
             case "GGA" -> 
-                    OptimizationAlgorithmFactory.createGenericGeneticAlgorithm(problem, populationSize, maxNumberOfEvaluations);
+                    MetaOptimizerFactory.createGenericGeneticAlgorithm(problem, populationSize, maxNumberOfEvaluations);
             case "SMPSO" ->
-                    OptimizationAlgorithmFactory.createSMPSO(problem, populationSize, maxNumberOfEvaluations, numCores);
+                    MetaOptimizerFactory.createSMPSO(problem, populationSize, maxNumberOfEvaluations, numCores);
             default -> throw new RuntimeException("Optimization algorithm not found");
         };
         return optimizationAlgorithm;

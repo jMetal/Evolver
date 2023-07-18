@@ -1,6 +1,6 @@
 package org.uma.evolver.problem;
 
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
-import static org.uma.jmetal.util.SolutionListUtils.findIndexOfBestSolution;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 import static smile.math.MathEx.median;
 
-public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBaseProblem {
+public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProblem {
 
   private final List<DoubleProblem> problems;
   private List<QualityIndicator> indicators;
@@ -32,7 +31,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
   private final int numberOfIndependentRuns;
   private ConfigurableAlgorithmBuilder configurableAlgorithm;
 
-  public ConfigurableAlgorithmMultiProblem(
+  public MultiFocusMetaOptimizationProblem(
       ConfigurableAlgorithmBuilder configurableAlgorithm,
       List<DoubleProblem> problems,
       List<String> referenceFrontFileNames,
@@ -41,7 +40,7 @@ public class ConfigurableAlgorithmMultiProblem extends ConfigurableAlgorithmBase
     this(configurableAlgorithm, problems, referenceFrontFileNames, indicators, evaluations, 1);
   }
 
-  public ConfigurableAlgorithmMultiProblem(
+  public MultiFocusMetaOptimizationProblem(
       ConfigurableAlgorithmBuilder configurableAlgorithmBuilder,
       List<DoubleProblem> problems,
       List<String> referenceFrontFileNames,

@@ -1,7 +1,7 @@
 package org.uma.evolver.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
-import org.uma.evolver.algorithm.impl.ConfigurableNSGAIIWithDE;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAIIWithDE;
 import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
 
 /**

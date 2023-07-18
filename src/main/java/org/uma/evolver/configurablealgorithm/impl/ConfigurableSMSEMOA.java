@@ -1,10 +1,10 @@
-package org.uma.evolver.algorithm.impl;
+package org.uma.evolver.configurablealgorithm.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.catalogue.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.CrossoverParameter;
@@ -14,7 +14,6 @@ import org.uma.evolver.parameter.catalogue.ProbabilityParameter;
 import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
 import org.uma.evolver.parameter.catalogue.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.VariationParameter;
-import org.uma.evolver.parameter.impl.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.evolver.parameter.impl.IntegerParameter;
 import org.uma.evolver.parameter.impl.RealParameter;
@@ -26,10 +25,9 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
-import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.SMSEMOAReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
-import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
@@ -37,25 +35,25 @@ import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
+import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.Hypervolume;
+import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
- * Class to configure NSGA-II with an argument string using class {@link EvolutionaryAlgorithm}
+ * Class to configure SMS-EMOA with an argument string using class {@link EvolutionaryAlgorithm}
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
+public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
   private IntegerParameter populationSizeWithArchiveParameter;
-  private CategoricalIntegerParameter offspringPopulationSizeParameter;
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
   private SelectionParameter<DoubleSolution> selectionParameter;
   private VariationParameter variationParameter;
-  private CategoricalParameter modelParameter ;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
@@ -66,7 +64,11 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
   private int populationSize;
   private int maximumNumberOfEvaluations;
 
-  public ConfigurableNSGAIIWithDE(DoubleProblem problem, int populationSize,
+  public ConfigurableSMSEMOA() {
+    this.configure();
+  }
+
+  public ConfigurableSMSEMOA(DoubleProblem problem, int populationSize,
       int maximumNumberOfEvaluations) {
     this.problem = problem;
     this.populationSize = populationSize;
@@ -76,21 +78,15 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
   @Override
   public ConfigurableAlgorithmBuilder createBuilderInstance() {
-    return new ConfigurableNSGAIIWithDE(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableSMSEMOA(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem,
       int maximumNumberOfEvaluations) {
-    return new ConfigurableNSGAIIWithDE(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableSMSEMOA(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   private void configure() {
-    offspringPopulationSizeParameter = new CategoricalIntegerParameter("offspringPopulationSize",
-        List.of(2, 5, 10, 20, 50, 100, 200, 400));
-
-    modelParameter = new CategoricalParameter("model", List.of("generational", "steadyState")) ;
-    modelParameter.addSpecificParameter("generational", offspringPopulationSizeParameter);
-
     algorithmResult();
     createInitialSolution();
     selection();
@@ -98,7 +94,6 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
     configurableParameterList.add(algorithmResultParameter);
     configurableParameterList.add(createInitialSolutionsParameter);
-    configurableParameterList.add(modelParameter);
     configurableParameterList.add(variationParameter);
     configurableParameterList.add(selectionParameter);
   }
@@ -170,8 +165,9 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
   private void algorithmResult() {
     algorithmResultParameter =
-        new CategoricalParameter("algorithmResult", List.of("population", "externalArchive"));
+        new CategoricalParameter("algorithmResult", List.of("population"));
 
+    /*
     populationSizeWithArchiveParameter = new IntegerParameter("populationSizeWithArchive", 10,
         200);
     externalArchiveParameter = new ExternalArchiveParameter<>(
@@ -181,7 +177,7 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
     algorithmResultParameter.addSpecificParameter(
         "externalArchive", externalArchiveParameter);
-
+*/
   }
 
   @Override
@@ -232,14 +228,8 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
           maximumNumberOfEvaluations / populationSize);
     }
 
-    int offspringPopulationSize ;
-    if (modelParameter.value().equals("steadyState")) {
-      offspringPopulationSize = 1 ;
-    } else {
-      offspringPopulationSize = offspringPopulationSizeParameter.value() ;
-    }
     variationParameter.addNonConfigurableParameter("offspringPopulationSize",
-        offspringPopulationSize);
+        1);
     var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
 
     Selection<DoubleSolution> selection =
@@ -253,11 +243,8 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
       evaluation = new SequentialEvaluation<>(problem);
     }
 
-    RankingAndDensityEstimatorPreference<DoubleSolution> preferenceForReplacement = new RankingAndDensityEstimatorPreference<>(
-        ranking, densityEstimator);
-    Replacement<DoubleSolution> replacement =
-        new RankingAndDensityEstimatorReplacement<>(preferenceForReplacement,
-            Replacement.RemovalPolicy.ONE_SHOT);
+    Hypervolume<DoubleSolution> hypervolume = new PISAHypervolume<>();
+    var replacement = new SMSEMOAReplacement<>(ranking, hypervolume);
 
     Termination termination =
         new TerminationByEvaluations(maximumNumberOfEvaluations);
@@ -296,7 +283,7 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
 
     if (algorithmResultParameter.value().equals("externalArchive")) {
       return new EvolutionaryAlgorithmWithArchive(
-          "NSGA-II",
+          "SMS-EMOA",
           initialSolutionsCreation,
           evaluation,
           termination,
@@ -306,7 +293,7 @@ public class ConfigurableNSGAIIWithDE implements ConfigurableAlgorithmBuilder {
           archive);
     } else {
       return new EvolutionaryAlgorithm<>(
-          "NSGA-II",
+          "SMS-EMOA",
           initialSolutionsCreation,
           evaluation,
           termination,

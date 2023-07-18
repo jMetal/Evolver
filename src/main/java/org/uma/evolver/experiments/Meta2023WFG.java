@@ -1,7 +1,7 @@
 package org.uma.evolver.experiments;
 
-import org.uma.evolver.algorithm.impl.ConfigurableMOPSO;
-import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
@@ -14,9 +14,7 @@ import org.uma.jmetal.lab.visualization.StudyVisualizer;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
-import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;

@@ -1,4 +1,4 @@
-package org.uma.evolver.algorithm;
+package org.uma.evolver.configurablealgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

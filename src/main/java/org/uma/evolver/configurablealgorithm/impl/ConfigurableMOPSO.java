@@ -1,9 +1,9 @@
-package org.uma.evolver.algorithm.impl;
+package org.uma.evolver.configurablealgorithm.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.catalogue.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;

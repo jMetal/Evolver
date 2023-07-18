@@ -1,9 +1,8 @@
 package org.uma.evolver.factory;
 
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.algorithm.impl.*;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.impl.*;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 
 public class ConfigurableProblemFactory {
     public static ConfigurableAlgorithmBuilder getProblem(String name, DoubleProblem problem, int population, int maxNumberOfEvaluations) {
