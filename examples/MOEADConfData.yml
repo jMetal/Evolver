@@ -1,15 +1,20 @@
+general_config:
+  dashboard_mode: false
+  output_directory: /tmp/evolver/MOEAD/DTLZ2Minus
+  cpu_cores: 8
+  plotting_frequency: 10
+
 external_algorithm_arguments:
   meta_optimizer_algorithm:  "NSGAII"
-  meta_optimizer_population: 50
+  meta_optimizer_population_size: 50
   meta_optimizer_max_evaluations: 3000
   independent_runs: 1
-  indicators_names: "Epsilon,NormalizedHypervolume"
-  output_directory: TEST/MOEAD/DTLZ2Minus
+  indicators_names: "EP,NHV"
 
 internal_algorithm_arguments:
   configurable_algorithm: "MOEAD"
-  population: 100
-  problem_names: DTLZ2Minus
+  internal_population_size: 100
+  problem_names: "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus"
   reference_front_file_name: "resources/referenceFronts/DTLZ2Minus.csv"
   max_number_of_evaluations: "15000"
 

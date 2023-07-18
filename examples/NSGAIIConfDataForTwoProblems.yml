@@ -1,8 +1,8 @@
 general_config:
-    dashboard_mode: False # Required to plot graphs in the dashboard
-  output_directory: TEST/SoftwareX/Goel20072/NSGAII
-    cpu_cores: 8
-    plotting_frequency: 10
+  dashboard_mode: false
+  output_directory: /tmp/evolver/NSGAII/2
+  cpu_cores: 8
+  plotting_frequency: 10
 
 external_algorithm_arguments:
   meta_optimizer_algorithm:  "NSGAII"
@@ -14,9 +14,9 @@ external_algorithm_arguments:
 internal_algorithm_arguments:
   configurable_algorithm: "NSGAII"
   internal_population_size: 100
-  problem_names: "org.uma.jmetal.problem.multiobjective.rwa.Goel2007"
-  reference_front_file_name: "resources/referenceFronts/Goel2007.csv"
-  max_number_of_evaluations: "7000"
+  problem_names: "org.uma.jmetal.problem.multiobjective.zdt.ZDT1,org.uma.jmetal.problem.multiobjective.zdt.ZDT2"
+  reference_front_file_name: "resources/referenceFronts/ZDT1.csv,resources/referenceFronts/ZDT2.csv"
+  max_number_of_evaluations: "3000,3000"
 
 optional_specific_arguments:
   # For MOEAD

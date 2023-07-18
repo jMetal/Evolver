@@ -1,11 +1,8 @@
-package org.uma.evolver.algorithm.runner;
+package org.uma.evolver.configurablealgorithm.runner;
 
-import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
-import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;

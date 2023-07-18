@@ -8,9 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.uma.evolver.algorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -19,7 +18,7 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
-public class DynamicConfigurableAlgorithmProblem extends AbstractDoubleProblem {
+public class MetaOptimizationProblem extends BaseMetaOptimizationProblem {
 
   private List<QualityIndicator> indicators;
   private List<Parameter<?>> parameters;
@@ -28,14 +27,14 @@ public class DynamicConfigurableAlgorithmProblem extends AbstractDoubleProblem {
   private final int numberOfIndependentRuns;
   private ConfigurableAlgorithmBuilder configurableAlgorithm;
 
-  public DynamicConfigurableAlgorithmProblem(ConfigurableAlgorithmBuilder configurableAlgorithm,
-      String referenceFrontFileName, List<QualityIndicator> indicators) {
+  public MetaOptimizationProblem(ConfigurableAlgorithmBuilder configurableAlgorithm,
+                                 String referenceFrontFileName, List<QualityIndicator> indicators) {
     this(configurableAlgorithm, referenceFrontFileName, indicators, 1);
   }
 
-  public DynamicConfigurableAlgorithmProblem(ConfigurableAlgorithmBuilder configurableAlgorithmBuilder,
-      String referenceFrontFileName, List<QualityIndicator> indicators,
-      int numberOfIndependentRuns) {
+  public MetaOptimizationProblem(ConfigurableAlgorithmBuilder configurableAlgorithmBuilder,
+                                 String referenceFrontFileName, List<QualityIndicator> indicators,
+                                 int numberOfIndependentRuns) {
     this.configurableAlgorithm = configurableAlgorithmBuilder;
     this.indicators = indicators;
     this.numberOfIndependentRuns = numberOfIndependentRuns;

@@ -1,8 +1,7 @@
-package org.uma.evolver.algorithm.runner;
+package org.uma.evolver.configurablealgorithm.runner;
 
-import org.uma.evolver.algorithm.impl.ConfigurableMOPSO;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;

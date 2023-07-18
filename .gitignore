@@ -4,3 +4,5 @@ __pycache__
 build
 .venv-evolver
 *.egg-info
+.ruff_cache
+jMetal*.log

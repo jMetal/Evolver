@@ -1,9 +1,7 @@
 package org.uma.evolver.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.algorithm.impl.ConfigurableNSGAII;
-import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 
 /**
  * Program to generate the irace configuration file for class {@link ConfigurableNSGAII}

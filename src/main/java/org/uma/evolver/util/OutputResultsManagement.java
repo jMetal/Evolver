@@ -3,14 +3,11 @@ package org.uma.evolver.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.uma.evolver.problem.ConfigurableAlgorithmBaseProblem;
-import org.uma.evolver.problem.ConfigurableAlgorithmProblem;
-import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+
+import org.uma.evolver.problem.BaseMetaOptimizationProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -20,7 +17,7 @@ public class OutputResultsManagement {
 
   public record OutputResultsManagementParameters(
       String algorithmName,
-      ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
+      BaseMetaOptimizationProblem configurableAlgorithmProblem,
       String problemName,
       List<QualityIndicator> indicators,
       String outputDirectoryName) {
@@ -66,7 +63,7 @@ public class OutputResultsManagement {
   }
 
   private void writeDecodedVariablesAsDoubleValues(
-      ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
+      BaseMetaOptimizationProblem configurableAlgorithmProblem,
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) throws IOException {
     var varWithDecodedDoubleValuesSolutionsFileName =
@@ -76,9 +73,9 @@ public class OutputResultsManagement {
         nonDominatedSolutionsArchive.solutions(), varWithDecodedDoubleValuesSolutionsFileName);
   }
 
-  private void writeDecodedVariables(ConfigurableAlgorithmBaseProblem configurableAlgorithmProblem,
-      NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
-      String problemDescription) throws IOException {
+  private void writeDecodedVariables(BaseMetaOptimizationProblem configurableAlgorithmProblem,
+                                     NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
+                                     String problemDescription) throws IOException {
     var varWithDecodedSolutionsFileName =
         parameters.outputDirectoryName + "/VAR." + problemDescription + ".Conf" + suffix ;
     ParameterManagement.writeDecodedSolutionsFoFile(configurableAlgorithmProblem.parameters(),
