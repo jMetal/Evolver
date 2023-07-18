@@ -27,6 +27,4 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ghcr.io/jMetal/evolver
-        labels:
-          - latest
-          - $LATEST_TAG
+        labels: latest, ${{ env.LATEST_TAG }}
