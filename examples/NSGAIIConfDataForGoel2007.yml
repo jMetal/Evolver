@@ -1,8 +1,8 @@
 general_config:
-  dashboard_mode: false
-  output_directory: /tmp/evolver/SoftwareX/Goel2007/NSGAII
-  cpu_cores: 8
-  plotting_frequency: 10
+    dashboard_mode: False # Required to plot graphs in the dashboard
+    output_directory: TEST/SoftwareX/Goel20072/NSGAII
+    cpu_cores: 8
+    plotting_frequency: 10
 
 external_algorithm_arguments:
   meta_optimizer_algorithm:  "NSGAII"
