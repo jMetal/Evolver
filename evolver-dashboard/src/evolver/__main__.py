@@ -7,15 +7,21 @@ from evolver.logs import get_logger
 from evolver.utils import is_installed
 
 
-def start_streamlit():
+def start_streamlit(jar: str = None):
     """
     Start streamlit dashboard.
 
     We use a subprocess instead of importing the streamlit package
     because it messes with the logging configuration.
+
+    Args:
+        jar: Path to the jar file for Evolver
     """
     # Set up environment variables and arguments
     environment = {}
+
+    if jar:
+        environment["EVOLVER_JAR"] = jar
 
     command = [
         sys.executable,  # Run the same python interpreter
@@ -34,13 +40,11 @@ def start_streamlit():
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "-f",
-    "--checkpoint-folder",
+    "-j",
+    "--jar",
     type=str,
-    default="checkpoints",
     help=(
-        "Path of the folder where the checkpoints will be stored."
-        "Defaults to './checkpoint'"
+        "Path to the jar file for Evolver"
     ),
 )
 parser.add_argument(
@@ -69,7 +73,7 @@ if not (is_streamlit_installed := is_installed("streamlit")):
 # Start streamlit dashboard
 try:
     logger.info("Starting streamlit dashboard")
-    streamlit_process = start_streamlit()
+    streamlit_process = start_streamlit(jar=args.jar)
     streamlit_process.wait()
 except KeyboardInterrupt:
     logger.info("Interrupted by user")

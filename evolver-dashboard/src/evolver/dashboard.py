@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryFile
@@ -29,6 +30,9 @@ st.set_page_config(
     layout="wide",
     menu_items={"About": None},
 )
+
+# Read environment variables
+evolver_jar = Path(os.environ.get("EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"))
 
 # Server-wide State
 with server_state_lock["is_running"]:
@@ -257,7 +261,7 @@ with server_state_lock["is_running"]:
                 server_state["execution"] = execute_evolver_streaming(
                     java_class,
                     args=args,
-                    jar=Path("target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"),
+                    jar=evolver_jar,
                     enable_logs=True,
                 )
                 server_state["is_running"] = True

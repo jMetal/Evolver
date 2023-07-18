@@ -17,7 +17,7 @@ COPY src/ ./src/
 RUN mvn package
 
 # Barebones Java 17 image to run the JAR
-FROM amazoncorretto:17-alpine
+FROM eclipse-temurin:17
 
 # Set the working directory inside the container
 WORKDIR /evolver
