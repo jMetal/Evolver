@@ -188,10 +188,6 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
         QualityIndicator indicator = indicators.get(indicatorId);
         indicator.referenceFront(normalizedReferenceFronts.get(problemId));
-        System.out.println("Problem "
-            + problems.get(problemId).name()
-            + ", normalized front length: "
-            + normalizedFront.length);
         indicatorValues[indicatorId][runId] = indicator.compute(normalizedFront);
       }
     }
