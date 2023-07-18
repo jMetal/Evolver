@@ -1,0 +1,45 @@
+name: Evolver build Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+     - "Dockerfile"
+     - "docker-entrypoint.sh"
+     - "src/**"
+     - "pom.xml"
+     - "resources/**"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+     - "Dockerfile"
+     - "docker-entrypoint.sh"
+     - "src/**"
+     - "pom.xml"
+     - "resources/**"
+
+jobs:
+  build-evolver:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build and push the Docker Image to the GitHub Container Registry
+      uses: actions/checkout@v3
+    - name: Build and push the Docker Image to the GitHub Container Registry
+      uses: docker/login-action@v2.2.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.1.0
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ghcr.io/jmetal/evolver
+        labels: latest
+  build-dashboard:
+    runs-on: ubuntu-latest
+    needs: build-evolver
+    steps:
+    - uses: ./.github/workflows/build-evolver-dashboard.yml
