@@ -41,4 +41,4 @@ jobs:
   build-dashboard:
     needs: build-evolver
     steps:
-    - uses: .github/workflows/build-evolver-dashboard.yml
+    - uses: ./.github/workflows/build-evolver-dashboard.yml
