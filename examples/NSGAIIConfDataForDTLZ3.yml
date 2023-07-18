@@ -1,10 +1,15 @@
+general_config:
+  dashboard_mode: false
+  output_directory: /tmp/evolver/NSGAII/DTLZ3
+  cpu_cores: 8
+  plotting_frequency: 10
+
 external_algorithm_arguments:
   meta_optimizer_algorithm:  "NSGAII"
   meta_optimizer_population_size: 50
   meta_optimizer_max_evaluations: 3000
   independent_runs: 1
   indicators_names: "EP,NHV"
-  output_directory: TEST/NSGAII/DTLZ3
 
 internal_algorithm_arguments:
   configurable_algorithm: "NSGAII"

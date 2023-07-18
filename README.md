@@ -12,7 +12,7 @@ The project is made of two parts:
 
 ## Sample configuration
 To execute evolver, the parameters are configured in a YAML file.
-The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems.
+The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems. You can find more example configurations at [examples](examples).
 
 ```yaml
 general_config:
@@ -52,7 +52,7 @@ $ java -cp target/evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver
 ```
 
 ## Execute Evolver with a GUI (Optional)
-Addionally, you can use Python to build Evolver and run the GUI:
+Additionally, you can use Python to build Evolver and run the GUI:
 ```console
 $ ./run.sh
 ```
