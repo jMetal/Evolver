@@ -1,0 +1,38 @@
+name: Evolver-dashboard build Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+     - "evolver-dashboard/Dockerfile"
+     - "evolver-dashboard/src/**"
+     - "evolver-dashboard/pyproject.toml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+     - "evolver-dashboard/Dockerfile"
+     - "evolver-dashboard/src/**"
+     - "evolver-dashboard/pyproject.toml"
+  workflow_call:
+
+jobs:
+  build-evolver-dashboard:
+    runs-on: ubuntu-latest
+    needs: build-evolver
+    steps:
+    - name: Build and push the Docker Image to the GitHub Container Registry
+      uses: actions/checkout@v3
+    - name: Build and push the Docker Image to the GitHub Container Registry
+      uses: docker/login-action@v2.2.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.1.0
+      with:
+        context: ./evolver-dashboard
+        file: ./evolver-dashboard/Dockerfile
+        push: true
+        tags: ghcr.io/jmetal/evolver-dashboard
+        labels: latest
