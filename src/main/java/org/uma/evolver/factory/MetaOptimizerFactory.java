@@ -20,10 +20,10 @@ import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.comparator.constraintcomparator.impl.OverallConstraintViolationDegreeComparator;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observable.Observable;
 
 import java.util.List;
@@ -34,15 +34,15 @@ public class MetaOptimizerFactory {
         if (name.equals("GGA") && numCores > 1) {
             JMetalLogger.logger.warning("GGA is not parallelized");
         }
-        
+
         MetaOptimizer optimizationAlgorithm = switch (name) {
-            case "NSGAII" -> MetaOptimizerFactory.createNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
+            case "NSGAII" ->
+                    MetaOptimizerFactory.createNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
             case "ASYNCNSGAII" ->
                     MetaOptimizerFactory.createAsyncNSGAII(problem, populationSize, maxNumberOfEvaluations, numCores);
-            case "GGA" -> 
+            case "GGA" ->
                     MetaOptimizerFactory.createGenericGeneticAlgorithm(problem, populationSize, maxNumberOfEvaluations);
-            case "SMPSO" ->
-                    MetaOptimizerFactory.createSMPSO(problem, populationSize, maxNumberOfEvaluations, numCores);
+            case "SMPSO" -> MetaOptimizerFactory.createSMPSO(problem, populationSize, maxNumberOfEvaluations, numCores);
             default -> throw new RuntimeException("Optimization algorithm not found");
         };
         return optimizationAlgorithm;
@@ -173,6 +173,7 @@ public class MetaOptimizerFactory {
 
         MetaOptimizer nsgaiiOptimizer = new MetaOptimizer() {
             private long computingTime;
+
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
