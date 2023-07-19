@@ -32,7 +32,11 @@ st.set_page_config(
 )
 
 # Read environment variables
-evolver_jar = Path(os.environ.get("EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"))
+evolver_jar = Path(
+    os.environ.get(
+        "EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    )
+)
 
 # Server-wide State
 with server_state_lock["is_running"]:
@@ -41,7 +45,7 @@ with server_state_lock["is_running"]:
 
 with server_state_lock["config"]:
     if "config" not in server_state:
-        date = datetime.now().strftime('%Y%m%d-%H%M%S')
+        date = datetime.now().strftime("%Y%m%d-%H%M%S")
         server_state["config"] = {
             "output_directory": f"/tmp/evolver/{date}",
             "cpu_cores": multiprocessing.cpu_count(),

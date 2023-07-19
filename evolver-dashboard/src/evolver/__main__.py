@@ -43,9 +43,7 @@ parser.add_argument(
     "-j",
     "--jar",
     type=str,
-    help=(
-        "Path to the jar file for Evolver"
-    ),
+    help=("Path to the jar file for Evolver"),
 )
 parser.add_argument(
     "-l",
