@@ -25,12 +25,12 @@ external_algorithm_arguments:
     meta_optimizer_algorithm: NSGAII
     meta_optimizer_population_size: 50
     meta_optimizer_max_evaluations: 3000
-    independent_runs: 3
     indicators_names: NHV,EP
 
 internal_algorithm_arguments:
     configurable_algorithm: NSGAII
     internal_population_size: 100
+    independent_runs: 3
     problem_names: org.uma.jmetal.problem.multiobjective.zdt.ZDT1,org.uma.jmetal.problem.multiobjective.zdt.ZDT4
     reference_front_file_name: resources/referenceFronts/ZDT1.csv,resources/referenceFronts/ZDT4.csv
     max_number_of_evaluations: 8000,16000
@@ -70,15 +70,14 @@ This will start the dashboard at [http://localhost:8501/](http://localhost:8501/
 
 ## Execute with docker
 There is two docker images available for Evolver.
-- `ghcr.io/jmetal/evolver:latest`: Contains the latest version of Evolver.
+- `ghcr.io/jmetal/evolver`: Contains the latest version of Evolver.
 Can be executed with the following command:
 ```bash
-$ docker run --rm -v <path-to-configuration-file>:/config.yaml ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yaml
+$ docker run --rm -v <path-to-configuration-file>:/config.yaml -v <local_output_folder>:<output_folder_defined_in_config> ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yaml
 ```
 
 - `ghcr.io/jmetal/evolver-dashboard`: Contains the latest version of Evolver with the GUI.
 Can be executed with the following command:
 ```bash
-$ docker run --rm -p 8501:8501 ghcr.io/jmetal/evolver-dashboard:latest
-```
+$ docker run --rm -v <local_output_folder>:/tmp/evolver -p 8501:8501 ghcr.io/jmetal/evolver-dashboard:latest
 ```
