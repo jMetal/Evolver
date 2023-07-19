@@ -12,7 +12,7 @@ def create_command(
     *,
     jar: Path = None,
     args: list[str] = [],
-    enable_logs: bool = False,
+    log_config: str = None,
 ):
     """
     Prepares the Evolver command to be executed.
@@ -20,7 +20,7 @@ def create_command(
     :param jar: The path to the JAR file.
     :param java_class: The name of the Java class to execute.
     :param args: The arguments to pass to the JAR file.
-    :param enable_logs: Whether to enable the Evolver logs.
+    :param log_config: Java configuration file for the logs.
     :return: The command to execute the JAR file.
     """
     # If the JAR file is not specified, use the default JAR file
@@ -37,10 +37,8 @@ def create_command(
 
     # Construct the command to run the JAR file
     command = ["java", "-cp", str(jar), java_class]
-    if not enable_logs:
-        command.insert(
-            1, "-Djava.util.logging.config.file=resources/evolver.log.config"
-        )
+    if log_config:
+        command.insert(1, f"-Djava.util.logging.config.file={log_config}")
     command.extend(args)
 
     return command
@@ -51,7 +49,7 @@ def execute_evolver(
     *,
     jar: Path = None,
     args: list[str] = [],
-    enable_logs: bool = False,
+    log_config: str = None,
 ):
     """
     Executes a JAR file and returns the output.
@@ -59,10 +57,10 @@ def execute_evolver(
     :param jar: The path to the JAR file.
     :param java_class: The name of the Java class to execute.
     :param args: The arguments to pass to the JAR file.
-    :param enable_logs: Whether to enable the Evolver logs.
+    :param log_config: Java configuration file for the logs.
     :return: The output of the JAR file.
     """
-    command = create_command(java_class, jar=jar, args=args, enable_logs=enable_logs)
+    command = create_command(java_class, jar=jar, args=args, log_config=log_config)
 
     # Run the JAR file using a subprocess
     try:
@@ -82,7 +80,7 @@ def execute_evolver_streaming(
     *,
     jar: Path = None,
     args: list[str] = [],
-    enable_logs: bool = False,
+    log_config: str = None,
 ):
     """
     Executes a JAR file and yields the output line by line.
@@ -90,10 +88,10 @@ def execute_evolver_streaming(
     :param jar: The path to the JAR file.
     :param java_class: The name of the Java class to execute.
     :param args: The arguments to pass to the JAR file.
-    :param enable_logs: Whether to enable the Evolver logs.
+    :param log_config: Java configuration file for the logs.
     :yield: Each line of the JAR file's output.
     """
-    command = create_command(java_class, jar=jar, args=args, enable_logs=enable_logs)
+    command = create_command(java_class, jar=jar, args=args, log_config=log_config)
 
     # Run the JAR file using a subprocess
     with subprocess.Popen(
@@ -110,3 +108,39 @@ def execute_evolver_streaming(
                 f"JAR execution failed with return code {process.returncode}."
                 f" Error message:\n{error_output}"
             )
+
+
+def execute_evolver_streaming_to_disk(
+    java_class: str,
+    log_file: Path,
+    *,
+    jar: Path = None,
+    args: list[str] = [],
+):
+    """
+    Executes a JAR file, storing to disk it's output by configuring Evolver logs.
+
+    :param jar: The path to the JAR file.
+    :param java_class: The name of the Java class to execute.
+    :param args: The arguments to pass to the JAR file.
+    :param enable_logs: Whether to enable the Evolver logs.
+    :return: The program PID.
+    """
+    logger_info = f"""# Set the log level
+.level = INFO
+
+# Configure the FileHandler
+handlers = java.util.logging.FileHandler
+java.util.logging.FileHandler.level = ALL
+java.util.logging.FileHandler.pattern = {log_file}
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+"""
+    log_config = log_file.with_suffix(log_file.suffix + ".config")
+    with open(log_config, "w") as f:
+        f.write(logger_info)
+    command = create_command(java_class, jar=jar, args=args, log_config=log_config)
+
+    # Run the JAR file using a subprocess
+    process = subprocess.Popen(command)
+
+    return process.pid
