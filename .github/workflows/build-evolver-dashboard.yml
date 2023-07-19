@@ -18,7 +18,6 @@ on:
 jobs:
   build-evolver-dashboard:
     runs-on: ubuntu-latest
-    needs: build-evolver
     steps:
     - name: Build and push the Docker Image to the GitHub Container Registry
       uses: actions/checkout@v3
