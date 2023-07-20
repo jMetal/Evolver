@@ -153,3 +153,7 @@ The following pictures show the population at 1000 and 1900 function evaluations
 Once the run is completed, the output directory contains these two files:
 * FUN.NSGA-II.Goel2007.EP.IGD+.2000.csv	-> the Pareto front approximation obtained by the meta-optimizer
 * VAR.NSGA-II.Goel2007.EP.IGD+.Conf.2000.csv -> the Pareto set approximation (i.e., the configurations found)
+
+The plot of the Pareto front approximation shows that four non-dominated solutions are found:
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.FrontObtainedByTheMetaOptimizer.pdf" alt="1000 evaluations" width="600"/>
+
