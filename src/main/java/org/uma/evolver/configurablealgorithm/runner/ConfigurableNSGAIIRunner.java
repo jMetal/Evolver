@@ -5,6 +5,7 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.rwa.Goel2007;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -23,32 +24,26 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/Goel2007.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive "
-            + "--populationSizeWithArchive 45 "
-            + "--externalArchive unboundedArchive "
+        ("--algorithmResult population "
             + "--createInitialSolutions random "
             + "--offspringPopulationSize 100 "
             + "--variation crossoverAndMutationVariation "
-            + "--crossover BLX_ALPHA "
-            + "--crossoverProbability 0.6748953752524687 "
+            + "--crossover SBX "
+            + "--crossoverProbability 0.9 "
             + "--crossoverRepairStrategy round "
-            + "--sbxDistributionIndex 69.33946841828451 "
-            + "--blxAlphaCrossoverAlphaValue 0.3524179610073535 "
-            + "--mutation nonUniform "
-            + "--mutationProbabilityFactor 1.76602778869229 "
+            + "--sbxDistributionIndex 20.0 "
+            + "--mutation polynomial "
+            + "--mutationProbabilityFactor 1.0 "
             + "--mutationRepairStrategy round "
-            + "--polynomialMutationDistributionIndex 20.465825376938277 "
-            + "--linkedPolynomialMutationDistributionIndex 369.76116204526977 "
-            + "--uniformMutationPerturbation 0.9230041512352161 "
-            + "--nonUniformMutationPerturbation 0.6160655898281514 "
+            + "--polynomialMutationDistributionIndex 20.0 "
             + "--selection tournament "
-            + "--selectionTournamentSize 8 ")
+            + "--selectionTournamentSize 2 ")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new Goel2007(), 100, 15000);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 20000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());

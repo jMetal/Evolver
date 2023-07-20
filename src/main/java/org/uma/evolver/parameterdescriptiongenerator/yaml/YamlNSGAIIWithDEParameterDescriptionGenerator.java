@@ -10,7 +10,6 @@ import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class YamlNSGAIIWithDEParameterDescriptionGenerator {
-
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator();
     String parameterString = parameterFileGenerator.generateConfiguration(

@@ -3,7 +3,7 @@ Evolver is a tool based on the formulation of the automatic configuration and de
 algorithms, i.e., Evolver applies a meta-optimization approach.
 
 The basis of Evolver are:
-* A multi-objective metaheuristic algorithm in which, given one or several problems used as training set, a configuration of it is sought that solves the training set in an efficient way. This algorithm is referred as to the *Internal Algorithm*.
+* A multi-objective metaheuristic algorithm in which, given one or several problems used as training set, a configuration of it is sought that solves the training set in an efficient way. This algorithm is referred as to the *Configurable Algorithm*.
 * A design space associated to the internal algorithm which defines their parameters and components subject to be configured.
 * A list of quality indicators used as objectives to minimize when using the internal algorithm to solve a problem of the training set.
 * A *meta-optimizer* algorithm which is used to solve the optimization problem defined by minimizing the quality indicators of an internal algorithm given a particular training set.
@@ -20,6 +20,145 @@ The project is made of two parts:
 Evolver is based on [jMetal 6.1](https://github.com/jMetal/jMetal), so all the stuff provided by that framework (algorithms, problems, quality indicators, utilities) are available in Evolver.
 
 You can use Evolver through Docker using our pre-built images. More information in the [Docker section](#execute-with-docker)
+
+# Configurable algorithms
+Evolver includes currently four configurable multi-objective metaheuristics:
+* [ConfigurableNSGAII](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/impl/ConfigurableNSGAII.java)
+* [ConfigurableMOEAD](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/impl/ConfigurableMOEAD.java)
+* [ConfigurableMOPSO](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/impl/ConfigurableMOPSO.java)
+* [ConfigurableSMSEMOA](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/impl/ConfigurableSMSEMOA.java)
+
+These implementations are highly configurable versions of the base algorithms. For example, the
+design space of the configurable NSGA-II algorithm, in YAML format, is printed by running the [YamlNSGAIIWithDEParameterDescriptionGenerator](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/parameterdescriptiongenerator/yaml/YamlNSGAIIWithDEParameterDescriptionGenerator.java) program:
+
+```yaml
+algorithmResult:
+  type: categorical
+  values: 
+    - population:
+    - externalArchive:
+        specific_parameter: 
+          - populationSizeWithArchive:
+              type: integer
+              values: [10, 200]
+          - externalArchive:
+              type: categorical
+              values: 
+                - crowdingDistanceArchive:
+                - unboundedArchive:
+#
+createInitialSolutions:
+  type: categorical
+  values: 
+    - random:
+    - latinHypercubeSampling:
+    - scatterSearch:
+#
+model:
+  type: categorical
+  values: 
+    - generational:
+        specific_parameter: 
+          - offspringPopulationSize:
+              type: categorical
+              values: [2, 5, 10, 20, 50, 100, 200, 400]
+    - steadyState:
+#
+variation:
+  type: categorical
+  values: 
+    - crossoverAndMutationVariation:
+        specific_parameter: 
+          - crossover:
+              type: categorical
+              values: 
+                - SBX:
+                    specific_parameter: 
+                      - sbxDistributionIndex:
+                          type: real
+                          values: [5.0, 400.0]
+                - BLX_ALPHA:
+                    specific_parameter: 
+                      - blxAlphaCrossoverAlphaValue:
+                          type: real
+                          values: [0.0, 1.0]
+                - wholeArithmetic:
+          - mutation:
+              type: categorical
+              values: 
+                - uniform:
+                    specific_parameter: 
+                      - uniformMutationPerturbation:
+                          type: real
+                          values: [0.0, 1.0]
+                - polynomial:
+                    specific_parameter: 
+                      - polynomialMutationDistributionIndex:
+                          type: real
+                          values: [5.0, 400.0]
+                - linkedPolynomial:
+                    specific_parameter: 
+                      - linkedPolynomialMutationDistributionIndex:
+                          type: real
+                          values: [5.0, 400.0]
+                - nonUniform:
+                    specific_parameter: 
+                      - nonUniformMutationPerturbation:
+                          type: real
+                          values: [0.0, 1.0]
+#
+selection:
+  type: categorical
+  values: 
+    - tournament:
+        specific_parameter: 
+          - selectionTournamentSize:
+              type: integer
+              values: [2, 10]
+    - random:
+#
+```
+
+These algorithms can be configured from a string containing valid combinations of parameters, as shown in the [ConfigurableNSGAIIRunner](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/runner/ConfigurableNSGAIIRunner.java) class: 
+```java
+public class ConfigurableNSGAIIRunner {
+
+  public static void main(String[] args) {
+
+    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+
+    String[] parameters =
+        ("--algorithmResult population "
+            + "--createInitialSolutions random "
+            + "--offspringPopulationSize 100 "
+            + "--variation crossoverAndMutationVariation "
+            + "--crossover SBX "
+            + "--crossoverProbability 0.9 "
+            + "--crossoverRepairStrategy round "
+            + "--sbxDistributionIndex 20.0 "
+            + "--mutation polynomial "
+            + "--mutationProbabilityFactor 1.0 "
+            + "--mutationRepairStrategy round "
+            + "--polynomialMutationDistributionIndex 20.0 "
+            + "--selection tournament "
+            + "--selectionTournamentSize 2 ")
+            .split("\\s+");
+
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 20000);
+    configurableNSGAII.parse(parameters);
+    
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = configurableNSGAII.build();
+    nsgaII.run();
+
+    JMetalLogger.logger.info("Total computing time: " + nsgaII.totalComputingTime());
+
+    new SolutionListOutput(nsgaII.result())
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
+        .print();
+  }
+}
+```
 
 # Execute Evolver
 To execute Evolver, first build the project with Maven:
@@ -199,12 +338,12 @@ public class ConfigurableNSGAIIRunner {
     //...
 ```
 
-Note that we set the stopping condition to 15000 function evaluatoins (7000 were set for the
+Note that we set the stopping condition to 15000 function evaluations (7000 were set for the
 meta-optimization).  
 
 We include next the reference front of the problem, the front obtained by the configured NSGA-II and
 the front obtained by NSGA-II with standard settings:
 
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.referenceFront.png" alt="Reference front" width="600"/>
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.standardNSGAII.png" alt="NSGAII front" width="600"/>
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.configurableNSGAII.png" alt="Configurable NSGAII front" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.referenceFront.png" alt="Reference front" width="400"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.standardNSGAII.png" alt="NSGAII front" width="400"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.configurableNSGAII.png" alt="Configurable NSGAII front" width="400"/>
