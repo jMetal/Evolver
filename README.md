@@ -1,4 +1,6 @@
-# Evolver: Meta-optimizing multi-objective metaheuristics
+Evolver: Meta-optimizing multi-objective metaheuristics
+=======================================================
+
 Evolver is a tool based on the formulation of the automatic configuration and design of multi-objective metaheuristics as a multi-objective optimization problem that can be solved by using the same kind of 
 algorithms, i.e., Evolver applies a meta-optimization approach.
 
