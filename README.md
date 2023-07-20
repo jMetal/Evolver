@@ -17,7 +17,7 @@ The project is made of two parts:
 * Maven 3.6.3 or higher
 * Python 3.9 and [<3.11](https://github.com/whitphx/streamlit-server-state/issues/187) (Optional, only for the GUI)
 
-Evolver is based on [jMetal 6.1](https://github.com/jMetal/jMetal)
+Evolver is based on [jMetal 6.1](https://github.com/jMetal/jMetal), so all the stuff provided by that framework (algorithms, problems, quality indicators, utilities) are available in Evolver.
 
 You can use Evolver through Docker using our pre-built images. More information in the [Docker section](#execute-with-docker)
 
@@ -44,7 +44,7 @@ general_config:
     dashboard_mode: false
     output_directory: /tmp/evolver
     cpu_cores: 8
-    plotting_frequency: 10
+    plotting_frequency: 100
 
 external_algorithm_arguments:
     meta_optimizer_algorithm: NSGAII
@@ -64,6 +64,22 @@ optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
     weight_vector_files_directory: resources/weightVectors
 ```
+
+We comment on these parameters next:
+* dashboard_mode: true if the dashboard-based GUI is used; false otherwise.
+* output_directory: directory where the output of the meta-optimization is stored. The output include files with the configurations and with the values of the quality indicators. 
+* cpu_cores: number of cores to be used by the meta-optimizer (ignored if the meta-optimizer cannot be parallelized).
+* plotting_frequency: frequency to plot the Pareto front approximation obtained by the meta-optimizer during the search. It must be a multiple of the meta-optimizer population size.
+* meta_optimizer_algorithm: most of the multi-objective algorithms in jMetal can be a meta-optimizer, but it is advisable to choose among those that can be run in parallel.
+* meta_optimizer_population_size: we typically use a size of 50 in our experiments.
+* meta_optimizer_max_evaluations: stopping condition of the meta-optimizer.
+* configurable_algorithm: algorithm whose configuration is searched for. Evolver currently provides configurable implementations of NSGA-II, MOEA/D, MOPSO, and SMS-EMOA.
+* internal_population_size: population size of the configurable algorithm.
+* independent_runs: number of independent runs when evaluating the configurable algorithm with a particular combination of parameters and components.
+* problem_names: problems used as the training set.
+* reference_front_file_name: files with the reference fronts of the problems in the training set.
+* max_number_of_evaluations: stopping condition of the configurable algorithm per problem.
+* weight_vector_files_directory: directory containing the weight vector files for MOEA/D.
 
 ## Using a runner program
 The [examples package](https://github.com/jMetal/Evolver/tree/main/src/main/java/org/uma/evolver/examples) in the Evolver project contains examples illustrating combinations of meta-optimizers and algorithms to be configured. 
