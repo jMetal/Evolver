@@ -138,6 +138,13 @@ $ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver
 ```
 
 The following chart shows the population of the meta-optimizer after 250 evaluations:
-#![250iterations](https://github.com/jMetal/Evolver/blob/develop/resources/documentation/goel2007.250evals.png "Population size after 250 evaluations")
+<!-- ![250iterations](https://github.com/jMetal/Evolver/blob/develop/resources/documentation/goel2007.250evals.png "Population size after 250 evaluations")
+-->
 
-<img src="https://github.com/jMetal/Evolver/blob/develop/resources/documentation/goel2007.250evals.png" alt="drawing" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.250evals.png" alt="250 evaluations" width="600"/>
+
+We can observe as, at this stage of the optimization, there are four non-dominated solutions. 
+
+The following pictures show the population at 1000 and 2000 function evaluations:
+
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.1000evals.png" alt="250 evaluations" width="600"/>
