@@ -2,7 +2,6 @@ import json
 import multiprocessing
 import os
 import time
-from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryFile
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -19,6 +18,7 @@ from evolver.components import (
 from evolver.execute import execute_evolver_streaming_to_disk
 from evolver.logs import get_logger
 from evolver.utils import (
+    EvolverDashboardException,
     download_link,
     extract_plot,
     github_logo,
@@ -29,8 +29,84 @@ from evolver.utils import (
 # Configure logger
 logger = get_logger()
 
+# Read environment variables, and define constants
+EVOLVER_JAR = Path(
+    os.environ.get(
+        "EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    )
+)
+BASE_PATH = Path(os.environ.get("EVOLVER_BASE_PATH", default="/tmp/evolver"))
+EVOLVER_STATE = None
 
-# DASHBOARD
+
+# Define auxiliary functions
+def get_experiment_folders() -> list[str]:
+    """Get the list of experiment folders."""
+    return [f.name for f in BASE_PATH.iterdir()]
+
+
+def default_session_state(key: str, value):
+    """Set a default value for a session state variable
+
+    Args:
+        key (str): The key to set the default value for
+        value (Any): The default value
+    """
+    if key not in st.session_state:
+        st.session_state[key] = value
+
+
+def create_new_state():
+    """Create a new Evolver state and change the current Evolver state to the newly
+    created one.
+    """
+    new_state = st.session_state["new_state"]
+    # Create the new state folder
+    (BASE_PATH / new_state).mkdir(parents=True, exist_ok=True)
+    st.session_state["state"] = new_state
+    st.session_state["new_state"] = ""
+
+
+def load_session_state(evolver_state: Path, filename: str) -> None:
+    """Load the session state from a json file. This must be called before
+    the widgets are created.
+
+    Args:
+        evolver_state (Path): The state folder for a experiment of Evolver
+        filename (str): The json file name
+
+    Raises:
+        EvolverDashboardException: If the file does not exist
+    """
+    if (json_file := evolver_state / filename).exists():
+        with open(json_file, "r") as fd:
+            loaded_state = json.load(fd)
+
+        logger.debug(f"Loaded session state: {loaded_state}")
+        for key, value in loaded_state.items():
+            st.session_state[key] = value
+    else:
+        raise EvolverDashboardException(f"File {json_file} does not exist.")
+
+
+def dump_session_state(evolver_state: Path, filename: str) -> None:
+    """Dump the session state to a json file.
+
+    Args:
+        evolver_state (Path): The state folder for a experiment of Evolver
+        filename (str): The json file name
+
+    Raises:
+        EvolverDashboardException: If the file does not exist
+    """
+    json_state = {key: value for key, value in st.session_state.items()}
+    # Delete unwanted keys
+    del json_state["state"]
+    with open(evolver_state / filename, "w") as fd:
+        json.dump(json_state, fd, indent=2)
+
+
+# From here on, the dashboard starts
 st.set_page_config(
     page_title="Evolver dashboard",
     page_icon=":sunglasses:",
@@ -38,23 +114,7 @@ st.set_page_config(
     menu_items={"About": None},
 )
 
-# Read environment variables
-evolver_jar = Path(
-    os.environ.get(
-        "EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"
-    )
-)
-
-base_path = Path("/tmp/evolver")
-
-
-# Session state
-# Evolver states are stored as folders
-def default_session_state(key: str, value):
-    if key not in st.session_state:
-        st.session_state[key] = value
-
-
+# Initialize session state
 default_session_state("global_cpu_cores", multiprocessing.cpu_count())
 default_session_state("global_plotting_frequency", 10)
 default_session_state("meta_optimizer_algorithm", "NSGA-II")
@@ -69,49 +129,31 @@ default_session_state("configurable_algorithm_independent_runs", 3)
 default_session_state("configurable_algorithm_problems", ["ZDT1", "ZDT4"])
 default_session_state("configurable_algorithm_max_number_of_evaluations", [8000, 16000])
 
-
-def load_session_state(state: Path, filename: str) -> None:
-    if (json_file := base_path / state / filename).exists():
-        with open(json_file, "r") as fd:
-            loaded_state = json.load(fd)
-
-        for key, value in loaded_state.items():
-            st.session_state[key] = value
-    else:
-        raise ValueError(f"File {json_file} does not exist.")
-
-
-def dump_session_state(state: Path, filename: str) -> None:
-    json_state = {key: value for key, value in st.session_state.items()}
-    del json_state["state"]
-    with open(base_path / state / filename, "w") as fd:
-        json.dump(json_state, fd, indent=2)
-
-
+# Create the experiment selector on the sidebar
 with st.sidebar:
     st.header("Choose experiment")
-    experiments = [f.name for f in base_path.iterdir()]
+    experiments = get_experiment_folders()
 
-    if not experiments:
-        experiments = [None]
-
-    state = st.selectbox(
+    current_state = st.selectbox(
         "Available experiments",
         experiments,
         key="state",
     )
-    if state:
-        state = Path(state)
 
+    if current_state:
+        EVOLVER_STATE = Path(current_state)
+
+    # Form to create a new experiment
     new_state = st.text_input(
-        "New experiment",
+        "Create new experiment",
+        key="new_state",
     )
 
-    if st.button("Create new experiment", disabled=not bool(new_state)):
-        # Ensure that the folder exists
-        (base_path / new_state).mkdir(parents=True, exist_ok=True)
-
-        st.experimental_rerun()
+    st.button(
+        "Create",
+        disabled=not bool(new_state),
+        on_click=create_new_state,
+    )
 
 st.header("Evolver")
 st.markdown(
@@ -120,20 +162,25 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-if state is None:
+# Check if an experiment is selected
+if EVOLVER_STATE is None:
     st.info("Please select an experiment on the sidebar to continue.")
     # We can stop the load here, because if not the widgets don't load a default value.
 
 # Read configuration values
 with st.spinner("Reading configuration..."):
-    if state:
-        has_executed = (base_path / state / ".executed").exists()
+    if EVOLVER_STATE:
+        # Check if the experiment has already been executed
+        # by checking for the lock file
+        has_executed = (BASE_PATH / EVOLVER_STATE / ".executed").exists()
         if has_executed:
-            load_session_state(state, "config.json")
+            # Load the session state from disk
+            load_session_state(BASE_PATH / EVOLVER_STATE, "config.json")
     else:
         # No experiment selected yet, disable everything
         has_executed = True
 
+# General configuration
 st.subheader("General configuration")
 st.number_input(
     "Number of CPU cores",
@@ -148,8 +195,9 @@ st.number_input(
     disabled=has_executed,
 )
 
-col1, col2 = st.columns(2)
-with col1:
+# Meta-optimizer and configurable algorithm configurations
+meta_optimizer_column, configurable_algorithm_column = st.columns(2)
+with meta_optimizer_column:
     st.subheader("Meta-optimizer configuration")
     st.selectbox(
         "Algorithm",
@@ -180,7 +228,7 @@ with col1:
         key="meta_optimizer_indicators_names",
         disabled=has_executed,
     )
-with col2:
+with configurable_algorithm_column:
     st.subheader("Meta-optimization problem configuration")
     st.selectbox(
         "Configurable algorithm",
@@ -208,6 +256,7 @@ with col2:
     )
 
     evaluations = []
+    # Ensure the length of the evaluations list is the same as the number of problems
     for i, problem in enumerate(st.session_state["configurable_algorithm_problems"]):
         if i < len(
             st.session_state["configurable_algorithm_max_number_of_evaluations"]
@@ -229,30 +278,64 @@ with col2:
 
     st.session_state["configurable_algorithm_max_number_of_evaluations"] = evaluations
 
-if state is None:
+# Here we stop the load if no state is choosen
+if EVOLVER_STATE is None:
     st.stop()
 
+# Add option to manually change the configuration
 with st.expander("Manually change configuration"):
-    # This yaml should be used for everything
+    # Extract long values to maintain readability
+    _meta_opt_alg = meta_optimizers[st.session_state["meta_optimizer_algorithm"]]
+    _meta_opt_ind = ",".join(
+        [
+            quality_indicators[indicator]
+            for indicator in st.session_state["meta_optimizer_indicators_names"]
+        ]
+    )
+    _int_alg_alg = configurable_algorithms[
+        st.session_state["configurable_algorithm_algorithm"]
+    ]
+    _int_alg_pop = st.session_state["configurable_algorithm_population_size"]
+    _int_alg_prob = ",".join(
+        [
+            problems[problem]
+            for problem in st.session_state["configurable_algorithm_problems"]
+        ]
+    )
+    _int_alg_ref = ",".join(
+        [
+            referenceFront[problem]
+            for problem in st.session_state["configurable_algorithm_problems"]
+        ]
+    )
+    _int_alg_eval = ",".join(
+        [
+            str(num_evaluations)
+            for num_evaluations in st.session_state[
+                "configurable_algorithm_max_number_of_evaluations"
+            ]
+        ]
+    )
+    # TODO: This yaml should be used for load and store the state to disk
     str_configuration = f"""general_config:
     dashboard_mode: True # Required to plot graphs in the dashboard
-    output_directory: {base_path / state}
+    output_directory: {BASE_PATH / EVOLVER_STATE}
     cpu_cores: {st.session_state["global_cpu_cores"]}
     plotting_frequency: {st.session_state["global_plotting_frequency"]}
 
 external_algorithm_arguments:
-    meta_optimizer_algorithm: {meta_optimizers[st.session_state["meta_optimizer_algorithm"]]}
+    meta_optimizer_algorithm: {_meta_opt_alg}
     meta_optimizer_population_size: {st.session_state["meta_optimizer_population_size"]}
     meta_optimizer_max_evaluations: {st.session_state["meta_optimizer_max_evaluations"]}
-    indicators_names: {",".join([quality_indicators[indicator] for indicator in st.session_state["meta_optimizer_indicators_names"]])}
+    indicators_names: {_meta_opt_ind}
 
 internal_algorithm_arguments:
-    configurable_algorithm: {configurable_algorithms[st.session_state["configurable_algorithm_algorithm"]]}
-    internal_population_size: {st.session_state["configurable_algorithm_population_size"]}
+    configurable_algorithm: {_int_alg_alg}
+    internal_population_size: {_int_alg_pop}
     independent_runs: {st.session_state["configurable_algorithm_independent_runs"]}
-    problem_names: {",".join([problems[problem] for problem in st.session_state["configurable_algorithm_problems"]])}
-    reference_front_file_name: {",".join([referenceFront[problem] for problem in st.session_state["configurable_algorithm_problems"]])}
-    max_number_of_evaluations: {",".join([str(num_evaluations) for num_evaluations in st.session_state["configurable_algorithm_max_number_of_evaluations"]])}
+    problem_names: {_int_alg_prob}
+    reference_front_file_name: {_int_alg_ref}
+    max_number_of_evaluations: {_int_alg_eval}
 
 optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
@@ -276,34 +359,39 @@ optional_specific_arguments:
 
 
 # Execute evolver
-log_file = base_path / state / "evolver.log"
+log_file = BASE_PATH / EVOLVER_STATE / "evolver.log"
 if not has_executed:
     st.header("Execute Evolver")
     if st.button(
         "Execute",
         disabled=has_executed,
     ):
-        temp_file = base_path / state / "evolver-config.yaml"
+        # Store configuration values in a temporary file to pass to Evolver
+        temp_file = BASE_PATH / EVOLVER_STATE / "evolver-config.yaml"
 
         with open(temp_file, "w") as f:
             f.write(configuration)
 
-        dump_session_state(state, "config.json")
+        # Save session state to disk
+        dump_session_state(BASE_PATH / EVOLVER_STATE, "config.json")
 
         java_class = "org.uma.evolver.MetaRunner"
         args = [str(temp_file)]
 
+        # Execute Evolver jar
         pid = execute_evolver_streaming_to_disk(
             java_class,
             log_file,
             args=args,
-            jar=evolver_jar,
+            jar=EVOLVER_JAR,
         )
-        with open(base_path / state / ".executed", "w") as execution_lock:
+
+        # Create lock to prevent multiple executions
+        with open(BASE_PATH / EVOLVER_STATE / ".executed", "w") as execution_lock:
             execution_lock.write(str(pid))
         st.experimental_rerun()
 
-
+# Once the execution starts, track the progress
 if has_executed:
     st.header("Evolver progress")
     if st.button("Refresh"):
@@ -314,10 +402,15 @@ if has_executed:
     results_block = st.empty()
 
     with st.spinner("Reading logs..."):
+        # Wait for the log file to be created after Evolver starts
         while not log_file.exists():
             time.sleep(0.1)
+
+        # Read the log file
         with open(log_file, "r") as logs_fd:
             logs = logs_fd.read()
+
+        # Extract from the logs if the execution is finished and the latest front
         is_finished = is_process_running(logs)
         plot, progress = extract_plot(logs)
         if plot:
@@ -346,12 +439,13 @@ if has_executed:
                 f"{min_evaluations} evaluations are done"
             )
 
+        # Show a expander with the logs
         with st.expander("Execution logs"):
             st_components.html(
                 f"""<pre>{logs}</pre>""",
                 height=600,
                 scrolling=True,
-            )  # Add it in code block
+            )  # TODO: Add it in code block and support Dark theme
             with open(log_file, "r") as logs_fd:
                 logs_link = download_link(
                     "here",
@@ -364,14 +458,16 @@ if has_executed:
                     unsafe_allow_html=True,
                 )
 
+    # Show the results if the execution is finished
     if not is_finished:
         with results_block.container():
             st.success("Evolver execution finished!")
             st.balloons()
 
+            # Zip the whole state folder
             with TemporaryFile() as tmp:
                 with ZipFile(tmp, "w", ZIP_DEFLATED) as zip_file:
-                    zip_directory(base_path / state, zip_file)
+                    zip_directory(BASE_PATH / EVOLVER_STATE, zip_file)
                 tmp.seek(0)
 
                 # The oficial streamlit download button refreshes the page,

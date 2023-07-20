@@ -3,7 +3,14 @@ import os
 from pathlib import Path
 
 
-def configure_logging(log_file: str = None, config: dict | None = None):
+def configure_logging(log_file: str = None, config: dict | None = None) -> None:
+    """Configure logging for the application.
+
+    Args:
+        log_file (str): Path to the log file.
+        config (dict|None): Logging configuration. If not provided, uses a default
+            console logger.
+    """
     if log_file is None:
         log_path = os.environ.get("XDG_STATE_HOME", "~/.local/state")
         log_file = Path(f"{log_path}/evolver/dashboard.log").expanduser().resolve()
@@ -47,7 +54,16 @@ def configure_logging(log_file: str = None, config: dict | None = None):
         logging.error(f"Error while configuring logging: {err}")
 
 
-def get_logger(module: str = "evolver", name: str = None):
+def get_logger(module: str = "evolver", name: str = None) -> logging.Logger:
+    """Get a logger for the given module.
+
+    Args:
+        module (str): Name of the module to get the logger for.
+        name (str): Name of the logger to get.
+
+    Returns:
+        logging.Logger: Logger for the given module.
+    """
     logger_name = module
     if name is not None:
         logger_name += "." + name

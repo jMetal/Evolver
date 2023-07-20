@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 class JavaException(Exception):
+    """Custom exception for raising Java-related errors."""
+
     pass
 
 
@@ -13,15 +15,19 @@ def create_command(
     jar: Path = None,
     args: list[str] = [],
     log_config: str = None,
-):
-    """
-    Prepares the Evolver command to be executed.
+) -> list[str]:
+    """Prepares the Evolver command to be executed.
 
-    :param jar: The path to the JAR file.
-    :param java_class: The name of the Java class to execute.
-    :param args: The arguments to pass to the JAR file.
-    :param log_config: Java configuration file for the logs.
-    :return: The command to execute the JAR file.
+    Args:
+        java_class (str): The name of the Java class to execute.
+        jar (Path, optional): The path to the JAR file. Defaults to None.
+        args (list[str], optional): The arguments to pass to the JAR file.
+            Defaults to [].
+        log_config (str, optional): Java configuration file for the logs.
+            Defaults to None.
+
+    Returns:
+        list[str]: The command to execute the JAR file.
     """
     # If the JAR file is not specified, use the default JAR file
     if jar is None:
@@ -50,15 +56,19 @@ def execute_evolver(
     jar: Path = None,
     args: list[str] = [],
     log_config: str = None,
-):
-    """
-    Executes a JAR file and returns the output.
+) -> str:
+    """Executes a JAR file, waits for its completion and returns the output.
 
-    :param jar: The path to the JAR file.
-    :param java_class: The name of the Java class to execute.
-    :param args: The arguments to pass to the JAR file.
-    :param log_config: Java configuration file for the logs.
-    :return: The output of the JAR file.
+    Args:
+        java_class (str): The name of the Java class to execute.
+        jar (Path, optional): The path to the JAR file. Defaults to None.
+        args (list[str], optional): The arguments to pass to the JAR file.
+            Defaults to [].
+        log_config (str, optional): Java configuration file for the logs.
+            Defaults to None.
+
+    Returns:
+        str: The stdout of the JAR file.
     """
     command = create_command(java_class, jar=jar, args=args, log_config=log_config)
 
@@ -82,14 +92,19 @@ def execute_evolver_streaming(
     args: list[str] = [],
     log_config: str = None,
 ):
-    """
-    Executes a JAR file and yields the output line by line.
+    """Executes a JAR file and returns a generator to its logs, while executing
+    in the background.
 
-    :param jar: The path to the JAR file.
-    :param java_class: The name of the Java class to execute.
-    :param args: The arguments to pass to the JAR file.
-    :param log_config: Java configuration file for the logs.
-    :yield: Each line of the JAR file's output.
+    Args:
+        java_class (str): The name of the Java class to execute.
+        jar (Path, optional): The path to the JAR file. Defaults to None.
+        args (list[str], optional): The arguments to pass to the JAR file.
+            Defaults to [].
+        log_config (str, optional): Java configuration file for the logs.
+            Defaults to None.
+
+    Yields:
+        str: The stdout of the JAR file line by line.
     """
     command = create_command(java_class, jar=jar, args=args, log_config=log_config)
 
@@ -117,14 +132,17 @@ def execute_evolver_streaming_to_disk(
     jar: Path = None,
     args: list[str] = [],
 ):
-    """
-    Executes a JAR file, storing to disk it's output by configuring Evolver logs.
+    """Executes a JAR file, storing to disk it's output by configuring Evolver logs.
 
-    :param jar: The path to the JAR file.
-    :param java_class: The name of the Java class to execute.
-    :param args: The arguments to pass to the JAR file.
-    :param enable_logs: Whether to enable the Evolver logs.
-    :return: The program PID.
+    Args:
+        java_class (str): The name of the Java class to execute.
+        log_file (Path): The path where Evolver log file will be written.
+        jar (Path, optional): The path to the JAR file. Defaults to None.
+        args (list[str], optional): The arguments to pass to the JAR file.
+            Defaults to [].
+
+    Returns:
+        int: The PID of the process executing the JAR file.
     """
     logger_info = f"""# Set the log level
 .level = INFO
@@ -135,6 +153,7 @@ java.util.logging.FileHandler.level = ALL
 java.util.logging.FileHandler.pattern = {log_file}
 java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
 """
+    # Create log configuration file to pass to Evolver
     log_config = log_file.with_suffix(log_file.suffix + ".config")
     with open(log_config, "w") as f:
         f.write(logger_info)

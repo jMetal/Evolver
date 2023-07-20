@@ -1,3 +1,9 @@
+"""
+This module contains the Evolver components that may be used in the dashboard.
+Ultimately, this module will be replaced by calls to the Evolver JAR file, to
+dinamically load the available components.
+"""
+
 meta_optimizers = {
     "NSGA-II": "NSGAII",
     "Asynchronous NSGA-II": "ASYNCNSGAII",
