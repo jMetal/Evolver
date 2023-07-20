@@ -155,5 +155,11 @@ Once the run is completed, the output directory contains these two files:
 * VAR.NSGA-II.Goel2007.EP.IGD+.Conf.2000.csv -> the Pareto set approximation (i.e., the configurations found)
 
 The plot of the Pareto front approximation shows that four non-dominated solutions are found:
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.FrontObtainedByTheMetaOptimizer.png" alt="2000 evaluations" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.FrontObtainedByTheMetaOptimizer.png" alt="2000 evaluations" width="400"/>
+
+We select the configuration corresponding to the solution having the minimum inverted generational distance value:
+
+```console
+--algorithmResult externalArchive --populationSizeWithArchive 45 --externalArchive unboundedArchive --createInitialSolutions random --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.6748953752524687 --crossoverRepairStrategy round --sbxDistributionIndex 69.33946841828451 --blxAlphaCrossoverAlphaValue 0.3524179610073535 --mutation nonUniform --mutationProbabilityFactor 1.76602778869229 --mutationRepairStrategy round --polynomialMutationDistributionIndex 20.465825376938277 --linkedPolynomialMutationDistributionIndex 369.76116204526977 --uniformMutationPerturbation 0.9230041512352161 --nonUniformMutationPerturbation 0.6160655898281514 --selection tournament --selectionTournamentSize 8 
+``` 
 
