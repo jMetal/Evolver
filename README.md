@@ -145,6 +145,11 @@ The following chart shows the population of the meta-optimizer after 250 evaluat
 
 We can observe as, at this stage of the optimization, there are four non-dominated solutions. 
 
-The following pictures show the population at 1000 and 2000 function evaluations:
+The following pictures show the population at 1000 and 1900 function evaluations:
 
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.1000evals.png" alt="250 evaluations" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.1000evals.png" alt="1000 evaluations" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.1900evals.png" alt="1900 evaluations" width="600"/>
+
+Once the run is completed, the output directory contains these two files:
+* FUN.NSGA-II.Goel2007.EP.IGD+.2000.csv	-> the Pareto front approximation obtained by the meta-optimizer
+* VAR.NSGA-II.Goel2007.EP.IGD+.Conf.2000.csv -> the Pareto set approximation (i.e., the configurations found)
