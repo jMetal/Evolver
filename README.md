@@ -29,7 +29,7 @@ Evolver includes currently four configurable multi-objective metaheuristics:
 * [ConfigurableSMSEMOA](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/configurablealgorithm/impl/ConfigurableSMSEMOA.java)
 
 These implementations are highly configurable versions of the base algorithms. For example, the
-design space of the configurable NSGA-II algorithm, in YAML format, is printed by running the [YamlNSGAIIWithDEParameterDescriptionGenerator](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/parameterdescriptiongenerator/yaml/YamlNSGAIIWithDEParameterDescriptionGenerator.java) program:
+design space of the configurable NSGA-II algorithm, in YAML format, is printed by running the [YamlNSGAIIParameterDescriptionGenerator](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/parameterdescriptiongenerator/yaml/YamlNSGAIIParameterDescriptionGenerator.java) program:
 
 ```yaml
 algorithmResult:
