@@ -155,5 +155,5 @@ Once the run is completed, the output directory contains these two files:
 * VAR.NSGA-II.Goel2007.EP.IGD+.Conf.2000.csv -> the Pareto set approximation (i.e., the configurations found)
 
 The plot of the Pareto front approximation shows that four non-dominated solutions are found:
-<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.FrontObtainedByTheMetaOptimizer.pdf" alt="1000 evaluations" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/goel2007.FrontObtainedByTheMetaOptimizer.png" alt="2000 evaluations" width="600"/>
 
