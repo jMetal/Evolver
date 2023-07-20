@@ -32,7 +32,7 @@ logger = get_logger()
 # Read environment variables, and define constants
 EVOLVER_JAR = Path(
     os.environ.get(
-        "EVOLVER_JAR", default="target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"
+        "EVOLVER_JAR", default="target/Evolver-1.0-jar-with-dependencies.jar"
     )
 )
 BASE_PATH = Path(os.environ.get("EVOLVER_BASE_PATH", default="/tmp/evolver"))

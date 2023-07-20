@@ -21,7 +21,7 @@ $ mvn package
 
 Then, execute the following command:
 ```console
-$ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver.MetaRunner <path-to-configuration-file>
+$ java -cp target/Evolver-1.0-jar-with-dependencies.jar org.uma.evolver.MetaRunner <path-to-configuration-file>
 ```
 
 ## Execute Evolver with a GUI (Optional)

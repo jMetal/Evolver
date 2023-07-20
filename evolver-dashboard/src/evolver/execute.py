@@ -34,7 +34,7 @@ def create_command(
         jar = (
             Path(os.environ.get("XDG_CACHE_HOME", "~/.cache"))
             / "Evolver"
-            / "Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"
+            / "Evolver-1.0-jar-with-dependencies.jar"
         )
     jar = jar.expanduser().resolve()
 
