@@ -15,4 +15,4 @@ COPY src ./src
 RUN python3 -m pip install "."
 
 ENTRYPOINT []
-CMD ["python3", "-m", "evolver", "--jar", "Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+CMD ["python3", "-m", "evolver", "--jar", "Evolver-1.0-jar-with-dependencies.jar"]

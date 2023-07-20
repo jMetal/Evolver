@@ -23,7 +23,7 @@ FROM eclipse-temurin:17
 WORKDIR /evolver
 
 # Copy the JAR file from the builder stage
-COPY --from=builder /evolver/target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar .
+COPY --from=builder /evolver/target/Evolver-1.0-jar-with-dependencies.jar .
 
 # Copy the resources folder
 COPY resources/ ./resources/
