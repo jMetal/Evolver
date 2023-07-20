@@ -12,7 +12,6 @@ The project is made of two parts:
 
 Alternative, you can use Evolver through Docker using our pre-built images. More information in the [Docker section](#execute-with-docker)
 
-
 # Execute Evolver
 To execute Evolver, first build the project with Maven:
 ```console
@@ -70,7 +69,7 @@ optional_specific_arguments:
 ```
 
 # Execute with docker
-There is two docker images available for Evolver.
+There are two docker images available for Evolver.
 
 ## Main Evolver
 Container image: `ghcr.io/jmetal/evolver`
