@@ -130,7 +130,7 @@ Check the [dashboard documentation](evolver-dashboard/README.md#execute-the-dash
 # Example: Meta-optimizing NSGA-II to solve an engineering problem
 To illustrate the use of Evolver, we provide an example where NSGA-II, as meta-optimizer, is used to find a configuration of NSGA-II for the liquid-rocket single element injector design problem described in [Engineering applications of multi-objective evolutionary algorithms: A test suite of box-constrained real-world problems](https://doi.org/10.1016/j.engappai.2023.106192). This problem in included in jMetal in the *org.uma.jmetal.problem.multiobjective.rwa.Goel2007* class.
 The code to run this example is in the [NSGAIIOptimizingNSGAIIForProblemGoel2007](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/examples/NSGAIIOptimizingNSGAIIForProblemGoel2007.java) program in Evolver.
-Without entering into details, we set the Epsilon and Inverted Generational Distance Plus as indicators to be minimized and the stopping condition of the meta-optimizer is to compute 2000 function evaluations.
+Without entering into details, we set the Epsilon and Inverted Generational Distance Plus as indicators to be minimized and the stopping condition of the meta-optimizer and the NSGA-II to be tuned are, respectively, 2000 and 7000 function evaluations.
 
 We execute the program in a terminal by using the following command:
 ```console
@@ -163,3 +163,48 @@ We select the configuration corresponding to the solution having the minimum inv
 --algorithmResult externalArchive --populationSizeWithArchive 45 --externalArchive unboundedArchive --createInitialSolutions random --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.6748953752524687 --crossoverRepairStrategy round --sbxDistributionIndex 69.33946841828451 --blxAlphaCrossoverAlphaValue 0.3524179610073535 --mutation nonUniform --mutationProbabilityFactor 1.76602778869229 --mutationRepairStrategy round --polynomialMutationDistributionIndex 20.465825376938277 --linkedPolynomialMutationDistributionIndex 369.76116204526977 --uniformMutationPerturbation 0.9230041512352161 --nonUniformMutationPerturbation 0.6160655898281514 --selection tournament --selectionTournamentSize 8 
 ``` 
 
+The last step is to use this configuration with the [ConfigurableNSGAIIRunner](https://github.com/jMetal/Evolver/blob/develop/src/main/java/org/uma/evolver/configurablealgorithm/runner/ConfigurableNSGAIIRunner.java):
+
+```java
+public class ConfigurableNSGAIIRunner {
+
+  public static void main(String[] args) {
+
+    String referenceFrontFileName = "resources/referenceFronts/Goel2007.csv";
+
+    String[] parameters =
+        ("--algorithmResult externalArchive "
+            + "--populationSizeWithArchive 45 "
+            + "--externalArchive unboundedArchive "
+            + "--createInitialSolutions random "
+            + "--offspringPopulationSize 100 "
+            + "--variation crossoverAndMutationVariation "
+            + "--crossover BLX_ALPHA "
+            + "--crossoverProbability 0.6748953752524687 "
+            + "--crossoverRepairStrategy round "
+            + "--sbxDistributionIndex 69.33946841828451 "
+            + "--blxAlphaCrossoverAlphaValue 0.3524179610073535 "
+            + "--mutation nonUniform "
+            + "--mutationProbabilityFactor 1.76602778869229 "
+            + "--mutationRepairStrategy round "
+            + "--polynomialMutationDistributionIndex 20.465825376938277 "
+            + "--linkedPolynomialMutationDistributionIndex 369.76116204526977 "
+            + "--uniformMutationPerturbation 0.9230041512352161 "
+            + "--nonUniformMutationPerturbation 0.6160655898281514 "
+            + "--selection tournament "
+            + "--selectionTournamentSize 8 ")
+            .split("\\s+");
+
+    var configurableNSGAII = new ConfigurableNSGAII(new Goel2007(), 100, 15000);
+    //...
+```
+
+Note that we set the stopping condition to 15000 function evaluatoins (7000 were set for the
+meta-optimization).  
+
+We include next the reference front of the problem, the front obtained by the configured NSGA-II and
+the front obtained by NSGA-II with standard settings:
+
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.referenceFront.png" alt="Reference front" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.standardNSGAII.png" alt="NSGAII front" width="600"/>
+<img src="https://github.com/jMetal/Evolver/blob/main/resources/documentation/Goel2007.configurableNSGAII.png" alt="Configurable NSGAII front" width="600"/>
