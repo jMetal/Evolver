@@ -128,3 +128,14 @@ ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yml
 Check the [dashboard documentation](evolver-dashboard/README.md#execute-the-dashboard-with-docker) for more information.
 
 # Example: Meta-optimizing NSGA-II to solve an engineering problem
+To illustrate the use of Evolver, we provide an example where NSGA-II, as meta-optimizer, is used to find a configuration of NSGA-II for the liquid-rocket single element injector design problem described in [Engineering applications of multi-objective evolutionary algorithms: A test suite of box-constrained real-world problems](https://doi.org/10.1016/j.engappai.2023.106192). This problem in included in jMetal in the *org.uma.jmetal.problem.multiobjective.rwa.Goel2007* class.
+The code to run this example is in the [NSGAIIOptimizingNSGAIIForProblemGoel2007](https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/examples/NSGAIIOptimizingNSGAIIForProblemGoel2007.java) program in Evolver.
+Without entering into details, we set the Epsilon and Inverted Generational Distance Plus as indicators to be minimized and the stopping condition of the meta-optimizer is to compute 2000 function evaluations.
+
+We execute the program in a terminal by using the following command:
+```console
+$ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver.examples.NSGAIIOptimizingNSGAIIForProblemGoel2007
+```
+
+The following chart shows the population of the meta-optimizer after 250 evaluations:
+![250iterations](./resources/documentation/goel2007.250.evals.png "Population size after 250 evaluations"

@@ -17,7 +17,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.rwa.Goel2007;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -26,22 +26,22 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link ConfigurableNSGAII} using
- * problem {@link DTLZ3} as training set.
+ * problem {@link Goel2007} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
+public class NSGAIIOptimizingNSGAIIForProblemGoel2007 {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the target problem (DTLZ3)
+    // Step 1: Select the target problem (Goel2007)
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ3();
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new Goel2007();
+    String referenceFrontFileName = "resources/referenceFronts/Goel2007.csv";
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAII})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
+        problemWhoseConfigurationIsSearchedFor, 100, 7000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
         indicators, 1);
@@ -74,7 +74,7 @@ public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
-        "RESULTS/NSGAII/DTLZ3");
+        "RESULTS/NSGAII/Goel2007");
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
@@ -83,7 +83,7 @@ public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
             indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
