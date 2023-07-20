@@ -1,10 +1,9 @@
-package org.uma.evolver.example;
+package org.uma.evolver.examples;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MetaOptimizationProblem;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;

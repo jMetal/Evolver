@@ -1,4 +1,4 @@
-package org.uma.evolver.example;
+package org.uma.evolver.examples;
 
 import java.io.IOException;
 import java.util.List;
