@@ -138,4 +138,4 @@ $ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver
 ```
 
 The following chart shows the population of the meta-optimizer after 250 evaluations:
-![250iterations](./resources/documentation/goel2007.250.evals.png "Population size after 250 evaluations"
+![250iterations](./resources/documentation/goel2007.250.evals.png "Population size after 250 evaluations")
