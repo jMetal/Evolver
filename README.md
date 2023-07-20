@@ -68,7 +68,7 @@ optional_specific_arguments:
 ## Using a runner program
 The [examples package](https://github.com/jMetal/Evolver/tree/main/src/main/java/org/uma/evolver/examples) in the Evolver project contains examples illustrating combinations of meta-optimizers and algorithms to be configured. 
 
-To run the example where NSGA-II is used to find configurations of MOEAD by selecting the DTZ2Minus problems as training set, the command to execute is:
+To run the example where NSGA-II is used to find configurations of MOEAD by selecting the DTZ2Minus problems as the training set, the command to execute is:
 
 ```console
 $ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver.examples.NSGAIIOptimizingMOEADForProblemDTLZ2Minus
