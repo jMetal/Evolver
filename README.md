@@ -5,12 +5,41 @@ The project is made of two parts:
 * [Evolver](src): A Java library built with maven that implements the meta-optimization approach.
 * [Evolver Dashboard](evolver-dashboard): A Python dashboard built with Streamlit that allows to configure and execute Evolver from an user-friendly web application.
 
-# Pre-requisites
+# Pre-requisites for
 * Java 17 or higher
 * Maven 3.6.3 or higher
 * Python 3.9 and [<3.11](https://github.com/whitphx/streamlit-server-state/issues/187) (Optional, only for the GUI)
 
-## Sample configuration
+Alternative, you can use Evolver through Docker using our pre-built images. More information in the [Docker section](#execute-with-docker)
+
+
+# Execute Evolver
+To execute Evolver, first build the project with Maven:
+```console
+$ mvn package
+```
+
+Then, execute the following command:
+```console
+$ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver.MetaRunner <path-to-configuration-file>
+```
+
+## Execute Evolver with a GUI (Optional)
+Additionally, you can use Python to deploy a web-based dashboard for executing evolver. To do so, follow the next steps:
+```bash
+# Build the latest version of the Evolver jar at target folder
+$ mvn package
+# Install the evolver python package
+$ pip install "./evolver-dashboard"
+# Execute the dashboard
+$ python -m evolver
+```
+
+This will start the dashboard at [http://localhost:8501/](http://localhost:8501/).
+
+For more information in the dashboard, please refer to the [dashboard documentation](evolver-dashboard/README.md).
+
+# Sample configuration
 To execute evolver, the parameters are configured in a YAML file.
 The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems. You can find more example configurations at [examples](examples).
 
@@ -40,44 +69,24 @@ optional_specific_arguments:
     weight_vector_files_directory: resources/weightVectors
 ```
 
-## Execute Evolver
-To execute Evolver, first build the project with Maven:
-```console
-$ mvn package
-```
-
-Then, execute the following command:
-```console
-$ java -cp target/Evolver-1.0-SNAPSHOT-jar-with-dependencies.jar org.uma.evolver.MetaRunner <path-to-configuration-file>
-```
-
-## Execute Evolver with a GUI (Optional)
-Additionally, you can use Python to build Evolver and run the GUI:
-```console
-$ ./run.sh
-```
-
-or manually (recommended to use a virtual enviroment):
-```bash
-# Build the latest version of the Evolver jar at target folder
-$ mvn package
-# Install the evolver
-$ pip install "./evolver-dashboard"
-$ python -m evolver
-```
-
-This will start the dashboard at [http://localhost:8501/](http://localhost:8501/).
-
-## Execute with docker
+# Execute with docker
 There is two docker images available for Evolver.
-- `ghcr.io/jmetal/evolver`: Contains the latest version of Evolver.
-Can be executed with the following command:
-```bash
-$ docker run --rm -v <path-to-configuration-file>:/config.yaml -v <local_output_folder>:<output_folder_defined_in_config> ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yaml
-```
 
-- `ghcr.io/jmetal/evolver-dashboard`: Contains the latest version of Evolver with the GUI.
-Can be executed with the following command:
+## Main Evolver
+Container image: `ghcr.io/jmetal/evolver`
+
+Tags: `latest`
+
+Evolver requires you to include your configuration file and the folder where you want to save the results. The output folder inside the container is the one you define in your execution configuration.
+
+You can do this by mounting volumes in the container.
+
+Usage:
 ```bash
-$ docker run --rm -v <local_output_folder>:/tmp/evolver -p 8501:8501 ghcr.io/jmetal/evolver-dashboard:latest
+$ docker run --rm \
+-v <local/path/config.yml>:/config.yml \
+-v <local/path/folder>:<container/path/from/config> \
+ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yml
 ```
+## Evolver dashboard
+Check the [dashboard documentation](evolver-dashboard/README.md#execute-the-dashboard-with-docker) for more information.
