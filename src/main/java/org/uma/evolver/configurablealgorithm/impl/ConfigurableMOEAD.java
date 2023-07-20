@@ -61,6 +61,8 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   private int maximumNumberOfEvaluations;
   private String weightVectorFilesDirectory ;
 
+  private MutationParameter mutationParameter ;
+
   @Override
   public List<Parameter<?>> configurableParameterList() {
     return autoConfigurableParameterList;
@@ -93,7 +95,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   public void configure() {
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
     RealParameter epsilonParameter = new RealParameter("epsilonParameterForNormalizing", 1.0E-8, 25);
-    normalizeObjectivesParameter.addGlobalParameter(epsilonParameter);
+    normalizeObjectivesParameter.addSpecificParameter("TRUE", epsilonParameter);
 
     neighborhoodSizeParameter = new IntegerParameter("neighborhoodSize",5, 50);
     neighborhoodSelectionProbabilityParameter =
@@ -102,7 +104,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
         new IntegerParameter("maximumNumberOfReplacedSolutions",1, 5);
     aggregationFunctionParameter =
         new AggregationFunctionParameter(
-            List.of("tschebyscheff", "weightedSum", "penaltyBoundaryIntersection"));
+            List.of("tschebyscheff", "weightedSum", "penaltyBoundaryIntersection", "modifiedTschebyscheff"));
     RealParameter pbiTheta = new RealParameter("pbiTheta",1.0, 200);
     aggregationFunctionParameter.addSpecificParameter("penaltyBoundaryIntersection", pbiTheta);
     aggregationFunctionParameter.addGlobalParameter(normalizeObjectivesParameter);
@@ -114,7 +116,6 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     autoConfigurableParameterList.add(neighborhoodSizeParameter);
     autoConfigurableParameterList.add(maximumNumberOfReplacedSolutionsParameter);
     autoConfigurableParameterList.add(aggregationFunctionParameter);
-    autoConfigurableParameterList.add(normalizeObjectivesParameter);
 
     autoConfigurableParameterList.add(algorithmResultParameter);
     autoConfigurableParameterList.add(createInitialSolutionsParameter);
@@ -138,7 +139,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     RealParameter alpha = new RealParameter("blxAlphaCrossoverAlphaValue",0.0, 1.0);
     crossoverParameter.addSpecificParameter("BLX_ALPHA", alpha);
 
-    MutationParameter mutationParameter =
+    mutationParameter =
         new MutationParameter(Arrays.asList("uniform", "polynomial", "linkedPolynomial", "nonUniform"));
 
     RealParameter mutationProbabilityFactor = new RealParameter("mutationProbabilityFactor",
@@ -179,10 +180,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
     variationParameter =
         new VariationParameter(List.of("crossoverAndMutationVariation", "differentialEvolutionVariation"));
+    variationParameter.addGlobalParameter(mutationParameter);
+
     variationParameter.addSpecificParameter("crossoverAndMutationVariation", crossoverParameter);
-    variationParameter.addSpecificParameter("crossoverAndMutationVariation", mutationParameter);
+    //variationParameter.addSpecificParameter("crossoverAndMutationVariation", mutationParameter);
     variationParameter.addNonConfigurableParameter("offspringPopulationSize", 1);
-    variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
+    //variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
     variationParameter.addSpecificParameter("differentialEvolutionVariation", deCrossoverParameter);
   }
 
@@ -240,8 +243,6 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     Termination termination =
         new TerminationByEvaluations(maximumNumberOfEvaluations);
 
-    MutationParameter mutationParameter = (MutationParameter) variationParameter.findSpecificParameter(
-        "mutation");
     mutationParameter.addNonConfigurableParameter("numberOfProblemVariables",
         problem.numberOfVariables());
 
@@ -286,13 +287,14 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
     aggregationFunctionParameter.normalizedObjectives(normalizeObjectivesParameter.value());
     AggregationFunction aggregativeFunction = aggregationFunctionParameter.getParameter();
+    boolean normalizedObjectives = normalizeObjectivesParameter.value() ;
     var replacement =
         new MOEADReplacement<>(
             selection,
             (WeightVectorNeighborhood<DoubleSolution>) neighborhood,
             aggregativeFunction,
             subProblemIdGenerator,
-            maximumNumberOfReplacedSolutions, normalizeObjectivesParameter.value());
+            maximumNumberOfReplacedSolutions, normalizedObjectives);
 
     class EvolutionaryAlgorithmWithArchive extends EvolutionaryAlgorithm<DoubleSolution> {
       private Archive<DoubleSolution> archive ;

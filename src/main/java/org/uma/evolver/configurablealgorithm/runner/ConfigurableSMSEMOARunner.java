@@ -3,6 +3,7 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableSMSEMOA;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -21,13 +22,13 @@ public class ConfigurableSMSEMOARunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ2Minus.csv";
 
     String[] parameters =
-        ("--algorithmResult population --populationSizeWithArchive 83 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --model steadyState --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.19266823108855072 --crossoverRepairStrategy bounds --sbxDistributionIndex 103.69370217320794 --blxAlphaCrossoverAlphaValue 0.8961783851503412 --mutation linkedPolynomial --mutationProbabilityFactor 1.0132184971489644 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 158.39649171594044 --linkedPolynomialMutationDistributionIndex 5.565728098862394 --uniformMutationPerturbation 0.8593793632073513 --nonUniformMutationPerturbation 0.9882758308775352 --selection random --selectionTournamentSize 8 \n \n  ")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 83 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --model steadyState --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.19266823108855072 --crossoverRepairStrategy bounds --sbxDistributionIndex 103.69370217320794 --blxAlphaCrossoverAlphaValue 0.8961783851503412 --mutation linkedPolynomial --mutationProbabilityFactor 1.0132184971489644 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 158.39649171594044 --linkedPolynomialMutationDistributionIndex 5.565728098862394 --uniformMutationPerturbation 0.8593793632073513 --nonUniformMutationPerturbation 0.9882758308775352 --selection random --selectionTournamentSize 8 \n \n  ")
             .split("\\s+");
 
-    var autoSMSEMOA = new ConfigurableSMSEMOA(new ZDT4(), 100, 25000);
+    var autoSMSEMOA = new ConfigurableSMSEMOA(new DTLZ2Minus(), 100, 25000);
     autoSMSEMOA.parse(parameters);
 
     ConfigurableNSGAII.print(autoSMSEMOA.configurableParameterList());

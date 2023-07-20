@@ -21,6 +21,8 @@ public class VariationParameter extends CategoricalParameter {
   public Variation<? extends DoubleSolution> getDoubleSolutionParameter() {
     Variation<DoubleSolution> result;
 
+    MutationParameter mutationParameter = (MutationParameter) findGlobalParameter("mutation");
+
     switch (value()) {
       case "crossoverAndMutationVariation" -> {
         int offspringPopulationSize;
@@ -32,7 +34,10 @@ public class VariationParameter extends CategoricalParameter {
         }
         CrossoverParameter crossoverParameter =
             (CrossoverParameter) findSpecificParameter("crossover");
-        var mutationParameter = (MutationParameter) findSpecificParameter("mutation");
+        if (mutationParameter == null) {
+          mutationParameter = (MutationParameter) findSpecificParameter("mutation");
+        }
+        Check.notNull(mutationParameter);
         CrossoverOperator<DoubleSolution> crossoverOperator = crossoverParameter.getDoubleSolutionParameter();
         MutationOperator<DoubleSolution> mutationOperatorOperator =
             mutationParameter.getParameter();
@@ -45,8 +50,10 @@ public class VariationParameter extends CategoricalParameter {
             (DifferentialEvolutionCrossoverParameter)
                 findSpecificParameter("differentialEvolutionCrossover");
         Check.notNull(differentialEvolutionCrossoverParameter);
-        var mutationDEParameter = (MutationParameter) findSpecificParameter("mutation");
-        Check.notNull(mutationDEParameter);
+        if (mutationParameter == null) {
+          mutationParameter = (MutationParameter) findSpecificParameter("mutation");
+        }
+        Check.notNull(mutationParameter);
         var subProblemIdGenerator =
             (SequenceGenerator<Integer>) getNonConfigurableParameter("subProblemIdGenerator");
         Check.notNull(subProblemIdGenerator);
@@ -54,7 +61,7 @@ public class VariationParameter extends CategoricalParameter {
             new DifferentialEvolutionCrossoverVariation(
                 1,
                 differentialEvolutionCrossoverParameter.getParameter(),
-                mutationDEParameter.getParameter(),
+                mutationParameter.getParameter(),
                 subProblemIdGenerator);
       }
       default -> throw new JMetalException("Variation component unknown: " + value());

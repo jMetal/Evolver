@@ -19,12 +19,15 @@ import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
  * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure
@@ -43,7 +46,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemDTLZ1 {
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAII})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 12000);
+        problemWhoseConfigurationIsSearchedFor, 100, 10000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
         indicators, 1);
@@ -72,17 +75,19 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemDTLZ1 {
         "RESULTS/NSGAII/DTLZ1");
 
     var evaluationObserver = new EvaluationObserver(50);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),
-            indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 50);
+
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+        new RunTimeChartObserver<>(
+            "NSGA-II",
+            80, 100, null, indicators.get(0).name(), indicators.get(1).name());
+
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(25,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
-    nsgaii.getObservable().register(frontChartObserver);
+    nsgaii.getObservable().register(runTimeChartObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
