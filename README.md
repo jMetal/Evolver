@@ -126,3 +126,5 @@ ghcr.io/jmetal/evolver:latest org.uma.evolver.MetaRunner /config.yml
 ```
 ## Evolver dashboard
 Check the [dashboard documentation](evolver-dashboard/README.md#execute-the-dashboard-with-docker) for more information.
+
+# Example: Meta-optimizing NSGA-II to solve an engineering problem
