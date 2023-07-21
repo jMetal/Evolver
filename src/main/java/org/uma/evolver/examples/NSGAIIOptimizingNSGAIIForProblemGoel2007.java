@@ -44,7 +44,7 @@ public class NSGAIIOptimizingNSGAIIForProblemGoel2007 {
         problemWhoseConfigurationIsSearchedFor, 100, 7000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
-        indicators, 1);
+        indicators, 3);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -74,7 +74,7 @@ public class NSGAIIOptimizingNSGAIIForProblemGoel2007 {
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
-        "RESULTS/NSGAII/Goel2007");
+        "RESULTS/NSGAII/Goel2007b");
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
