@@ -3,6 +3,7 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
+import org.uma.jmetal.problem.multiobjective.rwa.Liao2008;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -16,13 +17,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADRunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ2Minus.csv";
+    String referenceFrontFileName = "resources/referenceFronts/Liao2008.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 15 --maximumNumberOfReplacedSolutions 3 --aggregationFunction weightedSum --normalizeObjectives TRUE --epsilonParameterForNormalizing 16.243263727219677 --pbiTheta 108.64568844959776 --normalizeObjectives 0 --epsilonParameterForNormalizing 8.274413216488153 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions random --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.47813202443593594 --crossoverRepairStrategy random --sbxDistributionIndex 388.8997431246589 --blxAlphaCrossoverAlphaValue 0.010715439006001203 --mutation linkedPolynomial --mutationProbabilityFactor 0.8001376901794441 --mutationRepairStrategy round --polynomialMutationDistributionIndex 26.999443508956222 --linkedPolynomialMutationDistributionIndex 78.35408051283348 --uniformMutationPerturbation 0.29344380512579127 --nonUniformMutationPerturbation 0.6859568724552134 --mutation polynomial --mutationProbabilityFactor 1.1643011115104498 --mutationRepairStrategy random --polynomialMutationDistributionIndex 71.93772624901247 --linkedPolynomialMutationDistributionIndex 87.13221330299996 --uniformMutationPerturbation 0.5899570716565086 --nonUniformMutationPerturbation 0.3614814813850393 --differentialEvolutionCrossover RAND_1_EXP --CR 0.6682516297481558 --F 0.09681411403352258 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.1287896156137347 \n")
+        ("--neighborhoodSize 33 --maximumNumberOfReplacedSolutions 4 --aggregationFunction weightedSum --normalizeObjectives 0 --epsilonParameterForNormalizing 3.986039288806991 --pbiTheta 163.59801267269316 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions scatterSearch --variation differentialEvolutionVariation --mutation nonUniform --mutationProbabilityFactor 2.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 272.94399707716076 --linkedPolynomialMutationDistributionIndex 168.20189406154657 --uniformMutationPerturbation 0.1087680939459134 --nonUniformMutationPerturbation 0.9296104123455814 --crossover BLX_ALPHA --crossoverProbability 0.6651913708365154 --crossoverRepairStrategy bounds --sbxDistributionIndex 45.642021893535386 --blxAlphaCrossoverAlphaValue 0.3160289706370018 --differentialEvolutionCrossover RAND_1_BIN --CR 0.23231128717098734 --F 0.7699050764417739 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.3801342148948319 \n")
             .split("\\s+");
 
-    var autoMOEAD = new ConfigurableMOEAD(new DTLZ2Minus(), 91, 30000,
+    var autoMOEAD = new ConfigurableMOEAD(new Liao2008(), 91, 25000,
         "resources/weightVectors");
     autoMOEAD.parse(parameters);
 

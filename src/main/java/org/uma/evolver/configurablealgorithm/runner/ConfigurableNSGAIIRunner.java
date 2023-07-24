@@ -4,6 +4,8 @@ import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.rwa.Goel2007;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -22,18 +24,31 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 190 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.923753535628965 --crossoverRepairStrategy round --sbxDistributionIndex 62.2630806274734 --blxAlphaCrossoverAlphaValue 0.35965955597705745 --mutation uniform --mutationProbabilityFactor 0.3514924318091968 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 15.099374045878825 --linkedPolynomialMutationDistributionIndex 313.69841419815543 --uniformMutationPerturbation 0.2587621121188072 --nonUniformMutationPerturbation 0.3514149059879736 --selection tournament --selectionTournamentSize 8 \n ")
+        ("--algorithmResult population "
+            + "--createInitialSolutions random "
+            + "--offspringPopulationSize 100 "
+            + "--variation crossoverAndMutationVariation "
+            + "--crossover SBX "
+            + "--crossoverProbability 0.9 "
+            + "--crossoverRepairStrategy round "
+            + "--sbxDistributionIndex 20.0 "
+            + "--mutation polynomial "
+            + "--mutationProbabilityFactor 1.0 "
+            + "--mutationRepairStrategy round "
+            + "--polynomialMutationDistributionIndex 20.0 "
+            + "--selection tournament "
+            + "--selectionTournamentSize 2 ")
             .split("\\s+");
 
-    var autoNSGAII = new ConfigurableNSGAII(new DTLZ1(), 100, 25000);
-    autoNSGAII.parse(parameters);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 20000);
+    configurableNSGAII.parse(parameters);
 
-    ConfigurableNSGAII.print(autoNSGAII.configurableParameterList());
+    ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = autoNSGAII.build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = configurableNSGAII.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
