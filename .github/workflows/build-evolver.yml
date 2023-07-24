@@ -3,7 +3,7 @@ name: Evolver build Docker Image
 on:
   release:
     types:
-      - created
+      - published
 
 jobs:
   build-evolver:
