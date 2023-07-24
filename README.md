@@ -36,84 +36,98 @@ design space of the configurable NSGA-II algorithm, in YAML format, is printed b
 ```yaml
 algorithmResult:
   type: categorical
-  values: 
+  values:
     - population:
     - externalArchive:
-        specific_parameter: 
+        specific_parameter:
           - populationSizeWithArchive:
               type: integer
               values: [10, 200]
           - externalArchive:
               type: categorical
-              values: 
+              values:
                 - crowdingDistanceArchive:
                 - unboundedArchive:
 #
 createInitialSolutions:
   type: categorical
-  values: 
+  values:
     - random:
     - latinHypercubeSampling:
     - scatterSearch:
 #
-model:
+offspringPopulationSize:
   type: categorical
-  values: 
-    - generational:
-        specific_parameter: 
-          - offspringPopulationSize:
-              type: categorical
-              values: [2, 5, 10, 20, 50, 100, 200, 400]
-    - steadyState:
+  values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
 #
 variation:
   type: categorical
-  values: 
+  values:
     - crossoverAndMutationVariation:
-        specific_parameter: 
+        specific_parameter:
           - crossover:
               type: categorical
-              values: 
+              global_parameters:
+                - crossoverProbability:
+                    type: real
+                    values: [0.0, 1.0]
+                - crossoverRepairStrategy:
+                    type: categorical
+                    values:
+                      - random:
+                      - round:
+                      - bounds:
+              values:
                 - SBX:
-                    specific_parameter: 
+                    specific_parameter:
                       - sbxDistributionIndex:
                           type: real
                           values: [5.0, 400.0]
                 - BLX_ALPHA:
-                    specific_parameter: 
+                    specific_parameter:
                       - blxAlphaCrossoverAlphaValue:
                           type: real
                           values: [0.0, 1.0]
                 - wholeArithmetic:
           - mutation:
               type: categorical
-              values: 
+              global_parameters:
+                - mutationProbabilityFactor:
+                    type: real
+                    values: [0.0, 2.0]
+                - mutationRepairStrategy:
+                    type: categorical
+                    values:
+                      - random:
+                      - round:
+                      - bounds:
+              values:
                 - uniform:
-                    specific_parameter: 
+                    specific_parameter:
                       - uniformMutationPerturbation:
                           type: real
                           values: [0.0, 1.0]
                 - polynomial:
-                    specific_parameter: 
+                    specific_parameter:
                       - polynomialMutationDistributionIndex:
                           type: real
                           values: [5.0, 400.0]
                 - linkedPolynomial:
-                    specific_parameter: 
+                    specific_parameter:
                       - linkedPolynomialMutationDistributionIndex:
                           type: real
                           values: [5.0, 400.0]
                 - nonUniform:
-                    specific_parameter: 
+                    specific_parameter:
                       - nonUniformMutationPerturbation:
                           type: real
                           values: [0.0, 1.0]
 #
 selection:
   type: categorical
-  values: 
+  values:
     - tournament:
-        specific_parameter: 
+        specific_parameter:
           - selectionTournamentSize:
               type: integer
               values: [2, 10]
