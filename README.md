@@ -192,7 +192,7 @@ To run the metarunner class, just execute the following command:
 ```console
 $ java -cp target/Evolver-1.0-jar-with-dependencies.jar org.uma.evolver.MetaRunner <path-to-configuration-file>
 ```
-The configuration file describes an Evolver configuration by using a YAML file. The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems. You can find more example configurations at the [configurationFiles](configurationFiles) folder of the project.
+The configuration file describes an Evolver configuration by using a YAML file. The following example can use a generic NSGAII to auto-design the NSGAII algorithm to solve the ZDT1, ZDT4, and DTLZ3 problems. You can find more example configurations at the [configurationFiles](resources/configurationFiles) folder of the project.
 
 ```yaml
 general_config:
