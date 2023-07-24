@@ -21,5 +21,4 @@ jobs:
         context: ./evolver-dashboard
         file: ./evolver-dashboard/Dockerfile
         push: true
-        tags: ghcr.io/jmetal/evolver-dashboard
-        labels: latest, ${{ github.event.release.tag_name }}
+        tags: ghcr.io/jmetal/evolver-dashboard:latest,ghcr.io/jmetal/evolver-dashboard:${{ github.event.release.tag_name }}
