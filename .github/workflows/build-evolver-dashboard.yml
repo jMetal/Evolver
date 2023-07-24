@@ -1,19 +1,7 @@
 name: Evolver-dashboard build Docker Image
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-     - "evolver-dashboard/Dockerfile"
-     - "evolver-dashboard/src/**"
-     - "evolver-dashboard/pyproject.toml"
-  pull_request:
-    branches: [ "main" ]
-    paths:
-     - "evolver-dashboard/Dockerfile"
-     - "evolver-dashboard/src/**"
-     - "evolver-dashboard/pyproject.toml"
-  workflow_call:
+  workflow_call: # This is executed exclusively by the build-evolver.yml workflow
 
 jobs:
   build-evolver-dashboard:
@@ -34,4 +22,4 @@ jobs:
         file: ./evolver-dashboard/Dockerfile
         push: true
         tags: ghcr.io/jmetal/evolver-dashboard
-        labels: latest
+        labels: latest, ${{ github.event.release.tag_name }}

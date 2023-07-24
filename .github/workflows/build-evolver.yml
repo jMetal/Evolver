@@ -1,22 +1,9 @@
 name: Evolver build Docker Image
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-     - "Dockerfile"
-     - "docker-entrypoint.sh"
-     - "src/**"
-     - "pom.xml"
-     - "resources/**"
-  pull_request:
-    branches: [ "main" ]
-    paths:
-     - "Dockerfile"
-     - "docker-entrypoint.sh"
-     - "src/**"
-     - "pom.xml"
-     - "resources/**"
+  release:
+    types:
+      - created
 
 jobs:
   build-evolver:
@@ -37,7 +24,7 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ghcr.io/jmetal/evolver
-        labels: latest
+        labels: latest, ${{ github.event.release.tag_name }}
   build-dashboard:
     needs: build-evolver
     uses: ./.github/workflows/build-evolver-dashboard.yml
