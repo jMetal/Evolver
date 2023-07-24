@@ -102,6 +102,7 @@ def dump_session_state(evolver_state: Path, filename: str) -> None:
     json_state = {key: value for key, value in st.session_state.items()}
     # Delete unwanted keys
     del json_state["state"]
+    del json_state["new_state"]
     with open(evolver_state / filename, "w") as fd:
         json.dump(json_state, fd, indent=2)
 

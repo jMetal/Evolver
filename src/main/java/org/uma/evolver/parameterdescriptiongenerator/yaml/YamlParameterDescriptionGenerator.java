@@ -35,10 +35,20 @@ public class YamlParameterDescriptionGenerator {
     // If the parameter is part of a list, add 2 spaces more to offset the "- "
     tabSize += (isList?4:2);
     printType(parameter, stringBuilder, tabSize);
-
+    decodeGlobalParameters(parameter, stringBuilder, tabSize);
     stringBuilder.append(decodeValidValues(parameter, tabSize));
 
     return stringBuilder;
+  }
+
+  private void decodeGlobalParameters(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
+    var globalParameters = parameter.globalParameters();
+    if (!globalParameters.isEmpty()) {
+      stringBuilder.append(spaces(tabSize) + "global_parameters: \n");
+      for (Parameter<?> param : globalParameters) {
+        stringBuilder.append(decodeParameter(param, new StringBuilder(), tabSize +2, true));
+      }
+    }
   }
 
   private void printType(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
