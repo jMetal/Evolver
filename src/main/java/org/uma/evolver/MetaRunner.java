@@ -1,15 +1,13 @@
 package org.uma.evolver;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
 import org.uma.evolver.factory.MetaOptimizerFactory;
 import org.uma.evolver.problem.BaseMetaOptimizationProblem;
-import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
 import org.uma.evolver.problem.MetaOptimizationProblem;
-import org.uma.evolver.util.EvaluationObserver;
+import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
 import org.uma.evolver.util.DashboardFrontObserver;
+import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -28,6 +26,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class for running a meta-optimizer to auto-design an algorithm for a specific set of problems
@@ -36,6 +36,14 @@ import java.util.List;
  */
 public class MetaRunner {
 
+  /**
+   * Extracts the value of a parameter from the given input string using the provided pattern.
+   *
+   * @param input   The input string containing configuration parameters.
+   * @param pattern The regular expression pattern to match the parameter value.
+   * @return The extracted parameter value as a string.
+   * @throws IllegalArgumentException If the parameter is missing or malformed.
+   */
   private static String extractValue(String input, String pattern) {
     Pattern regex = Pattern.compile(pattern, Pattern.DOTALL);
     Matcher matcher = regex.matcher(input);
@@ -46,6 +54,13 @@ public class MetaRunner {
     return matcher.group(1).replace("\"", "");
   }
 
+  /**
+   * Extracts an optional value of a parameter from the given input string using the provided pattern.
+   *
+   * @param input   The input string containing configuration parameters.
+   * @param pattern The regular expression pattern to match the parameter value.
+   * @return The extracted parameter value as a string, or null if the parameter is missing or malformed.
+   */
   private static String extractOptionalValue(String input, String pattern) {
     try {
       return extractValue(input, pattern);
@@ -55,11 +70,11 @@ public class MetaRunner {
   }
 
   /**
-   * Given a string containing one or more problem names separated by a comma, it returns a string
-   * containing all the problem names (their qualified packages are removed)
+   * Given a comma-separated string containing the full qualified names of problems, it returns a string
+   * containing all the problem names without their qualified packages removed.
    *
-   * @param problemNames
-   * @return
+   * @param problemNames The comma-separated string containing problem names.
+   * @return A string containing the problem names without their qualified packages.
    */
   private static String getProblemNamesFromString(String problemNames) {
     String names = "" ;
@@ -78,9 +93,17 @@ public class MetaRunner {
   }
 
 
+  /**
+   * The main method of the MetaRunner class. Reads configuration parameters from a file,
+   * performs meta-optimization, and outputs the results to CSV files.
+   *
+   * @param args Command-line arguments (expects a path to the configuration file).
+   * @throws IOException If an I/O error occurs while reading the configuration file.
+   */
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
-      System.err.println("Missing configuration file.");
+      System.err.println("Error: Missing configuration file path.");
+      System.err.println("This class expects one single parameter as the file path for the configuration file.");
       System.exit(1);
     }
     String filePath = args[0];
@@ -153,7 +176,6 @@ public class MetaRunner {
     // Depends on the number of problems
     BaseMetaOptimizationProblem configurableProblem;
     if (problemName.contains(",")) {
-      //List<DoubleProblem> problems = List.of(org.uma.evolver.factory.ProblemFactory.getProblems(problemName));
       List<DoubleProblem> problems = Arrays
           .stream(problemName.split(","))
           .map(name -> (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(name))
@@ -220,6 +242,7 @@ public class MetaRunner {
 
     JMetalLogger.logger.info("Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
 
+    // Store the results to disk
     outputResultsManagement.updateSuffix("." + externalMaxEvaluations + ".csv");
     List<DoubleSolution> nonDominatedSolutions =
         new NonDominatedSolutionListArchive<DoubleSolution>()
