@@ -29,7 +29,7 @@ COPY --from=builder /evolver/target/Evolver-1.0-jar-with-dependencies.jar .
 COPY resources/ ./resources/
 
 # Set the entrypoint script
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN echo '#!/bin/sh\njava -cp Evolver-1.0-jar-with-dependencies.jar "$@"' > ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
 # Specify the command to execute when the container starts
