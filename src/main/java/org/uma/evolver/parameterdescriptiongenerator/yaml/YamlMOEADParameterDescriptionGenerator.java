@@ -4,7 +4,7 @@ import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 
 /**
- * Program to generate the irace configuration file for class {@link ConfigurableNSGAII}
+ * Program to generate the irace configuration file for class {@link ConfigurableMOEAD}
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
