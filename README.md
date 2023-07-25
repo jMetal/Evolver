@@ -342,7 +342,6 @@ public class ConfigurableNSGAIIRunner {
                       + "--mutationRepairStrategy round "
                       + "--polynomialMutationDistributionIndex 20.465825376938277 "
                       + "--linkedPolynomialMutationDistributionIndex 369.76116204526977 "
-                      + "--uniformMutationPerturbation 0.9230041512352161 "
                       + "--nonUniformMutationPerturbation 0.6160655898281514 "
                       + "--selection tournament "
                       + "--selectionTournamentSize 8 ")
