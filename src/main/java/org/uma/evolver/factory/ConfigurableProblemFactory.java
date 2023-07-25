@@ -9,8 +9,6 @@ public class ConfigurableProblemFactory {
         ConfigurableAlgorithmBuilder configurableAlgorithmProblem = switch (name) {
             case "NSGAII" -> new ConfigurableNSGAII(
                     problem, population, maxNumberOfEvaluations);
-            case "NSGAIIDE" -> new ConfigurableNSGAIIWithDE(
-                    problem, population, maxNumberOfEvaluations);
             case "MOPSO" -> new ConfigurableMOPSO(
                     problem, population, maxNumberOfEvaluations);
             case "MOEAD" -> new ConfigurableMOEAD(problem, population, maxNumberOfEvaluations, "resources/weightVectors") ;

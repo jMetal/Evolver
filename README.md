@@ -6,9 +6,9 @@ algorithms, i.e., Evolver applies a meta-optimization approach.
 
 The basis of Evolver are:
 * A multi-objective metaheuristic algorithm in which, given one or several problems used as training set, a configuration of it is sought that solves the training set in an efficient way. This algorithm is referred as to the *Configurable Algorithm*.
-* A design space associated to the internal algorithm which defines their parameters and components subject to be configured.
-* A list of quality indicators used as objectives to minimize when using the internal algorithm to solve a problem of the training set.
-* A *meta-optimizer* algorithm which is used to solve the optimization problem defined by minimizing the quality indicators of an internal algorithm given a particular training set.
+* A design space associated to the configurable algorithm which defines their parameters and components subject to be configured.
+* A list of quality indicators used as objectives to minimize when using the configurable algorithm to solve a problem of the training set.
+* A *meta-optimizer* algorithm which is used to solve the optimization problem defined by minimizing the quality indicators of an configurable algorithm given a particular training set.
 
 The project is made of two parts:
 * [Evolver](src): A Java library built with maven that implements the meta-optimization approach.
@@ -48,13 +48,13 @@ general_config:
     cpu_cores: 8
     plotting_frequency: 100
 
-external_algorithm_arguments:
+meta_optimizer_arguments:
     meta_optimizer_algorithm: NSGAII
     meta_optimizer_population_size: 50
     meta_optimizer_max_evaluations: 3000
     indicators_names: NHV,EP
 
-internal_algorithm_arguments:
+configurable_algorithm_arguments:
     configurable_algorithm: NSGAII
     internal_population_size: 100
     independent_runs: 3
@@ -342,7 +342,6 @@ public class ConfigurableNSGAIIRunner {
                       + "--mutationRepairStrategy round "
                       + "--polynomialMutationDistributionIndex 20.465825376938277 "
                       + "--linkedPolynomialMutationDistributionIndex 369.76116204526977 "
-                      + "--uniformMutationPerturbation 0.9230041512352161 "
                       + "--nonUniformMutationPerturbation 0.6160655898281514 "
                       + "--selection tournament "
                       + "--selectionTournamentSize 8 ")
