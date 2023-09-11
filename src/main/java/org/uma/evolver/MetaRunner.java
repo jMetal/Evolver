@@ -123,24 +123,24 @@ public class MetaRunner {
 
     // Extract the parameters from the file using regex
     // Each regex matches the key, a space and a word (\w), a number (\d) and some of them a series or special characters (",/.)
-    String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:\\s+([\\w,\"]+)");
-    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population_size:\\s+(\\d+)");
-    String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:\\s+(\\d+)");
-    String independentRunsArg = extractValue(configurationParameters, "independent_runs:\\s+(\\d+)");
-    String indicatorsNames = extractValue(configurationParameters, "indicators_names:\\s+([\\w,\"]+)");
-    String outputDirectory = extractValue(configurationParameters, "output_directory:\\s+([\\w/\"\\-\\s]+)");
+    String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:[ \\t]+([\\w,\"]+)");
+    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population_size:[ \\t]+(\\d+)");
+    String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:[ \\t]+(\\d+)");
+    String independentRunsArg = extractValue(configurationParameters, "independent_runs:[ \\t]+(\\d+)");
+    String indicatorsNames = extractValue(configurationParameters, "indicators_names:[ \\t]+([\\w,\"]+)");
+    String outputDirectory = extractValue(configurationParameters, "output_directory:[ \\t]+([\\w/\"\\-[ \\t]]+)");
 
-    String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:\\s+([\\w,\"]+)");
-    String populationArg = extractValue(configurationParameters, "internal_population_size:\\s+(\\d+)");
-    String problemName = extractValue(configurationParameters, "problem_names:\\s+([\\w,\"\\.]+)");
-    String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:\\s+([\\w.,/\"]+)");
-    String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:\\s+([\\d,\"]+)");
+    String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:[ \\t]+([\\w,\"]+)");
+    String populationArg = extractValue(configurationParameters, "internal_population_size:[ \\t]+(\\d+)");
+    String problemName = extractValue(configurationParameters, "problem_names:[ \\t]+([\\w,\"\\.]+)");
+    String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:[ \\t]+([\\w.,/\"]+)");
+    String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:[ \\t]+([\\d,\"]+)");
 
-    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:\\s+([\\w.,/\"]+)");
+    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:[ \\t]+([\\w.,/\"]+)");
 
-    boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:\\s+([\\w\"]+)"));
-    int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:\\s+([\\d,\"]+)"));
-    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "plotting_frequency:\\s+([\\d,\"]+)"));
+    boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:[ \\t]+([\\w\"]+)"));
+    int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:[ \\t]+([\\d,\"]+)"));
+    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "plotting_frequency:[ \\t]+([\\d,\"]+)"));
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
