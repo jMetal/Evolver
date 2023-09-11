@@ -2,13 +2,14 @@ import argparse
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 from evolver.logs import get_logger
 from evolver.utils import is_installed
 
 
 def start_streamlit(
-    data_path: str, port: int, logger_level: str = "INFO", jar: str = None
+    data_path: str, resources_path: str, port: int, logger_level: str = "INFO", jar: str = None
 ) -> subprocess.Popen:
     """
     Start streamlit dashboard.
@@ -18,6 +19,7 @@ def start_streamlit(
 
     Args:
         data_path: Path to the data directory for Evolver outputs
+        resources_path: Path to the resources directory for problem data
         port: Port to run the dashboard on
         logger_level: Set the logging level. Defaults to INFO
         jar: Path to the jar file for Evolver. Defaults to None
@@ -28,6 +30,7 @@ def start_streamlit(
     # Set up environment variables and arguments
     environment = {}
     environment["EVOLVER_BASE_PATH"] = data_path
+    environment["EVOLVER_RESOURCES_PATH"] = resources_path
     environment["STREAMLIT_BROWSER_SERVER_PORT"] = str(port)
     environment["STREAMLIT_SERVER_PORT"] = str(port)
     environment["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "FALSE"
@@ -56,8 +59,15 @@ parser.add_argument(
     "-f",
     "--data-folder",
     type=str,
-    help=("Path to the data directory for Evolver outputs. Defaults to /tmp/evolver"),
-    default="/tmp/evolver",
+    help=("Path to the data directory for Evolver outputs. Defaults to ./evolver-data"),
+    default="./evolver-data",
+)
+parser.add_argument(
+    "-r",
+    "--resources-folder",
+    type=str,
+    help=("Path to the resources directory for problem data. Defaults to ./resources"),
+    default="./resources",
 )
 parser.add_argument(
     "-j",
@@ -96,11 +106,16 @@ if not (is_streamlit_installed := is_installed("streamlit")):
         "To install streamlit, run 'pip install streamlit'"
     )
 
+if not (data_folder_path := Path(args.data_folder)).exists():
+    logger.info(f"Creating data folder at {data_folder_path}")
+    data_folder_path.mkdir(parents=True, exist_ok=True)
+
 # Start streamlit dashboard
 try:
     logger.info("Starting streamlit dashboard")
     streamlit_process = start_streamlit(
         data_path=args.data_folder,
+        resources_path=args.resources_folder,
         port=args.port,
         logger_level=args.log_level,
         jar=args.jar,

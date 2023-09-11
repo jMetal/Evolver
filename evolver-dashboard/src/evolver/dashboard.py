@@ -35,7 +35,10 @@ EVOLVER_JAR = Path(
         "EVOLVER_JAR", default="target/Evolver-1.0-jar-with-dependencies.jar"
     )
 )
-BASE_PATH = Path(os.environ.get("EVOLVER_BASE_PATH", default="/tmp/evolver"))
+BASE_PATH = Path(os.environ.get("EVOLVER_BASE_PATH", default="./evolver-data"))
+RESOURCES_PATH = Path(
+    os.environ.get("EVOLVER_RESOURCES_PATH", default="./resources")
+)
 EVOLVER_STATE = None
 
 
@@ -305,7 +308,7 @@ with st.expander("Manually change configuration"):
     )
     _int_alg_ref = ",".join(
         [
-            referenceFront[problem]
+            str(RESOURCES_PATH / referenceFront[problem])
             for problem in st.session_state["configurable_algorithm_problems"]
         ]
     )
@@ -340,7 +343,7 @@ internal_algorithm_arguments:
 
 optional_specific_arguments:
     # For Configurable-MOEAD only, probably shouldn't be modified
-    weight_vector_files_directory: resources/weightVectors"""
+    weight_vector_files_directory: {RESOURCES_PATH}/weightVectors"""
 
     configuration = st.text_area(
         "MetaRunner configuration",
