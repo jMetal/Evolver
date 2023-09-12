@@ -9,7 +9,11 @@ from evolver.utils import is_installed
 
 
 def start_streamlit(
-    data_path: str, resources_path: str, port: int, logger_level: str = "INFO", jar: str = None
+    data_path: str,
+    resources_path: str,
+    port: int,
+    logger_level: str = "INFO",
+    jar: str = None,
 ) -> subprocess.Popen:
     """
     Start streamlit dashboard.

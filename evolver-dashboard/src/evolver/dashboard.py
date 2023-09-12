@@ -36,9 +36,7 @@ EVOLVER_JAR = Path(
     )
 )
 BASE_PATH = Path(os.environ.get("EVOLVER_BASE_PATH", default="./evolver-data"))
-RESOURCES_PATH = Path(
-    os.environ.get("EVOLVER_RESOURCES_PATH", default="./resources")
-)
+RESOURCES_PATH = Path(os.environ.get("EVOLVER_RESOURCES_PATH", default="./resources"))
 EVOLVER_STATE = None
 
 
@@ -141,6 +139,7 @@ with st.sidebar:
     current_state = st.selectbox(
         "Available experiments",
         experiments,
+        help="Current experiment being shown in the main window",
         key="state",
     )
 
@@ -150,11 +149,13 @@ with st.sidebar:
     # Form to create a new experiment
     new_state = st.text_input(
         "Create new experiment",
+        help="Name for the new experiment",
         key="new_state",
     )
 
     st.button(
         "Create",
+        help="Create a new experiment with the given name",
         disabled=not bool(new_state),
         on_click=create_new_state,
     )
@@ -188,12 +189,21 @@ with st.spinner("Reading configuration..."):
 st.subheader("General configuration")
 st.number_input(
     "Number of CPU cores",
+    help=(
+        "Number of cores to be used by the meta-optimizer "
+        "(ignored if the meta-optimizer cannot be parallelized)"
+    ),
     key="global_cpu_cores",
     min_value=1,
     disabled=has_executed,
 )
 st.number_input(
     "Plotting frequency",
+    help=(
+        "Frequency to plot the Pareto front approximation obtained by "
+        "the meta-optimizer during the search. It must be a multiple of "
+        "the meta-optimizer population size"
+    ),
     key="global_plotting_frequency",
     min_value=1,
     disabled=has_executed,
@@ -206,6 +216,10 @@ with meta_optimizer_column:
     st.selectbox(
         "Algorithm",
         meta_optimizers.keys(),
+        help=(
+            "Meta-optimizer algorithm to be used. It is advisable to "
+            "choose among those that can be run in parallel"
+        ),
         key="meta_optimizer_algorithm",
         disabled=has_executed,
     )
@@ -216,12 +230,14 @@ with meta_optimizer_column:
 
     st.number_input(
         "Population size",
+        help="Population size for the meta-topimizer",
         key="meta_optimizer_population_size",
         min_value=1,
         disabled=has_executed,
     )
     st.number_input(
         "Maximum number of evaluations",
+        help="Maximum number of evaluations for the meta-optimizer",
         key="meta_optimizer_max_evaluations",
         min_value=1,
         disabled=has_executed,
@@ -229,6 +245,10 @@ with meta_optimizer_column:
     st.multiselect(
         "Indicators",
         quality_indicators.keys(),
+        help=(
+            "Quality indicators to be used by the "
+            "meta-optimizer to evaluate each configuration"
+        ),
         key="meta_optimizer_indicators_names",
         disabled=has_executed,
     )
@@ -237,17 +257,23 @@ with configurable_algorithm_column:
     st.selectbox(
         "Configurable algorithm",
         configurable_algorithms.keys(),
+        help="Configurable algorithm to be optimized for a set of problems",
         key="configurable_algorithm_algorithm",
         disabled=has_executed,
     )
     st.number_input(
         "Population size",
+        help="Population size for the configurable algorithm",
         key="configurable_algorithm_population_size",
         min_value=1,
         disabled=has_executed,
     )
     st.number_input(
         "Number of independent runs",
+        help=(
+            "Number of independent runs for the configurable algorithm. "
+            "The median of all execution will be used to evaluate the configuration"
+        ),
         key="configurable_algorithm_independent_runs",
         min_value=1,
         disabled=has_executed,
@@ -255,6 +281,7 @@ with configurable_algorithm_column:
     st.multiselect(
         "Problems",
         problems.keys(),
+        help="Problems to be used as the target to optimize the configurable algorithm",
         key="configurable_algorithm_problems",
         disabled=has_executed,
     )
@@ -274,6 +301,7 @@ with configurable_algorithm_column:
         evaluations.append(
             st.number_input(
                 f"Maximum number of evaluations for {problem}",
+                help=f"Maximum number of evaluations for the {problem} problem",
                 value=evaluations_value,
                 min_value=1,
                 disabled=has_executed,
