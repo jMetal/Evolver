@@ -6,7 +6,7 @@ The Evolver Dashboard is a web-based application built with [Streamlit](https://
 * This project requires Evolver's jar to be built. Read the [main README](../README.md) for more information.
 
 # Installation
-There are several ways to install the dashboard, it is recommended to use a virtual environment to avoid conflicts with other packages. You can learn more abou them [here](https://docs.python.org/3/library/venv.html).
+There are several ways to install the dashboard, it is recommended to use a virtual environment to avoid conflicts with other packages. You can learn more about them [here](https://docs.python.org/3/library/venv.html).
 
 * Cloning and installing the package:
 ```bash
