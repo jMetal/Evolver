@@ -272,12 +272,11 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     }
 
     var subProblemIdGenerator = new IntegerPermutationGenerator(populationSize);
+    variationParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
+    var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
+
     selectionParameter.addNonConfigurableParameter("neighborhood", neighborhood);
     selectionParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
-
-    variationParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
-
-    var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
 
     var selection =
         (PopulationAndNeighborhoodSelection<DoubleSolution>)

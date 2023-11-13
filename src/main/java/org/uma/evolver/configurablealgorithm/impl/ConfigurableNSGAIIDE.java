@@ -8,6 +8,8 @@ import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.catalogue.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.CrossoverParameter;
+import org.uma.evolver.parameter.catalogue.DifferentialEvolutionCrossoverParameter;
+import org.uma.evolver.parameter.catalogue.DifferentialEvolutionSelectionParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.MutationParameter;
 import org.uma.evolver.parameter.catalogue.ProbabilityParameter;
@@ -28,6 +30,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -39,13 +42,15 @@ import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
+import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 
 /**
- * Class to configure NSGA-II with an argument string using class {@link EvolutionaryAlgorithm}
+ * Class to configure a differential evolution variant of  NSGA-II with an argument string using
+ * class {@link EvolutionaryAlgorithm}
  *
  * @autor Antonio J. Nebro
  */
-public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
+public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
@@ -64,12 +69,13 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private DoubleProblem problem;
   private int populationSize;
   private int maximumNumberOfEvaluations;
+  private DifferentialEvolutionCrossoverParameter deCrossoverParameter ;
 
-  public ConfigurableNSGAII() {
+  public ConfigurableNSGAIIDE() {
     this.configure() ;
   }
 
-  public ConfigurableNSGAII(DoubleProblem problem, int populationSize,
+  public ConfigurableNSGAIIDE(DoubleProblem problem, int populationSize,
       int maximumNumberOfEvaluations) {
     this.problem = problem;
     this.populationSize = populationSize;
@@ -79,12 +85,12 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   @Override
   public ConfigurableAlgorithmBuilder createBuilderInstance() {
-    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableNSGAIIDE(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem,
       int maximumNumberOfEvaluations) {
-    return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);
+    return new ConfigurableNSGAIIDE(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   private void configure() {
@@ -93,32 +99,22 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
     algorithmResult();
     createInitialSolution();
-    selection();
     variation();
 
     configurableParameterList.add(algorithmResultParameter);
     configurableParameterList.add(createInitialSolutionsParameter);
     configurableParameterList.add(offspringPopulationSizeParameter);
     configurableParameterList.add(variationParameter);
-    configurableParameterList.add(selectionParameter);
   }
 
   private void variation() {
-    CrossoverParameter crossoverParameter = new CrossoverParameter(
-        List.of("SBX", "BLX_ALPHA", "wholeArithmetic"));
-    ProbabilityParameter crossoverProbability =
-        new ProbabilityParameter("crossoverProbability");
-    crossoverParameter.addGlobalParameter(crossoverProbability);
-    RepairDoubleSolutionStrategyParameter crossoverRepairStrategy =
-        new RepairDoubleSolutionStrategyParameter(
-            "crossoverRepairStrategy", Arrays.asList("random", "round", "bounds"));
-    crossoverParameter.addGlobalParameter(crossoverRepairStrategy);
+    deCrossoverParameter =
+        new DifferentialEvolutionCrossoverParameter(List.of("RAND_1_BIN", "RAND_1_EXP", "RAND_2_BIN"));
 
-    RealParameter distributionIndex = new RealParameter("sbxDistributionIndex", 5.0, 400.0);
-    crossoverParameter.addSpecificParameter("SBX", distributionIndex);
-
-    RealParameter alpha = new RealParameter("blxAlphaCrossoverAlphaValue", 0.0, 1.0);
-    crossoverParameter.addSpecificParameter("BLX_ALPHA", alpha);
+    RealParameter crParameter = new RealParameter("CR", 0.0, 1.0);
+    RealParameter fParameter = new RealParameter("F", 0.0, 1.0);
+    deCrossoverParameter.addGlobalParameter(crParameter);
+    deCrossoverParameter.addGlobalParameter(fParameter);
 
     MutationParameter mutationParameter =
         new MutationParameter(
@@ -149,17 +145,9 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
         new RealParameter("nonUniformMutationPerturbation", 0.0, 1.0);
     mutationParameter.addSpecificParameter("nonUniform", nonUniformMutationPerturbation);
 
-    variationParameter =
-        new VariationParameter(List.of("crossoverAndMutationVariation"));
-    variationParameter.addSpecificParameter("crossoverAndMutationVariation", crossoverParameter);
-    variationParameter.addSpecificParameter("crossoverAndMutationVariation", mutationParameter);
-  }
-
-  private void selection() {
-    selectionParameter = new SelectionParameter<>(Arrays.asList("tournament", "random"));
-    IntegerParameter selectionTournamentSize =
-        new IntegerParameter("selectionTournamentSize", 2, 10);
-    selectionParameter.addSpecificParameter("tournament", selectionTournamentSize);
+    variationParameter = new VariationParameter(List.of("differentialEvolutionVariation"));
+    variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
+    variationParameter.addSpecificParameter("differentialEvolutionVariation", deCrossoverParameter);
   }
 
   private void createInitialSolution() {
@@ -232,14 +220,20 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
           maximumNumberOfEvaluations / populationSize);
     }
 
-    variationParameter.addNonConfigurableParameter("offspringPopulationSize",
-        offspringPopulationSizeParameter.value());
+    var subProblemIdGenerator = new IntegerPermutationGenerator(populationSize);
+    variationParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
     var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
 
+    //variationParameter.addNonConfigurableParameter("offspringPopulationSize",
+    //    offspringPopulationSizeParameter.value());
+    //var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
 
-    Selection<DoubleSolution> selection =
-        selectionParameter.getParameter(
-            variation.getMatingPoolSize(), rankingAndCrowdingComparator);
+
+    Selection<DoubleSolution> selection = new DifferentialEvolutionSelection(
+        variation.getMatingPoolSize(),
+        deCrossoverParameter.getParameter().numberOfRequiredParents() ,
+        false,
+        subProblemIdGenerator) ;
 
     Evaluation<DoubleSolution> evaluation;
     if (algorithmResultParameter.value().equals("externalArchive")) {

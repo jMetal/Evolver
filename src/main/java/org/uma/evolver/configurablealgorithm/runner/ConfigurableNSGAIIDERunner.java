@@ -1,11 +1,12 @@
 package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAIIDE;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.rwa.Goel2007;
+import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -20,30 +21,30 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class ConfigurableNSGAIIRunner {
+public class ConfigurableNSGAIIDERunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    var problem = new ZDT4() ;
 
     String[] parameters =
-        ("--algorithmResult population "
+        ("--algorithmResult externalArchive "
             + "--createInitialSolutions random "
             + "--offspringPopulationSize 100 "
-            + "--variation crossoverAndMutationVariation "
-            + "--crossover SBX "
-            + "--crossoverProbability 0.9 "
-            + "--crossoverRepairStrategy round "
-            + "--sbxDistributionIndex 20.0 "
+            + "--populationSizeWithArchive 40 "
+            + "--externalArchive crowdingDistanceArchive "
+            + "--variation differentialEvolutionVariation "
+            + "--differentialEvolutionCrossover RAND_1_BIN "
             + "--mutation polynomial "
             + "--mutationProbabilityFactor 1.0 "
             + "--mutationRepairStrategy round "
-            + "--polynomialMutationDistributionIndex 20.0 "
-            + "--selection tournament "
-            + "--selectionTournamentSize 2 ")
+            + "--CR 0.5 "
+            + "--F 0.5 "
+            + "--polynomialMutationDistributionIndex 20.0 ")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 20000);
+    var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 25000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());
@@ -53,7 +54,7 @@ public class ConfigurableNSGAIIRunner {
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II", 80, 500,
+            "NSGA-II. " + problem.name(), 80, 1000,
             referenceFrontFileName, "F1", "F2");
 
     nsgaII.observable().register(evaluationObserver);
@@ -67,5 +68,7 @@ public class ConfigurableNSGAIIRunner {
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
+
+    System.exit(0);
   }
 }

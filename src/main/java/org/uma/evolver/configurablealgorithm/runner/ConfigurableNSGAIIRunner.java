@@ -24,7 +24,7 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
         ("--algorithmResult population "
@@ -43,7 +43,7 @@ public class ConfigurableNSGAIIRunner {
             + "--selectionTournamentSize 2 ")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 20000);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 18000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());

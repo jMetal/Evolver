@@ -9,60 +9,23 @@ import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelect
 import org.uma.jmetal.component.catalogue.ea.selection.impl.PopulationAndNeighborhoodSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.RandomSelection;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.neighborhood.Neighborhood;
 import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
+import scala.xml.dtd.impl.Base.Sequ;
 
-public class SelectionParameter<S extends Solution<?>> extends CategoricalParameter {
+public class DifferentialEvolutionSelectionParameter<S extends Solution<?>> extends
+    CategoricalParameter {
 
-  public SelectionParameter(List<String> selectionStrategies) {
+  public DifferentialEvolutionSelectionParameter(List<String> selectionStrategies) {
     super("selection", selectionStrategies);
   }
 
-  public Selection<S> getParameter(int matingPoolSize, Comparator<S> comparator) {
-    Selection<S> result;
-    switch (value()) {
-      case "tournament":
-        int tournamentSize =
-            (Integer) findSpecificParameter("selectionTournamentSize").value();
-
-        result = new NaryTournamentSelection<>(
-            tournamentSize, matingPoolSize, comparator);
-
-        break;
-      case "random":
-        result = new RandomSelection<>(matingPoolSize);
-        break;
-      case "populationAndNeighborhoodMatingPoolSelection":
-        double neighborhoodSelectionProbability =
-            (double) findSpecificParameter("neighborhoodSelectionProbability").value();
-        var neighborhood = (Neighborhood<S>) getNonConfigurableParameter("neighborhood");
-        Check.notNull(neighborhood);
-
-        var subProblemIdGenerator = (SequenceGenerator<Integer>) getNonConfigurableParameter(
-            "subProblemIdGenerator");
-        Check.notNull(subProblemIdGenerator);
-
-        result =
-            new PopulationAndNeighborhoodSelection<>(
-                matingPoolSize,
-                subProblemIdGenerator,
-                neighborhood,
-                neighborhoodSelectionProbability,
-                false);
-        break;
-      case "differentialEvolutionSelection":
-        matingPoolSize = (int)getNonConfigurableParameter("matingPoolSize") ;
-        var numberOfParentsToSelect = (int)getNonConfigurableParameter("numberOfParentsToSelect") ;
-        var sequenceGenerator = (SequenceGenerator<Integer>)getNonConfigurableParameter("sequenceGenerator") ;
-
-        return new DifferentialEvolutionSelection(matingPoolSize, numberOfParentsToSelect, false, sequenceGenerator) ;
-
-      default:
-        throw new JMetalException("Selection component unknown: " + value());
-    }
-
-    return result;
+  public Selection<DoubleSolution> getParameter(int matingPoolSize, int numberOfParentsToSelect,
+      SequenceGenerator<Integer> sequenceGenerator) {
+    return new DifferentialEvolutionSelection(matingPoolSize, numberOfParentsToSelect, false,
+        sequenceGenerator);
   }
 }

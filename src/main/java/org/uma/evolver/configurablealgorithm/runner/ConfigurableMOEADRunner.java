@@ -2,7 +2,10 @@ package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
+import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
+import org.uma.jmetal.problem.multiobjective.lz09.LZ09F3;
 import org.uma.jmetal.problem.multiobjective.rwa.Liao2008;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -10,6 +13,7 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+import smile.stat.Hypothesis.F;
 
 /**
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -17,13 +21,30 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADRunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/Liao2008.csv";
+    DoubleProblem problem = new LZ09F2() ;
+    String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 33 --maximumNumberOfReplacedSolutions 4 --aggregationFunction weightedSum --normalizeObjectives 0 --epsilonParameterForNormalizing 3.986039288806991 --pbiTheta 163.59801267269316 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions scatterSearch --variation differentialEvolutionVariation --mutation nonUniform --mutationProbabilityFactor 2.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 272.94399707716076 --linkedPolynomialMutationDistributionIndex 168.20189406154657 --uniformMutationPerturbation 0.1087680939459134 --nonUniformMutationPerturbation 0.9296104123455814 --crossover BLX_ALPHA --crossoverProbability 0.6651913708365154 --crossoverRepairStrategy bounds --sbxDistributionIndex 45.642021893535386 --blxAlphaCrossoverAlphaValue 0.3160289706370018 --differentialEvolutionCrossover RAND_1_BIN --CR 0.23231128717098734 --F 0.7699050764417739 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.3801342148948319 \n")
+        ("--neighborhoodSize 20"
+            + " --maximumNumberOfReplacedSolutions 2 "
+            + "--aggregationFunction tschebyscheff "
+            + "--normalizeObjectives False "
+            + "--epsilonParameterForNormalizing 4 "
+            + "--algorithmResult population "
+            + "--createInitialSolutions random "
+            + "--variation differentialEvolutionVariation "
+            + "--mutation polynomial "
+            + "--mutationProbabilityFactor 1.0 "
+            + "--mutationRepairStrategy bounds "
+            + "--polynomialMutationDistributionIndex 20.0 "
+            + "--differentialEvolutionCrossover RAND_1_BIN "
+            + "--CR 1.0 "
+            + "--F 0.5 "
+            + "--selection populationAndNeighborhoodMatingPoolSelection "
+            + "--neighborhoodSelectionProbability 0.9 \n")
             .split("\\s+");
 
-    var autoMOEAD = new ConfigurableMOEAD(new Liao2008(), 91, 25000,
+    var autoMOEAD = new ConfigurableMOEAD(problem, 300, 175000,
         "resources/weightVectors");
     autoMOEAD.parse(parameters);
 
@@ -31,10 +52,10 @@ public class ConfigurableMOEADRunner {
 
     EvolutionaryAlgorithm<DoubleSolution> moead = autoMOEAD.build();
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(100);
+    EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "MOEAD", 80, 100,
+            "MOEAD. " + problem.name(), 80, 1000,
             referenceFrontFileName, "F1", "F2");
 
     moead.observable().register(evaluationObserver);

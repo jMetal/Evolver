@@ -55,11 +55,13 @@ public class MetaRunner {
   }
 
   /**
-   * Extracts an optional value of a parameter from the given input string using the provided pattern.
+   * Extracts an optional value of a parameter from the given input string using the provided
+   * pattern.
    *
    * @param input   The input string containing configuration parameters.
    * @param pattern The regular expression pattern to match the parameter value.
-   * @return The extracted parameter value as a string, or null if the parameter is missing or malformed.
+   * @return The extracted parameter value as a string, or null if the parameter is missing or
+   * malformed.
    */
   private static String extractOptionalValue(String input, String pattern) {
     try {
@@ -70,32 +72,32 @@ public class MetaRunner {
   }
 
   /**
-   * Given a comma-separated string containing the full qualified names of problems, it returns a string
-   * containing all the problem names without their qualified packages removed.
+   * Given a comma-separated string containing the full qualified names of problems, it returns a
+   * string containing all the problem names without their qualified packages removed.
    *
    * @param problemNames The comma-separated string containing problem names.
    * @return A string containing the problem names without their qualified packages.
    */
   private static String getProblemNamesFromString(String problemNames) {
-    String names = "" ;
-    String[] namesArray = problemNames.split(",") ;
+    String names = "";
+    String[] namesArray = problemNames.split(",");
 
     for (String name : namesArray) {
       String[] packageNames = name.split("\\.");
       if (packageNames.length > 1) {
         names = names + packageNames[packageNames.length - 1] + ",";
       } else {
-        names = names + packageNames[0] ;
+        names = names + packageNames[0];
       }
     }
 
-    return names.substring(0, names.length()-1) ;
+    return names.substring(0, names.length() - 1);
   }
 
 
   /**
-   * The main method of the MetaRunner class. Reads configuration parameters from a file,
-   * performs meta-optimization, and outputs the results to CSV files.
+   * The main method of the MetaRunner class. Reads configuration parameters from a file, performs
+   * meta-optimization, and outputs the results to CSV files.
    *
    * @param args Command-line arguments (expects a path to the configuration file).
    * @throws IOException If an I/O error occurs while reading the configuration file.
@@ -103,7 +105,8 @@ public class MetaRunner {
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.err.println("Error: Missing configuration file path.");
-      System.err.println("This class expects one single parameter as the file path for the configuration file.");
+      System.err.println(
+          "This class expects one single parameter as the file path for the configuration file.");
       System.exit(1);
     }
     String filePath = args[0];
@@ -119,40 +122,58 @@ public class MetaRunner {
       configurationParameters = stringBuilder.toString();
     }
 
-    JMetalLogger.logger.info("Executing with the following configuration:\n" + configurationParameters);
+    JMetalLogger.logger.info(
+        "Executing with the following configuration:\n" + configurationParameters);
 
     // Extract the parameters from the file using regex
     // Each regex matches the key, a space and a word (\w), a number (\d) and some of them a series or special characters (",/.)
-    String externalAlgorithm = extractValue(configurationParameters, "meta_optimizer_algorithm:[ \\t]+([\\w,\"]+)");
-    String externalPopulationArg = extractValue(configurationParameters, "meta_optimizer_population_size:[ \\t]+(\\d+)");
-    String externalMaxEvaluationsArg = extractValue(configurationParameters, "meta_optimizer_max_evaluations:[ \\t]+(\\d+)");
-    String independentRunsArg = extractValue(configurationParameters, "independent_runs:[ \\t]+(\\d+)");
-    String indicatorsNames = extractValue(configurationParameters, "indicators_names:[ \\t]+([\\w,\"]+)");
-    String outputDirectory = extractValue(configurationParameters, "output_directory:[ \\t]+([\\w/\"\\-[ \\t]]+)");
+    String externalAlgorithm = extractValue(configurationParameters,
+        "meta_optimizer_algorithm:[ \\t]+([\\w,\"]+)");
+    String externalPopulationArg = extractValue(configurationParameters,
+        "meta_optimizer_population_size:[ \\t]+(\\d+)");
+    String externalMaxEvaluationsArg = extractValue(configurationParameters,
+        "meta_optimizer_max_evaluations:[ \\t]+(\\d+)");
+    String independentRunsArg = extractValue(configurationParameters,
+        "independent_runs:[ \\t]+(\\d+)");
+    String indicatorsNames = extractValue(configurationParameters,
+        "indicators_names:[ \\t]+([\\w,\"]+)");
+    String outputDirectory = extractValue(configurationParameters,
+        "output_directory:[ \\t]+([\\w/\"\\-[ \\t]]+)");
 
-    String configurableAlgorithm = extractValue(configurationParameters, "configurable_algorithm:[ \\t]+([\\w,\"]+)");
-    String populationArg = extractValue(configurationParameters, "internal_population_size:[ \\t]+(\\d+)");
-    String problemName = extractValue(configurationParameters, "problem_names:[ \\t]+([\\w,\"\\.]+)");
-    String referenceFrontFileName = extractValue(configurationParameters, "reference_front_file_name:[ \\t]+([\\w.,/\"]+)");
-    String maxNumberOfEvaluations = extractValue(configurationParameters, "max_number_of_evaluations:[ \\t]+([\\d,\"]+)");
+    String configurableAlgorithm = extractValue(configurationParameters,
+        "configurable_algorithm:[ \\t]+([\\w,\"]+)");
+    String populationArg = extractValue(configurationParameters,
+        "internal_population_size:[ \\t]+(\\d+)");
+    String problemName = extractValue(configurationParameters,
+        "problem_names:[ \\t]+([\\w,\"\\.]+)");
+    String referenceFrontFileName = extractValue(configurationParameters,
+        "reference_front_file_name:[ \\t]+([\\w.,/\"]+)");
+    String maxNumberOfEvaluations = extractValue(configurationParameters,
+        "max_number_of_evaluations:[ \\t]+([\\d,\"]+)");
 
-    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters, "weight_vector_files_directory:[ \\t]+([\\w.,/\"]+)");
+    String weightVectorFilesDirectory = extractOptionalValue(configurationParameters,
+        "weight_vector_files_directory:[ \\t]+([\\w.,/\"]+)");
 
-    boolean dashboardMode = Boolean.parseBoolean(extractValue(configurationParameters, "dashboard_mode:[ \\t]+([\\w\"]+)"));
-    int numCores = Integer.parseInt(extractValue(configurationParameters, "cpu_cores:[ \\t]+([\\d,\"]+)"));
-    int observerFrequency = Integer.parseInt(extractValue(configurationParameters, "plotting_frequency:[ \\t]+([\\d,\"]+)"));
+    boolean dashboardMode = Boolean.parseBoolean(
+        extractValue(configurationParameters, "dashboard_mode:[ \\t]+([\\w\"]+)"));
+    int numCores = Integer.parseInt(
+        extractValue(configurationParameters, "cpu_cores:[ \\t]+([\\d,\"]+)"));
+    int observerFrequency = Integer.parseInt(
+        extractValue(configurationParameters, "plotting_frequency:[ \\t]+([\\d,\"]+)"));
 
     int population = Integer.parseInt(populationArg);
     int independentRuns = Integer.parseInt(independentRunsArg);
     int externalPopulation = Integer.parseInt(externalPopulationArg);
     int externalMaxEvaluations = Integer.parseInt(externalMaxEvaluationsArg);
 
-    List<QualityIndicator> indicators = QualityIndicatorUtils.getIndicatorsFromNames(List.of(indicatorsNames.split(",")));
+    List<QualityIndicator> indicators = QualityIndicatorUtils.getIndicatorsFromNames(
+        List.of(indicatorsNames.split(",")));
 
     DoubleProblem problem;
     int internalMaxEvaluations;
     if (problemName.contains(",")) {
-      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem("org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
+      problem = (DoubleProblem) ProblemFactory.<DoubleSolution>loadProblem(
+          "org.uma.jmetal.problem.multiobjective.zdt.ZDT1"); // This is a dummy problem for the multi-problem cases
       internalMaxEvaluations = -1; // This is a dummy value for the multi-problem cases
     } else {
       Check.that(!maxNumberOfEvaluations.contains(","),
@@ -183,7 +204,7 @@ public class MetaRunner {
 
       List<Integer> maxNumberOfEvaluationsPerProblem = Arrays.stream(
               maxNumberOfEvaluations.split(","))
-          .map(Integer::parseInt).toList() ;
+          .map(Integer::parseInt).toList();
       configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithmBuilder,
           problems,
           List.of(referenceFrontFileName.split(",")),
@@ -198,16 +219,17 @@ public class MetaRunner {
 
     // Create external optimization algorithm
     MetaOptimizer externalOptimizationAlgorithm = MetaOptimizerFactory.getAlgorithm(
-        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations, numCores);
+        externalAlgorithm, configurableProblem, externalPopulation, externalMaxEvaluations,
+        numCores);
 
     OutputResultsManagementParameters outputResultsManagementParameters =
         new OutputResultsManagementParameters(
-        externalAlgorithm,
-        configurableProblem,
-        getProblemNamesFromString(problemName),
-        indicators,
-        outputDirectory
-    );
+            externalAlgorithm,
+            configurableProblem,
+            getProblemNamesFromString(problemName),
+            indicators,
+            outputDirectory
+        );
 
     // Observers
 
@@ -217,17 +239,18 @@ public class MetaRunner {
 
     // Dashboard observer
     if (dashboardMode) {
-      var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+      var dashboardFrontObserver = new DashboardFrontObserver<DoubleSolution>(externalAlgorithm,
+          indicators.get(0).name(),
           indicators.get(1).name(),
           problemName,
           observerFrequency);
       externalOptimizationAlgorithm.observable().register(dashboardFrontObserver);
     } else {
       var frontChartObserver =
-              new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
-                      indicators.get(1).name(),
-                      problemName,
-                      observerFrequency);
+          new FrontPlotObserver<DoubleSolution>(externalAlgorithm, indicators.get(0).name(),
+              indicators.get(1).name(),
+              problemName,
+              observerFrequency);
       externalOptimizationAlgorithm.observable().register(frontChartObserver);
     }
 
@@ -240,13 +263,14 @@ public class MetaRunner {
     // Execute algorithm
     externalOptimizationAlgorithm.run();
 
-    JMetalLogger.logger.info("Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
+    JMetalLogger.logger.info(
+        "Total computing time: " + externalOptimizationAlgorithm.totalComputingTime());
 
     // Store the results to disk
     outputResultsManagement.updateSuffix("." + externalMaxEvaluations + ".csv");
     List<DoubleSolution> nonDominatedSolutions =
         new NonDominatedSolutionListArchive<DoubleSolution>()
-            .addAll(externalOptimizationAlgorithm.result()).solutions() ;
+            .addAll(externalOptimizationAlgorithm.result()).solutions();
     outputResultsManagement.writeResultsToFiles(nonDominatedSolutions);
 
     System.exit(0);
