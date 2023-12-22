@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.uma.jmetal</groupId>
+    <groupId>org.uma</groupId>
     <artifactId>Evolver</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -32,7 +32,7 @@
         <connection>scm:git://git@github.com:jMetal/Evolver.git</connection>
         <developerConnection>scm:git:https://github.com/jMetal/Evolver.git</developerConnection>
         <url>https://github.com/jMetal/Evolver.git</url>
-        <tag>Evolver-1.1</tag>
+        <tag>Evolver-1.2</tag>
     </scm>
 
     <distributionManagement>
