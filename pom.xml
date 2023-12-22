@@ -4,7 +4,7 @@
 
     <groupId>org.uma.jmetal</groupId>
     <artifactId>Evolver</artifactId>
-    <version>1.3</version>
+    <version>1.4-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
