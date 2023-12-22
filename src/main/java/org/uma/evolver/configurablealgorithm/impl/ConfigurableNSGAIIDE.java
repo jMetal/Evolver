@@ -50,7 +50,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
  *
  * @author Antonio J. Nebro
  */
-public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
+public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder<DoubleProblem> {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;

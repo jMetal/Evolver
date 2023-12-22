@@ -44,7 +44,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 /**
  * @author Antonio J. Nebro
  */
-public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
+public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder<DoubleProblem> {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;

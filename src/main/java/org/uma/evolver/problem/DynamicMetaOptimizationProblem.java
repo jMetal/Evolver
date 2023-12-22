@@ -120,7 +120,7 @@ public class DynamicMetaOptimizationProblem extends AbstractDoubleProblem {
       algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-      nonDominatedSolutions.addAll(algorithm.result());
+      nonDominatedSolutions.addAll((List<DoubleSolution>) algorithm.result());
 
       double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
       double[][] normalizedFront =

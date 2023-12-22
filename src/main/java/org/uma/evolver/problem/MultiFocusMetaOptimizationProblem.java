@@ -166,7 +166,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-      nonDominatedSolutions.addAll(algorithm.result());
+      nonDominatedSolutions.addAll((List<DoubleSolution>) algorithm.result());
 
       double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
       if (front[0].length != referenceFronts.get(problemId)[0].length) {

@@ -53,7 +53,7 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  *
  * @author Antonio J. Nebro
  */
-public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
+public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder<DoubleProblem> {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   public ExternalArchiveParameter<DoubleSolution> leaderArchiveParameter;
   private CategoricalParameter algorithmResultParameter;

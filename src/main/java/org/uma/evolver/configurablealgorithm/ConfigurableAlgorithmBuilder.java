@@ -6,16 +6,17 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-public interface ConfigurableAlgorithmBuilder {
+public interface ConfigurableAlgorithmBuilder<P extends Problem<?>> {
   ConfigurableAlgorithmBuilder parse(String[] args) ;
   List<Parameter<?>> configurableParameterList() ;
 
   ConfigurableAlgorithmBuilder createBuilderInstance() ;
 
-  ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem, int maximumNumberOfEvaluations) ;
+  ConfigurableAlgorithmBuilder createBuilderInstance(P problem, int maximumNumberOfEvaluations) ;
 
   Algorithm<List<DoubleSolution>> build() ;
 
