@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.uma.jmetal</groupId>
+    <groupId>org.uma</groupId>
     <artifactId>Evolver</artifactId>
     <version>1.4-SNAPSHOT</version>
 
@@ -236,27 +236,27 @@
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>jmetal-core</artifactId>
-            <version>6.1</version>
+            <version>6.2</version>
         </dependency>
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>jmetal-algorithm</artifactId>
-            <version>6.1</version>
+            <version>6.2</version>
         </dependency>
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>jmetal-component</artifactId>
-            <version>6.1</version>
+            <version>6.2</version>
         </dependency>
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>jmetal-parallel</artifactId>
-            <version>6.1</version>
+            <version>6.2</version>
         </dependency>
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>jmetal-problem</artifactId>
-            <version>6.1</version>
+            <version>6.2</version>
         </dependency>
 
     </dependencies>
