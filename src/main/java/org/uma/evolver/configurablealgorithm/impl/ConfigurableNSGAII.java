@@ -43,7 +43,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 /**
  * Class to configure NSGA-II with an argument string using class {@link EvolutionaryAlgorithm}
  *
- * @autor Antonio J. Nebro
+ * @author Antonio J. Nebro
  */
 public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 

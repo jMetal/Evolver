@@ -48,7 +48,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
  * Class to configure a differential evolution variant of  NSGA-II with an argument string using
  * class {@link EvolutionaryAlgorithm}
  *
- * @autor Antonio J. Nebro
+ * @author Antonio J. Nebro
  */
 public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
 

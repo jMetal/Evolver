@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author José F. Aldana-Martín <jfaldanam@uma.es>
+ * @author José F. Aldana-Martín
  */
 public class DashboardFrontObserver<S extends Solution<?>> implements Observer<Map<String, Object>> {
     private Integer evaluations;

@@ -14,7 +14,7 @@ import org.uma.jmetal.util.plot.FrontScatterPlot;
 
 /**
 
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class UpdateReferenceFrontPlotObserver<S extends Solution<?>> implements Observer<Map<String, Object>> {
   private final FrontScatterPlot chart;

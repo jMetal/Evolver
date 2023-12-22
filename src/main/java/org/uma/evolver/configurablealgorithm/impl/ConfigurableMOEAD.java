@@ -42,7 +42,7 @@ import org.uma.jmetal.util.neighborhood.impl.WeightVectorNeighborhood;
 import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 
 /**
- * @autor Antonio J. Nebro
+ * @author Antonio J. Nebro
  */
 public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();

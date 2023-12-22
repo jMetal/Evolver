@@ -13,7 +13,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring SMS-EMOA using arguments in the form <key, value> and the {@link ConfigurableSMSEMOA}
+ * Class configuring SMS-EMOA using arguments in the form (key, value) and the {@link ConfigurableSMSEMOA}
  * class.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)

@@ -51,7 +51,7 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  * Class to configure a generic MOPSO with an argument string using class
  * {@link ParticleSwarmOptimizationAlgorithm}
  *
- * @autor Antonio J. Nebro
+ * @author Antonio J. Nebro
  */
 public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();

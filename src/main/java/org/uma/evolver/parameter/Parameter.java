@@ -33,7 +33,7 @@ import org.uma.jmetal.util.errorchecking.Check;
  * - specific parameter: a SBX crossover has a distribution index as specific parameter
  * - non-configurable parameter: constant parameters needed by a particular parameter
  *
- * The {@Parameter} class provides methods for setting and getting these sup-parameters:
+ * The Parameter class provides methods for setting and getting these sup-parameters:
  * - {@link Parameter#addGlobalParameter(Parameter)}
  * - {@link Parameter#addSpecificParameter(String, Parameter)}}
  * - {@link Parameter#addNonConfigurableParameter(String, Object)}
