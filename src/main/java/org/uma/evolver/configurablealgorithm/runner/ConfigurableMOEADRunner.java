@@ -3,17 +3,13 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
-import org.uma.jmetal.problem.multiobjective.lz09.LZ09F3;
-import org.uma.jmetal.problem.multiobjective.rwa.Liao2008;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
-import smile.stat.Hypothesis.F;
 
 /**
  * @author Antonio J. Nebro (ajnebro@uma.es)

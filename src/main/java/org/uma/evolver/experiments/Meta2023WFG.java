@@ -1,5 +1,9 @@
 package org.uma.evolver.experiments;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -7,25 +11,39 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.*;
+import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
+import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanHolmTestTables;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateHtmlPages;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
+import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
 import org.uma.jmetal.lab.visualization.StudyVisualizer;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.*;
-import org.uma.jmetal.problem.multiobjective.wfg.*;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6_2D;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7_2D;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG4;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG5;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG6;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG7;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG8;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG9;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.Check;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Meta2023WFG {
 
