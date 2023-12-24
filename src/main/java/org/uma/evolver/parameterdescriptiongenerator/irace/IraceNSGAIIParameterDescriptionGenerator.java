@@ -8,7 +8,6 @@ import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class IraceNSGAIIParameterDescriptionGenerator {
-
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator() ;
     parameterFileGenerator.generateConfigurationFile(new ConfigurableNSGAII()) ;

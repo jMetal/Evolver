@@ -1,7 +1,10 @@
 package org.uma.evolver.factory;
 
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.configurablealgorithm.impl.*;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableSMSEMOA;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 
 public class ConfigurableProblemFactory {

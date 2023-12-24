@@ -1,5 +1,7 @@
 package org.uma.evolver.factory;
 
+import java.util.List;
+import java.util.Map;
 import org.uma.evolver.MetaOptimizer;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
@@ -25,9 +27,6 @@ import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.comparator.constraintcomparator.impl.OverallConstraintViolationDegreeComparator;
 import org.uma.jmetal.util.observable.Observable;
-
-import java.util.List;
-import java.util.Map;
 
 public class MetaOptimizerFactory {
     public static MetaOptimizer getAlgorithm(String name, DoubleProblem problem, int populationSize, int maxNumberOfEvaluations, int numCores) {

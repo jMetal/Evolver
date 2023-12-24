@@ -1,6 +1,5 @@
 package org.uma.evolver.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAIIDE;
 
 /**
