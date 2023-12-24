@@ -13,10 +13,11 @@ import org.uma.evolver.parameter.impl.RealParameter;
 
 
 public class IraceParameterDescriptionGenerator {
+
   private static String formatString = "%-40s %-40s %-7s %-30s %-20s\n";
 
   public void generateConfigurationFile(ConfigurableAlgorithmBuilder autoConfigurableAlgorithm) {
-    List<Parameter<?>> parameterList = autoConfigurableAlgorithm.configurableParameterList() ;
+    List<Parameter<?>> parameterList = autoConfigurableAlgorithm.configurableParameterList();
 
     StringBuilder stringBuilder = new StringBuilder();
 
@@ -30,13 +31,13 @@ public class IraceParameterDescriptionGenerator {
 
   private void decodeParameter(Parameter<?> parameter, StringBuilder stringBuilder) {
     stringBuilder.append(
-            String.format(
-                    formatString,
-                    parameter.name(),
-                    "\"" + "--" + parameter.name() + " \"",
-                    decodeType(parameter),
-                    decodeValidValues(parameter),
-                    ""));
+        String.format(
+            formatString,
+            parameter.name(),
+            "\"" + "--" + parameter.name() + " \"",
+            decodeType(parameter),
+            decodeValidValues(parameter),
+            ""));
 
     for (Parameter<?> globalParameter : parameter.globalParameters()) {
       decodeParameterGlobal(globalParameter, stringBuilder, parameter);
@@ -47,7 +48,8 @@ public class IraceParameterDescriptionGenerator {
     }
   }
 
-  private void decodeParameterGlobal(Parameter<?> parameter, StringBuilder stringBuilder, Parameter<?> parentParameter) {
+  private void decodeParameterGlobal(Parameter<?> parameter, StringBuilder stringBuilder,
+      Parameter<?> parentParameter) {
     StringBuilder dependenceString = new StringBuilder("\"" + parameter.name() + "\"");
     if (parentParameter instanceof CategoricalParameter) {
       var validValues = ((CategoricalParameter) parentParameter).validValues();
@@ -55,17 +57,18 @@ public class IraceParameterDescriptionGenerator {
       for (String value : validValues) {
         dependenceString.append("\"").append(value).append("\"").append(",");
       }
-      dependenceString = new StringBuilder(dependenceString.substring(0, dependenceString.length() - 1));
+      dependenceString = new StringBuilder(
+          dependenceString.substring(0, dependenceString.length() - 1));
     }
 
     stringBuilder.append(
-            String.format(
-                    formatString,
-                    parameter.name(),
-                    "\"" + "--" + parameter.name() + " \"",
-                    decodeType(parameter),
-                    decodeValidValues(parameter),
-                    "| " + parentParameter.name() + " %in% c(" + dependenceString + ")"));
+        String.format(
+            formatString,
+            parameter.name(),
+            "\"" + "--" + parameter.name() + " \"",
+            decodeType(parameter),
+            decodeValidValues(parameter),
+            "| " + parentParameter.name() + " %in% c(" + dependenceString + ")"));
 
     for (Parameter<?> globalParameter : parameter.globalParameters()) {
       decodeParameterGlobal(globalParameter, stringBuilder, parameter);
@@ -78,15 +81,15 @@ public class IraceParameterDescriptionGenerator {
 
 
   private void decodeParameterSpecific(
-          Pair<String, Parameter<?>> pair, StringBuilder stringBuilder, Parameter<?> parentParameter) {
+      Pair<String, Parameter<?>> pair, StringBuilder stringBuilder, Parameter<?> parentParameter) {
     stringBuilder.append(
-            String.format(
-                    formatString,
-                    pair.getRight().name(),
-                    "\"" + "--" + pair.getRight().name() + " \"",
-                    decodeType(pair.getRight()),
-                    decodeValidValues(pair.getRight()),
-                    "| " + parentParameter.name() + " %in% c(\"" + pair.getLeft() + "\")"));
+        String.format(
+            formatString,
+            pair.getRight().name(),
+            "\"" + "--" + pair.getRight().name() + " \"",
+            decodeType(pair.getRight()),
+            decodeValidValues(pair.getRight()),
+            "| " + parentParameter.name() + " %in% c(\"" + pair.getLeft() + "\")"));
 
     for (Parameter<?> globalParameter : pair.getValue().globalParameters()) {
       decodeParameterGlobal(globalParameter, stringBuilder, pair.getValue());
@@ -125,7 +128,7 @@ public class IraceParameterDescriptionGenerator {
       result = ((CategoricalParameter) parameter).validValues().toString();
       result = result.replace("[", "(");
       result = result.replace("]", ")");
-    } else     if (parameter instanceof CategoricalIntegerParameter) {
+    } else if (parameter instanceof CategoricalIntegerParameter) {
       result = ((CategoricalIntegerParameter) parameter).validValues().toString();
       result = result.replace("[", "(");
       result = result.replace("]", ")");
