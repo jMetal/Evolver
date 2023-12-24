@@ -1,5 +1,13 @@
 package org.uma.evolver.problem;
 
+import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
+import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
+import static smile.math.MathEx.median;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -9,15 +17,6 @@ import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
-import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
-import static smile.math.MathEx.median;
 
 /**
  * This class represents a meta-optimization problem for configuring an algorithm based on quality indicators.

@@ -2,7 +2,6 @@ package org.uma.evolver.parameterdescriptiongenerator.yaml;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.impl.BooleanParameter;

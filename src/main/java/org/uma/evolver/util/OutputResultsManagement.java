@@ -3,7 +3,6 @@ package org.uma.evolver.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import org.uma.evolver.problem.BaseMetaOptimizationProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;

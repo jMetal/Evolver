@@ -1,13 +1,12 @@
 package org.uma.evolver.util;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author José F. Aldana-Martín

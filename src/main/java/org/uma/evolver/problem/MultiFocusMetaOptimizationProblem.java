@@ -1,5 +1,13 @@
 package org.uma.evolver.problem;
 
+import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
+import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
+import static smile.math.MathEx.median;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -10,15 +18,6 @@ import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
-import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
-import static smile.math.MathEx.median;
 
 public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProblem {
 
@@ -49,12 +48,14 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       int numberOfIndependentRuns) {
 
     if (problems.size() != referenceFrontFileNames.size()) {
-      System.err.println("There must be the same number of problems as reference fronts: " + problems.size() + " vs " + referenceFrontFileNames.size());
-      System.exit(1);
+      throw new JMetalException(
+          "There must be the same number of problems as reference fronts: " + problems.size()
+              + " vs " + referenceFrontFileNames.size());
     }
     if (problems.size() != evaluations.size()) {
-      System.err.println("There must be the same number of problems as different evaluations: " + problems.size() + " vs " + evaluations.size());
-      System.exit(1);
+      throw new JMetalException(
+          "There must be the same number of problems as different evaluations: " + problems.size()
+              + " vs " + evaluations.size());
     }
 
     this.configurableAlgorithm = configurableAlgorithmBuilder;
@@ -85,7 +86,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
   private void computeNormalizedReferenceFronts(List<String> referenceFrontFileNames) {
     referenceFronts = new ArrayList<double[][]>();
     normalizedReferenceFronts = new ArrayList<double[][]>();
-    for (String referenceFrontFileName: referenceFrontFileNames) {
+    for (String referenceFrontFileName : referenceFrontFileNames) {
       double[][] referenceFront;
       try {
         referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
@@ -130,24 +131,27 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
 
     // Run each problem n independent times
     double[][] indicatorValuesPerProblem = new double[problems.size()][indicators.size()];
-    for (int problemId = 0;problemId<problems.size();problemId++) {
-      double[] medianIndicatorValues = computeIndependentRuns(parameterArray, problemId) ; // Values for each indicator
+    for (int problemId = 0; problemId < problems.size(); problemId++) {
+      double[] medianIndicatorValues = computeIndependentRuns(parameterArray,
+          problemId); // Values for each indicator
       indicatorValuesPerProblem[problemId] = medianIndicatorValues;
     }
 
     double[] medianProblemValues = new double[indicators.size()];
-    for (int indicatorIndex = 0 ; indicatorIndex < indicators.size(); indicatorIndex++) {
+    for (int indicatorIndex = 0; indicatorIndex < indicators.size(); indicatorIndex++) {
       // Group the indicator values per problem
       double[] indicatorPerProblem = new double[problems.size()];
-      for (int problemIndex = 0 ; problemIndex < problems.size(); problemIndex++)
+      for (int problemIndex = 0; problemIndex < problems.size(); problemIndex++) {
         indicatorPerProblem[problemIndex] = indicatorValuesPerProblem[problemIndex][indicatorIndex];
+      }
 
       // Calculate the median per quality index, the mean can improve this if there are high values on some of the problems
-      medianProblemValues[indicatorIndex] = median(indicatorPerProblem) ;
+      medianProblemValues[indicatorIndex] = median(indicatorPerProblem);
     }
 
     // Update the solution's objectives
-    IntStream.range(0, indicators.size()).forEach(j -> solution.objectives()[j] = medianProblemValues[j]);
+    IntStream.range(0, indicators.size())
+        .forEach(j -> solution.objectives()[j] = medianProblemValues[j]);
 
     return solution;
   }
@@ -155,7 +159,8 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
   private double[] computeIndependentRuns(String[] parameterArray, int problemId) {
     double[] medianIndicatorValues = new double[indicators.size()];
     double[][] indicatorValues = new double[indicators.size()][];
-    IntStream.range(0, indicators.size()).forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
+    IntStream.range(0, indicators.size())
+        .forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm = configurableAlgorithm
@@ -172,7 +177,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       if (front[0].length != referenceFronts.get(problemId)[0].length) {
         throw new JMetalException("The front dimension: "
             + front[0].length + " is not equals to the reference front dimension: "
-            + referenceFronts.get(problemId)[0].length) ;
+            + referenceFronts.get(problemId)[0].length);
       }
 
       double[][] normalizedFront =
@@ -192,8 +197,8 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       }
     }
 
-    for (int i = 0 ; i < indicators.size(); i++) {
-      medianIndicatorValues[i] = median(indicatorValues[i]) ;
+    for (int i = 0; i < indicators.size(); i++) {
+      medianIndicatorValues[i] = median(indicatorValues[i]);
     }
 
     return medianIndicatorValues;
