@@ -45,7 +45,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @author Antonio J. Nebro
  */
-public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder<DoubleProblem> {
+public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
@@ -78,10 +78,11 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder<DoublePr
   }
 
   @Override
-  public ConfigurableAlgorithmBuilder createBuilderInstance() {
+  public ConfigurableAlgorithmBuilder  createBuilderInstance() {
     return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);
   }
 
+  @Override
   public ConfigurableAlgorithmBuilder createBuilderInstance(DoubleProblem problem,
       int maximumNumberOfEvaluations) {
     return new ConfigurableNSGAII(problem, populationSize, maximumNumberOfEvaluations);

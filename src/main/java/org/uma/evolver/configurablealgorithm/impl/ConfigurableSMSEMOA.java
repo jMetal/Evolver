@@ -45,7 +45,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @author Antonio J. Nebro
  */
-public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder<DoubleProblem> {
+public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;

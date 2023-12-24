@@ -7,14 +7,10 @@ import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.catalogue.CreateInitialSolutionsParameter;
-import org.uma.evolver.parameter.catalogue.CrossoverParameter;
 import org.uma.evolver.parameter.catalogue.DifferentialEvolutionCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.DifferentialEvolutionSelectionParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.MutationParameter;
-import org.uma.evolver.parameter.catalogue.ProbabilityParameter;
 import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
-import org.uma.evolver.parameter.catalogue.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.VariationParameter;
 import org.uma.evolver.parameter.impl.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
@@ -50,7 +46,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
  *
  * @author Antonio J. Nebro
  */
-public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder<DoubleProblem> {
+public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
 
   private List<Parameter<?>> configurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
@@ -58,7 +54,6 @@ public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder<Double
   private IntegerParameter populationSizeWithArchiveParameter;
   private CategoricalIntegerParameter offspringPopulationSizeParameter;
   private CreateInitialSolutionsParameter createInitialSolutionsParameter;
-  private SelectionParameter<DoubleSolution> selectionParameter;
   private VariationParameter variationParameter;
 
   @Override

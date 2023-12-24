@@ -44,7 +44,7 @@ import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 /**
  * @author Antonio J. Nebro
  */
-public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder<DoubleProblem> {
+public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   public List<Parameter<?>> autoConfigurableParameterList = new ArrayList<>();
   private CategoricalParameter algorithmResultParameter;
   private ExternalArchiveParameter<DoubleSolution> externalArchiveParameter;
@@ -60,14 +60,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder<DoublePro
   private int populationSize ;
   private int maximumNumberOfEvaluations;
   private String weightVectorFilesDirectory ;
-
   private MutationParameter mutationParameter ;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
     return autoConfigurableParameterList;
   }
-
   private DoubleProblem problem ;
 
   public ConfigurableMOEAD() {
