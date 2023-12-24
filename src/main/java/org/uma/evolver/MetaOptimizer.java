@@ -1,10 +1,9 @@
 package org.uma.evolver;
 
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.observable.Observable;
-
 import java.util.List;
 import java.util.Map;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.observable.Observable;
 
 /*
  * Interface for all meta-optimizers

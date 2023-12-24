@@ -1,5 +1,12 @@
 package org.uma.evolver;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.factory.ConfigurableProblemFactory;
 import org.uma.evolver.factory.MetaOptimizerFactory;
@@ -20,14 +27,6 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Class for running a meta-optimizer to auto-design an algorithm for a specific set of problems
