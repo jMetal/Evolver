@@ -7,7 +7,6 @@ import org.uma.evolver.referencefrontupdate.ReferenceFrontUpdate;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.point.Point;
 import org.uma.jmetal.util.point.impl.IdealPoint;
 import org.uma.jmetal.util.point.impl.NadirPoint;
 

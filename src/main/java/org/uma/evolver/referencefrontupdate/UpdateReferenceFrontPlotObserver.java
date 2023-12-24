@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.knowm.xchart.XYChart;
 import org.uma.evolver.referencefrontupdate.impl.DynamicReferenceFrontUpdate;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;

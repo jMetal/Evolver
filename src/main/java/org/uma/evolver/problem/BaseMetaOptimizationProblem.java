@@ -1,9 +1,8 @@
 package org.uma.evolver.problem;
 
+import java.util.List;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-
-import java.util.List;
 
 /**
  * Base class for Meta-Optimization Problems.

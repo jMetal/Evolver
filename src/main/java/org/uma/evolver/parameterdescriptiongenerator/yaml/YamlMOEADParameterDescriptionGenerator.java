@@ -1,7 +1,6 @@
 package org.uma.evolver.parameterdescriptiongenerator.yaml;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 
 /**
  * Program to generate the irace configuration file for class {@link ConfigurableMOEAD}
