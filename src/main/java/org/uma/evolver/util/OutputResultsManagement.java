@@ -50,9 +50,24 @@ public class OutputResultsManagement {
       throws IOException {
     var nonDominatedSolutionsArchive = new NonDominatedSolutionListArchive<DoubleSolution>();
     nonDominatedSolutionsArchive.addAll(solutions);
-    String problemDescription =
-        parameters.algorithmName + "." + parameters.problemName + "."
-            + parameters.indicators.get(0).name() + "." + parameters.indicators.get(1).name();
+
+    StringBuilder problemDescriptionBuilder = new StringBuilder();
+    problemDescriptionBuilder.append(parameters.algorithmName)
+        .append(".")
+        .append(parameters.problemName)
+        .append(".");
+
+    List<QualityIndicator> indicators = parameters.indicators;
+
+    if (!indicators.isEmpty()) {
+      for (int i = 0; i < indicators.size() - 1; i++) {
+        problemDescriptionBuilder.append(indicators.get(i).name()).append(".");
+      }
+      problemDescriptionBuilder.append(indicators.get(indicators.size() - 1).name());
+    }
+
+    String problemDescription = problemDescriptionBuilder.toString();
+
 
     writeFilesWithVariablesAndObjectives(nonDominatedSolutionsArchive, problemDescription);
     writeDecodedVariables(parameters.configurableAlgorithmProblem, nonDominatedSolutionsArchive,
