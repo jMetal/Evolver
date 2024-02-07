@@ -49,11 +49,11 @@ public class NSGAIIOptimizingMOPSOForProblemsZDT {
         "resources/referenceFronts/ZDT3.csv",
         "resources/referenceFronts/ZDT4.csv",
         "resources/referenceFronts/ZDT6.csv");
-    List<Integer> maxEvaluationsPerProblem = List.of(6000, 6000, 6000, 10000, 6000);
+    List<Integer> maxEvaluationsPerProblem = List.of(5000, 5000, 5000, 18000, 5000);
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableMOPSO(
-        new FakeDoubleProblem(), 100, 15000);
+        new FakeDoubleProblem(), 100, 10000);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
         trainingSet, referenceFrontFileNames,
         indicators, maxEvaluationsPerProblem);

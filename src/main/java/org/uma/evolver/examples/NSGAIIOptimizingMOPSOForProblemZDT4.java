@@ -18,19 +18,18 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link ConfigurableMOPSO} using proble
- * {@link DTLZ3} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link ConfigurableMOPSO} using problem
+ * {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingMOPSOForProblemDTLZ3 {
+public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
 
@@ -78,20 +77,13 @@ public class NSGAIIOptimizingMOPSOForProblemDTLZ3 {
         "RESULTS/MOPSO/ZDT4RF");
 
     var evaluationObserver = new EvaluationObserver(50);
-    /*
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "DTLZ3", indicators.get(0).name(),
-            indicators.get(1).name(), "DTLZ3", 50);
 
-     */
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    //nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer

@@ -164,7 +164,8 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
     perturbationParameter = configurePerturbation();
 
     leaderArchiveParameter = new ExternalArchiveParameter<>("leaderArchive",
-        List.of("crowdingDistanceArchive", "hypervolumeArchive", "spatialSpreadDeviationArchive"));
+        List.of("crowdingDistanceArchive", "spatialSpreadDeviationArchive"));
+    // List.of("crowdingDistanceArchive", "hypervolumeArchive", "spatialSpreadDeviationArchive"));
 
     inertiaWeightComputingParameter = new InertiaWeightComputingParameter(
         List.of("constantValue", "randomSelectedValue", "linearIncreasingValue",
