@@ -200,7 +200,8 @@ public class MetaOptimizationProblem extends BaseMetaOptimizationProblem {
 
             for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
                 indicators.get(indicatorId).referenceFront(normalizedReferenceFront);
-                indicatorValues[indicatorId][runId] = indicators.get(indicatorId).compute(normalizedFront);
+                var indicatorValue = indicators.get(indicatorId).compute(normalizedFront);
+                indicatorValues[indicatorId][runId] = indicatorValue ;
             }
         }
 
