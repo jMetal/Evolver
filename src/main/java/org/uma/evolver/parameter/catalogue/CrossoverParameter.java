@@ -3,12 +3,7 @@ package org.uma.evolver.parameter.catalogue;
 import java.util.List;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
-import org.uma.jmetal.operator.crossover.impl.BLXAlphaCrossover;
-import org.uma.jmetal.operator.crossover.impl.HUXCrossover;
-import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
-import org.uma.jmetal.operator.crossover.impl.SinglePointCrossover;
-import org.uma.jmetal.operator.crossover.impl.UniformCrossover;
-import org.uma.jmetal.operator.crossover.impl.WholeArithmeticCrossover;
+import org.uma.jmetal.operator.crossover.impl.*;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -44,6 +39,17 @@ public class CrossoverParameter extends CategoricalParameter {
       case "wholeArithmetic":
         result =
             new WholeArithmeticCrossover(crossoverProbability, repairDoubleSolution.getParameter());
+        break;
+      case "multiCrossover":
+        Double multiDistributionIndex =
+                (Double) findSpecificParameter("sbxDistributionIndex").value();
+        Double multiAlpha = (Double) findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
+
+        Double BLXCrossoverProbability = (Double) findSpecificParameter("blxCrossoverProbability").value();
+        Double SBXCrossoverProbability = (Double) findSpecificParameter("sbxCrossoverProbability").value();
+        Double WACrossoverProbability = (Double) findSpecificParameter("waCrossoverProbability").value();
+
+        result = new MultiCrossover(crossoverProbability, repairDoubleSolution.getParameter(), BLXCrossoverProbability, SBXCrossoverProbability, WACrossoverProbability, multiAlpha, multiDistributionIndex);
         break;
       default:
         throw new JMetalException("Crossover operator does not exist: " + name());

@@ -140,7 +140,7 @@ public class MetaRunner {
         "output_directory:[ \\t]+([\\w/\"\\-[ \\t]]+)");
 
     String configurableAlgorithm = extractValue(configurationParameters,
-        "configurable_algorithm:[ \\t]+([\\w,\"]+)");
+        "configurable_algorithm:[ \\t]+([\\w-,\"]+)");
     String populationArg = extractValue(configurationParameters,
         "internal_population_size:[ \\t]+(\\d+)");
     String problemName = extractValue(configurationParameters,

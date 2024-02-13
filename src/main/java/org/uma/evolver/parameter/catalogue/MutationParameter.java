@@ -3,10 +3,7 @@ package org.uma.evolver.parameter.catalogue;
 import java.util.List;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.jmetal.operator.mutation.MutationOperator;
-import org.uma.jmetal.operator.mutation.impl.LinkedPolynomialMutation;
-import org.uma.jmetal.operator.mutation.impl.NonUniformMutation;
-import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
-import org.uma.jmetal.operator.mutation.impl.UniformMutation;
+import org.uma.jmetal.operator.mutation.impl.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
@@ -53,6 +50,23 @@ public class MutationParameter extends CategoricalParameter {
         result =
             new NonUniformMutation(mutationProbability, perturbation, maxIterations,
                 repairDoubleSolution.getParameter());
+        break;
+      case "multiMutation":
+        Double nonUniPerturbation = (Double) findSpecificParameter("nonUniformMutationPerturbation").value();
+        Double uniPerturbation = (Double) findSpecificParameter("uniformMutationPerturbation").value();
+        int nonUniMaxIterations = (Integer) getNonConfigurableParameter("maxIterations");
+        Double polyDistributionIndex =
+                (Double) findSpecificParameter("polynomialMutationDistributionIndex").value();
+        Double linkedPolyDistributionIndex =
+                (Double) findSpecificParameter("linkedPolynomialMutationDistributionIndex").value();
+
+        Double polyMutationProbability = (Double) findSpecificParameter("polyMutationProbability").value();
+        Double linkedPolyMutationProbability = (Double) findSpecificParameter("linkedPolyMutationProbability").value();
+        Double uniMutationProbability = (Double) findSpecificParameter("uniMutationProbability").value();
+        Double nonUniMutationProbability = (Double) findSpecificParameter("nonUniMutationProbability").value();
+
+        result = new MultiMutation(mutationProbability, repairDoubleSolution.getParameter(), polyMutationProbability,linkedPolyMutationProbability, uniMutationProbability, nonUniMutationProbability,
+                uniPerturbation, polyDistributionIndex, linkedPolyDistributionIndex, nonUniPerturbation, nonUniMaxIterations);
         break;
       default:
         throw new JMetalException("Mutation operator does not exist: " + name());
