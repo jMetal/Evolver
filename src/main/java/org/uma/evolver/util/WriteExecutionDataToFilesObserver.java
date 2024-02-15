@@ -42,9 +42,7 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
         .filter(num -> (num) % frequency == 0)
         .boxed()
         .toList() ;
-    evaluationsList.stream().forEach(i -> System.out.print(i + ", "));
-    System.out.println() ;
-    System.exit(1);
+
     this.outputResultsManagement = outputResultsManagement;
     evaluationsListIndex = 0 ;
   }
