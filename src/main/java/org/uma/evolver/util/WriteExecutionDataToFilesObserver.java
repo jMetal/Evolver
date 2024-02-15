@@ -42,8 +42,9 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
         .filter(num -> (num) % frequency == 0)
         .boxed()
         .toList() ;
-    //evaluationsList.stream().forEach(i -> System.out.print(i + ", "));
-    //System.out.println() ;
+    evaluationsList.stream().forEach(i -> System.out.print(i + ", "));
+    System.out.println() ;
+    System.exit(1);
     this.outputResultsManagement = outputResultsManagement;
     evaluationsListIndex = 0 ;
   }
@@ -61,7 +62,7 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
     if ((evaluationsListIndex < evaluationsList.size()) && (evaluations > evaluationsList.get(evaluationsListIndex))) {
       try {
         JMetalLogger.logger.info("EVAlS -> "+evaluations) ;
-        outputResultsManagement.updateSuffix("." + evaluationsList.get(evaluationsListIndex) + ".csv");
+        outputResultsManagement.updateSuffix("." + evaluations + ".csv");
         outputResultsManagement.writeResultsToFiles(population);
         evaluationsListIndex ++ ;
       } catch (IOException e) {
