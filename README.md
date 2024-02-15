@@ -14,6 +14,8 @@ The project is made of two parts:
 * [Evolver](src): A Java library built with maven that implements the meta-optimization approach.
 * [Evolver Dashboard](evolver-dashboard): A Python dashboard built with Streamlit that allows to configure and execute Evolver from an user-friendly web application.
 
+Evolver is described in the paper [Evolver: Meta-optimizing multi-objective metaheuristics](https://doi.org/10.1016/j.softx.2023.101551), published in SoftwareX.
+
 # Pre-requisites
 * Java 17 or higher
 * Maven 3.6.3 or higher
