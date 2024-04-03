@@ -6,6 +6,7 @@ import static smile.math.MathEx.median;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
@@ -182,7 +183,10 @@ public class MetaOptimizationProblem extends BaseMetaOptimizationProblem {
                     .parse(parameterArray)
                     .build();
 
+            String parameters = Arrays.stream(parameterArray).reduce("", String::concat);
+            System.out.println("Start run " + parameters) ;
             algorithm.run();
+            System.out.println("End run " + parameters) ;
 
             NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
             nonDominatedSolutions.addAll((List<DoubleSolution>) algorithm.result());

@@ -280,7 +280,7 @@ public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
 
     if (algorithmResultParameter.value().equals("externalArchive")) {
       return new EvolutionaryAlgorithmWithArchive(
-          "NSGA-II",
+          "NSGA-II-DE",
           initialSolutionsCreation,
           evaluation,
           termination,
@@ -290,7 +290,7 @@ public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
           archive);
     } else {
       return new EvolutionaryAlgorithm<>(
-          "NSGA-II",
+          "NSGA-II-DE",
           initialSolutionsCreation,
           evaluation,
           termination,
