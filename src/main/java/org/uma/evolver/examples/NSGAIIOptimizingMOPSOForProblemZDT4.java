@@ -39,7 +39,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableMOPSO(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
+        problemWhoseConfigurationIsSearchedFor, 100, 20000);
 
     List<QualityIndicator> indicators = List.of(new HypervolumeMinus());
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,

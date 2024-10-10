@@ -2,6 +2,7 @@ package org.uma.evolver.examples;
 
 import java.io.IOException;
 import java.util.List;
+import org.uma.evolver.component.MultiThreadedMetaOptimizationProblemEvaluation;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAIIDE;
 import org.uma.evolver.problem.MetaOptimizationProblem;
@@ -21,13 +22,14 @@ import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link ConfigurableNSGAIIDE} using
- * problem {@link LZ09F2} as training set.
+ * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
@@ -69,7 +71,7 @@ public class NSGAIIOptimizingNSGAIIDEForProblemZDT4 {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(1, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -84,7 +86,7 @@ public class NSGAIIOptimizingNSGAIIDEForProblemZDT4 {
             indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 1);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);

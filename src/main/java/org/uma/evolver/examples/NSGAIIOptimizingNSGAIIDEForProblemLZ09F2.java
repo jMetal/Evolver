@@ -45,7 +45,7 @@ public class NSGAIIOptimizingNSGAIIDEForProblemLZ09F2 {
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAIIDE})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAIIDE(
-        problemWhoseConfigurationIsSearchedFor, 100, 75000);
+        problemWhoseConfigurationIsSearchedFor, 100, 100000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
         indicators, 1);
@@ -72,7 +72,7 @@ public class NSGAIIOptimizingNSGAIIDEForProblemLZ09F2 {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(48, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
         .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -81,17 +81,17 @@ public class NSGAIIOptimizingNSGAIIDEForProblemLZ09F2 {
         "RESULTS/NSGAIIDE/" + problemWhoseConfigurationIsSearchedFor.name());
 
     var evaluationObserver = new EvaluationObserver(1);
-    //var frontChartObserver =
-    //    new FrontPlotObserver<DoubleSolution>(
-    //        "NSGA-II, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),
-    //        indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 1);
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>(
+            "NSGA-II, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),
+            indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 1);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1000,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    //nsgaii.observable().register(frontChartObserver);
+    nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer

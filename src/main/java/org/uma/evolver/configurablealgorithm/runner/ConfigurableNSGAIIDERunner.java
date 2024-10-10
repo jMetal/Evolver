@@ -23,25 +23,13 @@ public class ConfigurableNSGAIIDERunner {
   public static void main(String[] args) {
 
     String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
-    var problem = new LZ09F2() ;
+    var problem = new ZDT4() ;
 
     String[] parameters =
-        ("--algorithmResult externalArchive "
-            + "--createInitialSolutions random "
-            + "--offspringPopulationSize 100 "
-            + "--populationSizeWithArchive 100 "
-            + "--externalArchive crowdingDistanceArchive "
-            + "--variation differentialEvolutionVariation "
-            + "--differentialEvolutionCrossover RAND_1_BIN "
-            + "--mutation polynomial "
-            + "--mutationProbabilityFactor 1.0 "
-            + "--mutationRepairStrategy round "
-            + "--CR 1.0 "
-            + "--F 0.5 "
-            + "--polynomialMutationDistributionIndex 20.0 ")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 28 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 400 --variation differentialEvolutionVariation --mutation polynomial --mutationProbabilityFactor 0.3078378639100489 --mutationRepairStrategy round --polynomialMutationDistributionIndex 11.087446774461819 --linkedPolynomialMutationDistributionIndex 291.0607557101411 --uniformMutationPerturbation 0.3059430679532979 --nonUniformMutationPerturbation 0.046036075207529996 --differentialEvolutionCrossover RAND_1_BIN --CR 0.1671077258269885 --F 0.605542128560754 \n")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 175000);
+    var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 13000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());

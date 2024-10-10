@@ -209,8 +209,8 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
       populationSize = populationSizeWithArchiveParameter.value();
     }
 
-    Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>(
-        new DominanceWithConstraintsComparator<>());
+    //Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>(new DominanceWithConstraintsComparator<>());
+    Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>();
     DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
     MultiComparator<DoubleSolution> rankingAndCrowdingComparator =
         new MultiComparator<>(
