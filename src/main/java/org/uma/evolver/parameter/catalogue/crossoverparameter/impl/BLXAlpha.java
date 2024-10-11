@@ -13,8 +13,8 @@ public class BLXAlpha {
 
   public static CrossoverOperator<DoubleSolution> getInstance(
       CrossoverParameter crossoverParameter) {
-    Double alpha =
-        (Double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
+    Double alpha = 0.5 ;
+        //(Double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
     return new BLXAlphaCrossover(
         crossoverParameter.crossoverProbability, alpha, crossoverParameter.repairDoubleSolution);
   }

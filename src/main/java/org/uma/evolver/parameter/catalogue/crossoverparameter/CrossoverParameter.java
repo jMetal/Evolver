@@ -1,26 +1,15 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
-import org.uma.evolver.parameter.catalogue.crossoverparameter.impl.BLXAlpha;
-import org.uma.evolver.parameter.catalogue.crossoverparameter.impl.SBX;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
-import org.uma.jmetal.operator.crossover.impl.BLXAlphaCrossover;
-import org.uma.jmetal.operator.crossover.impl.HUXCrossover;
-import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
-import org.uma.jmetal.operator.crossover.impl.SinglePointCrossover;
-import org.uma.jmetal.operator.crossover.impl.UniformCrossover;
-import org.uma.jmetal.operator.crossover.impl.WholeArithmeticCrossover;
-import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSolutionWithRandomValue;
 
 /** Factory for crossover operators. */
 public class CrossoverParameter extends CategoricalParameter {
@@ -43,31 +32,37 @@ public class CrossoverParameter extends CategoricalParameter {
   }
 
   public CrossoverOperator<DoubleSolution> getParameter() {
-    crossoverProbability = (double) findGlobalParameter("crossoverProbability").value();
-    var repairDoubleSolutionParameter =
-        (RepairDoubleSolutionStrategyParameter) findGlobalParameter("crossoverRepairStrategy");
-    repairDoubleSolution = repairDoubleSolutionParameter.getParameter();
+    // crossoverProbability = (double) findGlobalParameter("crossoverProbability").value();
+    // var repairDoubleSolutionParameter =
+    //    (RepairDoubleSolutionStrategyParameter) findGlobalParameter("crossoverRepairStrategy");
+    // repairDoubleSolution = repairDoubleSolutionParameter.getParameter();
+    crossoverProbability = 0.9;
+    repairDoubleSolution = new RepairDoubleSolutionWithRandomValue();
 
-    // Invoke the getInstance() method of the crossover using reflection
-
-    // String crossoverName = value() ;
-    String crossoverName = "SBX";
+    String crossoverName = value() ;
+    crossoverName = "BLXAlpha" ;
     String crossoverQualifiedName = availableImplementations.get(crossoverName);
 
     Class<?> crossoverClass = null;
     Method getInstanceMethod;
     try {
       crossoverClass = Class.forName(crossoverQualifiedName);
-      getInstanceMethod = crossoverClass.getMethod("getInstance", crossoverClass);
+      getInstanceMethod = crossoverClass.getMethod("getInstance", CrossoverParameter.class);
     } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
-    System.out.println(getInstanceMethod.toString());
+    System.out.println(getInstanceMethod);
+    CrossoverOperator<DoubleSolution> crossover;
 
-    CrossoverOperator<DoubleSolution> result;
-    CrossoverOperator<DoubleSolution> crossover = SBX.getInstance(this);
+    try {
+      crossover = (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(crossoverClass, this);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
 
     return crossover;
   }
@@ -92,6 +87,7 @@ public class CrossoverParameter extends CategoricalParameter {
         new CrossoverParameter(java.util.List.of("SBX", "BLXAlpha"));
     crossoverParameter.availableOperatorNames().forEach(className -> System.out.println(className));
 
-    crossoverParameter.getParameter();
+    CrossoverOperator<DoubleSolution> crossover = crossoverParameter.getParameter();
+    System.out.println(crossover) ;
   }
 }
