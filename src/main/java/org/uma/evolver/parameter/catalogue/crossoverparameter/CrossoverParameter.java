@@ -15,14 +15,16 @@ import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSo
 public class CrossoverParameter extends CategoricalParameter {
   public double crossoverProbability;
   public RepairDoubleSolution repairDoubleSolution;
-
   private Map<String, String> availableImplementations;
 
   public CrossoverParameter(List<String> crossoverOperators) {
     super("crossover", crossoverOperators);
 
     getImplementations();
+    checkCrossoverOperatorNames(crossoverOperators);
+  }
 
+  private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
     crossoverOperators.stream()
         .filter(crossoverOperator -> !availableImplementations.containsKey(crossoverOperator))
         .forEach(
@@ -39,8 +41,8 @@ public class CrossoverParameter extends CategoricalParameter {
     crossoverProbability = 0.9;
     repairDoubleSolution = new RepairDoubleSolutionWithRandomValue();
 
-    String crossoverName = value() ;
-    crossoverName = "BLXAlpha" ;
+    String crossoverName = value();
+    crossoverName = "BLXAlpha";
     String crossoverQualifiedName = availableImplementations.get(crossoverName);
 
     Class<?> crossoverClass = null;
@@ -53,11 +55,10 @@ public class CrossoverParameter extends CategoricalParameter {
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
-    System.out.println(getInstanceMethod);
     CrossoverOperator<DoubleSolution> crossover;
-
     try {
-      crossover = (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(crossoverClass, this);
+      crossover =
+          (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(crossoverClass, this);
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
@@ -84,10 +85,11 @@ public class CrossoverParameter extends CategoricalParameter {
 
   public static void main(String[] args) {
     CrossoverParameter crossoverParameter =
-        new CrossoverParameter(java.util.List.of("SBX", "BLXAlpha"));
+        new CrossoverParameter(java.util.List.of("BLXAlpha"));
+
     crossoverParameter.availableOperatorNames().forEach(className -> System.out.println(className));
 
     CrossoverOperator<DoubleSolution> crossover = crossoverParameter.getParameter();
-    System.out.println(crossover) ;
+    System.out.println(crossover);
   }
 }

@@ -18,4 +18,9 @@ public class BLXAlpha {
     return new BLXAlphaCrossover(
         crossoverParameter.crossoverProbability, alpha, crossoverParameter.repairDoubleSolution);
   }
+
+  @Override
+  public String toString() {
+    return ("Operator name: " + name()) ;
+  }
 }

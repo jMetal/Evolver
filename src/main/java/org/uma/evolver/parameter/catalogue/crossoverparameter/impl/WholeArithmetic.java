@@ -7,7 +7,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class WholeArithmetic {
     public static String name() {
-        return "BLXAlpha";
+        return "WholeArithmetic";
     }
 
     public static CrossoverOperator<DoubleSolution> getInstance(

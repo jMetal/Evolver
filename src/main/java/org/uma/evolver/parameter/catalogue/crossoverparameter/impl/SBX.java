@@ -19,4 +19,9 @@ public class SBX {
         distributionIndex,
         crossoverParameter.repairDoubleSolution);
   }
+
+  @Override
+  public String toString() {
+      return("Operator name: " + name()) ;
+  }
 }

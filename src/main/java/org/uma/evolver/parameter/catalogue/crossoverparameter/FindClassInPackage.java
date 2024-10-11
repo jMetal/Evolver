@@ -24,8 +24,7 @@ public class FindClassInPackage {
 
   public static void main(String[] args){
       List<String> classes = FindClassInPackage.findClasses("org.uma.evolver.parameter.catalogue.crossoverparameter.impl") ;
-      classes.forEach(className -> System.out.println(
-              className.substring(className.lastIndexOf(".")+1)
-      ));
+      classes.forEach(className -> System.out.println(className.substring(className.lastIndexOf(".")+1))
+      );
   }
 }
