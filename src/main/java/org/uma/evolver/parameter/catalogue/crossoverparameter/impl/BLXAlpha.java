@@ -1,6 +1,8 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter.impl;
 
+import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter;
+import org.uma.evolver.parameter.impl.RealParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.BLXAlphaCrossover;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -11,10 +13,13 @@ public class BLXAlpha {
     return "BLXAlpha";
   }
 
+  public static Parameter<?> getSpecificParameter() {
+    return new RealParameter("blxAlphaCrossoverAlphaValue", 0.0, 1.0);
+  }
+
   public static CrossoverOperator<DoubleSolution> getInstance(
       CrossoverParameter crossoverParameter) {
-    Double alpha = 0.5 ;
-        //(Double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
+    double alpha = (double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
     return new BLXAlphaCrossover(
         crossoverParameter.crossoverProbability, alpha, crossoverParameter.repairDoubleSolution);
   }
