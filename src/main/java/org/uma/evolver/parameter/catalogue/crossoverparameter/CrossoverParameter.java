@@ -1,5 +1,6 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -11,7 +12,6 @@ import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
-import scala.xml.PrettyPrinter;
 
 /** Factory for crossover operators. */
 public class CrossoverParameter extends CategoricalParameter {
@@ -25,13 +25,12 @@ public class CrossoverParameter extends CategoricalParameter {
     getImplementations();
     checkCrossoverOperatorNames(crossoverOperators);
 
-    List<Parameter<?>> globalParameters = getGlobalParameters();
-    globalParameters.forEach(this::addGlobalParameter);
+    createGlobalParameters().forEach(this::addGlobalParameter);
 
     getSpecificParameters();
   }
 
-  public List<Parameter<?>> getGlobalParameters() {
+  private List<Parameter<?>> createGlobalParameters() {
     ProbabilityParameter crossoverProbability = new ProbabilityParameter("crossoverProbability");
     RepairDoubleSolutionStrategyParameter crossoverRepairStrategy =
         new RepairDoubleSolutionStrategyParameter(
@@ -40,7 +39,6 @@ public class CrossoverParameter extends CategoricalParameter {
     return List.of(crossoverProbability, crossoverRepairStrategy) ;
   }
 
-
   public void getSpecificParameters() {
     for (Map.Entry<String, String> entry : availableImplementations.entrySet()) {
       try {
@@ -48,12 +46,16 @@ public class CrossoverParameter extends CategoricalParameter {
         var getInstanceMethod =
             crossoverClass.getMethod("getSpecificParameter");
 
-        addSpecificParameter(entry.getKey(), (Parameter<?>)getInstanceMethod.invoke(crossoverClass));
+        Constructor<?> constructor = crossoverClass.getConstructor();
+
+        addSpecificParameter(entry.getKey(), (Parameter<?>)getInstanceMethod.invoke(constructor.newInstance()));
 
       } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
         throw new RuntimeException(e);
       } catch (NoSuchMethodException e) {
         throw new RuntimeException(e);
+      } catch (InstantiationException e) {
+          throw new RuntimeException(e);
       }
     }
 
@@ -76,10 +78,7 @@ public class CrossoverParameter extends CategoricalParameter {
         (RepairDoubleSolutionStrategyParameter) findGlobalParameter("crossoverRepairStrategy");
     repairDoubleSolution = repairDoubleSolutionParameter.getParameter();
 
-    System.out.println("Crossover probability: " + crossoverProbability);
-
     String crossoverName = value();
-    System.out.println("Crossover name: " + crossoverName);
     String crossoverQualifiedName = availableImplementations.get(crossoverName);
 
     return getCrossoverInstance(crossoverQualifiedName);
@@ -99,14 +98,19 @@ public class CrossoverParameter extends CategoricalParameter {
 
     CrossoverOperator<DoubleSolution> crossover;
     try {
+      Constructor<?> constructor = crossoverClass.getConstructor();
       crossover =
-          (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(crossoverClass, this);
+          (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(constructor.newInstance(), this);
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
       throw new RuntimeException(e);
+    } catch (NoSuchMethodException e) {
+        throw new RuntimeException(e);
+    } catch (InstantiationException e) {
+        throw new RuntimeException(e);
     }
-    return crossover;
+      return crossover;
   }
 
   public List<String> availableOperatorNames() {
@@ -128,10 +132,10 @@ public class CrossoverParameter extends CategoricalParameter {
     CrossoverParameter crossoverParameter = new CrossoverParameter(List.of("BLXAlpha", "SBX"));
 
     String[] parameters =
-        ("--crossover BLXAlpha "
+        ("--crossover SBX "
                 + "--crossoverProbability 0.9 "
                 + "--crossoverRepairStrategy round "
-                + "--blxAlphaCrossoverAlphaValue 0.5 ")
+                + "--sbxDistributionIndex 29.0 ")
             .split("\\s+");
 
     crossoverParameter.parse(parameters).check();

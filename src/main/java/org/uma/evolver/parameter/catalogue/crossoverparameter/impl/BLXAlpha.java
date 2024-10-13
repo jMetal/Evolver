@@ -9,23 +9,30 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class BLXAlpha {
-  public static String name() {
+  private Parameter<?> specificParameter;
+
+  public BLXAlpha() {
+    specificParameter = new RealParameter("blxAlphaCrossoverAlphaValue", 0.0, 1.0);
+  }
+
+  public String name() {
     return "BLXAlpha";
   }
 
-  public static Parameter<?> getSpecificParameter() {
-    return new RealParameter("blxAlphaCrossoverAlphaValue", 0.0, 1.0);
+  public Parameter<?> getSpecificParameter() {
+    return specificParameter;
   }
 
-  public static CrossoverOperator<DoubleSolution> getInstance(
+  public CrossoverOperator<DoubleSolution> getInstance(
       CrossoverParameter crossoverParameter) {
-    double alpha = (double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
+    double alpha =
+        (double) crossoverParameter.findSpecificParameter("blxAlphaCrossoverAlphaValue").value();
     return new BLXAlphaCrossover(
         crossoverParameter.crossoverProbability, alpha, crossoverParameter.repairDoubleSolution);
   }
 
   @Override
   public String toString() {
-    return ("Operator name: " + name()) ;
+    return ("Operator name: " + name());
   }
 }
