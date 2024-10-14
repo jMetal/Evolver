@@ -13,6 +13,8 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
 
+import static tech.tablesaw.plotly.components.TickSettings.ExponentFormat.e;
+
 /** Factory for crossover operators. */
 public class CrossoverParameter extends CategoricalParameter {
   public double crossoverProbability;
@@ -36,31 +38,33 @@ public class CrossoverParameter extends CategoricalParameter {
         new RepairDoubleSolutionStrategyParameter(
             "crossoverRepairStrategy", Arrays.asList("random", "round", "bounds"));
 
-    return List.of(crossoverProbability, crossoverRepairStrategy) ;
+    return List.of(crossoverProbability, crossoverRepairStrategy);
   }
 
   public void getSpecificParameters() {
     for (Map.Entry<String, String> entry : availableImplementations.entrySet()) {
       try {
         Class<?> crossoverClass = Class.forName(entry.getValue());
-        var getInstanceMethod =
-            crossoverClass.getMethod("getSpecificParameter");
+        var getInstanceMethod = crossoverClass.getMethod("getSpecificParameter");
 
         Constructor<?> constructor = crossoverClass.getConstructor();
 
-        addSpecificParameter(entry.getKey(), (Parameter<?>)getInstanceMethod.invoke(constructor.newInstance()));
+        Parameter<?> specificParameter = (Parameter<?>) getInstanceMethod.invoke(constructor.newInstance()) ;
+        if (specificParameter != null) {
+          addSpecificParameter(entry.getKey(), specificParameter);
+        }
 
       } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
         throw new RuntimeException(e);
       } catch (NoSuchMethodException e) {
         throw new RuntimeException(e);
       } catch (InstantiationException e) {
-          throw new RuntimeException(e);
+        throw new RuntimeException(e);
       }
     }
 
-    //addSpecificParameter("SBX", SBX.getSpecificParameter());
-    //addSpecificParameter("BLX_ALPHA", SBX.getSpecificParameter());
+    // addSpecificParameter("SBX", SBX.getSpecificParameter());
+    // addSpecificParameter("BLX_ALPHA", SBX.getSpecificParameter());
   }
 
   private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
@@ -100,17 +104,18 @@ public class CrossoverParameter extends CategoricalParameter {
     try {
       Constructor<?> constructor = crossoverClass.getConstructor();
       crossover =
-          (CrossoverOperator<DoubleSolution>) getInstanceMethod.invoke(constructor.newInstance(), this);
+          (CrossoverOperator<DoubleSolution>)
+              getInstanceMethod.invoke(constructor.newInstance(), this);
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
       throw new RuntimeException(e);
     } catch (NoSuchMethodException e) {
-        throw new RuntimeException(e);
+      throw new RuntimeException(e);
     } catch (InstantiationException e) {
-        throw new RuntimeException(e);
+      throw new RuntimeException(e);
     }
-      return crossover;
+    return crossover;
   }
 
   public List<String> availableOperatorNames() {
@@ -129,13 +134,12 @@ public class CrossoverParameter extends CategoricalParameter {
   }
 
   public static void main(String[] args) {
-    CrossoverParameter crossoverParameter = new CrossoverParameter(List.of("BLXAlpha", "SBX"));
+    CrossoverParameter crossoverParameter = new CrossoverParameter(List.of("BLXAlpha", "SBX", "WholeArithmetic"));
 
     String[] parameters =
-        ("--crossover SBX "
+        ("--crossover WholeArithmetic "
                 + "--crossoverProbability 0.9 "
-                + "--crossoverRepairStrategy round "
-                + "--sbxDistributionIndex 29.0 ")
+                + "--crossoverRepairStrategy round ")
             .split("\\s+");
 
     crossoverParameter.parse(parameters).check();

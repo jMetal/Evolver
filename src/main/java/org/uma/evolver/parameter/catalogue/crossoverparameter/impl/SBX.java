@@ -23,7 +23,6 @@ public class SBX {
   }
 
   public CrossoverOperator<DoubleSolution> getInstance(CrossoverParameter crossoverParameter) {
-
     double distributionIndex =
         (double) crossoverParameter.findSpecificParameter("sbxDistributionIndex").value();
     return new SBXCrossover(
