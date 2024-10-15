@@ -13,8 +13,6 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
 
-import static tech.tablesaw.plotly.components.TickSettings.ExponentFormat.e;
-
 /** Factory for crossover operators. */
 public class CrossoverParameter extends CategoricalParameter {
   public double crossoverProbability;
@@ -26,9 +24,7 @@ public class CrossoverParameter extends CategoricalParameter {
 
     getImplementations();
     checkCrossoverOperatorNames(crossoverOperators);
-
     createGlobalParameters().forEach(this::addGlobalParameter);
-
     getSpecificParameters();
   }
 
@@ -62,9 +58,6 @@ public class CrossoverParameter extends CategoricalParameter {
         throw new RuntimeException(e);
       }
     }
-
-    // addSpecificParameter("SBX", SBX.getSpecificParameter());
-    // addSpecificParameter("BLX_ALPHA", SBX.getSpecificParameter());
   }
 
   private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
@@ -136,17 +129,26 @@ public class CrossoverParameter extends CategoricalParameter {
   public static void main(String[] args) {
     CrossoverParameter crossoverParameter = new CrossoverParameter(List.of("BLXAlpha", "SBX", "WholeArithmetic"));
 
-    String[] parameters =
-        ("--crossover WholeArithmetic "
-                + "--crossoverProbability 0.9 "
-                + "--crossoverRepairStrategy round ")
-            .split("\\s+");
+    // Print available crossover implementations
+    System.out.println("Available crossover implementations: ") ;
+    crossoverParameter.availableOperatorNames().forEach(System.out::println);
 
+    // Example of parsing
+    String parameterString = "--crossover SBX "
+            + "--crossoverProbability 0.9 "
+            + "--crossoverRepairStrategy round "
+            + "--sbxDistributionIndex 20.0"  ;
+    System.out.println("\nString to parse: \n" + parameterString) ;
+
+    String[] parameters = parameterString.split("\\s+");
     crossoverParameter.parse(parameters).check();
 
-    crossoverParameter.availableOperatorNames().forEach(className -> System.out.println(className));
-
+    // Print data of the instanced crossover
+    System.out.println("\nInstantiated crossover:") ;
     CrossoverOperator<DoubleSolution> crossover = crossoverParameter.getParameter();
     System.out.println(crossover);
+    System.out.println(crossover.crossoverProbability());
+    System.out.println(crossover.numberOfGeneratedChildren());
+    System.out.println(crossover.numberOfRequiredParents());
   }
 }
