@@ -28,6 +28,26 @@ public class CrossoverParameter extends CategoricalParameter {
     getSpecificParameters();
   }
 
+  private void getImplementations() {
+    availableImplementations = new HashMap<>();
+
+    List<String> implementations =
+            FindClassInPackage.findClasses(CrossoverParameter.class.getPackageName() + ".impl");
+    for (String implementation : implementations) {
+      String className = implementation.substring(implementation.lastIndexOf(".") + 1);
+      availableImplementations.put(className, implementation);
+    }
+  }
+
+  private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
+    crossoverOperators.stream()
+            .filter(crossoverOperator -> !availableImplementations.containsKey(crossoverOperator))
+            .forEach(
+                    crossoverOperator -> {
+                      throw new RuntimeException("The " + crossoverOperator + " is not available");
+                    });
+  }
+
   private List<Parameter<?>> createGlobalParameters() {
     ProbabilityParameter crossoverProbability = new ProbabilityParameter("crossoverProbability");
     RepairDoubleSolutionStrategyParameter crossoverRepairStrategy =
@@ -58,15 +78,6 @@ public class CrossoverParameter extends CategoricalParameter {
         throw new RuntimeException(e);
       }
     }
-  }
-
-  private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
-    crossoverOperators.stream()
-        .filter(crossoverOperator -> !availableImplementations.containsKey(crossoverOperator))
-        .forEach(
-            crossoverOperator -> {
-              throw new RuntimeException("The " + crossoverOperator + " is not available");
-            });
   }
 
   public CrossoverOperator<DoubleSolution> getParameter() {
@@ -113,17 +124,6 @@ public class CrossoverParameter extends CategoricalParameter {
 
   public List<String> availableOperatorNames() {
     return availableImplementations.keySet().stream().toList();
-  }
-
-  private void getImplementations() {
-    availableImplementations = new HashMap<>();
-
-    List<String> implementations =
-        FindClassInPackage.findClasses(CrossoverParameter.class.getPackageName() + ".impl");
-    for (String implementation : implementations) {
-      String className = implementation.substring(implementation.lastIndexOf(".") + 1);
-      availableImplementations.put(className, implementation);
-    }
   }
 
   public static void main(String[] args) {

@@ -2,7 +2,7 @@ package org.uma.evolver.problem;
 
 import static org.uma.evolver.util.ParameterManagement.decodeParametersToString;
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
-import static smile.math.MathEx.median;
+import static smile.math.MathEx.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -146,7 +146,8 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       }
 
       // Calculate the median per quality index, the mean can improve this if there are high values on some of the problems
-      medianProblemValues[indicatorIndex] = median(indicatorPerProblem);
+      //medianProblemValues[indicatorIndex] = mean(indicatorPerProblem);
+      medianProblemValues[indicatorIndex] = mean(indicatorPerProblem) / (1 + sd(indicatorPerProblem)) ;
     }
 
     // Update the solution's objectives
@@ -198,7 +199,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
     }
 
     for (int i = 0; i < indicators.size(); i++) {
-      medianIndicatorValues[i] = median(indicatorValues[i]);
+      medianIndicatorValues[i] = mean(indicatorValues[i]);
     }
 
     return medianIndicatorValues;

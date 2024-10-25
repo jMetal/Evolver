@@ -236,27 +236,27 @@
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-core</artifactId>
-      <version>6.2</version>
+      <version>6.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-algorithm</artifactId>
-      <version>6.2</version>
+      <version>6.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-component</artifactId>
-      <version>6.2</version>
+      <version>6.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-parallel</artifactId>
-      <version>6.2</version>
+      <version>6.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-problem</artifactId>
-      <version>6.2</version>
+      <version>6.7-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

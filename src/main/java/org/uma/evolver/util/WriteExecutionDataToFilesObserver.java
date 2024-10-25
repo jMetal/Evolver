@@ -19,33 +19,16 @@ import org.uma.jmetal.util.observer.Observer;
  */
 public class WriteExecutionDataToFilesObserver implements Observer<Map<String, Object>> {
 
-  private List<Integer> evaluationsList;
   private OutputResultsManagement outputResultsManagement;
-  private int evaluationsListIndex ;
-
-  /**
-   * Constructor
-   */
-  public WriteExecutionDataToFilesObserver(List<Integer> evaluationsList,
-      OutputResultsManagement outputResultsManagement) {
-    this.evaluationsList = evaluationsList;
-    this.outputResultsManagement = outputResultsManagement;
-    evaluationsListIndex = 0 ;
-  }
+  private int frequency;
 
   /**
    * Constructor
    */
   public WriteExecutionDataToFilesObserver(int frequency, int evaluationsLimit,
       OutputResultsManagement outputResultsManagement) {
-    evaluationsList = IntStream.rangeClosed(1, evaluationsLimit)
-        .filter(num -> (num) % frequency == 0)
-        .boxed()
-        .toList() ;
-    //evaluationsList.stream().forEach(i -> System.out.print(i + ", "));
-    //System.out.println() ;
     this.outputResultsManagement = outputResultsManagement;
-    evaluationsListIndex = 0 ;
+    this.frequency = frequency ;
   }
 
 
@@ -58,12 +41,11 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
     List<DoubleSolution> population = (List<DoubleSolution>) data.get("POPULATION");
     int evaluations = (int) data.get("EVALUATIONS");
-    if ((evaluationsListIndex < evaluationsList.size()) && (evaluations > evaluationsList.get(evaluationsListIndex))) {
+    if ((evaluations % frequency) == 0) {
       try {
         JMetalLogger.logger.info("EVAlS -> "+evaluations) ;
-        outputResultsManagement.updateSuffix("." + evaluationsList.get(evaluationsListIndex) + ".csv");
+        outputResultsManagement.updateSuffix("." + evaluations + ".csv");
         outputResultsManagement.writeResultsToFiles(population);
-        evaluationsListIndex ++ ;
       } catch (IOException e) {
         throw new JMetalException(e);
       }

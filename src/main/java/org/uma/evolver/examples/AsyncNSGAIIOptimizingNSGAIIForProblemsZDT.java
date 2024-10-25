@@ -5,6 +5,7 @@ import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MetaOptimizationProblem;
+import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -14,9 +15,12 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
@@ -26,21 +30,27 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForProblemDTLZ1 {
+public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the target problem (DTLZ1)
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ1();
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    List<DoubleProblem> trainingSet = List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(),
+            new ZDT6());
+    List<String> referenceFrontFileNames = List.of(
+            "resources/referenceFronts/ZDT1.csv",
+            "resources/referenceFronts/ZDT2.csv",
+            "resources/referenceFronts/ZDT3.csv",
+            "resources/referenceFronts/ZDT4.csv",
+            "resources/referenceFronts/ZDT6.csv");
+    List<Integer> maxEvaluationsPerProblem = List.of(10000, 10000, 10000, 10000, 10000);
 
-    // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAII})
-    ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAII(
-        problemWhoseConfigurationIsSearchedFor, 100, 15000);
-    var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
-        referenceFrontFileName,
-        indicators, 1);
+    // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
+    ConfigurableAlgorithmBuilder configurableAlgorithm =
+            new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
+    var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
+            trainingSet, referenceFrontFileNames,
+            indicators, maxEvaluationsPerProblem, 1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -52,8 +62,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemDTLZ1 {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 2000;
-    int numberOfCores = 8 ;
+    int maxEvaluations = 3000;
+    int numberOfCores = 12 ;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(
@@ -61,20 +71,21 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemDTLZ1 {
             new TerminationByEvaluations(maxEvaluations));
 
     // Step 4: Create observers for the meta-optimizer
+    // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
-        "RESULTS/AsyncNSGAII/DTLZ1");
+            "AsyncNSGA-II", configurableProblem, "ZDT", indicators,
+            "RESULTS/AsyncNSGAII/ZDT");
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(100);
 
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
-            "NSGA-II",
+            "AsyncNSGA-II",
             80, 100, null, indicators.get(0).name(), indicators.get(1).name());
 
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);

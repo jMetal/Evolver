@@ -38,14 +38,14 @@ public class NSGAIIOptimizingNSGAIIDEForProblemLZ09F2 {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the target problem (Goel2007)
+    // Step 1: Select the target problem (LZ09F2)
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new LZ09F2();
     String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAIIDE})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAIIDE(
-        problemWhoseConfigurationIsSearchedFor, 100, 100000);
+        problemWhoseConfigurationIsSearchedFor, 100, 25000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
         indicators, 1);
@@ -77,17 +77,17 @@ public class NSGAIIOptimizingNSGAIIDEForProblemLZ09F2 {
 
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
+        "NSGA-IIDE", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
         "RESULTS/NSGAIIDE/" + problemWhoseConfigurationIsSearchedFor.name());
 
     var evaluationObserver = new EvaluationObserver(1);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),
+            "NSGA-IIDE, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),
             indicators.get(1).name(), problemWhoseConfigurationIsSearchedFor.name(), 1);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1000,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
         maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
