@@ -1,5 +1,7 @@
 package org.uma.evolver.problemfamilyinfo;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
@@ -22,7 +24,7 @@ public class WFG2DProblemFamilyInfo implements ProblemFamilyInfo {
                     "resources/referenceFronts/WFG8.2D.csv",
                     "resources/referenceFronts/WFG9.2D.csv");
 
-    private static final List<Integer> evaluationsToOptimize = List.of(25000, 25000, 25000, 25000, 25000, 25000, 25000, 25000, 25000, 25000) ;
+    private static final List<Integer> evaluationsToOptimize = new ArrayList<>(Collections.nCopies(problemList.size(), 25000));
 
     public List<DoubleProblem> problemList() {return problemList;}
     public List<String> referenceFronts() {return referenceFrontFileName;}
