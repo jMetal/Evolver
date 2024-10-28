@@ -1,50 +1,31 @@
 package org.uma.evolver.configurablealgorithm.validator;
 
+import static smile.math.MathEx.mean;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.wfg.*;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
-import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
-import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import static smile.math.MathEx.mean;
-
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class ConfigurableNSGAIIValidator {
+  public double validate(String[] parameters, ProblemFamilyInfo problemFamilyInfo ) throws IOException {
+    List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
-  public static List<DoubleProblem> ZDT_LIST =
-      List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
-  public static List<String> ZDT_REFERENCE_FRONTS =
-      List.of(
-          "resources/referenceFronts/ZDT1.csv",
-          "resources/referenceFronts/ZDT2.csv",
-          "resources/referenceFronts/ZDT3.csv",
-          "resources/referenceFronts/ZDT4.csv",
-          "resources/referenceFronts/ZDT6.csv");
-
-  public double validate(String[] parameters) throws IOException {
-    List<DoubleProblem> trainingSet = ZDT_LIST;
-    List<String> referenceFrontFileNames = ZDT_REFERENCE_FRONTS;
-
-    int maximumNumberOfEvaluations = 25000;
     int populationSize = 100;
     int independentRuns = 2;
 
@@ -53,7 +34,8 @@ public class ConfigurableNSGAIIValidator {
     double[][] indicatorValues = new double[trainingSet.size()][independentRuns] ;
     double[] means = new double[trainingSet.size()] ;
 
-    for (int problemIndex : IntStream.range(0, ZDT_LIST.size()).toArray()) {
+    for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
+      int maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize().get(problemIndex) ;
       System.out.println("Problem: " + trainingSet.get(problemIndex).getClass().getName());
 
       double[][] referenceFront =
@@ -123,7 +105,7 @@ public class ConfigurableNSGAIIValidator {
   }
 
   public static void main(String[] args) throws IOException {
-    double result = new ConfigurableNSGAIIValidator().validate(args);
+    double result = new ConfigurableNSGAIIValidator().validate(args, new ZDTProblemFamilyInfo());
     System.out.println("\nGlobal mean: " + result);
   }
 }

@@ -11,7 +11,6 @@ import org.uma.evolver.parameter.impl.IntegerParameter;
 import org.uma.evolver.parameter.impl.OrdinalParameter;
 import org.uma.evolver.parameter.impl.RealParameter;
 
-
 public class IraceParameterDescriptionGenerator {
 
   private static String formatString = "%-40s %-40s %-7s %-30s %-20s\n";

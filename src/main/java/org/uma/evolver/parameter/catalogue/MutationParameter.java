@@ -10,7 +10,6 @@ import org.uma.jmetal.operator.mutation.impl.UniformMutation;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
-
 public class MutationParameter extends CategoricalParameter {
 
   public MutationParameter(List<String> mutationOperators) {

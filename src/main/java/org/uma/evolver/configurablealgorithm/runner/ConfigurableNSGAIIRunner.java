@@ -2,19 +2,12 @@ package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1_2D;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT2_2D;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT3_2D;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT6_2D;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
  * Class configuring NSGA-II using arguments in the form (key, value) and the {@link ConfigurableNSGAII}

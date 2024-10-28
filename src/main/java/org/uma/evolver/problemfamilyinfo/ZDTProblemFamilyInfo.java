@@ -1,9 +1,8 @@
 package org.uma.evolver.problemfamilyinfo;
 
+import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
-
-import java.util.List;
 
 public class ZDTProblemFamilyInfo implements ProblemFamilyInfo {
     private static final List<DoubleProblem> problemList =

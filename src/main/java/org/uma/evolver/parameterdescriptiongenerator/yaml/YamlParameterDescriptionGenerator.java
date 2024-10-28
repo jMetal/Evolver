@@ -11,7 +11,6 @@ import org.uma.evolver.parameter.impl.IntegerParameter;
 import org.uma.evolver.parameter.impl.OrdinalParameter;
 import org.uma.evolver.parameter.impl.RealParameter;
 
-
 public class YamlParameterDescriptionGenerator {
 
   public String generateConfiguration(ConfigurableAlgorithmBuilder autoConfigurableAlgorithm) {

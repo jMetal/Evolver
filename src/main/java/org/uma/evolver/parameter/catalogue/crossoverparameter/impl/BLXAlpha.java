@@ -5,7 +5,6 @@ import org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter
 import org.uma.evolver.parameter.impl.RealParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.BLXAlphaCrossover;
-import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class BLXAlpha {

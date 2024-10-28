@@ -2,8 +2,6 @@ package org.uma.evolver.examples;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
