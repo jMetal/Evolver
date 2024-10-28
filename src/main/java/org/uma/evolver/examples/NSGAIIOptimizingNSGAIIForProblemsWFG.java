@@ -2,10 +2,14 @@ package org.uma.evolver.examples;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.WFG2DProblemFamilyInfo;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -41,28 +45,29 @@ public class NSGAIIOptimizingNSGAIIForProblemsWFG {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the training set problems  (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6)
+    // Step 1: Select the training set problems
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    List<DoubleProblem> trainingSet = List.of(new WFG1(), new WFG2(), new WFG3(), new WFG4(),
-            new WFG5(), new WFG6(), new WFG7(), new WFG8(), new WFG9());
-    List<String> referenceFrontFileNames = List.of(
-            "resources/referenceFronts/WFG1.2D.csv",
-            "resources/referenceFronts/WFG2.2D.csv",
-            "resources/referenceFronts/WFG3.2D.csv",
-            "resources/referenceFronts/WFG4.2D.csv",
-            "resources/referenceFronts/WFG5.2D.csv",
-            "resources/referenceFronts/WFG6.2D.csv",
-            "resources/referenceFronts/WFG7.2D.csv",
-            "resources/referenceFronts/WFG8.2D.csv",
-            "resources/referenceFronts/WFG9.2D.csv");
-    List<Integer> maxEvaluationsPerProblem = List.of(10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000);
+    ProblemFamilyInfo problemFamilyInfo = new WFG2DProblemFamilyInfo();
+
+    List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    double trainingEvaluationsPercentage = 0.4;
+    List<Integer> maxEvaluationsPerProblem =
+        problemFamilyInfo.evaluationsToOptimize().stream()
+            .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
+            .toList();
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
         new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
-    var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
-        trainingSet, referenceFrontFileNames,
-        indicators, maxEvaluationsPerProblem, 1);
+    var configurableProblem =
+        new MultiFocusMetaOptimizationProblem(
+            configurableAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            maxEvaluationsPerProblem,
+            1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -79,30 +84,30 @@ public class NSGAIIOptimizingNSGAIIForProblemsWFG {
     int maxEvaluations = 3000;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
-        configurableProblem,
-        populationSize,
-        offspringPopulationSize,
-        crossover,
-        mutation)
-        .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(10, configurableProblem))
-        .build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        new NSGAIIBuilder<>(
+                configurableProblem, populationSize, offspringPopulationSize, crossover, mutation)
+            .setTermination(termination)
+            .setEvaluation(new MultiThreadedEvaluation<>(10, configurableProblem))
+            .build();
 
     // Step 4: Create observers for the meta-optimizer
-    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, "ZDT", indicators,
-        "RESULTS/NSGAII/WFG");
+    OutputResultsManagementParameters outputResultsManagementParameters =
+        new OutputResultsManagementParameters(
+            "NSGA-II", configurableProblem, "ZDT", indicators, "RESULTS/NSGAII/WFG");
 
     var evaluationObserver = new EvaluationObserver(populationSize);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "ZDT", indicators.get(0).name(),
-            indicators.get(1).name(), "WFG", populationSize);
+            "NSGA-II, " + "ZDT",
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            "WFG",
+            populationSize);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
-        maxEvaluations, outputResultsManagement);
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(50, maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
