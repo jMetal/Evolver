@@ -3,6 +3,7 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1_2D;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT2_2D;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT3_2D;
@@ -25,13 +26,13 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+    String referenceFrontFileName = "resources/referenceFronts/WFG.2D.csv";
 
     String[] parameters =
-        ("--algorithmResult population --populationSizeWithArchive 45 --externalArchive unboundedArchive --createInitialSolutions random --offspringPopulationSize 1 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8376231158003377 --crossoverRepairStrategy bounds --sbxDistributionIndex 175.2342006883794 --blxAlphaCrossoverAlphaValue 0.9308570666530741 --mutation linkedPolynomial --mutationProbabilityFactor 0.832562685046567 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 328.11849090807664 --linkedPolynomialMutationDistributionIndex 21.3452379400147 --uniformMutationPerturbation 0.7470633762182624 --nonUniformMutationPerturbation 0.9365446849400575 --selection tournament --selectionTournamentSize 9 \n")
+        ("--algorithmResult population --populationSizeWithArchive 111 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 50 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8898744113066657 --crossoverRepairStrategy round --sbxDistributionIndex 10.340034734550677 --blxAlphaCrossoverAlphaValue 0.8150790560730548 --mutation uniform --mutationProbabilityFactor 0.8606058307368026 --mutationRepairStrategy round --polynomialMutationDistributionIndex 363.9821559398714 --linkedPolynomialMutationDistributionIndex 135.05592356207515 --uniformMutationPerturbation 0.7273477093036995 --nonUniformMutationPerturbation 0.34415213634294417 --selection tournament --selectionTournamentSize 8 \n")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 20000);
+    var configurableNSGAII = new ConfigurableNSGAII(new WFG9(), 100, 20000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());
