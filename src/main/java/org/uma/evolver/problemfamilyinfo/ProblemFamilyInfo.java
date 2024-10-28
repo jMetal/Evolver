@@ -12,4 +12,6 @@ public interface ProblemFamilyInfo {
   List<DoubleProblem> problemList();
   List<String> referenceFronts();
   List<Integer> evaluationsToOptimize();
+
+  String name() ;
 }

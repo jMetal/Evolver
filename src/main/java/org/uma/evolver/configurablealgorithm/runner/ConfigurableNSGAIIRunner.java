@@ -2,7 +2,9 @@ package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
+import org.uma.jmetal.problem.multiobjective.zcat.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -22,10 +24,10 @@ public class ConfigurableNSGAIIRunner {
     String referenceFrontFileName = "resources/referenceFronts/WFG.2D.csv";
 
     String[] parameters =
-        ("--algorithmResult population --populationSizeWithArchive 111 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 50 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8898744113066657 --crossoverRepairStrategy round --sbxDistributionIndex 10.340034734550677 --blxAlphaCrossoverAlphaValue 0.8150790560730548 --mutation uniform --mutationProbabilityFactor 0.8606058307368026 --mutationRepairStrategy round --polynomialMutationDistributionIndex 363.9821559398714 --linkedPolynomialMutationDistributionIndex 135.05592356207515 --uniformMutationPerturbation 0.7273477093036995 --nonUniformMutationPerturbation 0.34415213634294417 --selection tournament --selectionTournamentSize 8 \n")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 73 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover wholeArithmetic --crossoverProbability 0.28069785841963524 --crossoverRepairStrategy bounds --sbxDistributionIndex 245.39690846527182 --blxAlphaCrossoverAlphaValue 0.01888966497350019 --mutation linkedPolynomial --mutationProbabilityFactor 1.988935485811351 --mutationRepairStrategy round --polynomialMutationDistributionIndex 260.62137030954744 --linkedPolynomialMutationDistributionIndex 9.076401102943487 --uniformMutationPerturbation 0.16515656717764357 --nonUniformMutationPerturbation 0.9619546810048647 --selection tournament --selectionTournamentSize 7 \n")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new WFG9(), 100, 20000);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZCAT16_2D(), 100, 50000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());

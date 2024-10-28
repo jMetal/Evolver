@@ -6,6 +6,9 @@ import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -42,15 +45,15 @@ public class NSGAIIOptimizingNSGAIIForProblemsZDT {
 
     // Step 1: Select the training set problems  (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6)
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    List<DoubleProblem> trainingSet = List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(),
-        new ZDT6());
-    List<String> referenceFrontFileNames = List.of(
-        "resources/referenceFronts/ZDT1.csv",
-        "resources/referenceFronts/ZDT2.csv",
-        "resources/referenceFronts/ZDT3.csv",
-        "resources/referenceFronts/ZDT4.csv",
-        "resources/referenceFronts/ZDT6.csv");
-    List<Integer> maxEvaluationsPerProblem = List.of(10000, 10000, 10000, 10000, 10000);
+    ProblemFamilyInfo problemFamilyInfo = new ZDTProblemFamilyInfo();
+
+    List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    double trainingEvaluationsPercentage = 0.4;
+    List<Integer> maxEvaluationsPerProblem =
+            problemFamilyInfo.evaluationsToOptimize().stream()
+                    .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
+                    .toList();
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
@@ -86,14 +89,14 @@ public class NSGAIIOptimizingNSGAIIForProblemsZDT {
 
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-        "NSGA-II", configurableProblem, "ZDT", indicators,
-        "RESULTS/NSGAII/ZDT");
+        "NSGA-II", configurableProblem, problemFamilyInfo.name(), indicators,
+        "RESULTS/NSGAII/"+ problemFamilyInfo.name());
 
     var evaluationObserver = new EvaluationObserver(populationSize);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "ZDT", indicators.get(0).name(),
-            indicators.get(1).name(), "ZDT", populationSize);
+            "NSGA-II, " + problemFamilyInfo.name(), indicators.get(0).name(),
+            indicators.get(1).name(), problemFamilyInfo.name(), populationSize);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,

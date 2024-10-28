@@ -8,7 +8,7 @@ import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
 import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
-import org.uma.evolver.problemfamilyinfo.ZCATReducedProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.WFG2DProblemFamilyInfo;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -22,7 +22,6 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zcat.*;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
@@ -36,32 +35,37 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link ConfigurableMOPSO} using problems
- * {@link ZDT1}, {@link ZDT2}, {@link ZDT3}, {@link ZDT4}, and {@link ZDT6} as training set.
+ * DTLZ (3 objectives) as the traininig set
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
+public class NSGAIIOptimizingNSGAIIForProblemsDTLZ3D {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the training set problems  (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6)
+    // Step 1: Select the training set problems
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    ProblemFamilyInfo problemFamilyInfo = new ZCATReducedProblemFamilyInfo();
+    ProblemFamilyInfo problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
 
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
     double trainingEvaluationsPercentage = 0.4;
     List<Integer> maxEvaluationsPerProblem =
-            problemFamilyInfo.evaluationsToOptimize().stream()
-                    .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
-                    .toList();
+        problemFamilyInfo.evaluationsToOptimize().stream()
+            .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
+            .toList();
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
         new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
-    var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
-        trainingSet, referenceFrontFileNames,
-        indicators, maxEvaluationsPerProblem, 1);
+    var configurableProblem =
+        new MultiFocusMetaOptimizationProblem(
+            configurableAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            maxEvaluationsPerProblem,
+            1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -75,33 +79,37 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 5000;
+    int maxEvaluations = 3000;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
-        configurableProblem,
-        populationSize,
-        offspringPopulationSize,
-        crossover,
-        mutation)
-        .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
-        .build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        new NSGAIIBuilder<>(
+                configurableProblem, populationSize, offspringPopulationSize, crossover, mutation)
+            .setTermination(termination)
+            .setEvaluation(new MultiThreadedEvaluation<>(10, configurableProblem))
+            .build();
 
     // Step 4: Create observers for the meta-optimizer
-    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
-            "NSGA-II", configurableProblem, problemFamilyInfo.name(), indicators,
-            "RESULTS/NSGAII/"+ problemFamilyInfo.name());
+    OutputResultsManagementParameters outputResultsManagementParameters =
+        new OutputResultsManagementParameters(
+            "NSGA-II",
+            configurableProblem,
+            problemFamilyInfo.name(),
+            indicators,
+            "RESULTS/NSGAII/" + problemFamilyInfo.name());
 
     var evaluationObserver = new EvaluationObserver(populationSize);
     var frontChartObserver =
-            new FrontPlotObserver<DoubleSolution>(
-                    "NSGA-II, " + problemFamilyInfo.name(), indicators.get(0).name(),
-                    indicators.get(1).name(), problemFamilyInfo.name(), populationSize);
+        new FrontPlotObserver<DoubleSolution>(
+            "NSGA-II, " + problemFamilyInfo.name(),
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            problemFamilyInfo.name(),
+            populationSize);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
-            maxEvaluations, outputResultsManagement);
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(50, maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);

@@ -2,10 +2,12 @@ package org.uma.evolver.configurablealgorithm.validator;
 
 import static smile.math.MathEx.mean;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -16,23 +18,26 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class ConfigurableNSGAIIValidator {
-  public double validate(String[] parameters, ProblemFamilyInfo problemFamilyInfo ) throws IOException {
+  public void validate(String[] parameters, ProblemFamilyInfo problemFamilyInfo, String csvFileName) throws IOException {
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
     int populationSize = 100;
-    int independentRuns = 2;
+    int independentRuns = 15;
 
     QualityIndicator qualityIndicator = new NormalizedHypervolume();
 
     double[][] indicatorValues = new double[trainingSet.size()][independentRuns] ;
     double[] means = new double[trainingSet.size()] ;
+
+    String csvFileHeader = "Problem,RunId,QualityIndicatorValue" ;
+    FileWriter outputFile = openCSVFile(csvFileName);
+    writeHeaderToCSVFile(outputFile, csvFileHeader);
 
     for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
       int maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize().get(problemIndex) ;
@@ -52,18 +57,32 @@ public class ConfigurableNSGAIIValidator {
                         SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
                         referenceFront);
         indicatorValues[problemIndex][run] = qualityIndicatorValue ;
+
         System.out.println("Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
+
+        writeLineToCSVFile(problemIndex, run, trainingSet, qualityIndicatorValue, outputFile);
       }
       means[problemIndex] = mean(indicatorValues[problemIndex]) ;
-      System.out.println("Mean: " + means[problemIndex]) ;
-
+      //System.out.println("Mean: " + means[problemIndex]) ;
     }
 
-    double globalMean = mean(means) ;
-
-    return globalMean;
+    outputFile.close();
   }
 
+  private static void writeLineToCSVFile(int problemIndex, int run, List<DoubleProblem> trainingSet, double qualityIndicatorValue, FileWriter outputFile) throws IOException {
+    String outputLine = ""+ trainingSet.get(problemIndex).name() ;
+    outputLine += ","+ run;
+    outputLine += ","+ qualityIndicatorValue;
+    outputFile.write(outputLine+"\n");
+  }
+
+  private static void writeHeaderToCSVFile(FileWriter outputFile, String csvFileHeader) throws IOException {
+    outputFile.write(csvFileHeader +"\n");
+  }
+
+  private static FileWriter openCSVFile(String csvFileName) throws IOException {
+      return new FileWriter(csvFileName, true);
+  }
 
   private EvolutionaryAlgorithm<DoubleSolution> configureAndBuildNSGAII(
       String[] parameters,
@@ -78,19 +97,6 @@ public class ConfigurableNSGAIIValidator {
     return configurableNSGAII.build();
   }
 
-  private static double[][] getNormalizedReferenceFront(String referenceFrontFileName) {
-    double[][] referenceFront;
-    double[][] normalizedReferenceFront;
-    try {
-      referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
-      normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
-    } catch (IOException e) {
-      throw new JMetalException("The file does not exist", e);
-    }
-
-    return normalizedReferenceFront;
-  }
-
   public double computeQualityIndicator(
       QualityIndicator indicator, double[][] front, double[][] referenceFront) {
     double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
@@ -102,10 +108,5 @@ public class ConfigurableNSGAIIValidator {
 
     indicator.referenceFront(normalizedReferenceFront);
     return indicator.compute(normalizedFront);
-  }
-
-  public static void main(String[] args) throws IOException {
-    double result = new ConfigurableNSGAIIValidator().validate(args, new ZDTProblemFamilyInfo());
-    System.out.println("\nGlobal mean: " + result);
   }
 }

@@ -2,18 +2,20 @@ package org.uma.evolver.problemfamilyinfo;
 
 import java.util.List;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.zcat.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 
-public class ZDTProblemFamilyInfo implements ProblemFamilyInfo {
+public class ZCATReducedProblemFamilyInfo implements ProblemFamilyInfo {
   private static final List<DoubleProblem> problemList =
-      List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
+      List.of(new ZCAT2_2D(), new ZCAT6_2D(), new ZCAT12_2D(), new ZCAT14_2D(),
+              new ZCAT19_2D());
   private static final List<String> referenceFrontFileName =
       List.of(
-          "resources/referenceFronts/ZDT1.csv",
-          "resources/referenceFronts/ZDT2.csv",
-          "resources/referenceFronts/ZDT3.csv",
-          "resources/referenceFronts/ZDT4.csv",
-          "resources/referenceFronts/ZDT6.csv");
+              "resources/referenceFronts/ZCAT2.2D.csv",
+              "resources/referenceFronts/ZCAT6.2D.csv",
+              "resources/referenceFronts/ZCAT12.2D.csv",
+              "resources/referenceFronts/ZCAT14.2D.csv",
+              "resources/referenceFronts/ZCAT19.2D.csv");
 
   private static final List<Integer> evaluationsToOptimize =
       List.of(25000, 25000, 25000, 25000, 25000);
@@ -35,6 +37,6 @@ public class ZDTProblemFamilyInfo implements ProblemFamilyInfo {
 
   @Override
   public String name() {
-    return "ZDT";
+    return "ZCATReduced";
   }
 }

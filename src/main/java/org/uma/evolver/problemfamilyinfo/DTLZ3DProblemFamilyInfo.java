@@ -24,7 +24,12 @@ public class DTLZ3DProblemFamilyInfo implements ProblemFamilyInfo {
 
     private static final List<Integer> evaluationsToOptimize = new ArrayList<>(Collections.nCopies(problemList.size(), 40000));
 
+    @Override
     public List<DoubleProblem> problemList() {return problemList;}
+    @Override
     public List<String> referenceFronts() {return referenceFrontFileName;}
+    @Override
     public List<Integer> evaluationsToOptimize() {return evaluationsToOptimize ;}
+    @Override
+    public String name() {return "DTLZ3D";}
 }
