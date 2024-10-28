@@ -12,7 +12,6 @@ import org.uma.jmetal.util.errorchecking.Check;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  *
- * @param <S>
  */
 public class MultiThreadedMetaOptimizationProblemEvaluation implements Evaluation<DoubleSolution> {
   private int computedEvaluations;

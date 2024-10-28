@@ -1,0 +1,110 @@
+package org.uma.evolver.examples;
+
+import java.io.IOException;
+import java.util.List;
+import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.problem.MetaOptimizationProblem;
+import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
+import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.util.EvaluationObserver;
+import org.uma.evolver.util.OutputResultsManagement;
+import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
+import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
+import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
+import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
+import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+
+/**
+ * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure
+ * {@link ConfigurableNSGAII} using problem {@link DTLZ1} as training set.
+ *
+ * @author Antonio J. Nebro (ajnebro@uma.es)
+ */
+public class AsyncNSGAIIOptimizingMOEADForProblemsDTLZ {
+
+  public static void main(String[] args) throws IOException {
+    String weightVectorFilesDirectory = "resources/weightVectors" ;
+
+    // Step 1: Select the training set problems
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    ProblemFamilyInfo problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+
+    List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    double trainingEvaluationsPercentage = 0.4;
+    List<Integer> maxEvaluationsPerProblem =
+            problemFamilyInfo.evaluationsToOptimize().stream()
+                    .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
+                    .toList();
+
+    // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
+    ConfigurableAlgorithmBuilder configurableAlgorithm =
+            new ConfigurableMOEAD(new FakeDoubleProblem(), 91, 10000, weightVectorFilesDirectory);
+    var configurableProblem =
+            new MultiFocusMetaOptimizationProblem(
+                    configurableAlgorithm,
+                    trainingSet,
+                    referenceFrontFileNames,
+                    indicators,
+                    maxEvaluationsPerProblem,
+                    1);
+
+    // Step 3: Set the parameters for the meta-optimizer (NSGAII)
+    double crossoverProbability = 0.9;
+    double crossoverDistributionIndex = 20.0;
+    var crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+
+    double mutationProbability = 1.0 / configurableProblem.numberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+
+    int populationSize = 50;
+    int maxEvaluations = 3000;
+    int numberOfCores = 128 ;
+
+    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
+        new AsynchronousMultiThreadedNSGAII<>(
+            numberOfCores, configurableProblem, populationSize, crossover, mutation,
+            new TerminationByEvaluations(maxEvaluations));
+
+    // Step 4: Create observers for the meta-optimizer
+    OutputResultsManagementParameters outputResultsManagementParameters = new OutputResultsManagementParameters(
+        "AsyncNSGAII", configurableProblem, problemFamilyInfo.name(), indicators,
+        "RESULTS/AsyncNSGAII/"+problemFamilyInfo.name());
+
+    var evaluationObserver = new EvaluationObserver(50);
+
+    var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
+
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
+        maxEvaluations, outputResultsManagement);
+
+    nsgaii.getObservable().register(evaluationObserver);
+    nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
+
+    // Step 5: Run the meta-optimizer
+    long initTime = System.currentTimeMillis();
+    nsgaii.run();
+    long endTime = System.currentTimeMillis();
+
+    // Step 6: Write results
+    System.out.println("Total computing time: " + (endTime - initTime)) ;
+
+    outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
+    outputResultsManagement.writeResultsToFiles(nsgaii.getResult());
+
+    System.exit(0);
+  }
+}
