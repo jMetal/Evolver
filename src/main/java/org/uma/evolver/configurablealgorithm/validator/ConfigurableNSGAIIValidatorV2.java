@@ -21,7 +21,8 @@ import org.uma.jmetal.util.VectorUtils;
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class ConfigurableNSGAIIValidatorV2 {
-  public void validate(String[] parameters, ProblemFamilyInfo problemFamilyInfo, String csvFileName) throws IOException {
+  public void validate(String[] parameters, ProblemFamilyInfo problemFamilyInfo, String csvFileName)
+      throws IOException {
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
@@ -30,70 +31,136 @@ public class ConfigurableNSGAIIValidatorV2 {
 
     QualityIndicator qualityIndicator = new NormalizedHypervolume();
 
-    double[][] indicatorValues = new double[trainingSet.size()][independentRuns] ;
+    double[][] indicatorValues = new double[trainingSet.size()][independentRuns];
 
-    for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
-      int maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize().get(problemIndex) ;
-      System.out.println("Problem: " + trainingSet.get(problemIndex).getClass().getName());
+    IntStream.range(0, trainingSet.size())
+        .parallel()
+        .forEach(
+            problemIndex -> {
+              int maximumNumberOfEvaluations =
+                  problemFamilyInfo.evaluationsToOptimize().get(problemIndex);
+              System.out.println("Problem: " + trainingSet.get(problemIndex).getClass().getName());
 
-      double[][] referenceFront =
-          VectorUtils.readVectors(referenceFrontFileNames.get(problemIndex), ",");
+              double[][] referenceFront;
+
+              try {
+                referenceFront =
+                    VectorUtils.readVectors(referenceFrontFileNames.get(problemIndex), ",");
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+
+              IntStream.range(0, independentRuns)
+                  .parallel()
+                  .forEach(
+                      run -> {
+                        EvolutionaryAlgorithm<DoubleSolution> nsgaII =
+                            configureAndBuildNSGAII(
+                                parameters,
+                                problemIndex,
+                                trainingSet,
+                                populationSize,
+                                maximumNumberOfEvaluations);
+                        nsgaII.run();
+                        double qualityIndicatorValue =
+                            computeQualityIndicator(
+                                qualityIndicator,
+                                SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
+                                referenceFront);
+                        indicatorValues[problemIndex][run] = qualityIndicatorValue;
+                      });
+
+              for (int run : IntStream.range(0, independentRuns).toArray()) {
+                EvolutionaryAlgorithm<DoubleSolution> nsgaII =
+                    configureAndBuildNSGAII(
+                        parameters,
+                        problemIndex,
+                        trainingSet,
+                        populationSize,
+                        maximumNumberOfEvaluations);
+                nsgaII.run();
+                double qualityIndicatorValue =
+                    computeQualityIndicator(
+                        qualityIndicator,
+                        SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
+                        referenceFront);
+                indicatorValues[problemIndex][run] = qualityIndicatorValue;
+
+                System.out.println(
+                    "Problem " + trainingSet.get(problemIndex).name() + ". Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
+              }
+            });
+    /*
+        for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
+          int maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize().get(problemIndex) ;
+          System.out.println("Problem: " + trainingSet.get(problemIndex).getClass().getName());
+
+          double[][] referenceFront =
+              VectorUtils.readVectors(referenceFrontFileNames.get(problemIndex), ",");
 
 
-      IntStream.range(0, independentRuns).parallel().forEach(run -> {
-        EvolutionaryAlgorithm<DoubleSolution> nsgaII =
+          IntStream.range(0, independentRuns).parallel().forEach(run -> {
+            EvolutionaryAlgorithm<DoubleSolution> nsgaII =
+                    configureAndBuildNSGAII(
+                            parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
+            nsgaII.run();
+            double qualityIndicatorValue =
+                    computeQualityIndicator(
+                            qualityIndicator,
+                            SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
+                            referenceFront);
+            indicatorValues[problemIndex][run] = qualityIndicatorValue ;
+          });
+
+          for (int run : IntStream.range(0, independentRuns).toArray()) {
+            EvolutionaryAlgorithm<DoubleSolution> nsgaII =
                 configureAndBuildNSGAII(
-                        parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
-        nsgaII.run();
-        double qualityIndicatorValue =
-                computeQualityIndicator(
-                        qualityIndicator,
-                        SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
-                        referenceFront);
-        indicatorValues[problemIndex][run] = qualityIndicatorValue ;
-      });
+                    parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
+            nsgaII.run();
+            double qualityIndicatorValue =
+                    computeQualityIndicator(
+                            qualityIndicator,
+                            SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
+                            referenceFront);
+            indicatorValues[problemIndex][run] = qualityIndicatorValue ;
 
-      for (int run : IntStream.range(0, independentRuns).toArray()) {
-        EvolutionaryAlgorithm<DoubleSolution> nsgaII =
-            configureAndBuildNSGAII(
-                parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
-        nsgaII.run();
-        double qualityIndicatorValue =
-                computeQualityIndicator(
-                        qualityIndicator,
-                        SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
-                        referenceFront);
-        indicatorValues[problemIndex][run] = qualityIndicatorValue ;
-
-        System.out.println("Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
-      }
-    }
-
-    String csvFileHeader = "Problem,RunId,QualityIndicatorValue" ;
+            System.out.println("Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
+          }
+        }
+    */
+    String csvFileHeader = "Problem,RunId,QualityIndicatorValue";
     FileWriter outputFile = openCSVFile(csvFileName);
     writeHeaderToCSVFile(outputFile, csvFileHeader);
 
     for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
       for (int run : IntStream.range(0, independentRuns).toArray()) {
-        writeLineToCSVFile(problemIndex, run, trainingSet, indicatorValues[problemIndex][run], outputFile);
+        writeLineToCSVFile(
+            problemIndex, run, trainingSet, indicatorValues[problemIndex][run], outputFile);
       }
     }
     outputFile.close();
   }
 
-  private static void writeLineToCSVFile(int problemIndex, int run, List<DoubleProblem> trainingSet, double qualityIndicatorValue, FileWriter outputFile) throws IOException {
-    String outputLine = ""+ trainingSet.get(problemIndex).name() ;
-    outputLine += ","+ run;
-    outputLine += ","+ qualityIndicatorValue;
-    outputFile.write(outputLine+"\n");
+  private static void writeLineToCSVFile(
+      int problemIndex,
+      int run,
+      List<DoubleProblem> trainingSet,
+      double qualityIndicatorValue,
+      FileWriter outputFile)
+      throws IOException {
+    String outputLine = "" + trainingSet.get(problemIndex).name();
+    outputLine += "," + run;
+    outputLine += "," + qualityIndicatorValue;
+    outputFile.write(outputLine + "\n");
   }
 
-  private static void writeHeaderToCSVFile(FileWriter outputFile, String csvFileHeader) throws IOException {
-    outputFile.write(csvFileHeader +"\n");
+  private static void writeHeaderToCSVFile(FileWriter outputFile, String csvFileHeader)
+      throws IOException {
+    outputFile.write(csvFileHeader + "\n");
   }
 
   private static FileWriter openCSVFile(String csvFileName) throws IOException {
-      return new FileWriter(csvFileName, true);
+    return new FileWriter(csvFileName, true);
   }
 
   private EvolutionaryAlgorithm<DoubleSolution> configureAndBuildNSGAII(

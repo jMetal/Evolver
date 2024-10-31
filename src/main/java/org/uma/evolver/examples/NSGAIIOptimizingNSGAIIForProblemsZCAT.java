@@ -44,7 +44,7 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
 
   public static void main(String[] args) throws IOException {
 
-    // Step 1: Select the training set problems  (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6)
+    // Step 1: Select the training set problems
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     ProblemFamilyInfo problemFamilyInfo = new ZCATReducedProblemFamilyInfo();
 
@@ -85,7 +85,7 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(50, configurableProblem))
         .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -94,17 +94,20 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
             "RESULTS/NSGAII/"+ problemFamilyInfo.name());
 
     var evaluationObserver = new EvaluationObserver(populationSize);
+    /*
     var frontChartObserver =
             new FrontPlotObserver<DoubleSolution>(
                     "NSGA-II, " + problemFamilyInfo.name(), indicators.get(0).name(),
                     indicators.get(1).name(), problemFamilyInfo.name(), populationSize);
+
+     */
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(50,
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
             maxEvaluations, outputResultsManagement);
 
     nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(frontChartObserver);
+    //nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
