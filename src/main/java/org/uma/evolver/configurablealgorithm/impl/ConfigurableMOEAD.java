@@ -68,8 +68,13 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   }
   private DoubleProblem problem ;
 
+  public ConfigurableMOEAD(int populationSize) {
+    this.populationSize = populationSize ;
+    this.configure();
+  }
+
   public ConfigurableMOEAD() {
-    this.configure() ;
+    this(100) ;
   }
 
   public ConfigurableMOEAD(DoubleProblem problem, int populationSize, int maximumNumberOfEvaluations,

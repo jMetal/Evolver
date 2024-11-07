@@ -63,8 +63,13 @@ public class ConfigurableNSGAIIDE implements ConfigurableAlgorithmBuilder {
   private int maximumNumberOfEvaluations;
   private DifferentialEvolutionCrossoverParameter deCrossoverParameter ;
 
+  public ConfigurableNSGAIIDE(int populationSize) {
+    this.populationSize = populationSize ;
+    this.configure();
+  }
+
   public ConfigurableNSGAIIDE() {
-    this.configure() ;
+    this(100) ;
   }
 
   public ConfigurableNSGAIIDE(DoubleProblem problem, int populationSize,

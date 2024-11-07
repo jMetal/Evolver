@@ -57,7 +57,7 @@ public class NSGAIIOptimizingNSGAIIForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
+        new ConfigurableNSGAII(100);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
         trainingSet, referenceFrontFileNames,
         indicators, maxEvaluationsPerProblem, 1);

@@ -13,7 +13,7 @@ public class YamlSMSEMOAParameterDescriptionGenerator {
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator();
     String parameterString = parameterFileGenerator.generateConfiguration(
-        new ConfigurableNSGAII());
+        new ConfigurableNSGAII(100));
     System.out.println(parameterString);
   }
 }

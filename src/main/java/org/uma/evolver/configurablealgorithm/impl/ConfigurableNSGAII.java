@@ -64,8 +64,13 @@ public class ConfigurableNSGAII implements ConfigurableAlgorithmBuilder {
   private int populationSize;
   private int maximumNumberOfEvaluations;
 
+  public ConfigurableNSGAII(int populationSize) {
+    this.populationSize = populationSize ;
+    this.configure();
+  }
+
   public ConfigurableNSGAII() {
-    this.configure() ;
+    this(100) ;
   }
 
   public ConfigurableNSGAII(DoubleProblem problem, int populationSize,

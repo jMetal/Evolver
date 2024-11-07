@@ -87,8 +87,13 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
 
   private DoubleProblem problem ;
 
+  public ConfigurableMOPSO(int archiveSize) {
+    this.archiveSize = archiveSize ;
+    this.configure();
+  }
+
   public ConfigurableMOPSO() {
-    this.configure() ;
+    this(100) ;
   }
 
   public ConfigurableMOPSO(DoubleProblem problem, int archiveSize, int maximumNumberOfEvaluations) {
