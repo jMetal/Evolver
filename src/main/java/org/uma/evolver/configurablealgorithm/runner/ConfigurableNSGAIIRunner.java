@@ -1,6 +1,7 @@
 package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.util.EvaluationObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
@@ -10,6 +11,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
  * Class configuring NSGA-II using arguments in the form (key, value) and the {@link ConfigurableNSGAII}
@@ -21,19 +23,21 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/WFG.2D.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZCAT1.2D.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 73 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover wholeArithmetic --crossoverProbability 0.28069785841963524 --crossoverRepairStrategy bounds --sbxDistributionIndex 245.39690846527182 --blxAlphaCrossoverAlphaValue 0.01888966497350019 --mutation linkedPolynomial --mutationProbabilityFactor 1.988935485811351 --mutationRepairStrategy round --polynomialMutationDistributionIndex 260.62137030954744 --linkedPolynomialMutationDistributionIndex 9.076401102943487 --uniformMutationPerturbation 0.16515656717764357 --nonUniformMutationPerturbation 0.9619546810048647 --selection tournament --selectionTournamentSize 7 \n")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 12 --externalArchive crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9328056669164495 --crossoverRepairStrategy bounds --sbxDistributionIndex 34.75084430605925 --blxAlphaCrossoverAlphaValue 0.0119812674028934 --mutation nonUniform --mutationProbabilityFactor 0.9129840053364019 --mutationRepairStrategy random --polynomialMutationDistributionIndex 229.79958635380098 --linkedPolynomialMutationDistributionIndex 177.0845855820928 --uniformMutationPerturbation 0.5887866999759116 --nonUniformMutationPerturbation 0.1558697609241359 --selection random --selectionTournamentSize 3 \n")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAII(new ZCAT16_2D(), 100, 50000);
+    //var configurableNSGAII = new ConfigurableNSGAII(new ZCAT3(2, 3, true, 1, false, false), 100, 25000);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 25000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = configurableNSGAII.build();
-/*
+
+    /*
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(

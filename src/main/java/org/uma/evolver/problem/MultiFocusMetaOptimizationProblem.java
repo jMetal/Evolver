@@ -146,7 +146,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       }
 
       // Calculate the median per quality index, the mean can improve this if there are high values on some of the problems
-      //medianProblemValues[indicatorIndex] = mean(indicatorPerProblem);
+      //medianProblemValues[indicatorIndex] = median(indicatorPerProblem);
       medianProblemValues[indicatorIndex] = mean(indicatorPerProblem) / (1 + sd(indicatorPerProblem)) ;
     }
 
@@ -199,7 +199,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
     }
 
     for (int i = 0; i < indicators.size(); i++) {
-      medianIndicatorValues[i] = mean(indicatorValues[i]);
+      medianIndicatorValues[i] = median(indicatorValues[i]);
     }
 
     return medianIndicatorValues;

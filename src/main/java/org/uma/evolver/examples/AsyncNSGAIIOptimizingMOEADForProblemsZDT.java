@@ -3,8 +3,10 @@ package org.uma.evolver.examples;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.evolver.util.EvaluationObserver;
@@ -18,22 +20,22 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure
- * {@link ConfigurableNSGAII} using problem {@link DTLZ1} as training set.
+ * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure {@link
+ * ConfigurableNSGAII} using problem {@link DTLZ1} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
+public class AsyncNSGAIIOptimizingMOEADForProblemsZDT {
 
   public static void main(String[] args) throws IOException {
+    String weightVectorFilesDirectory = "resources/weightVectors";
+
     int numberOfCores;
     int runId;
     String outputDirectory ;
@@ -53,16 +55,21 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
     double trainingEvaluationsPercentage = 0.4;
     List<Integer> maxEvaluationsPerProblem =
-            problemFamilyInfo.evaluationsToOptimize().stream()
-                    .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
-                    .toList();
+        problemFamilyInfo.evaluationsToOptimize().stream()
+            .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
+            .toList();
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-            new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
-    var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
-            trainingSet, referenceFrontFileNames,
-            indicators, maxEvaluationsPerProblem, 30);
+        new ConfigurableMOEAD(new FakeDoubleProblem(), 100, 10000, weightVectorFilesDirectory);
+    var configurableProblem =
+        new MultiFocusMetaOptimizationProblem(
+            configurableAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            maxEvaluationsPerProblem,
+            30);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -74,29 +81,32 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 2000;
-    //int numberOfCores = 256 ;
+    int maxEvaluations = 3000;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(
-            numberOfCores, configurableProblem, populationSize, crossover, mutation,
+            numberOfCores,
+            configurableProblem,
+            populationSize,
+            crossover,
+            mutation,
             new TerminationByEvaluations(maxEvaluations));
 
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters =
         new OutputResultsManagementParameters(
-            "AsyncNSGA-II",
+            "AsyncNSGAII",
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                outputDirectory + "/AsyncNSGAIIMOEAD/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
 
-    var evaluationObserver = new EvaluationObserver(100);
+    var evaluationObserver = new EvaluationObserver(50);
 
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,
-        maxEvaluations, outputResultsManagement);
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(50, maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
@@ -107,7 +117,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
     long endTime = System.currentTimeMillis();
 
     // Step 6: Write results
-    System.out.println("Total computing time: " + (endTime - initTime)) ;
+    System.out.println("Total computing time: " + (endTime - initTime));
 
     outputResultsManagement.updateSuffix("." + maxEvaluations + ".csv");
     outputResultsManagement.writeResultsToFiles(nsgaii.getResult());

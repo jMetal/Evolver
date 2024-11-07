@@ -69,65 +69,8 @@ public class ConfigurableNSGAIIValidatorV2 {
                                 referenceFront);
                         indicatorValues[problemIndex][run] = qualityIndicatorValue;
                       });
-
-              for (int run : IntStream.range(0, independentRuns).toArray()) {
-                EvolutionaryAlgorithm<DoubleSolution> nsgaII =
-                    configureAndBuildNSGAII(
-                        parameters,
-                        problemIndex,
-                        trainingSet,
-                        populationSize,
-                        maximumNumberOfEvaluations);
-                nsgaII.run();
-                double qualityIndicatorValue =
-                    computeQualityIndicator(
-                        qualityIndicator,
-                        SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
-                        referenceFront);
-                indicatorValues[problemIndex][run] = qualityIndicatorValue;
-
-                System.out.println(
-                    "Problem " + trainingSet.get(problemIndex).name() + ". Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
-              }
             });
-    /*
-        for (int problemIndex : IntStream.range(0, trainingSet.size()).toArray()) {
-          int maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize().get(problemIndex) ;
-          System.out.println("Problem: " + trainingSet.get(problemIndex).getClass().getName());
 
-          double[][] referenceFront =
-              VectorUtils.readVectors(referenceFrontFileNames.get(problemIndex), ",");
-
-
-          IntStream.range(0, independentRuns).parallel().forEach(run -> {
-            EvolutionaryAlgorithm<DoubleSolution> nsgaII =
-                    configureAndBuildNSGAII(
-                            parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
-            nsgaII.run();
-            double qualityIndicatorValue =
-                    computeQualityIndicator(
-                            qualityIndicator,
-                            SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
-                            referenceFront);
-            indicatorValues[problemIndex][run] = qualityIndicatorValue ;
-          });
-
-          for (int run : IntStream.range(0, independentRuns).toArray()) {
-            EvolutionaryAlgorithm<DoubleSolution> nsgaII =
-                configureAndBuildNSGAII(
-                    parameters, problemIndex, trainingSet, populationSize, maximumNumberOfEvaluations);
-            nsgaII.run();
-            double qualityIndicatorValue =
-                    computeQualityIndicator(
-                            qualityIndicator,
-                            SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
-                            referenceFront);
-            indicatorValues[problemIndex][run] = qualityIndicatorValue ;
-
-            System.out.println("Run: " + run + ". Quality indicator value: " + qualityIndicatorValue);
-          }
-        }
-    */
     String csvFileHeader = "Problem,RunId,QualityIndicatorValue";
     FileWriter outputFile = openCSVFile(csvFileName);
     writeHeaderToCSVFile(outputFile, csvFileHeader);
@@ -148,7 +91,7 @@ public class ConfigurableNSGAIIValidatorV2 {
       double qualityIndicatorValue,
       FileWriter outputFile)
       throws IOException {
-    String outputLine = "" + trainingSet.get(problemIndex).name();
+    String outputLine = trainingSet.get(problemIndex).name();
     outputLine += "," + run;
     outputLine += "," + qualityIndicatorValue;
     outputFile.write(outputLine + "\n");
