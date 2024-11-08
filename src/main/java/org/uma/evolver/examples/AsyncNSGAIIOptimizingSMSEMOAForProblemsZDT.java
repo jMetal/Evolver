@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingSMSEMOAForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableSMSEMOA(new FakeDoubleProblem(), 100, 10000);
+        new ConfigurableSMSEMOA();
     var configurableProblem =
         new MultiFocusMetaOptimizationProblem(
             configurableAlgorithm,
@@ -67,7 +67,7 @@ public class AsyncNSGAIIOptimizingSMSEMOAForProblemsZDT {
             referenceFrontFileNames,
             indicators,
             maxEvaluationsPerProblem,
-            30);
+            1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -79,7 +79,7 @@ public class AsyncNSGAIIOptimizingSMSEMOAForProblemsZDT {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 3000;
+    int maxEvaluations = 2000;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(

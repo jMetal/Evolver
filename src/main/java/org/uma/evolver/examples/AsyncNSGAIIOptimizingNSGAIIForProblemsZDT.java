@@ -39,7 +39,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
     String outputDirectory ;
 
     if (args.length != 3) {
-      throw new JMetalException("Arguments required: runId, number of cores");
+      throw new JMetalException("Arguments required: runId, number of cores, output directory");
     } else {
       runId = Integer.valueOf(args[0]);
       numberOfCores = Integer.valueOf((args[1]));
@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-            new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
+            new ConfigurableNSGAII();
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
             trainingSet, referenceFrontFileNames,
             indicators, maxEvaluationsPerProblem, 30);
@@ -74,7 +74,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 2000;
+    int maxEvaluations = 3000;
     //int numberOfCores = 256 ;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
@@ -92,7 +92,6 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
                 outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
-
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,

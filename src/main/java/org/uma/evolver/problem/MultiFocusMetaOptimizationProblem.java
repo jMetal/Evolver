@@ -6,6 +6,7 @@ import static smile.math.MathEx.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
@@ -169,10 +170,16 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
           .parse(parameterArray)
           .build();
 
+      String conf = problems.get(problemId).name() + ": " ;
+      for (String s: parameterArray) {
+        conf +=  s + " " ;
+      }
+      System.out.println(conf) ;
+
       algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-      nonDominatedSolutions.addAll((List<DoubleSolution>) algorithm.result());
+      nonDominatedSolutions.addAll(algorithm.result());
 
       double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
       if (front[0].length != referenceFronts.get(problemId)[0].length) {

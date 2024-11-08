@@ -2,7 +2,10 @@ package org.uma.evolver.configurablealgorithm.runner;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -17,13 +20,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOPSORunner {
 
   public static void main(String[] args) {
-    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
 
     String[] parameters =
-        ("--swarmSize 19 --leaderArchive crowdingDistanceArchive --algorithmResult leaderArchive --swarmInitialization scatterSearch --velocityInitialization SPSO2007VelocityInitialization --perturbation frequencySelectionMutationBasedPerturbation --mutation polynomial --mutationProbabilityFactor 0.08415887039602549 --mutationRepairStrategy round --polynomialMutationDistributionIndex 271.4522983377646 --linkedPolynomialMutationDistributionIndex 332.2989831527132 --uniformMutationPerturbation 0.5608130133317952 --nonUniformMutationPerturbation 0.6904700751660505 --frequencyOfApplicationOfMutationOperator 5 --inertiaWeightComputingStrategy linearDecreasingValue --weight 0.20269630637961966 --weightMin 0.3457170849465286 --weightMax 0.8953078972002195 --weightMin 0.14590266255096423 --weightMax 0.5373935218552816 --weightMin 0.3115675915591012 --weightMax 0.7767325892064336 --velocityUpdate constrainedVelocityUpdate --c1Min 1.3405600058860245 --c1Max 2.362687039410096 --c2Min 1.9106349910197937 --c2Max 2.6118720571077683 --localBestInitialization defaultLocalBestInitialization --globalBestInitialization defaultGlobalBestInitialization --globalBestSelection tournament --selectionTournamentSize 9 --globalBestUpdate defaultGlobalBestUpdate --localBestUpdate defaultLocalBestUpdate --positionUpdate defaultPositionUpdate --velocityChangeWhenLowerLimitIsReached -0.6241310786886691 --velocityChangeWhenUpperLimitIsReached 0.12282155624462687 \n")
+        ("--swarmSize 145 --leaderArchive crowdingDistanceArchive --algorithmResult leaderArchive --swarmInitialization scatterSearch --velocityInitialization SPSO2011VelocityInitialization --perturbation frequencySelectionMutationBasedPerturbation --mutation nonUniform --mutationProbabilityFactor 0.03566121960270807 --mutationRepairStrategy random --polynomialMutationDistributionIndex 361.10340057213523 --linkedPolynomialMutationDistributionIndex 84.76657256846384 --uniformMutationPerturbation 0.7750088626631135 --nonUniformMutationPerturbation 0.5950092299356947 --frequencyOfApplicationOfMutationOperator 6 --inertiaWeightComputingStrategy linearDecreasingValue --weight 0.40323860712257964 --weightMin 0.41585315035081083 --weightMax 0.8311424052682814 --weightMin 0.29736089576010316 --weightMax 0.875583268755388 --weightMin 0.45844201746847146 --weightMax 0.9787357050196652 --velocityUpdate constrainedVelocityUpdate --c1Min 1.7725435766277897 --c1Max 2.1738973339591934 --c2Min 1.7667947437605462 --c2Max 2.108236667520124 --localBestInitialization defaultLocalBestInitialization --globalBestInitialization defaultGlobalBestInitialization --globalBestSelection random --selectionTournamentSize 9 --globalBestUpdate defaultGlobalBestUpdate --localBestUpdate defaultLocalBestUpdate --positionUpdate defaultPositionUpdate --velocityChangeWhenLowerLimitIsReached 0.8770617275038382 --velocityChangeWhenUpperLimitIsReached -0.24164697200601226 \n")
             .split("\\s+");
 
-    var autoMOPSO = new ConfigurableMOPSO(new ZDT4(), 100, 15000);
+    var autoMOPSO = new ConfigurableMOPSO(new ZDT1(), 100, 20000);
     autoMOPSO.parse(parameters);
 
     ConfigurableMOPSO.print(autoMOPSO.configurableParameterList());

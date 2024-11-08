@@ -23,14 +23,14 @@ public class ConfigurableNSGAIIRunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/ZCAT1.2D.csv";
+    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 12 --externalArchive crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9328056669164495 --crossoverRepairStrategy bounds --sbxDistributionIndex 34.75084430605925 --blxAlphaCrossoverAlphaValue 0.0119812674028934 --mutation nonUniform --mutationProbabilityFactor 0.9129840053364019 --mutationRepairStrategy random --polynomialMutationDistributionIndex 229.79958635380098 --linkedPolynomialMutationDistributionIndex 177.0845855820928 --uniformMutationPerturbation 0.5887866999759116 --nonUniformMutationPerturbation 0.1558697609241359 --selection random --selectionTournamentSize 3 \n")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 10 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.47994944680723284 --crossoverRepairStrategy round --sbxDistributionIndex 365.2767225430345 --blxAlphaCrossoverAlphaValue 0.14891612183061093 --mutation linkedPolynomial --mutationProbabilityFactor 1.8703648764200105 --mutationRepairStrategy round --polynomialMutationDistributionIndex 236.6837710963203 --linkedPolynomialMutationDistributionIndex 23.98530434012288 --uniformMutationPerturbation 0.22065671325162176 --nonUniformMutationPerturbation 0.246866028371924 --selection random --selectionTournamentSize 3 \n")
             .split("\\s+");
 
     //var configurableNSGAII = new ConfigurableNSGAII(new ZCAT3(2, 3, true, 1, false, false), 100, 25000);
-    var configurableNSGAII = new ConfigurableNSGAII(new ZDT4(), 100, 25000);
+    var configurableNSGAII = new ConfigurableNSGAII(new ZDT1(), 100, 25000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());
