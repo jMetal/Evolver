@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-            new ConfigurableNSGAII();
+            new ConfigurableNSGAII(100);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
             trainingSet, referenceFrontFileNames,
             indicators, maxEvaluationsPerProblem, 30);
@@ -75,7 +75,6 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
 
     int populationSize = 50;
     int maxEvaluations = 3000;
-    //int numberOfCores = 256 ;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(

@@ -170,12 +170,13 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
           .parse(parameterArray)
           .build();
 
+      /*
       String conf = problems.get(problemId).name() + ": " ;
       for (String s: parameterArray) {
         conf +=  s + " " ;
       }
       System.out.println(conf) ;
-
+*/
       algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();

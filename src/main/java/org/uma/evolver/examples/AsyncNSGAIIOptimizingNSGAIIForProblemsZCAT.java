@@ -34,14 +34,16 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZCAT {
 
   public static void main(String[] args) throws IOException {
 
-    int numberOfCores ;
-    int runId ;
+    int numberOfCores;
+    int runId;
+    String outputDirectory ;
 
-    if (args.length != 2) {
-      throw new JMetalException("Arguments required: runId, number of cores") ;
+    if (args.length != 3) {
+      throw new JMetalException("Arguments required: runId, number of cores, output directory");
     } else {
-      runId = Integer.valueOf(args[0]) ;
-      numberOfCores = Integer.valueOf((args[1])) ;
+      runId = Integer.valueOf(args[0]);
+      numberOfCores = Integer.valueOf((args[1]));
+      outputDirectory = args[2] ;
     }
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -57,7 +59,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZCAT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-            new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
+            new ConfigurableNSGAII(100);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
             trainingSet, referenceFrontFileNames,
             indicators, maxEvaluationsPerProblem, 30);
