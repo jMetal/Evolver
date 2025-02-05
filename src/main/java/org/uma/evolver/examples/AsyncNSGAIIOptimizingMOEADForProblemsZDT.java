@@ -61,7 +61,7 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableMOEAD(new FakeDoubleProblem(), 100, 10000, weightVectorFilesDirectory);
+        new ConfigurableMOEAD(100, weightVectorFilesDirectory);
     var configurableProblem =
         new MultiFocusMetaOptimizationProblem(
             configurableAlgorithm,
@@ -99,14 +99,14 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsZDT {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIIMOEAD/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                outputDirectory + "/AsyncNSGAIIMOEAD/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(100);
 
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(50, maxEvaluations, outputResultsManagement);
+        new WriteExecutionDataToFilesObserver(100, maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);

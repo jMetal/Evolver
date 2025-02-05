@@ -88,7 +88,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZDT {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);

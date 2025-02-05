@@ -3,7 +3,9 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAIIDE;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -21,14 +23,14 @@ public class ConfigurableNSGAIIDERunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
-    var problem = new LZ09F2() ;
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    var problem = new DTLZ1() ;
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 50 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 400 --variation differentialEvolutionVariation --mutation polynomial --mutationProbabilityFactor 0.3078378639100489 --mutationRepairStrategy round --polynomialMutationDistributionIndex 11.087446774461819 --linkedPolynomialMutationDistributionIndex 291.0607557101411 --uniformMutationPerturbation 0.3059430679532979 --nonUniformMutationPerturbation 0.046036075207529996 --differentialEvolutionCrossover RAND_1_BIN --CR 1.0 --F 0.5 \n")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 177 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 20 --variation differentialEvolutionVariation --mutation polynomial --mutationProbabilityFactor 0.5226121847727929 --mutationRepairStrategy round --polynomialMutationDistributionIndex 375.50428453945534 --linkedPolynomialMutationDistributionIndex 17.138525721366843 --uniformMutationPerturbation 0.8535363298400096 --nonUniformMutationPerturbation 0.1293021691338726 --differentialEvolutionCrossover RAND_1_EXP --CR 0.6129492681665641 --F 0.40136315469564954 \n")
             .split("\\s+");
 
-    var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 250000);
+    var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 40000);
     configurableNSGAII.parse(parameters);
 
     ConfigurableNSGAII.print(configurableNSGAII.configurableParameterList());

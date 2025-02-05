@@ -148,7 +148,7 @@ public class ConfigurableNSGAIIGADE implements ConfigurableAlgorithmBuilder {
         new RealParameter("nonUniformMutationPerturbation", 0.0, 1.0);
     mutationParameter.addSpecificParameter("nonUniform", nonUniformMutationPerturbation);
 
-    variationParameter = new VariationParameter(List.of("crossoverAndMutationVariation"));
+    variationParameter = new VariationParameter(List.of("crossoverAndMutationVariation", "differentialEvolutionVariation"));
     variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
     variationParameter.addSpecificParameter("differentialEvolutionVariation", deCrossoverParameter);
 

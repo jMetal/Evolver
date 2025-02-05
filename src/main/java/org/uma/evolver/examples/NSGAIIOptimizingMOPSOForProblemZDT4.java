@@ -68,7 +68,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
         crossover,
         mutation)
         .setTermination(termination)
-        .setEvaluation(new MultiThreadedEvaluation<>(8, configurableProblem))
+        .setEvaluation(new MultiThreadedEvaluation<>(1, configurableProblem))
         .build();
 
     // Step 4: Create observers for the meta-optimizer

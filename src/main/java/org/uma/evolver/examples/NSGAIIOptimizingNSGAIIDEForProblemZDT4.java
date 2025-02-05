@@ -17,9 +17,11 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -35,13 +37,13 @@ public class NSGAIIOptimizingNSGAIIDEForProblemZDT4 {
   public static void main(String[] args) throws IOException {
 
     // Step 1: Select the target problem
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZDT4();
-    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZCAT1();
+    String referenceFrontFileName = "resources/referenceFronts/ZCAT1.3D.csv";
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAIIDE})
     ConfigurableAlgorithmBuilder configurableAlgorithm = new ConfigurableNSGAIIDE(
-        problemWhoseConfigurationIsSearchedFor, 100, 10000);
+        problemWhoseConfigurationIsSearchedFor, 100, 50000);
     var configurableProblem = new MetaOptimizationProblem(configurableAlgorithm,
         referenceFrontFileName,
         indicators, 1);
@@ -76,7 +78,7 @@ public class NSGAIIOptimizingNSGAIIDEForProblemZDT4 {
         "NSGA-II", configurableProblem, problemWhoseConfigurationIsSearchedFor.name(), indicators,
         "RESULTS/NSGAIIDE/" + problemWhoseConfigurationIsSearchedFor.name());
 
-    var evaluationObserver = new EvaluationObserver(1);
+    var evaluationObserver = new EvaluationObserver(100);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
             "NSGA-II, " + problemWhoseConfigurationIsSearchedFor.name(), indicators.get(0).name(),

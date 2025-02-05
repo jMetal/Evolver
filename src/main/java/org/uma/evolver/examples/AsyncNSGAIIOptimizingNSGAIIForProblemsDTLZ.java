@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-            new ConfigurableNSGAII(91);
+            new ConfigurableNSGAII(100);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
             trainingSet, referenceFrontFileNames,
             indicators, maxEvaluationsPerProblem, 30);
@@ -88,7 +88,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsDTLZ {
                     configurableProblem,
                     problemFamilyInfo.name(),
                     indicators,
-                    outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                    outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);

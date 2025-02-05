@@ -58,10 +58,10 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOPSO})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableNSGAII(new FakeDoubleProblem(), 100, 10000);
+        new ConfigurableNSGAII(100);
     var configurableProblem = new MultiFocusMetaOptimizationProblem(configurableAlgorithm,
         trainingSet, referenceFrontFileNames,
-        indicators, maxEvaluationsPerProblem, 30);
+        indicators, maxEvaluationsPerProblem, 1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -75,7 +75,7 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
     int populationSize = 50;
     int offspringPopulationSize = 50;
 
-    int maxEvaluations = 5000;
+    int maxEvaluations = 1000;
     Termination termination = new TerminationByEvaluations(maxEvaluations);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = new NSGAIIBuilder<>(
@@ -94,13 +94,13 @@ public class NSGAIIOptimizingNSGAIIForProblemsZCAT {
             "RESULTS/NSGAII/"+ problemFamilyInfo.name());
 
     var evaluationObserver = new EvaluationObserver(populationSize);
-    /*
+
     var frontChartObserver =
             new FrontPlotObserver<DoubleSolution>(
                     "NSGA-II, " + problemFamilyInfo.name(), indicators.get(0).name(),
                     indicators.get(1).name(), problemFamilyInfo.name(), populationSize);
 
-     */
+
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100,

@@ -88,7 +88,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsZCAT {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-            "RESULTS/AsyncNSGAII/"+problemFamilyInfo.name() + "." + runId);
+                outputDirectory + "/AsyncNSGAIINSGAII/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
 

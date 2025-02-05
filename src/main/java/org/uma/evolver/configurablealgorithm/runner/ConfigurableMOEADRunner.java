@@ -3,7 +3,7 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -20,14 +20,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADRunner {
 
   public static void main(String[] args) {
-    DoubleProblem problem = new ZDT4() ;
-    String referenceFrontFileName = "resources/referenceFronts/ZDT2.csv";
+    DoubleProblem problem = new DTLZ1() ;
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 44 --maximumNumberOfReplacedSolutions 4 --aggregationFunction tschebyscheff --normalizeObjectives 0 --epsilonParameterForNormalizing 0.21012411098985556 --pbiTheta 133.10287690724581 --algorithmResult externalArchive --externalArchive crowdingDistanceArchive --createInitialSolutions random --variation differentialEvolutionVariation --mutation linkedPolynomial --mutationProbabilityFactor 0.532370620337721 --mutationRepairStrategy round --polynomialMutationDistributionIndex 93.23986564248162 --linkedPolynomialMutationDistributionIndex 13.921818175200437 --uniformMutationPerturbation 0.611275291771117 --nonUniformMutationPerturbation 0.05785527642264886 --crossover BLX_ALPHA --crossoverProbability 0.30594800599269417 --crossoverRepairStrategy random --sbxDistributionIndex 257.5524927853928 --blxAlphaCrossoverAlphaValue 0.9690019845193056 --differentialEvolutionCrossover RAND_1_BIN --CR 0.2991777818966997 --F 0.9917964889392291 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.7997710746761074 \n")
+        ("--neighborhoodSize 17 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives 0 --epsilonParameterForNormalizing 16.74427554837178 --pbiTheta 102.33621092188483 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.365757626005199 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 330.9192060953075 --linkedPolynomialMutationDistributionIndex 259.6234057548009 --uniformMutationPerturbation 0.25039687229006147 --nonUniformMutationPerturbation 0.06369128222969085 --crossover SBX --crossoverProbability 0.7718296929024707 --crossoverRepairStrategy random --sbxDistributionIndex 39.14026628165764 --blxAlphaCrossoverAlphaValue 0.9664474833035351 --differentialEvolutionCrossover RAND_1_BIN --CR 0.16954180521284054 --F 0.996915805902218 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.6398452490955031 \n")
             .split("\\s+");
 
-    var autoMOEAD = new ConfigurableMOEAD(problem, 100, 25000,
+    var autoMOEAD = new ConfigurableMOEAD(problem, 100, 40000,
         "resources/weightVectors");
     autoMOEAD.parse(parameters);
 

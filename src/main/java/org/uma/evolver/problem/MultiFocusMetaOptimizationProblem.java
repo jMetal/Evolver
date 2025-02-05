@@ -6,19 +6,21 @@ import static smile.math.MathEx.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.fileoutput.SolutionListOutput;
+import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProblem {
 
@@ -96,7 +98,6 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       } catch (IOException e) {
         throw new JMetalException("The file does not exist", e);
       }
-      //normalizedReferenceFronts.add(NormalizeUtils.normalize(referenceFront));
     }
   }
 
@@ -147,8 +148,8 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
       }
 
       // Calculate the median per quality index, the mean can improve this if there are high values on some of the problems
-      //medianProblemValues[indicatorIndex] = median(indicatorPerProblem);
-      medianProblemValues[indicatorIndex] = mean(indicatorPerProblem) / (1 + sd(indicatorPerProblem)) ;
+      medianProblemValues[indicatorIndex] = mean(indicatorPerProblem);
+      //medianProblemValues[indicatorIndex] = mean(indicatorPerProblem) / (1 + sd(indicatorPerProblem)) ;
     }
 
     // Update the solution's objectives
@@ -176,7 +177,7 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
         conf +=  s + " " ;
       }
       System.out.println(conf) ;
-*/
+     */
       algorithm.run();
 
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
@@ -188,21 +189,46 @@ public class MultiFocusMetaOptimizationProblem extends BaseMetaOptimizationProbl
             + front[0].length + " is not equals to the reference front dimension: "
             + referenceFronts.get(problemId)[0].length);
       }
-
       double[][] normalizedFront =
           NormalizeUtils.normalize(
               front,
               NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)),
               NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)));
 
-      IntStream.range(0, indicators.size()).forEach(index -> {
-        indicators.get(index).referenceFront(normalizedReferenceFronts.get(problemId));
-      });
+      //IntStream.range(0, indicators.size()).forEach(index -> {
+      //  indicators.get(index).referenceFront(normalizedReferenceFronts.get(problemId));
+      //});
 
       for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
-        QualityIndicator indicator = indicators.get(indicatorId);
+        QualityIndicator indicator = indicators.get(indicatorId).newInstance();
         indicator.referenceFront(normalizedReferenceFronts.get(problemId));
         indicatorValues[indicatorId][runId] = indicator.compute(normalizedFront);
+        /*
+        if (indicatorId == 1) {
+          System.out.println("ProblemID: " + problems.get(problemId).name());
+          System.out.println("HV reference front: " + new PISAHypervolume(normalizedReferenceFronts.get(problemId)).compute(normalizedReferenceFronts.get(problemId))) ;
+        }
+*/
+
+        if (indicatorValues[indicatorId][runId] < 0) {
+          System.out.println("ProblemID: " + problems.get(problemId).name()) ;
+          System.out.println("Indicator value: " + indicatorValues[indicatorId][runId]) ;
+
+          QualityIndicator hv = new PISAHypervolume(normalizedReferenceFronts.get(problemId)) ;
+          System.out.println("HV: " + hv.compute(normalizedFront)) ;
+
+          String conf = problems.get(problemId).name() + ": " ;
+          for (String s: parameterArray) {
+            conf +=  s + " " ;
+          }
+          System.out.println(conf) ;
+          new SolutionListOutput(nonDominatedSolutions.solutions())
+                  .setVarFileOutputContext(new DefaultFileOutputContext("VAR-NEGATIVE.csv", ","))
+                  .setFunFileOutputContext(new DefaultFileOutputContext("FUN-NEGATIVE.csv", ","))
+                  .print();
+
+          System.exit(-1) ;
+        }
       }
     }
 

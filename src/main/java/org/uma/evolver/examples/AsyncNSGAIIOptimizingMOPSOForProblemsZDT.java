@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableMOPSO(new FakeDoubleProblem(), 100, 10000);
+        new ConfigurableMOPSO(100);
     var configurableProblem =
         new MultiFocusMetaOptimizationProblem(
             configurableAlgorithm,
@@ -97,7 +97,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
 

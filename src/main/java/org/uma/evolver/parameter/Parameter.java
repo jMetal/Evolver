@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.evolver.parameter.catalogue.CrossoverParameter;
 import org.uma.evolver.parameter.catalogue.MutationParameter;
@@ -104,7 +105,13 @@ public abstract class Parameter<T> {
   }
 
   public void addSpecificParameter(String dependsOn, Parameter<?> parameter) {
-    specificParameters.add(new ImmutablePair<>(dependsOn, parameter));
+    Pair<String, Parameter<?>> param = specificParameters.stream().filter(pair -> pair.getRight().equals(parameter)).findAny().orElse(null) ;
+    //if (param !=null) {
+      //System.out.println("----" + param.getLeft() + ", " + param.getRight()) ;
+    //  ((MutablePair<String, Parameter<?>>)param).setLeft(param.getLeft()+"\",\""+dependsOn);
+    //} else {
+      specificParameters.add(new MutablePair<>(dependsOn, parameter));
+    //}
   }
 
   public List<Parameter<?>> globalParameters() {

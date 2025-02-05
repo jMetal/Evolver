@@ -39,7 +39,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsDTLZ {
     String outputDirectory ;
 
     if (args.length != 3) {
-      throw new JMetalException("Arguments required: runId, number of cores");
+      throw new JMetalException("Arguments required: runId, number of cores outputdirectory");
     } else {
       runId = Integer.valueOf(args[0]);
       numberOfCores = Integer.valueOf((args[1]));
@@ -59,7 +59,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableMOPSO(91);
+        new ConfigurableMOPSO(100);
     var configurableProblem =
         new MultiFocusMetaOptimizationProblem(
             configurableAlgorithm,
@@ -97,7 +97,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsDTLZ {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
+                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".MEAN." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
 

@@ -259,7 +259,7 @@ public class ConfigurableSMSEMOA implements ConfigurableAlgorithmBuilder {
       /**
        * Constructor
        *
-       * @param name                      Algorithm name
+       * @param name Algorithm name
        * @param initialPopulationCreation
        * @param evaluation
        * @param termination
