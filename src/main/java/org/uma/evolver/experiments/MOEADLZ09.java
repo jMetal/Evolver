@@ -4,36 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.lab.experiment.Experiment;
 import org.uma.jmetal.lab.experiment.ExperimentBuilder;
-import org.uma.jmetal.lab.experiment.component.impl.ComputeQualityIndicators;
-import org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms;
-import org.uma.jmetal.lab.experiment.component.impl.GenerateFriedmanHolmTestTables;
-import org.uma.jmetal.lab.experiment.component.impl.GenerateHtmlPages;
-import org.uma.jmetal.lab.experiment.component.impl.GenerateLatexTablesWithStatistics;
-import org.uma.jmetal.lab.experiment.component.impl.GenerateWilcoxonTestTablesWithR;
+import org.uma.jmetal.lab.experiment.component.impl.*;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
-import org.uma.jmetal.lab.visualization.StudyVisualizer;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.*;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG4;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG5;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG6;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG7;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG8;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG9;
+import org.uma.jmetal.problem.multiobjective.lz09.*;
+import org.uma.jmetal.problem.multiobjective.uf.*;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -41,10 +25,12 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.Check;
 
-public class MOEADDTLZ3D {
+public class MOEADLZ09 {
 
   private static final int INDEPENDENT_RUNS = 30;
-  private static final String weightVectorDirectory = "resources/weightVectors" ;
+  private static final int MAXIMUM_NUMBER_OF_EVALUATIONS = 175000;
+
+  private static final String WEIGHT_VECTOR_DIRECTORY = "resources/weightVectors" ;
 
   public static void main(String[] args) throws IOException {
     Check.that(args.length == 1, "Missing argument: experimentBaseDirectory");
@@ -53,31 +39,32 @@ public class MOEADDTLZ3D {
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
 
+    problemList.add(new ExperimentProblem<>(new LZ09F1()).setReferenceFront("LZ09_F1.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F2()).setReferenceFront("LZ09_F2.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F3()).setReferenceFront("LZ09_F3.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F4()).setReferenceFront("LZ09_F4.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F5()).setReferenceFront("LZ09_F5.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F6()).setReferenceFront("LZ09_F6.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F7()).setReferenceFront("LZ09_F7.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F8()).setReferenceFront("LZ09_F8.csv"));
+    problemList.add(new ExperimentProblem<>(new LZ09F9()).setReferenceFront("LZ09_F9.csv"));
+    problemList.add((new ExperimentProblem<>(new UF1())));
+    problemList.add((new ExperimentProblem<>(new UF2())));
+    problemList.add((new ExperimentProblem<>(new UF3())));
+    problemList.add((new ExperimentProblem<>(new UF4())));
+    problemList.add((new ExperimentProblem<>(new UF5())));
+    problemList.add((new ExperimentProblem<>(new UF6())));
+    problemList.add((new ExperimentProblem<>(new UF7())));
+    problemList.add((new ExperimentProblem<>(new UF8())));
+    problemList.add((new ExperimentProblem<>(new UF9())));
+    problemList.add((new ExperimentProblem<>(new UF10())));
 
-    problemList.add(new ExperimentProblem<>(new DTLZ1()).setReferenceFront("DTLZ1.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ2()).setReferenceFront("DTLZ2.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ3()).setReferenceFront("DTLZ3.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ4()).setReferenceFront("DTLZ4.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ5()).setReferenceFront("DTLZ5.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ6()).setReferenceFront("DTLZ6.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ7()).setReferenceFront("DTLZ7.3D.csv"));
-
-
-    problemList.add(new ExperimentProblem<>(new WFG1(2,4,3)).setReferenceFront("WFG1.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG2(2,4,3)).setReferenceFront("WFG2.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG3(2,4,3)).setReferenceFront("WFG3.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG4(2,4,3)).setReferenceFront("WFG4.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG5(2,4,3)).setReferenceFront("WFG5.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG6(2,4,3)).setReferenceFront("WFG6.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG7(2,4,3)).setReferenceFront("WFG7.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG8(2,4,3)).setReferenceFront("WFG8.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG9(2,4,3)).setReferenceFront("WFG9.3D.csv"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
         configureAlgorithmList(problemList);
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("MOEADDTLZ3DGECCO2025")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("MOEADLZ09GECCO-2-7-9-2025")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setReferenceFrontDirectory("resources/referenceFrontsCSV")
@@ -131,8 +118,8 @@ public class MOEADDTLZ3D {
             + " --maximumNumberOfReplacedSolutions 2 "
             + "--aggregationFunction penaltyBoundaryIntersection "
             + "--pbiTheta 5.0 "
-            + "--normalizeObjectives False "
             + "--sequenceGenerator permutation "
+            + "--normalizeObjectives False "
             + "--algorithmResult population "
             + "--createInitialSolutions random "
             + "--variation crossoverAndMutationVariation "
@@ -149,9 +136,8 @@ public class MOEADDTLZ3D {
             .split("\\s+");
 
     int populationSize = 100;
-    int maximumNumberOfEvaluations = 40000;
     ConfigurableMOEAD moead = new ConfigurableMOEAD(
-        (DoubleProblem) experimentProblem.getProblem(), populationSize, maximumNumberOfEvaluations, weightVectorDirectory);
+        (DoubleProblem) experimentProblem.getProblem(), populationSize, MAXIMUM_NUMBER_OF_EVALUATIONS, WEIGHT_VECTOR_DIRECTORY);
     moead.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> algorithm = moead.build();
@@ -185,9 +171,8 @@ public class MOEADDTLZ3D {
                     .split("\\s+");
 
     int populationSize = 100;
-    int maximumNumberOfEvaluations = 40000;
     ConfigurableMOEAD moead = new ConfigurableMOEAD(
-            (DoubleProblem) experimentProblem.getProblem(), populationSize, maximumNumberOfEvaluations, weightVectorDirectory);
+            (DoubleProblem) experimentProblem.getProblem(), populationSize, MAXIMUM_NUMBER_OF_EVALUATIONS, WEIGHT_VECTOR_DIRECTORY);
     moead.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> algorithm = moead.build();
@@ -203,13 +188,12 @@ public class MOEADDTLZ3D {
         ("--referenceFrontFileName "
                 + experimentProblem.getReferenceFront()
                 + " "
-                + "--neighborhoodSize 34 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives True  --sequenceGenerator permutation --epsilonParameterForNormalizing 12.999310113949335 --pbiTheta 11.884564010591339 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions random --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.5581797053552503 --mutationRepairStrategy random --polynomialMutationDistributionIndex 41.740088532762925 --linkedPolynomialMutationDistributionIndex 156.33177957980624 --uniformMutationPerturbation 0.25573065645872584 --nonUniformMutationPerturbation 0.3310332522353208 --crossover BLX_ALPHA --crossoverProbability 0.7685659656528498 --crossoverRepairStrategy random --sbxDistributionIndex 184.70902034186506 --blxAlphaCrossoverAlphaValue 0.35323608962356984 --differentialEvolutionCrossover RAND_1_BIN --CR 0.13271870623647516 --F 0.9785205199810745 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.017056921280592524\n ")
+                + "--neighborhoodSize 20 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives True --epsilonParameterForNormalizing 1.0173142889333502 --pbiTheta 158.4813181794043 --sequenceGenerator integerSequence --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions scatterSearch --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.26948068961451727 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 28.240701251515937 --linkedPolynomialMutationDistributionIndex 222.08033048650782 --uniformMutationPerturbation 0.4558597275173921 --nonUniformMutationPerturbation 0.2239303081543158 --crossover BLX_ALPHA --crossoverProbability 0.9213553972423311 --crossoverRepairStrategy random --sbxDistributionIndex 44.073441743986095 --blxAlphaCrossoverAlphaValue 0.15639673821508548 --differentialEvolutionCrossover RAND_1_EXP --CR 0.9671368690347983 --F 0.6287597610846296 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.9070189421470535")
             .split("\\s+");
 
     int populationSize = 100;
-    int maximumNumberOfEvaluations = 40000;
     ConfigurableMOEAD moead = new ConfigurableMOEAD(
-            (DoubleProblem) experimentProblem.getProblem(), populationSize, maximumNumberOfEvaluations, weightVectorDirectory);
+            (DoubleProblem) experimentProblem.getProblem(), populationSize, MAXIMUM_NUMBER_OF_EVALUATIONS, WEIGHT_VECTOR_DIRECTORY);
     moead.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> algorithm = moead.build();

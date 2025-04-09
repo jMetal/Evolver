@@ -3,10 +3,7 @@ package org.uma.evolver.configurablealgorithm.runner;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
+import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -20,14 +17,14 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADForSolving3DProblemRunner {
 
   public static void main(String[] args) {
-    DoubleProblem problem = new DTLZ3() ;
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+    DoubleProblem problem = new DTLZ2Minus();
+    String referenceFrontFileName = "resources/referenceFrontsCSV/DTLZ3.3D.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 28 --maximumNumberOfReplacedSolutions 3 --aggregationFunction modifiedTschebyscheff --normalizeObjectives 0 --epsilonParameterForNormalizing 18.91825688344554 --pbiTheta 27.002664367792633 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions random --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.71805645059367 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.64807007261866 --linkedPolynomialMutationDistributionIndex 290.7168861207539 --uniformMutationPerturbation 0.758623725468837 --nonUniformMutationPerturbation 0.5342853911732168 --crossover BLX_ALPHA --crossoverProbability 0.24596337969888932 --crossoverRepairStrategy round --sbxDistributionIndex 117.47879046272575 --blxAlphaCrossoverAlphaValue 0.30473701527745767 --differentialEvolutionCrossover RAND_2_BIN --CR 0.21039497224343165 --F 0.4960370128457501 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.4219768430267933 \n")
+        ("--neighborhoodSize 34 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives True --epsilonParameterForNormalizing 12.999310113949335 --pbiTheta 11.884564010591339 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions random --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.5581797053552503 --mutationRepairStrategy random --polynomialMutationDistributionIndex 41.740088532762925 --linkedPolynomialMutationDistributionIndex 156.33177957980624 --uniformMutationPerturbation 0.25573065645872584 --nonUniformMutationPerturbation 0.3310332522353208 --crossover BLX_ALPHA --crossoverProbability 0.7685659656528498 --crossoverRepairStrategy random --sbxDistributionIndex 184.70902034186506 --blxAlphaCrossoverAlphaValue 0.35323608962356984 --differentialEvolutionCrossover RAND_1_BIN --CR 0.13271870623647516 --F 0.9785205199810745 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.017056921280592524\n")
             .split("\\s+");
 
-    var autoMOEAD = new ConfigurableMOEAD(problem, 91, 40000,
+    var autoMOEAD = new ConfigurableMOEAD(problem, 100, 40000,
         "resources/weightVectors");
     autoMOEAD.parse(parameters);
 
@@ -35,7 +32,7 @@ public class ConfigurableMOEADForSolving3DProblemRunner {
 
     EvolutionaryAlgorithm<DoubleSolution> moead = autoMOEAD.build();
 
-    EvaluationObserver evaluationObserver = new EvaluationObserver(100);
+    EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>(
             "MOEAD. " + problem.name(), 80, 1000,

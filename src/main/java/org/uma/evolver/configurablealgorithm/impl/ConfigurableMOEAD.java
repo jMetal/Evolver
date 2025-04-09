@@ -6,16 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
-import org.uma.evolver.parameter.catalogue.CreateInitialSolutionsParameter;
-import org.uma.evolver.parameter.catalogue.CrossoverParameter;
-import org.uma.evolver.parameter.catalogue.DifferentialEvolutionCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
-import org.uma.evolver.parameter.catalogue.MutationParameter;
-import org.uma.evolver.parameter.catalogue.ProbabilityParameter;
-import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
-import org.uma.evolver.parameter.catalogue.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.VariationParameter;
+import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.impl.BooleanParameter;
 import org.uma.evolver.parameter.impl.CategoricalParameter;
 import org.uma.evolver.parameter.impl.IntegerParameter;
@@ -39,7 +30,6 @@ import org.uma.jmetal.util.aggregationfunction.AggregationFunction;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.neighborhood.Neighborhood;
 import org.uma.jmetal.util.neighborhood.impl.WeightVectorNeighborhood;
-import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
 
 /**
  * @author Antonio J. Nebro
@@ -61,6 +51,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   private int maximumNumberOfEvaluations;
   private String weightVectorFilesDirectory ;
   private MutationParameter mutationParameter ;
+  private SequenceGeneratorParameter subProblemIdGeneratorParameter ;
 
   @Override
   public List<Parameter<?>> configurableParameterList() {
@@ -101,6 +92,8 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
   }
 
   public void configure() {
+    subProblemIdGeneratorParameter = new SequenceGeneratorParameter(List.of("permutation","integerSequence")) ;
+
     normalizeObjectivesParameter = new BooleanParameter("normalizeObjectives") ;
     RealParameter epsilonParameter = new RealParameter("epsilonParameterForNormalizing", 1.0E-8, 25);
     normalizeObjectivesParameter.addSpecificParameter("TRUE", epsilonParameter);
@@ -124,6 +117,7 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     autoConfigurableParameterList.add(neighborhoodSizeParameter);
     autoConfigurableParameterList.add(maximumNumberOfReplacedSolutionsParameter);
     autoConfigurableParameterList.add(aggregationFunctionParameter);
+    autoConfigurableParameterList.add(subProblemIdGeneratorParameter);
 
     autoConfigurableParameterList.add(algorithmResultParameter);
     autoConfigurableParameterList.add(createInitialSolutionsParameter);
@@ -279,7 +273,9 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
       }
     }
 
-    var subProblemIdGenerator = new IntegerPermutationGenerator(populationSize);
+    subProblemIdGeneratorParameter.sequenceLength(populationSize) ;
+    var subProblemIdGenerator = subProblemIdGeneratorParameter.getParameter() ;
+
     variationParameter.addNonConfigurableParameter("subProblemIdGenerator", subProblemIdGenerator);
     var variation = (Variation<DoubleSolution>) variationParameter.getDoubleSolutionParameter();
 
@@ -292,14 +288,14 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
 
     int maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutionsParameter.value();
 
-    aggregationFunctionParameter.normalizedObjectives(normalizeObjectivesParameter.value());
-    AggregationFunction aggregativeFunction = aggregationFunctionParameter.getParameter();
     boolean normalizedObjectives = normalizeObjectivesParameter.value() ;
+    aggregationFunctionParameter.normalizedObjectives(normalizedObjectives);
+    AggregationFunction aggregationFunction = aggregationFunctionParameter.getParameter();
     var replacement =
         new MOEADReplacement<>(
             selection,
             (WeightVectorNeighborhood<DoubleSolution>) neighborhood,
-            aggregativeFunction,
+                aggregationFunction,
             subProblemIdGenerator,
             maximumNumberOfReplacedSolutions, normalizedObjectives);
 

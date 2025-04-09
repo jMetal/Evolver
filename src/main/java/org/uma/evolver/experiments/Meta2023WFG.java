@@ -116,6 +116,7 @@ public class Meta2023WFG {
       for (ExperimentProblem<DoubleSolution> experimentProblem : problemList) {
         nsgaII(algorithms, run, experimentProblem);
         smpso(algorithms, run, experimentProblem);
+        EvNsgaII(algorithms, run, experimentProblem);
       }
     }
     return algorithms;
@@ -161,7 +162,7 @@ public class Meta2023WFG {
       ExperimentProblem<DoubleSolution> experimentProblem) {
     String[] parameters =
         ("--referenceFrontFileName " + experimentProblem.getReferenceFront() + " "
-            + "--maximumNumberOfEvaluations 25000 "
+                + "--swarmSize 100 "
             + "--algorithmResult leaderArchive "
             + "--archiveSize 100 "
             + "--swarmInitialization random "
@@ -201,5 +202,24 @@ public class Meta2023WFG {
 
     algorithms.add(
         new ExperimentAlgorithm<>(algorithm, "SMPSO", experimentProblem, run));
+  }
+
+  private static void EvNsgaII(
+          List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms, int run,
+          ExperimentProblem<DoubleSolution> experimentProblem) {
+    String[] parameters =
+        ("--algorithmResult externalArchive --populationSizeWithArchive 179 --externalArchive crowdingDistanceArchive --createInitialSolutions random --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover BLX_ALPHA --crossoverProbability 0.4516361182972551 --crossoverRepairStrategy bounds --sbxDistributionIndex 334.1278555494533 --blxAlphaCrossoverAlphaValue 0.7007829446362449 --mutation nonUniform --mutationProbabilityFactor 0.4990374331433836 --mutationRepairStrategy round --polynomialMutationDistributionIndex 27.648145410058294 --linkedPolynomialMutationDistributionIndex 377.523579097924 --uniformMutationPerturbation 0.51257742340875 --nonUniformMutationPerturbation 0.8127533569986545 --selection tournament --selectionTournamentSize 9 \n ")
+            .split("\\s+");
+
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 25000;
+    ConfigurableNSGAII autoNSGAII = new ConfigurableNSGAII(
+            (DoubleProblem) experimentProblem.getProblem(), populationSize, maximumNumberOfEvaluations);
+    autoNSGAII.parse(parameters);
+
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = autoNSGAII.build();
+
+    algorithms.add(
+            new ExperimentAlgorithm<>(algorithm, "EvNSGAII", experimentProblem, run));
   }
 }

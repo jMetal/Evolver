@@ -28,6 +28,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+import org.uma.jmetal.util.observer.impl.WriteSolutionsToFilesObserver;
 
 /**
  * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure
@@ -43,13 +44,15 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsDTLZ {
     int numberOfCores;
     int runId;
     String outputDirectory ;
+    double trainingEvaluationsPercentage ;
 
-    if (args.length != 3) {
-      throw new JMetalException("Arguments required: runId, number of cores, output directory");
+    if (args.length != 4) {
+      throw new JMetalException("Arguments required: runId, number of cores, output directory trainingEvaluationsPercentage");
     } else {
       runId = Integer.valueOf(args[0]);
       numberOfCores = Integer.valueOf((args[1]));
       outputDirectory = args[2] ;
+      trainingEvaluationsPercentage = Double.valueOf(args[3]);
     }
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -57,7 +60,6 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsDTLZ {
 
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
-    double trainingEvaluationsPercentage = 0.4;
     List<Integer> maxEvaluationsPerProblem =
             problemFamilyInfo.evaluationsToOptimize().stream()
                     .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
@@ -85,7 +87,7 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsDTLZ {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 3000;
+    int maxEvaluations = 2000;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
             new AsynchronousMultiThreadedNSGAII<>(
@@ -109,9 +111,16 @@ public class AsyncNSGAIIOptimizingMOEADForProblemsDTLZ {
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
     var writeExecutionDataToFilesObserver =
             new WriteExecutionDataToFilesObserver(100, maxEvaluations, outputResultsManagement);
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+            new RunTimeChartObserver<>(
+                    "Base optimizer: MOEA/D", 80, 100, null, indicators.get(0).name(), indicators.get(1).name());
+
+    var writeSolutionsToFilesObserver = new WriteSolutionsToFilesObserver(100, outputDirectory + "/AsyncNSGAIIMOEAD/"+problemFamilyInfo.name()+ ".MEAN." +runId+ "/FUNs") ;
 
     nsgaii.getObservable().register(evaluationObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
+    nsgaii.getObservable().register(runTimeChartObserver);
+    nsgaii.getObservable().register(writeSolutionsToFilesObserver);
 
     // Step 5: Run the meta-optimizer
     long initTime = System.currentTimeMillis();

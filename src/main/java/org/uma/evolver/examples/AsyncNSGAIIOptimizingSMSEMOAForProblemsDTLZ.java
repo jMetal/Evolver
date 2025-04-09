@@ -3,10 +3,10 @@ package org.uma.evolver.examples;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
+import org.uma.evolver.configurablealgorithm.impl.ConfigurableSMSEMOA;
 import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
+import org.uma.evolver.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.evolver.util.EvaluationObserver;
@@ -18,7 +18,6 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -31,7 +30,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
+public class AsyncNSGAIIOptimizingSMSEMOAForProblemsDTLZ {
 
   public static void main(String[] args) throws IOException {
     int numberOfCores;
@@ -49,7 +48,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
     }
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    ProblemFamilyInfo problemFamilyInfo = new ZDTProblemFamilyInfo();
+    ProblemFamilyInfo problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
 
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
@@ -61,7 +60,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
 
     // Step 2: Set the parameters for the algorithm to be configured)
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableMOPSO(100);
+        new ConfigurableSMSEMOA();
     var configurableProblem =
         new MultiFocusMetaOptimizationProblem(
             configurableAlgorithm,
@@ -69,7 +68,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
             referenceFrontFileNames,
             indicators,
             maxEvaluationsPerProblem,
-            30);
+            1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -81,7 +80,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 3000;
+    int maxEvaluations = 2000;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(
@@ -99,7 +98,7 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
             configurableProblem,
             problemFamilyInfo.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".MEAN." +runId);
+                outputDirectory + "/AsyncNSGAIISMSEMOA/"+problemFamilyInfo.name()+ ".SHARPE." +runId);
 
     var evaluationObserver = new EvaluationObserver(100);
 

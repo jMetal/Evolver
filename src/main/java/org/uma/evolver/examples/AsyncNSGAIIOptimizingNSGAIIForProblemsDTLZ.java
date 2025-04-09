@@ -37,13 +37,15 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsDTLZ {
     int numberOfCores;
     int runId;
     String outputDirectory ;
+    double trainingEvaluationsPercentage ;
 
-    if (args.length != 3) {
-      throw new JMetalException("Arguments required: runId, number of cores, output directory");
+    if (args.length != 4) {
+      throw new JMetalException("Arguments required: runId, number of cores, output directory trainingEvaluationsPercentage");
     } else {
       runId = Integer.valueOf(args[0]);
       numberOfCores = Integer.valueOf((args[1]));
       outputDirectory = args[2] ;
+      trainingEvaluationsPercentage = Double.valueOf(args[3]);
     }
 
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -51,7 +53,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForProblemsDTLZ {
 
     List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
-    double trainingEvaluationsPercentage = 0.4;
+    //double trainingEvaluationsPercentage = 0.4;
     List<Integer> maxEvaluationsPerProblem =
             problemFamilyInfo.evaluationsToOptimize().stream()
                     .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))

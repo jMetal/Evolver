@@ -42,9 +42,12 @@ public class ParameterManagement {
       int decodedValue = min + (int) Math.floor(value * (max - min));
       return "" + decodedValue;
     } else if (parameter instanceof BooleanParameter) {
-      int min = 0;
-      int max = 1;
-      int decodedValue = min + (int) Math.floor(value * (max - min));
+      String decodedValue ;
+      if (value < 0.5) {
+        decodedValue = "False" ;
+      } else  {
+        decodedValue = "True" ;
+      }
       return "" + decodedValue;
     } else {
       throw new JMetalException("The parameter is non-configurable: " + parameter.name());

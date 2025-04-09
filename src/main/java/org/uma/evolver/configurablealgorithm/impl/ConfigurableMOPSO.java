@@ -266,6 +266,7 @@ public class ConfigurableMOPSO implements ConfigurableAlgorithmBuilder {
   /**
    * Create an instance of MOPSO from the parsed parameters
    */
+  @Override
   public ParticleSwarmOptimizationAlgorithm build() {
     int swarmSize = swarmSizeParameter.value();
 

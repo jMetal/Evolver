@@ -20,11 +20,11 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class ConfigurableMOEADRunner {
 
   public static void main(String[] args) {
-    DoubleProblem problem = new DTLZ1() ;
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    DoubleProblem problem = new DTLZ3() ;
+    String referenceFrontFileName = "resources/referenceFrontsCSV/DTLZ3.3D.csv";
 
     String[] parameters =
-        ("--neighborhoodSize 17 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives 0 --epsilonParameterForNormalizing 16.74427554837178 --pbiTheta 102.33621092188483 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.365757626005199 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 330.9192060953075 --linkedPolynomialMutationDistributionIndex 259.6234057548009 --uniformMutationPerturbation 0.25039687229006147 --nonUniformMutationPerturbation 0.06369128222969085 --crossover SBX --crossoverProbability 0.7718296929024707 --crossoverRepairStrategy random --sbxDistributionIndex 39.14026628165764 --blxAlphaCrossoverAlphaValue 0.9664474833035351 --differentialEvolutionCrossover RAND_1_BIN --CR 0.16954180521284054 --F 0.996915805902218 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.6398452490955031 \n")
+        ("--neighborhoodSize 34 --maximumNumberOfReplacedSolutions 3 --aggregationFunction tschebyscheff --normalizeObjectives True --sequenceGenerator permutation --epsilonParameterForNormalizing 12.999310113949335 --pbiTheta 11.884564010591339 --algorithmResult externalArchive --externalArchive unboundedArchive --createInitialSolutions random --variation differentialEvolutionVariation --mutation uniform --mutationProbabilityFactor 0.5581797053552503 --mutationRepairStrategy random --polynomialMutationDistributionIndex 41.740088532762925 --linkedPolynomialMutationDistributionIndex 156.33177957980624 --uniformMutationPerturbation 0.25573065645872584 --nonUniformMutationPerturbation 0.3310332522353208 --crossover BLX_ALPHA --crossoverProbability 0.7685659656528498 --crossoverRepairStrategy random --sbxDistributionIndex 184.70902034186506 --blxAlphaCrossoverAlphaValue 0.35323608962356984 --differentialEvolutionCrossover RAND_1_BIN --CR 0.13271870623647516 --F 0.9785205199810745 --selection populationAndNeighborhoodMatingPoolSelection --neighborhoodSelectionProbability 0.017056921280592524 \n")
             .split("\\s+");
 
     var autoMOEAD = new ConfigurableMOEAD(problem, 100, 40000,

@@ -23,11 +23,27 @@ public class ConfigurableNSGAIIDERunner {
 
   public static void main(String[] args) {
 
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    String referenceFrontFileName = "resources/referenceFrontsCSV/DTLZ1.3D.csv";
     var problem = new DTLZ1() ;
 
     String[] parameters =
-        ("--algorithmResult externalArchive --populationSizeWithArchive 177 --externalArchive unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 20 --variation differentialEvolutionVariation --mutation polynomial --mutationProbabilityFactor 0.5226121847727929 --mutationRepairStrategy round --polynomialMutationDistributionIndex 375.50428453945534 --linkedPolynomialMutationDistributionIndex 17.138525721366843 --uniformMutationPerturbation 0.8535363298400096 --nonUniformMutationPerturbation 0.1293021691338726 --differentialEvolutionCrossover RAND_1_EXP --CR 0.6129492681665641 --F 0.40136315469564954 \n")
+        ("--neighborhoodSize 20 "
+            + " --maximumNumberOfReplacedSolutions 2 "
+            + "--aggregationFunction tschebyscheff "
+            + "--normalizeObjectives False "
+            + "--algorithmResult population "
+            + "--createInitialSolutions random "
+            + "--variation differentialEvolutionVariation "
+            + "--mutation polynomial "
+                + "--offspringPopulationSize 1 "
+                + "--differentialEvolutionCrossover RAND_1_BIN "
+            + "--mutationProbabilityFactor 1.0 "
+            + "--mutationRepairStrategy random "
+            + "--polynomialMutationDistributionIndex 20.0 "
+            + "--selection populationAndNeighborhoodMatingPoolSelection "
+            + "--CR 1.0 "
+            + "--F 0.5 "
+            + "--neighborhoodSelectionProbability 0.9 ")
             .split("\\s+");
 
     var configurableNSGAII = new ConfigurableNSGAIIDE(problem, 100, 40000);

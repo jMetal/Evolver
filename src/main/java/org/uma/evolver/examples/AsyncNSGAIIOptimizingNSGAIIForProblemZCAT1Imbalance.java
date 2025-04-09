@@ -3,12 +3,8 @@ package org.uma.evolver.examples;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.configurablealgorithm.ConfigurableAlgorithmBuilder;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOEAD;
-import org.uma.evolver.configurablealgorithm.impl.ConfigurableMOPSO;
 import org.uma.evolver.configurablealgorithm.impl.ConfigurableNSGAII;
-import org.uma.evolver.problem.MultiFocusMetaOptimizationProblem;
-import org.uma.evolver.problemfamilyinfo.ProblemFamilyInfo;
-import org.uma.evolver.problemfamilyinfo.ZDTProblemFamilyInfo;
+import org.uma.evolver.problem.MetaOptimizationProblem;
 import org.uma.evolver.util.EvaluationObserver;
 import org.uma.evolver.util.OutputResultsManagement;
 import org.uma.evolver.util.OutputResultsManagement.OutputResultsManagementParameters;
@@ -18,58 +14,33 @@ import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.doubleproblem.impl.FakeDoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
  * Class for running {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer to configure {@link
- * ConfigurableNSGAII} using problem {@link DTLZ1} as training set.
+ * ConfigurableNSGAII} using problem {@link ZCAT1} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
+public class AsyncNSGAIIOptimizingNSGAIIForProblemZCAT1Imbalance {
 
   public static void main(String[] args) throws IOException {
-    int numberOfCores;
-    int runId;
-    String outputDirectory ;
-    double trainingEvaluationsPercentage ;
 
-    if (args.length != 4) {
-      throw new JMetalException("Arguments required: runId, number of cores, output directory trainingEvaluationsPercentage");
-    } else {
-      runId = Integer.valueOf(args[0]);
-      numberOfCores = Integer.valueOf((args[1]));
-      outputDirectory = args[2] ;
-      trainingEvaluationsPercentage = Double.valueOf(args[3]);
-    }
-
+    // Step 1: Select the target problem (ZCAT1)
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    ProblemFamilyInfo problemFamilyInfo = new ZDTProblemFamilyInfo();
+    DoubleProblem problemWhoseConfigurationIsSearchedFor = new ZCAT1(2, 30, false, 1, false, true);
 
-    List<DoubleProblem> trainingSet = problemFamilyInfo.problemList();
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
-    //double trainingEvaluationsPercentage = 0.4;
-    List<Integer> maxEvaluationsPerProblem =
-        problemFamilyInfo.evaluationsToOptimize().stream()
-            .map(evaluations -> (int) (evaluations * trainingEvaluationsPercentage))
-            .toList();
+    String referenceFrontFileName = "resources/referenceFrontsCSV/ZCAT1.2D.csv";
 
-    // Step 2: Set the parameters for the algorithm to be configured)
+    // Step 2: Set the parameters for the algorithm to be configured (ConfigurableNSGAII})
     ConfigurableAlgorithmBuilder configurableAlgorithm =
-        new ConfigurableMOPSO(100);
+        new ConfigurableNSGAII(problemWhoseConfigurationIsSearchedFor, 100, 50000);
     var configurableProblem =
-        new MultiFocusMetaOptimizationProblem(
-            configurableAlgorithm,
-            trainingSet,
-            referenceFrontFileNames,
-            indicators,
-            maxEvaluationsPerProblem,
-            30);
+        new MetaOptimizationProblem(configurableAlgorithm, referenceFrontFileName, indicators, 1);
 
     // Step 3: Set the parameters for the meta-optimizer (NSGAII)
     double crossoverProbability = 0.9;
@@ -81,7 +52,8 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 50;
-    int maxEvaluations = 3000;
+    int maxEvaluations = 2000;
+    int numberOfCores = 8;
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         new AsynchronousMultiThreadedNSGAII<>(
@@ -95,20 +67,25 @@ public class AsyncNSGAIIOptimizingMOPSOForProblemsZDT {
     // Step 4: Create observers for the meta-optimizer
     OutputResultsManagementParameters outputResultsManagementParameters =
         new OutputResultsManagementParameters(
-            "AsyncNSGAII",
+            "NSGAII",
             configurableProblem,
-            problemFamilyInfo.name(),
+            problemWhoseConfigurationIsSearchedFor.name(),
             indicators,
-                outputDirectory + "/AsyncNSGAIIMOPSO/"+problemFamilyInfo.name()+ ".MEAN." +runId);
+                "RESULTS/AsyncNSGAII/"+problemWhoseConfigurationIsSearchedFor.name()+"/imbalance");
 
-    var evaluationObserver = new EvaluationObserver(100);
+    var evaluationObserver = new EvaluationObserver(50);
+
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
+        new RunTimeChartObserver<>(
+            "NSGA-II", 80, 100, null, indicators.get(0).name(), indicators.get(1).name());
 
     var outputResultsManagement = new OutputResultsManagement(outputResultsManagementParameters);
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(100, maxEvaluations, outputResultsManagement);
+        new WriteExecutionDataToFilesObserver(50, maxEvaluations, outputResultsManagement);
 
     nsgaii.getObservable().register(evaluationObserver);
+    nsgaii.getObservable().register(runTimeChartObserver);
     nsgaii.getObservable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer

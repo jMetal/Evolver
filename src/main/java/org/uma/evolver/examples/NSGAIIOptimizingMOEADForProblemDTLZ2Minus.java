@@ -38,7 +38,7 @@ public class NSGAIIOptimizingMOEADForProblemDTLZ2Minus {
     // Step 1: Select the target problem (DTLZ2Minus)
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     DoubleProblem problemWhoseConfigurationIsSearchedFor = new DTLZ2Minus();
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ2Minus.csv";
+    String referenceFrontFileName = "resources/referenceFrontsCSV/DTLZ2Minus.csv";
     String weightVectorFilesDirectory = "resources/weightVectors" ;
 
     // Step 2: Set the parameters for the algorithm to be configured (ConfigurableMOEAD})
