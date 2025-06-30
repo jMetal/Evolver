@@ -2,7 +2,7 @@ package org.uma.evolver.algorithm.base.nsgaii;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.RDEMOEAPermutationParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 

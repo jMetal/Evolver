@@ -3,7 +3,7 @@ package org.uma.evolver.algorithm.base.rdsmoea;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.RDEMOEAPermutationParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;

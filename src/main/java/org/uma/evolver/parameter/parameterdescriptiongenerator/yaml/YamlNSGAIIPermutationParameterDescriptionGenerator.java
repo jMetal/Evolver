@@ -1,7 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
