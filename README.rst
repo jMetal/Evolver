@@ -3,7 +3,7 @@ Evolver: Automated Metaheuristic Configuration Framework
 
 Overview
 --------
-Evolver is an advanced framework designed to automate the configuration and design of multi-objective metaheuristics through meta-optimization. By treating algorithm configuration as an optimization problem itself, Evolver enables the automatic discovery of high-performance parameter settings tailored to specific problem domains.
+Evolver is Java-based framework designed to automate the configuration and design of multi-objective metaheuristics through meta-optimization. By treating algorithm configuration as an optimization problem itself, Evolver enables the automatic discovery of high-performance parameter settings tailored to specific problem domains.
 
 Key Features
 ^^^^^^^^^^^^
@@ -13,9 +13,9 @@ Key Features
 - **Extensible Design**: Easy integration of new algorithms, problems, and quality indicators
 - **Empirical Validation**: Includes comprehensive testing and benchmarking capabilities
 
-Architecture
-^^^^^^^^^^^^
-Evolver implements a sophisticated two-level optimization architecture where:
+Approach    
+^^^^^^^^
+Evolver follows a two-level optimization approach:
 
 .. code-block:: none
 
@@ -50,10 +50,7 @@ Evolver implements a sophisticated two-level optimization architecture where:
     |                                             |
     +---------------------------------------------+
 
-Flow:
-1. Meta-optimization algorithm generates configurations for a base-level metaheuristic
-2. Each configuration is evaluated on base-level problems using quality indicators
-3. The process repeats until stopping criteria are met
+The components of the approach are:
 
 1. **Base-level Components**
 
@@ -66,6 +63,14 @@ Flow:
    * A **Meta-optimization Problem** that evaluates base-level configurations
    * Quality indicators (e.g., Epsilon, Normalized Hypervolume) as optimization objectives
    * A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
+
+
+The flow is as follows:
+
+1. Given a set of base-level problems, the meta-optimization algorithm generates configurations for a base-level metaheuristic
+2. Each configuration is evaluated in the meta-optimization problem using quality indicators
+3. The process repeats until stopping criteria are met
+
 
 This hierarchical approach enables the automatic discovery of high-performance parameter settings tailored to specific problem domains and performance criteria.
 
