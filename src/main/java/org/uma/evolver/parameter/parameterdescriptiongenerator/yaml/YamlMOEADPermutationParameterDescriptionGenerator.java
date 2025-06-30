@@ -1,6 +1,5 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 

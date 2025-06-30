@@ -2,9 +2,7 @@ package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Program to generate the irace configuration file for class {@link NSGAIIDouble}

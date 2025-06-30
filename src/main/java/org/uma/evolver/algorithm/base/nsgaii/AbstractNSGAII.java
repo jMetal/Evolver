@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.nsgaii;
 
 import java.util.*;
-
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIICommonParameterSpace;

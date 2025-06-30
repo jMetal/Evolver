@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.moead.parameterspace;
 
 import java.util.List;
-
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsPermutationParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.PermutationCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationPermutationParameter;
