@@ -1,8 +1,8 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-import org.uma.evolver.parameter.impl.BooleanParameter;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.type.BooleanParameter;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.util.aggregationfunction.AggregationFunction;
 import org.uma.jmetal.util.aggregationfunction.impl.ModifiedTschebyscheff;
 import org.uma.jmetal.util.aggregationfunction.impl.PenaltyBoundaryIntersection;
@@ -24,33 +24,27 @@ public class AggregationFunctionParameter extends CategoricalParameter {
     this.normalizedObjectives = normalizedObjectives;
   }
 
-  public AggregationFunction getParameter() {
+  public AggregationFunction getAggregationFunction() {
     AggregationFunction aggregationFunction;
 
-    BooleanParameter normalizeObjectivesParameter = ((BooleanParameter) findGlobalParameter(
-        "normalizeObjectives"));
+    BooleanParameter normalizeObjectivesParameter =
+        ((BooleanParameter) findGlobalSubParameter("normalizeObjectives"));
     boolean normalizeObjectives = normalizeObjectivesParameter.value();
-    double epsilon = 0.00000001;
 
     switch (value()) {
-      case "tschebyscheff":
-        aggregationFunction = new Tschebyscheff(normalizedObjectives);
-        break;
-      case "modifiedTschebyscheff":
-        aggregationFunction = new ModifiedTschebyscheff(normalizedObjectives);
-        break;
-      case "weightedSum":
-        aggregationFunction = new WeightedSum(normalizedObjectives);
-        break;
-      case "penaltyBoundaryIntersection":
-        double theta = (double) findSpecificParameter("pbiTheta").value();
+      case "tschebyscheff" -> aggregationFunction = new Tschebyscheff(normalizedObjectives);
+      case "modifiedTschebyscheff" ->
+          aggregationFunction = new ModifiedTschebyscheff(normalizedObjectives);
+      case "weightedSum" -> aggregationFunction = new WeightedSum(normalizedObjectives);
+      case "penaltyBoundaryIntersection" -> {
+        double theta = (double) findSpecificSubParameter("pbiTheta").value();
         aggregationFunction = new PenaltyBoundaryIntersection(theta, normalizedObjectives);
-        break;
-      default:
-        throw new JMetalException("Aggregation function does not exist: " + name());
+      }
+      default -> throw new JMetalException("Aggregation function does not exist: " + name());
     }
 
     if (normalizeObjectives) {
+      double epsilon = (double) normalizeObjectivesParameter.findSpecificSubParameter("epsilonParameterForNormalization").value();
       aggregationFunction.epsilon(epsilon);
     }
     return aggregationFunction;

@@ -2,7 +2,7 @@ package org.uma.evolver.parameter.catalogue;
 
 import java.util.Comparator;
 import java.util.List;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.PopulationAndNeighborhoodSelection;
@@ -19,12 +19,12 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
     super("selection", selectionStrategies);
   }
 
-  public Selection<S> getParameter(int matingPoolSize, Comparator<S> comparator) {
+  public Selection<S> getSelection(int matingPoolSize, Comparator<S> comparator) {
     Selection<S> result;
     switch (value()) {
       case "tournament":
         int tournamentSize =
-            (Integer) findSpecificParameter("selectionTournamentSize").value();
+            (Integer) findSpecificSubParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentSelection<>(
             tournamentSize, matingPoolSize, comparator);
@@ -35,11 +35,11 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
         break;
       case "populationAndNeighborhoodMatingPoolSelection":
         double neighborhoodSelectionProbability =
-            (double) findSpecificParameter("neighborhoodSelectionProbability").value();
-        var neighborhood = (Neighborhood<S>) getNonConfigurableParameter("neighborhood");
+            (double) findSpecificSubParameter("neighborhoodSelectionProbability").value();
+        var neighborhood = (Neighborhood<S>) nonConfigurableSubParameters().get("neighborhood");
         Check.notNull(neighborhood);
 
-        var subProblemIdGenerator = (SequenceGenerator<Integer>) getNonConfigurableParameter(
+        var subProblemIdGenerator = (SequenceGenerator<Integer>) nonConfigurableSubParameters().get(
             "subProblemIdGenerator");
         Check.notNull(subProblemIdGenerator);
 

@@ -1,7 +1,7 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
 
 public class DifferentialEvolutionCrossoverParameter extends CategoricalParameter {
@@ -27,8 +27,8 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
 
   public DifferentialEvolutionCrossover getParameter() {
     DifferentialEvolutionCrossover result;
-    Double cr = (Double) findGlobalParameter("CR").value();
-    Double f = (Double) findGlobalParameter("F").value();
+    Double cr = (Double) findGlobalSubParameter("CR").value();
+    Double f = (Double) findGlobalSubParameter("F").value();
 
     String variant = value() ;
 

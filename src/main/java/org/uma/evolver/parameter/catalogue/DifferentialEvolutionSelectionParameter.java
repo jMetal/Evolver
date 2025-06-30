@@ -1,7 +1,7 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.solution.Solution;

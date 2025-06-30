@@ -1,153 +1,35 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.catalogue.ProbabilityParameter;
-import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import java.util.List;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.doublesolution.repairsolution.RepairDoubleSolution;
+import org.uma.jmetal.solution.Solution;
 
-/** Factory for crossover operators. */
-public class CrossoverParameter extends CategoricalParameter {
-  public double crossoverProbability;
-  public RepairDoubleSolution repairDoubleSolution;
-  private Map<String, String> availableImplementations;
+/**
+ * Abstract parameter class representing a configurable crossover operator for evolutionary algorithms.
+ * <p>
+ * This class acts as a factory for creating specific {@link CrossoverOperator} instances
+ * based on the selected crossover type. It extends {@link CategoricalParameter} to allow
+ * selection among a list of available crossover operator names.
+ * </p>
+ *
+ * @param <S> the solution type for which the crossover operator is defined
+ */
+public abstract class CrossoverParameter<S extends Solution<?>> extends CategoricalParameter {
 
-  public CrossoverParameter(List<String> crossoverOperators) {
+  /**
+   * Constructs a crossover parameter with the given list of available crossover operator names.
+   *
+   * @param crossoverOperators the list of supported crossover operator names
+   */
+  protected CrossoverParameter(List<String> crossoverOperators) {
     super("crossover", crossoverOperators);
-
-    getImplementations();
-    checkCrossoverOperatorNames(crossoverOperators);
-    createGlobalParameters().forEach(this::addGlobalParameter);
-    getSpecificParameters();
   }
 
-  private void getImplementations() {
-    availableImplementations = new HashMap<>();
-
-    List<String> implementations =
-            FindClassInPackage.findClasses(CrossoverParameter.class.getPackageName() + ".impl");
-    for (String implementation : implementations) {
-      String className = implementation.substring(implementation.lastIndexOf(".") + 1);
-      availableImplementations.put(className, implementation);
-    }
-  }
-
-  private void checkCrossoverOperatorNames(List<String> crossoverOperators) {
-    crossoverOperators.stream()
-            .filter(crossoverOperator -> !availableImplementations.containsKey(crossoverOperator))
-            .forEach(
-                    crossoverOperator -> {
-                      throw new RuntimeException("The " + crossoverOperator + " is not available");
-                    });
-  }
-
-  private List<Parameter<?>> createGlobalParameters() {
-    ProbabilityParameter crossoverProbability = new ProbabilityParameter("crossoverProbability");
-    RepairDoubleSolutionStrategyParameter crossoverRepairStrategy =
-        new RepairDoubleSolutionStrategyParameter(
-            "crossoverRepairStrategy", Arrays.asList("random", "round", "bounds"));
-
-    return List.of(crossoverProbability, crossoverRepairStrategy);
-  }
-
-  public void getSpecificParameters() {
-    for (Map.Entry<String, String> entry : availableImplementations.entrySet()) {
-      try {
-        Class<?> crossoverClass = Class.forName(entry.getValue());
-        var getInstanceMethod = crossoverClass.getMethod("getSpecificParameter");
-
-        Constructor<?> constructor = crossoverClass.getConstructor();
-
-        Parameter<?> specificParameter = (Parameter<?>) getInstanceMethod.invoke(constructor.newInstance()) ;
-        if (specificParameter != null) {
-          addSpecificParameter(entry.getKey(), specificParameter);
-        }
-
-      } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException(e);
-      } catch (NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      } catch (InstantiationException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  public CrossoverOperator<DoubleSolution> getParameter() {
-    crossoverProbability = (double) findGlobalParameter("crossoverProbability").value();
-    var repairDoubleSolutionParameter =
-        (RepairDoubleSolutionStrategyParameter) findGlobalParameter("crossoverRepairStrategy");
-    repairDoubleSolution = repairDoubleSolutionParameter.getParameter();
-
-    String crossoverName = value();
-    String crossoverQualifiedName = availableImplementations.get(crossoverName);
-
-    return getCrossoverInstance(crossoverQualifiedName);
-  }
-
-  private CrossoverOperator<DoubleSolution> getCrossoverInstance(String crossoverQualifiedName) {
-    Class<?> crossoverClass = null;
-    Method getInstanceMethod;
-    try {
-      crossoverClass = Class.forName(crossoverQualifiedName);
-      getInstanceMethod = crossoverClass.getMethod("getInstance", CrossoverParameter.class);
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
-
-    CrossoverOperator<DoubleSolution> crossover;
-    try {
-      Constructor<?> constructor = crossoverClass.getConstructor();
-      crossover =
-          (CrossoverOperator<DoubleSolution>)
-              getInstanceMethod.invoke(constructor.newInstance(), this);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    } catch (InstantiationException e) {
-      throw new RuntimeException(e);
-    }
-    return crossover;
-  }
-
-  public List<String> availableOperatorNames() {
-    return availableImplementations.keySet().stream().toList();
-  }
-
-  public static void main(String[] args) {
-    CrossoverParameter crossoverParameter = new CrossoverParameter(List.of("BLXAlpha", "SBX", "WholeArithmetic"));
-
-    // Print available crossover implementations
-    System.out.println("Available crossover implementations: ") ;
-    crossoverParameter.availableOperatorNames().forEach(System.out::println);
-
-    // Example of parsing
-    String parameterString = "--crossover SBX "
-            + "--crossoverProbability 0.9 "
-            + "--crossoverRepairStrategy round "
-            + "--sbxDistributionIndex 20.0"  ;
-    System.out.println("\nString to parse: \n" + parameterString) ;
-
-    String[] parameters = parameterString.split("\\s+");
-    crossoverParameter.parse(parameters).check();
-
-    // Print data of the instanced crossover
-    System.out.println("\nInstantiated crossover:") ;
-    CrossoverOperator<DoubleSolution> crossover = crossoverParameter.getParameter();
-    System.out.println(crossover);
-    System.out.println(crossover.crossoverProbability());
-    System.out.println(crossover.numberOfGeneratedChildren());
-    System.out.println(crossover.numberOfRequiredParents());
-  }
+  /**
+   * Returns the configured {@link CrossoverOperator} instance for the selected crossover type.
+   *
+   * @return the crossover operator
+   */
+  public abstract CrossoverOperator<S> getCrossover();
 }

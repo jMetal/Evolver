@@ -18,19 +18,15 @@ import org.uma.jmetal.util.observer.Observer;
  */
 public class WriteExecutionDataToFilesObserver implements Observer<Map<String, Object>> {
 
-  private OutputResultsManagement outputResultsManagement;
+  private OutputResults outputResults;
   private int frequency;
 
-  /**
-   * Constructor
-   */
-  public WriteExecutionDataToFilesObserver(int frequency, int evaluationsLimit,
-      OutputResultsManagement outputResultsManagement) {
-
-    this.outputResultsManagement = outputResultsManagement;
-    this.frequency = frequency ;
+  /** Constructor */
+  public WriteExecutionDataToFilesObserver(
+      int frequency, int evaluationsLimit, OutputResults outputResultsManagement) {
+    this.outputResults = outputResultsManagement;
+    this.frequency = frequency;
   }
-
 
   /**
    * This method gets the population
@@ -43,9 +39,9 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
     int evaluations = (int) data.get("EVALUATIONS");
     if ((evaluations % frequency) == 0) {
       try {
-        JMetalLogger.logger.info("EVAlS -> "+evaluations) ;
-        outputResultsManagement.updateSuffix("." + evaluations + ".csv");
-        outputResultsManagement.writeResultsToFiles(population);
+        JMetalLogger.logger.info("EVAlS -> " + evaluations);
+        outputResults.updateEvaluations(evaluations);
+        outputResults.writeResultsToFiles(population);
       } catch (IOException e) {
         throw new JMetalException(e);
       }
@@ -55,6 +51,6 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   @Override
   public String toString() {
     return "Observer that writes output files from a list of numbers representing "
-        + "iterations where the outputs are required" ;
+        + "iterations where the outputs are required";
   }
 }

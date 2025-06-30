@@ -1,0 +1,142 @@
+neighborhoodSize:
+  type: integer
+  range: [5, 50]
+#
+maximumNumberOfReplacedSolutions:
+  type: integer
+  range: [1, 5]
+#
+aggregationFunction:
+  type: categorical
+  global_subparameters:
+    normalizeObjectives:
+      type: boolean
+      values:
+        true:
+          specific_subparameter:
+            epsilonParameterForNormalization:
+              type: double
+              values: [1.0E-8, 25.0]
+        false:
+  values:
+    tschebyscheff:
+    weightedSum:
+    penaltyBoundaryIntersection:
+      specific_subparameter:
+        pbiTheta:
+          type: double
+          values: [1.0, 200.0]
+    modifiedTschebyscheff:
+#
+algorithmResult:
+  type: categorical
+  values:
+    externalArchive:
+      specific_subparameter:
+        externalArchive:
+          type: categorical
+          values:
+            crowdingDistanceArchive:
+            unboundedArchive:
+    population:
+#
+subProblemIdGenerator:
+  type: categorical
+  values:
+    permutation:
+    integerSequence:
+#
+createInitialSolutions:
+  type: categorical
+  values:
+    default:
+    latinHypercubeSampling:
+    scatterSearch:
+#
+variation:
+  type: categorical
+  global_subparameters:
+    mutation:
+      type: categorical
+      global_subparameters:
+        mutationProbabilityFactor:
+          type: double
+          values: [0.0, 2.0]
+        mutationRepairStrategy:
+          type: categorical
+          values:
+            random:
+            round:
+            bounds:
+      values:
+        uniform:
+          specific_subparameter:
+            uniformMutationPerturbation:
+              type: double
+              values: [0.0, 1.0]
+        polynomial:
+          specific_subparameter:
+            polynomialMutationDistributionIndex:
+              type: double
+              values: [5.0, 400.0]
+        linkedPolynomial:
+          specific_subparameter:
+            linkedPolynomialMutationDistributionIndex:
+              type: double
+              values: [5.0, 400.0]
+        nonUniform:
+          specific_subparameter:
+            nonUniformMutationPerturbation:
+              type: double
+              values: [0.0, 1.0]
+  values:
+    crossoverAndMutationVariation:
+      specific_subparameter:
+        crossover:
+          type: categorical
+          global_subparameters:
+            crossoverProbability:
+              type: double
+              values: [0.0, 1.0]
+            crossoverRepairStrategy:
+              type: categorical
+              values:
+                random:
+                round:
+                bounds:
+          values:
+            SBX:
+              specific_subparameter:
+                sbxDistributionIndex:
+                  type: double
+                  values: [5.0, 400.0]
+            BLX_ALPHA:
+              specific_subparameter:
+                blxAlphaCrossoverAlphaValue:
+                  type: double
+                  values: [0.0, 1.0]
+            wholeArithmetic:
+    differentialEvolutionVariation:
+      specific_subparameter:
+        differentialEvolutionCrossover:
+          type: categorical
+          global_subparameters:
+            CR:
+              type: double
+              values: [0.0, 1.0]
+            F:
+              type: double
+              values: [0.0, 1.0]
+          values:
+            RAND_1_BIN:
+            RAND_1_EXP:
+            RAND_2_BIN:
+#
+selection:
+  type: categorical
+  values:
+    populationAndNeighborhoodMatingPoolSelection:
+      specific_subparameter:
+        neighborhoodSelectionProbability:
+          type: double
+          values: [0.0, 1.0]

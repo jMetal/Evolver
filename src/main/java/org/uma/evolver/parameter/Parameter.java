@@ -1,201 +1,314 @@
 package org.uma.evolver.parameter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.uma.evolver.parameter.catalogue.CrossoverParameter;
-import org.uma.evolver.parameter.catalogue.MutationParameter;
-import org.uma.evolver.parameter.impl.RealParameter;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**
- * Abstract class representing generic parameters. Any parameter has a name and a value that is
- * assigned by parsing an array which contains sequences of pairs [key, value], as for example:,
+ * Abstract class representing a generic parameter for evolutionary algorithms.
+ *
+ * <p>Each parameter has a name and a value, which is assigned by parsing an array containing
+ * sequences of [key, value] pairs, for example:
+ *
+ * <pre>
  * ["--populationSize", "100", "--offspringPopulationSize", "100", "--createInitialSolutions", "random"]
+ * </pre>
  *
- * Every parameter has a {@link Parameter#name} (such as "populationSize" or "offpspringPopulationSize")
- * and a {@link Parameter#value} that is obtained after invoking the {@link Parameter#parse(String[])} and
- * {@link Parameter#check()} methods.
+ * <p>Every parameter has a {@link #name} (such as "populationSize" or "offspringPopulationSize")
+ * and a {@link #value} that is obtained after invoking the {@link #parse(String[])} method.
  *
- * Parameters can be seen a factories of any kind of objects, from single values (e.g., {@link RealParameter}
- * to genetic operators (e.g., {@link MutationParameter}).
+ * <p>Parameters can be seen as factories for any kind of objects, from single values (e.g., {@link
+ * org.uma.evolver.parameter.type.DoubleParameter}) to genetic operators (e.g., {@link org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter}).
  *
- * A parameter can contain other parameters, so we define three different types of associations
- * between them. We illustrate the associations by using the {@link CrossoverParameter} as an example:
- * - global parameter: any crossover has a probability parameter
- * - specific parameter: a SBX crossover has a distribution index as specific parameter
- * - non-configurable parameter: constant parameters needed by a particular parameter
+ * <p>A parameter can contain other parameters, and there are three types of associations between
+ * them. Using {@link org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter} as an example:
  *
- * The Parameter class provides methods for setting and getting these sup-parameters:
- * - {@link Parameter#addGlobalParameter(Parameter)}
- * - {@link Parameter#addSpecificParameter(String, Parameter)}}
- * - {@link Parameter#addNonConfigurableParameter(String, Object)}
- * - {@link Parameter#globalParameters()}
- * - {@link Parameter#specificParameters()}
- * - {@link Parameter#getNonConfigurableParameter(String)}
- * - {@link Parameter#findGlobalParameter(String)}
- * - {@link Parameter#findSpecificParameter(String)}
+ * <ul>
+ *   <li><b>Global sub-parameter:</b> Any crossover has a probability parameter.
+ *   <li><b>Specific sub-parameter:</b> An SBX crossover has a distribution index as a specific
+ *       parameter.
+ *   <li><b>Non-configurable sub-parameter:</b> Constant parameters needed by a particular
+ *       parameter.
+ * </ul>
+ *
+ * <p>The {@code Parameter} class provides methods for setting and getting these sub-parameters:
+ *
+ * <ul>
+ *   <li>{@link #addGlobalSubParameter(Parameter)}
+ *   <li>{@link #addSpecificSubParameter(String, Parameter)}
+ *   <li>{@link #addNonConfigurableSubParameter(String, Object)}
+ *   <li>{@link #globalSubParameters()}
+ *   <li>{@link #specificSubParameters()}
+ *   <li>{@link #findGlobalSubParameter(String)}
+ *   <li>{@link #findSpecificSubParameter(String)}
+ * </ul>
  *
  * @author Antonio J. Nebro
- * @param <T> Type of the parameter
+ * @param <T> Type of the parameter value
+ */
+/**
+ * Represents a configurable parameter with a value of type {@code T}, supporting hierarchical
+ * sub-parameters.
+ *
+ * <p>A {@code Parameter} can have:
+ *
+ * <ul>
+ *   <li><b>Global sub-parameters</b>: Always relevant, regardless of this parameter's value.
+ *   <li><b>Specific sub-parameters</b>: Only relevant when this parameter has a certain value or
+ *       condition.
+ *   <li><b>Non-configurable sub-parameters</b>: Internal or fixed configuration values.
+ * </ul>
+ *
+ * <p>Subclasses must implement the {@link #parse(String[])} method to define how the parameter
+ * value is parsed from arguments. This class provides fluent methods for adding sub-parameters and
+ * utilities for parsing and retrieving them.
+ *
+ * @param <T> the type of the parameter value
  */
 public abstract class Parameter<T> {
   private T value;
   private final String name;
-  private final List<Pair<String, Parameter<?>>> specificParameters = new ArrayList<>() ;
-  private final List<Parameter<?>> globalParameters = new ArrayList<>();
-  private final Map<String, Object> nonConfigurableParameters = new HashMap<>();
-
-  protected Parameter(String name) {
-    this.name = name ;
-  }
-
-  private T on(String key, String[] args, Function<String, T> parser) {
-    return parser.apply(retrieve(args, key));
-  }
-
-  private String retrieve(String[] args, String key) {
-    int index = Arrays.asList(args).indexOf(key);
-    Check.that(index != -1 && index != args.length - 1, "Missing parameter: " + key);
-    return args[index + 1];
-  }
-
-  public abstract void check();
-
-  public abstract Parameter<T> parse(String[] arguments) ;
+  private final List<Parameter<?>> globalSubParameters = new ArrayList<>();
+  private final Map<String, Object> nonConfigurableSubParameters = new HashMap<>();
+  private SpecificSubParameterManager<T> specificSubParameterManager;
 
   /**
-   * Parsing a parameter implies to parse and check its global and specific parameters
+   * Constructs a parameter with the given name.
    *
-   * @param parseFunction
-   * @return
+   * @param name the name of the parameter
    */
-  public Parameter<T> parse(Function<String, T> parseFunction, String[] args) {
-    value(on("--" + name(), args, parseFunction));
-
-    for (Parameter<?> parameter : globalParameters()) {
-      parameter.parse(args).check();
-    }
-
-    specificParameters()
-        .forEach(
-            pair -> {
-              if (pair.getKey().equals(value())) {
-                pair.getValue().parse(args).check();
-              }
-            });
-
-    return this;
+  protected Parameter(String name) {
+    Check.notNull(name);
+    Check.that(!name.isEmpty(), "Then parameter name must not be empty");
+    this.name = name;
+    specificSubParameterManager = new SpecificSubParameterManager<>();
   }
 
+  /**
+   * Parses the value for this parameter from the given arguments. Subclasses must implement this
+   * method to define their parsing logic.
+   *
+   * @param arguments the arguments from which to parse the parameter value
+   */
+  public abstract void parse(String[] arguments);
+
+  /**
+   * Parses the value for this parameter using the provided function and arguments, and also parses
+   * all global and specific sub-parameters.
+   *
+   * @param parseFunction the function to convert a string to the parameter value type
+   * @param args the argument array
+   */
+  public void parse(Function<String, T> parseFunction, String[] args) {
+    value(on("--" + name(), args, parseFunction));
+    parseGlobalSubParameters(args);
+    specificSubParameterManager.parseSpecificSubParameters(value(), args);
+  }
+
+  /**
+   * Returns the name of this parameter.
+   *
+   * @return the parameter name
+   */
   public String name() {
     return name;
   }
 
-  public List<Pair<String, Parameter<?>>> specificParameters() {
-    return specificParameters;
-  }
-
-  public void addSpecificParameter(String dependsOn, Parameter<?> parameter) {
-    Pair<String, Parameter<?>> param = specificParameters.stream().filter(pair -> pair.getRight().equals(parameter)).findAny().orElse(null) ;
-    //if (param !=null) {
-      //System.out.println("----" + param.getLeft() + ", " + param.getRight()) ;
-    //  ((MutablePair<String, Parameter<?>>)param).setLeft(param.getLeft()+"\",\""+dependsOn);
-    //} else {
-      specificParameters.add(new MutablePair<>(dependsOn, parameter));
-    //}
-  }
-
-  public List<Parameter<?>> globalParameters() {
-    return globalParameters;
-  }
-
-  public void addGlobalParameter(Parameter<?> parameter) {
-    globalParameters.add(parameter);
-  }
-
-  public void addNonConfigurableParameter(String parameterName, Object value) {
-    nonConfigurableParameters.put(parameterName, value) ;
-  }
-
-  public Object getNonConfigurableParameter(String parameterName) {
-    return nonConfigurableParameters.get(parameterName) ;
-  }
-
-  public  Map<String, Object> nonConfigurableParameters() {
-    return nonConfigurableParameters ;
-  }
-
+  /**
+   * Returns the current value of this parameter.
+   *
+   * @return the parameter value
+   */
   public T value() {
     return value;
   }
 
+  /**
+   * Sets the value of this parameter.
+   *
+   * @param value the value to set
+   */
   public void value(T value) {
     this.value = value;
   }
 
   /**
-   * Finds a global parameter given its name
+   * Returns the list of global sub-parameters associated with this parameter. Global sub-parameters
+   * are always relevant, regardless of the parameter's value.
    *
-   * @param parameterName
-   * @return
+   * @return a list of global sub-parameters
    */
-  public Parameter<?> findGlobalParameter(String parameterName) {
-    return globalParameters().stream()
+  public List<Parameter<?>> globalSubParameters() {
+    return globalSubParameters;
+  }
+
+  /**
+   * Adds a global sub-parameter to this parameter.
+   *
+   * @param parameter the global sub-parameter to add
+   */
+  public Parameter<T> addGlobalSubParameter(Parameter<?> parameter) {
+    globalSubParameters.add(parameter);
+
+    return this ;
+  }
+
+  /**
+   * Returns the list of specific sub-parameters associated with this parameter. Specific
+   * sub-parameters are only relevant when the parameter has a certain value or condition.
+   *
+   * @return a list of specific sub-parameters
+   */
+  public List<SpecificSubParameter<T>> specificSubParameters() {
+    return specificSubParameterManager.specificSubParameters();
+  }
+
+  /**
+   * Adds a specific sub-parameter that depends on a string value.
+   *
+   * @param dependsOn the value or condition that activates the sub-parameter
+   * @param parameter the specific sub-parameter to add
+   */
+  public Parameter<T> addSpecificSubParameter(String dependsOn, Parameter<?> parameter) {
+    specificSubParameterManager.addSpecificSubParameter(dependsOn, parameter);
+
+    return this ;
+  }
+
+  /**
+   * Adds a specific sub-parameter that depends on a boolean value.
+   *
+   * @param dependsOn the value or condition that activates the sub-parameter
+   * @param parameter the specific sub-parameter to add
+   */
+  public Parameter<T> addSpecificSubParameter(Boolean dependsOn, Parameter<?> parameter) {
+    specificSubParameterManager.addSpecificSubParameter(dependsOn, parameter);
+
+    return this ;
+  }
+
+
+  /**
+   * Adds a non-configurable sub-parameter to this parameter. These are typically used for internal
+   * or fixed configuration values.
+   *
+   * @param parameterName the name of the sub-parameter
+   * @param value the value of the sub-parameter
+   */
+  public Parameter<T> addNonConfigurableSubParameter(String parameterName, Object value) {
+    nonConfigurableSubParameters.put(parameterName, value);
+
+    return this ;
+  }
+
+  /**
+   * Returns a map of non-configurable sub-parameters associated with this parameter.
+   *
+   * @return a map of non-configurable sub-parameters
+   */
+  public Map<String, Object> nonConfigurableSubParameters() {
+    return nonConfigurableSubParameters;
+  }
+
+  /**
+   * Finds a global sub-parameter given its name.
+   *
+   * @param parameterName the name of the global sub-parameter
+   * @return the global sub-parameter, or {@code null} if not found
+   */
+  @SuppressWarnings("unchecked")
+  public Parameter<?> findGlobalSubParameter(String parameterName) {
+    return globalSubParameters().stream()
         .filter(parameter -> parameter.name().equals(parameterName))
         .findFirst()
         .orElse(null);
   }
 
   /**
-   * Finds a specific parameter given its name
-   * @param parameterName
-   * @return
+   * Finds a specific sub-parameter given its name.
+   *
+   * @param parameterName the name of the specific sub-parameter
+   * @return the specific sub-parameter, or {@code null} if not found
    */
-  public Parameter<?> findSpecificParameter(String parameterName) {
-    return Objects.requireNonNull(specificParameters()
-            .stream()
-            .filter(pair -> pair.getRight().name().equals(parameterName))
-            .findFirst()
-            .orElse(null))
-        .getValue();
+  public Parameter<?> findSpecificSubParameter(String parameterName) {
+    return specificSubParameterManager.findSpecificSubParameter(parameterName);
   }
 
   /**
-   * Finds a list of the specific parameters associated to a particular parameter value
+   * Finds a list of the specific sub-parameters associated with a particular parameter value.
+   *
+   * @param parameterValue the value that activates the specific sub-parameters
+   * @return a list of specific sub-parameters for the given value
    */
-  public List<Parameter<?>> findSpecificParameters(String parameterValue) {
-    return specificParameters()
-        .stream()
-        .filter(pair -> pair.getLeft().equals(parameterValue))
-        .map(Pair::getRight)
+  public List<Parameter<?>> findSpecificSubParameters(String parameterValue) {
+    return specificSubParameters().stream()
+        .filter(specificSubParameter -> specificSubParameter.description().equals(parameterValue))
+        .map(specificSubParameter -> specificSubParameter.parameter())
         .collect(Collectors.toList());
   }
 
-
+  /**
+   * Returns a string representation of this parameter, including its value and sub-parameters.
+   *
+   * @return a string representation of the parameter
+   */
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder("Name: " + name() + ": " + "Value: " + value());
-    if (!globalParameters.isEmpty()) {
+    if (!globalSubParameters.isEmpty()) {
       result.append("\n\t");
-      for (Parameter<?> parameter : globalParameters) {
+      for (Parameter<?> parameter : globalSubParameters) {
         result.append(" \n -> ").append(parameter.toString());
       }
     }
-    if (!specificParameters.isEmpty()) {
+    if (!specificSubParameterManager.specificSubParameters().isEmpty()) {
       result.append("\n\t");
-
-      for (Pair<String, Parameter<?>> parameter : specificParameters) {
+      for (SpecificSubParameter<T> parameter :
+          specificSubParameterManager.specificSubParameters()) {
         result.append(" \n -> ").append(parameter.toString());
       }
     }
     return result.toString();
+  }
+
+  // --- Private helper methods ---
+
+  /**
+   * Helper method to parse a value from the arguments using a key and a parser function.
+   *
+   * @param key the key to search for in the arguments
+   * @param args the argument array
+   * @param parser the function to convert the string value
+   * @return the parsed value
+   */
+  private T on(String key, String[] args, Function<String, T> parser) {
+    return parser.apply(retrieve(args, key));
+  }
+
+  /**
+   * Helper method to retrieve the value associated with a key from the arguments array.
+   *
+   * @param args the argument array
+   * @param key the key to search for
+   * @return the value associated with the key
+   * @throws IllegalArgumentException if the key is missing or has no value
+   */
+  private String retrieve(String[] args, String key) {
+    int index = List.of(args).indexOf(key);
+    Check.that(index != -1 && index != args.length - 1, "Missing parameter: " + key);
+    return args[index + 1];
+  }
+
+  /**
+   * Parses all global sub-parameters from the given arguments.
+   *
+   * @param args the argument array
+   */
+  private void parseGlobalSubParameters(String[] args) {
+    globalSubParameters().forEach(parameter -> parameter.parse(args));
   }
 }

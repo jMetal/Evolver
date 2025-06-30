@@ -1,7 +1,7 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-import org.uma.evolver.parameter.impl.CategoricalParameter;
+import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
@@ -14,14 +14,18 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
     super(name, validDensityEstimators);
   }
 
-  public DensityEstimator<S> getParameter() {
+  public DensityEstimator<S> getDensityEstimator() {
     DensityEstimator<S> result;
     switch (value()) {
       case "crowdingDistance":
         result = new CrowdingDistanceDensityEstimator<>();
         break;
       case "knn":
-        result = new KnnDensityEstimator<>(1);
+        boolean normalizeObjectives =
+            (Boolean) findSpecificSubParameter("knnNormalizeObjectives").value();
+        int knnNeighborhoodSize =
+            (Integer) findSpecificSubParameter("knnNeighborhoodSize").value();
+        result = new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);
         break;
       default:
         throw new JMetalException("Density estimator does not exist: " + name());
