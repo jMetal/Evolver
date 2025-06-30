@@ -1,13 +1,21 @@
-Evolver: A Meta-Optimization Framework for Multi-Objective Metaheuristics
-========================================================================
+Evolver: Automated Metaheuristic Configuration Framework
+======================================================
 
 Overview
 --------
-Evolver is a framework that formulates the automatic configuration and design of multi-objective metaheuristics as a multi-objective optimization problem. It employs a meta-optimization approach where one metaheuristic is used to optimize the parameters of another metaheuristic.
+Evolver is an advanced framework designed to automate the configuration and design of multi-objective metaheuristics through meta-optimization. By treating algorithm configuration as an optimization problem itself, Evolver enables the automatic discovery of high-performance parameter settings tailored to specific problem domains.
 
-The current version of the tool is Evolver 2.0 beta, which is a complete rewrite of the original Evolver framework.
+Key Features
+^^^^^^^^^^^^
+- **Automated Configuration**: Automatically finds optimal parameter settings for metaheuristics
+- **Flexible Architecture**: Supports various metaheuristics at both meta and base levels
+- **Multi-objective Optimization**: Optimizes multiple performance criteria simultaneously
+- **Extensible Design**: Easy integration of new algorithms, problems, and quality indicators
+- **Empirical Validation**: Includes comprehensive testing and benchmarking capabilities
 
-Evolver implements a two-level optimization architecture:
+Architecture
+^^^^^^^^^^^^
+Evolver implements a sophisticated two-level optimization architecture where:
 
 .. code-block:: none
 
@@ -30,9 +38,9 @@ Evolver implements a two-level optimization architecture:
     +---------------------|-----------------------+
     |  Base-level         v                       |
     |  +------------------+--------------------+  |
-    |  | Base-level Metaheuristic             |  |
-    |  | - Configurable parameters            |  |
-    |  | - Solves base-level problems         |  |
+    |  | Base-level Metaheuristic              |  |
+    |  | - Parameter space                     |  |
+    |  | - Solves base-level problems          |  |
     |  +------------------+--------------------+  |
     |                     |                       |
     |  +------------------v--------------------+  |
@@ -43,10 +51,9 @@ Evolver implements a two-level optimization architecture:
     +---------------------------------------------+
 
 Flow:
-1. Meta-optimization algorithm generates configurations
-2. Each configuration is evaluated on base-level problems
-3. Performance metrics are fed back to the meta-level
-4. The process repeats until stopping criteria are met
+1. Meta-optimization algorithm generates configurations for a base-level metaheuristic
+2. Each configuration is evaluated on base-level problems using quality indicators
+3. The process repeats until stopping criteria are met
 
 1. **Base-level Components**
 
@@ -61,12 +68,6 @@ Flow:
    * A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
 
 This hierarchical approach enables the automatic discovery of high-performance parameter settings tailored to specific problem domains and performance criteria.
-
-Key Features
-------------
-- **Flexible Meta-optimization**: Supports various metaheuristics for both meta and base levels
-- **Multiple Problem Domains**: Works with continuous, combinatorial, and mixed-variable optimization problems
-- **Extensible Architecture**: Easy to add new algorithms, problems, and performance metrics
 
 Installation
 ------------
