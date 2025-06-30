@@ -13,12 +13,62 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.neighborhood.Neighborhood;
 import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
 
+/**
+ * A categorical parameter representing different selection strategies for evolutionary algorithms.
+ * This parameter allows selecting and configuring how parent solutions are chosen for reproduction.
+ *
+ * <p>The available selection strategies are:
+ * <ul>
+ *   <li>tournament: Selects solutions based on tournament selection</li>
+ *   <li>random: Selects solutions uniformly at random</li>
+ *   <li>populationAndNeighborhoodMatingPoolSelection: Selects solutions based on both
+ *       population-wide and neighborhood-based criteria</li>
+ * </ul>
+ *
+ * <p>Required sub-parameters depend on the selection strategy:
+ * <ul>
+ *   <li>For "tournament":
+ *     <ul>
+ *       <li>selectionTournamentSize: The size of the tournament (Integer)</li>
+ *     </ul>
+ *   </li>
+ *   <li>For "populationAndNeighborhoodMatingPoolSelection":
+ *     <ul>
+ *       <li>neighborhoodSelectionProbability: Probability of selecting from neighborhood (Double)</li>
+ *       <li>neighborhood: A Neighborhood instance (provided via non-configurable parameters)</li>
+ *       <li>subProblemIdGenerator: A SequenceGenerator for subproblem IDs (provided via non-configurable parameters)</li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ *
+ * @param <S> The type of solutions being evolved
+ */
 public class SelectionParameter<S extends Solution<?>> extends CategoricalParameter {
 
+  /**
+   * Creates a new SelectionParameter with the specified selection strategies.
+   *
+   * @param selectionStrategies A list of valid selection strategy names. Supported values:
+   *                          - "tournament"
+   *                          - "random"
+   *                          - "populationAndNeighborhoodMatingPoolSelection"
+   * @throws IllegalArgumentException if selectionStrategies is null or empty
+   */
   public SelectionParameter(List<String> selectionStrategies) {
     super("selection", selectionStrategies);
   }
 
+  /**
+   * Creates and returns a Selection operator based on the current parameter value.
+   * The specific implementation and required parameters depend on the selection strategy.
+   *
+   * @param matingPoolSize The number of solutions to select
+   * @param comparator The comparator used to compare solutions (used by some selection strategies)
+   * @return A configured Selection operator
+   * @throws JMetalException if the current value does not match any known selection strategy,
+   *                         or if required sub-parameters are missing or invalid
+   * @throws IllegalArgumentException if matingPoolSize is not positive or comparator is null
+   */
   public Selection<S> getSelection(int matingPoolSize, Comparator<S> comparator) {
     Selection<S> result;
     switch (value()) {
@@ -44,17 +94,27 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
         Check.notNull(subProblemIdGenerator);
 
         result =
-            new PopulationAndNeighborhoodSelection<>(
+            new PopulationAndNeighborhoodSelection<S>(
                 matingPoolSize,
                 subProblemIdGenerator,
                 neighborhood,
                 neighborhoodSelectionProbability,
-                false);
+                false); // selectCurrentSolution is false to match the original behavior
         break;
       default:
         throw new JMetalException("Selection component unknown: " + value());
     }
 
     return result;
+  }
+
+  /**
+   * Returns the name of this parameter.
+   *
+   * @return The string "selection"
+   */
+  @Override
+  public String name() {
+    return "selection";
   }
 }
