@@ -134,7 +134,7 @@ class MOEADTest {
                   + "--crossoverProbability 0.9 "
                   + "--crossoverRepairStrategy bounds "
                   + "--mutation swap "
-                  + "--mutationProbability 1.0 "
+                  + "--mutationProbability 0.06 "
                   + "--mutationRepairStrategy bounds "
                   + "--crossover PMX "
                   + "--selection populationAndNeighborhoodMatingPoolSelection "
@@ -159,7 +159,7 @@ class MOEADTest {
       assertEquals("crossoverAndMutationVariation", parameterSpace.get("variation").value());
       assertEquals(0.9, parameterSpace.get("crossoverProbability").value());
       assertEquals("swap", parameterSpace.get("mutation").value());
-      assertEquals(1.0, parameterSpace.get("mutationProbability").value());
+      assertEquals(0.06, parameterSpace.get("mutationProbability").value());
       assertEquals("PMX", parameterSpace.get("crossover").value());
       assertEquals(
           "populationAndNeighborhoodMatingPoolSelection", parameterSpace.get("selection").value());

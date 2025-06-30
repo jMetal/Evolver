@@ -94,7 +94,7 @@ class NSGAIIDoubleIT {
 
     var parameters =
         ("--algorithmResult externalArchive "
-                + "--externalArchive crowdingDistanceArchive "
+                + "--archiveType crowdingDistanceArchive "
                 + "--populationSizeWithArchive 20 "
                 + "--createInitialSolutions default "
                 + "--variation crossoverAndMutationVariation "

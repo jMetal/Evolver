@@ -37,13 +37,13 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var configurableAlgorithm = new NSGAIIDouble(100);
+    var baseAlgorithm = new NSGAIIDouble(100);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
