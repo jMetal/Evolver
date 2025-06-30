@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
@@ -13,8 +14,7 @@ public class YamlNSGAIIPermutationParameterDescriptionGenerator {
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator<PermutationSolution<Integer>>();
     String parameterString =
-        parameterFileGenerator.generateConfiguration(
-            new NSGAIIPermutationParameterSpace());
+        parameterFileGenerator.generateConfiguration(new NSGAIIPermutationParameterSpace());
     System.out.println(parameterString);
   }
 }
