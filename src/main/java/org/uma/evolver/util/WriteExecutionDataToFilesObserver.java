@@ -26,6 +26,7 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
    */
   public WriteExecutionDataToFilesObserver(int frequency, int evaluationsLimit,
       OutputResultsManagement outputResultsManagement) {
+
     this.outputResultsManagement = outputResultsManagement;
     this.frequency = frequency ;
   }

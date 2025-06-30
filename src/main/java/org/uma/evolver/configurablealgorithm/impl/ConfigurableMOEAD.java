@@ -177,17 +177,12 @@ public class ConfigurableMOEAD implements ConfigurableAlgorithmBuilder {
     deCrossoverParameter.addGlobalParameter(crParameter);
     deCrossoverParameter.addGlobalParameter(fParameter);
 
-    offspringPopulationSizeParameter = new PositiveIntegerValue("offspringPopulationSize") ;
-    offspringPopulationSizeParameter.value(1);
-
     variationParameter =
         new VariationParameter(List.of("crossoverAndMutationVariation", "differentialEvolutionVariation"));
     variationParameter.addGlobalParameter(mutationParameter);
 
     variationParameter.addSpecificParameter("crossoverAndMutationVariation", crossoverParameter);
-    //variationParameter.addSpecificParameter("crossoverAndMutationVariation", mutationParameter);
     variationParameter.addNonConfigurableParameter("offspringPopulationSize", 1);
-    //variationParameter.addSpecificParameter("differentialEvolutionVariation", mutationParameter);
     variationParameter.addSpecificParameter("differentialEvolutionVariation", deCrossoverParameter);
   }
 

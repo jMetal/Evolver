@@ -5,10 +5,10 @@ Evolver is a tool based on the formulation of the automatic configuration and de
 algorithms, i.e., Evolver applies a meta-optimization approach.
 
 The basis of Evolver are:
-* A multi-objective metaheuristic algorithm in which, given one or several problems used as training set, a configuration of it is sought that solves the training set in an efficient way. This algorithm is referred as to the *Configurable Algorithm*.
+* A multi-objective metaheuristic algorithm in which, given one or several problems used as a training set, a configuration of it is sought that solves the training set efficiently. This algorithm is referred as to the *Configurable Algorithm*.
 * A design space associated to the configurable algorithm which defines their parameters and components subject to be configured.
-* A list of quality indicators used as objectives to minimize when using the configurable algorithm to solve a problem of the training set.
-* A *meta-optimizer* algorithm which is used to solve the optimization problem defined by minimizing the quality indicators of an configurable algorithm given a particular training set.
+* A list of quality indicators used as objectives to be minimized when appling the configurable algorithm to solve a problem of the training set.
+* A *meta-optimizer* algorithm used to solve the optimization problem defined by minimizing the quality indicators of an configurable algorithm given a particular training set.
 
 The project is made of two parts:
 * [Evolver](src): A Java library built with maven that implements the meta-optimization approach.
