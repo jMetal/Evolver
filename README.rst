@@ -7,14 +7,46 @@ Evolver is a framework that formulates the automatic configuration and design of
 
 The current version of the tool is Evolver 2.0 beta, which is a complete rewrite of the original Evolver framework.
 
-Evolver implements a two-level optimization architecture, depicted in :ref:`fig-meta-optimization-approach`:
+Evolver implements a two-level optimization architecture:
 
-.. _fig-meta-optimization-approach:
+.. code-block:: none
 
-.. figure:: docs/images/metaOptimizationApproach.png
-   :alt: Meta-optimization approach of Evolver
-   :align: center
-   :width: 600px
+    +---------------------------------------------+
+    |        Meta-optimization Level              |
+    |  +---------------------------------------+  |
+    |  | Meta-optimization Algorithm           |  |
+    |  | (e.g., NSGA-II, MOEA/D)               |  |
+    |  +------------------+--------------------+  |
+    |                     |                       |
+    |  +------------------v--------------------+  |
+    |  | Meta-optimization Problem             |  |
+    |  | - Evaluates base-level configurations |  |
+    |  | - Uses quality indicators as          |  |
+    |  |   optimization objectives             |  |
+    |  +------------------+--------------------+  |
+    |                     |                       |
+    +---------------------|-----------------------+
+                          |
+    +---------------------|-----------------------+
+    |  Base-level         v                       |
+    |  +------------------+--------------------+  |
+    |  | Base-level Metaheuristic             |  |
+    |  | - Configurable parameters            |  |
+    |  | - Solves base-level problems         |  |
+    |  +------------------+--------------------+  |
+    |                     |                       |
+    |  +------------------v--------------------+  |
+    |  | Base-level Problems                   |  |
+    |  | (Training instances)                  |  |
+    |  +---------------------------------------+  |
+    |                                             |
+    +---------------------------------------------+
+
+Flow:
+1. Meta-optimization algorithm generates configurations
+2. Each configuration is evaluated on base-level problems
+3. Performance metrics are fed back to the meta-level
+4. The process repeats until stopping criteria are met
 
 1. **Base-level Components**
 
