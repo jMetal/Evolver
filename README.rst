@@ -5,9 +5,16 @@ Overview
 --------
 Evolver is a framework that formulates the automatic configuration and design of multi-objective metaheuristics as a multi-objective optimization problem. It employs a meta-optimization approach where one metaheuristic is used to optimize the parameters of another metaheuristic.
 
-The current version of the tool is Evolver 2.0, which is a complete rewrite of the original Evolver framework.
+The current version of the tool is Evolver 2.0 beta, which is a complete rewrite of the original Evolver framework.
 
-Evolver implements a two-level optimization architecture:
+Evolver implements a two-level optimization architecture, depicted in :ref:`fig-meta-optimization-approach`:
+
+.. _fig-meta-optimization-approach:
+
+.. figure:: docs/images/metaOptimizationApproach.png
+   :alt: Meta-optimization approach of Evolver
+   :align: center
+   :width: 600px
 
 1. **Base-level Components**
 
@@ -105,8 +112,8 @@ If you use Evolver in your research, please cite:
 Changelog
 ---------
 
-v2.0 (2024-06-30)
-^^^^^^^^^^^^^^^^^
+v2.0 beta (2024-06-30)
+^^^^^^^^^^^^^^^^^^^^^
 * Complete rewrite of the original Evolver framework
 * New architecture for improved flexibility and maintainability
 * Enhanced support for meta-optimization of multi-objective metaheuristics
