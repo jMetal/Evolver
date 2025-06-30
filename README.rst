@@ -1,26 +1,25 @@
 Evolver: A Meta-Optimization Framework for Multi-Objective Metaheuristics
 ========================================================================
 
-.. image:: docs/images/meta_optimization_scheme.png
-   :alt: Meta-optimization Architecture
-   :align: center
-   :width: 80%
-
 Overview
 --------
 Evolver is a framework that formulates the automatic configuration and design of multi-objective metaheuristics as a multi-objective optimization problem. It employs a meta-optimization approach where one metaheuristic is used to optimize the parameters of another metaheuristic.
 
-The framework implements a two-level optimization architecture:
+The current version of the tool is Evolver 2.0, which is a complete rewrite of the original Evolver framework.
 
-1. **Base-level Components**:
-   - A set of **Base-level Problems** serving as training instances
-   - A **Base-level Multi-objective Metaheuristic** to be configured
-   - A parameter space defining the algorithm's configurable parameters and their constraints
+Evolver implements a two-level optimization architecture:
 
-2. **Meta-level Components**:
-   - A **Meta-optimization Problem** that evaluates base-level configurations
-   - Quality indicators (e.g., Epsilon, Normalized Hypervolume) as optimization objectives
-   - A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
+1. **Base-level Components**
+
+   * A set of **Base-level Problems** serving as training instances
+   * A **Base-level Multi-objective Metaheuristic** to be configured
+   * A parameter space defining the algorithm's configurable parameters and their constraints
+
+2. **Meta-level Components**
+
+   * A **Meta-optimization Problem** that evaluates base-level configurations
+   * Quality indicators (e.g., Epsilon, Normalized Hypervolume) as optimization objectives
+   * A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
 
 This hierarchical approach enables the automatic discovery of high-performance parameter settings tailored to specific problem domains and performance criteria.
 
@@ -103,10 +102,18 @@ If you use Evolver in your research, please cite:
     issn = {2352-7110},
    }
 
+Changelog
+---------
+
+v2.0 (2024-06-30)
+^^^^^^^^^^^^^^^^^
+* Complete rewrite of the original Evolver framework
+* New architecture for improved flexibility and maintainability
+* Enhanced support for meta-optimization of multi-objective metaheuristics
+* Improved documentation and examples
+* The Docker images are not available for this version
+* The GUI-based dashboard has been removed
+
 License
 -------
-This project is licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details.
-
-Contributing
-------------
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, or suggest enhancements.
+This project is licensed under the GNU General Public License - see the `LICENSE <LICENSE>`_ file for details.
