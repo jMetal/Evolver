@@ -6,4 +6,5 @@ build
 *.egg-info
 .ruff_cache
 jMetal*.log
+.vscode
 *.iml
