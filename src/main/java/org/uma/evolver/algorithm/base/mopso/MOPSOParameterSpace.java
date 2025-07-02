@@ -1,20 +1,15 @@
 package org.uma.evolver.algorithm.base.mopso;
 
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
-import org.uma.evolver.parameter.catalogue.VelocityInitializationParameter;
-import org.uma.evolver.parameter.catalogue.VelocityUpdateParameter;
+import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsDoubleParameter;
+import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
-import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Parameter space configuration for Multi-Objective Particle Swarm Optimization (MOPSO) algorithms.
@@ -76,10 +71,13 @@ public class MOPSOParameterSpace extends ParameterSpace {
       "frequencyOfApplicationOfMutationOperator";
 
   public static final String INERTIA_WEIGHT_COMPUTING_STRATEGY = "inertiaWeightComputingStrategy";
-
-  public static final String WEIGHT = "weight";
-  public static final String WEIGHT_MIN = "weightMin";
-  public static final String WEIGHT_MAX = "weightMax";
+  public static final String CONSTANT_VALUE = "constantValue";
+  public static final String LINEAR_DECREASING = "linearDecreasing";
+  public static final String LINEAR_INCREASING = "linearIncreasing";
+  public static final String RANDOM_SELECTED_VALUE = "randomSelectedValue";
+  public static final String INERTIA_WEIGHT = "inertiaWeight";
+  public static final String INERTIA_WEIGHT_MIN = "inertiaWeightMin";
+  public static final String INERTIA_WEIGHT_MAX = "inertiaWeightMax";
 
   public static final String VELOCITY_UPDATE = "velocityUpdate";
   public static final String DEFAULT_VELOCITY_UPDATE = "defaultVelocityUpdate";
@@ -167,11 +165,50 @@ public class MOPSOParameterSpace extends ParameterSpace {
     put(new DoubleParameter(C2_MIN, 1.0, 2.0));
     put(new DoubleParameter(C2_MAX, 2.0, 3.0));
 
-    put(new VelocityUpdateParameter(List.of(DEFAULT_VELOCITY_UPDATE, SPSO2011_VELOCITY_UPDATE, CONSTRAINED_VELOCITY_UPDATE)));
+    put(
+        new VelocityUpdateParameter(
+            List.of(
+                DEFAULT_VELOCITY_UPDATE, SPSO2011_VELOCITY_UPDATE, CONSTRAINED_VELOCITY_UPDATE)));
 
     put(new LocalBestInitializationParameter(List.of(DEFAULT_LOCAL_BEST_INITIALIZATION)));
-    
-    
+    put(new LocalBestUpdateParameter(List.of(DEFAULT_LOCAL_BEST_UPDATE)));
+
+    put(new GlobalBestInitializationParameter(List.of(GLOBAL_BEST_INITIALIZATION)));
+    put(new GlobalBestUpdateParameter(List.of(DEFAULT_GLOBAL_BEST_INITIALIZATION)));
+
+    put(new GlobalBestSelectionParameter(List.of(TOURNAMENT_SELECTION, RANDOM_SELECTION)));
+    put(new IntegerParameter(SELECTION_TOURNAMENT_SIZE, 2, 10));
+
+
+    put(new PositionUpdateParameter(List.of(DEFAULT_POSITION_UPDATE)));
+    put(new DoubleParameter(VELOCITY_CHANGE_WHEN_LOWER_LIMIT_IS_REACHED, -1.0, 1.0));
+    put(new DoubleParameter(VELOCITY_CHANGE_WHEN_UPPER_LIMIT_IS_REACHED, -1.0, 1.0));
+
+    put(new PerturbationParameter(List.of(FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION)));
+    put(new IntegerParameter(FREQUENCY_OF_APPLICATION_OF_MUTATION_OPERATOR, 1, 10));
+    put(new DoubleMutationParameter(List.of(POLYNOMIAL, UNIFORM, LINKED_POLYNOMIAL, NON_UNIFORM)));
+    put(new DoubleParameter(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX, 5.0, 400.0));
+    put(new DoubleParameter(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX, 5.0, 400.0));
+    put(new DoubleParameter(NON_UNIFORM_MUTATION_PERTURBATION, 0.0, 1.0));
+    put(new DoubleParameter(UNIFORM_MUTATION_PERTURBATION, 0.0, 1.0));
+    put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
+    put(
+        new RepairDoubleSolutionStrategyParameter(
+            MUTATION_REPAIR_STRATEGY, List.of(REPAIR_RANDOM, REPAIR_ROUND, REPAIR_BOUNDS)));
+
+    put(
+        new ExternalArchiveParameter<DoubleSolution>(
+            LEADER_ARCHIVE,
+            List.of(
+                CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
+
+    put(
+        new InertiaWeightComputingParameter(
+            List.of(CONSTANT_VALUE, LINEAR_DECREASING, LINEAR_INCREASING, RANDOM_SELECTED_VALUE)));
+    put(new DoubleParameter(INERTIA_WEIGHT_MIN, 0.1, 0.5));
+    put(new DoubleParameter(INERTIA_WEIGHT_MAX, 0.5, 1.0));
+    put(new DoubleParameter(INERTIA_WEIGHT, 0.1, 1.0));
+  }
 
   /**
    * Sets up relationships between parameters. This method is called by the ParameterSpace
@@ -181,12 +218,52 @@ public class MOPSOParameterSpace extends ParameterSpace {
   protected void setParameterRelationships() {
     // Set up relationships between parameters
     // For example, mutation parameters are sub-parameters of perturbation
-    get(PERTURBATION).addSpecificSubParameter("mutation", get(MUTATION));
-    get(MUTATION).addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR));
+    get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MIN));
+    get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MAX));
+    get(VELOCITY_UPDATE).addGlobalSubParameter(get(C2_MIN));
+    get(VELOCITY_UPDATE).addGlobalSubParameter(get(C2_MAX));
+
+    get(GLOBAL_BEST_SELECTION)
+        .addSpecificSubParameter(TOURNAMENT_SELECTION, get(SELECTION_TOURNAMENT_SIZE));
+
+    get(POSITION_UPDATE)
+        .addSpecificSubParameter(
+            DEFAULT_POSITION_UPDATE, get(VELOCITY_CHANGE_WHEN_LOWER_LIMIT_IS_REACHED));
+    get(POSITION_UPDATE)
+        .addSpecificSubParameter(
+            DEFAULT_POSITION_UPDATE, get(VELOCITY_CHANGE_WHEN_UPPER_LIMIT_IS_REACHED));
 
     // Add mutation-specific parameters
-    get(MUTATION).addSpecificSubParameter("uniform", get(UNIFORM_MUTATION_PERTURBATION));
     get(MUTATION).addGlobalSubParameter(get(MUTATION_REPAIR_STRATEGY));
+    get(MUTATION).addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR));
+    get(MUTATION).addSpecificSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION));
+    get(MUTATION).addSpecificSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION));
+    get(MUTATION).addSpecificSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
+    get(MUTATION)
+        .addSpecificSubParameter(
+            LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
+
+    get(PERTURBATION)
+        .addSpecificSubParameter(FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION, get(MUTATION));
+    get(PERTURBATION)
+        .addSpecificSubParameter(
+            FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION,
+            get(FREQUENCY_OF_APPLICATION_OF_MUTATION_OPERATOR));
+
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(CONSTANT_VALUE, get(INERTIA_WEIGHT));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(LINEAR_DECREASING, get(INERTIA_WEIGHT_MIN));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(LINEAR_DECREASING, get(INERTIA_WEIGHT_MAX));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(LINEAR_INCREASING, get(INERTIA_WEIGHT_MIN));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(LINEAR_INCREASING, get(INERTIA_WEIGHT_MAX));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MIN));
+    get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
+        .addSpecificSubParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MAX));
   }
 
   /**
@@ -201,72 +278,13 @@ public class MOPSOParameterSpace extends ParameterSpace {
     topLevelParameters().add(get(SWARM_INITIALIZATION));
     topLevelParameters().add(get(VELOCITY_INITIALIZATION));
     topLevelParameters().add(get(PERTURBATION));
-  }
-
-  /**
-   * Creates a MOPSO parameter space from a configuration map.
-   *
-   * @param configuration the configuration map
-   * @return a configured MOPSOParameterSpace instance
-   * @throws NullPointerException if configuration is null
-   */
-  public static MOPSOParameterSpace fromConfiguration(Map<String, Object> configuration) {
-    Objects.requireNonNull(configuration, "Configuration map cannot be null");
-
-    MOPSOParameterSpace parameterSpace = new MOPSOParameterSpace();
-
-    // Apply configuration values to parameters
-    configuration.forEach(
-        (key, value) -> {
-          if (parameterSpace.parameters().containsKey(key)) {
-            Parameter<?> param = parameterSpace.get(key);
-            if (value instanceof String) {
-              param.parse(new String[] {(String) value});
-            } else if (value instanceof Number) {
-              param.parse(new String[] {value.toString()});
-            } else if (value instanceof Boolean) {
-              param.parse(new String[] {value.toString()});
-            }
-          }
-        });
-
-    // Validate the configured parameters
-    parameterSpace.validate();
-
-    return parameterSpace;
-  }
-
-  /**
-   * Validates the parameter configuration.
-   *
-   * @throws JMetalException if the configuration is invalid
-   */
-  public void validate() {
-    // Validate swarm size
-    int swarmSize = (int) get(SWARM_SIZE).value();
-    if (swarmSize < MIN_SWARM_SIZE || swarmSize > MAX_SWARM_SIZE) {
-      throw new JMetalException(
-          String.format(
-              "Swarm size must be between %d and %d", (int) MIN_SWARM_SIZE, (int) MAX_SWARM_SIZE));
-    }
-
-    // Validate mutation probability factor
-    double mutationProbFactor = (double) get(MUTATION_PROBABILITY_FACTOR).value();
-    if (mutationProbFactor < MIN_MUTATION_PROB_FACTOR
-        || mutationProbFactor > MAX_MUTATION_PROB_FACTOR) {
-      throw new JMetalException(
-          String.format(
-              "Mutation probability factor must be between %.1f and %.1f",
-              MIN_MUTATION_PROB_FACTOR, MAX_MUTATION_PROB_FACTOR));
-    }
-
-    // Validate uniform mutation perturbation
-    double perturbation = (double) get(UNIFORM_MUTATION_PERTURBATION).value();
-    if (perturbation < MIN_PERTURBATION || perturbation > MAX_PERTURBATION) {
-      throw new JMetalException(
-          String.format(
-              "Uniform mutation perturbation must be between %.1f and %.1f",
-              MIN_PERTURBATION, MAX_PERTURBATION));
-    }
+    topLevelParameters().add(get(INERTIA_WEIGHT_COMPUTING_STRATEGY));
+    topLevelParameters().add(get(VELOCITY_UPDATE));
+    topLevelParameters().add(get(LOCAL_BEST_INITIALIZATION));
+    topLevelParameters().add(get(LOCAL_BEST_UPDATE));
+    topLevelParameters().add(get(GLOBAL_BEST_INITIALIZATION));
+    topLevelParameters().add(get(GLOBAL_BEST_UPDATE));
+    topLevelParameters().add(get(GLOBAL_BEST_SELECTION));
+    topLevelParameters().add(get(POSITION_UPDATE));
   }
 }

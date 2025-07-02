@@ -56,27 +56,21 @@ public class VelocityUpdateParameter extends CategoricalParameter {
     double c2Min;
     double c2Max;
     DoubleProblem problem;
+
+    c1Min = (double) findGlobalSubParameter("c1Min").value();
+    c1Max = (double) findGlobalSubParameter("c1Max").value();
+    c2Min = (double) findGlobalSubParameter("c2Min").value();
+    c2Max = (double) findGlobalSubParameter("c2Max").value();
+
     switch (value()) {
       case "defaultVelocityUpdate" -> {
-        c1Min = (double) findGlobalSubParameter("c1Min").value();
-        c1Max = (double) findGlobalSubParameter("c1Max").value();
-        c2Min = (double) findGlobalSubParameter("c2Min").value();
-        c2Max = (double) findGlobalSubParameter("c2Max").value();
         return new DefaultVelocityUpdate(c1Min, c1Max, c2Min, c2Max);
       }
       case "constrainedVelocityUpdate" -> {
-        c1Min = (double) findGlobalSubParameter("c1Min").value();
-        c1Max = (double) findGlobalSubParameter("c1Max").value();
-        c2Min = (double) findGlobalSubParameter("c2Min").value();
-        c2Max = (double) findGlobalSubParameter("c2Max").value();
         problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
         return new ConstrainedVelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }
       case "SPSO2011VelocityUpdate" -> {
-        c1Min = (double) findGlobalSubParameter("c1Min").value();
-        c1Max = (double) findGlobalSubParameter("c1Max").value();
-        c2Min = (double) findGlobalSubParameter("c2Min").value();
-        c2Max = (double) findGlobalSubParameter("c2Max").value();
         problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
         return new SPS2011VelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }

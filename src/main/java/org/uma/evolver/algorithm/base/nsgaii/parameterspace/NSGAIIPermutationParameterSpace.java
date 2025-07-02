@@ -3,7 +3,7 @@ package org.uma.evolver.algorithm.base.nsgaii.parameterspace;
 import java.util.List;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsPermutationParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.PermutationCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.mutationparameter.MutationPermutationParameter;
+import org.uma.evolver.parameter.catalogue.mutationparameter.PermutationMutationParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -58,7 +58,7 @@ public class NSGAIIPermutationParameterSpace extends NSGAIICommonParameterSpace<
     put(new CreateInitialSolutionsPermutationParameter(List.of(DEFAULT)));
     put(new PermutationCrossoverParameter(List.of(PMX, OXD, CX)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.6, 0.9));
-    put(new MutationPermutationParameter(List.of(SWAP, INSERT, SCRAMBLE, INVERSION, SIMPLE_INVERSION, DISPLACEMENT)));
+    put(new PermutationMutationParameter(List.of(SWAP, INSERT, SCRAMBLE, INVERSION, SIMPLE_INVERSION, DISPLACEMENT)));
     put(new DoubleParameter(MUTATION_PROBABILITY, 0.05, 0.1));
   }
 

@@ -45,7 +45,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * @see org.uma.jmetal.operator.mutation.impl.InversionMutation
  * @see org.uma.jmetal.operator.mutation.impl.SimpleInversionMutation
  */
-public class MutationPermutationParameter extends MutationParameter<PermutationSolution<Integer>> {
+public class PermutationMutationParameter extends MutationParameter<PermutationSolution<Integer>> {
 
   /** Valid mutation operator names for permutation solutions. */
   private static final List<String> VALID_OPERATORS = 
@@ -58,7 +58,7 @@ public class MutationPermutationParameter extends MutationParameter<PermutationS
    * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
    * @throws JMetalException if any operator name is not supported
    */
-  public MutationPermutationParameter(List<String> mutationOperators) {
+  public PermutationMutationParameter(List<String> mutationOperators) {
     super(mutationOperators);
     
     if (mutationOperators == null || mutationOperators.isEmpty()) {

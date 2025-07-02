@@ -36,7 +36,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * @see org.uma.jmetal.operator.mutation.impl.BitFlipMutation
  */
-public class MutationBinaryParameter extends MutationParameter<BinarySolution> {
+public class BinaryMutationParameter extends MutationParameter<BinarySolution> {
 
   /**
    * Constructs a new MutationBinaryParameter with the specified list of mutation operator names.
@@ -44,7 +44,7 @@ public class MutationBinaryParameter extends MutationParameter<BinarySolution> {
    * @param mutationOperators the list of supported mutation operator names (should contain "bitFlip")
    * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
    */
-  public MutationBinaryParameter(List<String> mutationOperators) {
+  public BinaryMutationParameter(List<String> mutationOperators) {
     super(mutationOperators);
     
     // Validate that only supported operators are provided
