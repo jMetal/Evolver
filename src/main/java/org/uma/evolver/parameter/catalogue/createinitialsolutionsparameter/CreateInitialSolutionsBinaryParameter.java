@@ -43,9 +43,19 @@ public class CreateInitialSolutionsBinaryParameter
    * @throws IllegalArgumentException if validValues is null or empty
    */
   public CreateInitialSolutionsBinaryParameter(List<String> validValues) {
-    super(validValues);
+    this("createInitialSolutions", validValues);
   }
 
+   /**
+   * Creates a new CreateInitialSolutionsBinaryParameter with the specified name and valid values.
+   *
+   * @param name
+   * @param validValues
+   */
+  public CreateInitialSolutionsBinaryParameter(String name, List<String> validValues) {
+    super(name, validValues);
+  }
+  
   /**
    * Creates and returns a SolutionsCreation strategy for binary solutions based on the current parameter value.
    *

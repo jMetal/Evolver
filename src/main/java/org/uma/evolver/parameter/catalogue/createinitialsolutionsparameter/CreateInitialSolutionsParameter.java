@@ -7,16 +7,26 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
 /**
- * An abstract categorical parameter for creating initial solutions in evolutionary algorithms.
- * This parameter defines the strategy used to generate the initial population.
+ * An abstract categorical parameter for creating initial solutions in evolutionary algorithms. This
+ * parameter defines the strategy used to generate the initial population.
  *
- * <p>Implementations of this class should provide specific strategies for creating
- * initial solutions based on the problem type (e.g., binary, double, permutation).
+ * <p>Implementations of this class should provide specific strategies for creating initial
+ * solutions based on the problem type (e.g., binary, double, permutation).
  *
  * @param <S> The type of solutions being created
  */
 public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
     extends CategoricalParameter {
+
+  /**
+   * Creates a new CreateInitialSolutionsParameter with the specified name and valid values.
+   *
+   * @param name
+   * @param validValues
+   */
+  public CreateInitialSolutionsParameter(String name, List<String> validValues) {
+    super(name, validValues);
+  }
 
   /**
    * Creates a new CreateInitialSolutionsParameter with the specified valid values.
@@ -25,12 +35,12 @@ public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
    * @throws IllegalArgumentException if validValues is null or empty
    */
   protected CreateInitialSolutionsParameter(List<String> validValues) {
-    super("createInitialSolutions", validValues);
+    this("createInitialSolutions", validValues);
   }
 
   /**
-   * Creates and returns a SolutionsCreation strategy based on the current parameter value.
-   * The specific implementation is provided by concrete subclasses.
+   * Creates and returns a SolutionsCreation strategy based on the current parameter value. The
+   * specific implementation is provided by concrete subclasses.
    *
    * @param problem The problem for which to create initial solutions
    * @param populationSize The number of solutions to create
@@ -39,14 +49,4 @@ public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
    */
   public abstract SolutionsCreation<S> getCreateInitialSolutionsStrategy(
       Problem<S> problem, int populationSize);
-      
-  /**
-   * Returns the name of this parameter.
-   *
-   * @return The string "createInitialSolutions"
-   */
-  @Override
-  public String name() {
-    return "createInitialSolutions";
-  }
 }

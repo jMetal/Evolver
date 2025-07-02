@@ -63,9 +63,19 @@ public class CreateInitialSolutionsDoubleParameter
    * @throws IllegalArgumentException if validValues is null or empty
    */
   public CreateInitialSolutionsDoubleParameter(List<String> validValues) {
-    super(validValues);
+    this("createInitialSolutions", validValues);
   }
 
+  /**
+   * Creates a new CreateInitialSolutionsDoubleParameter with the specified name and valid values.
+   *
+   * @param name
+   * @param validValues
+   */
+  public CreateInitialSolutionsDoubleParameter(String name, List<String> validValues) {
+    super(name, validValues);
+  }
+  
   /**
    * Creates and returns a SolutionsCreation strategy for double solutions based on the current parameter value.
    *

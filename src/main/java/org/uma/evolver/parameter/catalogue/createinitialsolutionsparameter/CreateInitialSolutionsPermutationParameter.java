@@ -44,7 +44,17 @@ public class CreateInitialSolutionsPermutationParameter
    * @throws IllegalArgumentException if validValues is null or empty
    */
   public CreateInitialSolutionsPermutationParameter(List<String> validValues) {
-    super(validValues);
+    this("createInitialSolutions", validValues);
+  }
+
+   /**
+   * Creates a new CreateInitialSolutionsPermutationParameter with the specified name and valid values.
+   *
+   * @param name
+   * @param validValues
+   */
+  public CreateInitialSolutionsPermutationParameter(String name, List<String> validValues) {
+    super(name, validValues);
   }
 
   /**

@@ -1,0 +1,166 @@
+swarmSize:
+  type: integer
+  values: [10, 200]
+#
+leaderArchive:
+  type: categorical
+  values:
+    - crowdingDistanceArchive:
+    - spatialSpreadDeviationArchive:
+#
+algorithmResult:
+  type: categorical
+  values:
+    - leaderArchive:
+#
+swarmInitialization:
+  type: categorical
+  values:
+    - random:
+    - latinHypercubeSampling:
+    - scatterSearch:
+#
+velocityInitialization:
+  type: categorical
+  values:
+    - defaultVelocityInitialization:
+    - SPSO2007VelocityInitialization:
+    - SPSO2011VelocityInitialization:
+#
+perturbation:
+  type: categorical
+  values:
+    - frequencySelectionMutationBasedPerturbation:
+        specific_parameter:
+          - mutation:
+              type: categorical
+              global_parameters:
+                - mutationProbabilityFactor:
+                    type: real
+                    values: [0.0, 2.0]
+                - mutationRepairStrategy:
+                    type: categorical
+                    values:
+                      - random:
+                      - round:
+                      - bounds:
+              values:
+                - uniform:
+                    specific_parameter:
+                      - uniformMutationPerturbation:
+                          type: real
+                          values: [0.0, 1.0]
+                - polynomial:
+                    specific_parameter:
+                      - polynomialMutationDistributionIndex:
+                          type: real
+                          values: [5.0, 400.0]
+                - nonUniform:
+                    specific_parameter:
+                      - nonUniformMutationPerturbation:
+                          type: real
+                          values: [0.0, 1.0]
+                - linkedPolynomial:
+                    specific_parameter:
+                      - linkedPolynomialMutationDistributionIndex:
+                          type: real
+                          values: [5.0, 400.0]
+          - frequencyOfApplicationOfMutationOperator:
+              type: integer
+              values: [1, 10]
+#
+inertiaWeightComputingStrategy:
+  type: categorical
+  values:
+    - constantValue:
+        specific_parameter:
+          - weight:
+              type: real
+              values: [0.1, 1.0]
+    - randomSelectedValue:
+        specific_parameter:
+          - weightMin:
+              type: real
+              values: [0.1, 0.5]
+          - weightMax:
+              type: real
+              values: [0.5, 1.0]
+    - linearIncreasingValue:
+        specific_parameter:
+          - weightMin:
+              type: real
+              values: [0.1, 0.5]
+          - weightMax:
+              type: real
+              values: [0.5, 1.0]
+    - linearDecreasingValue:
+        specific_parameter:
+          - weightMin:
+              type: real
+              values: [0.1, 0.5]
+          - weightMax:
+              type: real
+              values: [0.5, 1.0]
+#
+velocityUpdate:
+  type: categorical
+  global_parameters:
+    - c1Min:
+        type: real
+        values: [1.0, 2.0]
+    - c1Max:
+        type: real
+        values: [2.0, 3.0]
+    - c2Min:
+        type: real
+        values: [1.0, 2.0]
+    - c2Max:
+        type: real
+        values: [2.0, 3.0]
+  values:
+    - defaultVelocityUpdate:
+    - constrainedVelocityUpdate:
+    - SPSO2011VelocityUpdate:
+#
+localBestInitialization:
+  type: categorical
+  values:
+    - defaultLocalBestInitialization:
+#
+globalBestInitialization:
+  type: categorical
+  values:
+    - defaultGlobalBestInitialization:
+#
+globalBestSelection:
+  type: categorical
+  values:
+    - tournament:
+        specific_parameter:
+          - selectionTournamentSize:
+              type: integer
+              values: [2, 10]
+    - random:
+#
+globalBestUpdate:
+  type: categorical
+  values:
+    - defaultGlobalBestUpdate:
+#
+localBestUpdate:
+  type: categorical
+  values:
+    - defaultLocalBestUpdate:
+#
+positionUpdate:
+  type: categorical
+  values:
+    - defaultPositionUpdate:
+        specific_parameter:
+          - velocityChangeWhenLowerLimitIsReached:
+              type: real
+              values: [-1.0, 1.0]
+          - velocityChangeWhenUpperLimitIsReached:
+              type: real
+              values: [-1.0, 1.0]
+#
