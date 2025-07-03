@@ -159,7 +159,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
     double perturbation = (Double) findSpecificSubParameter("nonUniformMutationPerturbation").value();
-    int maxIterations = (Integer) findSpecificSubParameter("maxIterations").value();
+    int maxIterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
     return new NonUniformMutation(
         mutationProbability, 
         perturbation, 

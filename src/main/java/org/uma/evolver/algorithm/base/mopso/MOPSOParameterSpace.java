@@ -74,8 +74,8 @@ public class MOPSOParameterSpace extends ParameterSpace {
 
   public static final String INERTIA_WEIGHT_COMPUTING_STRATEGY = "inertiaWeightComputingStrategy";
   public static final String CONSTANT_VALUE = "constantValue";
-  public static final String LINEAR_DECREASING = "linearDecreasing";
-  public static final String LINEAR_INCREASING = "linearIncreasing";
+  public static final String LINEAR_DECREASING_VALUE = "linearDecreasingValue";
+  public static final String LINEAR_INCREASING_VALUE = "linearIncreasingValue";
   public static final String RANDOM_SELECTED_VALUE = "randomSelectedValue";
   public static final String INERTIA_WEIGHT = "inertiaWeight";
   public static final String INERTIA_WEIGHT_MIN = "inertiaWeightMin";
@@ -143,7 +143,8 @@ public class MOPSOParameterSpace extends ParameterSpace {
         new ExternalArchiveParameter<DoubleSolution>(
             LEADER_ARCHIVE,
             List.of(
-                CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
+                    //CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
+                    CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE)));
 
     // External archive type
     put(new ExternalArchiveParameter<DoubleSolution>(EXTERNAL_ARCHIVE_TYPE, List.of(UNBOUNDED_ARCHIVE)));
@@ -201,14 +202,8 @@ public class MOPSOParameterSpace extends ParameterSpace {
             MUTATION_REPAIR_STRATEGY, List.of(REPAIR_RANDOM, REPAIR_ROUND, REPAIR_BOUNDS)));
 
     put(
-        new ExternalArchiveParameter<DoubleSolution>(
-            LEADER_ARCHIVE,
-            List.of(
-                CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
-
-    put(
         new InertiaWeightComputingParameter(
-            List.of(CONSTANT_VALUE, LINEAR_DECREASING, LINEAR_INCREASING, RANDOM_SELECTED_VALUE)));
+            List.of(CONSTANT_VALUE, LINEAR_DECREASING_VALUE, LINEAR_INCREASING_VALUE, RANDOM_SELECTED_VALUE)));
     put(new DoubleParameter(INERTIA_WEIGHT_MIN, 0.1, 0.5));
     put(new DoubleParameter(INERTIA_WEIGHT_MAX, 0.5, 1.0));
     put(new DoubleParameter(INERTIA_WEIGHT, 0.1, 1.0));
@@ -259,13 +254,13 @@ public class MOPSOParameterSpace extends ParameterSpace {
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
         .addSpecificSubParameter(CONSTANT_VALUE, get(INERTIA_WEIGHT));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addSpecificSubParameter(LINEAR_DECREASING, get(INERTIA_WEIGHT_MIN));
+        .addSpecificSubParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addSpecificSubParameter(LINEAR_DECREASING, get(INERTIA_WEIGHT_MAX));
+        .addSpecificSubParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MAX));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addSpecificSubParameter(LINEAR_INCREASING, get(INERTIA_WEIGHT_MIN));
+        .addSpecificSubParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addSpecificSubParameter(LINEAR_INCREASING, get(INERTIA_WEIGHT_MAX));
+        .addSpecificSubParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MAX));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
         .addSpecificSubParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)

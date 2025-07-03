@@ -136,8 +136,8 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
     var swarmSizeParameter = ((IntegerParameter) parameterSpace.get(SWARM_SIZE));
     var inertiaWeightComputingStrategyParameter =
         ((InertiaWeightComputingParameter) parameterSpace.get(INERTIA_WEIGHT_COMPUTING_STRATEGY));
-    if (inertiaWeightComputingStrategyParameter.value().equals(LINEAR_DECREASING)
-        || inertiaWeightComputingStrategyParameter.value().equals(LINEAR_INCREASING)) {
+    if (inertiaWeightComputingStrategyParameter.value().equals(LINEAR_DECREASING_VALUE)
+        || inertiaWeightComputingStrategyParameter.value().equals(LINEAR_INCREASING_VALUE)) {
       inertiaWeightComputingStrategyParameter.addNonConfigurableSubParameter(
           "maxIterations", maximumNumberOfEvaluations / swarmSizeParameter.value());
       inertiaWeightComputingStrategyParameter.addNonConfigurableSubParameter(
@@ -148,9 +148,9 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
     mutationParameter.addNonConfigurableSubParameter(
         "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(NON_UNIFORM)) {
+    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
       mutationParameter.addNonConfigurableSubParameter(
-          "maxIterations", maximumNumberOfEvaluations / swarmSizeParameter.value());
+              "maxIterations", maximumNumberOfEvaluations / swarmSize);
     }
 
     if (mutationParameter.value().equals(UNIFORM)) {

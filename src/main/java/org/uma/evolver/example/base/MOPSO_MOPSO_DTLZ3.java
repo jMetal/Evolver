@@ -37,7 +37,7 @@ public class MOPSO_MOPSO_DTLZ3 {
                 + "--perturbation frequencySelectionMutationBasedPerturbation "
                 + "--frequencyOfApplicationOfMutationOperator 7 "
                 + "--mutation polynomial "
-                + "--polynomialMutationDistributionIndex 42.5 "
+                + "--polynomialMutationDistributionIndex 20.0 "
                 + "--mutationProbabilityFactor 1.0 "
                 + "--mutationRepairStrategy bounds "
                 + "--inertiaWeightComputingStrategy randomSelectedValue "
