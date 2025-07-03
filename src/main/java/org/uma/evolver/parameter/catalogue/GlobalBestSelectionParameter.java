@@ -53,12 +53,12 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
   public GlobalBestSelection getGlobalBestSelection(Comparator<DoubleSolution> comparator) {
     GlobalBestSelection result;
     switch (value()) {
-      case "tournament" -> {
+      case "tournamentSelection" -> {
         int tournamentSize = (Integer) findSpecificSubParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentGlobalBestSelection(tournamentSize, comparator);
       }
-      case "random" -> result = new RandomGlobalBestSelection();
+      case "randomSelection" -> result = new RandomGlobalBestSelection();
       default -> throw new JMetalException("Global Best Selection component unknown: " + value());
     }
 

@@ -90,7 +90,7 @@ public class ParticleSwarmOptimizationBuilder {
       GlobalBestSelection globalBestSelection,
       BoundedArchive<DoubleSolution> globalBestArchive,
       Archive<DoubleSolution> externalArchive) {
-    if (externalArchive != null) {
+    if (externalArchive == null) {
       return new ParticleSwarmOptimizationAlgorithm(
           name,
           solutionsCreation,

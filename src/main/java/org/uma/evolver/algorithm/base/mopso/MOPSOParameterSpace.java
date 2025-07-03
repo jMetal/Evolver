@@ -26,6 +26,7 @@ public class MOPSOParameterSpace extends ParameterSpace {
   public static final String ALGORITHM_RESULT = "algorithmResult";
   public static final String LEADER_ARCHIVE = "leaderArchive";
   public static final String EXTERNAL_ARCHIVE = "externalArchive";
+  public static final String EXTERNAL_ARCHIVE_TYPE = "externalArchiveType";
   public static final String UNBOUNDED_ARCHIVE = "unboundedArchive";
   public static final String HYPERVOLUME_ARCHIVE = "hypervolumeArchive";
   public static final String CROWDING_DISTANCE_ARCHIVE = "crowdingDistanceArchive";
@@ -145,7 +146,7 @@ public class MOPSOParameterSpace extends ParameterSpace {
                 CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
 
     // External archive type
-    put(new ExternalArchiveParameter<DoubleSolution>(EXTERNAL_ARCHIVE, List.of(UNBOUNDED_ARCHIVE)));
+    put(new ExternalArchiveParameter<DoubleSolution>(EXTERNAL_ARCHIVE_TYPE, List.of(UNBOUNDED_ARCHIVE)));
 
     // Swarm initialization
     put(
@@ -221,6 +222,8 @@ public class MOPSOParameterSpace extends ParameterSpace {
   protected void setParameterRelationships() {
     // Set up relationships between parameters
     // For example, mutation parameters are sub-parameters of perturbation
+    get(ALGORITHM_RESULT).addSpecificSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE_TYPE)) ;
+
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MIN));
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MAX));
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C2_MIN));
