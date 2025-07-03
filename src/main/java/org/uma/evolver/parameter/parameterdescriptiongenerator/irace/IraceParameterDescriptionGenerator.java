@@ -7,10 +7,34 @@ import org.uma.evolver.parameter.SpecificSubParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 
+/**
+ * A generator for creating parameter description files in the irace configuration format.
+ * 
+ * <p>This class is responsible for converting a {@link ParameterSpace} into a string
+ * representation that follows the irace parameter configuration format. It handles different
+ * types of parameters and their relationships (global and specific sub-parameters).
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * IraceParameterDescriptionGenerator<Solution<?>> generator = new IraceParameterDescriptionGenerator<>();
+ * ParameterSpace parameterSpace = new MyParameterSpace();
+ * generator.generateConfigurationFile(parameterSpace);
+ * }</pre>
+ *
+ * @param <S> The type of solution the parameters are associated with
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ */
 public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
 
-  private static String formatString = "%-40s %-40s %-7s %-30s %-20s\n";
+  /** Format string for parameter output alignment */
+  private static final String FORMAT_STRING = "%-40s %-40s %-7s %-30s %-20s\n";
 
+  /**
+   * Generates and prints the irace configuration for the given parameter space.
+   *
+   * @param parameterSpace The parameter space to generate configuration for
+   * @throws NullPointerException if parameterSpace is null
+   */
   public void generateConfigurationFile(ParameterSpace parameterSpace) {
     List<Parameter<?>> parameterList = parameterSpace.topLevelParameters();
 
@@ -24,10 +48,17 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
     System.out.println(stringBuilder);
   }
 
+  /**
+   * Decodes a single parameter and appends its irace configuration to the string builder.
+   *
+   * @param parameter The parameter to decode
+   * @param stringBuilder The string builder to append the configuration to
+   * @throws NullPointerException if either parameter or stringBuilder is null
+   */
   private void decodeParameter(Parameter<?> parameter, StringBuilder stringBuilder) {
     stringBuilder.append(
         String.format(
-            formatString,
+            FORMAT_STRING,
             parameter.name(),
             "\"" + "--" + parameter.name() + " \"",
             decodeType(parameter),
@@ -43,8 +74,19 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
     }
   }
 
+  /**
+   * Decodes a global sub-parameter and appends its irace configuration to the string builder.
+   *
+   * <p>This method handles the decoding of global sub-parameters, including their dependencies on
+   * parent parameters.
+   *
+   * @param parameter The global sub-parameter to decode
+   * @param stringBuilder The string builder to append the configuration to
+   * @param parentParameter The parent parameter of this sub-parameter
+   * @throws NullPointerException if any parameter is null
+   */
   private void decodeGlobalParameter(Parameter<?> parameter, StringBuilder stringBuilder,
-                                     Parameter<?> parentParameter) {
+                                   Parameter<?> parentParameter) {
     StringBuilder dependenceString = new StringBuilder("\"" + parameter.name() + "\"");
     if (parentParameter instanceof CategoricalParameter) {
       var validValues = ((CategoricalParameter) parentParameter).validValues();
@@ -58,8 +100,8 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
 
     stringBuilder.append(
         String.format(
-            formatString,
-            parameter.name(),
+            FORMAT_STRING,
+            " |" + parameter.name(),
             "\"" + "--" + parameter.name() + " \"",
             decodeType(parameter),
             decodeValidValues(parameter),
@@ -75,11 +117,19 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
   }
 
 
+  /**
+   * Decodes a specific sub-parameter and appends its irace configuration to the string builder.
+   *
+   * @param subParameter The specific sub-parameter to decode
+   * @param stringBuilder The string builder to append the configuration to
+   * @param parentParameter The parent parameter of this sub-parameter
+   * @throws NullPointerException if any parameter is null
+   */
   private void decodeSpecificParameter(
       SpecificSubParameter<?> subParameter, StringBuilder stringBuilder, Parameter<?> parentParameter) {
     stringBuilder.append(
         String.format(
-            formatString,
+            FORMAT_STRING,
             subParameter.parameter().name(),
             "\"" + "--" + subParameter.parameter().name() + " \"",
             decodeType(subParameter.parameter()),
@@ -96,6 +146,14 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
     }
   }
 
+  /**
+   * Determines the irace parameter type for a given parameter.
+   *
+   * @param parameter The parameter to get the type for
+   * @return A string representing the irace parameter type
+   * @throws JMetalException if the parameter type is not supported
+   * @throws NullPointerException if parameter is null
+   */
   private String decodeType(Parameter<?> parameter) {
     String result = " ";
     if (parameter instanceof CategoricalParameter) {
@@ -115,6 +173,13 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
     return result;
   }
 
+  /**
+   * Generates the valid values string for a parameter in irace format.
+   *
+   * @param parameter The parameter to get valid values for
+   * @return A string representing the valid values in irace format
+   * @throws NullPointerException if parameter is null
+   */
   private String decodeValidValues(Parameter<?> parameter) {
     String result = " ";
 

@@ -1,16 +1,33 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.mopso.MOPSO;
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Program to generate the irace configuration file for class {@link.EvNSGAIIDouble}
+ * Program to generate the YAML configuration file for the MOPSO (Multi-Objective Particle Swarm Optimization) algorithm.
  *
- * @author Antonio J. Nebro (ajnebro@uma.es)
+ * <p>This class is a utility that generates a configuration file in YAML format, which can be used
+ * for automatic algorithm configuration. The configuration includes all tunable parameters of the MOPSO
+ * algorithm, allowing for automated parameter tuning.
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * // Run the generator to print the YAML configuration to standard output
+ * YamlMOPSOParameterDescriptionGenerator.main(new String[]{});
+ * }</pre>
+ *
+ * @see MOPSOParameterSpace
+ * @see MOPSO
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class YamlMOPSOParameterDescriptionGenerator {
-
+  /**
+   * Main method that generates and prints the YAML configuration for MOPSO.
+   * The output is printed to standard output and can be redirected to a file.
+   *
+   * @param args Command line arguments (not used)
+   */
   public static void main(String[] args) {
     var parameterFileGenerator = new YamlParameterDescriptionGenerator<DoubleSolution>();
     String parameterString =

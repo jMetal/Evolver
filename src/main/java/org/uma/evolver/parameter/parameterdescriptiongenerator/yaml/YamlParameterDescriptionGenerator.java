@@ -8,8 +8,32 @@ import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
+/**
+ * A generator for creating parameter description files in YAML format.
+ *
+ * <p>This class is responsible for converting a {@link ParameterSpace} into a YAML string
+ * representation. It handles different types of parameters and their relationships (global and
+ * specific sub-parameters) in a hierarchical YAML structure.
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * YamlParameterDescriptionGenerator<Solution<?>> generator = new YamlParameterDescriptionGenerator<>();
+ * ParameterSpace parameterSpace = new MyParameterSpace();
+ * String yamlConfig = generator.generateConfiguration(parameterSpace);
+ * }</pre>
+ *
+ * @param <S> The type of solution the parameters are associated with
+ * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ */
 public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
 
+  /**
+   * Generates a YAML configuration string from the given parameter space.
+   *
+   * @param parameterSpace The parameter space to generate configuration for
+   * @return A YAML formatted string representing the parameter space
+   * @throws NullPointerException if parameterSpace is null
+   */
   public String generateConfiguration(ParameterSpace parameterSpace) {
     List<Parameter<?>> parameterList = parameterSpace.topLevelParameters() ;
 
@@ -24,8 +48,18 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
     return parameterStringBuilder.toString();
   }
 
+  /**
+   * Recursively decodes a parameter and its sub-parameters into YAML format.
+   *
+   * @param parameter The parameter to decode
+   * @param stringBuilder The string builder to append the YAML to
+   * @param tabSize The current indentation level
+   * @param isList Whether the parameter is part of a YAML list
+   * @return The updated string builder with the parameter's YAML representation
+   * @throws NullPointerException if parameter or stringBuilder is null
+   */
   private StringBuilder decodeParameter(Parameter<?> parameter, StringBuilder stringBuilder,
-                                        int tabSize, boolean isList) {
+                                      int tabSize, boolean isList) {
     printName(parameter, stringBuilder, tabSize, isList);
     // If the parameter is part of a list, add 2 spaces more to offset the "- "
     tabSize += (isList?4:2);
@@ -36,6 +70,14 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
     return stringBuilder;
   }
 
+  /**
+   * Decodes and appends global sub-parameters to the YAML output.
+   *
+   * @param parameter The parent parameter containing global sub-parameters
+   * @param stringBuilder The string builder to append the YAML to
+   * @param tabSize The current indentation level
+   * @throws NullPointerException if any parameter is null
+   */
   private void decodeGlobalParameters(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
     var globalParameters = parameter.globalSubParameters();
     if (!globalParameters.isEmpty()) {
@@ -46,18 +88,42 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
     }
   }
 
+  /**
+   * Appends the parameter's type to the YAML output.
+   *
+   * @param parameter The parameter whose type to print
+   * @param stringBuilder The string builder to append to
+   * @param tabSize The current indentation level
+   * @throws NullPointerException if any parameter is null
+   */
   private void printType(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
     stringBuilder.append(
             spaces(tabSize) + "type: " + decodeType(parameter) + "\n"
     );
   }
 
+  /**
+   * Appends the parameter's name to the YAML output with proper indentation.
+   *
+   * @param parameter The parameter whose name to print
+   * @param stringBuilder The string builder to append to
+   * @param tabSize The current indentation level
+   * @param isList Whether the parameter is part of a YAML list
+   * @throws NullPointerException if any parameter is null
+   */
   private void printName(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize, boolean isList) {
     stringBuilder.append(spaces(tabSize));
     stringBuilder.append(parameter.name()).append(":\n");
   }
 
 
+  /**
+   * Generates a string of spaces for YAML indentation.
+   *
+   * @param length The number of spaces to generate
+   * @return A string containing the specified number of spaces
+   * @throws IllegalArgumentException if length is negative
+   */
   String spaces(int length) {
     String spaces = "";
     for (int i = 0; i < length; i++) {
@@ -67,6 +133,14 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
     return spaces;
   }
 
+  /**
+   * Decodes the valid values of a parameter into YAML format.
+   *
+   * @param parameter The parameter whose valid values to decode
+   * @param tabSize The current indentation level
+   * @return A YAML string representing the parameter's valid values
+   * @throws NullPointerException if parameter is null
+   */
   private String decodeValidValues(Parameter<?> parameter, int tabSize) {
     StringBuilder result = new StringBuilder();
 
@@ -119,6 +193,14 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
     return result.toString();
   }
 
+  /**
+   * Determines the YAML type string for a given parameter.
+   *
+   * @param parameter The parameter to get the type for
+   * @return A string representing the parameter's type in YAML
+   * @throws JMetalException if the parameter type is not supported
+   * @throws NullPointerException if parameter is null
+   */
   private String decodeType(Parameter<?> parameter) {
     String result = " ";
     if (parameter instanceof CategoricalParameter) {

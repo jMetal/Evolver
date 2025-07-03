@@ -33,7 +33,7 @@ public class CreateInitialSolutionsBinaryParameter
     extends CreateInitialSolutionsParameter<BinarySolution> {
 
   /** The default strategy name for creating initial binary solutions. */
-  public static final String DEFAULT_STRATEGY = "DEFAULT_STRATEGY";
+  public static final String DEFAULT_STRATEGY = "default";
 
   /**
    * Creates a new CreateInitialSolutionsBinaryParameter with the specified valid values.
