@@ -24,6 +24,7 @@ public class MOPSOParameterSpace extends ParameterSpace {
   // Parameter names
   public static final String SWARM_SIZE = "swarmSize";
   public static final String LEADER_ARCHIVE = "leaderArchive";
+  public static final String EXTERNAL_ARCHIVE = "externalArchive";
   public static final String UNBOUNDED_ARCHIVE = "unboundedArchive";
   public static final String HYPERVOLUME_ARCHIVE = "hypervolumeArchive";
   public static final String ALGORITHM_RESULT = "algorithmResult";
@@ -173,8 +174,8 @@ public class MOPSOParameterSpace extends ParameterSpace {
     put(new LocalBestInitializationParameter(List.of(DEFAULT_LOCAL_BEST_INITIALIZATION)));
     put(new LocalBestUpdateParameter(List.of(DEFAULT_LOCAL_BEST_UPDATE)));
 
-    put(new GlobalBestInitializationParameter(List.of(GLOBAL_BEST_INITIALIZATION)));
-    put(new GlobalBestUpdateParameter(List.of(DEFAULT_GLOBAL_BEST_INITIALIZATION)));
+    put(new GlobalBestInitializationParameter(List.of(DEFAULT_GLOBAL_BEST_INITIALIZATION)));
+    put(new GlobalBestUpdateParameter(List.of(DEFAULT_GLOBAL_BEST_UPDATE)));
 
     put(new GlobalBestSelectionParameter(List.of(TOURNAMENT_SELECTION, RANDOM_SELECTION)));
     put(new IntegerParameter(SELECTION_TOURNAMENT_SIZE, 2, 10));
