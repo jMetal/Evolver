@@ -2,7 +2,6 @@ package org.uma.evolver.algorithm.base;
 
 import java.util.List;
 import java.util.Objects;
-import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
@@ -22,40 +21,57 @@ import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
 
 /**
- * A builder class for creating instances of {@link Algorithm} that implement Particle Swarm
- * Optimization (PSO). This builder provides a flexible way to configure and instantiate PSO
- * algorithms with various components.
+ * A builder class for creating instances of {@link ParticleSwarmOptimizationAlgorithm} with optional archive support.
+ * This builder provides a flexible way to configure and instantiate Particle Swarm Optimization algorithms,
+ * with or without an external archive for storing non-dominated solutions.
  *
  * <p>Example usage:
- *
  * <pre>{@code
- * Algorithm<List<DoubleSolution>> algorithm = new ParticleSwarmOptimizationBuilder<DoubleSolution>()
- *     .setName("MOPSO")
- *     .setSolutionsCreation(initialSwarmCreation)
- *     .setEvaluation(evaluation)
- *     .setTermination(termination)
- *     .setVelocityInitialization(velocityInitialization)
- *     .setLocalBestInitialization(localBestInitialization)
- *     .setGlobalBestInitialization(globalBestInitialization)
- *     .setInertiaWeightStrategy(inertiaWeightStrategy)
- *     .setVelocityUpdate(velocityUpdate)
- *     .setPositionUpdate(positionUpdate)
- *     .setPerturbation(perturbation)
- *     .setGlobalBestUpdate(globalBestUpdate)
- *     .setLocalBestUpdate(localBestUpdate)
- *     .setGlobalBestSelection(globalBestSelection)
- *     .setGlobalBestArchive(globalBestArchive)
- *     .build();
+ * Algorithm<List<DoubleSolution>> algorithm = new ParticleSwarmOptimizationBuilder()
+ *     .build(
+ *         "MOPSO",
+ *         initialSwarmCreation,
+ *         evaluation,
+ *         termination,
+ *         velocityInitialization,
+ *         localBestInitialization,
+ *         globalBestInitialization,
+ *         inertiaWeightStrategy,
+ *         velocityUpdate,
+ *         positionUpdate,
+ *         perturbation,
+ *         globalBestUpdate,
+ *         localBestUpdate,
+ *         globalBestSelection,
+ *         globalBestArchive,
+ *         externalArchive  // can be null if no external archive is needed
+ *     );
  * }</pre>
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class ParticleSwarmOptimizationBuilder {
   /**
-   * Builds and returns a configured PSO algorithm instance.
+   * Builds an instance of ParticleSwarmOptimizationAlgorithm with the specified components.
    *
-   * @return a configured PSO algorithm
-   * @throws NullPointerException if any required component is not set
+   * @param name the name of the algorithm (used for identification and logging)
+   * @param solutionsCreation component responsible for creating the initial swarm
+   * @param evaluation component that handles solution evaluation
+   * @param termination condition that determines when the algorithm should stop
+   * @param velocityInitialization strategy for initializing particle velocities
+   * @param localBestInitialization strategy for initializing local best solutions
+   * @param globalBestInitialization strategy for initializing global best solutions
+   * @param inertiaWeightStrategy strategy for computing inertia weight during the search
+   * @param velocityUpdate operator for updating particle velocities
+   * @param positionUpdate operator for updating particle positions
+   * @param perturbation operator for applying perturbations to solutions
+   * @param globalBestUpdate strategy for updating the global best solution
+   * @param localBestUpdate strategy for updating local best solutions
+   * @param globalBestSelection strategy for selecting the global best solution
+   * @param globalBestArchive archive for storing global best solutions
+   * @param externalArchive optional external archive for storing non-dominated solutions (can be null)
+   * @return a configured instance of ParticleSwarmOptimizationAlgorithm
+   * @throws NullPointerException if any required parameter is null (except externalArchive)
    */
   public ParticleSwarmOptimizationAlgorithm build(
       String name,
