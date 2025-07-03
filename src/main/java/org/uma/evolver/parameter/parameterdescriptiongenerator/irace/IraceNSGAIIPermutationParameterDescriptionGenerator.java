@@ -1,7 +1,5 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 
 /**

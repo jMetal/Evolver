@@ -1,6 +1,5 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 

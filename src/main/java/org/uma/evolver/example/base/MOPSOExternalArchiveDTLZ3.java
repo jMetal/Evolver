@@ -12,7 +12,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class MOPSO_EXTERNAL_ARCHIVE_DTLZ3 {
+public class MOPSOExternalArchiveDTLZ3 {
   public static void main(String[] args) {
     DoubleProblem problem = new DTLZ3();
     String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
