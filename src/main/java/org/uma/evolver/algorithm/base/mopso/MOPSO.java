@@ -197,7 +197,10 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
     return new MOPSO(
-        (DoubleProblem) problem, leaderArchiveSize, maximumNumberOfEvaluations, parameterSpace);
+        (DoubleProblem) problem,
+        leaderArchiveSize,
+        maximumNumberOfEvaluations,
+        new MOPSOParameterSpace());
   }
 
   /**

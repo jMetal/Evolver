@@ -21,31 +21,70 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
+/**
+ * A meta-optimization problem that optimizes the parameters of another optimization algorithm
+ * by evaluating its performance across multiple problem instances using quality indicators.
+ * 
+ * <p>This class implements a meta-optimization approach where the parameters of a base
+ * algorithm are tuned by evaluating its performance on multiple problem instances using
+ * various quality indicators. The optimization objective is to find parameter settings
+ * that work well across all problem instances.</p>
+ *
+ * @param <S> The type of solutions used by the base algorithm
+ */
 public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoubleProblem {
-  private final BaseLevelAlgorithm<S> configurableAlgorithm;
+  /** The base algorithm whose parameters are being optimized. */
+  private final BaseLevelAlgorithm<S> baseAlgorithm;
+  
+  /** List of problems used to evaluate the algorithm's performance. */
   private final List<Problem<S>> problems;
+  
+  /** Quality indicators used to evaluate solutions. */
   private final List<QualityIndicator> indicators;
+  
+  /** Maximum number of evaluations for each problem. */
   private final List<Integer> maxNumberOfEvaluations;
+  
+  /** List of parameters being optimized. */
   private final List<Parameter<?>> parameters;
+  
+  /** Normalized reference fronts for each problem. */
   private List<double[][]> normalizedReferenceFronts;
+  
+  /** Original reference fronts for each problem. */
   private List<double[][]> referenceFronts;
+  
+  /** Number of independent runs to perform for each evaluation. */
   private final int numberOfIndependentRuns;
 
+  /**
+   * Constructs a new meta-optimization problem instance.
+   *
+   * @param baseAlgorithm the base algorithm whose parameters will be optimized
+   * @param problems the list of problems to evaluate the algorithm on
+   * @param referenceFrontFileNames list of file paths containing reference fronts for each problem
+   * @param indicators list of quality indicators to evaluate solutions
+   * @param maxNumberOfEvaluations maximum number of evaluations for each problem
+   * @param numberOfIndependentRuns number of independent runs to perform for each evaluation
+   * @throws NullPointerException if any parameter is null
+   * @throws IllegalArgumentException if the sizes of problems, referenceFrontFileNames,
+   *         and maxNumberOfEvaluations don't match
+   */
   public MetaOptimizationProblem(
-      BaseLevelAlgorithm<S> configurableAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       List<Problem<S>> problems,
       List<String> referenceFrontFileNames,
       List<QualityIndicator> indicators,
       List<Integer> maxNumberOfEvaluations,
       int numberOfIndependentRuns) {
-    this.configurableAlgorithm = configurableAlgorithm;
+    this.baseAlgorithm = baseAlgorithm;
     this.problems = problems;
     this.indicators = indicators;
     this.maxNumberOfEvaluations = maxNumberOfEvaluations;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
 
     this.parameters =
-        ParameterManagement.parameterFlattening(configurableAlgorithm.parameterSpace().topLevelParameters());
+        ParameterManagement.parameterFlattening(baseAlgorithm.parameterSpace().topLevelParameters());
 
     Check.that(
         problems.size() == referenceFrontFileNames.size(),
@@ -69,6 +108,12 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     computeNormalizedReferenceFronts(referenceFrontFileNames);
   }
 
+  /**
+   * Loads and normalizes the reference fronts from the specified files.
+   *
+   * @param referenceFrontFileNames list of file paths containing reference fronts
+   * @throws JMetalException if a reference front file cannot be read
+   */
   private void computeNormalizedReferenceFronts(List<String> referenceFrontFileNames) {
     referenceFronts = new ArrayList<>();
     normalizedReferenceFronts = new ArrayList<>();
@@ -84,30 +129,65 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     }
   }
 
+  /**
+   * Returns the number of variables (parameters) in the problem.
+   *
+   * @return the number of parameters being optimized
+   */
   @Override
   public int numberOfVariables() {
     return parameters.size();
   }
 
+  /**
+   * Returns the number of objectives in the problem.
+   *
+   * @return the number of quality indicators being used
+   */
   @Override
   public int numberOfObjectives() {
     return indicators.size();
   }
 
+  /**
+   * Returns the number of constraints in the problem.
+   * This implementation returns 0 as the problem is unconstrained.
+   *
+   * @return 0 (no constraints)
+   */
   @Override
   public int numberOfConstraints() {
     return 0;
   }
 
+  /**
+   * Returns the name of the problem.
+   *
+   * @return the name of the problem as a string
+   */
   @Override
   public String name() {
     return "Meta-optimization problem";
   }
 
+  /**
+   * Returns the list of parameters being optimized.
+   *
+   * @return an unmodifiable list of parameters
+   */
   public List<Parameter<?>> parameters() {
     return parameters;
   }
 
+  /**
+   * Evaluates a solution by running the base algorithm with the specified parameter settings
+   * and computing the quality indicators.
+   *
+   * @param solution the solution containing the parameter values to evaluate
+   * @return the evaluated solution with objective values set
+   * @throws NullPointerException if solution is null
+   * @throws IllegalArgumentException if the solution's variables don't match the expected number of parameters
+   */
   @Override
   public DoubleSolution evaluate(DoubleSolution solution) {
     String[] parameterArray = convertSolutionToParameters(solution);
@@ -117,12 +197,25 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     return solution;
   }
 
+  /**
+   * Converts a solution's variables into an array of parameter strings.
+   *
+   * @param solution the solution containing parameter values
+   * @return array of parameter strings in the format expected by the base algorithm
+   * @throws NullPointerException if solution is null
+   */
   private String[] convertSolutionToParameters(DoubleSolution solution) {
     StringBuilder parameterString =
         ParameterManagement.decodeParametersToString(parameters, solution.variables());
     return parameterString.toString().split("\\s+");
   }
 
+  /**
+   * Computes the indicator values for all problems using the given parameter settings.
+   *
+   * @param parameterArray the parameter settings to evaluate
+   * @return a 2D array where each row corresponds to a problem and each column to an indicator
+   */
   private double[][] computeIndicatorValuesForAllProblems(String[] parameterArray) {
     double[][] indicatorValuesPerProblem = new double[problems.size()][indicators.size()];
 
@@ -137,6 +230,13 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     return indicatorValuesPerProblem;
   }
 
+  /**
+   * Updates the solution's objective values with the mean indicator values across all problems.
+   *
+   * @param solution the solution to update
+   * @param indicatorValuesPerProblem a 2D array of indicator values [problemIndex][indicatorIndex]
+   * @throws IllegalStateException if there are no indicators or problems
+   */
   private void updateSolutionWithMeanIndicatorValues(
       DoubleSolution solution, double[][] indicatorValuesPerProblem) {
     // Validate inputs
@@ -163,6 +263,16 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
                 solution.objectives()[indicatorIndex] = meanIndicatorValues[indicatorIndex]);
   }
 
+  /**
+   * Performs multiple independent runs of the base algorithm with the given parameters
+   * and computes median indicator values.
+   *
+   * @param parameterArray the parameter settings to evaluate
+   * @param problemId the index of the problem to evaluate against
+   * @return array of median indicator values, one for each quality indicator
+   * @throws JMetalException if the computed front dimensions don't match the reference front
+   * @throws IndexOutOfBoundsException if problemId is out of bounds
+   */
   private double[] computeIndependentRuns(String[] parameterArray, int problemId) {
     double[] medianIndicatorValues = new double[indicators.size()];
     double[][] indicatorValues = new double[indicators.size()][];
@@ -171,7 +281,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm =
-          configurableAlgorithm
+          baseAlgorithm
               .createInstance(problems.get(problemId), maxNumberOfEvaluations.get(problemId))
               .parse(parameterArray)
               .build();

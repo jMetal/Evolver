@@ -66,7 +66,7 @@ public class MOEADPermutationParameterSpace extends MOEADCommonParameterSpace<Pe
   public static final String INSERT = "insert";
   public static final String SCRAMBLE = "scramble";
   public static final String INVERSION = "inversion";
-  public static final String SIMPLE_INVERSION = "simpleInVersion";
+  public static final String SIMPLE_INVERSION = "simpleInversion";
   public static final String DISPLACEMENT = "displacement";
 
   @Override

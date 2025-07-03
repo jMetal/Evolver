@@ -7,34 +7,40 @@ import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
+import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link MOPSO} using
- * problem {@link DTLZ3} as training set.
+ * problem DTLZ problems as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingMOPSOForProblemDTLZ3 {
+public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
   public static void main(String[] args) throws IOException {
+    JMetalRandom.getInstance().setSeed(1);
+
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ3.3D.csv");
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+
+    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var configurableAlgorithm = new MOPSO(100);
-    var maximumNumberOfEvaluations = List.of(30000);
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
@@ -63,7 +69,7 @@ public class NSGAIIOptimizingMOPSOForProblemDTLZ3 {
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/MOPSO/" + trainingSet.get(0).name());
+            "RESULTS/MOPSO/" + "DTLZ");
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
@@ -71,7 +77,7 @@ public class NSGAIIOptimizingMOPSOForProblemDTLZ3 {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "MOPSO, " + trainingSet.get(0).name(),
+            "MOPSO, " + "DTLZ",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

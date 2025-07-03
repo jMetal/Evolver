@@ -18,6 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link MOEADDouble} using
