@@ -94,7 +94,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
   public MutationOperator<DoubleSolution> getMutation() {
     // Validate and get common parameters
     int numberOfProblemVariables = getNonNegativeIntParameter("numberOfProblemVariables");
-    double mutationProbabilityFactor = getPositiveDoubleParameter("mutationProbabilityFactor");
+    double mutationProbabilityFactor = (Double) findGlobalSubParameter("mutationProbabilityFactor").value();
     double mutationProbability = mutationProbabilityFactor / numberOfProblemVariables;
     
     RepairDoubleSolutionStrategyParameter repairDoubleSolution = getRepairStrategy();
@@ -116,7 +116,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    Double distributionIndex = getPositiveDoubleParameter("polynomialMutationDistributionIndex");
+    double distributionIndex = (Double) findSpecificSubParameter("polynomialMutationDistributionIndex").value();
     return new PolynomialMutation(
         mutationProbability, 
         distributionIndex, 
@@ -130,7 +130,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    Double distributionIndex = getPositiveDoubleParameter("linkedPolynomialMutationDistributionIndex");
+    double distributionIndex = (Double) findSpecificSubParameter("linkedPolynomialMutationDistributionIndex").value();
     return new LinkedPolynomialMutation(
         mutationProbability, 
         distributionIndex, 
@@ -144,7 +144,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    Double perturbation = getPositiveDoubleParameter("uniformMutationPerturbation");
+    double perturbation = (Double) findSpecificSubParameter("uniformMutationPerturbation").value();
     return new UniformMutation(
         mutationProbability, 
         perturbation, 
@@ -158,8 +158,8 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    Double perturbation = getPositiveDoubleParameter("nonUniformMutationPerturbation");
-    int maxIterations = getNonNegativeIntParameter("maxIterations");
+    double perturbation = (Double) findSpecificSubParameter("nonUniformMutationPerturbation").value();
+    int maxIterations = (Integer) findSpecificSubParameter("maxIterations").value();
     return new NonUniformMutation(
         mutationProbability, 
         perturbation, 
@@ -174,17 +174,6 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
     Integer value = (Integer) nonConfigurableSubParameters().get(paramName);
     if (value == null || value < 0) {
       throw new IllegalStateException(paramName + " must be a non-negative integer");
-    }
-    return value;
-  }
-  
-  /**
-   * Helper method to get a positive double parameter.
-   */
-  private double getPositiveDoubleParameter(String paramName) {
-    Double value = (Double) findSpecificSubParameter(paramName).value();
-    if (value == null || value <= 0) {
-      throw new IllegalStateException(paramName + " must be a positive number");
     }
     return value;
   }

@@ -23,11 +23,11 @@ public class MOPSOParameterSpace extends ParameterSpace {
 
   // Parameter names
   public static final String SWARM_SIZE = "swarmSize";
+  public static final String ALGORITHM_RESULT = "algorithmResult";
   public static final String LEADER_ARCHIVE = "leaderArchive";
   public static final String EXTERNAL_ARCHIVE = "externalArchive";
   public static final String UNBOUNDED_ARCHIVE = "unboundedArchive";
   public static final String HYPERVOLUME_ARCHIVE = "hypervolumeArchive";
-  public static final String ALGORITHM_RESULT = "algorithmResult";
   public static final String CROWDING_DISTANCE_ARCHIVE = "crowdingDistanceArchive";
   public static final String SPATIAL_SPREAD_DEVIATION_ARCHIVE = "spatialSpreadDeviationArchive";
 
@@ -135,7 +135,7 @@ public class MOPSOParameterSpace extends ParameterSpace {
     put(new IntegerParameter(SWARM_SIZE, MIN_SWARM_SIZE, MAX_SWARM_SIZE));
 
     // Algorithm result
-    put(new CategoricalParameter(ALGORITHM_RESULT, List.of(UNBOUNDED_ARCHIVE, LEADER_ARCHIVE)));
+    put(new CategoricalParameter(ALGORITHM_RESULT, List.of(EXTERNAL_ARCHIVE, LEADER_ARCHIVE)));
 
     // Leader archive type
     put(
@@ -143,6 +143,9 @@ public class MOPSOParameterSpace extends ParameterSpace {
             LEADER_ARCHIVE,
             List.of(
                 CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
+
+    // External archive type
+    put(new ExternalArchiveParameter<DoubleSolution>(EXTERNAL_ARCHIVE, List.of(UNBOUNDED_ARCHIVE)));
 
     // Swarm initialization
     put(
@@ -179,7 +182,6 @@ public class MOPSOParameterSpace extends ParameterSpace {
 
     put(new GlobalBestSelectionParameter(List.of(TOURNAMENT_SELECTION, RANDOM_SELECTION)));
     put(new IntegerParameter(SELECTION_TOURNAMENT_SIZE, 2, 10));
-
 
     put(new PositionUpdateParameter(List.of(DEFAULT_POSITION_UPDATE)));
     put(new DoubleParameter(VELOCITY_CHANGE_WHEN_LOWER_LIMIT_IS_REACHED, -1.0, 1.0));

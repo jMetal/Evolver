@@ -92,8 +92,7 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
   protected void setNonConfigurableParameters() {
     NSGAIIDoubleParameterSpace parameterSpace = (NSGAIIDoubleParameterSpace) parameterSpace();
 
-    MutationParameter mutationParameter =
-            (MutationParameter) parameterSpace.get(parameterSpace.MUTATION);
+    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get(parameterSpace.MUTATION);
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfProblemVariables", problem.numberOfVariables());
 

@@ -112,7 +112,7 @@ public abstract class RangeParameter<T extends Number & Comparable<T>> extends P
   public String toString() {
     return "Name: "
         + name()
-        + "Value: "
+        + ". Value: "
         + value()
         + ". "
         + ". Lower bound: "

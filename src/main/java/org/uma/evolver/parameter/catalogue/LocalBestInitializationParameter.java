@@ -12,7 +12,7 @@ public class LocalBestInitializationParameter extends CategoricalParameter {
     super("localBestInitialization", localBestInitializationStrategies);
   }
 
-  public LocalBestInitialization getParameter() {
+  public LocalBestInitialization getLocalBestInitialization() {
     LocalBestInitialization result;
 
     if ("defaultLocalBestInitialization".equals(value())) {
