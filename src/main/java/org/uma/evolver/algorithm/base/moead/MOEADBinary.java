@@ -2,7 +2,6 @@ package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.jmetal.problem.Problem;

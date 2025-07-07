@@ -1,19 +1,16 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIBinary;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class NSGAIIOneZeroMaxExample {
+public class NSGAIIOneZeroMaxExample {  
   public static void main(String[] args) {
 
     String[] parameters =

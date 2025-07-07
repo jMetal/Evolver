@@ -11,7 +11,6 @@ import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -39,13 +38,13 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var configurableAlgorithm = new MOPSO(100);
+    var baseAlgorithm = new MOPSO(100);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -54,7 +53,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8;
+    int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem)

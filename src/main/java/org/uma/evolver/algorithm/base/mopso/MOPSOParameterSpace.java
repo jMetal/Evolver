@@ -113,10 +113,6 @@ public class MOPSOParameterSpace extends ParameterSpace {
   // Parameter validation constants
   private static final int MIN_SWARM_SIZE = 10;
   private static final int MAX_SWARM_SIZE = 200;
-  private static final double MIN_MUTATION_PROB_FACTOR = 0.0;
-  private static final double MAX_MUTATION_PROB_FACTOR = 2.0;
-  private static final double MIN_PERTURBATION = 0.0;
-  private static final double MAX_PERTURBATION = 1.0;
 
   /**
    * Creates a new MOPSOParameterSpace with default parameter values. The constructor calls the
