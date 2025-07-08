@@ -90,10 +90,28 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 alpha,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
+      /*
+      case "BLX_ALPHA_BETA" -> {
+        Double alpha = (Double) findSpecificSubParameter("blxAlphaCrossoverAlphaValue").value();
+        Double beta = (Double) findSpecificSubParameter("blxBetaCrossoverBetaValue").value();
+        result =
+            new BLXAlphaBetaCrossover(
+                crossoverProbability,
+                alpha,
+                beta,
+                repairDoubleSolution.getRepairDoubleSolutionStrategy());
+
+      } */
       case "wholeArithmetic" ->
           result =
               new WholeArithmeticCrossover(
                   crossoverProbability, repairDoubleSolution.getRepairDoubleSolutionStrategy());
+      case "arithmetic" -> {
+        result =
+            new ArithmeticCrossover(
+                crossoverProbability,
+                repairDoubleSolution.getRepairDoubleSolutionStrategy());
+      }
       default -> throw new JMetalException("Crossover operator does not exist: " + name());
     }
     return result;

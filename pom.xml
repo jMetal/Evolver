@@ -11,8 +11,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <maven.compiler.source>19</maven.compiler.source>
-    <maven.compiler.target>19</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -57,27 +56,27 @@
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-core</artifactId>
-      <version>6.8-SNAPSHOT</version>
+      <version>6.8</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-algorithm</artifactId>
-      <version>6.8-SNAPSHOT</version>
+      <version>6.8</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-component</artifactId>
-      <version>6.8-SNAPSHOT</version>
+      <version>6.8</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-parallel</artifactId>
-      <version>6.8-SNAPSHOT</version>
+      <version>6.8</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-problem</artifactId>
-      <version>6.8-SNAPSHOT</version>
+      <version>6.8</version>
     </dependency>
   </dependencies>
 </project>

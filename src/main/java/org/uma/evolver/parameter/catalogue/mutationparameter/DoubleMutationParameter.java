@@ -105,8 +105,25 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       case "linkedPolynomial" -> createLinkedPolynomialMutation(mutationProbability, repairDoubleSolution);
       case "uniform" -> createUniformMutation(mutationProbability, repairDoubleSolution);
       case "nonUniform" -> createNonUniformMutation(mutationProbability, repairDoubleSolution);
+      case "levyFlight" -> createLevyFlightMutation(mutationProbability, repairDoubleSolution);
       default -> throw new JMetalException("Unsupported mutation operator: " + value());
     };
+  }
+
+  /**
+   * Creates a LevyFlightMutation operator with the given parameters.
+   */
+  private MutationOperator<DoubleSolution> createLevyFlightMutation(
+      double mutationProbability, 
+      RepairDoubleSolutionStrategyParameter repairStrategy) {
+    
+    double beta = (Double) findSpecificSubParameter("levyFlightMutationBetaValue").value();
+    double stepSize = (Double) findSpecificSubParameter("levyFlightMutationStepSize").value();
+    return new LevyFlightMutation(
+        mutationProbability, 
+        beta, 
+        stepSize, 
+        repairStrategy.getRepairDoubleSolutionStrategy());
   }
   
   /**
