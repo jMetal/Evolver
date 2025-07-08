@@ -55,7 +55,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
   /** List of valid mutation operator names for double solutions. */
   private static final List<String> VALID_MUTATION_NAMES = 
-      List.of("polynomial", "linkedPolynomial", "uniform", "nonUniform");
+      List.of("polynomial", "linkedPolynomial", "uniform", "nonUniform", "levyFlight", "powerLaw");
 
   /**
    * Constructs a new DoubleMutationParameter with the specified list of mutation operator names.
@@ -106,6 +106,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       case "uniform" -> createUniformMutation(mutationProbability, repairDoubleSolution);
       case "nonUniform" -> createNonUniformMutation(mutationProbability, repairDoubleSolution);
       case "levyFlight" -> createLevyFlightMutation(mutationProbability, repairDoubleSolution);
+      case "powerLaw" -> createPowerLawMutation(mutationProbability, repairDoubleSolution);
       default -> throw new JMetalException("Unsupported mutation operator: " + value());
     };
   }
@@ -123,6 +124,20 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
         mutationProbability, 
         beta, 
         stepSize, 
+        repairStrategy.getRepairDoubleSolutionStrategy());
+  }
+  
+  /**
+   * Creates a PowerLawMutation operator with the given parameters.
+   */
+  private MutationOperator<DoubleSolution> createPowerLawMutation(
+      double mutationProbability, 
+      RepairDoubleSolutionStrategyParameter repairStrategy) {
+    
+    double delta = (Double) findSpecificSubParameter("powerLawMutationDeltaValue").value();
+    return new PowerLawMutation(
+        mutationProbability, 
+        delta, 
         repairStrategy.getRepairDoubleSolutionStrategy());
   }
   
