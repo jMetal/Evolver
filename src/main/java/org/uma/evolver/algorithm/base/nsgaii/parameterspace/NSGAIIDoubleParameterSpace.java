@@ -38,8 +38,21 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
   public static final String SBX = "SBX";
   public static final String BLX_ALPHA = "BLX_ALPHA";
   public static final String WHOLE_ARITHMETIC = "wholeArithmetic";
+  public static final String BLX_ALPHA_BETA = "blxAlphaBeta";
+  public static final String ARITHMETIC = "arithmetic";
+  public static final String LAPLACE = "laplace";
+  public static final String FUZZY_RECOMBINATION = "fuzzyRecombination";
+  public static final String UNDC = "undc";
+  
+  public static final String POWER_LAW_MUTATION_DELTA = "powerLawMutationDelta";
   public static final String SBX_DISTRIBUTION_INDEX = "sbxDistributionIndex";
-  public static final String BLX_ALPHA_CROSSOVER_ALPHA_VALUE = "blxAlphaCrossoverAlphaValue";
+  public static final String BLX_ALPHA_CROSSOVER_ALPHA = "blxAlphaCrossoverAlpha";
+  public static final String BLX_ALPHA_BETA_CROSSOVER_BETA = "blxAlphaBetaCrossoverBeta";
+  public static final String BLX_ALPHA_BETA_CROSSOVER_ALPHA = "blxAlphaBetaCrossoverAlpha";
+  public static final String LAPLACE_CROSSOVER_SCALE = "laplaceCrossoverScale";
+  public static final String FUZZY_RECOMBINATION_CROSSOVER_ALPHA = "fuzzyRecombinationCrossoverAlpha";
+  public static final String UNDC_CROSSOVER_ZETA = "undcCrossoverZeta";
+  public static final String UNDC_CROSSOVER_ETA_VALUE = "undcCrossoverEtaValue";
 
   // Mutation
   public static final String MUTATION_PROBABILITY_FACTOR = "mutationProbabilityFactor";
@@ -50,12 +63,16 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
   public static final String POLYNOMIAL = "polynomial";
   public static final String LINKED_POLYNOMIAL = "linkedPolynomial";
   public static final String NON_UNIFORM = "nonUniform";
+  public static final String LEVY_FLIGHT = "levyFlight";
+  public static final String POWER_LAW = "powerLaw";
   public static final String POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX =
       "polynomialMutationDistributionIndex";
   public static final String LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX =
       "linkedPolynomialMutationDistributionIndex";
   public static final String UNIFORM_MUTATION_PERTURBATION = "uniformMutationPerturbation";
   public static final String NON_UNIFORM_MUTATION_PERTURBATION = "nonUniformMutationPerturbation";
+  public static final String LEVY_FLIGHT_MUTATION_BETA_VALUE = "levyFlightMutationBetaValue";
+  public static final String LEVY_FLIGHT_MUTATION_STEP_SIZE_VALUE = "levyFlightMutationStepSizeValue";
 
   // Repair strategy values
   public static final String REPAIR_RANDOM = "random";
@@ -76,15 +93,20 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new CreateInitialSolutionsDoubleParameter(
             List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
 
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC)));
+    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, UNDC)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
             CROSSOVER_REPAIR_STRATEGY, List.of(REPAIR_RANDOM, REPAIR_ROUND, REPAIR_BOUNDS)));
     put(new DoubleParameter(SBX_DISTRIBUTION_INDEX, 5.0, 400.0));
-    put(new DoubleParameter(BLX_ALPHA_CROSSOVER_ALPHA_VALUE, 0.0, 1.0));
-
-    put(new DoubleMutationParameter(List.of(UNIFORM, POLYNOMIAL, LINKED_POLYNOMIAL, NON_UNIFORM)));
+    put(new DoubleParameter(BLX_ALPHA_CROSSOVER_ALPHA, 0.0, 1.0));
+    put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_BETA, 0.0, 1.0));
+    put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_ALPHA, 0.0, 1.0));
+    put(new DoubleParameter(LAPLACE_CROSSOVER_SCALE, 0.0, 1.0));
+    put(new DoubleParameter(FUZZY_RECOMBINATION_CROSSOVER_ALPHA, 0.0, 1.0));
+    put(new DoubleParameter(UNDC_CROSSOVER_ZETA, 0.1, 1.0));
+    put(new DoubleParameter(UNDC_CROSSOVER_ETA_VALUE, 0.1, 0.5));
+    put(new DoubleMutationParameter(List.of(UNIFORM, POLYNOMIAL, LINKED_POLYNOMIAL, NON_UNIFORM, LEVY_FLIGHT, POWER_LAW)));
     put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
@@ -93,6 +115,11 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
     put(new DoubleParameter(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX, 5.0, 400.0));
     put(new DoubleParameter(UNIFORM_MUTATION_PERTURBATION, 0.0, 1.0));
     put(new DoubleParameter(NON_UNIFORM_MUTATION_PERTURBATION, 0.0, 1.0));
+    put(new DoubleParameter(LEVY_FLIGHT_MUTATION_BETA_VALUE, 1.0, 2.0));
+    put(new DoubleParameter(LEVY_FLIGHT_MUTATION_STEP_SIZE_VALUE, 0.01, 1.0));
+    put(new DoubleParameter(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX, 5.0, 400.0));
+    put(new DoubleParameter(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX, 5.0, 400.0));
+    put(new DoubleParameter(POWER_LAW_MUTATION_DELTA, 0.0, 10.0));
   }
 
   /**
@@ -110,7 +137,13 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
         .addGlobalSubParameter(get(CROSSOVER_REPAIR_STRATEGY))
         .addSpecificSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA_VALUE));
+        .addSpecificSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
+        .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
+        .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
+        .addSpecificSubParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
+        .addSpecificSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
+        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
+        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ETA_VALUE));
 
     get(MUTATION)
         .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
@@ -119,6 +152,9 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         .addSpecificSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
         .addSpecificSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
         .addSpecificSubParameter(
-            LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
+            LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
+        .addSpecificSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA_VALUE))
+        .addSpecificSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE_VALUE))
+        .addSpecificSubParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
   }
 }

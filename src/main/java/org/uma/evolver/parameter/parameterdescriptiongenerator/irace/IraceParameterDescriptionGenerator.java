@@ -6,6 +6,7 @@ import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.SpecificSubParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * A generator for creating parameter description files in the irace configuration format.
@@ -100,8 +101,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
 
     stringBuilder.append(
         String.format(
-            FORMAT_STRING,
-            " |" + parameter.name(),
+            FORMAT_STRING, parameter.name(),
             "\"" + "--" + parameter.name() + " \"",
             decodeType(parameter),
             decodeValidValues(parameter),
