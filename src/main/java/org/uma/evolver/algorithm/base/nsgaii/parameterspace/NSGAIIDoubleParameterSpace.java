@@ -36,6 +36,7 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
 
   // Crossover strategies
   public static final String SBX = "SBX";
+  public static final String PCX = "PCX";
   public static final String BLX_ALPHA = "blxAlpha";
   public static final String WHOLE_ARITHMETIC = "wholeArithmetic";
   public static final String BLX_ALPHA_BETA = "blxAlphaBeta";
@@ -46,6 +47,8 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
   
   public static final String POWER_LAW_MUTATION_DELTA = "powerLawMutationDelta";
   public static final String SBX_DISTRIBUTION_INDEX = "sbxDistributionIndex";
+  public static final String PCX_CROSSOVER_ZETA = "pcxCrossoverZeta";
+  public static final String PCX_CROSSOVER_ETA = "pcxCrossoverEta";
   public static final String BLX_ALPHA_CROSSOVER_ALPHA = "blxAlphaCrossoverAlpha";
   public static final String BLX_ALPHA_BETA_CROSSOVER_BETA = "blxAlphaBetaCrossoverBeta";
   public static final String BLX_ALPHA_BETA_CROSSOVER_ALPHA = "blxAlphaBetaCrossoverAlpha";
@@ -93,12 +96,14 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new CreateInitialSolutionsDoubleParameter(
             List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
 
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION)));
+    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
             CROSSOVER_REPAIR_STRATEGY, List.of(REPAIR_RANDOM, REPAIR_ROUND, REPAIR_BOUNDS)));
     put(new DoubleParameter(SBX_DISTRIBUTION_INDEX, 5.0, 400.0));
+    put(new DoubleParameter(PCX_CROSSOVER_ZETA, 0.1, 0.));
+    put(new DoubleParameter(PCX_CROSSOVER_ETA, 0.1, 0.5));
     put(new DoubleParameter(BLX_ALPHA_CROSSOVER_ALPHA, 0.0, 1.0));
     put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_BETA, 0.0, 1.0));
     put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_ALPHA, 0.0, 1.0));
@@ -137,6 +142,8 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
         .addGlobalSubParameter(get(CROSSOVER_REPAIR_STRATEGY))
         .addSpecificSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
+        .addSpecificSubParameter(PCX, get(PCX_CROSSOVER_ZETA))
+        .addSpecificSubParameter(PCX, get(PCX_CROSSOVER_ETA))
         .addSpecificSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
         .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
         .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))

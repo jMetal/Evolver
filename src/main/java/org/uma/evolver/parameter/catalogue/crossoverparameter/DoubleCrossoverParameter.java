@@ -126,6 +126,17 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 scale,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
+      case "PCX" -> {
+        Double zeta = (Double) findSpecificSubParameter("pcxCrossoverZeta").value();
+        Double eta = (Double) findSpecificSubParameter("pcxCrossoverEta").value();
+
+        result =
+            new ParentCentricCrossover(
+                crossoverProbability,
+                zeta,
+                eta,
+                repairDoubleSolution.getRepairDoubleSolutionStrategy());
+      }
       case "UNDC" -> {
         Double zeta = (Double) findSpecificSubParameter("undcCrossoverZeta").value();
         Double eta = (Double) findSpecificSubParameter("undcCrossoverEta").value();
