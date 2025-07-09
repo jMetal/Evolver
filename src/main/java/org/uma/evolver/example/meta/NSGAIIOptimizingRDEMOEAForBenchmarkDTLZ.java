@@ -23,24 +23,24 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  * optimize the parameters of the RDE-MOEA (Ranking and Density Estimation Multi-Objective
  * Evolutionary Algorithm) for the DTLZ benchmark problem family.
  *
- * <p>The optimization process involves:
- * <ol>
- *   <li>Defining a set of DTLZ problems as the training set</li>
- *   <li>Configuring NSGA-II as the meta-optimizer to find optimal parameter settings for RDE-MOEA</li>
- *   <li>Using quality indicators (Epsilon and Normalized Hypervolume) to evaluate the performance</li>
- *   <li>Running multiple independent optimizations to ensure robust results</li>
+ * &lt;p&gt;The optimization process involves:
+ * &lt;ol&gt;
+ *   &lt;li&gt;Defining a set of DTLZ problems as the training set</li>
+ *   &lt;li&gt;Configuring NSGA-II as the meta-optimizer to find optimal parameter settings for RDE-MOEA&lt;/li>
+ *   &lt;li&gt;Using quality indicators (Epsilon and Normalized Hypervolume) to evaluate the performance</li>
+ *   &lt;li&gt;Running multiple independent optimizations to ensure robust results</li>
  * </ol>
  *
- * <p>The class demonstrates how to:
- * <ul>
- *   <li>Set up a meta-optimization problem for algorithm configuration</li>
- *   <li>Use the DTLZ problem family for benchmarking</li>
- *   <li>Configure and run NSGA-II as a meta-optimizer</li>
- *   <li>Handle evaluation and visualization of results</li>
+ * &lt;p&gt;The class demonstrates how to:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Set up a meta-optimization problem for algorithm configuration</li>
+ *   &lt;li&gt;Use the DTLZ problem family for benchmarking</li>
+ *   &lt;li&gt;Configure and run NSGA-II as a meta-optimizer</li>
+ *   &lt;li&gt;Handle evaluation and visualization of results</li>
  * </ul>
  *
- * <p>Example usage:
- * <pre>{@code
+ * &lt;p&gt;Example usage:
+ * <pre&gt;{@code
  * public static void main(String[] args) throws IOException {
  *   // The main method demonstrates how to set up and run the meta-optimization process
  *   // for configuring RDE-MOEA parameters on the DTLZ benchmark
