@@ -3,7 +3,7 @@ algorithmResult:
   values:
     population:
     externalArchive:
-      specific_subparameter:
+      specificSubparameter:
         populationSizeWithArchive:
           type: integer
           range: [10, 200]
@@ -26,7 +26,7 @@ densityEstimator:
   values:
     crowdingDistance:
     knn:
-      specific_subparameter:
+      specificSubparameter:
         knnNeighborhoodSize:
           type: integer
           range: [1, 2]
@@ -48,10 +48,10 @@ variation:
   type: categorical
   values:
     crossoverAndMutationVariation:
-      specific_subparameter:
+      specificSubparameter:
         crossover:
           type: categorical
-          global_subparameters: 
+          globalSubparameters: 
             crossoverProbability:
                 type: double
                 values: [0.0, 1.0]
@@ -63,18 +63,18 @@ variation:
                   bounds:
           values: 
             SBX:
-                specific_subparameters: 
+                specificSubparameters: 
                   sbxDistributionIndex:
                       type: double
                       values: [5.0, 400.0]
             BLX_ALPHA:
-                specific_subparameters: 
+                specificSubparameters: 
                   blxAlphaCrossoverAlpha:
                       type: double
                       values: [0.0, 1.0]
             wholeArithmetic:
             blxAlphaBeta:
-                specific_subparameters: 
+                specificSubparameters: 
                   blxAlphaBetaCrossoverBeta:
                       type: double
                       values: [0.0, 1.0]
@@ -83,17 +83,17 @@ variation:
                       values: [0.0, 1.0]
             arithmetic:
             laplace:
-                specific_subparameters: 
+                specificSubparameters: 
                   laplaceCrossoverScale:
                       type: double
                       values: [0.0, 1.0]
             fuzzyRecombination:
-                specific_subparameters: 
+                specificSubparameters: 
                   fuzzyRecombinationCrossoverAlpha:
                       type: double
                       values: [0.0, 1.0]
             undc:
-                specific_subparameters: 
+                specificSubparameters: 
                   undcCrossoverZeta:
                       type: double
                       values: [0.1, 1.0]
@@ -102,7 +102,7 @@ variation:
                       values: [0.1, 0.5]
           mutation:
               type: categorical
-              global_subparameters: 
+              globalSubparameters: 
                 mutationProbabilityFactor:
                     type: double
                     values: [0.0, 2.0]
@@ -114,27 +114,27 @@ variation:
                       bounds:
               values: 
                 uniform:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       uniformMutationPerturbation:
                           type: double
                           values: [0.0, 1.0]
                 polynomial:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       polynomialMutationDistributionIndex:
                           type: double
                           values: [5.0, 400.0]
                 linkedPolynomial:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       linkedPolynomialMutationDistributionIndex:
                           type: double
                           values: [5.0, 400.0]
                 nonUniform:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       nonUniformMutationPerturbation:
                           type: double
                           values: [0.0, 1.0]
                 levyFlight:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       levyFlightMutationBetaValue:
                           type: double
                           values: [1.0, 2.0]
@@ -142,15 +142,15 @@ variation:
                           type: double
                           values: [0.01, 1.0]
                 powerLaw:
-                    specific_subparameters: 
+                    specificSubparameters: 
                       powerLawMutationDelta:
                           type: double
                           values: [0.0, 10.0]
     differentialEvolutionVariation:
-      specific_subparameters: 
+      specificSubparameters: 
         differentialEvolutionCrossover:
           type: categorical
-          global_subparameters: 
+          globalSubparameters: 
             CR:
               type: double
               values: [0.0, 1.0]
@@ -166,18 +166,23 @@ selection:
   type: categorical
   values:
     tournament:
-      specific_subparameter:
+      specificSubparameter:
         selectionTournamentSize:
           type: integer
           range: [2, 10]
     random:
     differentialEvolutionSelection:
-      specific_subparameter:
+      specificSubparameter:
         sequenceGenerator:
           type: categorical
           values:
-            permutationGenerator:
-            integerRangeSequence:
+            randomPermutationCycle:
+            cyclicIntegerSequence:
+        takeCurrentSolutionAsParent:
+          type: boolean
+          values:
+            true:
+            false:
             
 
 #

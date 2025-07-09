@@ -81,7 +81,7 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
   private void decodeGlobalParameters(Parameter<?> parameter, StringBuilder stringBuilder, int tabSize) {
     var globalParameters = parameter.globalSubParameters();
     if (!globalParameters.isEmpty()) {
-      stringBuilder.append(spaces(tabSize) + "global_subparameters: \n");
+      stringBuilder.append(spaces(tabSize) + "globalSubparameters: \n");
       for (Parameter<?> param : globalParameters) {
         stringBuilder.append(decodeParameter(param, new StringBuilder(), tabSize +2, true));
       }
@@ -152,7 +152,7 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
         result.append(value + ":\n");
         var specificParameters = parameter.findSpecificSubParameters(value);
         if (!specificParameters.isEmpty()) {
-          result.append(spaces(tabSize + 6) + "specific_subparameters: \n");
+          result.append(spaces(tabSize + 6) + "specificSubparameters: \n");
           for (Parameter<?> param : specificParameters) {
             result.append(decodeParameter(param, new StringBuilder(), tabSize + 8, true));
           }

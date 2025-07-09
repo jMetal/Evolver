@@ -65,8 +65,8 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
   public static final String BLX_ALPHA_BETA_CROSSOVER_ALPHA = "blxAlphaBetaCrossoverAlpha";
   public static final String LAPLACE_CROSSOVER_SCALE = "laplaceCrossoverScale";
   public static final String FUZZY_RECOMBINATION_CROSSOVER_ALPHA = "fuzzyRecombinationCrossoverAlpha";
-  public static final String UNDC_CROSSOVER_ZETA = "undcCrossoverZeta";
-  public static final String UNDC_CROSSOVER_ETA = "undcCrossoverEta";
+  //public static final String UNDC_CROSSOVER_ZETA = "undcCrossoverZeta";
+  //public static final String UNDC_CROSSOVER_ETA = "undcCrossoverEta";
 
   // Differential evolution parameters
   public static final String DIFFERENTIAL_EVOLUTION_CROSSOVER = "differentialEvolutionCrossover";
@@ -117,7 +117,7 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
   protected void setParameterSpace() {
     super.setParameterSpace();
     put(new CreateInitialSolutionsDoubleParameter(List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, UNDC)));
+    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(new RepairDoubleSolutionStrategyParameter(CROSSOVER_REPAIR_STRATEGY, List.of(RANDOM, ROUND, BOUNDS)));
     put(new DoubleParameter(SBX_DISTRIBUTION_INDEX, 5.0, 400.0));
@@ -126,8 +126,8 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
     put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_ALPHA, 0.0, 1.0));
     put(new DoubleParameter(LAPLACE_CROSSOVER_SCALE, 0.0, 1.0));
     put(new DoubleParameter(FUZZY_RECOMBINATION_CROSSOVER_ALPHA, 0.0, 1.0));
-    put(new DoubleParameter(UNDC_CROSSOVER_ZETA, 0.1, 1.0));
-    put(new DoubleParameter(UNDC_CROSSOVER_ETA, 0.1, 0.5));
+    //put(new DoubleParameter(UNDC_CROSSOVER_ZETA, 0.1, 1.0));
+    //put(new DoubleParameter(UNDC_CROSSOVER_ETA, 0.1, 0.5));
     put(new DoubleMutationParameter(List.of(UNIFORM, POLYNOMIAL, LINKED_POLYNOMIAL, NON_UNIFORM, LEVY_FLIGHT, POWER_LAW)));
     put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
     put(new RepairDoubleSolutionStrategyParameter(MUTATION_REPAIR_STRATEGY, List.of(RANDOM, ROUND, BOUNDS)));
@@ -159,9 +159,9 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
         .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
         .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
         .addSpecificSubParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
-        .addSpecificSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
-        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
-        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ETA));
+        .addSpecificSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA));
+        //.addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
+        //.addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ETA));
 
     get(MUTATION)
         .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))

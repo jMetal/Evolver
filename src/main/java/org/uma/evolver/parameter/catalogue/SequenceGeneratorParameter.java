@@ -4,8 +4,8 @@ import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
-import org.uma.jmetal.util.sequencegenerator.impl.IntegerBoundedSequenceGenerator;
-import org.uma.jmetal.util.sequencegenerator.impl.IntegerPermutationGenerator;
+import org.uma.jmetal.util.sequencegenerator.impl.CyclicIntegerSequence;
+import org.uma.jmetal.util.sequencegenerator.impl.RandomPermutationCycle;
 
 /**
  * A categorical parameter representing different sequence generation strategies.
@@ -32,7 +32,7 @@ public class SequenceGeneratorParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if name is null or empty
    */
   public SequenceGeneratorParameter(String name) {
-    super(name, List.of("permutation", "integerSequence"));
+    super(name, List.of("randomPermutationCycle", "cyclicIntegerSequence"));
   }
 
   /**
@@ -64,9 +64,9 @@ public class SequenceGeneratorParameter extends CategoricalParameter {
   public SequenceGenerator<Integer> getSequenceGenerator() {
     SequenceGenerator<Integer> sequenceGenerator;
     switch (value()) {
-      case "permutation" -> sequenceGenerator = new IntegerPermutationGenerator(sequenceLength);
-      case "integerSequence" ->
-          sequenceGenerator = new IntegerBoundedSequenceGenerator(sequenceLength);
+      case "randomPermutationCycle" -> sequenceGenerator = new RandomPermutationCycle(sequenceLength);
+      case "cyclicIntegerSequence" ->
+          sequenceGenerator = new CyclicIntegerSequence(sequenceLength);
       default -> throw new JMetalException("Sequence generator does not exist: " + name());
     }
 

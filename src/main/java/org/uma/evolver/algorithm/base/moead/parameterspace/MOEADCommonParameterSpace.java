@@ -3,6 +3,7 @@ package org.uma.evolver.algorithm.base.moead.parameterspace;
 import java.util.List;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
+import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 

@@ -1,4 +1,4 @@
-package org.uma.evolver.parameter.catalogue;
+package org.uma.evolver.parameter.catalogue.selectionparameter;
 
 import java.util.Comparator;
 import java.util.List;
