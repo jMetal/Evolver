@@ -1,0 +1,188 @@
+algorithmResult:
+  type: categorical
+  values:
+    population:
+    externalArchive:
+      specific_subparameter:
+        populationSizeWithArchive:
+          type: integer
+          range: [10, 200]
+        archiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive:
+            unboundedArchive:
+#
+createInitialSolutions:
+  type: categorical
+  values:
+    default:
+    latinHypercubeSampling:
+    scatterSearch:
+
+#
+densityEstimator:
+  type: categorical
+  values:
+    crowdingDistance:
+    knn:
+      specific_subparameter:
+        knnNeighborhoodSize:
+          type: integer
+          range: [1, 2]
+        knnNormalizeObjectives:
+          type: boolean
+          values:
+            true:
+            false:
+
+#
+ranking:
+  type: categorical
+  values:
+    dominanceRanking:
+    strength:
+
+#
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      specific_subparameter:
+        crossover:
+          type: categorical
+          global_subparameters: 
+            crossoverProbability:
+                type: double
+                values: [0.0, 1.0]
+            crossoverRepairStrategy:
+                type: categorical
+                values: 
+                  random:
+                  round:
+                  bounds:
+          values: 
+            SBX:
+                specific_subparameters: 
+                  sbxDistributionIndex:
+                      type: double
+                      values: [5.0, 400.0]
+            BLX_ALPHA:
+                specific_subparameters: 
+                  blxAlphaCrossoverAlpha:
+                      type: double
+                      values: [0.0, 1.0]
+            wholeArithmetic:
+            blxAlphaBeta:
+                specific_subparameters: 
+                  blxAlphaBetaCrossoverBeta:
+                      type: double
+                      values: [0.0, 1.0]
+                  blxAlphaBetaCrossoverAlpha:
+                      type: double
+                      values: [0.0, 1.0]
+            arithmetic:
+            laplace:
+                specific_subparameters: 
+                  laplaceCrossoverScale:
+                      type: double
+                      values: [0.0, 1.0]
+            fuzzyRecombination:
+                specific_subparameters: 
+                  fuzzyRecombinationCrossoverAlpha:
+                      type: double
+                      values: [0.0, 1.0]
+            undc:
+                specific_subparameters: 
+                  undcCrossoverZeta:
+                      type: double
+                      values: [0.1, 1.0]
+                  undcCrossoverEtaValue:
+                      type: double
+                      values: [0.1, 0.5]
+          mutation:
+              type: categorical
+              global_subparameters: 
+                mutationProbabilityFactor:
+                    type: double
+                    values: [0.0, 2.0]
+                mutationRepairStrategy:
+                    type: categorical
+                    values: 
+                      random:
+                      round:
+                      bounds:
+              values: 
+                uniform:
+                    specific_subparameters: 
+                      uniformMutationPerturbation:
+                          type: double
+                          values: [0.0, 1.0]
+                polynomial:
+                    specific_subparameters: 
+                      polynomialMutationDistributionIndex:
+                          type: double
+                          values: [5.0, 400.0]
+                linkedPolynomial:
+                    specific_subparameters: 
+                      linkedPolynomialMutationDistributionIndex:
+                          type: double
+                          values: [5.0, 400.0]
+                nonUniform:
+                    specific_subparameters: 
+                      nonUniformMutationPerturbation:
+                          type: double
+                          values: [0.0, 1.0]
+                levyFlight:
+                    specific_subparameters: 
+                      levyFlightMutationBetaValue:
+                          type: double
+                          values: [1.0, 2.0]
+                      levyFlightMutationStepSizeValue:
+                          type: double
+                          values: [0.01, 1.0]
+                powerLaw:
+                    specific_subparameters: 
+                      powerLawMutationDelta:
+                          type: double
+                          values: [0.0, 10.0]
+    differentialEvolutionVariation:
+      specific_subparameters: 
+        differentialEvolutionCrossover:
+          type: categorical
+          global_subparameters: 
+            CR:
+              type: double
+              values: [0.0, 1.0]
+            F:
+              type: double
+              values: [0.0, 1.0]
+          values: 
+            rand_1_bin:
+            rand_1_exp:
+            rand_2_bin:
+            
+selection:
+  type: categorical
+  values:
+    tournament:
+      specific_subparameter:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+    random:
+    differentialEvolutionSelection:
+      specific_subparameter:
+        sequenceGenerator:
+          type: categorical
+          values:
+            permutationGenerator:
+            integerRangeSequence:
+            
+
+#
+replacement:
+  type: categorical
+  values:
+    rankingAndDensityEstimator:
+

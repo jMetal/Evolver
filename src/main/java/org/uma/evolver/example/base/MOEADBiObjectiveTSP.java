@@ -11,6 +11,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
