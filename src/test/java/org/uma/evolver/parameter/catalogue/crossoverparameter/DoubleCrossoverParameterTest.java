@@ -37,7 +37,7 @@ class DoubleCrossoverParameterTest {
     @Test
     void shouldNotThrowExceptionWhenValidCrossoverOperatorsAreProvided() {
       // Arrange
-      List<String> validOperators = List.of("SBX", "BLX_ALPHA", "wholeArithmetic");
+      List<String> validOperators = List.of("SBX", "blxAlpha", "wholeArithmetic");
 
       // Act & Assert
       assertDoesNotThrow(() -> new DoubleCrossoverParameter(validOperators));
@@ -47,7 +47,7 @@ class DoubleCrossoverParameterTest {
     @Test
     void shouldNotThrowExceptionWhenSublistOfValidCrossoverOperatorsAreProvided() {
       // Arrange
-      List<String> validOperators = List.of("SBX", "BLX_ALPHA");
+      List<String> validOperators = List.of("SBX", "blxAlpha");
 
       // Act & Assert
       assertDoesNotThrow(() -> new DoubleCrossoverParameter(validOperators));
@@ -71,7 +71,7 @@ class DoubleCrossoverParameterTest {
 
     @BeforeEach
     void setUp() {
-      crossoverParameter = new DoubleCrossoverParameter(List.of("SBX", "BLX_ALPHA", "wholeArithmetic"));
+      crossoverParameter = new DoubleCrossoverParameter(List.of("SBX", "blxAlpha", "wholeArithmetic"));
       crossoverParameter.addGlobalSubParameter(new DoubleParameter("crossoverProbability", 0, 1.0));
       crossoverParameter.addGlobalSubParameter(new RepairDoubleSolutionStrategyParameter("crossoverRepairStrategy", List.of("random"))) ;
     }
@@ -93,12 +93,12 @@ class DoubleCrossoverParameterTest {
       assertEquals(20.0, ((SBXCrossover) operator).distributionIndex());
     }
 
-    @DisplayName("returns a BLXAlphaCrossover when the operator is BLX_ALPHA")
+    @DisplayName("returns a BLXAlphaCrossover when the operator is blxAlpha")
     @Test
     void shouldReturnBLXAlphaCrossoverWhenOperatorIsBLXAlpha() {
       // Arrange
-      String parameterString = "--crossover BLX_ALPHA --crossoverProbability 0.8 --crossoverRepairStrategy random --blxAlphaCrossoverAlphaValue 0.5" ;
-      crossoverParameter.addSpecificSubParameter("BLX_ALPHA", new DoubleParameter("blxAlphaCrossoverAlphaValue", 0.0, 1.0)) ;
+      String parameterString = "--crossover blxAlpha --crossoverProbability 0.8 --crossoverRepairStrategy random --blxAlphaCrossoverAlpha 0.5" ;
+      crossoverParameter.addSpecificSubParameter("blxAlpha", new DoubleParameter("blxAlphaCrossoverAlpha", 0.0, 1.0)) ;
 
       // Act
       crossoverParameter.parse(parameterString.split(" "));

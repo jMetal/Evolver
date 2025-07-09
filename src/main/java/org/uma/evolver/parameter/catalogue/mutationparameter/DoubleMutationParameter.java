@@ -118,7 +118,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double beta = (Double) findSpecificSubParameter("levyFlightMutationBetaValue").value();
+    double beta = (Double) findSpecificSubParameter("levyFlightMutationBeta").value();
     double stepSize = (Double) findSpecificSubParameter("levyFlightMutationStepSize").value();
     return new LevyFlightMutation(
         mutationProbability, 
@@ -134,7 +134,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double delta = (Double) findSpecificSubParameter("powerLawMutationDeltaValue").value();
+    double delta = (Double) findSpecificSubParameter("powerLawMutationDelta").value();
     return new PowerLawMutation(
         mutationProbability, 
         delta, 

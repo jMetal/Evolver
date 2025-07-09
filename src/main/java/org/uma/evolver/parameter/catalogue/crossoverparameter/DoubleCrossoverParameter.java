@@ -35,7 +35,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution> {
 
-  private static List<String> validCrossoverNames = List.of("SBX", "BLX_ALPHA", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "undc", "blxAlphaBeta");
+  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "UNDC", "blxAlphaBeta");
 
   /**
    * Constructs a crossover parameter for double solutions with the given list of supported
@@ -82,8 +82,8 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 distributionIndex,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
-      case "BLX_ALPHA" -> {
-        Double alpha = (Double) findSpecificSubParameter("blxAlphaCrossoverAlphaValue").value();
+      case "blxAlpha" -> {
+        Double alpha = (Double) findSpecificSubParameter("blxAlphaCrossoverAlpha").value();
         result =
             new BLXAlphaCrossover(
                 crossoverProbability,
@@ -91,9 +91,9 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       
-      case "BLX_ALPHA_BETA" -> {
-        Double alpha = (Double) findSpecificSubParameter("blxAlphaCrossoverAlphaValue").value();
-        Double beta = (Double) findSpecificSubParameter("blxBetaCrossoverBetaValue").value();
+      case "blxAlphaBeta" -> {
+        Double alpha = (Double) findSpecificSubParameter("blxAlphaBetaCrossoverAlpha").value();
+        Double beta = (Double) findSpecificSubParameter("blxAlphaBetaCrossoverBeta").value();
         result =
             new BLXAlphaBetaCrossover(
                 crossoverProbability,
@@ -111,7 +111,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "fuzzyRecombination" -> {
-        Double alpha = (Double) findSpecificSubParameter("fuzzyRecombinationCrossoverAlphaValue").value();
+        Double alpha = (Double) findSpecificSubParameter("fuzzyRecombinationCrossoverAlpha").value();
         result =
             new FuzzyRecombinationCrossover(
                 crossoverProbability,
@@ -119,7 +119,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "laplace" -> {
-        Double scale = (Double) findSpecificSubParameter("laplaceCrossoverScaleValue").value();
+        Double scale = (Double) findSpecificSubParameter("laplaceCrossoverScale").value();
         result =
             new LaplaceCrossover(
                 crossoverProbability,
@@ -127,8 +127,8 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "UNDC" -> {
-        Double zeta = (Double) findSpecificSubParameter("undcCrossoverZetaValue").value();
-        Double eta = (Double) findSpecificSubParameter("undcCrossoverEtaValue").value();
+        Double zeta = (Double) findSpecificSubParameter("undcCrossoverZeta").value();
+        Double eta = (Double) findSpecificSubParameter("undcCrossoverEta").value();
 
         result =
             new UnimodalNormalDistributionCrossover(
@@ -137,7 +137,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 eta,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
-      default -> throw new JMetalException("Crossover operator does not exist: " + name());
+      default -> throw new JMetalException("Crossover operator does not exist: " + value());
     }
     return result;
   }

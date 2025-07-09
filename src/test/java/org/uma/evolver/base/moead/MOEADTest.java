@@ -36,7 +36,7 @@ class MOEADTest {
     @Test
     @DisplayName("The total number of parameters is correct")
     void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-      int numberOfFlattenedParameters = 28;
+      int numberOfFlattenedParameters = 37;
       assertEquals(
           numberOfFlattenedParameters, moeadDouble.parameterSpace().parameters().size());
     }
