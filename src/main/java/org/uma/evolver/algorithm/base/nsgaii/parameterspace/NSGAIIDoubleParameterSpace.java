@@ -102,7 +102,7 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new RepairDoubleSolutionStrategyParameter(
             CROSSOVER_REPAIR_STRATEGY, List.of(REPAIR_RANDOM, REPAIR_ROUND, REPAIR_BOUNDS)));
     put(new DoubleParameter(SBX_DISTRIBUTION_INDEX, 5.0, 400.0));
-    put(new DoubleParameter(PCX_CROSSOVER_ZETA, 0.1, 0.));
+    put(new DoubleParameter(PCX_CROSSOVER_ZETA, 0.1, 0.5));
     put(new DoubleParameter(PCX_CROSSOVER_ETA, 0.1, 0.5));
     put(new DoubleParameter(BLX_ALPHA_CROSSOVER_ALPHA, 0.0, 1.0));
     put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_BETA, 0.0, 1.0));
