@@ -8,36 +8,79 @@ import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 
 /**
- * Parameter space for the MOEA/D algorithm.
- *
- * <p>This class defines all configurable parameters, their relationships, and top-level parameters
- * for the MOEA/D algorithm, supporting both real-coded and permutation-based problems.
- * It is designed to be flexible and extensible, following the same structure as the NSGA-II parameter space classes.
- *
- * <p>Typical parameters include:
+ * Base parameter space for the MOEA/D algorithm.
+ * <p>
+ * This abstract class defines the common parameter space for the MOEA/D algorithm, providing a
+ * standardized structure for configuring the algorithm's components. It is designed to be
+ * extended by concrete implementations for specific solution types (e.g., double or permutation).
+ * </p>
+ * <p>
+ * Key components managed by this parameter space include:
  * <ul>
- *   <li>Neighborhood size and replacement settings</li>
- *   <li>Aggregation function and normalization options</li>
- *   <li>Variation, crossover, and mutation operators</li>
- *   <li>Selection strategy and neighborhood selection probability</li>
- *   <li>Archive configuration and algorithm result type</li>
- *   <li>Initial solutions creation and sub-problem ID generator</li>
+ *   <li><strong>Neighborhood Management:</strong>
+ *     <ul>
+ *       <li>Neighborhood size</li>
+ *       <li>Maximum number of replaced solutions</li>
+ *       <li>Neighborhood selection probability</li>
+ *     </ul>
+ *   </li>
+ *   <li><strong>Aggregation Function:</strong>
+ *     <ul>
+ *       <li>Choice of aggregation function (e.g., Tchebycheff, PBI)</li>
+ *       <li>Objective normalization settings</li>
+ *       <li>PBI theta parameter</li>
+ *     </ul>
+ *   </li>
+ *   <li><strong>Variation Operators:</strong>
+ *     <ul>
+ *       <li>Crossover operators</li>
+ *       <li>Mutation operators</li>
+ *       <li>Operator probabilities and parameters</li>
+ *     </ul>
+ *   </li>
+ *   <li><strong>Selection:</strong>
+ *     <ul>
+ *       <li>Selection strategy</li>
+ *       <li>Neighborhood-based selection probability</li>
+ *     </ul>
+ *   </li>
+ *   <li><strong>Algorithm Configuration:</strong>
+ *     <ul>
+ *       <li>Population size</li>
+ *       <li>Archive settings</li>
+ *       <li>Initial solutions creation</li>
+ *     </ul>
+ *   </li>
  * </ul>
- *
- * <p>Parameter relationships and dependencies are also defined, ensuring that the configuration is consistent and valid.
- * Subclasses can extend this class to add or specialize parameters for specific encodings or MOEA/D variants.
- *
- * <p>To configure the parameter space, override the methods {@link #setParameterSpace()},
- * {@link #setParameterRelationships()}, and {@link #setTopLevelParameters()} as needed.
- *
- * <p>Example of extension:
+ * </p>
+ * <p>
+ * The parameter space is designed to be extensible, allowing subclasses to:
+ * <ul>
+ *   <li>Add solution-type specific parameters</li>
+ *   <li>Define specific parameter relationships</li>
+ *   <li>Set solution-type specific default values</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Usage example:
  * <pre>{@code
  * public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleSolution> {
- *   // Add double-specific parameters and relationships here
+ *   // Add double-specific parameters and relationships
+ *   protected void setParameterSpace() {
+ *     super.setParameterSpace();
+ *     // Add double-specific parameters here
+ *   }
  * }
  * }</pre>
+ * </p>
  *
- * @param <S> the solution type handled by the algorithm
+ * @param <S> the solution type handled by the algorithm (e.g., DoubleSolution, PermutationSolution)
+ * @author Antonio J. Nebro
+ * @see ParameterSpace
+ * @see CategoricalParameter
+ * @see DoubleParameter
+ * @see IntegerParameter
+ * @since 1.0
  */
 public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends ParameterSpace {
   // Neighborhood parameters
