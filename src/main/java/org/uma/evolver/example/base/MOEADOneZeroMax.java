@@ -3,21 +3,16 @@ package org.uma.evolver.example.base;
 import java.io.IOException;
 
 import org.uma.evolver.algorithm.base.moead.MOEADBinary;
-import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value>
+ * Class configuring MOEA/D using arguments in the form &lt;key, value&gt;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */

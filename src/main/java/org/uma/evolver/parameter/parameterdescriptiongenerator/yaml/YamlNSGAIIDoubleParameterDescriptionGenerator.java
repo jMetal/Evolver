@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * @see NSGAIIDoubleParameterSpace
  * @see NSGAIIDouble
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class YamlNSGAIIDoubleParameterDescriptionGenerator {
   /**

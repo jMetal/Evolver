@@ -61,7 +61,6 @@ public class CategoricalIntegerParameter extends Parameter<Integer> {
    * Parses the parameter value from a list of arguments and validates it.
    *
    * @param arguments An array of strings representing command-line arguments
-   * @return This parameter instance with its value set
    * @throws JMetalException If the value is not in the list of valid values
    * @throws NumberFormatException If the value is not a valid integer
    */

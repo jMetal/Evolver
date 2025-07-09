@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  *
  * @see NSGAIIBinaryParameterSpace
  * @see NSGAIIBinary
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class YamlNSGAIIBinaryParameterDescriptionGenerator {
   /**

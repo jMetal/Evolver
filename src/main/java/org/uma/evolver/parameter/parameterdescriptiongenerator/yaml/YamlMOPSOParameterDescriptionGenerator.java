@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * @see MOPSOParameterSpace
  * @see MOPSO
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class YamlMOPSOParameterDescriptionGenerator {
   /**

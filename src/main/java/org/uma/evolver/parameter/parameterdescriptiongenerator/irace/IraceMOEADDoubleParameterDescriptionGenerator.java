@@ -20,7 +20,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see MOEADDoubleParameterSpace
  * @see MOEADDouble
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class IraceMOEADDoubleParameterDescriptionGenerator {
   /**

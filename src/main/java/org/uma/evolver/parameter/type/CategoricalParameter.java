@@ -11,15 +11,18 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * A parameter representing a categorical value selected from a predefined list of valid values.
  *
  * <p>This class supports:
+ *
  * <ul>
- *   <li>Parsing from command-line-style arguments (e.g., {@code --paramName value})</li>
- *   <li>Validation against an allowed list of string values</li>
- *   <li>Formatted string representation including sub-parameters</li>
+ *   <li>Parsing from command-line-style arguments (e.g., {@code --paramName value})
+ *   <li>Validation against an allowed list of string values
+ *   <li>Formatted string representation including sub-parameters
  * </ul>
  *
- * <p>Validation is performed immediately during parsing, and an exception is thrown if the value is not valid.
+ * <p>Validation is performed immediately during parsing, and an exception is thrown if the value is
+ * not valid.
  *
  * <p>Example:
+ *
  * <pre>{@code
  * CategoricalParameter colorParam = new CategoricalParameter("color", List.of("red", "green", "blue"));
  * colorParam.parse(new String[] {"--color", "green"}); // OK
@@ -39,9 +42,9 @@ public class CategoricalParameter extends Parameter<String> {
   /**
    * Constructs a new {@code CategoricalParameter}.
    *
-   * @param name        The name of the parameter (used as the command-line key)
+   * @param name The name of the parameter (used as the command-line key)
    * @param validValues The list of valid string values for this parameter
-   * @throws NullPointerException     If {@code validValues} is null
+   * @throws NullPointerException If {@code validValues} is null
    * @throws IllegalArgumentException If {@code validValues} is empty
    */
   public CategoricalParameter(String name, List<String> validValues) {
@@ -49,9 +52,8 @@ public class CategoricalParameter extends Parameter<String> {
     Check.notNull(validValues);
     Check.that(!validValues.isEmpty(), "The list of valid values cannot be empty");
     Check.that(
-            validValues.size() == validValues.stream().distinct().count(),
-            "The list of valid values cannot contain duplicates: " + validValues
-    );
+        validValues.size() == validValues.stream().distinct().count(),
+        "The list of valid values cannot contain duplicates: " + validValues);
 
     this.validValues = List.copyOf(validValues);
     this.validator = value -> value != null && validValues.contains(value);
@@ -61,7 +63,6 @@ public class CategoricalParameter extends Parameter<String> {
    * Parses the parameter value from a list of arguments and validates it.
    *
    * @param arguments An array of strings representing command-line arguments
-   * @return This parameter instance with its value set
    * @throws JMetalException If the value is not in the list of valid values
    */
   @Override
@@ -69,12 +70,7 @@ public class CategoricalParameter extends Parameter<String> {
     parse(s -> s, arguments);
     if (!validator.test(value())) {
       throw new JMetalException(
-              "Parameter "
-                      + name()
-                      + ": Invalid value: "
-                      + value()
-                      + ". Valid values: "
-                      + validValues);
+          "Parameter " + name() + ": Invalid value: " + value() + ". Valid values: " + validValues);
     }
   }
 
@@ -88,16 +84,16 @@ public class CategoricalParameter extends Parameter<String> {
   }
 
   /**
-   * Returns a formatted string representation of this parameter including name, value, and valid values.
-   * Also includes sub-parameters, if any.
+   * Returns a formatted string representation of this parameter including name, value, and valid
+   * values. Also includes sub-parameters, if any.
    *
    * @return A string representation of the parameter
    */
   @Override
   public String toString() {
-    StringBuilder result = new StringBuilder("Name: " + name()
-            + ". Value: " + value()
-            + ". Valid values: " + validValues);
+    StringBuilder result =
+        new StringBuilder(
+            "Name: " + name() + ". Value: " + value() + ". Valid values: " + validValues);
     for (Parameter<?> parameter : globalSubParameters()) {
       result.append("\n -> ").append(parameter.toString());
     }

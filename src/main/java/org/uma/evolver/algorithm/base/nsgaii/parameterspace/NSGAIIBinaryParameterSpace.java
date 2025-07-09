@@ -23,7 +23,7 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  * // Configure parameters as needed
  * }</pre>
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<BinarySolution> {
 

@@ -41,7 +41,7 @@ public class PerturbationParameter extends CategoricalParameter {
    * 
    * <p>Required sub-parameters for the frequencySelectionMutationBasedPerturbation strategy:
    * <ul>
-   *   <li>mutation: A MutationParameter<DoubleSolution> defining the mutation operator to apply</li>
+   *   <li>mutation: A MutationParameter defining the mutation operator to apply</li>
    *   <li>frequencyOfApplicationOfMutationOperator: Integer specifying how often the perturbation is applied</li>
    * </ul>
    * 

@@ -41,7 +41,6 @@ public class BooleanParameter extends Parameter<Boolean> {
    * Parses the parameter value from a list of command-line-style arguments.
    *
    * @param args An array of strings representing the arguments
-   * @return This parameter instance with its value set
    */
   @Override
   public void parse(String[] args) {

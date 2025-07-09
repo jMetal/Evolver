@@ -18,9 +18,8 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  * YamlNSGAIIBinaryParameterDescriptionGenerator.main(new String[]{});
  * }</pre>
  *
- * @see NSGAIIBinaryParameterSpace
- * @see NSGAIIBinary
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @see MOEADBinaryParameterSpace
+ * @author Antonio J. Nebro
  */
 public class YamlMOEADBinaryParameterDescriptionGenerator {
   /**

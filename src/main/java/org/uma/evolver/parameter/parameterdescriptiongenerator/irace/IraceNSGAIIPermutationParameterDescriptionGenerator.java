@@ -17,8 +17,7 @@ import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationPar
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see NSGAIIPermutationParameterSpace
- * @see NSGAIIPermutation
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class IraceNSGAIIPermutationParameterDescriptionGenerator {
   /**

@@ -56,7 +56,6 @@ public abstract class RangeParameter<T extends Number & Comparable<T>> extends P
    * Parses the parameter value from a string array and validates it against the defined range.
    *
    * @param arguments the command-line style arguments array
-   * @return the current instance after successful parsing and validation
    * @throws JMetalException if the parsed value is outside the allowed range
    */
   @Override

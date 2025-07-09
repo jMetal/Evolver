@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  *
  * @see NSGAIIPermutationParameterSpace
  * @see NSGAIIPermutation
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class YamlNSGAIIPermutationParameterDescriptionGenerator {
   /**

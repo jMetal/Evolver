@@ -17,13 +17,13 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>Example usage:
  * <pre>{@code
- * YamlParameterDescriptionGenerator<Solution<?>> generator = new YamlParameterDescriptionGenerator<>();
+ * YamlParameterDescriptionGenerator&lt;Solution&lt;?&gt;&gt; generator = new YamlParameterDescriptionGenerator<>();
  * ParameterSpace parameterSpace = new MyParameterSpace();
  * String yamlConfig = generator.generateConfiguration(parameterSpace);
  * }</pre>
  *
  * @param <S> The type of solution the parameters are associated with
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
 

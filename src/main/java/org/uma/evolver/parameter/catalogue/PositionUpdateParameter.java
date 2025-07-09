@@ -39,7 +39,7 @@ public class PositionUpdateParameter extends CategoricalParameter {
    * 
    * <p>Required sub-parameters for the default strategy:
    * <ul>
-   *   <li>positionBounds: List of Bounds<Double> defining the search space limits</li>
+   *   <li>positionBounds: List of Bounds&lt;Double&gt; defining the search space limits</li>
    *   <li>velocityChangeWhenLowerLimitIsReached: double value for velocity adjustment at lower bounds</li>
    *   <li>velocityChangeWhenUpperLimitIsReached: double value for velocity adjustment at upper bounds</li>
    * </ul>

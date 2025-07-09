@@ -15,7 +15,7 @@ import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Class configuring NSGA-II using arguments in the form <key, value>
+ * Class configuring NSGA-II using arguments in the form &lt;key, value&gt;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */

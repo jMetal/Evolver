@@ -3,6 +3,7 @@ package org.uma.evolver.parameter.catalogue;
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.operator.crossover.impl.DifferentialEvolutionCrossover;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * A categorical parameter representing different Differential Evolution (DE) crossover variants.

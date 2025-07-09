@@ -26,7 +26,7 @@ import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParamete
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see NSGAIIBinaryParameterSpace
  * @see NSGAIIBinary
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class IraceNSGAIIBinaryParameterDescriptionGenerator {
   

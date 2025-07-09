@@ -27,7 +27,6 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * }
  * </pre>
  *
- * @param <Integer> The type of elements in the permutation (typically Integer)
  * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation
  */
 public class CreateInitialSolutionsPermutationParameter

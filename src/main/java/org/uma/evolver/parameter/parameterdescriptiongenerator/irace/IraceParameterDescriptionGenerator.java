@@ -23,7 +23,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * }</pre>
  *
  * @param <S> The type of solution the parameters are associated with
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Antonio J. Nebro
  */
 public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
 
