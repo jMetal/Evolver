@@ -1,7 +1,6 @@
 package org.uma.evolver.example.base;
 
 import java.io.IOException;
-
 import org.uma.evolver.algorithm.base.moead.MOEADBinary;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;

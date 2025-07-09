@@ -3,16 +3,17 @@ algorithmResult:
   values:
     population:
     externalArchive:
-      specific_subparameter:
+      specific_subparameters:
         populationSizeWithArchive:
           type: integer
           range: [10, 200]
         archiveType:
           type: categorical
           values:
-            crowdingDistanceArchive:
-            unboundedArchive:
+              crowdingDistanceArchive:
+              unboundedArchive:
 #
+
 createInitialSolutions:
   type: categorical
   values:
@@ -20,15 +21,17 @@ createInitialSolutions:
     latinHypercubeSampling:
     scatterSearch:
 #
+
 offspringPopulationSize:
   type: categorical
   values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
 #
+
 variation:
   type: categorical
   values:
     crossoverAndMutationVariation:
-      specific_subparameter:
+      specific_subparameters:
         crossover:
           type: categorical
           global_subparameters:
@@ -43,56 +46,89 @@ variation:
                 bounds:
           values:
             SBX:
-              specific_subparameter:
+              specific_subparameters:
                 sbxDistributionIndex:
                   type: double
                   values: [5.0, 400.0]
-            BLX_ALPHA:
-              specific_subparameter:
-                blxAlphaCrossoverAlphaValue:
+            blxAlpha:
+              specific_subparameters:
+                blxAlphaCrossoverAlpha:
                   type: double
                   values: [0.0, 1.0]
             wholeArithmetic:
+            blxAlphaBeta:
+              specific_subparameters:
+                blxAlphaBetaCrossoverBeta:
+                  type: double
+                  values: [0.0, 1.0]
+                blxAlphaBetaCrossoverAlpha:
+                  type: double
+                  values: [0.0, 1.0]
+          arithmetic:
+          laplace:
+            specific_subparameters:
+              laplaceCrossoverScale:
+                type: double
+                values: [0.0, 1.0]
+          fuzzyRecombination:
+            specific_subparameters:
+              fuzzyRecombinationCrossoverAlpha:
+                type: double
+                values: [0.0, 1.0]
         mutation:
           type: categorical
           global_subparameters:
             mutationProbabilityFactor:
               type: double
               values: [0.0, 2.0]
-            mutationRepairStrategy:
-              type: categorical
-              values:
-                random:
-                round:
-                bounds:
-          values:
-            uniform:
-              specific_subparameter:
-                uniformMutationPerturbation:
-                  type: double
-                  values: [0.0, 1.0]
-            polynomial:
-              specific_subparameter:
-                polynomialMutationDistributionIndex:
-                  type: double
-                  values: [5.0, 400.0]
-            linkedPolynomial:
-              specific_subparameter:
-                linkedPolynomialMutationDistributionIndex:
-                  type: double
-                  values: [5.0, 400.0]
-            nonUniform:
-              specific_subparameter:
-                nonUniformMutationPerturbation:
-                  type: double
-                  values: [0.0, 1.0]
+                mutationRepairStrategy:
+                  type: categorical
+                  values:
+                    random:
+                    round:
+                  bounds:
+            values:
+              uniform:
+                specific_subparameters:
+                  uniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              polynomial:
+                specific_subparameters:
+                  polynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              linkedPolynomial:
+                specific_subparameters:
+                  linkedPolynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              nonUniform:
+                specific_subparameters:
+                  nonUniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              levyFlight:
+                specific_subparameters:
+                  levyFlightMutationBeta:
+                    type: double
+                    values: [1.0, 2.0]
+                  levyFlightMutationStepSize:
+                    type: double
+                    values: [0.01, 1.0]
+              powerLaw:
+                specific_subparameters:
+                  powerLawMutationDelta:
+                    type: double
+                    values: [0.0, 10.0]
 #
 selection:
   type: categorical
   values:
     tournament:
-      specific_subparameter:
+      specific_subparameters:
         selectionTournamentSize:
           type: integer
           range: [2, 10]
     random:
+#

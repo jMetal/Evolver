@@ -1,5 +1,7 @@
 package org.uma.evolver.algorithm.base.mopso;
 
+import static org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace.*;
+
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.ParticleSwarmOptimizationBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -40,8 +42,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
-
-import static org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace.*;
 
 public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
 

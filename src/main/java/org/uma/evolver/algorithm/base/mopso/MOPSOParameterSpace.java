@@ -1,5 +1,6 @@
 package org.uma.evolver.algorithm.base.mopso;
 
+import java.util.List;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsDoubleParameter;
@@ -8,8 +9,6 @@ import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.List;
 
 /**
  * Parameter space configuration for Multi-Objective Particle Swarm Optimization (MOPSO) algorithms.

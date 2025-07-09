@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base;
 
 import java.util.List;
-import java.util.Objects;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;

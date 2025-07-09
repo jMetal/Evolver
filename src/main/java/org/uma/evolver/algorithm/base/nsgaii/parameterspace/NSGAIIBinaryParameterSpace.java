@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.nsgaii.parameterspace;
 
 import java.util.List;
-
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsBinaryParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.BinaryCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.BinaryMutationParameter;

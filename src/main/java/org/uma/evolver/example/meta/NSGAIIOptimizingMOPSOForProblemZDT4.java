@@ -2,7 +2,6 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;

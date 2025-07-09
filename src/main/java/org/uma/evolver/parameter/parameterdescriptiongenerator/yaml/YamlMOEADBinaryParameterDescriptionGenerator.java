@@ -1,8 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIBinary;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
 /**

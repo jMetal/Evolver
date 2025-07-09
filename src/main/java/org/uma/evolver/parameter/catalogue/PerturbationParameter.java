@@ -1,7 +1,6 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.pso.perturbation.Perturbation;

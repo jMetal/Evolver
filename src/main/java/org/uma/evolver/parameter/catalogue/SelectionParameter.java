@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
-import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.PopulationAndNeighborhoodSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.RandomSelection;

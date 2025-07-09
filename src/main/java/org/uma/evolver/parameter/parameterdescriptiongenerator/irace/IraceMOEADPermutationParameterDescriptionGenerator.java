@@ -1,6 +1,5 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
