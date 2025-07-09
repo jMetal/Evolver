@@ -96,7 +96,7 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new CreateInitialSolutionsDoubleParameter(
             List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
 
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX)));
+    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX, UNDC)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
