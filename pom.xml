@@ -26,7 +26,7 @@
   <developers>
     <developer>
       <name>Antonio J. Nebro</name>
-      <email>ajnebro@uma.es</email>
+      <email>antonio@lcc.uma.es</email>
       <organization>University of Malaga</organization>
       <organizationUrl>http://www.uma.es</organizationUrl>
     </developer>
@@ -38,21 +38,6 @@
     <url>https://github.com/jMetal/Evolver.git</url>
     <tag>Evolver2.0-SNAPSHOT</tag>
   </scm>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <site>
-      <id>${project.artifactId}-site</id>
-      <url>${project.baseUri}</url>
-    </site>
-  </distributionManagement>
 
   <build>
     <plugins>
