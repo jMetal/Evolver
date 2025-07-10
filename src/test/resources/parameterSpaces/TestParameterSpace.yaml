@@ -1,0 +1,12 @@
+# Test parameter space with different parameter types
+algorithm:
+  type: categorical
+  values: [NSGAII, SMPSO]
+
+populationSize:
+  type: integer
+  values: [50, 200]
+
+mutationProbability:
+  type: double
+  values: [0.1, 0.01, 0.001]

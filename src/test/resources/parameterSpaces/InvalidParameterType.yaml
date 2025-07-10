@@ -1,0 +1,4 @@
+# Parameter space with an invalid parameter type for testing
+algorithm:
+  type: invalid_type
+  values: [NSGAII, SMPSO]
