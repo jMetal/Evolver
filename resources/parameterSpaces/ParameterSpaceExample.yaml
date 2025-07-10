@@ -3,6 +3,16 @@ algorithmResult:
   values: 
     population:
     externalArchive:
+      specificSubParameters: 
+        populationSizeWithArchive:
+          type: integer
+          range: [10, 200]
+        archiveType:
+          type: categorical
+          values: 
+            crowdingDistanceArchive:
+            unboundedArchive:
+
 #
 createInitialSolutions:
   type: categorical

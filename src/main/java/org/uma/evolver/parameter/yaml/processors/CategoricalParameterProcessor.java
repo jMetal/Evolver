@@ -37,6 +37,9 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     // Process parameter values first
     processParameterValues(parameterName, configMap, parameterSpace);
     
+    // Process specific subparameters for each value
+    processSpecificSubParameters(parameterName, configMap, parameterSpace);
+    
     // Then process global sub-parameters if they exist
     processGlobalSubParameters(parameterName, configMap, parameterSpace);
   }
@@ -111,6 +114,100 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     parameterSpace.put(new CategoricalParameter(parameterName, stringCategories));
   }
   
+  /**
+   * Processes specific subparameters that are defined for particular values of a categorical parameter.
+   * These subparameters are only active when their parent parameter has a specific value.
+   *
+   * @param parameterName the name of the parent parameter
+   * @param configMap the configuration map containing the parameter definition
+   * @param parameterSpace the parameter space to add parameters to
+   */
+  @SuppressWarnings("unchecked")
+  private void processSpecificSubParameters(String parameterName, Map<String, Object> configMap, ParameterSpace parameterSpace) {
+    // Get the values map which contains the categorical options
+    Object valuesObj = configMap.get("values");
+    if (!(valuesObj instanceof Map)) {
+      return; // No values or values is not a map
+    }
+    
+    Map<String, Object> valuesMap = (Map<String, Object>) valuesObj;
+    
+    // Check each value for specific subparameters
+    for (Map.Entry<String, Object> entry : valuesMap.entrySet()) {
+      String valueName = entry.getKey();
+      Object valueConfig = entry.getValue();
+      
+      // For the YAML structure, the values can be either a simple string or a map with subparameters
+      if (valueConfig instanceof Map) {
+        Map<String, Object> valueConfigMap = (Map<String, Object>) valueConfig;
+        
+        // Check if this value has specific subparameters (note: capital P in SubParameters to match YAML)
+        if (valueConfigMap.containsKey("specificSubParameters")) {
+          Object subParamsObj = valueConfigMap.get("specificSubParameters");
+          
+          if (subParamsObj instanceof Map) {
+            Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
+            if (!subParams.isEmpty()) {
+              System.out.println("  - Found specific subparameters for " + parameterName + "." + valueName + ": " + 
+                  String.join(", ", subParams.keySet()));
+              
+              // Log details of each specific subparameter
+              for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
+                String subParamName = subParamEntry.getKey();
+                Object subParamConfig = subParamEntry.getValue();
+                
+                if (subParamConfig instanceof Map) {
+                  Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
+                  String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
+                  System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
+                }
+              }
+            }
+          }
+        }
+      }
+      // Handle the case where the value is a map with nested values (like in the YAML example)
+      else if (valueName.equals("externalArchive")) {
+        // In the YAML, externalArchive is a key under values, but its value is a map with specificSubParameters
+        if (valueConfig instanceof Map) {
+          Map<String, Object> externalArchiveMap = (Map<String, Object>) valueConfig;
+          if (externalArchiveMap.containsKey("specificSubParameters")) {
+            Object subParamsObj = externalArchiveMap.get("specificSubParameters");
+            
+            if (subParamsObj instanceof Map) {
+              Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
+              if (!subParams.isEmpty()) {
+                System.out.println("  - Found specific subparameters for " + parameterName + ".externalArchive: " + 
+                    String.join(", ", subParams.keySet()));
+                
+                // Log details of each specific subparameter
+                for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
+                  String subParamName = subParamEntry.getKey();
+                  Object subParamConfig = subParamEntry.getValue();
+                  
+                  if (subParamConfig instanceof Map) {
+                    Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
+                    String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
+                    System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      }
+    }
+  }
+
+  /**
+   * Processes global sub-parameters that are always active regardless of the parameter's value.
+   * These subparameters are added to the parameter space and linked to their parent parameter.
+   *
+   * @param parameterName the name of the parent parameter
+   * @param configMap the configuration map containing the parameter definition
+   * @param parameterSpace the parameter space to add parameters to
+   */
   @SuppressWarnings("unchecked")
   private void processGlobalSubParameters(String parameterName, Map<String, Object> configMap, ParameterSpace parameterSpace) {
     if (!configMap.containsKey("globalSubParameters")) {
