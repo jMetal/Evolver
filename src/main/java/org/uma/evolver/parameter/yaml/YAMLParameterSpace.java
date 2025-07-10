@@ -4,17 +4,20 @@ import java.io.*;
 import java.util.*;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.type.CategoricalParameter;
-import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
-import org.uma.evolver.parameter.type.DoubleParameter;
-import org.uma.evolver.parameter.type.IntegerParameter;
+import org.uma.evolver.parameter.yaml.processors.*;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simplified ParameterSpace implementation that loads its configuration from a YAML file. This
  * version only handles top-level parameters with basic types (categorical, integer, double).
  */
 public class YAMLParameterSpace extends ParameterSpace {
+  /** Map of parameter type names to their respective processors */
+  private final Map<String, ParameterProcessor> parameterProcessors = new HashMap<>();
 
   /**
    * Constructs a new YAMLParameterSpace by loading parameters from the specified YAML file.
@@ -23,12 +26,25 @@ public class YAMLParameterSpace extends ParameterSpace {
    */
   public YAMLParameterSpace(String yamlFilePath) {
     super();
+    initializeParameterProcessors();
     var parameterDefinitions = loadParametersFromYAML(yamlFilePath);
     processParameterDefinitions(parameterDefinitions);
   }
 
   /**
-   * Loads and processes parameters from the specified YAML file.
+   * Initializes the map of parameter processors for different parameter types.
+   */
+  private void initializeParameterProcessors() {
+    parameterProcessors.clear();
+    parameterProcessors.put("categorical", new CategoricalParameterProcessor());
+    parameterProcessors.put("integer", new IntegerParameterProcessor());
+    parameterProcessors.put("int", new IntegerParameterProcessor());
+    parameterProcessors.put("double", new DoubleParameterProcessor());
+    parameterProcessors.put("real", new DoubleParameterProcessor());
+  }
+
+  /**
+   * Loads parameters from the specified YAML file.
    *
    * @param yamlFilePath Path to the YAML file containing parameter definitions
    */
@@ -104,169 +120,27 @@ public class YAMLParameterSpace extends ParameterSpace {
   }
 
   /**
-   * Processes a single parameter definition from the YAML configuration.
+   * Processes a parameter definition based on its type using the appropriate processor.
    *
-   * @param parameterName Name of the parameter being processed
-   * @param parameterConfig Map containing the parameter's configuration
+   * @param parameterName Name of the parameter
+   * @param parameterConfig Map containing parameter configuration
    */
   @SuppressWarnings("unchecked")
   private void processParameterDefinition(String parameterName, Map<String, Object> parameterConfig) {
     if (!parameterConfig.containsKey("type") || !parameterConfig.containsKey("values")) {
-      System.err.println("Skipping parameter " + parameterName + " - missing type or values");
-      return;
+      throw new JMetalException("Skipping parameter " + parameterName + " - missing type or values");
     }
 
     String parameterType = ((String) parameterConfig.get("type")).toLowerCase();
+    Object parameterValues = parameterConfig.get("values");
+
     System.out.println("Processing parameter: " + parameterName + " (type: " + parameterType + ")");
 
-    try {
-      switch (parameterType) {
-        case "categorical":
-          processCategoricalParameter(parameterName, parameterConfig.get("values"));
-          break;
-        case "integer":
-          processIntegerParameter(parameterName, parameterConfig.get("values"));
-          break;
-        case "double":
-        case "real":
-          processDoubleParameter(parameterName, parameterConfig.get("values"));
-          break;
-        default:
-          System.err.println("Unsupported parameter type: " + parameterType);
-      }
-    } catch (Exception exception) {
-      System.err.println("Error processing parameter " + parameterName + ": " + exception.getMessage());
-    }
-  }
-
-  /**
-   * Processes a categorical parameter definition.
-   *
-   * @param parameterName Name of the categorical parameter
-   * @param parameterValues Object containing the parameter's possible values
-   */
-  @SuppressWarnings("unchecked")
-  private void processCategoricalParameter(String parameterName, Object parameterValues) {
-    List<String> stringCategories = new ArrayList<>();
-    List<Integer> numericCategories = new ArrayList<>();
-
-    // Handle array-style values: [val1, val2, ...]
-    if (parameterValues instanceof List) {
-      List<?> categoryList = (List<?>) parameterValues;
-
-      if (categoryList.isEmpty()) {
-        System.out.println("  - Creating empty categorical parameter");
-        put(new CategoricalParameter(parameterName, stringCategories));
-        return;
-      }
-
-      // Check if values are numeric
-      if (categoryList.get(0) instanceof Number) {
-        for (Object category : categoryList) {
-          if (category instanceof Number) {
-            numericCategories.add(((Number) category).intValue());
-          }
-        }
-        System.out.println("  - Creating integer categorical parameter with values: " + numericCategories);
-        put(new CategoricalIntegerParameter(parameterName, numericCategories));
-      }
-      // Handle string values
-      else {
-        for (Object category : categoryList) {
-          stringCategories.add(category.toString());
-        }
-        System.out.println(
-            "  - Creating string categorical parameter with values: " + stringCategories);
-        put(new CategoricalParameter(parameterName, stringCategories));
-      }
-    }
-    // Handle map-style values: {value1: {...}, value2: {...}, ...}
-    else if (parameterValues instanceof Map) {
-      Map<String, Object> categoryMap = (Map<String, Object>) parameterValues;
-      stringCategories.addAll(categoryMap.keySet());
-      System.out.println("  - Creating categorical parameter from map keys: " + stringCategories);
-      put(new CategoricalParameter(parameterName, stringCategories));
+    ParameterProcessor processor = parameterProcessors.get(parameterType);
+    if (processor != null) {
+      processor.process(parameterName, parameterValues, this);
     } else {
-      System.err.println("  - Unsupported values format for parameter " + parameterName);
-    }
-  }
-
-  /**
-   * Processes an integer parameter definition.
-   *
-   * @param parameterName Name of the integer parameter
-   * @param parameterValues Object containing the parameter's value specification
-   */
-  @SuppressWarnings("unchecked")
-  private void processIntegerParameter(String parameterName, Object parameterValues) {
-    if (parameterValues instanceof List) {
-      List<?> valueList = (List<?>) parameterValues;
-
-      if (valueList.size() == 2 && valueList.get(0) instanceof Number) {
-        // Treat as [min, max] range
-        int minValue = ((Number) valueList.get(0)).intValue();
-        int maxValue = ((Number) valueList.get(1)).intValue();
-        System.out.println("  - Creating integer parameter with range: [" + minValue + ", " + maxValue + "]");
-        put(new IntegerParameter(parameterName, minValue, maxValue));
-      } else {
-        // Handle as discrete values
-        List<Integer> discreteValues = new ArrayList<>();
-        for (Object value : valueList) {
-          if (value instanceof Number) {
-            discreteValues.add(((Number) value).intValue());
-          }
-        }
-        if (!discreteValues.isEmpty()) {
-          System.out.println("  - Creating integer categorical parameter with values: " + discreteValues);
-          put(new CategoricalIntegerParameter(parameterName, discreteValues));
-        } else {
-          System.err.println("  - No valid integer values found for parameter " + parameterName);
-        }
-      }
-    } else {
-      System.err.println("  - Unsupported values format for integer parameter " + parameterName);
-    }
-  }
-
-  /**
-   * Processes a double/real parameter definition.
-   *
-   * @param parameterName Name of the double/real parameter
-   * @param parameterValues Object containing the parameter's value specification
-   */
-  @SuppressWarnings("unchecked")
-  private void processDoubleParameter(String parameterName, Object parameterValues) {
-    if (parameterValues instanceof List) {
-      List<?> valueList = (List<?>) parameterValues;
-
-      if (valueList.size() == 2 && valueList.get(0) instanceof Number) {
-        // Treat as [min, max] range
-        double minValue = ((Number) valueList.get(0)).doubleValue();
-        double maxValue = ((Number) valueList.get(1)).doubleValue();
-        System.out.println("  - Creating double parameter with range: [" + minValue + ", " + maxValue + "]");
-        put(new DoubleParameter(parameterName, minValue, maxValue));
-      } else {
-        // Handle as discrete values
-        List<Double> discreteValues = new ArrayList<>();
-        for (Object value : valueList) {
-          if (value instanceof Number) {
-            discreteValues.add(((Number) value).doubleValue());
-          }
-        }
-        if (!discreteValues.isEmpty()) {
-          System.out.println("  - Creating double categorical parameter with values: " + discreteValues);
-          // Convert to strings for CategoricalParameter
-          List<String> stringCategories = new ArrayList<>();
-          for (Double value : discreteValues) {
-            stringCategories.add(value.toString());
-          }
-          put(new CategoricalParameter(parameterName, stringCategories));
-        } else {
-          System.err.println("  - No valid double values found for parameter " + parameterName);
-        }
-      }
-    } else {
-      System.err.println("  - Unsupported values format for double parameter " + parameterName);
+      throw new JMetalException("Unsupported parameter type: " + parameterType);
     }
   }
 
@@ -296,9 +170,7 @@ public class YAMLParameterSpace extends ParameterSpace {
       }
 
     } catch (Exception error) {
-      System.err.println("Failed to load parameter space: " + error.getMessage());
-      error.printStackTrace();
-      System.exit(1);
+      throw new JMetalException("Failed to load parameter space: " + error.getMessage());
     }
   }
 }

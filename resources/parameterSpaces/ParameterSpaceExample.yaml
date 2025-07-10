@@ -23,11 +23,9 @@ selection:
     tournament:
     random:
 #
-
 swarmSize:
   type: integer
   values: [10, 200]
-
 # 
 selectionProbability:
   type: double

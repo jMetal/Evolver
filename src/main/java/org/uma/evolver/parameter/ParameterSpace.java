@@ -43,7 +43,7 @@ public class ParameterSpace {
    * Constructs a new ParameterSpace and initializes its parameters, relationships, and top-level parameters.
    * Subclasses must implement the abstract methods to define the specific configuration.
    */
-  protected ParameterSpace() {
+  public ParameterSpace() {
     parameterSpace = new LinkedHashMap<>();
     topLevelParameters = new ArrayList<>();
   }
