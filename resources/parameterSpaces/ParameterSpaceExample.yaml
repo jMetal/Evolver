@@ -38,13 +38,13 @@ selection:
       values: [yes, no]
     numberOfParents:
       type: integer
-      values: [1, 2, 3, 4, 5]
+      range: [1, 4]
 #
 swarmSize:
   type: integer
-  values: [10, 200]
+  range: [10, 200]
 
 # 
 selectionProbability:
   type: double
-  values: [0.0, 1.0]
+  range: [0.0, 1.0]

@@ -84,8 +84,8 @@ class CategoricalParameterProcessorTest {
     parameterMap.put("values", List.of("A", "B"));
     
     Map<String, Object> subParams = new HashMap<>();
-    subParams.put("subParam1", Map.of("type", "integer", "values", List.of(1, 2)));
-    subParams.put("subParam2", Map.of("type", "double", "values", List.of(1.0, 2.0)));
+    subParams.put("intParam", Map.of("type", "integer", "range", List.of(1, 10)));
+    subParams.put("doubleParam", Map.of("type", "double", "range", List.of(0.1, 1.0)));
     parameterMap.put("globalSubParameters", subParams);
 
     // When
@@ -97,6 +97,10 @@ class CategoricalParameterProcessorTest {
     assertEquals(2, param.validValues().size());
     assertTrue(param.validValues().contains("A"));
     assertTrue(param.validValues().contains("B"));
+    
+    // Verify sub-parameters were added to the parameter space
+    assertNotNull(parameterSpace.get("intParam"));
+    assertNotNull(parameterSpace.get("doubleParam"));
     
     // The actual processing of sub-parameters would be tested in the YAMLParameterSpaceTest
   }

@@ -1,12 +1,10 @@
 package org.uma.evolver.parameter.yaml.processors;
 
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,41 +20,40 @@ public class DoubleParameterProcessor implements ParameterProcessor {
     }
     
     Map<String, Object> configMap = (Map<String, Object>) parameterConfig;
-    Object parameterValues = configMap.get("values");
     
-    if (parameterValues == null) {
-      throw new JMetalException("No values defined for parameter " + parameterName);
+    // Require 'range' key for double parameters
+    if (!configMap.containsKey("range")) {
+      throw new JMetalException("No range defined for double parameter " + parameterName + ". Use 'range: [min, max]'");
     }
     
-    if (parameterValues instanceof List) {
-      List<?> valueList = (List<?>) parameterValues;
-
-      if (valueList.size() == 2 && valueList.get(0) instanceof Number) {
-        // Treat as [min, max] range
-        double minValue = ((Number) valueList.get(0)).doubleValue();
-        double maxValue = ((Number) valueList.get(1)).doubleValue();
-        System.out.println("  - Creating double parameter with range: [" + minValue + ", " + maxValue + "]");
-        parameterSpace.put(new DoubleParameter(parameterName, minValue, maxValue));
-      } else {
-        // Handle as discrete values
-        List<Double> discreteValues = new ArrayList<>();
-        List<String> stringCategories = new ArrayList<>();
-        for (Object value : valueList) {
-          if (value instanceof Number) {
-            double doubleValue = ((Number) value).doubleValue();
-            discreteValues.add(doubleValue);
-            stringCategories.add(String.valueOf(doubleValue));
-          }
-        }
-        if (!discreteValues.isEmpty()) {
-          System.out.println("  - Creating double categorical parameter with values: " + discreteValues);
-          parameterSpace.put(new CategoricalParameter(parameterName, stringCategories));
-        } else {
-          throw new JMetalException("No valid double values found for parameter " + parameterName);
-        }
-      }
-    } else {
-      throw new JMetalException("Unsupported values format for double parameter " + parameterName);
+    // Reject 'values' key as it's not supported for double parameters
+    if (configMap.containsKey("values")) {
+      throw new JMetalException("The 'values' key is not supported for double parameters. Use 'range: [min, max]' for parameter " + parameterName);
     }
+    
+    // Get and validate range
+    Object rangeObj = configMap.get("range");
+    if (!(rangeObj instanceof List)) {
+      throw new JMetalException("Range for parameter " + parameterName + " must be a list [min, max]");
+    }
+    
+    List<?> rangeList = (List<?>) rangeObj;
+    if (rangeList.size() != 2) {
+      throw new JMetalException("Range for parameter " + parameterName + " must contain exactly 2 values [min, max]");
+    }
+    
+    if (!(rangeList.get(0) instanceof Number) || !(rangeList.get(1) instanceof Number)) {
+      throw new JMetalException("Both range values for parameter " + parameterName + " must be numbers");
+    }
+    
+    double minValue = ((Number) rangeList.get(0)).doubleValue();
+    double maxValue = ((Number) rangeList.get(1)).doubleValue();
+    
+    if (minValue >= maxValue) {
+      throw new JMetalException("Minimum value must be less than maximum value in range for parameter " + parameterName);
+    }
+    
+    System.out.println("  - Creating double parameter with range: [" + minValue + ", " + maxValue + "]");
+    parameterSpace.put(new DoubleParameter(parameterName, minValue, maxValue));
   }
 }

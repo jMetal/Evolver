@@ -42,6 +42,25 @@ public class YAMLParameterSpace extends ParameterSpace {
     parameterProcessors.put("double", new DoubleParameterProcessor());
     parameterProcessors.put("real", new DoubleParameterProcessor());
   }
+  
+  /**
+   * Gets the map of all parameter processors.
+   *
+   * @return A map of parameter type names to their respective processors
+   */
+  public Map<String, ParameterProcessor> getParameterProcessors() {
+    return parameterProcessors;
+  }
+  
+  /**
+   * Gets the parameter processor for the specified parameter type.
+   *
+   * @param type The parameter type (e.g., "categorical", "integer", "double")
+   * @return The parameter processor for the specified type, or null if not found
+   */
+  public ParameterProcessor getParameterProcessor(String type) {
+    return parameterProcessors.get(type);
+  }
 
   /**
    * Loads parameters from the specified YAML file.
@@ -136,9 +155,14 @@ public class YAMLParameterSpace extends ParameterSpace {
 
     String parameterType = ((String) parameterConfig.get("type")).toLowerCase();
     
-    // If there's no values but there are globalSubParameters, we might be dealing with a nested parameter
-    if (!parameterConfig.containsKey("values") && !parameterConfig.containsKey("globalSubParameters")) {
-      throw new JMetalException("Skipping parameter " + parameterName + " - missing values or globalSubParameters");
+    // For numeric types (integer, double), we allow either 'values' or 'range'
+    // For categorical types, we require either 'values' or 'globalSubParameters'
+    if (parameterType.equals("integer") || parameterType.equals("double") || parameterType.equals("real")) {
+      if (!parameterConfig.containsKey("values") && !parameterConfig.containsKey("range")) {
+        throw new JMetalException("Skipping parameter " + parameterName + " - missing 'values' or 'range' for " + parameterType + " type");
+      }
+    } else if (!parameterConfig.containsKey("values") && !parameterConfig.containsKey("globalSubParameters")) {
+      throw new JMetalException("Skipping parameter " + parameterName + " - missing 'values' or 'globalSubParameters' for " + parameterType + " type");
     }
 
     System.out.println("Processing parameter: " + parameterName + " (type: " + parameterType + ")");

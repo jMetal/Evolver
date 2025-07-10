@@ -3,6 +3,7 @@ package org.uma.evolver.parameter.yaml.processors;
 import java.util.Map;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
@@ -140,62 +141,76 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       // For the YAML structure, the values can be either a simple string or a map with subparameters
       if (valueConfig instanceof Map) {
         Map<String, Object> valueConfigMap = (Map<String, Object>) valueConfig;
-        
-        // Check if this value has specific subparameters (note: capital P in SubParameters to match YAML)
-        if (valueConfigMap.containsKey("specificSubParameters")) {
-          Object subParamsObj = valueConfigMap.get("specificSubParameters");
-          
-          if (subParamsObj instanceof Map) {
-            Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
-            if (!subParams.isEmpty()) {
-              System.out.println("  - Found specific subparameters for " + parameterName + "." + valueName + ": " + 
-                  String.join(", ", subParams.keySet()));
-              
-              // Log details of each specific subparameter
-              for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
-                String subParamName = subParamEntry.getKey();
-                Object subParamConfig = subParamEntry.getValue();
-                
-                if (subParamConfig instanceof Map) {
-                  Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
-                  String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
-                  System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
-                }
-              }
-            }
-          }
-        }
+        processSpecificSubParametersForValue(parameterName, valueName, valueConfigMap, parameterSpace);
       }
       // Handle the case where the value is a map with nested values (like in the YAML example)
-      else if (valueName.equals("externalArchive")) {
-        // In the YAML, externalArchive is a key under values, but its value is a map with specificSubParameters
-        if (valueConfig instanceof Map) {
-          Map<String, Object> externalArchiveMap = (Map<String, Object>) valueConfig;
-          if (externalArchiveMap.containsKey("specificSubParameters")) {
-            Object subParamsObj = externalArchiveMap.get("specificSubParameters");
+      else if (valueName.equals("externalArchive") && valueConfig instanceof Map) {
+        Map<String, Object> externalArchiveMap = (Map<String, Object>) valueConfig;
+        processSpecificSubParametersForValue(parameterName, "externalArchive", externalArchiveMap, parameterSpace);
+      }
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void processSpecificSubParametersForValue(String parentParamName, String valueName, 
+      Map<String, Object> valueConfigMap, ParameterSpace parameterSpace) {
+    if (!valueConfigMap.containsKey("specificSubParameters")) {
+      return;
+    }
+    
+    Object subParamsObj = valueConfigMap.get("specificSubParameters");
+    if (!(subParamsObj instanceof Map)) {
+      return;
+    }
+    
+    Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
+    if (subParams.isEmpty()) {
+      return;
+    }
+    
+    String fullParentName = parentParamName + "." + valueName;
+    System.out.println("  - Found specific subparameters for " + fullParentName + ": " + 
+        String.join(", ", subParams.keySet()));
+    
+    // Process each specific subparameter
+    for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
+      String subParamName = subParamEntry.getKey();
+      Object subParamConfig = subParamEntry.getValue();
+      
+      if (!(subParamConfig instanceof Map)) {
+        continue;
+      }
+      
+      Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
+      String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
+      System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
+      
+      try {
+        // Process the subparameter using only its base name (without any prefix)
+        if (parameterSpace instanceof YAMLParameterSpace) {
+          YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
+          ParameterProcessor processor = yamlParameterSpace.getParameterProcessor(subParamType);
+          
+          if (processor != null) {
+            // Process the subparameter with just its base name
+            processor.process(subParamName, subParamConfigMap, parameterSpace);
             
-            if (subParamsObj instanceof Map) {
-              Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
-              if (!subParams.isEmpty()) {
-                System.out.println("  - Found specific subparameters for " + parameterName + ".externalArchive: " + 
-                    String.join(", ", subParams.keySet()));
-                
-                // Log details of each specific subparameter
-                for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
-                  String subParamName = subParamEntry.getKey();
-                  Object subParamConfig = subParamEntry.getValue();
-                  
-                  if (subParamConfig instanceof Map) {
-                    Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
-                    String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
-                    System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
-                  }
-                }
+            // Get the parent parameter and add this as a specific subparameter
+            Parameter<?> parentParam = parameterSpace.get(parentParamName);
+            if (parentParam != null) {
+              Parameter<?> subParam = parameterSpace.get(subParamName);
+              if (subParam != null) {
+                parentParam.addSpecificSubParameter(valueName, subParam);
+                System.out.println("      Added as specific subparameter for " + parentParamName + " when value is " + valueName);
               }
             }
+          } else {
+            System.err.println("      Warning: No processor found for type " + subParamType);
           }
         }
-      }
+      } catch (Exception e) {
+        System.err.println("      Error processing specific subparameter " + subParamName + ": " + e.getMessage());
+        e.printStackTrace();
       }
     }
   }
@@ -228,6 +243,14 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     System.out.println("  - Processing global sub-parameters for " + parameterName + ": " + 
         String.join(", ", subParams.keySet()));
     
+    // Get the parameter processors from the YAMLParameterSpace
+    if (!(parameterSpace instanceof YAMLParameterSpace)) {
+      System.err.println("Error: Parameter space must be an instance of YAMLParameterSpace");
+      return;
+    }
+    YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
+    Map<String, ParameterProcessor> parameterProcessors = yamlParameterSpace.getParameterProcessors();
+    
     // Process each sub-parameter and add it to the parameter space
     for (Map.Entry<String, Object> entry : subParams.entrySet()) {
       String subParamName = entry.getKey();
@@ -239,27 +262,48 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       }
       
       try {
-        // Process the sub-parameter using the same logic as the parent
-        // Use the sub-parameter name directly without the parent prefix
-        processParameterValues(subParamName, (Map<String, Object>) subParamConfig, parameterSpace);
+        Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
+        
+        // Get the parameter type
+        String paramType = (String) subParamConfigMap.get("type");
+        if (paramType == null) {
+          System.err.println("Warning: No type specified for sub-parameter " + subParamName);
+          continue;
+        }
+        
+        // Get the appropriate processor for this parameter type
+        ParameterProcessor processor = parameterProcessors.get(paramType);
+        if (processor == null) {
+          System.err.println("Warning: No processor found for type " + paramType + " for parameter " + subParamName);
+          continue;
+        }
+        
+        // Process the parameter with the appropriate processor
+        System.out.println("    - Processing global sub-parameter " + subParamName + " as type " + paramType);
+        processor.process(subParamName, subParamConfig, parameterSpace);
         
         // Get the parent and sub-parameter from the parameter space
         Parameter<?> parentParameter = parameterSpace.get(parameterName);
         Parameter<?> subParameter = parameterSpace.get(subParamName);
         
+        if (subParameter == null) {
+          System.err.println("Warning: Failed to create sub-parameter " + subParamName);
+          continue;
+        }
+        
         // Add the sub-parameter to the parent's global sub-parameters
         if (parentParameter instanceof CategoricalParameter) {
           ((CategoricalParameter) parentParameter).addGlobalSubParameter(subParameter);
-          System.out.println("    - Added global sub-parameter " + subParamName + " to " + parameterName);
+          System.out.println("      Added as global sub-parameter " + subParamName + " to " + parameterName);
         } else if (parentParameter instanceof CategoricalIntegerParameter) {
           ((CategoricalIntegerParameter) parentParameter).addGlobalSubParameter(subParameter);
-          System.out.println("    - Added global sub-parameter " + subParamName + " to " + parameterName);
+          System.out.println("      Added as global sub-parameter " + subParamName + " to " + parameterName);
         } else {
           System.err.println("Warning: Cannot add global sub-parameter to non-categorical parameter: " + parameterName);
         }
       } catch (Exception e) {
         System.err.println("Error processing global sub-parameter " + subParamName + ": " + e.getMessage());
-        e.printStackTrace(); // Add stack trace for better debugging
+        e.printStackTrace();
       }
     }
   }
