@@ -23,7 +23,8 @@ public class YAMLParameterSpace extends ParameterSpace {
    */
   public YAMLParameterSpace(String yamlFilePath) {
     super();
-    loadParametersFromYAML(yamlFilePath);
+    var parameterDefinitions = loadParametersFromYAML(yamlFilePath);
+    processParameterDefinitions(parameterDefinitions);
   }
 
   /**
@@ -31,9 +32,10 @@ public class YAMLParameterSpace extends ParameterSpace {
    *
    * @param yamlFilePath Path to the YAML file containing parameter definitions
    */
-  private void loadParametersFromYAML(String yamlFilePath) {
-    Map<String, Map<String, Object>> parameterDefinitions = loadParameterDefinitions(yamlFilePath);
-    processParameterDefinitions(parameterDefinitions);
+  private Map<String, Map<String, Object>> loadParametersFromYAML(String yamlFilePath) {
+    var parameterDefinitions = loadParameterDefinitions(yamlFilePath);
+
+    return parameterDefinitions;    
   }
 
   /**
@@ -173,7 +175,8 @@ public class YAMLParameterSpace extends ParameterSpace {
         for (Object category : categoryList) {
           stringCategories.add(category.toString());
         }
-        System.out.println("  - Creating string categorical parameter with values: " + stringCategories);
+        System.out.println(
+            "  - Creating string categorical parameter with values: " + stringCategories);
         put(new CategoricalParameter(parameterName, stringCategories));
       }
     }
