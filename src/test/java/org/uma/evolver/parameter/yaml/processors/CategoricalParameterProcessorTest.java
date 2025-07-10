@@ -75,6 +75,33 @@ class CategoricalParameterProcessorTest {
   }
 
   @Test
+  void shouldHandleGlobalSubParameters() {
+    // Given
+    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
+    ParameterSpace parameterSpace = new ParameterSpace();
+    
+    Map<String, Object> parameterMap = new HashMap<>();
+    parameterMap.put("values", List.of("A", "B"));
+    
+    Map<String, Object> subParams = new HashMap<>();
+    subParams.put("subParam1", Map.of("type", "integer", "values", List.of(1, 2)));
+    subParams.put("subParam2", Map.of("type", "double", "values", List.of(1.0, 2.0)));
+    parameterMap.put("globalSubParameters", subParams);
+
+    // When
+    processor.process("testParam", parameterMap, parameterSpace);
+
+    // Then
+    CategoricalParameter param = (CategoricalParameter) parameterSpace.get("testParam");
+    assertNotNull(param);
+    assertEquals(2, param.validValues().size());
+    assertTrue(param.validValues().contains("A"));
+    assertTrue(param.validValues().contains("B"));
+    
+    // The actual processing of sub-parameters would be tested in the YAMLParameterSpaceTest
+  }
+  
+  @Test
   void shouldThrowExceptionForEmptyList() {
     // Given
     CategoricalParameterProcessor processor = new CategoricalParameterProcessor();

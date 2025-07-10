@@ -8,13 +8,26 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Processes double/real parameters from YAML configuration.
  */
 public class DoubleParameterProcessor implements ParameterProcessor {
   @Override
-  public void process(String parameterName, Object parameterValues, ParameterSpace parameterSpace) {
+  @SuppressWarnings("unchecked")
+  public void process(String parameterName, Object parameterConfig, ParameterSpace parameterSpace) {
+    if (!(parameterConfig instanceof Map)) {
+      throw new JMetalException("Invalid configuration for parameter " + parameterName + ": expected a map");
+    }
+    
+    Map<String, Object> configMap = (Map<String, Object>) parameterConfig;
+    Object parameterValues = configMap.get("values");
+    
+    if (parameterValues == null) {
+      throw new JMetalException("No values defined for parameter " + parameterName);
+    }
+    
     if (parameterValues instanceof List) {
       List<?> valueList = (List<?>) parameterValues;
 

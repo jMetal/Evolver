@@ -22,10 +22,18 @@ selection:
   values: 
     tournament:
     random:
+  globalSubParameters:
+    withReplacement:
+      type: categorical
+      values: [yes, no]
+    numberOfParents:
+      type: integer
+      values: [1, 2, 3, 4, 5]
 #
 swarmSize:
   type: integer
   values: [10, 200]
+
 # 
 selectionProbability:
   type: double

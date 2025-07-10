@@ -90,6 +90,9 @@ public class YAMLParameterSpace extends ParameterSpace {
     for (Map.Entry<String, Map<String, Object>> entry : parameterDefinitions.entrySet()) {
       String parameterName = entry.getKey();
       Map<String, Object> parameterConfig = entry.getValue();
+      
+      // Pass the entire parameter configuration to the processor
+      // The processor will extract what it needs (type, values, globalSubParameters, etc.)
       processParameterDefinition(parameterName, parameterConfig);
     }
   }
@@ -127,18 +130,24 @@ public class YAMLParameterSpace extends ParameterSpace {
    */
   @SuppressWarnings("unchecked")
   private void processParameterDefinition(String parameterName, Map<String, Object> parameterConfig) {
-    if (!parameterConfig.containsKey("type") || !parameterConfig.containsKey("values")) {
-      throw new JMetalException("Skipping parameter " + parameterName + " - missing type or values");
+    if (!parameterConfig.containsKey("type")) {
+      throw new JMetalException("Skipping parameter " + parameterName + " - missing type");
     }
 
     String parameterType = ((String) parameterConfig.get("type")).toLowerCase();
-    Object parameterValues = parameterConfig.get("values");
+    
+    // If there's no values but there are globalSubParameters, we might be dealing with a nested parameter
+    if (!parameterConfig.containsKey("values") && !parameterConfig.containsKey("globalSubParameters")) {
+      throw new JMetalException("Skipping parameter " + parameterName + " - missing values or globalSubParameters");
+    }
 
     System.out.println("Processing parameter: " + parameterName + " (type: " + parameterType + ")");
 
     ParameterProcessor processor = parameterProcessors.get(parameterType);
     if (processor != null) {
-      processor.process(parameterName, parameterValues, this);
+      // Pass the entire parameter config map instead of just the values
+      // The processor will extract what it needs
+      processor.process(parameterName, parameterConfig, this);
     } else {
       throw new JMetalException("Unsupported parameter type: " + parameterType);
     }
