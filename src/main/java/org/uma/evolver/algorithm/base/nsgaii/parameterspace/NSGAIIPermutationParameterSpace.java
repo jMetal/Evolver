@@ -23,6 +23,14 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  */
 public class NSGAIIPermutationParameterSpace extends NSGAIICommonParameterSpace<PermutationSolution<Integer>> {
+  public NSGAIIPermutationParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
+  
   // Initial solutions creation
   public static final String DEFAULT = "default";
 
@@ -52,7 +60,6 @@ public class NSGAIIPermutationParameterSpace extends NSGAIICommonParameterSpace<
    * parameters, such as permutation crossover and mutation operators.
    * </p>
    */
-  @Override
   protected void setParameterSpace() {
     super.setParameterSpace();
     put(new CreateInitialSolutionsPermutationParameter(List.of(DEFAULT)));
@@ -69,7 +76,6 @@ public class NSGAIIPermutationParameterSpace extends NSGAIICommonParameterSpace<
    * additional relationships for permutation-specific parameters.
    * </p>
    */
-  @Override
   protected void setParameterRelationships() {
     super.setParameterRelationships();
 

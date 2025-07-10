@@ -41,7 +41,7 @@ import org.uma.jmetal.solution.Solution;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class NSGAIICommonParameterSpace<S extends Solution<?>> extends ParameterSpace {
-  // Common parameters for any NSGA-II variant
+ // Common parameters for any NSGA-II variant
 
   // Algorithm result options
   public static final String ALGORITHM_RESULT = "algorithmResult";
@@ -76,7 +76,6 @@ public abstract class NSGAIICommonParameterSpace<S extends Solution<?>> extends 
   public static final String SELECTION_TOURNAMENT_SIZE = "selectionTournamentSize";
   public static final String RANDOM_SELECTION = "random";
 
-  @Override
   /**
    * Defines and adds all common parameters to the parameter space for NSGA-II variants.
    * <p>
@@ -101,7 +100,6 @@ public abstract class NSGAIICommonParameterSpace<S extends Solution<?>> extends 
     put(new IntegerParameter(SELECTION_TOURNAMENT_SIZE, 2, 10));
   }
 
-  @Override
   /**
    * Establishes relationships and dependencies between parameters in the parameter space.
    * <p>
@@ -123,7 +121,6 @@ public abstract class NSGAIICommonParameterSpace<S extends Solution<?>> extends 
     get(SELECTION).addSpecificSubParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
   }
 
-  @Override
   /**
    * Identifies and adds the top-level parameters to the list.
    * <p>

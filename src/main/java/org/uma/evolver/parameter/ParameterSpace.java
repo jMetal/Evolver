@@ -35,7 +35,7 @@ import java.util.Map;
  * </pre>
  * </p>
  */
-public abstract class ParameterSpace {
+public class ParameterSpace {
   protected final Map<String, Parameter<?>> parameterSpace;
   protected final List<Parameter<?>> topLevelParameters;
 
@@ -46,31 +46,7 @@ public abstract class ParameterSpace {
   protected ParameterSpace() {
     parameterSpace = new LinkedHashMap<>();
     topLevelParameters = new ArrayList<>();
-
-    setParameterSpace();
-    setParameterRelationships();
-    setTopLevelParameters();
   }
-
-  /**
-   * Defines and adds all parameters to the parameter space.
-   * Subclasses must implement this method to specify which parameters are available.
-   */
-  protected abstract void setParameterSpace();
-
-  /**
-   * Establishes relationships (such as dependencies or hierarchies) between parameters.
-   * Subclasses must implement this method to specify how parameters are related.
-   */
-  protected abstract void setParameterRelationships();
-
-  /**
-   * Identifies and adds the top-level parameters to the list.
-   * Top-level parameters are the main entry points for configuration.
-   * Subclasses must implement this method to specify which parameters are top-level.
-   */
-  protected abstract void setTopLevelParameters();
-
   /**
    * Adds a parameter to the parameter space.
    *

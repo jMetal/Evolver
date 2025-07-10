@@ -19,6 +19,12 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @author Antonio J. Nebro
  */
 public class MOPSOParameterSpace extends ParameterSpace {
+  public MOPSOParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
 
   // Parameter names
   public static final String SWARM_SIZE = "swarmSize";
@@ -114,18 +120,9 @@ public class MOPSOParameterSpace extends ParameterSpace {
   private static final int MAX_SWARM_SIZE = 200;
 
   /**
-   * Creates a new MOPSOParameterSpace with default parameter values. The constructor calls the
-   * parent constructor which will initialize the parameters and their relationships.
-   */
-  public MOPSOParameterSpace() {
-    super();
-  }
-
-  /**
    * Initializes all parameters in the parameter space. This method is called by the ParameterSpace
    * constructor.
    */
-  @Override
   protected void setParameterSpace() {
     // Swarm size
     put(new IntegerParameter(SWARM_SIZE, MIN_SWARM_SIZE, MAX_SWARM_SIZE));
@@ -138,11 +135,14 @@ public class MOPSOParameterSpace extends ParameterSpace {
         new ExternalArchiveParameter<DoubleSolution>(
             LEADER_ARCHIVE,
             List.of(
-                    //CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE, HYPERVOLUME_ARCHIVE)));
-                    CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE)));
+                // CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE,
+                // HYPERVOLUME_ARCHIVE)));
+                CROWDING_DISTANCE_ARCHIVE, SPATIAL_SPREAD_DEVIATION_ARCHIVE)));
 
     // External archive type
-    put(new ExternalArchiveParameter<DoubleSolution>(EXTERNAL_ARCHIVE_TYPE, List.of(UNBOUNDED_ARCHIVE)));
+    put(
+        new ExternalArchiveParameter<DoubleSolution>(
+            EXTERNAL_ARCHIVE_TYPE, List.of(UNBOUNDED_ARCHIVE)));
 
     // Swarm initialization
     put(
@@ -198,7 +198,11 @@ public class MOPSOParameterSpace extends ParameterSpace {
 
     put(
         new InertiaWeightComputingParameter(
-            List.of(CONSTANT_VALUE, LINEAR_DECREASING_VALUE, LINEAR_INCREASING_VALUE, RANDOM_SELECTED_VALUE)));
+            List.of(
+                CONSTANT_VALUE,
+                LINEAR_DECREASING_VALUE,
+                LINEAR_INCREASING_VALUE,
+                RANDOM_SELECTED_VALUE)));
     put(new DoubleParameter(INERTIA_WEIGHT_MIN, 0.1, 0.5));
     put(new DoubleParameter(INERTIA_WEIGHT_MAX, 0.5, 1.0));
     put(new DoubleParameter(INERTIA_WEIGHT, 0.1, 1.0));
@@ -208,11 +212,10 @@ public class MOPSOParameterSpace extends ParameterSpace {
    * Sets up relationships between parameters. This method is called by the ParameterSpace
    * constructor.
    */
-  @Override
   protected void setParameterRelationships() {
     // Set up relationships between parameters
     // For example, mutation parameters are sub-parameters of perturbation
-    get(ALGORITHM_RESULT).addSpecificSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE_TYPE)) ;
+    get(ALGORITHM_RESULT).addSpecificSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE_TYPE));
 
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MIN));
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MAX));
@@ -266,7 +269,6 @@ public class MOPSOParameterSpace extends ParameterSpace {
    * Identifies and adds the top-level parameters to the list. This method is called by the
    * ParameterSpace constructor.
    */
-  @Override
   protected void setTopLevelParameters() {
     topLevelParameters().add(get(SWARM_SIZE));
     topLevelParameters().add(get(LEADER_ARCHIVE));

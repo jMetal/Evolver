@@ -41,6 +41,12 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * @see MOEADCommonParameterSpace
  */
 public class MOEADPermutationParameterSpace extends MOEADCommonParameterSpace<PermutationSolution<Integer>> {
+  public MOEADPermutationParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
 
   // Initial solutions creation
   public static final String DEFAULT = "default";

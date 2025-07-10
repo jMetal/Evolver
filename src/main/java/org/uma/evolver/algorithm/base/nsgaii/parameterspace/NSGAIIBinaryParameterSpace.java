@@ -26,6 +26,13 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  */
 public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<BinarySolution> {
 
+  public NSGAIIBinaryParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
   // Crossover parameters
   public static final String CROSSOVER_PROBABILITY = "crossoverProbability";
   
@@ -41,14 +48,6 @@ public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<Binar
   public static final String BIT_FLIP_MUTATION = "bitFlip";
 
   /**
-   * Constructs a new parameter space for binary-coded NSGA-II variants.
-   * Initializes the parameter space with default values for binary-specific parameters.
-   */
-  public NSGAIIBinaryParameterSpace() {
-    super();
-  }
-
-  /**
    * Defines and adds all parameters specific to binary-coded NSGA-II to the parameter space.
    *
    * <p>This method calls {@code super.setParameterSpace()} and then adds binary-specific
@@ -59,7 +58,6 @@ public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<Binar
    *   <li>Number of bits in a solution (non-configurable, must be set before use)
    * </ul>
    */
-  @Override
   protected void setParameterSpace() {
     super.setParameterSpace();
 
@@ -77,7 +75,6 @@ public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<Binar
    * for binary-specific parameters, connecting crossover and mutation operators with their
    * respective parameters.
    */
-  @Override
   protected void setParameterRelationships() {
     super.setParameterRelationships();
 

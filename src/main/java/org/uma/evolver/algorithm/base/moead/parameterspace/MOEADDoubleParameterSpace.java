@@ -42,6 +42,12 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @see MOEADCommonParameterSpace
  */
 public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleSolution> {
+  public MOEADDoubleParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
 
   // Mutation parameters
   public static final String MUTATION = "mutation";

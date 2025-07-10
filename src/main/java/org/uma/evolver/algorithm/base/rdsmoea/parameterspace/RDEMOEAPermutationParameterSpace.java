@@ -23,6 +23,14 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  */
 public class RDEMOEAPermutationParameterSpace extends RDEMOEACommonParameterSpace<PermutationSolution<Integer>> {
+  public RDEMOEAPermutationParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
+  
   // Initial solutions creation
   public static final String DEFAULT = "default";
 

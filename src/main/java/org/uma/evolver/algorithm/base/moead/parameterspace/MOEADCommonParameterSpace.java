@@ -127,7 +127,6 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
   public static final String PERMUTATION = "permutation";
   public static final String INTEGER_SEQUENCE = "integerPermutation";
 
-  @Override
   /**
    * Defines and adds all parameters to the parameter space for MOEA/D.
    * This includes neighborhood, aggregation, variation, mutation, crossover, selection, archive, and initialization parameters.
@@ -147,7 +146,6 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
     put(new ExternalArchiveParameter<>(EXTERNAL_ARCHIVE, List.of(CROWDING_DISTANCE_ARCHIVE, UNBOUNDED_ARCHIVE)));
    }
 
-  @Override
   /**
    * Establishes relationships and dependencies between parameters in the MOEA/D parameter space.
    */
@@ -169,7 +167,6 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
             get(NEIGHBORHOOD_SELECTION_PROBABILITY));
   }
 
-  @Override
   /**
    * Identifies and adds the top-level parameters for MOEA/D.
    * These are the main entry points for user configuration.

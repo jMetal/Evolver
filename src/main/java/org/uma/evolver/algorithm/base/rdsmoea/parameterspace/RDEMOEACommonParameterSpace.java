@@ -75,7 +75,6 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
   public static final String ONE_SHOT = "oneShot";
   public static final String SEQUENTIAL = "sequential";
 
-  @Override
   protected void setParameterSpace() {
     put(new CategoricalParameter(ALGORITHM_RESULT, List.of(POPULATION, EXTERNAL_ARCHIVE)));
     put(new IntegerParameter(POPULATION_SIZE_WITH_ARCHIVE, 10, 200));
@@ -99,7 +98,6 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
     put(new CategoricalParameter(REMOVAL_POLICY, List.of(ONE_SHOT, SEQUENTIAL)));
   }
 
-  @Override
   protected void setParameterRelationships() {
     get(ALGORITHM_RESULT)
         .addSpecificSubParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
@@ -118,7 +116,6 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
         .addSpecificSubParameter(KNN, get(KNN_NORMALIZE_OBJECTIVES));
   }
 
-  @Override
   protected void setTopLevelParameters() {
     // Define which parameters should be exposed at the top level of the configuration
     topLevelParameters.add(parameterSpace.get(ALGORITHM_RESULT));

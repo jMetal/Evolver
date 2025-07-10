@@ -24,7 +24,13 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  */
 public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<DoubleSolution> {
-
+    public NSGAIIDoubleParameterSpace() {
+        super();
+        setParameterSpace();
+        setParameterRelationships();
+        setTopLevelParameters();
+      }
+   
   // Initial solutions creation
   public static final String DEFAULT = "default";
   public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
@@ -89,7 +95,6 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
    * parameters, such as real-valued crossover and mutation operators.
    * </p>
    */
-  @Override
   protected void setParameterSpace() {
     super.setParameterSpace();
     put(
@@ -134,7 +139,6 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
    * additional relationships for double-specific parameters.
    * </p>
    */
-  @Override
   protected void setParameterRelationships() {
     super.setParameterRelationships();
     // Variation dependencies

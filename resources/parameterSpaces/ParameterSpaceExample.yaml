@@ -1,0 +1,34 @@
+algorithmResult:
+  type: categorical
+  values: 
+    population:
+    externalArchive:
+#
+createInitialSolutions:
+  type: categorical
+  values: [default, latinHypercubeSampling, scatterSearch]
+#
+offspringPopulationSize:
+  type: categorical
+  values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
+#
+variation:
+  type: categorical
+  values: 
+    crossoverAndMutationVariation:
+#      
+selection:
+  type: categorical
+  values: 
+    tournament:
+    random:
+#
+
+swarmSize:
+  type: integer
+  values: [10, 200]
+
+# 
+selectionProbability:
+  type: double
+  values: [0.0, 1.0]

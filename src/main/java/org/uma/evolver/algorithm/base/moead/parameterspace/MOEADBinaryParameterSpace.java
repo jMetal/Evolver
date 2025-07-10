@@ -41,6 +41,13 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  * @see MOEADCommonParameterSpace
  */
 public class MOEADBinaryParameterSpace extends MOEADCommonParameterSpace<BinarySolution> {
+  public MOEADBinaryParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
 
   // Initial solutions creation
   public static final String DEFAULT_STRATEGY = "default";
