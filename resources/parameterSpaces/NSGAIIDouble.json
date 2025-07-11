@@ -1,0 +1,196 @@
+{
+  "evolutionaryAlgorithmConfig": {
+    "algorithmResult": {
+      "type": "categorical",
+      "values": {
+        "population": {},
+        "externalArchive": {
+          "conditionalSubParameters": {
+            "populationSizeWithArchive": {
+              "type": "integer",
+              "range": [10, 200]
+            },
+            "archiveType": {
+              "type": "categorical",
+              "values": {
+                "crowdingDistanceArchive": {},
+                "unboundedArchive": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "createInitialSolutions": {
+      "type": "categorical",
+      "values": {
+        "default": {},
+        "latinHypercubeSampling": {},
+        "scatterSearch": {}
+      }
+    },
+    "offspringPopulationSize": {
+      "type": "categorical",
+      "values": [1, 2, 5, 10, 20, 50, 100, 200, 400]
+    },
+    "variation": {
+      "type": "categorical",
+      "values": {
+        "crossoverAndMutationVariation": {
+          "conditionalSubParameters": {
+            "crossover": {
+              "type": "categorical",
+              "globalSubParameters": {
+                "crossoverProbability": {
+                  "type": "double",
+                  "range": [0.0, 1.0]
+                },
+                "crossoverRepairStrategy": {
+                  "type": "categorical",
+                  "values": {
+                    "random": {},
+                    "round": {},
+                    "bounds": {}
+                  }
+                }
+              },
+              "values": {
+                "SBX": {
+                  "conditionalSubParameters": {
+                    "sbxDistributionIndex": {
+                      "type": "double",
+                      "range": [5.0, 400.0]
+                    }
+                  }
+                },
+                "blxAlpha": {
+                  "conditionalSubParameters": {
+                    "blxAlphaCrossoverAlpha": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                },
+                "wholeArithmetic": {},
+                "blxAlphaBeta": {
+                  "conditionalSubParameters": {
+                    "blxAlphaBetaCrossoverBeta": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    },
+                    "blxAlphaBetaCrossoverAlpha": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                },
+                "arithmetic": {},
+                "laplace": {
+                  "conditionalSubParameters": {
+                    "laplaceCrossoverScale": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                },
+                "fuzzyRecombination": {
+                  "conditionalSubParameters": {
+                    "fuzzyRecombinationCrossoverAlpha": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                }
+              }
+            },
+            "mutation": {
+              "type": "categorical",
+              "globalSubParameters": {
+                "mutationProbabilityFactor": {
+                  "type": "double",
+                  "range": [0.0, 2.0]
+                },
+                "mutationRepairStrategy": {
+                  "type": "categorical",
+                  "values": {
+                    "random": {},
+                    "round": {},
+                    "bounds": {}
+                  }
+                }
+              },
+              "values": {
+                "uniform": {
+                  "conditionalSubParameters": {
+                    "uniformMutationPerturbation": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                },
+                "polynomial": {
+                  "conditionalSubParameters": {
+                    "polynomialMutationDistributionIndex": {
+                      "type": "double",
+                      "range": [5.0, 400.0]
+                    }
+                  }
+                },
+                "linkedPolynomial": {
+                  "conditionalSubParameters": {
+                    "linkedPolynomialMutationDistributionIndex": {
+                      "type": "double",
+                      "range": [5.0, 400.0]
+                    }
+                  }
+                },
+                "nonUniform": {
+                  "conditionalSubParameters": {
+                    "nonUniformMutationPerturbation": {
+                      "type": "double",
+                      "range": [0.0, 1.0]
+                    }
+                  }
+                },
+                "levyFlight": {
+                  "conditionalSubParameters": {
+                    "levyFlightMutationBeta": {
+                      "type": "double",
+                      "range": [1.0, 2.0]
+                    },
+                    "levyFlightMutationStepSize": {
+                      "type": "double",
+                      "range": [0.01, 1.0]
+                    }
+                  }
+                },
+                "powerLaw": {
+                  "conditionalSubParameters": {
+                    "powerLawMutationDelta": {
+                      "type": "double",
+                      "range": [0.0, 10.0]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "selection": {
+      "type": "categorical",
+      "values": {
+        "tournament": {
+          "conditionalSubParameters": {
+            "selectionTournamentSize": {
+              "type": "integer",
+              "range": [2, 10]
+            }
+          }
+        },
+        "random": {}
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ package org.uma.evolver.parameter.yaml.processors;
 import java.util.Map;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.catalogue.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
@@ -38,8 +39,8 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     // Process parameter values first
     processParameterValues(parameterName, configMap, parameterSpace);
     
-    // Process specific subparameters for each value
-    processSpecificSubParameters(parameterName, configMap, parameterSpace);
+    // Process conditional subparameters for each value
+    processConditionalSubParameters(parameterName, configMap, parameterSpace);
     
     // Then process global sub-parameters if they exist
     processGlobalSubParameters(parameterName, configMap, parameterSpace);
@@ -72,7 +73,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
   private void processListValues(String parameterName, List<?> categoryList, ParameterSpace parameterSpace) {
     if (categoryList.isEmpty()) {
       System.out.println("  - Creating empty categorical parameter: " + parameterName);
-      parameterSpace.put(new CategoricalParameter(parameterName, new ArrayList<>()));
+      parameterSpace.put(DoubleParameterFactory.createCategoricalParameter(parameterName, new ArrayList<>()));
       return;
     }
     
@@ -86,7 +87,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
   private void processMapValues(String parameterName, Map<String, Object> categoryMap, ParameterSpace parameterSpace) {
     List<String> stringCategories = new ArrayList<>(categoryMap.keySet());
     System.out.println("  - Creating categorical parameter from map keys: " + parameterName + " = " + stringCategories);
-    parameterSpace.put(new CategoricalParameter(parameterName, stringCategories));
+    parameterSpace.put(DoubleParameterFactory.createCategoricalParameter(parameterName, stringCategories));
   }
   
   private void processNumericCategories(String parameterName, List<?> categoryList, ParameterSpace parameterSpace) {
@@ -112,7 +113,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       stringCategories.add(item.toString());
     }
     System.out.println("  - Creating string categorical parameter: " + parameterName + " = " + stringCategories);
-    parameterSpace.put(new CategoricalParameter(parameterName, stringCategories));
+    parameterSpace.put(DoubleParameterFactory.createCategoricalParameter(parameterName, stringCategories));
   }
   
   /**
@@ -124,7 +125,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
    * @param parameterSpace the parameter space to add parameters to
    */
   @SuppressWarnings("unchecked")
-  private void processSpecificSubParameters(String parameterName, Map<String, Object> configMap, ParameterSpace parameterSpace) {
+  private void processConditionalSubParameters(String parameterName, Map<String, Object> configMap, ParameterSpace parameterSpace) {
     // Get the values map which contains the categorical options
     Object valuesObj = configMap.get("values");
     if (!(valuesObj instanceof Map)) {
@@ -141,24 +142,33 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       // For the YAML structure, the values can be either a simple string or a map with subparameters
       if (valueConfig instanceof Map) {
         Map<String, Object> valueConfigMap = (Map<String, Object>) valueConfig;
-        processSpecificSubParametersForValue(parameterName, valueName, valueConfigMap, parameterSpace);
+        processConditionalSubParametersForValue(parameterName, valueName, valueConfigMap, parameterSpace);
       }
       // Handle the case where the value is a map with nested values (like in the YAML example)
-      else if (valueName.equals("externalArchive") && valueConfig instanceof Map) {
+      //else if (valueName.equals("externalArchive") && valueConfig instanceof Map) {
+      //  Map<String, Object> externalArchiveMap = (Map<String, Object>) valueConfig;
+      //  processConditionalSubParametersForValue(parameterName, "externalArchive", externalArchiveMap, parameterSpace);
+      //}
+      else if (valueConfig instanceof Map) {
         Map<String, Object> externalArchiveMap = (Map<String, Object>) valueConfig;
-        processSpecificSubParametersForValue(parameterName, "externalArchive", externalArchiveMap, parameterSpace);
+        processConditionalSubParametersForValue(parameterName, valueName, externalArchiveMap, parameterSpace);
       }
     }
   }
 
   @SuppressWarnings("unchecked")
-  private void processSpecificSubParametersForValue(String parentParamName, String valueName, 
+  private void processConditionalSubParametersForValue(String parentParamName, String valueName, 
       Map<String, Object> valueConfigMap, ParameterSpace parameterSpace) {
-    if (!valueConfigMap.containsKey("conditionalSubParameters")) {
+    // Check for both 'conditionalSubParameters' and 'conditionalSuParameters' (with typo)
+    String subParamsKey = valueConfigMap.containsKey("conditionalSubParameters") 
+        ? "conditionalSubParameters" 
+        : (valueConfigMap.containsKey("conditionalSuParameters") ? "conditionalSuParameters" : null);
+        
+    if (subParamsKey == null) {
       return;
     }
     
-    Object subParamsObj = valueConfigMap.get("conditionalSubParameters");
+    Object subParamsObj = valueConfigMap.get(subParamsKey);
     if (!(subParamsObj instanceof Map)) {
       return;
     }

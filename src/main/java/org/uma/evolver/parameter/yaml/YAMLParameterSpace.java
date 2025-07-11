@@ -93,7 +93,12 @@ public class YAMLParameterSpace extends ParameterSpace {
           parameterDefinitions.put(entry.getKey(), (Map<String, Object>) entry.getValue());
         }
       }
-      
+
+      // Write data back
+      //try (FileWriter writer = new FileWriter("output.yaml")) {
+      //  yamlParser.dump(parameterDefinitions, writer);
+      //}
+
       return parameterDefinitions;
     } catch (Exception exception) {
       throw new RuntimeException("Failed to load parameter definitions from YAML file: " + yamlFilePath, exception);
@@ -102,6 +107,7 @@ public class YAMLParameterSpace extends ParameterSpace {
   
   /**
    * Processes a map of parameter definitions and adds them to the parameter space.
+   * This method processes both top-level and nested parameters.
    *
    * @param parameterDefinitions Map of parameter names to their configuration maps
    */
@@ -110,9 +116,66 @@ public class YAMLParameterSpace extends ParameterSpace {
       String parameterName = entry.getKey();
       Map<String, Object> parameterConfig = entry.getValue();
       
-      // Pass the entire parameter configuration to the processor
-      // The processor will extract what it needs (type, values, globalSubParameters, etc.)
+      // Process the current parameter
       processParameterDefinition(parameterName, parameterConfig);
+      
+      // Process any nested parameters
+      processNestedParameters(parameterName, parameterConfig);
+    }
+  }
+  
+  /**
+   * Recursively processes nested parameters within a parameter's configuration.
+   * This handles both conditionalSubParameters and globalSubParameters.
+   *
+   * @param parentName The name of the parent parameter
+   * @param config The configuration map of the parent parameter
+   */
+  @SuppressWarnings("unchecked")
+  private void processNestedParameters(String parentName, Map<String, Object> config) {
+    if (config == null) {
+      return;
+    }
+    
+    // Process conditionalSubParameters if they exist
+    Object conditionalParams = config.get("conditionalSubParameters");
+    if (conditionalParams instanceof Map) {
+      Map<String, Object> nestedParams = (Map<String, Object>) conditionalParams;
+      for (Map.Entry<String, Object> entry : nestedParams.entrySet()) {
+        if (entry.getValue() instanceof Map) {
+          Map<String, Object> nestedConfig = (Map<String, Object>) entry.getValue();
+          // Process the nested parameter
+          processParameterDefinition(entry.getKey(), nestedConfig);
+          // Recursively process any further nested parameters
+          processNestedParameters(entry.getKey(), nestedConfig);
+        }
+      }
+    }
+    
+    // Process globalSubParameters if they exist
+    Object globalParams = config.get("globalSubParameters");
+    if (globalParams instanceof Map) {
+      Map<String, Object> nestedParams = (Map<String, Object>) globalParams;
+      for (Map.Entry<String, Object> entry : nestedParams.entrySet()) {
+        if (entry.getValue() instanceof Map) {
+          Map<String, Object> nestedConfig = (Map<String, Object>) entry.getValue();
+          // Process the nested parameter
+          processParameterDefinition(entry.getKey(), nestedConfig);
+          // Recursively process any further nested parameters
+          processNestedParameters(entry.getKey(), nestedConfig);
+        }
+      }
+    }
+    
+    // Process values that might contain nested parameters
+    Object values = config.get("values");
+    if (values instanceof Map) {
+      Map<String, Object> valuesMap = (Map<String, Object>) values;
+      for (Object value : valuesMap.values()) {
+        if (value instanceof Map) {
+          processNestedParameters(parentName, (Map<String, Object>) value);
+        }
+      }
     }
   }
 
