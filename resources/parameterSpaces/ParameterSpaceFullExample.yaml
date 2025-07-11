@@ -1,17 +1,18 @@
+
 algorithmResult:
   type: categorical
-  values: 
-    population:
-    externalArchive:
-        specificSubParameters: 
-          populationSizeWithArchive:
-              type: integer
-              range: [10, 200]
-          archiveType:
-              type: categorical
-              values: 
-                crowdingDistanceArchive:
-                unboundedArchive:
+  values: [population, externalArchive]
+#
+
+conditionalParameters:
+  algorithmResult=externalArchive:
+    populationSizeWithArchive:
+      type: integer
+      range: [10, 200]
+    archiveType:
+      type: categorical
+      values: [crowdingDistanceArchive, unboundedArchive]
+      
 #
 createInitialSolutions:
   type: categorical
@@ -28,58 +29,57 @@ variation:
   type: categorical
   values: 
     crossoverAndMutationVariation:
-        specificSubParameters: 
-          crossover:
+      specificSubParameters: 
+        crossover:
+          type: categorical
+          globalSubParameters: 
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+            crossoverRepairStrategy:
               type: categorical
-              globalSubParameters: 
-                crossoverProbability:
-                    type: double
-                    range: [0.0, 1.0]
-                crossoverRepairStrategy:
-                    type: categorical
-                    values: [random, round, bounds]
-              values: 
-                SBX:
-                    specificSubParameters: 
-                      sbxDistributionIndex:
-                          type: double
-                          range: [5.0, 400.0]
-                blxAlpha:
-                    specificSubParameters: 
-                      blxAlphaCrossoverAlpha:
-                          type: double
-                          range: [0.0, 1.0]
-                wholeArithmetic:
+              values: [random, round, bounds]
+          values: 
+            SBX:
+              specificSubParameters: 
+                sbxDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+            blxAlpha:
+              specificSubParameters: 
+                blxAlphaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            wholeArithmetic:
           mutation:
-              type: categorical
-              globalSubparameters: 
-                mutationProbabilityFactor:
-                    type: double
-                    range: [0.0, 2.0]
-                mutationRepairStrategy:
-                    type: categorical
-                    values: 
-                      random:
-                      round:
-                      bounds:
+            type: categorical
+            globalSubparameters: 
+              mutationProbabilityFactor:
+                type: double
+                range: [0.0, 2.0]
+              mutationRepairStrategy:
+                type: categorical
+                values: 
+                  random:
+                  round:
+                  bounds:
               values: 
                 uniform:
-                    specificSubparameters: 
-                      uniformMutationPerturbation:
-                          type: double
-                          range: [0.0, 1.0]
+                  specificSubParameters: 
+                    uniformMutationPerturbation:
+                      type: double
+                      range: [0.0, 1.0]
                 polynomial:
-                    specificSubparameters: 
-                      polynomialMutationDistributionIndex:
-                          type: double
-                          range: [5.0, 400.0]
+                  specificSubParameters: 
+                    polynomialMutationDistributionIndex:
+                      type: double
+                      range: [5.0, 400.0]
 #
 selection:
   type: categorical
   values: 
     tournament:
-        specificSubParameters: 
-          selectionTournamentSize:
-              type: integer
-              range: [2, 10]
-    random:
+      specificSubParameters: 
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
