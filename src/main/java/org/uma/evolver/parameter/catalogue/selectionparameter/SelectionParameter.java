@@ -46,6 +46,8 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  */
 public class SelectionParameter<S extends Solution<?>> extends CategoricalParameter {
 
+  public static final String DEFAULT_NAME = "selection";
+
   /**
    * Creates a new SelectionParameter with the specified selection strategies.
    *

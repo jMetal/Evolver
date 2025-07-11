@@ -32,6 +32,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public class DoubleSelectionParameter extends CategoricalParameter {
 
+  public static final String DEFAULT_NAME = "selection";
+
   /**
    * Creates a new DoubleSelectionParameter with the specified selection strategies.
    *
@@ -77,6 +79,7 @@ public class DoubleSelectionParameter extends CategoricalParameter {
             new DifferentialEvolutionSelection(
                 matingPoolSize, 3, takeCurrentSolutionAsParent.value(), sequenceGenerator.getSequenceGenerator());
       }
+
       default -> throw new JMetalException("Selection component unknown: " + value());
     }
 
