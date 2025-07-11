@@ -25,6 +25,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * while lower values favor exploitation of the search space.
  */
 public class InertiaWeightComputingParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "inertiaWeightComputingStrategy";
+  
   /**
    * Creates a new InertiaWeightComputingParameter with the specified valid values.
    * 
@@ -36,7 +38,7 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if inertiaWeightStrategies is null or empty
    */
   public InertiaWeightComputingParameter(List<String> inertiaWeightStrategies) {
-    super("inertiaWeightComputingStrategy", inertiaWeightStrategies);
+    super(DEFAULT_NAME, inertiaWeightStrategies);
   }
 
   /**
@@ -60,24 +62,24 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
   public InertiaWeightComputingStrategy getInertiaWeightComputingStrategy() {
     return switch (value()) {
       case "constantValue" -> {
-        Double weight = (Double) findSpecificSubParameter("inertiaWeight").value();
+        Double weight = (Double) findConditionalSubParameter("inertiaWeight").value();
         yield new ConstantValueStrategy(weight);
       }
       case "randomSelectedValue" -> {
-        Double weightMin = (Double) findSpecificSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findSpecificSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
         yield new RandomSelectedValueStrategy(weightMin, weightMax);
       }
       case "linearDecreasingValue" -> {
-        Double weightMin = (Double) findSpecificSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findSpecificSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearDecreasingStrategy(weightMin, weightMax, iterations, swarmSize);
       }
       case "linearIncreasingValue" -> {
-        Double weightMin = (Double) findSpecificSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findSpecificSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearIncreasingStrategy(weightMin, weightMax, iterations, swarmSize);

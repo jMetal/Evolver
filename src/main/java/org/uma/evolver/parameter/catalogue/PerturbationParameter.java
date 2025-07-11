@@ -23,6 +23,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * diversity into the population through mutation operations.
  */
 public class PerturbationParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "perturbation";
+  
   /**
    * Creates a new PerturbationParameter with the specified valid values.
    * 
@@ -31,7 +33,7 @@ public class PerturbationParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if perturbationStrategies is null or empty
    */
   public PerturbationParameter(List<String> perturbationStrategies) {
-    super("perturbation", perturbationStrategies);
+    super(DEFAULT_NAME, perturbationStrategies);
   }
 
   /**
@@ -53,11 +55,11 @@ public class PerturbationParameter extends CategoricalParameter {
     Perturbation result;
 
     if ("frequencySelectionMutationBasedPerturbation".equals(value())) {
-      var mutationParameter = (MutationParameter<DoubleSolution>) findSpecificSubParameter("mutation");
+      var mutationParameter = (MutationParameter<DoubleSolution>) findConditionalSubParameter("mutation");
       MutationOperator<DoubleSolution> mutationOperator = mutationParameter.getMutation();
 
       int frequencyOfApplication =
-          (int) findSpecificSubParameter("frequencyOfApplicationOfMutationOperator").value();
+          (int) findConditionalSubParameter("frequencyOfApplicationOfMutationOperator").value();
 
       result =
           new FrequencySelectionMutationBasedPerturbation(mutationOperator, frequencyOfApplication);

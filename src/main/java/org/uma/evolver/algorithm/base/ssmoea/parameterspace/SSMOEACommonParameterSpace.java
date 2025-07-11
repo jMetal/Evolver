@@ -112,14 +112,14 @@ public abstract class SSMOEACommonParameterSpace<S extends Solution<?>> extends 
   protected void setParameterRelationships() {
     // AlgorithmResult dependencies
     get(ALGORITHM_RESULT)
-        .addSpecificSubParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
-        .addSpecificSubParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
+        .addConditionalSubParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
+        .addConditionalSubParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
 
     get(VARIATION)
-        .addSpecificSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER))
-        .addSpecificSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(MUTATION));
+        .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER))
+        .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(MUTATION));
 
-    get(SELECTION).addSpecificSubParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
+    get(SELECTION).addConditionalSubParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
   }
 
   /**

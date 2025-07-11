@@ -154,7 +154,7 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
     
     // Get and validate the differential evolution crossover parameter
     var deCrossoverParameter = (DifferentialEvolutionCrossoverParameter)
-        findSpecificSubParameter("differentialEvolutionCrossover");
+        findConditionalSubParameter("differentialEvolutionCrossover");
     if (deCrossoverParameter == null) {
       throw new JMetalException("differentialEvolutionCrossover parameter not found");
     }
@@ -194,7 +194,7 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
    */
   @SuppressWarnings("unchecked")
   private CrossoverParameter<DoubleSolution> getCrossoverParameter() {
-    return (CrossoverParameter<DoubleSolution>) findSpecificSubParameter("crossover");
+    return (CrossoverParameter<DoubleSolution>) findConditionalSubParameter("crossover");
   }
   
   /**
@@ -211,7 +211,7 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
     
     // Otherwise, try to get a specific mutation parameter
     MutationParameter<DoubleSolution> specificMutationParameter = 
-        (MutationParameter<DoubleSolution>) findSpecificSubParameter("mutation");
+        (MutationParameter<DoubleSolution>) findConditionalSubParameter("mutation");
     if (specificMutationParameter == null) {
       throw new JMetalException("No mutation parameter found");
     }

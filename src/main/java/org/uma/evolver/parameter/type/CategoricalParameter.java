@@ -3,7 +3,7 @@ package org.uma.evolver.parameter.type;
 import java.util.List;
 import java.util.function.Predicate;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.SpecificSubParameter;
+import org.uma.evolver.parameter.ConditionalSubParameter;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
@@ -97,7 +97,7 @@ public class CategoricalParameter extends Parameter<String> {
     for (Parameter<?> parameter : globalSubParameters()) {
       result.append("\n -> ").append(parameter.toString());
     }
-    for (SpecificSubParameter<String> parameter : specificSubParameters()) {
+    for (ConditionalSubParameter<String> parameter : conditionalSubParameters()) {
       result.append("\n -> ").append(parameter.parameter().toString());
     }
     return result.toString();

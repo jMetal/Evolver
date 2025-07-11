@@ -16,6 +16,7 @@ import org.uma.jmetal.solution.Solution;
  * @param <S> the solution type for which the mutation operator is defined
  */
 public abstract class MutationParameter<S extends Solution<?>> extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "mutation";
 
   /**
    * Constructs a mutation parameter with the given list of available mutation operator names.
@@ -24,7 +25,7 @@ public abstract class MutationParameter<S extends Solution<?>> extends Categoric
    * @throws IllegalArgumentException if mutationOperators is null or empty
    */
   public MutationParameter(List<String> mutationOperators) {
-    super("mutation", mutationOperators);
+    super(DEFAULT_NAME, mutationOperators);
   }
 
   /**

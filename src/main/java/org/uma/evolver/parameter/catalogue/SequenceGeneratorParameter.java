@@ -22,18 +22,24 @@ import org.uma.jmetal.util.sequencegenerator.impl.RandomPermutationCycle;
  * getting a sequence generator.
  */
 public class SequenceGeneratorParameter extends CategoricalParameter {
+  private static String DEFAULT_NAME = "sequenceGenerator";
   private int sequenceLength;
 
   /**
    * Creates a new SequenceGeneratorParameter with the specified name.
-   * The available sequence generation strategies are "permutation" and "integerSequence".
+   * The available sequence generation strategies are "randomPermutationCycle" and "cyclicIntegerSequence".
    *
    * @param name The name of the parameter
    * @throws IllegalArgumentException if name is null or empty
    */
-  public SequenceGeneratorParameter(String name) {
-    super(name, List.of("randomPermutationCycle", "cyclicIntegerSequence"));
+  public SequenceGeneratorParameter(String name, List<String> values) {
+    super(name, values);
   }
+
+  public SequenceGeneratorParameter() {
+    this(DEFAULT_NAME, List.of("randomPermutationCycle", "cyclicIntegerSequence")) ;
+  }
+
 
   /**
    * Sets the length of the sequence to be generated.

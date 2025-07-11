@@ -75,7 +75,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
     switch (value()) {
       case "SBX" -> {
         Double distributionIndex =
-            (Double) findSpecificSubParameter("sbxDistributionIndex").value();
+            (Double) findConditionalSubParameter("sbxDistributionIndex").value();
         result =
             new SBXCrossover(
                 crossoverProbability,
@@ -83,7 +83,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "blxAlpha" -> {
-        Double alpha = (Double) findSpecificSubParameter("blxAlphaCrossoverAlpha").value();
+        Double alpha = (Double) findConditionalSubParameter("blxAlphaCrossoverAlpha").value();
         result =
             new BLXAlphaCrossover(
                 crossoverProbability,
@@ -92,8 +92,8 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
       }
       
       case "blxAlphaBeta" -> {
-        Double alpha = (Double) findSpecificSubParameter("blxAlphaBetaCrossoverAlpha").value();
-        Double beta = (Double) findSpecificSubParameter("blxAlphaBetaCrossoverBeta").value();
+        Double alpha = (Double) findConditionalSubParameter("blxAlphaBetaCrossoverAlpha").value();
+        Double beta = (Double) findConditionalSubParameter("blxAlphaBetaCrossoverBeta").value();
         result =
             new BLXAlphaBetaCrossover(
                 crossoverProbability,
@@ -111,7 +111,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "fuzzyRecombination" -> {
-        Double alpha = (Double) findSpecificSubParameter("fuzzyRecombinationCrossoverAlpha").value();
+        Double alpha = (Double) findConditionalSubParameter("fuzzyRecombinationCrossoverAlpha").value();
         result =
             new FuzzyRecombinationCrossover(
                 crossoverProbability,
@@ -119,7 +119,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "laplace" -> {
-        Double scale = (Double) findSpecificSubParameter("laplaceCrossoverScale").value();
+        Double scale = (Double) findConditionalSubParameter("laplaceCrossoverScale").value();
         result =
             new LaplaceCrossover(
                 crossoverProbability,
@@ -127,8 +127,8 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "PCX" -> {
-        Double zeta = (Double) findSpecificSubParameter("pcxCrossoverZeta").value();
-        Double eta = (Double) findSpecificSubParameter("pcxCrossoverEta").value();
+        Double zeta = (Double) findConditionalSubParameter("pcxCrossoverZeta").value();
+        Double eta = (Double) findConditionalSubParameter("pcxCrossoverEta").value();
 
         result =
             new ParentCentricCrossover(
@@ -138,8 +138,8 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "UNDC" -> {
-        Double zeta = (Double) findSpecificSubParameter("undcCrossoverZeta").value();
-        Double eta = (Double) findSpecificSubParameter("undcCrossoverEta").value();
+        Double zeta = (Double) findConditionalSubParameter("undcCrossoverZeta").value();
+        Double eta = (Double) findConditionalSubParameter("undcCrossoverEta").value();
 
         result =
             new UnimodalNormalDistributionCrossover(

@@ -23,6 +23,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * of the PSO algorithm by determining how the best solution is propagated through the swarm.
  */
 public class GlobalBestSelectionParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "globalBestSelection";
+  
   /**
    * Creates a new GlobalBestSelectionParameter with the specified valid values.
    * 
@@ -31,7 +33,7 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public GlobalBestSelectionParameter(List<String> selectionStrategies) {
-    super("globalBestSelection", selectionStrategies);
+    super(DEFAULT_NAME, selectionStrategies);
   }
 
   /**
@@ -54,7 +56,7 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
     GlobalBestSelection result;
     switch (value()) {
       case "tournamentSelection" -> {
-        int tournamentSize = (Integer) findSpecificSubParameter("selectionTournamentSize").value();
+        int tournamentSize = (Integer) findConditionalSubParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentGlobalBestSelection(tournamentSize, comparator);
       }

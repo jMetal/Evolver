@@ -7,8 +7,10 @@ import org.uma.jmetal.component.catalogue.pso.localbestinitialization.impl.Defau
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 public class LocalBestInitializationParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "localBestInitialization";
+  
   public LocalBestInitializationParameter(List<String> localBestInitializationStrategies) {
-    super("localBestInitialization", localBestInitializationStrategies);
+    super(DEFAULT_NAME, localBestInitializationStrategies);
   }
 
   public LocalBestInitialization getLocalBestInitialization() {

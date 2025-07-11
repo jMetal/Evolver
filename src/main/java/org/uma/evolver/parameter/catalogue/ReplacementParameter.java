@@ -31,6 +31,7 @@ import org.uma.jmetal.util.ranking.Ranking;
  * @param <S> The type of solutions being evolved
  */
 public class ReplacementParameter<S extends Solution<?>> extends CategoricalParameter {
+  private static final String DEFAULT_NAME = "replacement";
   private Ranking<S> ranking;
   private DensityEstimator<S> densityEstimator;
 
@@ -42,7 +43,7 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public ReplacementParameter(List<String> selectionStrategies) {
-    super("replacement", selectionStrategies);
+    super(DEFAULT_NAME, selectionStrategies);
   }
 
   /**

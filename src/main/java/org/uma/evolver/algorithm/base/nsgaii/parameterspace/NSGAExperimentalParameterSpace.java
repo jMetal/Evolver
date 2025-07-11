@@ -103,41 +103,41 @@ public class NSGAExperimentalParameterSpace extends ParameterSpace {
   protected void setParameterRelationships() {
     // Common NSGA-II relationships
     get("algorithmResult")
-        .addSpecificSubParameter("externalArchive", get("populationSizeWithArchive"))
-        .addSpecificSubParameter("externalArchive", get("archiveType"));
+        .addConditionalSubParameter("externalArchive", get("populationSizeWithArchive"))
+        .addConditionalSubParameter("externalArchive", get("archiveType"));
 
     get("variation")
-        .addSpecificSubParameter("crossoverAndMutationVariation", get("crossover"))
-        .addSpecificSubParameter("crossoverAndMutationVariation", get("mutation"));
+        .addConditionalSubParameter("crossoverAndMutationVariation", get("crossover"))
+        .addConditionalSubParameter("crossoverAndMutationVariation", get("mutation"));
 
-    get("selection").addSpecificSubParameter("tournament", get("selectionTournamentSize"));
+    get("selection").addConditionalSubParameter("tournament", get("selectionTournamentSize"));
 
     // Double-specific relationships
     get("crossover")
         .addGlobalSubParameter(get("crossoverProbability"))
         .addGlobalSubParameter(get("crossoverRepairStrategy"))
-        .addSpecificSubParameter("SBX", get("sbxDistributionIndex"))
-        .addSpecificSubParameter("PCX", get("pcxCrossoverZeta"))
-        .addSpecificSubParameter("PCX", get("pcxCrossoverEta"))
-        .addSpecificSubParameter("blxAlpha", get("blxAlphaCrossoverAlpha"))
-        .addSpecificSubParameter("blxAlphaBeta", get("blxAlphaBetaCrossoverBeta"))
-        .addSpecificSubParameter("blxAlphaBeta", get("blxAlphaBetaCrossoverAlpha"))
-        .addSpecificSubParameter("laplace", get("laplaceCrossoverScale"))
-        .addSpecificSubParameter("fuzzyRecombination", get("fuzzyRecombinationCrossoverAlpha"))
-        .addSpecificSubParameter("UNDC", get("undcCrossoverZeta"))
-        .addSpecificSubParameter("UNDC", get("undcCrossoverEta"));
+        .addConditionalSubParameter("SBX", get("sbxDistributionIndex"))
+        .addConditionalSubParameter("PCX", get("pcxCrossoverZeta"))
+        .addConditionalSubParameter("PCX", get("pcxCrossoverEta"))
+        .addConditionalSubParameter("blxAlpha", get("blxAlphaCrossoverAlpha"))
+        .addConditionalSubParameter("blxAlphaBeta", get("blxAlphaBetaCrossoverBeta"))
+        .addConditionalSubParameter("blxAlphaBeta", get("blxAlphaBetaCrossoverAlpha"))
+        .addConditionalSubParameter("laplace", get("laplaceCrossoverScale"))
+        .addConditionalSubParameter("fuzzyRecombination", get("fuzzyRecombinationCrossoverAlpha"))
+        .addConditionalSubParameter("UNDC", get("undcCrossoverZeta"))
+        .addConditionalSubParameter("UNDC", get("undcCrossoverEta"));
 
     get("mutation")
         .addGlobalSubParameter(get("mutationProbabilityFactor"))
         .addGlobalSubParameter(get("mutationRepairStrategy"))
-        .addSpecificSubParameter("uniform", get("uniformMutationPerturbation"))
-        .addSpecificSubParameter("nonUniform", get("nonUniformMutationPerturbation"))
-        .addSpecificSubParameter("polynomial", get("polynomialMutationDistributionIndex"))
-        .addSpecificSubParameter(
+        .addConditionalSubParameter("uniform", get("uniformMutationPerturbation"))
+        .addConditionalSubParameter("nonUniform", get("nonUniformMutationPerturbation"))
+        .addConditionalSubParameter("polynomial", get("polynomialMutationDistributionIndex"))
+        .addConditionalSubParameter(
             "linkedPolynomial", get("linkedPolynomialMutationDistributionIndex"))
-        .addSpecificSubParameter("levyFlight", get("levyFlightMutationBeta"))
-        .addSpecificSubParameter("levyFlight", get("levyFlightMutationStepSize"))
-        .addSpecificSubParameter("powerLaw", get("powerLawMutationDelta"));
+        .addConditionalSubParameter("levyFlight", get("levyFlightMutationBeta"))
+        .addConditionalSubParameter("levyFlight", get("levyFlightMutationStepSize"))
+        .addConditionalSubParameter("powerLaw", get("powerLawMutationDelta"));
   }
 
   /**

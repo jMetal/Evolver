@@ -150,10 +150,10 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
       for (String value : validValues) {
         result.append(spaces(tabSize + 2));
         result.append(value + ":\n");
-        var specificParameters = parameter.findSpecificSubParameters(value);
-        if (!specificParameters.isEmpty()) {
-          result.append(spaces(tabSize + 6) + "specificSubparameters: \n");
-          for (Parameter<?> param : specificParameters) {
+        var conditionalSubParameters = parameter.findConditionalSubParameters(value);
+        if (!conditionalSubParameters.isEmpty()) {
+          result.append(spaces(tabSize + 6) + "conditionalSubparameters: \n");
+          for (Parameter<?> param : conditionalSubParameters) {
             result.append(decodeParameter(param, new StringBuilder(), tabSize + 8, true));
           }
         }
@@ -180,10 +180,10 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
       for (Boolean value : validValues) {
         result.append(spaces(tabSize + 2));
         result.append(value + ":\n");
-        var specificParameters = parameter.findSpecificSubParameters("" + value);
-        if (!specificParameters.isEmpty()) {
-          result.append(spaces(tabSize + 6) + "specific_subparameter: \n");
-          for (Parameter<?> param : specificParameters) {
+        var conditionalSubParameters = parameter.findConditionalSubParameters("" + value);
+        if (!conditionalSubParameters.isEmpty()) {
+          result.append(spaces(tabSize + 6) + "conditionalSubParamaters: \n");
+          for (Parameter<?> param : conditionalSubParameters) {
             result.append(decodeParameter(param, new StringBuilder(), tabSize + 8, true));
           }
         }

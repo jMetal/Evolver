@@ -27,6 +27,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * a theta parameter that controls the balance between convergence and diversity.
  */
 public class AggregationFunctionParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "aggregationFunction";
 
   private boolean normalizedObjectives;
 
@@ -41,7 +42,7 @@ public class AggregationFunctionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if aggregationFunctions is null or empty
    */
   public AggregationFunctionParameter(List<String> aggregationFunctions) {
-    super("aggregationFunction", aggregationFunctions);
+    super(DEFAULT_NAME, aggregationFunctions);
     this.normalizedObjectives = false;
   }
 
@@ -78,14 +79,14 @@ public class AggregationFunctionParameter extends CategoricalParameter {
           aggregationFunction = new ModifiedTschebyscheff(normalizedObjectives);
       case "weightedSum" -> aggregationFunction = new WeightedSum(normalizedObjectives);
       case "penaltyBoundaryIntersection" -> {
-        double theta = (double) findSpecificSubParameter("pbiTheta").value();
+        double theta = (double) findConditionalSubParameter("pbiTheta").value();
         aggregationFunction = new PenaltyBoundaryIntersection(theta, normalizedObjectives);
       }
       default -> throw new JMetalException("Aggregation function does not exist: " + name());
     }
 
     if (normalizeObjectives) {
-      double epsilon = (double) normalizeObjectivesParameter.findSpecificSubParameter("epsilonParameterForNormalization").value();
+      double epsilon = (double) normalizeObjectivesParameter.findConditionalSubParameter("epsilonParameterForNormalization").value();
       aggregationFunction.epsilon(epsilon);
     }
     return aggregationFunction;

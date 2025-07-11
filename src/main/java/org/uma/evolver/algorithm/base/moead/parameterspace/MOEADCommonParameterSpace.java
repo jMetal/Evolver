@@ -137,7 +137,7 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
     put(new IntegerParameter(NEIGHBORHOOD_SIZE, 5, 50));
     put(new ProbabilityParameter(NEIGHBORHOOD_SELECTION_PROBABILITY));
     put(new IntegerParameter(MAXIMUM_NUMBER_OF_REPLACED_SOLUTIONS, 1, 5));
-    put(new SequenceGeneratorParameter(SUB_PROBLEM_ID_GENERATOR));
+    put(new SequenceGeneratorParameter(SUB_PROBLEM_ID_GENERATOR, List.of("randomPermutationCycle", "cyclicIntegerSequence")));
     put(new AggregationFunctionParameter(List.of(
         TSCHEBYSCHEFF, WEIGHTED_SUM, PENALTY_BOUNDARY_INTERSECTION, MODIFIED_TSCHEBYSCHEFF)));
     put(new SelectionParameter<>(List.of(POPULATION_AND_NEIGHBORHOOD_MATING_POOL_SELECTION)));
@@ -151,18 +151,18 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
    */
   protected void setParameterRelationships() {
     get(NORMALIZE_OBJECTIVES)
-        .addSpecificSubParameter(true, get(EPSILON_PARAMETER_FOR_NORMALIZATION));
+        .addConditionalSubParameter(true, get(EPSILON_PARAMETER_FOR_NORMALIZATION));
 
     get(AGGREGATION_FUNCTION)
         .addGlobalSubParameter(get(NORMALIZE_OBJECTIVES))
-        .addSpecificSubParameter(PENALTY_BOUNDARY_INTERSECTION, get(PBI_THETA));
+        .addConditionalSubParameter(PENALTY_BOUNDARY_INTERSECTION, get(PBI_THETA));
 
     // AlgorithmResult dependencies
-    get(ALGORITHM_RESULT).addSpecificSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE));
+    get(ALGORITHM_RESULT).addConditionalSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE));
 
     // Selection dependencies
     get(SELECTION)
-        .addSpecificSubParameter(
+        .addConditionalSubParameter(
             POPULATION_AND_NEIGHBORHOOD_MATING_POOL_SELECTION,
             get(NEIGHBORHOOD_SELECTION_PROBABILITY));
   }

@@ -32,6 +32,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * </ul>
  */
 public class DifferentialEvolutionCrossoverParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "differentialEvolutionCrossover";
+  
   /**
    * Creates a new DifferentialEvolutionCrossoverParameter with all standard DE crossover variants.
    * The following variants are included by default:
@@ -65,7 +67,7 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
    * @throws IllegalArgumentException if variants is null or empty
    */
   public DifferentialEvolutionCrossoverParameter(List<String> variants) {
-    super("differentialEvolutionCrossover", variants);
+    super(DEFAULT_NAME, variants);
   }
 
   /**

@@ -29,7 +29,7 @@ class NSGAIIDoubleTest {
     @Test
     @DisplayName("The total number of parameters is correct")
     void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-      int numberOfFlattenedParameters = 29;
+      int numberOfFlattenedParameters = 31;
       assertEquals(
           numberOfFlattenedParameters,
           nsgaIIDouble.parameterSpace().parameters().size());

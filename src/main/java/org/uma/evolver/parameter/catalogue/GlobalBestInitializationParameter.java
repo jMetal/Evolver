@@ -20,6 +20,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * direction of the swarm's movement in the search space.
  */
 public class GlobalBestInitializationParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "globalBestInitialization";
+  
   /**
    * Creates a new GlobalBestInitializationParameter with the specified valid values.
    * 
@@ -28,7 +30,7 @@ public class GlobalBestInitializationParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if globalBestInitializationStrategies is null or empty
    */
   public GlobalBestInitializationParameter(List<String> globalBestInitializationStrategies) {
-    super("globalBestInitialization", globalBestInitializationStrategies);
+    super(DEFAULT_NAME, globalBestInitializationStrategies);
   }
 
   /**

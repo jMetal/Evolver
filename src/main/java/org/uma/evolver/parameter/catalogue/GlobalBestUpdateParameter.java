@@ -19,6 +19,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * which guides the movement of all particles in subsequent iterations.
  */
 public class GlobalBestUpdateParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "globalBestUpdate";
+  
   /**
    * Creates a new GlobalBestUpdateParameter with the specified valid values.
    * 
@@ -32,7 +34,7 @@ public class GlobalBestUpdateParameter extends CategoricalParameter {
    * @param updateStrategies the list of valid global best update strategy names
    */
   public GlobalBestUpdateParameter(List<String> updateStrategies) {
-    super("globalBestUpdate", updateStrategies);
+    super(DEFAULT_NAME, updateStrategies);
   }
 
   /**

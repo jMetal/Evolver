@@ -22,6 +22,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * which guides the particle's movement in subsequent iterations.
  */
 public class LocalBestUpdateParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "localBestUpdate";
+  
   /**
    * Creates a new LocalBestUpdateParameter with the specified valid values.
    * 
@@ -30,7 +32,7 @@ public class LocalBestUpdateParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if localBestUpdateStrategies is null or empty
    */
   public LocalBestUpdateParameter(List<String> localBestUpdateStrategies) {
-    super("localBestUpdate", localBestUpdateStrategies);
+    super(DEFAULT_NAME, localBestUpdateStrategies);
   }
 
   /**

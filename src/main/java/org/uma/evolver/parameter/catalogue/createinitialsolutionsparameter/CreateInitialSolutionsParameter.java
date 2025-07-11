@@ -18,6 +18,8 @@ import org.uma.jmetal.solution.Solution;
 public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
     extends CategoricalParameter {
 
+  public static final String DEFAULT_NAME = "createInitialSolutions";
+      
   /**
    * Creates a new CreateInitialSolutionsParameter with the specified name and valid values.
    *
@@ -35,7 +37,7 @@ public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
    * @throws IllegalArgumentException if validValues is null or empty
    */
   protected CreateInitialSolutionsParameter(List<String> validValues) {
-    this("createInitialSolutions", validValues);
+    this(DEFAULT_NAME, validValues);
   }
 
   /**

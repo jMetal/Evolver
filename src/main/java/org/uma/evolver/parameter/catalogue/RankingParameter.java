@@ -22,6 +22,7 @@ import org.uma.jmetal.util.ranking.impl.StrengthRanking;
  * @param <S> The type of solutions being ranked
  */
 public class RankingParameter<S extends Solution<?>> extends CategoricalParameter {
+  private static final String DEFAULT_NAME = "ranking";
   /**
    * Creates a new RankingParameter with the specified name and valid ranking strategies.
    * 
@@ -33,6 +34,10 @@ public class RankingParameter<S extends Solution<?>> extends CategoricalParamete
    */
   public RankingParameter(String name, List<String> validRankings) {
     super(name, validRankings);
+  }
+
+  public RankingParameter(List<String> validRankings) {
+    this(DEFAULT_NAME, validRankings);
   }
 
   /**

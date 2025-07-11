@@ -36,7 +36,7 @@ class MOEADTest {
     @Test
     @DisplayName("The total number of parameters is correct")
     void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-      int numberOfFlattenedParameters = 37;
+      int numberOfFlattenedParameters = 35;
       assertEquals(
           numberOfFlattenedParameters, moeadDouble.parameterSpace().parameters().size());
     }
@@ -66,7 +66,7 @@ class MOEADTest {
                   + "--pbiTheta 5.0 "
                   + "--algorithmResult population "
                   + "--createInitialSolutions default "
-                  + "--subProblemIdGenerator permutation "
+                  + "--subProblemIdGenerator randomPermutationCycle "
                   + "--variation crossoverAndMutationVariation "
                   + "--crossoverProbability 0.9 "
                   + "--crossoverRepairStrategy bounds "
@@ -101,7 +101,7 @@ class MOEADTest {
       assertEquals(5.0, parameterSpace.get("pbiTheta").value());
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
-      assertEquals("permutation", parameterSpace.get("subProblemIdGenerator").value());
+      assertEquals("randomPermutationCycle", parameterSpace.get("subProblemIdGenerator").value());
       assertEquals("crossoverAndMutationVariation", parameterSpace.get("variation").value());
       assertEquals(0.9, parameterSpace.get("crossoverProbability").value());
       assertEquals("bounds", parameterSpace.get("crossoverRepairStrategy").value());
@@ -129,7 +129,7 @@ class MOEADTest {
                   + "--pbiTheta 5.0 "
                   + "--algorithmResult population "
                   + "--createInitialSolutions default "
-                  + "--subProblemIdGenerator permutation "
+                  + "--subProblemIdGenerator randomPermutationCycle "
                   + "--variation crossoverAndMutationVariation "
                   + "--crossoverProbability 0.9 "
                   + "--crossoverRepairStrategy bounds "
@@ -155,7 +155,7 @@ class MOEADTest {
       assertEquals(5.0, parameterSpace.get("pbiTheta").value());
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
-      assertEquals("permutation", parameterSpace.get("subProblemIdGenerator").value());
+      assertEquals("randomPermutationCycle", parameterSpace.get("subProblemIdGenerator").value());
       assertEquals("crossoverAndMutationVariation", parameterSpace.get("variation").value());
       assertEquals(0.9, parameterSpace.get("crossoverProbability").value());
       assertEquals("swap", parameterSpace.get("mutation").value());
@@ -181,7 +181,7 @@ class MOEADTest {
                   + "--algorithmResult population "
                   + "--createInitialSolutions default "
                   + "--variation differentialEvolutionVariation "
-                  + "--subProblemIdGenerator permutation "
+                  + "--subProblemIdGenerator randomPermutationCycle "
                   + "--mutation polynomial "
                   + "--mutationProbabilityFactor 1.0 "
                   + "--mutationRepairStrategy bounds "
@@ -212,7 +212,7 @@ class MOEADTest {
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
       assertEquals("differentialEvolutionVariation", parameterSpace.get("variation").value());
-      assertEquals("permutation", parameterSpace.get("subProblemIdGenerator").value());
+      assertEquals("randomPermutationCycle", parameterSpace.get("subProblemIdGenerator").value());
       assertEquals("polynomial", parameterSpace.get("mutation").value());
       assertEquals(1.0, parameterSpace.get("mutationProbabilityFactor").value());
       assertEquals("bounds", parameterSpace.get("mutationRepairStrategy").value());

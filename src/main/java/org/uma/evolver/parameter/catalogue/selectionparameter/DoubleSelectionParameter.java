@@ -30,7 +30,6 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * @author Antonio J. Nebro
  */
-
 public class DoubleSelectionParameter extends CategoricalParameter {
 
   /**
@@ -40,7 +39,7 @@ public class DoubleSelectionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public DoubleSelectionParameter(List<String> selectionStrategies) {
-    super("selection", selectionStrategies);
+    super(DEFAULT_NAME, selectionStrategies);
   }
 
   /**
@@ -70,9 +69,9 @@ public class DoubleSelectionParameter extends CategoricalParameter {
     switch (value()) {
       case "differentialEvolutionSelection" -> {
         SequenceGeneratorParameter sequenceGenerator =
-            (SequenceGeneratorParameter) findSpecificSubParameter("sequenceGenerator").value();
+            (SequenceGeneratorParameter) findConditionalSubParameter("sequenceGenerator").value();
 
-        BooleanParameter takeCurrentSolutionAsParent = (BooleanParameter) findSpecificSubParameter("takeCurrentSolutionAsParent").value();
+        BooleanParameter takeCurrentSolutionAsParent = (BooleanParameter) findConditionalSubParameter("takeCurrentSolutionAsParent").value();
 
         result =
             new DifferentialEvolutionSelection(

@@ -18,6 +18,7 @@ import org.uma.jmetal.solution.Solution;
  * @param <S> The type of solutions being evolved
  */
 public abstract class VariationParameter<S extends Solution<?>> extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "variation";
   
   /**
    * Constructs a new VariationParameter with the specified list of variation strategy names.
@@ -26,7 +27,7 @@ public abstract class VariationParameter<S extends Solution<?>> extends Categori
    * @throws IllegalArgumentException if variationStrategies is null or empty
    */
   protected VariationParameter(List<String> variationStrategies) {
-    super("variation", variationStrategies);
+    super(DEFAULT_NAME, variationStrategies);
   }
 
   /**

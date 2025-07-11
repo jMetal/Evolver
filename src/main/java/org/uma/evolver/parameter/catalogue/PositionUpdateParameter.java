@@ -21,7 +21,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * to handle boundary conditions when particles move beyond the defined search space.
  */
 public class PositionUpdateParameter extends CategoricalParameter {
-
+  private static final String DEFAULT_NAME = "positionUpdate";
   /**
    * Creates a new PositionUpdateParameter with the specified valid values.
    * 
@@ -30,7 +30,7 @@ public class PositionUpdateParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if positionUpdateStrategies is null or empty
    */
   public PositionUpdateParameter(List<String> positionUpdateStrategies) {
-    super("positionUpdate", positionUpdateStrategies);
+    super(DEFAULT_NAME, positionUpdateStrategies);
   }
 
   /**
@@ -56,9 +56,9 @@ public class PositionUpdateParameter extends CategoricalParameter {
         List<Bounds<Double>> positionBounds =
             (List<Bounds<Double>>) nonConfigurableSubParameters().get("positionBounds");
         double velocityChangeWhenLowerLimitIsReached =
-            (double) findSpecificSubParameter("velocityChangeWhenLowerLimitIsReached").value();
+            (double) findConditionalSubParameter("velocityChangeWhenLowerLimitIsReached").value();
         double velocityChangeWhenUpperLimitIsReached =
-            (double) findSpecificSubParameter("velocityChangeWhenUpperLimitIsReached").value();
+            (double) findConditionalSubParameter("velocityChangeWhenUpperLimitIsReached").value();
 
         result =
             new DefaultPositionUpdate(

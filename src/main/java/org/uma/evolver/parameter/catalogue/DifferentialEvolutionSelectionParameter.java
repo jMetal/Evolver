@@ -20,6 +20,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  */
 public class DifferentialEvolutionSelectionParameter<S extends Solution<?>> extends
     CategoricalParameter {
+  public static final String DEFAULT_NAME = "selection";
 
   /**
    * Creates a new DifferentialEvolutionSelectionParameter with the specified selection strategies.
@@ -29,7 +30,7 @@ public class DifferentialEvolutionSelectionParameter<S extends Solution<?>> exte
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public DifferentialEvolutionSelectionParameter(List<String> selectionStrategies) {
-    super("selection", selectionStrategies);
+    super(DEFAULT_NAME, selectionStrategies);
   }
 
   /**

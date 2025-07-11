@@ -16,6 +16,7 @@ import org.uma.jmetal.solution.Solution;
  * @param <S> the solution type for which the crossover operator is defined
  */
 public abstract class CrossoverParameter<S extends Solution<?>> extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "crossover";
 
   /**
    * Constructs a crossover parameter with the given list of available crossover operator names.
@@ -23,7 +24,7 @@ public abstract class CrossoverParameter<S extends Solution<?>> extends Categori
    * @param crossoverOperators the list of supported crossover operator names
    */
   protected CrossoverParameter(List<String> crossoverOperators) {
-    super("crossover", crossoverOperators);
+    super(DEFAULT_NAME, crossoverOperators);
   }
 
   /**

@@ -145,27 +145,27 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
     get(CROSSOVER)
         .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
         .addGlobalSubParameter(get(CROSSOVER_REPAIR_STRATEGY))
-        .addSpecificSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(PCX, get(PCX_CROSSOVER_ZETA))
-        .addSpecificSubParameter(PCX, get(PCX_CROSSOVER_ETA))
-        .addSpecificSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
-        .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
-        .addSpecificSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
-        .addSpecificSubParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
-        .addSpecificSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
-        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
-        .addSpecificSubParameter(UNDC, get(UNDC_CROSSOVER_ETA));
+        .addConditionalSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
+        .addConditionalSubParameter(PCX, get(PCX_CROSSOVER_ZETA))
+        .addConditionalSubParameter(PCX, get(PCX_CROSSOVER_ETA))
+        .addConditionalSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
+        .addConditionalSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
+        .addConditionalSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
+        .addConditionalSubParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
+        .addConditionalSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
+        .addConditionalSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
+        .addConditionalSubParameter(UNDC, get(UNDC_CROSSOVER_ETA));
 
     get(MUTATION)
         .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
         .addGlobalSubParameter(get(MUTATION_REPAIR_STRATEGY))
-        .addSpecificSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
-        .addSpecificSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
-        .addSpecificSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(
+        .addConditionalSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
+        .addConditionalSubParameter(
             LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA))
-        .addSpecificSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE))
-        .addSpecificSubParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
+        .addConditionalSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA))
+        .addConditionalSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE))
+        .addConditionalSubParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
   }
 }

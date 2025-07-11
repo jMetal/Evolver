@@ -54,7 +54,7 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public SelectionParameter(List<String> selectionStrategies) {
-    super("selection", selectionStrategies);
+    super(DEFAULT_NAME, selectionStrategies);
   }
 
   /**
@@ -72,14 +72,14 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
     Selection<S> result;
     switch (value()) {
       case "tournament" -> {
-        int tournamentSize = (Integer) findSpecificSubParameter("selectionTournamentSize").value();
+        int tournamentSize = (Integer) findConditionalSubParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentSelection<>(tournamentSize, matingPoolSize, comparator);
       }
       case "random" -> result = new RandomSelection<>(matingPoolSize);
       case "populationAndNeighborhoodMatingPoolSelection" -> {
         double neighborhoodSelectionProbability =
-            (double) findSpecificSubParameter("neighborhoodSelectionProbability").value();
+            (double) findConditionalSubParameter("neighborhoodSelectionProbability").value();
         var neighborhood = (Neighborhood<S>) nonConfigurableSubParameters().get("neighborhood");
         Check.notNull(neighborhood);
 

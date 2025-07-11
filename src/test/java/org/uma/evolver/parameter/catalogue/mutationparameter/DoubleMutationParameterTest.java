@@ -93,7 +93,7 @@ class DoubleMutationParameterTest {
               + " --mutationRepairStrategy random --polynomialMutationDistributionIndex "
               + polynomialMutationDistributionIndex
               + " ";
-      mutationParameter.addSpecificSubParameter(
+      mutationParameter.addConditionalSubParameter(
           "polynomial", new DoubleParameter("polynomialMutationDistributionIndex", 1.0, 200.0));
 
       // Act
@@ -122,7 +122,7 @@ class DoubleMutationParameterTest {
               + " --mutationRepairStrategy random --linkedPolynomialMutationDistributionIndex "
               + linkedPolynomialMutationDistributionIndex
               + " ";
-      mutationParameter.addSpecificSubParameter(
+      mutationParameter.addConditionalSubParameter(
           "linkedPolynomial",
           new DoubleParameter("linkedPolynomialMutationDistributionIndex", 2.0, 200.0));
 
@@ -152,7 +152,7 @@ class DoubleMutationParameterTest {
               + mutationProbabilityFactor
               + " --mutationRepairStrategy random " + "--uniformMutationPerturbation " + uniformMutationPerturbation ;
 
-      mutationParameter.addSpecificSubParameter(
+      mutationParameter.addConditionalSubParameter(
               "uniform",
               new DoubleParameter("uniformMutationPerturbation", 0.0, 1.0));
 
@@ -180,7 +180,7 @@ class DoubleMutationParameterTest {
               + mutationProbabilityFactor
               + " --mutationRepairStrategy random " + "--nonUniformMutationPerturbation " + nonUniformMutationPerturbation ;
 
-      mutationParameter.addSpecificSubParameter(
+      mutationParameter.addConditionalSubParameter(
               "nonUniform",
               new DoubleParameter("nonUniformMutationPerturbation", 0.0, 1.0));
 

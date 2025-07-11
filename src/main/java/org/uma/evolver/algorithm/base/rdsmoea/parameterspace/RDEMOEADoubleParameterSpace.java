@@ -87,16 +87,16 @@ public class RDEMOEADoubleParameterSpace extends RDEMOEACommonParameterSpace<Dou
     get(CROSSOVER)
         .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
         .addGlobalSubParameter(get(CROSSOVER_REPAIR_STRATEGY))
-        .addSpecificSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA_VALUE));
+        .addConditionalSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
+        .addConditionalSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA_VALUE));
 
     get(MUTATION)
         .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
         .addGlobalSubParameter(get(MUTATION_REPAIR_STRATEGY))
-        .addSpecificSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
-        .addSpecificSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
-        .addSpecificSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
-        .addSpecificSubParameter(
+        .addConditionalSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
+        .addConditionalSubParameter(
             LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
   }
 }

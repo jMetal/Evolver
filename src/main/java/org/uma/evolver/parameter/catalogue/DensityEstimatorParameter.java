@@ -28,6 +28,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * @param <S> The type of solutions being evaluated
  */
 public class DensityEstimatorParameter<S extends Solution<?>> extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "densityEstimator";
 
   /**
    * Creates a new DensityEstimatorParameter with the specified name and valid density estimator strategies.
@@ -42,6 +43,10 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
     super(name, validDensityEstimators);
   }
 
+  public DensityEstimatorParameter(List<String> validDensityEstimators) {
+    this(DEFAULT_NAME, validDensityEstimators);
+  }
+  
   /**
    * Creates and returns a DensityEstimator instance based on the current parameter value.
    * The specific implementation is determined by the current value of this parameter.
@@ -64,9 +69,9 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
         break;
       case "knn":
         boolean normalizeObjectives =
-            (Boolean) findSpecificSubParameter("knnNormalizeObjectives").value();
+            (Boolean) findConditionalSubParameter("knnNormalizeObjectives").value();
         int knnNeighborhoodSize =
-            (Integer) findSpecificSubParameter("knnNeighborhoodSize").value();
+            (Integer) findConditionalSubParameter("knnNeighborhoodSize").value();
         result = new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);
         break;
       default:

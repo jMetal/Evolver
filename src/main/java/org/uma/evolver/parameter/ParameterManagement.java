@@ -153,8 +153,8 @@ public class ParameterManagement {
     parameters.forEach(parameter -> {
       parameterList.add(parameter);
       parameterList.addAll(parameterFlattening(parameter.globalSubParameters()));
-      List<Parameter<?>> specificParameters = parameter.specificSubParameters().stream().map(
-              SpecificSubParameter::parameter).collect(
+      List<Parameter<?>> specificParameters = parameter.conditionalSubParameters().stream().map(
+              ConditionalSubParameter::parameter).collect(
               Collectors.toList());
       parameterList.addAll(parameterFlattening(specificParameters));
     });

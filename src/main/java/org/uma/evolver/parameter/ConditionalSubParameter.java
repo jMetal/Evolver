@@ -16,7 +16,7 @@ import org.uma.jmetal.util.errorchecking.Check;
  *
  * @param <T> the type of the main parameter's value used in the condition
  */
-public class SpecificSubParameter<T> {
+public class ConditionalSubParameter<T> {
   private final Predicate<T> condition;
   private final Parameter<?> parameter;
   private final String description;
@@ -28,7 +28,7 @@ public class SpecificSubParameter<T> {
    * @param parameter   the sub-parameter to be activated when the condition is met
    * @param description a textual description of the condition (for documentation or debugging)
    */
-  public SpecificSubParameter(Predicate<T> condition, Parameter<?> parameter, String description) {
+  public ConditionalSubParameter(Predicate<T> condition, Parameter<?> parameter, String description) {
     Check.notNull(condition);
     Check.notNull(parameter);
 

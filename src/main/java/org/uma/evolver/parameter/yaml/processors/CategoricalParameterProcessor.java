@@ -154,11 +154,11 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
   @SuppressWarnings("unchecked")
   private void processSpecificSubParametersForValue(String parentParamName, String valueName, 
       Map<String, Object> valueConfigMap, ParameterSpace parameterSpace) {
-    if (!valueConfigMap.containsKey("specificSubParameters")) {
+    if (!valueConfigMap.containsKey("conditionalSubParameters")) {
       return;
     }
     
-    Object subParamsObj = valueConfigMap.get("specificSubParameters");
+    Object subParamsObj = valueConfigMap.get("conditionalSubParameters");
     if (!(subParamsObj instanceof Map)) {
       return;
     }
@@ -169,7 +169,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
     
     String fullParentName = parentParamName + "." + valueName;
-    System.out.println("  - Found specific subparameters for " + fullParentName + ": " + 
+    System.out.println("  - Found conditional subparameters for " + fullParentName + ": " +
         String.join(", ", subParams.keySet()));
     
     // Process each specific subparameter
@@ -200,7 +200,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
             if (parentParam != null) {
               Parameter<?> subParam = parameterSpace.get(subParamName);
               if (subParam != null) {
-                parentParam.addSpecificSubParameter(valueName, subParam);
+                parentParam.addConditionalSubParameter(valueName, subParam);
                 System.out.println("      Added as specific subparameter for " + parentParamName + " when value is " + valueName);
               }
             }
