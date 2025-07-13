@@ -62,24 +62,24 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
   public InertiaWeightComputingStrategy getInertiaWeightComputingStrategy() {
     return switch (value()) {
       case "constantValue" -> {
-        Double weight = (Double) findConditionalSubParameter("inertiaWeight").value();
+        Double weight = (Double) findConditionalParameter("inertiaWeight").value();
         yield new ConstantValueStrategy(weight);
       }
       case "randomSelectedValue" -> {
-        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
         yield new RandomSelectedValueStrategy(weightMin, weightMax);
       }
       case "linearDecreasingValue" -> {
-        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearDecreasingStrategy(weightMin, weightMax, iterations, swarmSize);
       }
       case "linearIncreasingValue" -> {
-        Double weightMin = (Double) findConditionalSubParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalSubParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearIncreasingStrategy(weightMin, weightMax, iterations, swarmSize);

@@ -3,7 +3,7 @@ package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 import java.util.List;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.ConditionalSubParameter;
+import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -70,7 +70,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
       decodeGlobalParameter(globalParameter, stringBuilder, parameter);
     }
 
-    for (ConditionalSubParameter<?> specificParameter : parameter.conditionalSubParameters()) {
+    for (ConditionalParameter<?> specificParameter : parameter.conditionalParameters()) {
       decodeSpecificParameter(specificParameter, stringBuilder, parameter);
     }
   }
@@ -111,7 +111,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
       decodeGlobalParameter(globalParameter, stringBuilder, parameter);
     }
 
-    for (ConditionalSubParameter<?> specificParameter : parameter.conditionalSubParameters()) {
+    for (ConditionalParameter<?> specificParameter : parameter.conditionalParameters()) {
       decodeSpecificParameter(specificParameter, stringBuilder, parameter);
     }
   }
@@ -126,7 +126,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
    * @throws NullPointerException if any parameter is null
    */
   private void decodeSpecificParameter(
-          ConditionalSubParameter<?> subParameter, StringBuilder stringBuilder, Parameter<?> parentParameter) {
+          ConditionalParameter<?> subParameter, StringBuilder stringBuilder, Parameter<?> parentParameter) {
     stringBuilder.append(
         String.format(
             FORMAT_STRING,
@@ -141,7 +141,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
       decodeGlobalParameter(globalParameter, stringBuilder, subParameter.parameter());
     }
 
-    for (ConditionalSubParameter<?> specificParameter : subParameter.parameter().conditionalSubParameters()) {
+    for (ConditionalParameter<?> specificParameter : subParameter.parameter().conditionalParameters()) {
       decodeSpecificParameter(specificParameter, stringBuilder, subParameter.parameter());
     }
   }

@@ -88,14 +88,14 @@ public class VariationPermutationParameter extends VariationParameter<Permutatio
     if (CROSSOVER_AND_MUTATION.equals(value())) {
       // Get and validate the crossover parameter
       CrossoverParameter<PermutationSolution<Integer>> crossoverParameter = 
-          (CrossoverParameter<PermutationSolution<Integer>>) findConditionalSubParameter("crossover");
+          (CrossoverParameter<PermutationSolution<Integer>>) findConditionalParameter("crossover");
       if (crossoverParameter == null) {
         throw new JMetalException("crossover parameter not found");
       }
       
       // Get and validate the mutation parameter
       MutationParameter<PermutationSolution<Integer>> mutationParameter = 
-          (MutationParameter<PermutationSolution<Integer>>) findConditionalSubParameter("mutation");
+          (MutationParameter<PermutationSolution<Integer>>) findConditionalParameter("mutation");
       if (mutationParameter == null) {
         throw new JMetalException("mutation parameter not found");
       }

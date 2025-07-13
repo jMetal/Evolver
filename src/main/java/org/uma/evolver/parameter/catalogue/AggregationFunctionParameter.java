@@ -79,14 +79,14 @@ public class AggregationFunctionParameter extends CategoricalParameter {
           aggregationFunction = new ModifiedTschebyscheff(normalizedObjectives);
       case "weightedSum" -> aggregationFunction = new WeightedSum(normalizedObjectives);
       case "penaltyBoundaryIntersection" -> {
-        double theta = (double) findConditionalSubParameter("pbiTheta").value();
+        double theta = (double) findConditionalParameter("pbiTheta").value();
         aggregationFunction = new PenaltyBoundaryIntersection(theta, normalizedObjectives);
       }
       default -> throw new JMetalException("Aggregation function does not exist: " + name());
     }
 
     if (normalizeObjectives) {
-      double epsilon = (double) normalizeObjectivesParameter.findConditionalSubParameter("epsilonParameterForNormalization").value();
+      double epsilon = (double) normalizeObjectivesParameter.findConditionalParameter("epsilonParameterForNormalization").value();
       aggregationFunction.epsilon(epsilon);
     }
     return aggregationFunction;

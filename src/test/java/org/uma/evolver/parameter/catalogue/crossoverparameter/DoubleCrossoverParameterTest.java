@@ -81,7 +81,7 @@ class DoubleCrossoverParameterTest {
     void shouldReturnSBXCrossoverWhenOperatorIsSBX() {
       // Arrange
       String parameterString = "--crossover SBX --crossoverProbability 0.8 --crossoverRepairStrategy random --sbxDistributionIndex 20.0" ;
-      crossoverParameter.addConditionalSubParameter("SBX", new DoubleParameter("sbxDistributionIndex", 1.0, 200.0)) ;
+      crossoverParameter.addConditionalParameter("SBX", new DoubleParameter("sbxDistributionIndex", 1.0, 200.0)) ;
 
       // Act  
       crossoverParameter.parse(parameterString.split(" "));
@@ -98,7 +98,7 @@ class DoubleCrossoverParameterTest {
     void shouldReturnBLXAlphaCrossoverWhenOperatorIsBLXAlpha() {
       // Arrange
       String parameterString = "--crossover blxAlpha --crossoverProbability 0.8 --crossoverRepairStrategy random --blxAlphaCrossoverAlpha 0.5" ;
-      crossoverParameter.addConditionalSubParameter("blxAlpha", new DoubleParameter("blxAlphaCrossoverAlpha", 0.0, 1.0)) ;
+      crossoverParameter.addConditionalParameter("blxAlpha", new DoubleParameter("blxAlphaCrossoverAlpha", 0.0, 1.0)) ;
 
       // Act
       crossoverParameter.parse(parameterString.split(" "));

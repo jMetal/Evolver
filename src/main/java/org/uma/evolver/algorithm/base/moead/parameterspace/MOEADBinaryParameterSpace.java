@@ -108,6 +108,6 @@ public class MOEADBinaryParameterSpace extends MOEADCommonParameterSpace<BinaryS
 
     get(VARIATION)
             .addGlobalSubParameter(get(MUTATION))
-            .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER)) ;
+            .addConditionalParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER)) ;
   }
 }

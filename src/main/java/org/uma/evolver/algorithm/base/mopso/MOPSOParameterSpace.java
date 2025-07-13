@@ -215,7 +215,7 @@ public class MOPSOParameterSpace extends ParameterSpace {
   protected void setParameterRelationships() {
     // Set up relationships between parameters
     // For example, mutation parameters are sub-parameters of perturbation
-    get(ALGORITHM_RESULT).addConditionalSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE_TYPE));
+    get(ALGORITHM_RESULT).addConditionalParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE_TYPE));
 
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MIN));
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C1_MAX));
@@ -223,46 +223,46 @@ public class MOPSOParameterSpace extends ParameterSpace {
     get(VELOCITY_UPDATE).addGlobalSubParameter(get(C2_MAX));
 
     get(GLOBAL_BEST_SELECTION)
-        .addConditionalSubParameter(TOURNAMENT_SELECTION, get(SELECTION_TOURNAMENT_SIZE));
+        .addConditionalParameter(TOURNAMENT_SELECTION, get(SELECTION_TOURNAMENT_SIZE));
 
     get(POSITION_UPDATE)
-        .addConditionalSubParameter(
+        .addConditionalParameter(
             DEFAULT_POSITION_UPDATE, get(VELOCITY_CHANGE_WHEN_LOWER_LIMIT_IS_REACHED));
     get(POSITION_UPDATE)
-        .addConditionalSubParameter(
+        .addConditionalParameter(
             DEFAULT_POSITION_UPDATE, get(VELOCITY_CHANGE_WHEN_UPPER_LIMIT_IS_REACHED));
 
     // Add mutation-specific parameters
     get(MUTATION).addGlobalSubParameter(get(MUTATION_REPAIR_STRATEGY));
     get(MUTATION).addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR));
-    get(MUTATION).addConditionalSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION));
-    get(MUTATION).addConditionalSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION));
-    get(MUTATION).addConditionalSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
+    get(MUTATION).addConditionalParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION));
+    get(MUTATION).addConditionalParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION));
+    get(MUTATION).addConditionalParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
     get(MUTATION)
-        .addConditionalSubParameter(
+        .addConditionalParameter(
             LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
 
     get(PERTURBATION)
-        .addConditionalSubParameter(FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION, get(MUTATION));
+        .addConditionalParameter(FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION, get(MUTATION));
     get(PERTURBATION)
-        .addConditionalSubParameter(
+        .addConditionalParameter(
             FREQUENCY_SELECTION_MUTATION_BASED_PERTURBATION,
             get(FREQUENCY_OF_APPLICATION_OF_MUTATION_OPERATOR));
 
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(CONSTANT_VALUE, get(INERTIA_WEIGHT));
+        .addConditionalParameter(CONSTANT_VALUE, get(INERTIA_WEIGHT));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MIN));
+        .addConditionalParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MAX));
+        .addConditionalParameter(LINEAR_DECREASING_VALUE, get(INERTIA_WEIGHT_MAX));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MIN));
+        .addConditionalParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MAX));
+        .addConditionalParameter(LINEAR_INCREASING_VALUE, get(INERTIA_WEIGHT_MAX));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MIN));
+        .addConditionalParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MIN));
     get(INERTIA_WEIGHT_COMPUTING_STRATEGY)
-        .addConditionalSubParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MAX));
+        .addConditionalParameter(RANDOM_SELECTED_VALUE, get(INERTIA_WEIGHT_MAX));
   }
 
   /**

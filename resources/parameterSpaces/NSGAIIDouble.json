@@ -5,7 +5,7 @@
       "values": {
         "population": {},
         "externalArchive": {
-          "conditionalSubParameters": {
+          "conditionalParameters": {
             "populationSizeWithArchive": {
               "type": "integer",
               "range": [10, 200]
@@ -37,7 +37,7 @@
       "type": "categorical",
       "values": {
         "crossoverAndMutationVariation": {
-          "conditionalSubParameters": {
+          "conditionalParameters": {
             "crossover": {
               "type": "categorical",
               "globalSubParameters": {
@@ -56,7 +56,7 @@
               },
               "values": {
                 "SBX": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "sbxDistributionIndex": {
                       "type": "double",
                       "range": [5.0, 400.0]
@@ -64,7 +64,7 @@
                   }
                 },
                 "blxAlpha": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "blxAlphaCrossoverAlpha": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -73,7 +73,7 @@
                 },
                 "wholeArithmetic": {},
                 "blxAlphaBeta": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "blxAlphaBetaCrossoverBeta": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -86,7 +86,7 @@
                 },
                 "arithmetic": {},
                 "laplace": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "laplaceCrossoverScale": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -94,7 +94,7 @@
                   }
                 },
                 "fuzzyRecombination": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "fuzzyRecombinationCrossoverAlpha": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -121,7 +121,7 @@
               },
               "values": {
                 "uniform": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "uniformMutationPerturbation": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -129,7 +129,7 @@
                   }
                 },
                 "polynomial": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "polynomialMutationDistributionIndex": {
                       "type": "double",
                       "range": [5.0, 400.0]
@@ -137,7 +137,7 @@
                   }
                 },
                 "linkedPolynomial": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "linkedPolynomialMutationDistributionIndex": {
                       "type": "double",
                       "range": [5.0, 400.0]
@@ -145,7 +145,7 @@
                   }
                 },
                 "nonUniform": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "nonUniformMutationPerturbation": {
                       "type": "double",
                       "range": [0.0, 1.0]
@@ -153,7 +153,7 @@
                   }
                 },
                 "levyFlight": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "levyFlightMutationBeta": {
                       "type": "double",
                       "range": [1.0, 2.0]
@@ -165,7 +165,7 @@
                   }
                 },
                 "powerLaw": {
-                  "conditionalSubParameters": {
+                  "conditionalParameters": {
                     "powerLawMutationDelta": {
                       "type": "double",
                       "range": [0.0, 10.0]
@@ -182,7 +182,7 @@
       "type": "categorical",
       "values": {
         "tournament": {
-          "conditionalSubParameters": {
+          "conditionalParameters": {
             "selectionTournamentSize": {
               "type": "integer",
               "range": [2, 10]

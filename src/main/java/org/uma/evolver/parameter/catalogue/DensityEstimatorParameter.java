@@ -69,9 +69,9 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
         break;
       case "knn":
         boolean normalizeObjectives =
-            (Boolean) findConditionalSubParameter("knnNormalizeObjectives").value();
+            (Boolean) findConditionalParameter("knnNormalizeObjectives").value();
         int knnNeighborhoodSize =
-            (Integer) findConditionalSubParameter("knnNeighborhoodSize").value();
+            (Integer) findConditionalParameter("knnNeighborhoodSize").value();
         result = new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);
         break;
       default:

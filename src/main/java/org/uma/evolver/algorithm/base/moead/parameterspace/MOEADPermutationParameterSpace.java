@@ -102,6 +102,6 @@ public class MOEADPermutationParameterSpace extends MOEADCommonParameterSpace<Pe
 
     get(VARIATION)
             .addGlobalSubParameter(get(MUTATION))
-            .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER)) ;
+            .addConditionalParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER)) ;
   }
 }

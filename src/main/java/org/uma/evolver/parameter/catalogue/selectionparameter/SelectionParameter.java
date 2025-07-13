@@ -74,14 +74,14 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
     Selection<S> result;
     switch (value()) {
       case "tournament" -> {
-        int tournamentSize = (Integer) findConditionalSubParameter("selectionTournamentSize").value();
+        int tournamentSize = (Integer) findConditionalParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentSelection<>(tournamentSize, matingPoolSize, comparator);
       }
       case "random" -> result = new RandomSelection<>(matingPoolSize);
       case "populationAndNeighborhoodMatingPoolSelection" -> {
         double neighborhoodSelectionProbability =
-            (double) findConditionalSubParameter("neighborhoodSelectionProbability").value();
+            (double) findConditionalParameter("neighborhoodSelectionProbability").value();
         var neighborhood = (Neighborhood<S>) nonConfigurableSubParameters().get("neighborhood");
         Check.notNull(neighborhood);
 

@@ -71,9 +71,9 @@ public class DoubleSelectionParameter extends CategoricalParameter {
     switch (value()) {
       case "differentialEvolutionSelection" -> {
         SequenceGeneratorParameter sequenceGenerator =
-            (SequenceGeneratorParameter) findConditionalSubParameter("sequenceGenerator").value();
+            (SequenceGeneratorParameter) findConditionalParameter("sequenceGenerator").value();
 
-        BooleanParameter takeCurrentSolutionAsParent = (BooleanParameter) findConditionalSubParameter("takeCurrentSolutionAsParent").value();
+        BooleanParameter takeCurrentSolutionAsParent = (BooleanParameter) findConditionalParameter("takeCurrentSolutionAsParent").value();
 
         result =
             new DifferentialEvolutionSelection(

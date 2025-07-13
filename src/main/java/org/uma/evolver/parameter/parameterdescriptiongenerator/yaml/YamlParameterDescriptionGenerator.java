@@ -150,7 +150,7 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
       for (String value : validValues) {
         result.append(spaces(tabSize + 2));
         result.append(value + ":\n");
-        var conditionalSubParameters = parameter.findConditionalSubParameters(value);
+        var conditionalSubParameters = parameter.findConditionalParameters(value);
         if (!conditionalSubParameters.isEmpty()) {
           result.append(spaces(tabSize + 6) + "conditionalSubparameters: \n");
           for (Parameter<?> param : conditionalSubParameters) {
@@ -180,7 +180,7 @@ public class YamlParameterDescriptionGenerator<S extends Solution<?>> {
       for (Boolean value : validValues) {
         result.append(spaces(tabSize + 2));
         result.append(value + ":\n");
-        var conditionalSubParameters = parameter.findConditionalSubParameters("" + value);
+        var conditionalSubParameters = parameter.findConditionalParameters("" + value);
         if (!conditionalSubParameters.isEmpty()) {
           result.append(spaces(tabSize + 6) + "conditionalSubParamaters: \n");
           for (Parameter<?> param : conditionalSubParameters) {

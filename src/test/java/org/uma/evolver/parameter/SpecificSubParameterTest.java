@@ -23,8 +23,8 @@ class SpecificSubParameterTest {
     when(mockParam.name()).thenReturn("testParam");
 
     // Act
-    ConditionalSubParameter<Integer> specificParam =
-        new ConditionalSubParameter<>(intPredicate, mockParam, "parameter description");
+    ConditionalParameter<Integer> specificParam =
+        new ConditionalParameter<>(intPredicate, mockParam, "parameter description");
 
     // Assert
     assertNotNull(specificParam.condition());
@@ -42,8 +42,8 @@ class SpecificSubParameterTest {
     when(mockParam.name()).thenReturn("stringParameter");
 
     // Act
-    ConditionalSubParameter<String> specificParam =
-        new ConditionalSubParameter<>(stringPredicate, mockParam, "parameter description");
+    ConditionalParameter<String> specificParam =
+        new ConditionalParameter<>(stringPredicate, mockParam, "parameter description");
 
     // Assert
     assertNotNull(specificParam.condition());
@@ -58,7 +58,7 @@ class SpecificSubParameterTest {
   @DisplayName("Constructor should handle null parameter correctly")
   void constructorShouldHandleNullParameter() {
     // Arrange & Act & Assert
-    assertThrows(NullParameterException.class, () -> new ConditionalSubParameter<>(value -> true, null, "parameter description"));
+    assertThrows(NullParameterException.class, () -> new ConditionalParameter<>(value -> true, null, "parameter description"));
   }
 
   @Test
@@ -69,7 +69,7 @@ class SpecificSubParameterTest {
 
     // Act & Assert
     assertThrows(
-            NullParameterException.class, () -> new ConditionalSubParameter<String>(null, mockParam, "parameter description"));
+            NullParameterException.class, () -> new ConditionalParameter<String>(null, mockParam, "parameter description"));
   }
 
   @Test
@@ -79,8 +79,8 @@ class SpecificSubParameterTest {
     Predicate<Double> doublePredicate = d -> d < 100.0;
     Parameter<?> mockParam = mock(Parameter.class);
     when(mockParam.name()).thenReturn("doubleParam");
-    ConditionalSubParameter<Double> specificParam =
-        new ConditionalSubParameter<>(doublePredicate, mockParam, "parameter description");
+    ConditionalParameter<Double> specificParam =
+        new ConditionalParameter<>(doublePredicate, mockParam, "parameter description");
 
     // Act
     String result = specificParam.toString();
@@ -97,8 +97,8 @@ class SpecificSubParameterTest {
     // Arrange
     Predicate<Integer> intPredicate = v -> v > 15;
     Parameter<?> mockParam = mock(Parameter.class);
-    ConditionalSubParameter<Integer> specificParam =
-        new ConditionalSubParameter<>(intPredicate, mockParam, "parameter description");
+    ConditionalParameter<Integer> specificParam =
+        new ConditionalParameter<>(intPredicate, mockParam, "parameter description");
 
     // Act & Assert
     assertEquals(value > 15, specificParam.condition().test(value));
@@ -111,7 +111,7 @@ class SpecificSubParameterTest {
       Predicate<T> predicate, T trueValue, T falseValue) {
     // Arrange
     Parameter<?> mockParam = mock(Parameter.class);
-    ConditionalSubParameter<T> specificParam = new ConditionalSubParameter<>(predicate, mockParam, "parameter description");
+    ConditionalParameter<T> specificParam = new ConditionalParameter<>(predicate, mockParam, "parameter description");
 
     // Act & Assert
     assertTrue(specificParam.condition().test(trueValue));

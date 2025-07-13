@@ -55,11 +55,11 @@ public class PerturbationParameter extends CategoricalParameter {
     Perturbation result;
 
     if ("frequencySelectionMutationBasedPerturbation".equals(value())) {
-      var mutationParameter = (MutationParameter<DoubleSolution>) findConditionalSubParameter("mutation");
+      var mutationParameter = (MutationParameter<DoubleSolution>) findConditionalParameter("mutation");
       MutationOperator<DoubleSolution> mutationOperator = mutationParameter.getMutation();
 
       int frequencyOfApplication =
-          (int) findConditionalSubParameter("frequencyOfApplicationOfMutationOperator").value();
+          (int) findConditionalParameter("frequencyOfApplicationOfMutationOperator").value();
 
       result =
           new FrequencySelectionMutationBasedPerturbation(mutationOperator, frequencyOfApplication);

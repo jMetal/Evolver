@@ -1,4 +1,4 @@
-package org.uma.evolver.parameter.catalogue.factory;
+package org.uma.evolver.parameter.factory;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @author Your Name
  * @since version
  */
-public class DoubleParameterFactory {
+public class DoubleParameterFactory implements ParameterFactory {
 
   /**
    * Creates and returns a specific CategoricalParameter instance based on the provided parameter name.
@@ -43,7 +43,8 @@ public class DoubleParameterFactory {
    * @return an instance of CategoricalParameter corresponding to the specified parameter name
    * @throws IllegalArgumentException if the values list is null or empty
    */
-  public static CategoricalParameter createCategoricalParameter(
+  @Override
+  public CategoricalParameter createParameter(
       String parameterName, List<String> values) {
     
     if (values == null || values.isEmpty()) {

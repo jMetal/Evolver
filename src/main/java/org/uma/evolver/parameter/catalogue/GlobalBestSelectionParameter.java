@@ -56,7 +56,7 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
     GlobalBestSelection result;
     switch (value()) {
       case "tournamentSelection" -> {
-        int tournamentSize = (Integer) findConditionalSubParameter("selectionTournamentSize").value();
+        int tournamentSize = (Integer) findConditionalParameter("selectionTournamentSize").value();
 
         result = new NaryTournamentGlobalBestSelection(tournamentSize, comparator);
       }

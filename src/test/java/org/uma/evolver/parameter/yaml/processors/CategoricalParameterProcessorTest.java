@@ -6,18 +6,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
 
 class CategoricalParameterProcessorTest {
 
+  private CategoricalParameterProcessor processor ;
+
+
+  @BeforeEach void setUp() {
+    processor = new CategoricalParameterProcessor(new DoubleParameterFactory()) ;
+  }
+
   @Test
   void shouldProcessStringCategories() {
     // Given
-    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
     ParameterSpace parameterSpace = new ParameterSpace();
     List<String> categories = Arrays.asList("A", "B", "C");
 
@@ -36,7 +45,6 @@ class CategoricalParameterProcessorTest {
   @Test
   void shouldProcessNumericCategories() {
     // Given
-    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
     ParameterSpace parameterSpace = new ParameterSpace();
     List<Integer> categories = Arrays.asList(1, 2, 3);
 
@@ -55,7 +63,6 @@ class CategoricalParameterProcessorTest {
   @Test
   void shouldProcessMapCategories() {
     // Given
-    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
     ParameterSpace parameterSpace = new ParameterSpace();
     Map<String, Object> categories = new HashMap<>();
     categories.put("A", null);
@@ -77,7 +84,6 @@ class CategoricalParameterProcessorTest {
   @Test
   void shouldHandleGlobalSubParameters() {
     // Given
-    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
     ParameterSpace parameterSpace = new ParameterSpace();
     
     Map<String, Object> parameterMap = new HashMap<>();
@@ -108,7 +114,6 @@ class CategoricalParameterProcessorTest {
   @Test
   void shouldThrowExceptionForEmptyList() {
     // Given
-    CategoricalParameterProcessor processor = new CategoricalParameterProcessor();
     ParameterSpace parameterSpace = new ParameterSpace();
 
     // When/Then

@@ -56,9 +56,9 @@ public class PositionUpdateParameter extends CategoricalParameter {
         List<Bounds<Double>> positionBounds =
             (List<Bounds<Double>>) nonConfigurableSubParameters().get("positionBounds");
         double velocityChangeWhenLowerLimitIsReached =
-            (double) findConditionalSubParameter("velocityChangeWhenLowerLimitIsReached").value();
+            (double) findConditionalParameter("velocityChangeWhenLowerLimitIsReached").value();
         double velocityChangeWhenUpperLimitIsReached =
-            (double) findConditionalSubParameter("velocityChangeWhenUpperLimitIsReached").value();
+            (double) findConditionalParameter("velocityChangeWhenUpperLimitIsReached").value();
 
         result =
             new DefaultPositionUpdate(

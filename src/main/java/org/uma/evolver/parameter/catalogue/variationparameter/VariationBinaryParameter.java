@@ -93,7 +93,7 @@ public class VariationBinaryParameter extends VariationParameter<BinarySolution>
     if (CROSSOVER_AND_MUTATION.equals(value())) {
       // Get and validate the crossover parameter
       CrossoverParameter<BinarySolution> crossoverParameter =
-          (CrossoverParameter<BinarySolution>) findConditionalSubParameter("crossover");
+          (CrossoverParameter<BinarySolution>) findConditionalParameter("crossover");
       if (crossoverParameter == null) {
         throw new JMetalException("crossover parameter not found");
       }
@@ -103,7 +103,7 @@ public class VariationBinaryParameter extends VariationParameter<BinarySolution>
           (MutationParameter<BinarySolution>) findGlobalSubParameter("mutation");
       if (mutationParameter == null) {
         mutationParameter =
-            (MutationParameter<BinarySolution>) findConditionalSubParameter("mutation");
+            (MutationParameter<BinarySolution>) findConditionalParameter("mutation");
         if (mutationParameter == null) {
           throw new JMetalException("mutation parameter not found");
         }

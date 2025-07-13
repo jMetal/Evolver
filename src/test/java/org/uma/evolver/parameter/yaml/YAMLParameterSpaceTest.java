@@ -2,18 +2,11 @@ package org.uma.evolver.parameter.yaml;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.type.CategoricalParameter;
-import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 class YAMLParameterSpaceTest {
 
@@ -21,10 +14,11 @@ class YAMLParameterSpaceTest {
   void loadParametersFromYAML_WithValidYAML_ShouldLoadParameters() {
     // Given
     String yamlFilePath = "src/test/resources/parameterSpaces/TestParameterSpace.yaml";
-    
+
     // When
-    YAMLParameterSpace parameterSpace = new YAMLParameterSpace(yamlFilePath);
-    
+    YAMLParameterSpace parameterSpace =
+        new YAMLParameterSpace(yamlFilePath, new DoubleParameterFactory());
+
     // Then
     assertNotNull(parameterSpace);
     assertTrue(parameterSpace.get("categoricalParam") instanceof CategoricalParameter);
@@ -53,21 +47,24 @@ class YAMLParameterSpaceTest {
   void loadParametersFromYAML_WithNonExistentFile_ShouldThrowException() {
     // Given
     String invalidYamlPath = "nonexistent.yaml";
-    
+
     // When/Then
-    assertThrows(JMetalException.class, () -> {
-      new YAMLParameterSpace(invalidYamlPath);
-    });
+    assertThrows(
+        JMetalException.class,
+        () -> {
+          new YAMLParameterSpace(invalidYamlPath, new DoubleParameterFactory());
+        });
   }
 
   @Test
   void loadParametersFromYAML_WithEmptyYAML_ShouldReturnEmptyParameterSpace() {
     // Given
     String emptyYamlPath = "src/test/resources/parameterSpaces/EmptyParameterSpace.yaml";
-    
+
     // When
-    YAMLParameterSpace parameterSpace = new YAMLParameterSpace(emptyYamlPath);
-    
+    YAMLParameterSpace parameterSpace =
+        new YAMLParameterSpace(emptyYamlPath, new DoubleParameterFactory());
+
     // Then
     assertTrue(parameterSpace.parameters().isEmpty());
   }
@@ -76,10 +73,12 @@ class YAMLParameterSpaceTest {
   void loadParametersFromYAML_WithInvalidParameterType_ShouldThrowException() {
     // Given
     String invalidTypeYaml = "src/test/resources/parameterSpaces/InvalidParameterType.yaml";
-    
+
     // When/Then
-    assertThrows(JMetalException.class, () -> {
-      new YAMLParameterSpace(invalidTypeYaml);
-    });
+    assertThrows(
+        JMetalException.class,
+        () -> {
+          new YAMLParameterSpace(invalidTypeYaml, new DoubleParameterFactory());
+        });
   }
 }

@@ -101,7 +101,7 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new CreateInitialSolutionsDoubleParameter(
             List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
 
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX, UNDC)));
+    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
@@ -145,27 +145,27 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
     get(CROSSOVER)
         .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
         .addGlobalSubParameter(get(CROSSOVER_REPAIR_STRATEGY))
-        .addConditionalSubParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
-        .addConditionalSubParameter(PCX, get(PCX_CROSSOVER_ZETA))
-        .addConditionalSubParameter(PCX, get(PCX_CROSSOVER_ETA))
-        .addConditionalSubParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
-        .addConditionalSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
-        .addConditionalSubParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
-        .addConditionalSubParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
-        .addConditionalSubParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
-        .addConditionalSubParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
-        .addConditionalSubParameter(UNDC, get(UNDC_CROSSOVER_ETA));
+        .addConditionalParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
+        .addConditionalParameter(PCX, get(PCX_CROSSOVER_ZETA))
+        .addConditionalParameter(PCX, get(PCX_CROSSOVER_ETA))
+        .addConditionalParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA))
+        .addConditionalParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_BETA))
+        .addConditionalParameter(BLX_ALPHA_BETA, get(BLX_ALPHA_BETA_CROSSOVER_ALPHA))
+        .addConditionalParameter(LAPLACE, get(LAPLACE_CROSSOVER_SCALE))
+        .addConditionalParameter(FUZZY_RECOMBINATION, get(FUZZY_RECOMBINATION_CROSSOVER_ALPHA))
+        .addConditionalParameter(UNDC, get(UNDC_CROSSOVER_ZETA))
+        .addConditionalParameter(UNDC, get(UNDC_CROSSOVER_ETA));
 
     get(MUTATION)
         .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
         .addGlobalSubParameter(get(MUTATION_REPAIR_STRATEGY))
-        .addConditionalSubParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
-        .addConditionalSubParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
-        .addConditionalSubParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
-        .addConditionalSubParameter(
+        .addConditionalParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalParameter(NON_UNIFORM, get(NON_UNIFORM_MUTATION_PERTURBATION))
+        .addConditionalParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
+        .addConditionalParameter(
             LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
-        .addConditionalSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA))
-        .addConditionalSubParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE))
-        .addConditionalSubParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
+        .addConditionalParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA))
+        .addConditionalParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE))
+        .addConditionalParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
   }
 }

@@ -100,20 +100,20 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
 
   protected void setParameterRelationships() {
     get(ALGORITHM_RESULT)
-        .addConditionalSubParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
-        .addConditionalSubParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
+        .addConditionalParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
+        .addConditionalParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
 
     get(VARIATION)
-        .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER))
-        .addConditionalSubParameter(CROSSOVER_AND_MUTATION_VARIATION, get(MUTATION));
+        .addConditionalParameter(CROSSOVER_AND_MUTATION_VARIATION, get(CROSSOVER))
+        .addConditionalParameter(CROSSOVER_AND_MUTATION_VARIATION, get(MUTATION));
 
-    get(SELECTION).addConditionalSubParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
+    get(SELECTION).addConditionalParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
 
     get(REPLACEMENT).addGlobalSubParameter(get(REMOVAL_POLICY));
 
     get(DENSITY_ESTIMATOR)
-        .addConditionalSubParameter(KNN, get(KNN_NEIGHBORHOOD_SIZE))
-        .addConditionalSubParameter(KNN, get(KNN_NORMALIZE_OBJECTIVES));
+        .addConditionalParameter(KNN, get(KNN_NEIGHBORHOOD_SIZE))
+        .addConditionalParameter(KNN, get(KNN_NORMALIZE_OBJECTIVES));
   }
 
   protected void setTopLevelParameters() {

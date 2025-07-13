@@ -151,18 +151,18 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
    */
   protected void setParameterRelationships() {
     get(NORMALIZE_OBJECTIVES)
-        .addConditionalSubParameter(true, get(EPSILON_PARAMETER_FOR_NORMALIZATION));
+        .addConditionalParameter(true, get(EPSILON_PARAMETER_FOR_NORMALIZATION));
 
     get(AGGREGATION_FUNCTION)
         .addGlobalSubParameter(get(NORMALIZE_OBJECTIVES))
-        .addConditionalSubParameter(PENALTY_BOUNDARY_INTERSECTION, get(PBI_THETA));
+        .addConditionalParameter(PENALTY_BOUNDARY_INTERSECTION, get(PBI_THETA));
 
     // AlgorithmResult dependencies
-    get(ALGORITHM_RESULT).addConditionalSubParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE));
+    get(ALGORITHM_RESULT).addConditionalParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE));
 
     // Selection dependencies
     get(SELECTION)
-        .addConditionalSubParameter(
+        .addConditionalParameter(
             POPULATION_AND_NEIGHBORHOOD_MATING_POOL_SELECTION,
             get(NEIGHBORHOOD_SELECTION_PROBABILITY));
   }

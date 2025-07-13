@@ -74,7 +74,7 @@ public abstract class Parameter<T> {
   private final String name;
   private final List<Parameter<?>> globalSubParameters = new ArrayList<>();
   private final Map<String, Object> nonConfigurableSubParameters = new HashMap<>();
-  private ConditionalSubParameterManager<T> conditionalSubParameterManager;
+  private ConditionalParameterManager<T> conditionalParameterManager;
 
   /**
    * Constructs a parameter with the given name.
@@ -85,7 +85,7 @@ public abstract class Parameter<T> {
     Check.notNull(name);
     Check.that(!name.isEmpty(), "Then parameter name must not be empty");
     this.name = name;
-    conditionalSubParameterManager = new ConditionalSubParameterManager<>();
+    conditionalParameterManager = new ConditionalParameterManager<>();
   }
 
   /**
@@ -106,7 +106,7 @@ public abstract class Parameter<T> {
   public void parse(Function<String, T> parseFunction, String[] args) {
     value(on("--" + name(), args, parseFunction));
     parseGlobalSubParameters(args);
-    conditionalSubParameterManager.parseConditionalSubParameters(value(), args);
+    conditionalParameterManager.parseConditionalSubParameters(value(), args);
   }
 
   /**
@@ -163,8 +163,8 @@ public abstract class Parameter<T> {
    *
    * @return a list of specific sub-parameters
    */
-  public List<ConditionalSubParameter<T>> conditionalSubParameters() {
-    return conditionalSubParameterManager.conditionalSubParameters();
+  public List<ConditionalParameter<T>> conditionalParameters() {
+    return conditionalParameterManager.conditionalParameters();
   }
 
   /**
@@ -173,8 +173,8 @@ public abstract class Parameter<T> {
    * @param dependsOn the value or condition that activates the sub-parameter
    * @param parameter the specific sub-parameter to add
    */
-  public Parameter<T> addConditionalSubParameter(String dependsOn, Parameter<?> parameter) {
-    conditionalSubParameterManager.addConditionalSubParameter(dependsOn, parameter);
+  public Parameter<T> addConditionalParameter(String dependsOn, Parameter<?> parameter) {
+    conditionalParameterManager.addConditionalParameter(dependsOn, parameter);
 
     return this ;
   }
@@ -185,8 +185,8 @@ public abstract class Parameter<T> {
    * @param dependsOn the value or condition that activates the sub-parameter
    * @param parameter the specific sub-parameter to add
    */
-  public Parameter<T> addConditionalSubParameter(Boolean dependsOn, Parameter<?> parameter) {
-    conditionalSubParameterManager.addConditionalSubParameter(dependsOn, parameter);
+  public Parameter<T> addConditionalParameter(Boolean dependsOn, Parameter<?> parameter) {
+    conditionalParameterManager.addConditionalParameter(dependsOn, parameter);
 
     return this ;
   }
@@ -234,8 +234,8 @@ public abstract class Parameter<T> {
    * @param parameterName the name of the specific sub-parameter
    * @return the specific sub-parameter, or {@code null} if not found
    */
-  public Parameter<?> findConditionalSubParameter(String parameterName) {
-    return conditionalSubParameterManager.findConditionalSubParameter(parameterName);
+  public Parameter<?> findConditionalParameter(String parameterName) {
+    return conditionalParameterManager.findConditionalParameter(parameterName);
   }
 
   /**
@@ -244,10 +244,10 @@ public abstract class Parameter<T> {
    * @param parameterValue the value that activates the specific sub-parameters
    * @return a list of specific sub-parameters for the given value
    */
-  public List<Parameter<?>> findConditionalSubParameters(String parameterValue) {
-    return conditionalSubParameters().stream()
-        .filter(conditionalSubParameter -> conditionalSubParameter.description().equals(parameterValue))
-        .map(subParameter -> subParameter.parameter())
+  public List<Parameter<?>> findConditionalParameters(String parameterValue) {
+    return conditionalParameters().stream()
+        .filter(conditionalParameter -> conditionalParameter.description().equals(parameterValue))
+        .map(parameter -> parameter.parameter())
         .collect(Collectors.toList());
   }
 
@@ -265,10 +265,10 @@ public abstract class Parameter<T> {
         result.append(" \n -> ").append(parameter.toString());
       }
     }
-    if (!conditionalSubParameterManager.conditionalSubParameters().isEmpty()) {
+    if (!conditionalParameterManager.conditionalParameters().isEmpty()) {
       result.append("\n\t");
-      for (ConditionalSubParameter<T> parameter :
-          conditionalSubParameterManager.conditionalSubParameters()) {
+      for (ConditionalParameter<T> parameter :
+          conditionalParameterManager.conditionalParameters()) {
         result.append(" \n -> ").append(parameter.toString());
       }
     }

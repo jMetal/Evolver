@@ -1,7 +1,7 @@
 package org.uma.evolver.parameter.type;
 
 import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.ConditionalSubParameter;
+import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**
@@ -60,7 +60,7 @@ public class BooleanParameter extends Parameter<Boolean> {
     for (Parameter<?> parameter : globalSubParameters()) {
       result.append("\n -> ").append(parameter.toString());
     }
-    for (ConditionalSubParameter<Boolean> parameter : conditionalSubParameters()) {
+    for (ConditionalParameter<Boolean> parameter : conditionalParameters()) {
       result.append("\n -> ").append(parameter.parameter().toString());
     }
 

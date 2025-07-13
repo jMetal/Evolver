@@ -118,8 +118,8 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double beta = (Double) findConditionalSubParameter("levyFlightMutationBeta").value();
-    double stepSize = (Double) findConditionalSubParameter("levyFlightMutationStepSize").value();
+    double beta = (Double) findConditionalParameter("levyFlightMutationBeta").value();
+    double stepSize = (Double) findConditionalParameter("levyFlightMutationStepSize").value();
     return new LevyFlightMutation(
         mutationProbability, 
         beta, 
@@ -134,7 +134,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double delta = (Double) findConditionalSubParameter("powerLawMutationDelta").value();
+    double delta = (Double) findConditionalParameter("powerLawMutationDelta").value();
     return new PowerLawMutation(
         mutationProbability, 
         delta, 
@@ -148,7 +148,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double distributionIndex = (Double) findConditionalSubParameter("polynomialMutationDistributionIndex").value();
+    double distributionIndex = (Double) findConditionalParameter("polynomialMutationDistributionIndex").value();
     return new PolynomialMutation(
         mutationProbability, 
         distributionIndex, 
@@ -162,7 +162,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double distributionIndex = (Double) findConditionalSubParameter("linkedPolynomialMutationDistributionIndex").value();
+    double distributionIndex = (Double) findConditionalParameter("linkedPolynomialMutationDistributionIndex").value();
     return new LinkedPolynomialMutation(
         mutationProbability, 
         distributionIndex, 
@@ -176,7 +176,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double perturbation = (Double) findConditionalSubParameter("uniformMutationPerturbation").value();
+    double perturbation = (Double) findConditionalParameter("uniformMutationPerturbation").value();
     return new UniformMutation(
         mutationProbability, 
         perturbation, 
@@ -190,7 +190,7 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double perturbation = (Double) findConditionalSubParameter("nonUniformMutationPerturbation").value();
+    double perturbation = (Double) findConditionalParameter("nonUniformMutationPerturbation").value();
     int maxIterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
     return new NonUniformMutation(
         mutationProbability, 
