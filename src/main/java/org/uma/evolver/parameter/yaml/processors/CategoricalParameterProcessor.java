@@ -183,8 +183,6 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
     
     String fullParentName = parentParamName + "." + valueName;
-    System.out.println("  - Found conditional parameters for " + fullParentName + ": " +
-        String.join(", ", subParams.keySet()));
     
     // Process each conditional subparameter
     for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
@@ -197,7 +195,6 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       
       Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
       String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
-      System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
       
       try {
         // Process the conditional parameter using only its base name (without any prefix)

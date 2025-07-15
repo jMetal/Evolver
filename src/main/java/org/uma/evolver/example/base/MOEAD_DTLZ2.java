@@ -28,7 +28,7 @@ public class MOEAD_DTLZ2 {
                 + "--pbiTheta 5.0 "
                 + "--algorithmResult population "
                 + "--createInitialSolutions default "
-                + "--subProblemIdGenerator permutation "
+                + "--subProblemIdGenerator randomPermutationCycle "
                 + "--variation crossoverAndMutationVariation "
                 + "--crossoverProbability 0.9 "
                 + "--crossoverRepairStrategy bounds "

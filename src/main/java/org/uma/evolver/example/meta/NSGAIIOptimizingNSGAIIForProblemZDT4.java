@@ -41,7 +41,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var configurableAlgorithm = new NSGAIIDoubleV2(100, parameterSpace);
-    //var configurableAlgorithm = new NSGAIIDouble(100) ;
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
