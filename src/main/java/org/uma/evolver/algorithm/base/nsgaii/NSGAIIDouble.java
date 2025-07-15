@@ -100,11 +100,5 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / populationSize);
     }
-
-    if (mutationParameter.value().equals(parameterSpace.UNIFORM)) {
-      mutationParameter.addNonConfigurableSubParameter(
-              parameterSpace.UNIFORM_MUTATION_PERTURBATION,
-              parameterSpace.get(parameterSpace.UNIFORM_MUTATION_PERTURBATION));
-    }
   }
 }

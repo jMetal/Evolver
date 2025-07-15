@@ -21,9 +21,9 @@ import java.util.List;
  * It also supports global sub-parameters that can be associated with categories.</p>
  */
 public class CategoricalParameterProcessor implements ParameterProcessor {
-  private final ParameterFactory parameterFactory ;
+  private final ParameterFactory<?> parameterFactory ;
 
-  public CategoricalParameterProcessor(ParameterFactory parameterFactory) {
+  public CategoricalParameterProcessor(ParameterFactory<?> parameterFactory) {
     this.parameterFactory = parameterFactory ;
   }
   /**

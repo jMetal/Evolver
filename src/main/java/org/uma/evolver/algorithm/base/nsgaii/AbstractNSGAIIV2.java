@@ -3,7 +3,6 @@ package org.uma.evolver.algorithm.base.nsgaii;
 import java.util.*;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIICommonParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
@@ -21,14 +20,13 @@ import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityE
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
-import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
@@ -61,7 +59,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class AbstractNSGAIIV2<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
-  protected ParameterSpace parameterSpace;
+  protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
   protected DensityEstimator<S> densityEstimator;
@@ -139,6 +137,7 @@ public abstract class AbstractNSGAIIV2<S extends Solution<?>> implements BaseLev
     if (usingExternalArchive()) {
       archive = createExternalArchive();
       updatePopulationSize(archive);
+      Check.notNull(archive);
     }
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
     Variation<S> variation = createVariation();
@@ -179,7 +178,6 @@ public abstract class AbstractNSGAIIV2<S extends Solution<?>> implements BaseLev
 
     externalArchiveParameter.setSize(populationSize);
     Archive<S> archive = externalArchiveParameter.getExternalArchive();
-
     return archive;
   }
 
@@ -229,6 +227,7 @@ public abstract class AbstractNSGAIIV2<S extends Solution<?>> implements BaseLev
   protected Evaluation<S> createEvaluation(Archive<S> archive) {
     Evaluation<S> evaluation;
     if (usingExternalArchive()) {
+      Check.notNull(archive);
       evaluation = new SequentialEvaluationWithArchive<>(problem, archive);
     } else {
       evaluation = new SequentialEvaluation<>(problem);

@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @author Your Name
  * @since version
  */
-public class DoubleParameterFactory implements ParameterFactory {
+public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> {
 
   /**
    * Creates and returns a specific CategoricalParameter instance based on the provided parameter name.

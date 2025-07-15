@@ -13,13 +13,7 @@ public class DTLZ3DProblemFamilyInfo implements ProblemFamilyInfo {
 
   private static final List<Problem<DoubleSolution>> problemList =
       List.of(
-          new DTLZ1(),
-          new DTLZ2(),
-          new DTLZ3(),
-          new DTLZ4(),
-          new DTLZ5(),
-          new DTLZ6(),
-          new DTLZ7());
+          new DTLZ1());
 
   private static final List<String> referenceFrontFileName =
       IntStream.range(1, problemList.size() + 1)

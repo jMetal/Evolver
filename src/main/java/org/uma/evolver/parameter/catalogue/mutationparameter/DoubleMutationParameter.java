@@ -5,6 +5,7 @@ import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
@@ -148,7 +149,8 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
       double mutationProbability, 
       RepairDoubleSolutionStrategyParameter repairStrategy) {
     
-    double distributionIndex = (Double) findConditionalParameter("polynomialMutationDistributionIndex").value();
+    Double distributionIndex = (Double) findConditionalParameter("polynomialMutationDistributionIndex").value();
+    Check.notNull(distributionIndex) ;
     return new PolynomialMutation(
         mutationProbability, 
         distributionIndex, 

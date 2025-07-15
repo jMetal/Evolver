@@ -3,8 +3,12 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
@@ -28,6 +32,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
   public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
@@ -37,7 +42,9 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var baseAlgorithm = new NSGAIIDouble(100);
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var baseAlgorithm = new NSGAIIDoubleV2(100, new NSGAIIDoubleParameterSpace());
+    //var baseAlgorithm = new NSGAIIDouble(100) ;
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
@@ -52,7 +59,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8;
+    int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem)

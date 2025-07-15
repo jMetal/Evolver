@@ -3,7 +3,6 @@ package org.uma.evolver.parameter.yaml;
 import java.io.*;
 import java.util.*;
 
-import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -99,9 +98,7 @@ import java.util.Map;
  * @see ParameterProcessor
  * @see Parameter
  *
- * @author [Author Name]
- * @version 1.0
- * @since 1.0
+ * @author Antonio J. Nebro
  */
 public class YAMLParameterSpace extends ParameterSpace {
 
@@ -132,7 +129,7 @@ public class YAMLParameterSpace extends ParameterSpace {
   /** Map of parameter type names to their respective processors */
   private final Map<String, ParameterProcessor> parameterProcessors = new HashMap<>();
 
-  private final ParameterFactory parameterFactory ;
+  private final ParameterFactory<?> parameterFactory ;
 
 
   /**
@@ -147,7 +144,7 @@ public class YAMLParameterSpace extends ParameterSpace {
    * @throws RuntimeException if the YAML file cannot be loaded or parsed
    * @throws JMetalException if parameter definitions are invalid or contain unsupported types
    */
-  public YAMLParameterSpace(String yamlFilePath, ParameterFactory parameterFactory) {
+  public YAMLParameterSpace(String yamlFilePath, ParameterFactory<?> parameterFactory) {
     super();
     this.parameterFactory = parameterFactory ;
     initializeParameterProcessors();
@@ -444,7 +441,7 @@ public class YAMLParameterSpace extends ParameterSpace {
       String configFilePath = args[0];
       System.out.println("Loading parameter space from: " + configFilePath);
 
-      ParameterFactory parameterFactory = new DoubleParameterFactory() ;
+      ParameterFactory<?> parameterFactory = new DoubleParameterFactory() ;
 
       YAMLParameterSpace parameterSpace = new YAMLParameterSpace(configFilePath, parameterFactory);
       int parameterCount = parameterSpace.parameters().size();

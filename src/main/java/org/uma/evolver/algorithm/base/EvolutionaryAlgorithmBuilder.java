@@ -3,6 +3,7 @@ package org.uma.evolver.algorithm.base;
 import java.util.List;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
+import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluationWithArchive;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
@@ -10,6 +11,7 @@ import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * A builder class for creating instances of {@link EvolutionaryAlgorithm} with optional archive support.
@@ -59,6 +61,8 @@ public class EvolutionaryAlgorithmBuilder<S extends Solution<?>> {
       Replacement<S> replacement,
       Archive<S> archive) {
     if (archive != null) {
+      Check.that(evaluation instanceof SequentialEvaluationWithArchive, "The evaluator must be of class SequentialEvaluatorWithArchive");
+      Check.notNull(((SequentialEvaluationWithArchive<S>) evaluation).archive());
       return new EvolutionaryAlgorithmWithArchive<>(
           name,
           initialSolutionsCreation,

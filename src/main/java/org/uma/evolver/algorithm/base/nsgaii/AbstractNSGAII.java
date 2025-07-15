@@ -27,6 +27,7 @@ import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
@@ -227,6 +228,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
   protected Evaluation<S> createEvaluation(Archive<S> archive) {
     Evaluation<S> evaluation;
     if (usingExternalArchive()) {
+      Check.notNull(archive);
       evaluation = new SequentialEvaluationWithArchive<>(problem, archive);
     } else {
       evaluation = new SequentialEvaluation<>(problem);
