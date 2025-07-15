@@ -31,7 +31,7 @@ variation:
       conditionalParameters:
         crossover:
           type: categorical
-          globalSubparameters:
+          globalSubParameters:
             crossoverProbability:
               type: double
               range: [0.0, 1.0]
@@ -72,9 +72,18 @@ variation:
                 fuzzyRecombinationCrossoverAlpha:
                   type: double
                   range: [0.0, 1.0]
+            PCX:
+              conditionalParameters:
+                pcxCrossoverZeta:
+                  type: double
+                  range: [0.0, 1.0]
+                pcxCrossoverEta:
+                  type: double
+                  range: [0.0, 1.0]
+
         mutation:
           type: categorical
-          globalSubparameters:
+          globalSubParameters:
             mutationProbabilityFactor:
               type: double
               range: [0.0, 2.0]

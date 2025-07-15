@@ -138,7 +138,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     
     Map<String, Object> valuesMap = (Map<String, Object>) valuesObj;
     
-    // Check each value for specific subparameters
+    // Check each value for conditional subparameters
     for (Map.Entry<String, Object> entry : valuesMap.entrySet()) {
       String valueName = entry.getKey();
       Object valueConfig = entry.getValue();
@@ -186,7 +186,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     System.out.println("  - Found conditional parameters for " + fullParentName + ": " +
         String.join(", ", subParams.keySet()));
     
-    // Process each specific subparameter
+    // Process each conditional subparameter
     for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
       String subParamName = subParamEntry.getKey();
       Object subParamConfig = subParamEntry.getValue();
@@ -200,7 +200,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       System.out.println("    - " + subParamName + " (type: " + subParamType + ")");
       
       try {
-        // Process the subparameter using only its base name (without any prefix)
+        // Process the conditional parameter using only its base name (without any prefix)
         if (parameterSpace instanceof YAMLParameterSpace) {
           YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
           ParameterProcessor processor = yamlParameterSpace.getParameterProcessor(subParamType);
@@ -209,13 +209,14 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
             // Process the subparameter with just its base name
             processor.process(subParamName, subParamConfigMap, parameterSpace);
             
-            // Get the parent parameter and add this as a specific subparameter
+            // Get the parent parameter and add this as a conditional parameter
             Parameter<?> parentParam = parameterSpace.get(parentParamName);
             if (parentParam != null) {
               Parameter<?> subParam = parameterSpace.get(subParamName);
               if (subParam != null) {
                 parentParam.addConditionalParameter(valueName, subParam);
-                System.out.println("      Added as specific subparameter for " + parentParamName + " when value is " + valueName);
+                //parameterSpace.get(parentParamName).addConditionalParameter(valueName, subParam) ;
+                System.out.println("      Added as conditional subparameter for " + parentParamName + " when value is " + valueName);
               }
             }
           } else {

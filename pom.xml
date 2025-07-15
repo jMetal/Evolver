@@ -13,6 +13,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jmetal.version>6.9.2-SNAPSHOT</jmetal.version>
   </properties>
 
   <licenses>
@@ -230,27 +231,27 @@
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-core</artifactId>
-      <version>6.9</version>
+      <version>${jmetal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-algorithm</artifactId>
-      <version>6.9</version>
+      <version>${jmetal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-component</artifactId>
-      <version>6.9</version>
+      <version>${jmetal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-parallel</artifactId>
-      <version>6.9</version>
+      <version>${jmetal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-problem</artifactId>
-      <version>6.9</version>
+      <version>${jmetal.version}</version>
     </dependency>
   </dependencies>
 </project>

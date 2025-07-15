@@ -34,8 +34,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * </pre>
  */
 public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution> {
+  long timeStamp ;
 
-  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "UNDC", "blxAlphaBeta", "PCX");
+  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "blxAlphaBeta", "PCX");
 
   /**
    * Constructs a crossover parameter for double solutions with the given list of supported
@@ -45,6 +46,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
    */
   public DoubleCrossoverParameter(List<String> crossoverOperators) {
     super(crossoverOperators);
+    timeStamp = System.currentTimeMillis() ;
 
     crossoverOperators.stream()
         .filter(crossoverOperator -> !validCrossoverNames.contains(crossoverOperator))
@@ -132,17 +134,6 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
 
         result =
             new ParentCentricCrossover(
-                crossoverProbability,
-                zeta,
-                eta,
-                repairDoubleSolution.getRepairDoubleSolutionStrategy());
-      }
-      case "UNDC" -> {
-        Double zeta = (Double) findConditionalParameter("undcCrossoverZeta").value();
-        Double eta = (Double) findConditionalParameter("undcCrossoverEta").value();
-
-        result =
-            new UnimodalNormalDistributionCrossover(
                 crossoverProbability,
                 zeta,
                 eta,

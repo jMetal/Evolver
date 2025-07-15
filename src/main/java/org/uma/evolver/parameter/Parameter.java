@@ -106,7 +106,7 @@ public abstract class Parameter<T> {
   public void parse(Function<String, T> parseFunction, String[] args) {
     value(on("--" + name(), args, parseFunction));
     parseGlobalSubParameters(args);
-    conditionalParameterManager.parseConditionalSubParameters(value(), args);
+    conditionalParameterManager.parseConditionalParameters(value(), args);
   }
 
   /**

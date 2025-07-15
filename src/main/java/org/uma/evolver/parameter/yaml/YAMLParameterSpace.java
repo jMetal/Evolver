@@ -3,6 +3,7 @@ package org.uma.evolver.parameter.yaml;
 import java.io.*;
 import java.util.*;
 
+import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -267,8 +268,11 @@ public class YAMLParameterSpace extends ParameterSpace {
       // Process the current parameter
       processParameterDefinition(parameterName, parameterConfig);
 
+      // Add the parameter to the top level list of parameters
+      addTopLevelParameter(get(parameterName));
+      
       // Process any nested parameters
-      processNestedParameters(parameterName, parameterConfig);
+      //processNestedParameters(parameterName, parameterConfig);
     }
   }
 

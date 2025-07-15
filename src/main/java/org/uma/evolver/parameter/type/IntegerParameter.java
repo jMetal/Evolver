@@ -16,8 +16,7 @@ package org.uma.evolver.parameter.type;
  * @author Antonio J. Nebro
  */
 public class IntegerParameter extends RangeParameter<Integer> {
-
-  /**
+ /**
    * Constructs an {@code IntegerParameter} with the given name and range.
    *
    * @param name the parameter name

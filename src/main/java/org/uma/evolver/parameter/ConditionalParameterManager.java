@@ -2,7 +2,6 @@ package org.uma.evolver.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -29,7 +28,7 @@ import java.util.function.Predicate;
  * manager.addConditionalParameter("advanced", selectionPressure);
  *
  * // During processing, only parse arguments for active parameters
- * manager.parseConditionalSubParameters("advanced", args);
+ * manager.parseConditionalParameters("advanced", args);
  * }</pre>
  *
  * <p>This class is particularly useful for processing YAML configuration files where parameters
@@ -50,7 +49,7 @@ public class ConditionalParameterManager<T> {
    * Internal storage for all managed conditional parameters. Each entry represents a parameter that
    * becomes active when its associated condition is met.
    */
-  private final List<ConditionalParameter<T>> conditionalSubParameters = new ArrayList<>();
+  private final List<ConditionalParameter<T>> conditionalParameters = new ArrayList<>();
 
   /**
    * Adds a conditional parameter with a custom predicate condition.
@@ -68,7 +67,7 @@ public class ConditionalParameterManager<T> {
    */
   public void addConditionalParameter(
       Predicate<T> condition, Parameter<?> parameter, String description) {
-    conditionalSubParameters.add(new ConditionalParameter<>(condition, parameter, description));
+    conditionalParameters.add(new ConditionalParameter<>(condition, parameter, description));
   }
 
   /**
@@ -87,7 +86,7 @@ public class ConditionalParameterManager<T> {
    * @param parameter the parameter to be activated; must not be null
    */
   public void addConditionalParameter(String value, Parameter<?> parameter) {
-    conditionalSubParameters.add(
+    conditionalParameters.add(
         new ConditionalParameter<>(v -> v.equals(value), parameter, value));
   }
 
@@ -107,7 +106,7 @@ public class ConditionalParameterManager<T> {
    * @param parameter the parameter to be activated; must not be null
    */
   public void addConditionalParameter(int value, Parameter<?> parameter) {
-    conditionalSubParameters.add(
+    conditionalParameters.add(
         new ConditionalParameter<>(v -> v.equals(value), parameter, "" + value));
   }
 
@@ -127,7 +126,7 @@ public class ConditionalParameterManager<T> {
    * @param parameter the parameter to be activated; must not be null
    */
   public void addConditionalParameter(boolean value, Parameter<?> parameter) {
-    conditionalSubParameters.add(
+    conditionalParameters.add(
         new ConditionalParameter<>(v -> v.equals(value), parameter, "" + value));
   }
 
@@ -146,12 +145,12 @@ public class ConditionalParameterManager<T> {
    * @param args the command-line arguments or configuration values to parse for the active
    *     parameters
    */
-  public void parseConditionalSubParameters(T value, String[] args) {
-    conditionalSubParameters.forEach(
-        specificSubParameter -> {
-          Predicate<T> condition = specificSubParameter.condition();
+  public void parseConditionalParameters(T value, String[] args) {
+    conditionalParameters.forEach(
+        conditionalParameter -> {
+          Predicate<T> condition = conditionalParameter.condition();
           if (condition.test(value)) {
-            specificSubParameter.parameter().parse(args);
+            conditionalParameter.parameter().parse(args);
           }
         });
   }
@@ -192,6 +191,6 @@ public class ConditionalParameterManager<T> {
    *     empty
    */
   public List<ConditionalParameter<T>> conditionalParameters() {
-    return conditionalSubParameters;
+    return conditionalParameters;
   }
 }

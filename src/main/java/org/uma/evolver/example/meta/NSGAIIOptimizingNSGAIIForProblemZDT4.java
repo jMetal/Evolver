@@ -3,8 +3,11 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -26,13 +29,18 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
+
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var configurableAlgorithm = new NSGAIIDouble(100);
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var configurableAlgorithm = new NSGAIIDoubleV2(100, parameterSpace);
+    //var configurableAlgorithm = new NSGAIIDouble(100) ;
+
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 
@@ -47,7 +55,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8;
+    int numberOfCores = 1 ;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem)

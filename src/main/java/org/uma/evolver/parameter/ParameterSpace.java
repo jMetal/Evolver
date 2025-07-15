@@ -88,4 +88,63 @@ public class ParameterSpace {
   public List<Parameter<?>> topLevelParameters() {
     return topLevelParameters;
   }
+
+  /**
+   * Adds a parameter to the list of top-level parameters.
+   * @param parameter
+   */
+  public void addTopLevelParameter(Parameter<?> parameter) {
+    topLevelParameters.add(parameter);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (Parameter<?> topLevel : topLevelParameters) {
+      printParameterHierarchy(topLevel, sb, 0);
+    }
+    return sb.toString();
+  }
+
+  private void printParameterHierarchy(Parameter<?> parameter, StringBuilder sb, int indent) {
+    for (int i = 0; i < indent; i++) {
+      sb.append("  ");
+    }
+    sb.append("- ").append(parameter.name());
+    sb.append(" [value=").append(parameter.value()).append("]");
+    sb.append(System.lineSeparator());
+
+    // Imprimir subparámetros globales
+    List<Parameter<?>> globalSubParameters = parameter.globalSubParameters();
+    if (globalSubParameters != null && !globalSubParameters.isEmpty()) {
+      for (Parameter<?> global : globalSubParameters) {
+        printParameterHierarchy(global, sb, indent + 1);
+      }
+    }
+
+    // Imprimir subparámetros condicionales
+    List<? extends Object> conditionalParameters = parameter.conditionalParameters();
+    if (conditionalParameters != null && !conditionalParameters.isEmpty()) {
+      for (Object condObj : conditionalParameters) {
+        // Cada elemento es un ConditionalParameter<?>
+        try {
+          // Usamos reflexión para acceder a los métodos description() y parameter()
+          java.lang.reflect.Method descMethod = condObj.getClass().getMethod("description");
+          java.lang.reflect.Method paramMethod = condObj.getClass().getMethod("parameter");
+          Object desc = descMethod.invoke(condObj);
+          Object param = paramMethod.invoke(condObj);
+
+          for (int i = 0; i < indent + 1; i++) {
+            sb.append("  ");
+          }
+          sb.append("> if value = ").append(desc).append(":").append(System.lineSeparator());
+          if (param instanceof Parameter) {
+            printParameterHierarchy((Parameter<?>) param, sb, indent + 2);
+          }
+        } catch (Exception e) {
+          // Si falla la reflexión, ignoramos ese subparámetro condicional
+        }
+      }
+    }
+  }
 }

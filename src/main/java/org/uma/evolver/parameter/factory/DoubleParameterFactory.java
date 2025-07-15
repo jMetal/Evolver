@@ -7,6 +7,7 @@ import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.Creat
 import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.VariationDoubleParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -38,6 +39,7 @@ public class DoubleParameterFactory implements ParameterFactory {
    *                     - "ranking": Creates a RankingParameter
    *                     - "replacement": Creates a ReplacementParameter
    *                     - "selection": Creates a SelectionParameter
+   *                     - "variation": Creates a VariationParameter
    *                     - Any other value: Creates a basic CategoricalParameter
    * @param values the list of possible values for the parameter
    * @return an instance of CategoricalParameter corresponding to the specified parameter name
@@ -65,6 +67,7 @@ public class DoubleParameterFactory implements ParameterFactory {
       case "ranking" -> parameter = new RankingParameter<DoubleSolution>("ranking", values);
       case "replacement" -> parameter = new ReplacementParameter<DoubleSolution>(values);
       case "selection" -> parameter = new SelectionParameter<DoubleSolution>(values);
+      case "variation" -> parameter = new VariationDoubleParameter(values) ;
       default -> {
         parameter = new CategoricalParameter(parameterName, values);
       }
