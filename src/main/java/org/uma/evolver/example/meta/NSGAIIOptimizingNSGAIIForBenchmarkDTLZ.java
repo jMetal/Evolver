@@ -43,7 +43,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new NSGAIIDoubleV2(100, new NSGAIIDoubleParameterSpace());
+    var baseAlgorithm = new NSGAIIDoubleV2(100, parameterSpace);
     //var baseAlgorithm = new NSGAIIDouble(100) ;
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
@@ -59,7 +59,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 1;
+    int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem)

@@ -71,11 +71,9 @@ public class NSGAIIDoubleV2 extends AbstractNSGAIIV2<DoubleSolution> {
   @Override
   public synchronized BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
-     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-
+   
     return new NSGAIIDoubleV2(
-        problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
+        problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /**

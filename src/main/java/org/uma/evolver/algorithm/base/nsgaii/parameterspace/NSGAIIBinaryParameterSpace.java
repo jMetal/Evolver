@@ -33,6 +33,11 @@ public class NSGAIIBinaryParameterSpace extends NSGAIICommonParameterSpace<Binar
     setTopLevelParameters();
   }
 
+  @Override
+  public NSGAIIBinaryParameterSpace createInstance() {
+    return new NSGAIIBinaryParameterSpace();
+  }
+  
   // Crossover parameters
   public static final String CROSSOVER_PROBABILITY = "crossoverProbability";
   

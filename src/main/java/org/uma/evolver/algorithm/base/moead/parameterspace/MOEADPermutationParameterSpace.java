@@ -48,6 +48,11 @@ public class MOEADPermutationParameterSpace extends MOEADCommonParameterSpace<Pe
     setTopLevelParameters();
   }
 
+  @Override
+  public MOEADPermutationParameterSpace createInstance() {
+    return new MOEADPermutationParameterSpace();
+  }
+
   // Initial solutions creation
   public static final String DEFAULT = "default";
 

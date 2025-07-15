@@ -48,6 +48,10 @@ public class MOEADBinaryParameterSpace extends MOEADCommonParameterSpace<BinaryS
     setTopLevelParameters();
   }
 
+  @Override
+  public MOEADBinaryParameterSpace createInstance() {
+    return new MOEADBinaryParameterSpace();
+  }
 
   // Initial solutions creation
   public static final String DEFAULT_STRATEGY = "default";

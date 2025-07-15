@@ -130,7 +130,7 @@ public class YAMLParameterSpace extends ParameterSpace {
   private final Map<String, ParameterProcessor> parameterProcessors = new HashMap<>();
 
   private final ParameterFactory<?> parameterFactory ;
-
+  private final String yamlFilePath ;
 
   /**
    * Constructs a new YAMLParameterSpace by loading parameters from the specified YAML file.
@@ -147,10 +147,16 @@ public class YAMLParameterSpace extends ParameterSpace {
   public YAMLParameterSpace(String yamlFilePath, ParameterFactory<?> parameterFactory) {
     super();
     this.parameterFactory = parameterFactory ;
+    this.yamlFilePath = yamlFilePath ;
     initializeParameterProcessors();
     var parameterDefinitions = loadParametersFromYAML(yamlFilePath);
     processParameterDefinitions(parameterDefinitions);
   }
+
+  @Override
+  public YAMLParameterSpace createInstance() {
+    return new YAMLParameterSpace(yamlFilePath, parameterFactory);
+  } 
 
   /**
    * Initializes the map of parameter processors for different parameter types.

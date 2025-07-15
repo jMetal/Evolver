@@ -30,6 +30,10 @@ public class NSGAIIPermutationParameterSpace extends NSGAIICommonParameterSpace<
     setTopLevelParameters();
   }
 
+  @Override
+  public NSGAIIPermutationParameterSpace createInstance() {
+    return new NSGAIIPermutationParameterSpace();
+  }
   
   // Initial solutions creation
   public static final String DEFAULT = "default";

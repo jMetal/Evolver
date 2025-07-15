@@ -35,6 +35,11 @@ public class NSGAExperimentalParameterSpace extends ParameterSpace {
      setTopLevelParameters();
    }
    
+   @Override
+   public NSGAExperimentalParameterSpace createInstance() {
+     return new NSGAExperimentalParameterSpace();
+   }
+   
   /**
    * Defines and adds all parameters to the parameter space.
    * <p>

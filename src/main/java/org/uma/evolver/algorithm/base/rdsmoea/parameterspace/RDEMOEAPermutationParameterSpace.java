@@ -30,6 +30,10 @@ public class RDEMOEAPermutationParameterSpace extends RDEMOEACommonParameterSpac
     setTopLevelParameters();
   }
 
+  @Override
+  public RDEMOEAPermutationParameterSpace createInstance() {
+    return new RDEMOEAPermutationParameterSpace();
+  }
   
   // Initial solutions creation
   public static final String DEFAULT = "default";

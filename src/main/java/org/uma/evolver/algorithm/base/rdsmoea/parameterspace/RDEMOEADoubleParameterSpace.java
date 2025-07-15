@@ -10,14 +10,19 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /** Parameter space for RDS-MOEA with double-encoded solutions. */
 public class RDEMOEADoubleParameterSpace extends RDEMOEACommonParameterSpace<DoubleSolution> {
-    public RDEMOEADoubleParameterSpace() {
-        super();
-        setParameterSpace();
-        setParameterRelationships();
-        setTopLevelParameters();
-      }
-   
-    // Initial solutions creation
+  public RDEMOEADoubleParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
+  @Override
+  public RDEMOEADoubleParameterSpace createInstance() {
+    return new RDEMOEADoubleParameterSpace();
+  }
+
+  // Initial solutions creation
   public static final String DEFAULT = "default";
   public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
   public static final String SCATTER_SEARCH = "scatterSearch";

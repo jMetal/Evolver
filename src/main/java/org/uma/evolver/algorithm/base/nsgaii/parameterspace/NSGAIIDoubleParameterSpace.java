@@ -31,6 +31,10 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         setTopLevelParameters();
       }
    
+      @Override
+      public NSGAIIDoubleParameterSpace createInstance() {
+        return new NSGAIIDoubleParameterSpace();
+      }
   // Initial solutions creation
   public static final String DEFAULT = "default";
   public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";

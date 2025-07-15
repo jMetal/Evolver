@@ -26,6 +26,11 @@ public class MOPSOParameterSpace extends ParameterSpace {
     setTopLevelParameters();
   }
 
+  @Override
+  public MOPSOParameterSpace createInstance() {
+    return new MOPSOParameterSpace();
+  }
+
   // Parameter names
   public static final String SWARM_SIZE = "swarmSize";
   public static final String ALGORITHM_RESULT = "algorithmResult";

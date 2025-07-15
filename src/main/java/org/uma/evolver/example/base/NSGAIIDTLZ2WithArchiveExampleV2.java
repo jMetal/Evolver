@@ -5,6 +5,8 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -19,29 +21,13 @@ public class NSGAIIDTLZ2WithArchiveExampleV2 {
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
-        ("--algorithmResult externalArchive "
-                + "--populationSizeWithArchive 100 "
-                + "--archiveType unboundedArchive "
-                + "--createInitialSolutions default "
-                + "--variation crossoverAndMutationVariation "
-                + "--offspringPopulationSize 100 "
-                + "--crossover SBX "
-                + "--crossoverProbability 0.9 "
-                + "--crossoverRepairStrategy bounds "
-                + "--sbxDistributionIndex 20.0 "
-                + "--mutation polynomial "
-                + "--mutationProbabilityFactor 1.0 "
-                + "--mutationRepairStrategy bounds "
-                + "--polynomialMutationDistributionIndex 20.0 "
-                + "--selection tournament "
-                + "--selectionTournamentSize 2")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 131 --archiveType unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.976418940698032 --crossoverRepairStrategy round --sbxDistributionIndex 82.12550784373838 --blxAlphaCrossoverAlpha 0.8607709450249538 --blxAlphaBetaCrossoverBeta 0.5021796145439621 --blxAlphaBetaCrossoverAlpha 0.7141465092667029 --laplaceCrossoverScale 0.3176134039416645 --fuzzyRecombinationCrossoverAlpha 0.9780081931363176 --pcxCrossoverZeta 0.0604178930573782 --pcxCrossoverEta 0.5684660525202027 --mutation levyFlight --mutationProbabilityFactor 0.7424688413365836 --mutationRepairStrategy round --uniformMutationPerturbation 0.775593605827027 --polynomialMutationDistributionIndex 283.9924164821486 --linkedPolynomialMutationDistributionIndex 296.7821669154807 --nonUniformMutationPerturbation 0.6440218870731419 --levyFlightMutationBeta 1.9046527204023227 --levyFlightMutationStepSize 0.5142023233190223 --powerLawMutationDelta 9.151452382077057 --selection tournament --selectionTournamentSize 6 \n")
             .split("\\s+");
-
 
     String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var evNSGAII = new NSGAIIDoubleV2(new DTLZ1(), 100, 30000, parameterSpace);
+    var evNSGAII = new NSGAIIDoubleV2(new DTLZ3(), 100, 30000, parameterSpace);
     evNSGAII.parse(parameters);
 
     System.out.println(parameterSpace) ;

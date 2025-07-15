@@ -49,6 +49,11 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
     setTopLevelParameters();
   }
 
+  @Override
+  public MOEADDoubleParameterSpace createInstance() {
+    return new MOEADDoubleParameterSpace();
+  }
+
   // Mutation parameters
   public static final String MUTATION = "mutation";
   public static final String MUTATION_PROBABILITY_FACTOR = "mutationProbabilityFactor";
