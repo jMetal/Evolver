@@ -31,6 +31,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "resources/parameterSpaces/MOEADDouble.yaml" ;
+    String weightVectorFilesDirectory = "resources/weightVectors" ;
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
@@ -41,7 +42,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     //var configurableAlgorithm = new MOEADDouble(100);
-    var configurableAlgorithm = new MOEADDoubleV2(100, parameterSpace);
+    var configurableAlgorithm = new MOEADDoubleV2(100, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 

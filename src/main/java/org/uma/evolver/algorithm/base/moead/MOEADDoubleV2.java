@@ -38,8 +38,8 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
    *
    * @param populationSize the population size to use
    */
-  public MOEADDoubleV2(int populationSize, ParameterSpace parameterSpace) {
-    super(populationSize, parameterSpace);
+  public MOEADDoubleV2(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
+    super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
   /**

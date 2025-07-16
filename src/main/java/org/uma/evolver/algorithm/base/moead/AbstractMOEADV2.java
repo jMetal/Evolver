@@ -75,8 +75,9 @@ public abstract class AbstractMOEADV2<S extends Solution<?>> implements BaseLeve
   protected AggregationFunction aggregationFunction;
   protected boolean normalizedObjectives;
 
-  public AbstractMOEADV2(int populationSize, ParameterSpace parameterSpace) {
+  public AbstractMOEADV2(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     this.populationSize = populationSize;
+    this.weightVectorFilesDirectory = weightVectorFilesDirectory ;
     this.parameterSpace = parameterSpace;
   }
 
