@@ -275,19 +275,19 @@ public class MOPSOParameterSpace extends ParameterSpace {
    * ParameterSpace constructor.
    */
   protected void setTopLevelParameters() {
-    topLevelParameters().add(get(SWARM_SIZE));
-    topLevelParameters().add(get(LEADER_ARCHIVE));
-    topLevelParameters().add(get(ALGORITHM_RESULT));
-    topLevelParameters().add(get(SWARM_INITIALIZATION));
-    topLevelParameters().add(get(VELOCITY_INITIALIZATION));
-    topLevelParameters().add(get(PERTURBATION));
-    topLevelParameters().add(get(INERTIA_WEIGHT_COMPUTING_STRATEGY));
-    topLevelParameters().add(get(VELOCITY_UPDATE));
-    topLevelParameters().add(get(LOCAL_BEST_INITIALIZATION));
-    topLevelParameters().add(get(LOCAL_BEST_UPDATE));
-    topLevelParameters().add(get(GLOBAL_BEST_INITIALIZATION));
-    topLevelParameters().add(get(GLOBAL_BEST_UPDATE));
-    topLevelParameters().add(get(GLOBAL_BEST_SELECTION));
-    topLevelParameters().add(get(POSITION_UPDATE));
+    topLevelParameters.add(get(SWARM_SIZE));
+    topLevelParameters.add(get(LEADER_ARCHIVE));
+    topLevelParameters.add(get(ALGORITHM_RESULT));
+    topLevelParameters.add(get(SWARM_INITIALIZATION));
+    topLevelParameters.add(get(VELOCITY_INITIALIZATION));
+    topLevelParameters.add(get(PERTURBATION));
+    topLevelParameters.add(get(INERTIA_WEIGHT_COMPUTING_STRATEGY));
+    topLevelParameters.add(get(VELOCITY_UPDATE));
+    topLevelParameters.add(get(LOCAL_BEST_INITIALIZATION));
+    topLevelParameters.add(get(LOCAL_BEST_UPDATE));
+    topLevelParameters.add(get(GLOBAL_BEST_INITIALIZATION));
+    topLevelParameters.add(get(GLOBAL_BEST_UPDATE));
+    topLevelParameters.add(get(GLOBAL_BEST_SELECTION));
+    topLevelParameters.add(get(POSITION_UPDATE));
   }
 }

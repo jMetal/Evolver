@@ -2,9 +2,14 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
+
+import org.uma.evolver.algorithm.base.moead.MOEADDoubleV2;
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -26,13 +31,18 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
+
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var configurableAlgorithm = new MOPSO(100);
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    // var configurableAlgorithm = new MOEADDouble(100);
+    var configurableAlgorithm = new MOPSOV2(100, parameterSpace);
+
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 
