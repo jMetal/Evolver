@@ -62,8 +62,7 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
         populationSize,
         maximumNumberOfEvaluations,
         weightVectorFilesDirectory,
-            parameterSpace
-        );
+        parameterSpace);
   }
 
   /**
@@ -77,7 +76,11 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
     return new MOEADDoubleV2(
-        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory, parameterSpace().createInstance());
+        problem,
+        populationSize,
+        maximumNumberOfEvaluations,
+        weightVectorFilesDirectory,
+        parameterSpace().createInstance());
   }
 
   /**
@@ -105,7 +108,7 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
             .getAggregationFunction();
 
     normalizedObjectives =
-            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
+        ((String) parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
         (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
@@ -117,11 +120,9 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
     parameterSpace
         .get("selection")
         .addNonConfigurableSubParameter("neighborhood", neighborhood)
-        .addNonConfigurableSubParameter(
-            "subProblemIdGenerator", subProblemIdGenerator);
+        .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
 
-    MutationParameter mutationParameter =
-        (MutationParameter) parameterSpace.get("mutation");
+    MutationParameter mutationParameter = (MutationParameter) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
         "numberOfProblemVariables", problem.numberOfVariables());
 
@@ -132,17 +133,11 @@ public class MOEADDoubleV2 extends AbstractMOEADV2<DoubleSolution> {
 
     if (mutationParameter.value().equals("uniform")) {
       mutationParameter.addNonConfigurableSubParameter(
-          "uniformMutationPerturbation",
-          parameterSpace.get("uniformMutationPerturbation"));
+          "uniformMutationPerturbation", parameterSpace.get("uniformMutationPerturbation"));
     }
 
-    if (parameterSpace
-        .get("variation")
-        .value()
-        .equals("crossoverAndMutationVariation")) {
-      parameterSpace
-          .get("variation")
-          .addNonConfigurableSubParameter("offspringPopulationSize", 1);
+    if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
+      parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
   }
 }
