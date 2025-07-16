@@ -25,7 +25,11 @@ public abstract class MutationParameter<S extends Solution<?>> extends Categoric
    * @throws IllegalArgumentException if mutationOperators is null or empty
    */
   public MutationParameter(List<String> mutationOperators) {
-    super(DEFAULT_NAME, mutationOperators);
+    this(DEFAULT_NAME, mutationOperators);
+  }
+
+  public MutationParameter(String name, List<String> mutationOperators) {
+    super(name, mutationOperators);
   }
 
   /**

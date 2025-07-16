@@ -24,9 +24,13 @@ public abstract class CrossoverParameter<S extends Solution<?>> extends Categori
    * @param crossoverOperators the list of supported crossover operator names
    */
   protected CrossoverParameter(List<String> crossoverOperators) {
-    super(DEFAULT_NAME, crossoverOperators);
+    this(DEFAULT_NAME, crossoverOperators);
   }
 
+  protected CrossoverParameter(String name, List<String> crossoverOperators) {
+    super(name, crossoverOperators);
+  }
+  
   /**
    * Returns the configured {@link CrossoverOperator} instance for the selected crossover type.
    *

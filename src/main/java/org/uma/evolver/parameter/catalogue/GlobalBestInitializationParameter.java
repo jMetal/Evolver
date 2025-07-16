@@ -30,7 +30,19 @@ public class GlobalBestInitializationParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if globalBestInitializationStrategies is null or empty
    */
   public GlobalBestInitializationParameter(List<String> globalBestInitializationStrategies) {
-    super(DEFAULT_NAME, globalBestInitializationStrategies);
+    this(DEFAULT_NAME, globalBestInitializationStrategies);
+  }
+
+  /**
+   * Creates a new GlobalBestInitializationParameter with the specified name and valid values.
+   * 
+   * @param name The name of the parameter
+   * @param globalBestInitializationStrategies A list of valid global best initialization strategy names.
+   *                                         Currently supports: "defaultGlobalBestInitialization"
+   * @throws IllegalArgumentException if globalBestInitializationStrategies is null or empty
+   */
+  public GlobalBestInitializationParameter(String name, List<String> globalBestInitializationStrategies) {
+    super(name, globalBestInitializationStrategies);
   }
 
   /**
@@ -55,10 +67,10 @@ public class GlobalBestInitializationParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "globalBestInitialization"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "globalBestInitialization";
+    return super.name();
   }
 }

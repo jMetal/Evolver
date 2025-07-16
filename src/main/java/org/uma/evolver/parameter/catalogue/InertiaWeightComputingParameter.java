@@ -38,9 +38,24 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if inertiaWeightStrategies is null or empty
    */
   public InertiaWeightComputingParameter(List<String> inertiaWeightStrategies) {
-    super(DEFAULT_NAME, inertiaWeightStrategies);
+    this(DEFAULT_NAME, inertiaWeightStrategies);
   }
 
+  /**
+   * Creates a new InertiaWeightComputingParameter with the specified name and valid values.
+   * 
+   * @param name The name of the parameter
+   * @param inertiaWeightStrategies A list of valid inertia weight strategy names. Supported values:
+   *                              - "constantValue"
+   *                              - "randomSelectedValue"
+   *                              - "linearDecreasingValue"
+   *                              - "linearIncreasingValue"
+   * @throws IllegalArgumentException if inertiaWeightStrategies is null or empty
+   */
+  public InertiaWeightComputingParameter(String name, List<String> inertiaWeightStrategies) {
+    super(name, inertiaWeightStrategies);
+  }
+  
   /**
    * Creates and returns an InertiaWeightComputingStrategy instance based on the current parameter value.
    * The specific implementation is determined by the current value of this parameter.
@@ -95,7 +110,7 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
    * @return The string "inertiaWeightComputingStrategy"
    */
   @Override
-  public String name() {
-    return "inertiaWeightComputingStrategy";
+  public String name() {  
+    return super.name();
   }
 }

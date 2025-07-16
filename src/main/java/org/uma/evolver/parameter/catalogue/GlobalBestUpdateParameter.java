@@ -34,7 +34,17 @@ public class GlobalBestUpdateParameter extends CategoricalParameter {
    * @param updateStrategies the list of valid global best update strategy names
    */
   public GlobalBestUpdateParameter(List<String> updateStrategies) {
-    super(DEFAULT_NAME, updateStrategies);
+    this(DEFAULT_NAME, updateStrategies);
+  }
+
+  /**
+   * Constructs a new GlobalBestUpdateParameter instance with the given name and list of update strategies.
+   * 
+   * @param name The name of the parameter
+   * @param updateStrategies the list of valid global best update strategy names
+   */
+  public GlobalBestUpdateParameter(String name, List<String> updateStrategies) {
+    super(name, updateStrategies);
   }
 
   /**
@@ -57,10 +67,10 @@ public class GlobalBestUpdateParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "globalBestUpdate"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "globalBestUpdate";
+    return super.name();
   }
 }

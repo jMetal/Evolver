@@ -27,6 +27,8 @@ import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.WFGHype
  * @param <S> The type of solutions stored in the archive
  */
 public class ExternalArchiveParameter<S extends Solution<?>> extends CategoricalParameter {
+  private static final String DEFAULT_NAME = "externalArchive";
+  
   private int size;
 
   /**
@@ -51,7 +53,7 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
    * @throws IllegalArgumentException if archiveTypes is null or empty
    */
   public ExternalArchiveParameter(List<String> archiveTypes) {
-    this("externalArchive", archiveTypes);
+    this(DEFAULT_NAME, archiveTypes);
   }
 
   /**
@@ -95,7 +97,7 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
   /**
    * Returns the name of this parameter.
    * 
-   * @return The name of this parameter as specified in the constructor
+   * @return The name of this parameter as specified in the con structor
    */
   @Override
   public String name() {

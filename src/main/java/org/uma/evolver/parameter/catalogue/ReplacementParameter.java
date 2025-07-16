@@ -43,8 +43,18 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public ReplacementParameter(List<String> selectionStrategies) {
-    super(DEFAULT_NAME, selectionStrategies);
+    this(DEFAULT_NAME, selectionStrategies);
   }
+
+  /**
+   * Constructs a new ReplacementParameter instance with the given name and list of selection strategies.
+   * 
+   * @param name The name of the parameter
+   * @param selectionStrategies the list of valid selection strategy names
+   */
+  public ReplacementParameter(String name, List<String> selectionStrategies) {
+    super(name, selectionStrategies);
+  } 
 
   /**
    * Creates and returns a Replacement instance based on the current parameter value.
@@ -116,11 +126,11 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
   /**
    * Returns the name of this parameter.
    *
-   * @return The string "replacement"
+   * @return The name of this parameter
    */
   @Override
   public String name() {
-    return "replacement";
+    return super.name();
   }
   
 }

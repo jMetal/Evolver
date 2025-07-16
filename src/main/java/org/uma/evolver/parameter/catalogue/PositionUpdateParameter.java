@@ -30,8 +30,18 @@ public class PositionUpdateParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if positionUpdateStrategies is null or empty
    */
   public PositionUpdateParameter(List<String> positionUpdateStrategies) {
-    super(DEFAULT_NAME, positionUpdateStrategies);
+    this(DEFAULT_NAME, positionUpdateStrategies);
   }
+
+  /**
+   * Constructs a new PositionUpdateParameter instance with the given name and list of update strategies.
+   * 
+   * @param name The name of the parameter
+   * @param positionUpdateStrategies the list of valid position update strategy names
+   */
+  public PositionUpdateParameter(String name, List<String> positionUpdateStrategies) {
+    super(name, positionUpdateStrategies);
+  }   
 
   /**
    * Creates and returns a PositionUpdate instance based on the current parameter value.
@@ -70,5 +80,15 @@ public class PositionUpdateParameter extends CategoricalParameter {
         throw new JMetalException("Position update component unknown: " + value());
     }
     return result;
+  }
+
+  /**
+   * Returns the name of this parameter.
+   * 
+   * @return The name of this parameter as specified in the constructor
+   */
+  @Override
+  public String name() {
+    return super.name();
   }
 }

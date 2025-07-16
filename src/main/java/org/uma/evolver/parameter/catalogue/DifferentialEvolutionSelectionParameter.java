@@ -30,9 +30,20 @@ public class DifferentialEvolutionSelectionParameter<S extends Solution<?>> exte
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public DifferentialEvolutionSelectionParameter(List<String> selectionStrategies) {
-    super(DEFAULT_NAME, selectionStrategies);
+    this(DEFAULT_NAME, selectionStrategies);
   }
 
+  /**
+   * Creates a new DifferentialEvolutionSelectionParameter with the specified name and selection strategies.
+   * 
+   * @param name The name of the parameter
+   * @param selectionStrategies A list of valid selection strategy names
+   * @throws IllegalArgumentException if selectionStrategies is null or empty
+   */
+  public DifferentialEvolutionSelectionParameter(String name, List<String> selectionStrategies) {
+    super(name, selectionStrategies);
+  }
+  
   /**
    * Creates and returns a Selection operator for Differential Evolution.
    * 
@@ -57,10 +68,10 @@ public class DifferentialEvolutionSelectionParameter<S extends Solution<?>> exte
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "selection"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "selection";
+    return super.name();
   }
 }

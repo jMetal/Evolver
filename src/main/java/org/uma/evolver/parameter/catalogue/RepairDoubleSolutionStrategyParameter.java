@@ -24,6 +24,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * might generate solutions with variables outside their defined bounds.
  */
 public class RepairDoubleSolutionStrategyParameter extends CategoricalParameter {
+  private static final String DEFAULT_NAME = "repairDoubleSolutionStrategy";
   /**
    * Creates a new RepairDoubleSolutionStrategyParameter with the specified name and repair strategies.
    *
@@ -36,6 +37,19 @@ public class RepairDoubleSolutionStrategyParameter extends CategoricalParameter 
    */
   public RepairDoubleSolutionStrategyParameter(String name, List<String> strategies) {
     super(name, strategies);
+  }
+
+  /**
+   * Creates a new RepairDoubleSolutionStrategyParameter with the specified repair strategies.
+   *
+   * @param strategies A list of valid repair strategy names. Supported values:
+   *                   - "random": Replaces with random value within bounds
+   *                   - "bounds": Clips to nearest bound
+   *                   - "round": Wraps to opposite bound
+   * @throws IllegalArgumentException if strategies is null or empty
+   */
+  public RepairDoubleSolutionStrategyParameter(List<String> strategies) {
+    this(DEFAULT_NAME, strategies);
   }
 
   /**

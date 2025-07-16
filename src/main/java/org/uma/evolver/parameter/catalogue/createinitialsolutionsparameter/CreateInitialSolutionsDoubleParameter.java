@@ -63,7 +63,7 @@ public class CreateInitialSolutionsDoubleParameter
    * @throws IllegalArgumentException if validValues is null or empty
    */
   public CreateInitialSolutionsDoubleParameter(List<String> validValues) {
-    this("createInitialSolutions", validValues);
+    this(DEFAULT_NAME, validValues);
   }
 
   /**

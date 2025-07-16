@@ -34,9 +34,27 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class BinaryCrossoverParameter extends CrossoverParameter<BinarySolution> {
   private static List<String> validCrossoverNames = List.of("HUX", "uniform", "singlePoint");
 
+  /**
+   * Constructs a new BinaryCrossoverParameter with the specified list of crossover operator names.
+   *
+   * @param crossoverOperators the list of supported crossover operator names
+   * @throws IllegalArgumentException if crossoverOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */
   public BinaryCrossoverParameter(List<String> crossoverOperators) {
-
-    super(crossoverOperators);
+    this(DEFAULT_NAME, crossoverOperators);
+  }
+  
+  /**
+   * Constructs a new BinaryCrossoverParameter with the specified list of crossover operator names.
+   *
+   * @param name the name of the parameter
+   * @param crossoverOperators the list of supported crossover operator names
+   * @throws IllegalArgumentException if crossoverOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */
+  public BinaryCrossoverParameter(String name, List<String> crossoverOperators) {
+    super(name, crossoverOperators);
     crossoverOperators.stream()
         .filter(crossoverOperator -> !validCrossoverNames.contains(crossoverOperator))
         .forEach(

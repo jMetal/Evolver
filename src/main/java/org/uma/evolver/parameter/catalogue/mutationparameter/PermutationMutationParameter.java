@@ -58,8 +58,8 @@ public class PermutationMutationParameter extends MutationParameter<PermutationS
    * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
    * @throws JMetalException if any operator name is not supported
    */
-  public PermutationMutationParameter(List<String> mutationOperators) {
-    super(mutationOperators);
+  public PermutationMutationParameter(String name, List<String> mutationOperators) {
+    super(name, mutationOperators);
     
     if (mutationOperators == null || mutationOperators.isEmpty()) {
       throw new IllegalArgumentException("Mutation operators list cannot be null or empty");
@@ -75,6 +75,17 @@ public class PermutationMutationParameter extends MutationParameter<PermutationS
               ". Supported operators are: " + VALID_OPERATORS);
         });
   }
+
+  /**
+   * Constructs a new MutationPermutationParameter with the specified list of mutation operator names.
+   *
+   * @param mutationOperators the list of supported mutation operator names
+   * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */ 
+  public PermutationMutationParameter(List<String> mutationOperators) {
+    this(DEFAULT_NAME, mutationOperators);
+  } 
 
   /**
    * Creates and returns a configured mutation operator for permutation solutions based on the current parameter value.

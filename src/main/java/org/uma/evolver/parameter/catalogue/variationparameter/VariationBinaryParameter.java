@@ -56,7 +56,19 @@ public class VariationBinaryParameter extends VariationParameter<BinarySolution>
    * @throws JMetalException if any strategy name is not supported
    */
   public VariationBinaryParameter(List<String> variationStrategies) {
-    super(variationStrategies);
+    this(DEFAULT_NAME, variationStrategies);
+  }
+
+  /**
+   * Constructs a new VariationBinaryParameter with the specified list of variation strategy names.
+   *
+   * @param variationStrategies the list of supported variation strategy names
+   * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid
+   *     values
+   * @throws JMetalException if any strategy name is not supported
+   */
+  public VariationBinaryParameter(String name, List<String> variationStrategies) {
+    super(name, variationStrategies);
 
     if (variationStrategies == null || variationStrategies.isEmpty()) {
       throw new IllegalArgumentException("Variation strategies list cannot be null or empty");

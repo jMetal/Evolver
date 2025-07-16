@@ -33,7 +33,19 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public GlobalBestSelectionParameter(List<String> selectionStrategies) {
-    super(DEFAULT_NAME, selectionStrategies);
+    this(DEFAULT_NAME, selectionStrategies);
+  }
+
+  /**
+   * Creates a new GlobalBestSelectionParameter with the specified name and valid values.
+   * 
+   * @param name The name of the parameter
+   * @param selectionStrategies A list of valid global best selection strategy names.
+   *                          Supported values: "tournament", "random"
+   * @throws IllegalArgumentException if selectionStrategies is null or empty
+   */
+  public GlobalBestSelectionParameter(String name, List<String> selectionStrategies) {
+    super(name, selectionStrategies);
   }
 
   /**
@@ -70,10 +82,10 @@ public class GlobalBestSelectionParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "globalBestSelection"
+   * @return The name of this parameter
    */
   @Override
   public String name() {
-    return "globalBestSelection";
+    return super.name();
   }
 }

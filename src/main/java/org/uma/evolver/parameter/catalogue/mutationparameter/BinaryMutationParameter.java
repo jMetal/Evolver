@@ -38,14 +38,25 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public class BinaryMutationParameter extends MutationParameter<BinarySolution> {
 
+
+  /**
+   * Constructs a new MutationBinaryParameter with the specified list of mutation operator names.
+   *
+   * @param mutationOperators the list of supported mutation operator names (should contain "bitFlip")
+   * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
+   */ 
+  public BinaryMutationParameter(List<String> mutationOperators) {
+    this(DEFAULT_NAME, mutationOperators);
+  }
+    
   /**
    * Constructs a new MutationBinaryParameter with the specified list of mutation operator names.
    *
    * @param mutationOperators the list of supported mutation operator names (should contain "bitFlip")
    * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
    */
-  public BinaryMutationParameter(List<String> mutationOperators) {
-    super(mutationOperators);
+  public BinaryMutationParameter(String name, List<String> mutationOperators) {
+    super(name, mutationOperators);
     
     // Validate that only supported operators are provided
     mutationOperators.forEach(operator -> {

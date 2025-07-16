@@ -36,6 +36,14 @@ public class RankingParameter<S extends Solution<?>> extends CategoricalParamete
     super(name, validRankings);
   }
 
+  /**
+   * Creates a new RankingParameter with the specified valid ranking strategies.
+   * 
+   * @param validRankings A list of valid ranking strategy names. Supported values:
+   *                      - "dominanceRanking"
+   *                      - "strengthRanking"
+   * @throws IllegalArgumentException if validRankings is null or empty
+   */
   public RankingParameter(List<String> validRankings) {
     this(DEFAULT_NAME, validRankings);
   }

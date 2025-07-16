@@ -33,7 +33,11 @@ public class PerturbationParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if perturbationStrategies is null or empty
    */
   public PerturbationParameter(List<String> perturbationStrategies) {
-    super(DEFAULT_NAME, perturbationStrategies);
+    this(DEFAULT_NAME, perturbationStrategies);
+  }
+
+  public PerturbationParameter(String name, List<String> perturbationStrategies) {
+    super(name, perturbationStrategies);
   }
 
   /**
@@ -73,10 +77,10 @@ public class PerturbationParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "perturbation"
+   * @return The name of this parameter
    */
   @Override
   public String name() {
-    return "perturbation";
+    return super.name();
   }
 }

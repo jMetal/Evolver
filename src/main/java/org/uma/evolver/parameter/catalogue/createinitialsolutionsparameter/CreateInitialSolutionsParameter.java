@@ -19,7 +19,7 @@ public abstract class CreateInitialSolutionsParameter<S extends Solution<?>>
     extends CategoricalParameter {
 
   public static final String DEFAULT_NAME = "createInitialSolutions";
-      
+
   /**
    * Creates a new CreateInitialSolutionsParameter with the specified name and valid values.
    *

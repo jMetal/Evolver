@@ -42,7 +42,18 @@ public class AggregationFunctionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if aggregationFunctions is null or empty
    */
   public AggregationFunctionParameter(List<String> aggregationFunctions) {
-    super(DEFAULT_NAME, aggregationFunctions);
+    this(DEFAULT_NAME, aggregationFunctions);
+  }
+
+  /**
+   * Creates a new AggregationFunctionParameter with the specified name and aggregation function options.
+   *
+   * @param name The name of the parameter
+   * @param aggregationFunctions A list of valid aggregation function names
+   * @throws IllegalArgumentException if aggregationFunctions is null or empty
+   */
+  public AggregationFunctionParameter(String name, List<String> aggregationFunctions) {
+    super(name, aggregationFunctions);
     this.normalizedObjectives = false;
   }
 
@@ -95,10 +106,10 @@ public class AggregationFunctionParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "aggregationFunction"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "aggregationFunction";
+    return super.name();
   }
 }

@@ -43,6 +43,7 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
     super(name, validDensityEstimators);
   }
 
+  /**
   public DensityEstimatorParameter(List<String> validDensityEstimators) {
     this(DEFAULT_NAME, validDensityEstimators);
   }

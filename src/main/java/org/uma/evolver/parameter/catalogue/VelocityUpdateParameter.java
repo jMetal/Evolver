@@ -24,6 +24,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * cognitive and social components of the velocity update.
  */
 public class VelocityUpdateParameter extends CategoricalParameter {
+  public static final String DEFAULT_NAME = "velocityUpdate";
+
   /**
    * Creates a new VelocityUpdateParameter with the specified valid values.
    * 
@@ -32,7 +34,19 @@ public class VelocityUpdateParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if validValues is null or empty
    */
   public VelocityUpdateParameter(List<String> validValues) {
-    super("velocityUpdate", validValues);
+    this(DEFAULT_NAME, validValues);
+  }
+
+  /**
+   * Creates a new VelocityUpdateParameter with the specified name and valid values.
+   * 
+   * @param name The name of the parameter
+   * @param validValues A list of valid velocity update strategy names. Typical values include:
+   *                   "defaultVelocityUpdate", "constrainedVelocityUpdate", "SPSO2011VelocityUpdate"
+   * @throws IllegalArgumentException if validValues is null or empty
+   */
+  public VelocityUpdateParameter(String name, List<String> validValues) {
+    super(name, validValues);
   }
 
   /**
@@ -76,5 +90,15 @@ public class VelocityUpdateParameter extends CategoricalParameter {
       }
       default -> throw new JMetalException(value() + " is not a valid velocity update strategy");
     }
+  }
+
+  /**
+   * Returns the name of this parameter.
+   * 
+   * @return The name of this parameter as specified in the constructor
+   */
+  @Override
+  public String name() {
+    return super.name();
   }
 }

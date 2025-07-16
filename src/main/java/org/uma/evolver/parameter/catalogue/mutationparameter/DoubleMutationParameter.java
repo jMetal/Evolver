@@ -65,8 +65,8 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
    * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
    * @throws JMetalException if any operator name is not supported
    */
-  public DoubleMutationParameter(List<String> mutationOperators) {
-    super(mutationOperators);
+  public DoubleMutationParameter(String name, List<String> mutationOperators) {
+    super(name, mutationOperators);
 
     if (mutationOperators == null || mutationOperators.isEmpty()) {
       throw new IllegalArgumentException("Mutation operators list cannot be null or empty");
@@ -83,6 +83,17 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
         });
   }
 
+  /**
+   * Constructs a new DoubleMutationParameter with the specified list of mutation operator names.
+   *
+   * @param mutationOperators the list of supported mutation operator names
+   * @throws IllegalArgumentException if mutationOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */
+  public DoubleMutationParameter(List<String> mutationOperators) {
+    this(DEFAULT_NAME, mutationOperators);
+  }
+  
   /**
    * Creates and returns a configured mutation operator for double solutions based on the current parameter value.
    *

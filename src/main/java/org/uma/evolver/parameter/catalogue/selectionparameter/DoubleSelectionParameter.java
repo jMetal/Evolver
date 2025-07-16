@@ -41,9 +41,21 @@ public class DoubleSelectionParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public DoubleSelectionParameter(List<String> selectionStrategies) {
-    super(DEFAULT_NAME, selectionStrategies);
+    this(DEFAULT_NAME, selectionStrategies);
   }
 
+  /**
+   * Creates a new DoubleSelectionParameter with the specified name and selection strategies.
+   *
+   * @param name The name of the parameter
+   * @param selectionStrategies A list of valid selection strategy names. Supported values: -
+   *     "differentialEvolutionSelection"
+   * @throws IllegalArgumentException if selectionStrategies is null or empty
+   */
+  public DoubleSelectionParameter(String name, List<String> selectionStrategies) {
+    super(name, selectionStrategies);
+  }
+  
   /**
    * Creates a new DoubleSelectionParameter with the default selection strategy.
    * <p>

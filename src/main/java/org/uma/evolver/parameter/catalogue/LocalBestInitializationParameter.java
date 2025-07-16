@@ -6,13 +6,48 @@ import org.uma.jmetal.component.catalogue.pso.localbestinitialization.LocalBestI
 import org.uma.jmetal.component.catalogue.pso.localbestinitialization.impl.DefaultLocalBestInitialization;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
+/**
+ * A categorical parameter representing different local best initialization strategies for Particle Swarm Optimization (PSO).
+ * This parameter allows selecting and configuring how the local best initialization is computed during the PSO execution.
+ * 
+ * <p>The available local best initialization strategies are:
+ * <ul>
+ *   <li>defaultLocalBestInitialization: Uses the default local best initialization strategy</li>
+ * </ul>
+ */
 public class LocalBestInitializationParameter extends CategoricalParameter {
   public static final String DEFAULT_NAME = "localBestInitialization";
   
+  /**
+   * Creates a new LocalBestInitializationParameter with the specified valid values.
+   * 
+   * @param localBestInitializationStrategies A list of valid local best initialization strategy names. Typical values include:
+   *                                          "defaultLocalBestInitialization"
+   * @throws IllegalArgumentException if localBestInitializationStrategies is null or empty
+   */
   public LocalBestInitializationParameter(List<String> localBestInitializationStrategies) {
-    super(DEFAULT_NAME, localBestInitializationStrategies);
+    this(DEFAULT_NAME, localBestInitializationStrategies);
   }
 
+  /**
+   * Creates a new LocalBestInitializationParameter with the specified name and valid values.
+   * 
+   * @param name The name of the parameter
+   * @param localBestInitializationStrategies A list of valid local best initialization strategy names. Typical values include:
+   *                                          "defaultLocalBestInitialization"
+   * @throws IllegalArgumentException if localBestInitializationStrategies is null or empty
+   */
+  public LocalBestInitializationParameter(String name, List<String> localBestInitializationStrategies) {
+    super(name, localBestInitializationStrategies);
+  }
+
+  /** 
+   * Creates and returns a LocalBestInitialization instance based on the current parameter value.
+   * The specific implementation is determined by the current value of this parameter.
+   * 
+   * @return A configured LocalBestInitialization implementation based on the current parameter value
+   * @throws JMetalException if the current value does not match any known local best initialization strategy
+   */
   public LocalBestInitialization getLocalBestInitialization() {
     LocalBestInitialization result;
 
@@ -25,8 +60,13 @@ public class LocalBestInitializationParameter extends CategoricalParameter {
     return result;
   }
 
+  /**
+   * Returns the name of this parameter.
+   * 
+   * @return The name of this parameter as specified in the constructor
+   */
   @Override
   public String name() {
-    return "localBestInitialization";
+    return super.name();
   }
 }

@@ -56,7 +56,19 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public SelectionParameter(List<String> selectionStrategies) {
-    super(DEFAULT_NAME, selectionStrategies);
+    this(DEFAULT_NAME, selectionStrategies);
+  }
+
+  /**
+   * Creates a new SelectionParameter with the specified name and selection strategies.
+   *
+   * @param name The name of the parameter
+   * @param selectionStrategies A list of valid selection strategy names. Supported values: -
+   *     "tournament" - "random" - "populationAndNeighborhoodMatingPoolSelection"
+   * @throws IllegalArgumentException if selectionStrategies is null or empty
+   */
+  public SelectionParameter(String name, List<String> selectionStrategies) {
+    super(name, selectionStrategies);
   }
 
   /**
@@ -107,10 +119,10 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
   /**
    * Returns the name of this parameter.
    *
-   * @return The string "selection"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "selection";
+    return super.name();
   }
 }

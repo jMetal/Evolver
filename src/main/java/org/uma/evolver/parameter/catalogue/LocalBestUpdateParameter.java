@@ -32,7 +32,17 @@ public class LocalBestUpdateParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if localBestUpdateStrategies is null or empty
    */
   public LocalBestUpdateParameter(List<String> localBestUpdateStrategies) {
-    super(DEFAULT_NAME, localBestUpdateStrategies);
+    this(DEFAULT_NAME, localBestUpdateStrategies);
+  }
+
+  /**
+   * Constructs a new LocalBestUpdateParameter instance with the given name and list of update strategies.
+   * 
+   * @param name The name of the parameter
+   * @param localBestUpdateStrategies the list of valid local best update strategy names
+   */
+  public LocalBestUpdateParameter(String name, List<String> localBestUpdateStrategies) {
+    super(name, localBestUpdateStrategies);
   }
 
   /**
@@ -60,10 +70,10 @@ public class LocalBestUpdateParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "localBestUpdate"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "localBestUpdate";
+    return super.name();
   }
 }

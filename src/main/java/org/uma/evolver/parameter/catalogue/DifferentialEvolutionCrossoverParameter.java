@@ -67,7 +67,18 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
    * @throws IllegalArgumentException if variants is null or empty
    */
   public DifferentialEvolutionCrossoverParameter(List<String> variants) {
-    super(DEFAULT_NAME, variants);
+    this(DEFAULT_NAME, variants);
+  }
+
+  /**
+   * Creates a new Diffe  rentialEvolutionCrossoverParameter with the specified name and variants.
+   *
+   * @param name The name of the parameter
+   * @param variants A list of valid DE crossover variant names
+   * @throws IllegalArgumentException if variants is null or empty
+   */
+  public DifferentialEvolutionCrossoverParameter(String name, List<String> variants) {
+    super(name, variants);
   }
 
   /**
@@ -98,8 +109,13 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
     return result;
   }
 
+  /**
+   * Returns the name of this parameter.
+   *
+   * @return The name of this parameter as specified in the constructor
+   */
   @Override
   public String name() {
-    return "differentialEvolutionCrossover";
+    return super.name();
   }
 }

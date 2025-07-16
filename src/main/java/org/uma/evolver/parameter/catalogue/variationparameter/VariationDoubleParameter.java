@@ -78,6 +78,17 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
    * @throws JMetalException if any strategy name is not supported
    */
   public VariationDoubleParameter(List<String> variationStrategies) {
+    this(DEFAULT_NAME, variationStrategies);
+  }
+
+  /**
+   * Constructs a new VariationDoubleParameter with the specified list of variation strategy names.
+   *
+   * @param variationStrategies the list of supported variation strategy names
+   * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid values
+   * @throws JMetalException if any strategy name is not supported
+   */
+  public VariationDoubleParameter(String name, List<String> variationStrategies) {
     super(variationStrategies);
     
     if (variationStrategies == null || variationStrategies.isEmpty()) {

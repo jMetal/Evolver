@@ -45,8 +45,17 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
    * @param crossoverOperators the list of supported crossover operator names
    */
   public DoubleCrossoverParameter(List<String> crossoverOperators) {
-    super(crossoverOperators);
-    timeStamp = System.currentTimeMillis() ;
+    this(DEFAULT_NAME, crossoverOperators);
+  }
+
+  /**
+   * Constructs a crossover parameter for double solutions with the given list of supported
+   * crossover operator names.
+   *
+   * @param crossoverOperators the list of supported crossover operator names
+   */
+  public DoubleCrossoverParameter(String name, List<String> crossoverOperators) {
+    super(name, crossoverOperators);
 
     crossoverOperators.stream()
         .filter(crossoverOperator -> !validCrossoverNames.contains(crossoverOperator))

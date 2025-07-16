@@ -39,8 +39,23 @@ public class PermutationCrossoverParameter
   private static List<String> validCrossoverNames =
       List.of("PMX", "CX", "OXD", "positionBased", "edgeRecombination");
 
+  /** 
+   * @param crossoverOperators the list of supported crossover operator names
+   * @throws IllegalArgumentException if crossoverOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */
   public PermutationCrossoverParameter(List<String> crossoverOperators) {
-    super(crossoverOperators);
+    this(DEFAULT_NAME, crossoverOperators);
+  }
+
+  /** 
+   * @param name the name of the parameter
+   * @param crossoverOperators the list of supported crossover operator names
+   * @throws IllegalArgumentException if crossoverOperators is null, empty, or contains invalid values
+   * @throws JMetalException if any operator name is not supported
+   */
+  public PermutationCrossoverParameter(String name, List<String> crossoverOperators) {
+    super(name, crossoverOperators);
 
     crossoverOperators.stream()
         .filter(crossoverOperator -> !validCrossoverNames.contains(crossoverOperator))

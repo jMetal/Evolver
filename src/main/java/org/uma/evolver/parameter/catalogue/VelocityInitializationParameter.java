@@ -23,7 +23,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * the exploration/exploitation behavior of the PSO algorithm.
  */
 public class VelocityInitializationParameter extends CategoricalParameter {
-
+private static final String DEFAULT_NAME = "velocityInitialization";
   /**
    * Creates a new VelocityInitializationParameter with the specified valid values.
    * 
@@ -32,7 +32,11 @@ public class VelocityInitializationParameter extends CategoricalParameter {
    * @throws IllegalArgumentException if variationStrategies is null or empty
    */
   public VelocityInitializationParameter(List<String> variationStrategies) {
-    super("velocityInitialization", variationStrategies);
+    this(DEFAULT_NAME, variationStrategies);
+  }
+
+  public VelocityInitializationParameter(String name, List<String> variationStrategies) {
+    super(name, variationStrategies);
   }
 
   /**
@@ -64,10 +68,10 @@ public class VelocityInitializationParameter extends CategoricalParameter {
   /**
    * Returns the name of this parameter.
    * 
-   * @return The string "velocityInitialization"
+   * @return The name of this parameter as specified in the constructor
    */
   @Override
   public String name() {
-    return "velocityInitialization";
+    return super.name();
   }
 }

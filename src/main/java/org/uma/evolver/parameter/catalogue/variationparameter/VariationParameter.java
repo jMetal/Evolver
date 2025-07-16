@@ -27,7 +27,18 @@ public abstract class VariationParameter<S extends Solution<?>> extends Categori
    * @throws IllegalArgumentException if variationStrategies is null or empty
    */
   protected VariationParameter(List<String> variationStrategies) {
-    super(DEFAULT_NAME, variationStrategies);
+    this(DEFAULT_NAME, variationStrategies);
+  }
+
+  /**
+   * Constructs a new VariationParameter with the specified name and list of variation strategy names.
+   *
+   * @param name the name of the parameter
+   * @param variationStrategies the list of supported variation strategy names
+   * @throws IllegalArgumentException if variationStrategies is null or empty
+   */
+  protected VariationParameter(String name, List<String> variationStrategies) {
+    super(name, variationStrategies);
   }
 
   /**
