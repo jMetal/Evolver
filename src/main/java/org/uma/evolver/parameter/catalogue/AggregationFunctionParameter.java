@@ -69,9 +69,9 @@ public class AggregationFunctionParameter extends CategoricalParameter {
   public AggregationFunction getAggregationFunction() {
     AggregationFunction aggregationFunction;
 
-    BooleanParameter normalizeObjectivesParameter =
-        ((BooleanParameter) findGlobalSubParameter("normalizeObjectives"));
-    boolean normalizeObjectives = normalizeObjectivesParameter.value();
+    CategoricalParameter normalizeObjectivesParameter =
+        ((CategoricalParameter) findGlobalSubParameter("normalizeObjectives"));
+    boolean normalizeObjectives = (normalizeObjectivesParameter.value()).equalsIgnoreCase("true");
 
     switch (value()) {
       case "tschebyscheff" -> aggregationFunction = new Tschebyscheff(normalizedObjectives);

@@ -10,19 +10,19 @@ aggregationFunction:
   type: categorical
   globalSubParameters:
     normalizeObjectives:
-      type: boolean
+      type: categorical
       values:
-        true:
-          conditionalSubParameters:
+        "true":
+          conditionalParameters:
             epsilonParameterForNormalization:
               type: double
               range: [1.0E-8, 25.0]
-        false:
+        "false":
   values:
     tschebyscheff:
     weightedSum:
     penaltyBoundaryIntersection:
-      conditionalSubParameters:
+      conditionalParameters:
         pbiTheta:
           type: double
           range: [1.0, 200.0]
@@ -32,8 +32,8 @@ algorithmResult:
   type: categorical
   values:
     externalArchive:
-      conditionalSubParameters:
-        externalArchive:
+      conditionalParameters:
+        archiveType:
           type: categorical
           values:
             crowdingDistanceArchive:
@@ -43,8 +43,8 @@ algorithmResult:
 subProblemIdGenerator:
   type: categorical
   values:
-    permutation:
-    integerSequence:
+    randomPermutationCycle:
+    cyclicIntegerSequence:
 #
 createInitialSolutions:
   type: categorical
@@ -70,28 +70,29 @@ variation:
             bounds:
       values:
         uniform:
-          conditionalSubParameters:
+          conditionalParameters:
             uniformMutationPerturbation:
               type: double
               range: [0.0, 1.0]
         polynomial:
-          conditionalSubParameters:
+          conditionalParameters:
             polynomialMutationDistributionIndex:
               type: double
               range: [5.0, 400.0]
         linkedPolynomial:
-          conditionalSubParameters:
+          conditionalParameters:
             linkedPolynomialMutationDistributionIndex:
               type: double
               range: [5.0, 400.0]
         nonUniform:
-          conditionalSubParameters:
+          conditionalParameters:
             nonUniformMutationPerturbation:
               type: double
               range: [0.0, 1.0]
+        
   values:
     crossoverAndMutationVariation:
-      conditionalSubParameters:
+      conditionalParameters:
         crossover:
           type: categorical
           globalSubParameters:
@@ -106,18 +107,45 @@ variation:
                 bounds:
           values:
             SBX:
-              conditionalSubParameters:
+              conditionalParameters:
                 sbxDistributionIndex:
                   type: double
                   range: [5.0, 400.0]
-            BLX_ALPHA:
-              conditionalSubParameters:
-                blxAlphaCrossoverAlphaValue:
+            blxAlpha:
+              conditionalParameters:
+                blxAlphaCrossoverAlpha:
                   type: double
                   range: [0.0, 1.0]
             wholeArithmetic:
+              conditionalParameters:
+                blxAlphaBetaCrossoverBeta:
+                  type: double
+                  range: [0.0, 1.0]
+                blxAlphaBetaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            arithmetic: {}
+            laplace:
+              conditionalParameters:
+                laplaceCrossoverScale:
+                  type: double
+                  range: [0.0, 1.0]
+            fuzzyRecombination:
+              conditionalParameters:
+                fuzzyRecombinationCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            PCX:
+              conditionalParameters:
+                pcxCrossoverZeta:
+                  type: double
+                  range: [0.0, 1.0]
+                pcxCrossoverEta:
+                  type: double
+                  range: [0.0, 1.0]
+                  
     differentialEvolutionVariation:
-      conditionalSubParameters:
+      conditionalParameters:
         differentialEvolutionCrossover:
           type: categorical
           globalSubParameters:
@@ -136,7 +164,7 @@ selection:
   type: categorical
   values:
     populationAndNeighborhoodMatingPoolSelection:
-      conditionalSubParameters:
+      conditionalParameters:
         neighborhoodSelectionProbability:
           type: double
           range: [0.0, 1.0]

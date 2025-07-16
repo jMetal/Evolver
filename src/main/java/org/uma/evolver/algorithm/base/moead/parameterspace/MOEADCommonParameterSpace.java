@@ -132,7 +132,7 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
    * This includes neighborhood, aggregation, variation, mutation, crossover, selection, archive, and initialization parameters.
    */
   protected void setParameterSpace() {
-    put(new BooleanParameter(NORMALIZE_OBJECTIVES));
+    put(new CategoricalParameter(NORMALIZE_OBJECTIVES, List.of("true", "false")));
     put(new DoubleParameter(EPSILON_PARAMETER_FOR_NORMALIZATION, 1.e-8, 25.0));
     put(new IntegerParameter(NEIGHBORHOOD_SIZE, 5, 50));
     put(new ProbabilityParameter(NEIGHBORHOOD_SELECTION_PROBABILITY));
@@ -151,7 +151,7 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
    */
   protected void setParameterRelationships() {
     get(NORMALIZE_OBJECTIVES)
-        .addConditionalParameter(true, get(EPSILON_PARAMETER_FOR_NORMALIZATION));
+        .addConditionalParameter("true", get(EPSILON_PARAMETER_FOR_NORMALIZATION));
 
     get(AGGREGATION_FUNCTION)
         .addGlobalSubParameter(get(NORMALIZE_OBJECTIVES))

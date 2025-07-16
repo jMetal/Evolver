@@ -63,11 +63,12 @@ public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> 
       case "densityEstimator" -> parameter = new DensityEstimatorParameter<DoubleSolution>(values);
       case "mutation" -> parameter = new DoubleMutationParameter(values);
       case "mutationRepairStrategy" -> parameter = new RepairDoubleSolutionStrategyParameter("mutationRepairStrategy", values);
-      case "sequenceGenerator" -> parameter = new SequenceGeneratorParameter(parameterName, values);
+      case "sequenceGenerator", "subProblemIdGenerator" -> parameter = new SequenceGeneratorParameter(parameterName, values);
       case "ranking" -> parameter = new RankingParameter<DoubleSolution>("ranking", values);
       case "replacement" -> parameter = new ReplacementParameter<DoubleSolution>(values);
       case "selection" -> parameter = new SelectionParameter<DoubleSolution>(values);
       case "variation" -> parameter = new VariationDoubleParameter(values) ;
+      case "differentialEvolutionCrossover" -> parameter = new DifferentialEvolutionCrossoverParameter(values);
       default -> {
         parameter = new CategoricalParameter(parameterName, values);
       }
