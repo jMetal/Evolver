@@ -11,12 +11,25 @@ import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Factory class for creating categorical parameters specific to double-solution based evolutionary algorithms.
- * This factory provides a centralized way to create different types of parameters used in the configuration
- * of evolutionary algorithms that work with double-encoded solutions.
- * 
- * @author Your Name
- * @since version
+ * Factory class for creating and configuring categorical parameters specific to evolutionary algorithms
+ * that operate on permutation-based solutions. This factory implements the ParameterFactory interface
+ * to provide type-safe creation of various algorithm components and their parameters.
+ *
+ * <p>The factory supports the creation of parameters for different components including:
+ * <ul>
+ *   <li>Variation operators (crossover, mutation) for permutation solutions</li>
+ *   <li>Selection mechanisms</li>
+ *   <li>Archiving strategies</li>
+ *   <li>Solution initialization methods</li>
+ *   <li>Density estimators</li>
+ *   <li>And other algorithm-specific parameters</li>
+ * </ul>
+ *
+ * <p>This implementation is specifically designed for algorithms working with permutation-encoded solutions
+ * and provides appropriate parameter types that are compatible with the PermutationSolution interface.
+ *
+ * @author Antonio J. Nebro
+ * @since 1.0
  */
 public class PermutationParameterFactory implements ParameterFactory<PermutationSolution<Integer>> {
 

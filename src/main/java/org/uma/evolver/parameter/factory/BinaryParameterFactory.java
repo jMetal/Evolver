@@ -3,51 +3,65 @@ package org.uma.evolver.parameter.factory;
 import java.util.List;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsBinaryParameter;
-import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsPermutationParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.BinaryCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.crossoverparameter.PermutationCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.BinaryMutationParameter;
-import org.uma.evolver.parameter.catalogue.mutationparameter.PermutationMutationParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.BinaryVariationParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.PermutationVariationParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
-import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Factory class for creating categorical parameters specific to double-solution based evolutionary algorithms.
- * This factory provides a centralized way to create different types of parameters used in the configuration
- * of evolutionary algorithms that work with double-encoded solutions.
- * 
- * @author Your Name
- * @since version
+ * Factory class for creating and configuring categorical parameters specific to evolutionary algorithms
+ * that operate on BinarySolution individuals. This factory implements the ParameterFactory interface
+ * to provide type-safe creation of various algorithm components and their parameters.
+ *
+ * <p>The factory supports the creation of parameters for different components including:
+ * <ul>
+ *   <li>Variation operators (crossover, mutation)</li>
+ *   <li>Selection mechanisms</li>
+ *   <li>Archiving strategies</li>
+ *   <li>Solution initialization methods</li>
+ *   <li>Density estimators</li>
+ *   <li>And other algorithm-specific parameters</li>
+ * </ul>
+ *
+ * <p>This implementation is specifically designed for algorithms working with binary-encoded solutions
+ * and provides appropriate parameter types that are compatible with the BinarySolution interface.
+ *
+ * @author Antonio J. Nebro
+ * @since 1.0
  */
 public class BinaryParameterFactory implements ParameterFactory<BinarySolution> {
 
   /**
-   * Creates and returns a specific CategoricalParameter instance based on the provided parameter name.
-   * This factory method supports the creation of various types of parameters used in evolutionary algorithms,
-   * such as selection, crossover, mutation, and other algorithm-specific parameters.
+   * Creates and returns a specific {@link CategoricalParameter} instance based on the provided parameter name.
+   * This factory method centralizes the creation of all parameter types used in evolutionary algorithms
+   * that operate on binary-encoded solutions.
    *
-   * @param parameterName the name of the parameter to create. Supported values are:
-   *                     - "archiveType": Creates an ExternalArchiveParameter
-   *                     - "aggregationFunction": Creates an AggregationFunctionParameter
-   *                     - "createInitialSolutions": Creates a CreateInitialSolutionsDoubleParameter
-   *                     - "crossover": Creates a DoubleCrossoverParameter
-   *                     - "crossoverRepairStrategy": Creates a RepairDoubleSolutionStrategyParameter for crossover
-   *                     - "densityEstimator": Creates a DensityEstimatorParameter
-   *                     - "mutation": Creates a DoubleMutationParameter
-   *                     - "mutationRepairStrategy": Creates a RepairDoubleSolutionStrategyParameter for mutation
-   *                     - "sequenceGenerator": Creates a SequenceGeneratorParameter
-   *                     - "ranking": Creates a RankingParameter
-   *                     - "replacement": Creates a ReplacementParameter
-   *                     - "selection": Creates a SelectionParameter
-   *                     - "variation": Creates a VariationParameter
-   *                     - Any other value: Creates a basic CategoricalParameter
-   * @param values the list of possible values for the parameter
-   * @return an instance of CategoricalParameter corresponding to the specified parameter name
+   * <p>The following parameter types are supported:
+   * <table border="1">
+   *   <caption>Supported Parameter Types</caption>
+   *   <tr><th>Parameter Name</th><th>Creates</th><th>Description</th></tr>
+   *   <tr><td>archiveType</td><td>{@link ExternalArchiveParameter}</td><td>External archive type for storing non-dominated solutions</td></tr>
+   *   <tr><td>aggregationFunction</td><td>{@link AggregationFunctionParameter}</td><td>Function for aggregating multiple objectives</td></tr>
+   *   <tr><td>createInitialSolutions</td><td>{@link CreateInitialSolutionsBinaryParameter}</td><td>Strategy for creating initial population of binary solutions</td></tr>
+   *   <tr><td>crossover</td><td>{@link BinaryCrossoverParameter}</td><td>Binary-solution crossover operator</td></tr>
+   *   <tr><td>densityEstimator</td><td>{@link DensityEstimatorParameter}</td><td>Density estimation method for solution selection</td></tr>
+   *   <tr><td>mutation</td><td>{@link BinaryMutationParameter}</td><td>Binary-solution mutation operator</td></tr>
+   *   <tr><td>sequenceGenerator</td><td>{@link SequenceGeneratorParameter}</td><td>Generator for sequence-based parameters</td></tr>
+   *   <tr><td>ranking</td><td>{@link RankingParameter}</td><td>Solution ranking method</td></tr>
+   *   <tr><td>replacement</td><td>{@link ReplacementParameter}</td><td>Strategy for population replacement</td></tr>
+   *   <tr><td>selection</td><td>{@link SelectionParameter}</td><td>Parent selection mechanism</td></tr>
+   *   <tr><td>variation</td><td>{@link BinaryVariationParameter}</td><td>Variation operator for binary solutions</td></tr>
+   *   <tr><td>subProblemIdGenerator</td><td>{@link SequenceGeneratorParameter}</td><td>Generator for sub-problem identifiers</td></tr>
+   *   <tr><td>any other value</td><td>{@link CategoricalParameter}</td><td>Basic categorical parameter with the given name</td></tr>
+   * </table>
+   *
+   * @param parameterName the name of the parameter to create (case-sensitive)
+   * @param values the list of possible string values for the parameter (must not be null or empty)
+   * @return an instance of {@code CategoricalParameter} corresponding to the specified parameter name
    * @throws IllegalArgumentException if the values list is null or empty
+   * @see CategoricalParameter
    */
   @Override
   public CategoricalParameter createParameter(
