@@ -6,7 +6,7 @@ algorithmResult:
       conditionalParameters:
         populationSizeWithArchive:
           type: integer
-          range: [10, 200]
+          values: [10, 200]
         archiveType:
           type: categorical
           values:
@@ -32,24 +32,19 @@ variation:
           globalSubParameters:
             crossoverProbability:
               type: double
-              range: [0.0, 1.0]
+              values: [0.0, 1.0]
           values:
-            PMX:
-            OXD:
-            CX:
+            HUX:
+            uniform:
+            singlePoint:
         mutation:
           type: categorical
           globalSubParameters:
-            mutationProbability:
+            mutationProbabilityFactor:
               type: double
-              range: [0.0, 1.0]
+              range: [0.0, 2.0]
           values:
-            swap:
-            insert:
-            scramble:
-            inversion:
-            simpleInversion:
-            displacement:
+            bitFlip:
 #
 selection:
   type: categorical
@@ -58,7 +53,7 @@ selection:
       conditionalParameters:
         selectionTournamentSize:
           type: integer
-          range: [2, 10]
+          values: [2, 10]
     random:
 #
 

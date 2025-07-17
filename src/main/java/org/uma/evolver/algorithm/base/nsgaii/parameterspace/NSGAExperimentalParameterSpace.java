@@ -7,7 +7,7 @@ import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.Creat
 import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationDoubleParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.DoubleVariationParameter;
 import org.uma.evolver.parameter.type.*;
 
 /**
@@ -57,7 +57,7 @@ public class NSGAExperimentalParameterSpace extends ParameterSpace {
     put(
         new CategoricalIntegerParameter(
             "offspringPopulationSize", List.of(1, 2, 5, 10, 20, 50, 100, 200, 400)));
-    put(new VariationDoubleParameter(List.of("crossoverAndMutationVariation")));
+    put(new DoubleVariationParameter(List.of("crossoverAndMutationVariation")));
 
     put(new SelectionParameter<>(List.of("tournament", "random")));
     put(new IntegerParameter("selectionTournamentSize", 2, 10));

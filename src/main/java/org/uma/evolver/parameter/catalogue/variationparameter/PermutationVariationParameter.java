@@ -42,7 +42,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * @see org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation
  */
-public class VariationPermutationParameter extends VariationParameter<PermutationSolution<Integer>> {
+public class PermutationVariationParameter extends VariationParameter<PermutationSolution<Integer>> {
   
   /** Valid variation strategy for permutation solutions. */
   private static final String CROSSOVER_AND_MUTATION = "crossoverAndMutationVariation";
@@ -54,7 +54,7 @@ public class VariationPermutationParameter extends VariationParameter<Permutatio
    * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid values
    * @throws JMetalException if any strategy name is not supported
    */ 
-  public VariationPermutationParameter(List<String> variationStrategies) {
+  public PermutationVariationParameter(List<String> variationStrategies) {
     this(DEFAULT_NAME, variationStrategies);
   }
 
@@ -65,7 +65,7 @@ public class VariationPermutationParameter extends VariationParameter<Permutatio
    * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid values
    * @throws JMetalException if any strategy name is not supported
    */
-  public VariationPermutationParameter(String name, List<String> variationStrategies) {
+  public PermutationVariationParameter(String name, List<String> variationStrategies) {
     super(name, variationStrategies);
     
     if (variationStrategies == null || variationStrategies.isEmpty()) {

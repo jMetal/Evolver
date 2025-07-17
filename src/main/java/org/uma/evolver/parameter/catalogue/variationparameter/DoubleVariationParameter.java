@@ -62,7 +62,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  * @see org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation
  * @see org.uma.jmetal.component.catalogue.ea.variation.impl.DifferentialEvolutionCrossoverVariation
  */
-public class VariationDoubleParameter extends VariationParameter<DoubleSolution> {
+public class DoubleVariationParameter extends VariationParameter<DoubleSolution> {
   
   /** Variation strategy that combines crossover and mutation. */
   private static final String CROSSOVER_AND_MUTATION = "crossoverAndMutationVariation";
@@ -77,7 +77,7 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
    * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid values
    * @throws JMetalException if any strategy name is not supported
    */
-  public VariationDoubleParameter(List<String> variationStrategies) {
+  public DoubleVariationParameter(List<String> variationStrategies) {
     this(DEFAULT_NAME, variationStrategies);
   }
 
@@ -88,7 +88,7 @@ public class VariationDoubleParameter extends VariationParameter<DoubleSolution>
    * @throws IllegalArgumentException if variationStrategies is null, empty, or contains invalid values
    * @throws JMetalException if any strategy name is not supported
    */
-  public VariationDoubleParameter(String name, List<String> variationStrategies) {
+  public DoubleVariationParameter(String name, List<String> variationStrategies) {
     super(variationStrategies);
     
     if (variationStrategies == null || variationStrategies.isEmpty()) {

@@ -5,7 +5,7 @@ import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsDoubleParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationDoubleParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.DoubleVariationParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -152,7 +152,7 @@ public class MOEADDoubleParameterSpace extends MOEADCommonParameterSpace<DoubleS
     put(new DifferentialEvolutionCrossoverParameter(List.of(RAND_1_BIN, RAND_1_EXP, RAND_2_BIN)));
     put(new DoubleParameter(CR, 0.0, 1.0));
     put(new DoubleParameter(F, 0.0, 1.0));
-    put(new VariationDoubleParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION, DIFFERENTIAL_EVOLUTION_VARIATION)));
+    put(new DoubleVariationParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION, DIFFERENTIAL_EVOLUTION_VARIATION)));
   }
 
   @Override

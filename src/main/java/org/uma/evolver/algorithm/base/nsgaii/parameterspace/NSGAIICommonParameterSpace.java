@@ -4,7 +4,7 @@ import java.util.List;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationDoubleParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.DoubleVariationParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 
@@ -94,7 +94,7 @@ public abstract class NSGAIICommonParameterSpace<S extends Solution<?>> extends 
     put(
         new CategoricalIntegerParameter(
             OFFSPRING_POPULATION_SIZE, List.of(1, 2, 5, 10, 20, 50, 100, 200, 400)));
-    put(new VariationDoubleParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION)));
+    put(new DoubleVariationParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION)));
 
     put(new SelectionParameter<>(List.of(TOURNAMENT, RANDOM_SELECTION)));
     put(new IntegerParameter(SELECTION_TOURNAMENT_SIZE, 2, 10));

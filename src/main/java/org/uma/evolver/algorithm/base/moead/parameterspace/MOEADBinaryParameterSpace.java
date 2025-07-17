@@ -4,7 +4,7 @@ import java.util.List;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsBinaryParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.BinaryCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.BinaryMutationParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationBinaryParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.BinaryVariationParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
@@ -96,7 +96,7 @@ public class MOEADBinaryParameterSpace extends MOEADCommonParameterSpace<BinaryS
     put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 1.0));
     
     // Variation parameters
-    put(new VariationBinaryParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION)));
+    put(new BinaryVariationParameter(List.of(CROSSOVER_AND_MUTATION_VARIATION)));
   }
 
   @Override

@@ -43,7 +43,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * @see org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation
  */
-public class VariationBinaryParameter extends VariationParameter<BinarySolution> {
+public class BinaryVariationParameter extends VariationParameter<BinarySolution> {
   /** Valid variation strategy names for binary solutions. */
   private static final String CROSSOVER_AND_MUTATION = "crossoverAndMutationVariation";
 
@@ -55,7 +55,7 @@ public class VariationBinaryParameter extends VariationParameter<BinarySolution>
    *     values
    * @throws JMetalException if any strategy name is not supported
    */
-  public VariationBinaryParameter(List<String> variationStrategies) {
+  public BinaryVariationParameter(List<String> variationStrategies) {
     this(DEFAULT_NAME, variationStrategies);
   }
 
@@ -67,7 +67,7 @@ public class VariationBinaryParameter extends VariationParameter<BinarySolution>
    *     values
    * @throws JMetalException if any strategy name is not supported
    */
-  public VariationBinaryParameter(String name, List<String> variationStrategies) {
+  public BinaryVariationParameter(String name, List<String> variationStrategies) {
     super(name, variationStrategies);
 
     if (variationStrategies == null || variationStrategies.isEmpty()) {

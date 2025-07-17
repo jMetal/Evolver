@@ -1,15 +1,19 @@
 package org.uma.evolver.parameter.factory;
 
 import java.util.List;
-
 import org.uma.evolver.parameter.catalogue.*;
-import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsDoubleParameter;
-import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
+import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsBinaryParameter;
+import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsPermutationParameter;
+import org.uma.evolver.parameter.catalogue.crossoverparameter.BinaryCrossoverParameter;
+import org.uma.evolver.parameter.catalogue.crossoverparameter.PermutationCrossoverParameter;
+import org.uma.evolver.parameter.catalogue.mutationparameter.BinaryMutationParameter;
+import org.uma.evolver.parameter.catalogue.mutationparameter.PermutationMutationParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.DoubleVariationParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.BinaryVariationParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.PermutationVariationParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.solution.binarysolution.BinarySolution;
+import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
  * Factory class for creating categorical parameters specific to double-solution based evolutionary algorithms.
@@ -19,7 +23,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @author Your Name
  * @since version
  */
-public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> {
+public class BinaryParameterFactory implements ParameterFactory<BinarySolution> {
 
   /**
    * Creates and returns a specific CategoricalParameter instance based on the provided parameter name.
@@ -55,20 +59,17 @@ public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> 
 
     CategoricalParameter parameter;
     switch (parameterName) {
-      case "archiveType" -> parameter = new ExternalArchiveParameter<DoubleSolution>("archiveType", values);
+      case "archiveType" -> parameter = new ExternalArchiveParameter<BinarySolution>("archiveType", values);
       case "aggregationFunction" -> parameter = new AggregationFunctionParameter(values);
-      case "createInitialSolutions" -> parameter = new CreateInitialSolutionsDoubleParameter(values);
-      case "crossover" -> parameter = new DoubleCrossoverParameter(values);
-      case "crossoverRepairStrategy" -> parameter = new RepairDoubleSolutionStrategyParameter("crossoverRepairStrategy", values);
-      case "densityEstimator" -> parameter = new DensityEstimatorParameter<DoubleSolution>(values);
-      case "mutation" -> parameter = new DoubleMutationParameter(values);
-      case "mutationRepairStrategy" -> parameter = new RepairDoubleSolutionStrategyParameter("mutationRepairStrategy", values);
+      case "createInitialSolutions" -> parameter = new CreateInitialSolutionsBinaryParameter(values);
+      case "crossover" -> parameter = new BinaryCrossoverParameter(values);
+      case "densityEstimator" -> parameter = new DensityEstimatorParameter<BinarySolution>(values);
+      case "mutation" -> parameter = new BinaryMutationParameter(values);
       case "sequenceGenerator", "subProblemIdGenerator" -> parameter = new SequenceGeneratorParameter(parameterName, values);
-      case "ranking" -> parameter = new RankingParameter<DoubleSolution>("ranking", values);
-      case "replacement" -> parameter = new ReplacementParameter<DoubleSolution>(values);
-      case "selection" -> parameter = new SelectionParameter<DoubleSolution>(values);
-      case "variation" -> parameter = new DoubleVariationParameter(values) ;
-      case "differentialEvolutionCrossover" -> parameter = new DifferentialEvolutionCrossoverParameter(values);
+      case "ranking" -> parameter = new RankingParameter<BinarySolution>("ranking", values);
+      case "replacement" -> parameter = new ReplacementParameter<BinarySolution>(values);
+      case "selection" -> parameter = new SelectionParameter<BinarySolution>(values);
+      case "variation" -> parameter = new BinaryVariationParameter(values) ;
       default -> {
         parameter = new CategoricalParameter(parameterName, values);
       }

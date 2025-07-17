@@ -2,9 +2,15 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
+
+import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
+import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutationV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -28,6 +34,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
 
   public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIPermutation.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<PermutationSolution<Integer>>> trainingSet = List.of(new KroAB100TSP());
@@ -35,13 +42,17 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
 
     // Step 2: Set the parameters for the algorithm to be configured
     List<QualityIndicator> indicators = List.of(new HypervolumeMinus(), new Epsilon());
-    var configurableAlgorithm = new NSGAIIPermutation(100);
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory());
+    System.out.println(parameterSpace);
+    // var configurableAlgorithm = new MOEADDouble(100);
+    var baseAlgorithm = new NSGAIIPermutationV2(100, parameterSpace);
     var maximumNumberOfEvaluations = List.of(15000);
     int numberOfIndependentRuns = 1;
 
     var metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
