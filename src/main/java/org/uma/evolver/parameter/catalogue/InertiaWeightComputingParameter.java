@@ -81,20 +81,20 @@ public class InertiaWeightComputingParameter extends CategoricalParameter {
         yield new ConstantValueStrategy(weight);
       }
       case "randomSelectedValue" -> {
-        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("randomInertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("randomInertiaWeightMax").value();
         yield new RandomSelectedValueStrategy(weightMin, weightMax);
       }
       case "linearDecreasingValue" -> {
-        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("linearDecreasingInertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("linearDecreasingInertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearDecreasingStrategy(weightMin, weightMax, iterations, swarmSize);
       }
       case "linearIncreasingValue" -> {
-        Double weightMin = (Double) findConditionalParameter("inertiaWeightMin").value();
-        Double weightMax = (Double) findConditionalParameter("inertiaWeightMax").value();
+        Double weightMin = (Double) findConditionalParameter("linearIncreasingInertiaWeightMin").value();
+        Double weightMax = (Double) findConditionalParameter("linearIncreasingInertiaWeightMax").value();
         int iterations = (Integer) nonConfigurableSubParameters().get("maxIterations");
         int swarmSize = (Integer) nonConfigurableSubParameters().get("swarmSize");
         yield new LinearIncreasingStrategy(weightMin, weightMax, iterations, swarmSize);

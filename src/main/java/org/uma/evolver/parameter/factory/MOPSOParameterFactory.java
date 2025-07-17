@@ -42,7 +42,7 @@ public class MOPSOParameterFactory implements ParameterFactory<DoubleSolution> {
     CategoricalParameter parameter;
     switch (parameterName) {
       case "leaderArchive" -> parameter = new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
-      case "archiveType" -> parameter = new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
+      case "externalArchiveType" -> parameter = new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
       case "swarmInitialization" -> parameter = new CreateInitialSolutionsDoubleParameter(parameterName, values);
       case "velocityInitialization" -> parameter = new VelocityInitializationParameter(values);
       case "perturbation" -> parameter = new PerturbationParameter(values);

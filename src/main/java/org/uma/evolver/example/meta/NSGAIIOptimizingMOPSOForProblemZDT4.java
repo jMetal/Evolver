@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.uma.evolver.algorithm.base.moead.MOEADDoubleV2;
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -21,6 +23,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link MOPSO} using
@@ -31,6 +34,8 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
+    JMetalRandom.getInstance().setSeed(1);
+
     String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
 
     // Step 1: Select the target problem
@@ -39,16 +44,18 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
+    System.out.println(parameterSpace);
     // var configurableAlgorithm = new MOEADDouble(100);
-    var configurableAlgorithm = new MOPSOV2(100, parameterSpace);
+    var baseAlgorithm = new MOPSOV2(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -57,7 +64,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8;
+    int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem)

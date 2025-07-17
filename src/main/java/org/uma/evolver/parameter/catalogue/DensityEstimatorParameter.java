@@ -30,6 +30,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class DensityEstimatorParameter<S extends Solution<?>> extends CategoricalParameter {
   public static final String DEFAULT_NAME = "densityEstimator";
 
+
   /**
    * Creates a new DensityEstimatorParameter with the specified name and valid density estimator strategies.
    *
@@ -44,6 +45,13 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
   }
 
   /**
+   * Creates a new DensityEstimatorParameter with the specified valid density estimator strategies.
+   *
+   * @param validDensityEstimators A list of valid density estimator strategy names. Supported values:
+   *                              - "crowdingDistance"
+   *                              - "knn" (requires additional sub-parameters)
+   * @throws IllegalArgumentException if validDensityEstimators is null or empty
+   */
   public DensityEstimatorParameter(List<String> validDensityEstimators) {
     this(DEFAULT_NAME, validDensityEstimators);
   }

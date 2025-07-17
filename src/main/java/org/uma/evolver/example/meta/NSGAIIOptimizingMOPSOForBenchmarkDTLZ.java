@@ -3,8 +3,11 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
@@ -28,7 +31,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
   public static void main(String[] args) throws IOException {
-    JMetalRandom.getInstance().setSeed(1);
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
@@ -38,7 +41,11 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var baseAlgorithm = new MOPSO(100);
+    var parameterSpace =
+            new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
+    System.out.println(parameterSpace);
+    // var configurableAlgorithm = new MOEADDouble(100);
+    var baseAlgorithm = new MOPSOV2(100, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 

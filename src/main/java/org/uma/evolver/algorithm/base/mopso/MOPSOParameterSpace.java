@@ -76,9 +76,6 @@ public class MOPSOParameterSpace extends ParameterSpace {
   public static final String REPAIR_ROUND = "round";
   public static final String REPAIR_BOUNDS = "bounds";
 
-  public static final String FREQUENCY_SELECTION_OF_MUTATION_BASED_PERTURBATION =
-      "frequencySelectionOfMutationBasedPerturbation";
-
   public static final String FREQUENCY_OF_APPLICATION_OF_MUTATION_OPERATOR =
       "frequencyOfApplicationOfMutationOperator";
 

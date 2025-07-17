@@ -53,7 +53,7 @@ public class DoubleParameterProcessor implements ParameterProcessor {
       throw new JMetalException("Minimum value must be less than maximum value in range for parameter " + parameterName);
     }
     
-    System.out.println("  - Creating double parameter with range: [" + minValue + ", " + maxValue + "]");
+    System.out.println("  - Creating double parameter " + parameterName + " with range: [" + minValue + ", " + maxValue + "]");
     parameterSpace.put(new DoubleParameter(parameterName, minValue, maxValue));
   }
 }

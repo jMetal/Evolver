@@ -1,7 +1,5 @@
 package org.uma.evolver.algorithm.base.mopso;
 
-import static org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace.*;
-
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.ParticleSwarmOptimizationBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -119,7 +117,7 @@ public class MOPSOV2 implements BaseLevelAlgorithm<DoubleSolution> {
   }
 
   private void setNonConfigurableParameters() {
-    swarmSize = (int) parameterSpace.get(SWARM_SIZE).value();
+    swarmSize = (int) parameterSpace.get("swarmSize").value();
 
     var leaderArchiveParameter =
         (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get("leaderArchive");
@@ -144,22 +142,22 @@ public class MOPSOV2 implements BaseLevelAlgorithm<DoubleSolution> {
           "swarmSize", swarmSizeParameter.value());
     }
 
-    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get(MUTATION);
+    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
         "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(parameterSpace.get("nonUniform"))) {
+    if (mutationParameter.value().equals("nonUniform")) {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / swarmSize);
     }
 
-    if (mutationParameter.value().equals(UNIFORM)) {
+    if (mutationParameter.value().equals("uniform")) {
       mutationParameter.addNonConfigurableSubParameter(
-          UNIFORM_MUTATION_PERTURBATION, parameterSpace.get(UNIFORM_MUTATION_PERTURBATION));
+          "uniformMutationPerturbation", parameterSpace.get("uniformMutationPerturbation"));
     }
 
-    var PositionUpdateParameter = (PositionUpdateParameter) parameterSpace.get(POSITION_UPDATE);
-    if (PositionUpdateParameter.value().equals(DEFAULT_POSITION_UPDATE)) {
+    var PositionUpdateParameter = (PositionUpdateParameter) parameterSpace.get("positionUpdate");
+    if (PositionUpdateParameter.value().equals("defaultPositionUpdate")) {
       PositionUpdateParameter.addNonConfigurableSubParameter(
           "positionBounds", problem.variableBounds());
     }
