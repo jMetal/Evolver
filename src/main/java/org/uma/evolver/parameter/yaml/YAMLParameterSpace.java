@@ -24,6 +24,12 @@ import java.util.Map;
  * nested and conditional parameter structures commonly found in metaheuristic
  * algorithm configurations.
  *
+ * @author Antonio J. Nebro
+ * @version 1.0
+ * @since 1.0
+ * @notThreadSafe This class is not thread-safe. External synchronization should be used if
+ *                instances are accessed from multiple threads.
+ *
  * <p>The class uses a processor pattern to handle different parameter types,
  * making it easily extensible for new parameter types. Each parameter type
  * is processed by a specialized {@link ParameterProcessor} that understands
@@ -32,8 +38,10 @@ import java.util.Map;
  * <p><strong>Supported Parameter Types:</strong>
  * <ul>
  * <li><strong>Categorical:</strong> Parameters with discrete string values</li>
- * <li><strong>Integer:</strong> Parameters with integer values (supports both discrete values and ranges)</li>
- * <li><strong>Double/Real:</strong> Parameters with floating-point values (supports both discrete values and ranges)</li>
+ * <li><strong>Integer/Int:</strong> Parameters with integer values (supports both discrete values and ranges).
+ *     Both 'integer' and 'int' type names are accepted.</li>
+ * <li><strong>Double/Real:</strong> Parameters with floating-point values (supports both discrete values and ranges).
+ *     Both 'double' and 'real' type names are accepted and treated equivalently.</li>
  * </ul>
  *
  * <p><strong>Supported Parameter Structures:</strong>
@@ -70,17 +78,30 @@ import java.util.Map;
  * if the file is not found in the classpath.
  *
  * <p><strong>Error Handling:</strong>
- * The class provides comprehensive validation and error reporting, including:
+ * The class provides comprehensive validation and error reporting through {@link JMetalException} for:
  * <ul>
- * <li>Missing required parameter configuration keys</li>
- * <li>Unsupported parameter types</li>
- * <li>Malformed YAML structures</li>
- * <li>File not found errors</li>
+ * <li>Missing required parameter configuration keys (e.g., 'type', 'values', or 'range')</li>
+ * <li>Unsupported or unknown parameter types</li>
+ * <li>Malformed YAML structures or invalid configurations</li>
+ * <li>File not found errors when loading from classpath or filesystem</li>
+ * <li>Invalid parameter values or ranges (e.g., min > max in range definitions)</li>
+ * <li>Type mismatches in configuration values</li>
  * </ul>
  *
- * <p><strong>Thread Safety:</strong>
- * This class is not thread-safe. If concurrent access is required, external
- * synchronization should be provided.
+ * <p><strong>Implementation Notes:</strong>
+ * <ul>
+ * <li>Uses a processor pattern to handle different parameter types, making it easily extensible</li>
+ * <li>Processes parameters in the order they appear in the YAML file</li>
+ * <li>Validates all parameter configurations during loading</li>
+ * <li>Supports loading from both classpath and filesystem with classpath having precedence</li>
+ * </ul>
+ *
+ * <p><strong>Performance Considerations:</strong>
+ * <ul>
+ * <li>Loading large YAML files may impact startup time</li>
+ * <li>Parameter validation is performed during loading, not during access</li>
+ * <li>Consider caching the parameter space if used frequently</li>
+ * </ul>
  *
  * <p><strong>Usage Example:</strong>
  * <pre>{@code
@@ -97,8 +118,16 @@ import java.util.Map;
  * @see ParameterSpace
  * @see ParameterProcessor
  * @see Parameter
+ * @see JMetalException
  *
+ * @implSpec This implementation processes parameters in the order they appear in the YAML file.
+ *           Parameters with the same name will override previous definitions.
+ * @implNote The YAML parsing is handled by the SnakeYAML library, and this class expects
+ *           the YAML to be well-formed according to the documented structure.
  * @author Antonio J. Nebro
+ * @version 1.0
+ * @notThreadSafe This class is not thread-safe. External synchronization should be used if
+ *                instances are accessed from multiple threads.
  */
 public class YAMLParameterSpace extends ParameterSpace {
 
@@ -136,13 +165,19 @@ public class YAMLParameterSpace extends ParameterSpace {
    * Constructs a new YAMLParameterSpace by loading parameters from the specified YAML file.
    *
    * <p>This constructor initializes the parameter processors, loads the YAML configuration,
-   * and processes all parameter definitions including nested and conditional parameters.
    *
-   * @param yamlFilePath path to the YAML file containing parameter definitions;
-   *                     supports both classpath and filesystem paths
-   *
-   * @throws RuntimeException if the YAML file cannot be loaded or parsed
-   * @throws JMetalException if parameter definitions are invalid or contain unsupported types
+   * @param yamlFilePath the path to the YAML configuration file. The path can be
+   *                    a classpath resource (e.g., "config/parameters.yaml") or a
+   *                    filesystem path (e.g., "/path/to/parameters.yaml").
+   * @param parameterFactory the factory to use for creating parameter instances.
+   *                        This allows customization of parameter creation while
+   *                        maintaining the YAML parsing logic.
+   * @throws JMetalException if there is an error loading or parsing the YAML file,
+   *                        or if the configuration is invalid.
+   * @throws IllegalArgumentException if yamlFilePath is null or empty, or if
+   *                                 parameterFactory is null.
+   * @see #loadParametersFromYAML(String)
+   * @see #processParameterDefinitions(Map)
    */
   public YAMLParameterSpace(String yamlFilePath, ParameterFactory<?> parameterFactory) {
     super();
@@ -273,73 +308,6 @@ public class YAMLParameterSpace extends ParameterSpace {
 
       // Add the parameter to the top level list of parameters
       addTopLevelParameter(get(parameterName));
-      
-      // Process any nested parameters
-      //processNestedParameters(parameterName, parameterConfig);
-    }
-  }
-
-  /**
-   * Recursively processes nested parameters within a parameter's configuration.
-   *
-   * <p>This method handles three types of nested parameter structures:
-   * <ul>
-   * <li><strong>Conditional Parameters:</strong> Parameters that are only active
-   *     when the parent parameter meets specific conditions</li>
-   * <li><strong>Global Sub-Parameters:</strong> Parameters that are globally
-   *     available as sub-parameters</li>
-   * <li><strong>Value-nested Parameters:</strong> Parameters defined within
-   *     categorical parameter values</li>
-   * </ul>
-   *
-   * @param parentName the name of the parent parameter
-   * @param config the configuration map of the parent parameter
-   */
-  @SuppressWarnings("unchecked")
-  private void processNestedParameters(String parentName, Map<String, Object> config) {
-    if (config == null) {
-      return;
-    }
-
-    // Process conditionalParameters if they exist
-    Object conditionalParams = config.get(CONDITIONAL_PARAMETERS_KEY);
-    if (conditionalParams instanceof Map) {
-      Map<String, Object> nestedParams = (Map<String, Object>) conditionalParams;
-      for (Map.Entry<String, Object> entry : nestedParams.entrySet()) {
-        if (entry.getValue() instanceof Map) {
-          Map<String, Object> nestedConfig = (Map<String, Object>) entry.getValue();
-          // Process the nested parameter
-          processParameterDefinition(entry.getKey(), nestedConfig);
-          // Recursively process any further nested parameters
-          processNestedParameters(entry.getKey(), nestedConfig);
-        }
-      }
-    }
-
-    // Process globalSubParameters if they exist
-    Object globalParams = config.get(GLOBAL_SUB_PARAMETERS_KEY);
-    if (globalParams instanceof Map) {
-      Map<String, Object> nestedParams = (Map<String, Object>) globalParams;
-      for (Map.Entry<String, Object> entry : nestedParams.entrySet()) {
-        if (entry.getValue() instanceof Map) {
-          Map<String, Object> nestedConfig = (Map<String, Object>) entry.getValue();
-          // Process the nested parameter
-          processParameterDefinition(entry.getKey(), nestedConfig);
-          // Recursively process any further nested parameters
-          processNestedParameters(entry.getKey(), nestedConfig);
-        }
-      }
-    }
-
-    // Process values that might contain nested parameters
-    Object values = config.get(VALUES_KEY);
-    if (values instanceof Map) {
-      Map<String, Object> valuesMap = (Map<String, Object>) values;
-      for (Object value : valuesMap.values()) {
-        if (value instanceof Map) {
-          processNestedParameters(parentName, (Map<String, Object>) value);
-        }
-      }
     }
   }
 
@@ -413,8 +381,6 @@ public class YAMLParameterSpace extends ParameterSpace {
       throw new JMetalException("Skipping parameter " + parameterName + " - missing 'values' or 'globalSubParameters' for " + parameterType + " type");
     }
 
-    System.out.println("Processing parameter: " + parameterName + " (type: " + parameterType + ")");
-
     ParameterProcessor processor = parameterProcessors.get(parameterType);
     if (processor != null) {
       // Pass the entire parameter config map instead of just the values
@@ -422,45 +388,6 @@ public class YAMLParameterSpace extends ParameterSpace {
       processor.process(parameterName, parameterConfig, this);
     } else {
       throw new JMetalException("Unsupported parameter type: " + parameterType);
-    }
-  }
-
-  /**
-   * Command-line entry point for testing and demonstrating the YAML parameter space loader.
-   *
-   * <p>This method provides a simple command-line interface for loading and
-   * inspecting YAML parameter configurations. It loads the specified YAML file,
-   * creates the parameter space, and displays information about all loaded parameters.
-   *
-   * <p><strong>Usage:</strong> {@code java YAMLParameterSpace <path-to-yaml-config>}
-   *
-   * @param args command-line arguments; expects exactly one argument containing
-   *             the path to the YAML configuration file
-   */
-  public static void main(String[] args) {
-    if (args.length != 1) {
-      System.err.println("Usage: YAMLParameterSpace <path-to-yaml-config>");
-      System.exit(1);
-    }
-
-    try {
-      String configFilePath = args[0];
-      System.out.println("Loading parameter space from: " + configFilePath);
-
-      ParameterFactory<?> parameterFactory = new DoubleParameterFactory() ;
-
-      YAMLParameterSpace parameterSpace = new YAMLParameterSpace(configFilePath, parameterFactory);
-      int parameterCount = parameterSpace.parameters().size();
-      System.out.println("\nSuccessfully loaded parameter space with " + parameterCount + " parameters:");
-
-      // Display all loaded parameters
-      for (String parameterName : parameterSpace.parameters().keySet()) {
-        Parameter<?> parameter = parameterSpace.get(parameterName);
-        System.out.println("  - " + parameterName + ": " + parameter);
-      }
-
-    } catch (Exception error) {
-      throw new JMetalException("Failed to load parameter space: " + error.getMessage());
     }
   }
 }

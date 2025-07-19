@@ -12,6 +12,7 @@ import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -32,8 +33,8 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
     String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+    List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT1());
+    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZCAT1.2D.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
