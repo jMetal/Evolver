@@ -2,6 +2,9 @@ package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
+import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -44,11 +47,15 @@ public class MOPSO_SMPSO_ZDT4 {
                 + "--velocityChangeWhenUpperLimitIsReached -1.0 "
                 + "--localBestInitialization defaultLocalBestInitialization "
                 + "--localBestUpdate defaultLocalBestUpdate "
-                + "--inertiaWeightMin 0.1 "
-                + "--inertiaWeightMax 0.5")
+                + "--randomInertiaWeightMin 0.1 "
+                + "--randomInertiaWeightMax 0.5")
             .split("\\s+");
 
-    var mopso = new MOPSO(problem, 100, 15000, new MOPSOParameterSpace());
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
+    var parameterSpace =
+            new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
+
+    var mopso = new MOPSOV2(problem, 100, 15000, parameterSpace);
     mopso.parse(parameters);
 
     mopso.parameterSpace().topLevelParameters().forEach(System.out::println);
