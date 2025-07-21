@@ -61,7 +61,7 @@ class MOEADTest {
           ("--neighborhoodSize 20 "
                   + "--maximumNumberOfReplacedSolutions 2 "
                   + "--aggregationFunction penaltyBoundaryIntersection "
-                  + "--normalizeObjectives True "
+                  + "--normalizeObjectives true "
                   + "--epsilonParameterForNormalization 4 "
                   + "--pbiTheta 5.0 "
                   + "--algorithmResult population "
@@ -97,7 +97,7 @@ class MOEADTest {
       assertEquals(2, parameterSpace.get("maximumNumberOfReplacedSolutions").value());
       assertEquals(
           "penaltyBoundaryIntersection", parameterSpace.get("aggregationFunction").value());
-      assertEquals(true, parameterSpace.get("normalizeObjectives").value());
+      assertEquals("true", parameterSpace.get("normalizeObjectives").value());
       assertEquals(5.0, parameterSpace.get("pbiTheta").value());
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
@@ -151,7 +151,7 @@ class MOEADTest {
       assertEquals(2, parameterSpace.get("maximumNumberOfReplacedSolutions").value());
       assertEquals(
           "penaltyBoundaryIntersection", parameterSpace.get("aggregationFunction").value());
-      assertEquals(true, parameterSpace.get("normalizeObjectives").value());
+      assertEquals("true", parameterSpace.get("normalizeObjectives").value());
       assertEquals(5.0, parameterSpace.get("pbiTheta").value());
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
@@ -177,7 +177,7 @@ class MOEADTest {
           ("--neighborhoodSize 20 "
                   + "--maximumNumberOfReplacedSolutions 2 "
                   + "--aggregationFunction tschebyscheff "
-                  + "--normalizeObjectives False "
+                  + "--normalizeObjectives false "
                   + "--algorithmResult population "
                   + "--createInitialSolutions default "
                   + "--variation differentialEvolutionVariation "
@@ -208,7 +208,7 @@ class MOEADTest {
       assertEquals(20, parameterSpace.get("neighborhoodSize").value());
       assertEquals(2, parameterSpace.get("maximumNumberOfReplacedSolutions").value());
       assertEquals("tschebyscheff", parameterSpace.get("aggregationFunction").value());
-      assertEquals(false, parameterSpace.get("normalizeObjectives").value());
+      assertEquals("false", parameterSpace.get("normalizeObjectives").value());
       assertEquals("population", parameterSpace.get("algorithmResult").value());
       assertEquals("default", parameterSpace.get("createInitialSolutions").value());
       assertEquals("differentialEvolutionVariation", parameterSpace.get("variation").value());

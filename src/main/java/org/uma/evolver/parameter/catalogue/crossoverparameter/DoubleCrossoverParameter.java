@@ -148,6 +148,16 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 eta,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
+      case "UNDC" -> {
+        Double zeta = (Double) findConditionalParameter("undcCrossoverZeta").value();
+        Double eta = (Double) findConditionalParameter("undcCrossoverEta").value();
+        result =
+            new UnimodalNormalDistributionCrossover(
+                crossoverProbability,
+                zeta,
+                eta,
+                repairDoubleSolution.getRepairDoubleSolutionStrategy());
+      }
       default -> throw new JMetalException("Crossover operator does not exist: " + value());
     }
     return result;

@@ -99,7 +99,7 @@ class IntegerParameterProcessorTest {
 
       // Act & Assert
       assertThrows(
-              JMetalException.class,
+              InvalidConditionException.class,
               () -> processor.process(parameterName, "not a map", parameterSpace));
     }
 

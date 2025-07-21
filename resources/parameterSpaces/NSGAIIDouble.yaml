@@ -80,6 +80,14 @@ variation:
                 pcxCrossoverEta:
                   type: double
                   range: [0.0, 1.0]
+            UNDC:
+              conditionalParameters:
+                undcCrossoverZeta:
+                  type: double
+                  range: [0.1, 1.0]
+                undcCrossoverEta:
+                  type: double
+                  range: [0.1, 0.5]
 
         mutation:
           type: categorical
