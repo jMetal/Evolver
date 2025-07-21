@@ -1,7 +1,5 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.mopso.MOPSO;
-import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;

@@ -1,7 +1,7 @@
 package org.uma.evolver.algorithm.base.nsgaii;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
@@ -32,26 +32,16 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  * mutation operator, other derived values, are set automatically based on the problem and algorithm
  * configuration.
  *
- * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
+ * @see MutationParameter
  */
 public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
-  /**
-   * Constructs an NSGAIIBinary instance with the given population size and a default parameter
-   * space.
-   *
-   * @param populationSize the population size to use
-   */
-  public NSGAIIBinary(int populationSize) {
-    this(populationSize, new NSGAIIBinaryParameterSpace());
-  }
-
   /**
    * Constructs an NSGAIIBinary instance with the given population size and parameter space.
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIBinary(int populationSize, NSGAIIBinaryParameterSpace parameterSpace) {
+  public NSGAIIBinary(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -66,9 +56,10 @@ public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
   public NSGAIIBinary(
       Problem<BinarySolution> problem,
       int populationSize,
-      int maximumNumberOfEvaluations) {
+      int maximumNumberOfEvaluations,
+      ParameterSpace parameterSpace) {
     super(
-        problem, populationSize, maximumNumberOfEvaluations, new NSGAIIBinaryParameterSpace());
+        problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
   }
 
   /**
@@ -82,16 +73,15 @@ public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
   @Override
   public BaseLevelAlgorithm<BinarySolution> createInstance(
       Problem<BinarySolution> problem, int maximumNumberOfEvaluations) {
-    return new NSGAIIBinary(problem, populationSize, maximumNumberOfEvaluations);
+    return new NSGAIIBinary(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */
   @Override
   protected void setNonConfigurableParameters() {
-    NSGAIIBinaryParameterSpace parameterSpace= (NSGAIIBinaryParameterSpace) parameterSpace();
     int numberOfBitsInASolution = ((BinaryProblem)problem).totalNumberOfBits() ;
 
-    var mutationParameter = (MutationParameter<BinarySolution>) parameterSpace.get(parameterSpace.MUTATION);
+    var mutationParameter = (MutationParameter<BinarySolution>) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfBitsInASolution", numberOfBitsInASolution);
 

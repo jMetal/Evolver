@@ -44,7 +44,6 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
     System.out.println(parameterSpace);
-    // var configurableAlgorithm = new MOEADDouble(100);
     var baseAlgorithm = new MOPSOV2(100, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
@@ -63,7 +62,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
     int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

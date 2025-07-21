@@ -2,6 +2,7 @@ package org.uma.evolver.algorithm.meta;
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
 import org.uma.jmetal.problem.Problem;
@@ -47,15 +48,19 @@ public class MetaNSGAIIBuilder {
   /** The number of cores to use for parallel evaluation (default: available processors) */
   private int numberOfCores = Runtime.getRuntime().availableProcessors();
 
+  /** The parameter space */
+  private ParameterSpace parameterSpace;
+
   /**
    * Creates a new builder with the specified meta-optimization problem.
    *
    * @param problem the meta-optimization problem to be solved (must not be null)
    * @throws JMetalException if the problem is null
    */
-  public MetaNSGAIIBuilder(MetaOptimizationProblem<?> problem) {
+  public MetaNSGAIIBuilder(MetaOptimizationProblem<?> problem, ParameterSpace parameterSpace) {
     Check.notNull(problem);
     this.problem = problem;
+    this.parameterSpace = parameterSpace;
   }
 
   /**
@@ -147,7 +152,7 @@ public class MetaNSGAIIBuilder {
                     + "--selectionTournamentSize 2")
                     .split("\\s+");
 
-    var evNSGAII = new NSGAIIDouble(problem, populationSize, maxEvaluations);
+    var evNSGAII = new NSGAIIDouble(problem, populationSize, maxEvaluations, parameterSpace);
     evNSGAII.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = evNSGAII.build();

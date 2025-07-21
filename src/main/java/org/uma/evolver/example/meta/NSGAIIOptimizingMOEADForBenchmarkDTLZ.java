@@ -62,7 +62,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

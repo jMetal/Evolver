@@ -1,8 +1,7 @@
 package org.uma.evolver.algorithm.base.nsgaii;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -27,32 +26,16 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * nsgaii.run();
  * }</pre>
  *
- * <p>Non-configurable parameters, such as the number of problem variables and, depending on the
- * mutation operator, other derived values, are set automatically based on the problem and algorithm
- * configuration.
- *
- * @see
- *     RDEMOEAPermutationParameterSpace
- * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
  */
 public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Integer>> {
-  /**
-   * Constructs an NSGAIIPermutation instance with the given population size and a default parameter
-   * space.
-   *
-   * @param populationSize the population size to use
-   */
-  public NSGAIIPermutation(int populationSize) {
-    this(populationSize, new NSGAIIPermutationParameterSpace());
-  }
-
+  
   /**
    * Constructs an NSGAIIPermutation instance with the given population size and parameter space.
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIPermutation(int populationSize, NSGAIIPermutationParameterSpace parameterSpace) {
+  public NSGAIIPermutation(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -67,9 +50,10 @@ public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Intege
   public NSGAIIPermutation(
       Problem<PermutationSolution<Integer>> problem,
       int populationSize,
-      int maximumNumberOfEvaluations) {
+      int maximumNumberOfEvaluations, 
+      ParameterSpace parameterSpace) {
     super(
-        problem, populationSize, maximumNumberOfEvaluations, new NSGAIIPermutationParameterSpace());
+        problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
   }
 
   /**
@@ -83,7 +67,7 @@ public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Intege
   @Override
   public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
       Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
-    return new NSGAIIPermutation(problem, populationSize, maximumNumberOfEvaluations);
+    return new NSGAIIPermutation(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */

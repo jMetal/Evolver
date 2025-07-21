@@ -65,7 +65,7 @@ public class NSGAIIOptimizingMOPSOForProblemZCAT3 {
     int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

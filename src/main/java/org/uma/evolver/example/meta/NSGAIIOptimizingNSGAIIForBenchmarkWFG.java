@@ -5,6 +5,8 @@ import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
@@ -28,6 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
   public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo() ;
@@ -37,13 +40,14 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var configurableAlgorithm = new NSGAIIDouble(100);
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var baseAlgorithm = new NSGAIIDouble(100, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+                baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -55,7 +59,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
     int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

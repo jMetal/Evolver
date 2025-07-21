@@ -3,8 +3,6 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -43,7 +41,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new NSGAIIDoubleV2(100, parameterSpace);
+    var baseAlgorithm = new NSGAIIDouble(100, parameterSpace);
     //var baseAlgorithm = new NSGAIIDouble(100) ;
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
@@ -62,7 +60,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

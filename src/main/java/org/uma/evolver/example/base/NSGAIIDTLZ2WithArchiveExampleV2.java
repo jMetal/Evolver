@@ -1,13 +1,10 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
+import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -27,7 +24,7 @@ public class NSGAIIDTLZ2WithArchiveExampleV2 {
     String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var evNSGAII = new NSGAIIDoubleV2(new DTLZ3(), 100, 30000, parameterSpace);
+    var evNSGAII = new NSGAIIDouble(new DTLZ3(), 100, 30000, parameterSpace);
     evNSGAII.parse(parameters);
 
     System.out.println(parameterSpace) ;

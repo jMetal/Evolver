@@ -1,6 +1,8 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -12,7 +14,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 public class NSGAIIZDT4Example {
   public static void main(String[] args) {
-
+    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =
@@ -32,7 +34,12 @@ public class NSGAIIZDT4Example {
                 + "--selectionTournamentSize 2")
             .split("\\s+");
 
-    var evNSGAII = new NSGAIIDouble(new ZDT4(), 100, 25000);
+    var evNSGAII =
+        new NSGAIIDouble(
+            new ZDT4(),
+            100,
+            25000,
+            new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
     evNSGAII.parse(parameters);
 
     evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);

@@ -3,11 +3,8 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
-import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
@@ -40,7 +37,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new NSGAIIDoubleV2(100, parameterSpace);
+    var configurableAlgorithm = new NSGAIIDouble(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
@@ -59,7 +56,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     int numberOfCores = 8 ;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

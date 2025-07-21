@@ -3,8 +3,10 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -41,7 +43,8 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
     // Step 2: Set the parameters for the algorithm to be configured
     List<QualityIndicator> indicators = List.of(new HypervolumeMinus(), new Epsilon());
     var maximumNumberOfEvaluations = List.of(15000, 15000);
-    var configurableAlgorithm = new NSGAIIPermutation(100);
+    ParameterSpace parameterSpace = new NSGAIIPermutationParameterSpace();
+    var configurableAlgorithm = new NSGAIIPermutation(100, parameterSpace);
     int numberOfIndependentRuns = 1;
 
     var metaOptimizationProblem =
@@ -58,7 +61,7 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
     int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-            new MetaNSGAIIBuilder(metaOptimizationProblem)
+            new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
                     .setMaxEvaluations(maxEvaluations)
                     .setNumberOfCores(numberOfCores)
                     .build();

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
@@ -25,7 +27,8 @@ class MetaOptimizationProblemTest {
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT1());
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT1.csv");
 
-    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm = new NSGAIIDouble(100);
+    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
+        new NSGAIIDouble(100, new NSGAIIDoubleParameterSpace());
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
@@ -57,7 +60,8 @@ class MetaOptimizationProblemTest {
             "resources/referenceFronts/ZDT4.csv",
             "resources/referenceFronts/ZDT6.csv");
 
-    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm = new NSGAIIDouble(100);
+    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
+        new NSGAIIDouble(100, new NSGAIIDoubleParameterSpace());
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
@@ -84,7 +88,8 @@ class MetaOptimizationProblemTest {
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
 
-    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm = new NSGAIIDouble(100);
+    BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
+        new NSGAIIDouble(100, new NSGAIIDoubleParameterSpace());
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume(), new Epsilon());
 
@@ -110,7 +115,7 @@ class MetaOptimizationProblemTest {
     List<Problem<PermutationSolution<Integer>>> trainingSet = List.of(new KroAB100TSP());
     List<String> referenceFrontFileNames = List.of("resources/referenceFrontsTSP/KroAB100TSP.csv");
 
-    var configurableAlgorithm = new NSGAIIPermutation(100);
+    var configurableAlgorithm = new NSGAIIPermutation(100, new NSGAIIPermutationParameterSpace());
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume());
 

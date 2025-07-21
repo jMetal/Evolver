@@ -1,6 +1,7 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIBinary;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
@@ -26,7 +27,8 @@ public class NSGAIIOneZeroMaxExample {
                 + "--selectionTournamentSize 2")
             .split("\\s+");
 
-    var baseNSGAII = new NSGAIIBinary(new OneZeroMax(), 100, 5000);
+    var baseNSGAII =
+        new NSGAIIBinary(new OneZeroMax(), 100, 5000, new NSGAIIBinaryParameterSpace());
     baseNSGAII.parse(parameters);
 
     baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);

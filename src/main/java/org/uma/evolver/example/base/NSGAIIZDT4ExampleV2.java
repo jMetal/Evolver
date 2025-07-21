@@ -1,22 +1,16 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDoubleV2;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
-
-import java.util.List;
 
 public class NSGAIIZDT4ExampleV2 {
   public static void main(String[] args) {
@@ -44,7 +38,7 @@ public class NSGAIIZDT4ExampleV2 {
     String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var evNSGAII = new NSGAIIDoubleV2(new ZDT4(), 100, 25000, parameterSpace);
+    var evNSGAII = new NSGAIIDouble(new ZDT4(), 100, 25000, parameterSpace);
     evNSGAII.parse(parameters);
 
     System.out.println(parameterSpace) ;

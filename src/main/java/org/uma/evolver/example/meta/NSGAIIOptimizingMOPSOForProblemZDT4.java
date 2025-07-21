@@ -34,8 +34,6 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
-    JMetalRandom.getInstance().setSeed(1);
-
     String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
 
     // Step 1: Select the target problem
@@ -67,7 +65,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
     int numberOfCores = 1;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

@@ -3,7 +3,6 @@ package org.uma.evolver.algorithm.base.nsgaii;
 import java.util.*;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIICommonParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
@@ -60,7 +59,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
-  private final NSGAIICommonParameterSpace<S> parameterSpace;
+  protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
   protected DensityEstimator<S> densityEstimator;
@@ -78,7 +77,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  protected AbstractNSGAII(int populationSize, NSGAIICommonParameterSpace<S> parameterSpace) {
+  protected AbstractNSGAII(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
   }
@@ -96,7 +95,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      NSGAIICommonParameterSpace<S> parameterSpace) {
+      ParameterSpace parameterSpace) {
     this.problem = problem;
     this.populationSize = populationSize;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
@@ -138,6 +137,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
     if (usingExternalArchive()) {
       archive = createExternalArchive();
       updatePopulationSize(archive);
+      Check.notNull(archive);
     }
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
     Variation<S> variation = createVariation();
@@ -146,7 +146,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder().build(
+    return new EvolutionaryAlgorithmBuilder<S>().build(
         "NSGAII",
         initialSolutionsCreation,
         evaluation,
@@ -174,11 +174,10 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    */
   protected Archive<S> createExternalArchive() {
     ExternalArchiveParameter<S> externalArchiveParameter =
-        (ExternalArchiveParameter<S>) parameterSpace.get(parameterSpace.ARCHIVE_TYPE);
+        (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
     Archive<S> archive = externalArchiveParameter.getExternalArchive();
-
     return archive;
   }
 
@@ -189,9 +188,9 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    */
   private boolean usingExternalArchive() {
     return parameterSpace
-        .get(parameterSpace.ALGORITHM_RESULT)
+        .get("algorithmResult")
         .value()
-        .equals(parameterSpace.EXTERNAL_ARCHIVE);
+        .equals("externalArchive");
   }
 
   /**
@@ -203,7 +202,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
   private void updatePopulationSize(Archive<S> archive) {
     if (archive != null) {
       populationSize =
-          (int) parameterSpace.get(parameterSpace.POPULATION_SIZE_WITH_ARCHIVE).value();
+          (int) parameterSpace.get("populationSizeWithArchive").value();
     }
   }
 
@@ -244,7 +243,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    * @return the selection operator
    */
   protected Selection<S> createSelection(Variation<S> variation) {
-    var selectionParameter = (SelectionParameter<S>) parameterSpace.get(parameterSpace.SELECTION);
+    var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
         variation.getMatingPoolSize(), rankingAndCrowdingComparator);
   }
@@ -257,10 +256,10 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    */
   protected Variation<S> createVariation() {
     VariationParameter<S> variationParameter =
-        (VariationParameter<S>) parameterSpace.get(parameterSpace.VARIATION);
+        (VariationParameter<S>) parameterSpace.get("variation");
     variationParameter.addNonConfigurableSubParameter(
-        parameterSpace.OFFSPRING_POPULATION_SIZE,
-        parameterSpace.get(parameterSpace.OFFSPRING_POPULATION_SIZE).value());
+        "offspringPopulationSize",
+        parameterSpace.get("offspringPopulationSize").value());
 
     return variationParameter.getVariation();
   }
@@ -272,7 +271,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    */
   protected SolutionsCreation<S> createInitialSolutions() {
     return ((CreateInitialSolutionsParameter<S>)
-            parameterSpace.get(parameterSpace.CREATE_INITIAL_SOLUTIONS))
+            parameterSpace.get("createInitialSolutions"))
         .getCreateInitialSolutionsStrategy(problem, populationSize);
   }
 

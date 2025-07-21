@@ -2,9 +2,11 @@ package org.uma.evolver.algorithm.base.nsgaii;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * Configurable implementation of the NSGA-II algorithm for double-valued (real-coded) problems.
@@ -33,14 +35,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * @see MutationParameter
  */
 public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
-  /**
-   * Constructs an NSGAIIDouble instance with the given population size and a default parameter space.
-   *
-   * @param populationSize the population size to use
-   */
-  public NSGAIIDouble(int populationSize) {
-    this(populationSize, new NSGAIIDoubleParameterSpace());
-  }
 
   /**
    * Constructs an NSGAIIDouble instance with the given population size and parameter space.
@@ -48,7 +42,7 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIDouble(int populationSize, NSGAIIDoubleParameterSpace parameterSpace) {
+  public NSGAIIDouble(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -61,8 +55,8 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    */
   public NSGAIIDouble(
-      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations) {
-   super(problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace()) ;
+      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations, ParameterSpace parameterSpace) {
+   super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace) ;
   }
 
   /**
@@ -73,9 +67,11 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @return a new configured instance of NSGAIIDouble
    */
   @Override
-  public BaseLevelAlgorithm<DoubleSolution> createInstance(
+  public synchronized BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-    return new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+   
+    return new NSGAIIDouble(
+        problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /**
@@ -90,15 +86,25 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    */
   @Override
   protected void setNonConfigurableParameters() {
-    NSGAIIDoubleParameterSpace parameterSpace = (NSGAIIDoubleParameterSpace) parameterSpace();
-
-    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get(parameterSpace.MUTATION);
+    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get("mutation");
+    Check.notNull(mutationParameter);
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
+    Check.that(maximumNumberOfEvaluations > 0, "Maximum number of evaluations must be greater than 0");
+    Check.that(populationSize > 0, "Population size must be greater than 0");
+    if (mutationParameter.value().equals("nonUniform")) {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / populationSize);
     }
+
+    /*
+    if (mutationParameter.value().equals("uniform")) {
+      mutationParameter.addNonConfigurableSubParameter(
+              "uniformMutationPerturbation",
+              parameterSpace.get("uniformMutationPerturbation"));
+    }
+
+     */
   }
 }

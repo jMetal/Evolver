@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.*;
 import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -37,7 +38,9 @@ class NSGAIIDoubleIT {
     int populationSize = 100;
     int maximumNumberOfEvaluations = 20000;
 
-    var nsgaII = new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+    var nsgaII =
+        new NSGAIIDouble(
+            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
         ("--algorithmResult population "
@@ -90,7 +93,9 @@ class NSGAIIDoubleIT {
     int populationSize = 100;
     int maximumNumberOfEvaluations = 25000;
 
-    var nsgaII = new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+    var nsgaII =
+        new NSGAIIDouble(
+            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
         ("--algorithmResult externalArchive "
@@ -145,7 +150,9 @@ class NSGAIIDoubleIT {
     int populationSize = 100;
     int maximumNumberOfEvaluations = 25000;
 
-    var nsgaII = new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+    var nsgaII =
+        new NSGAIIDouble(
+            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
         ("--algorithmResult population "
@@ -201,7 +208,9 @@ class NSGAIIDoubleIT {
     int populationSize = 100;
     int maximumNumberOfEvaluations = 40000;
 
-    var nsgaII = new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+    var nsgaII =
+        new NSGAIIDouble(
+            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
         ("--algorithmResult externalArchive "

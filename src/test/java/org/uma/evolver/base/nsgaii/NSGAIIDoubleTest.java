@@ -19,7 +19,7 @@ class NSGAIIDoubleTest {
     int maximumNumberOfEvaluations = 20000;
 
     nsgaIIDouble =
-        new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations);
+        new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
   }
 
   @Nested
