@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
-import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
@@ -42,7 +41,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
         new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
     System.out.println(parameterSpace);
     // var configurableAlgorithm = new MOEADDouble(100);
-    var baseAlgorithm = new MOPSOV2(100, parameterSpace);
+    var baseAlgorithm = new MOPSO(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;

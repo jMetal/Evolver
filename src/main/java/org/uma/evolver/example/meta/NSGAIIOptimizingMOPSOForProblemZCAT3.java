@@ -3,7 +3,6 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
-import org.uma.evolver.algorithm.base.mopso.MOPSOV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
@@ -13,7 +12,6 @@ import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zcat.DefaultZCATSettings;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -22,7 +20,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link MOPSO} using
@@ -46,7 +43,7 @@ public class NSGAIIOptimizingMOPSOForProblemZCAT3 {
         new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
     System.out.println(parameterSpace);
     // var configurableAlgorithm = new MOEADDouble(100);
-    var baseAlgorithm = new MOPSOV2(100, parameterSpace);
+    var baseAlgorithm = new MOPSO(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(20000);
     int numberOfIndependentRuns = 1;

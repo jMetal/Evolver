@@ -36,7 +36,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution> {
   long timeStamp ;
 
-  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "blxAlphaBeta", "PCX");
+  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "blxAlphaBeta", "PCX", "UNDC");
 
   /**
    * Constructs a crossover parameter for double solutions with the given list of supported

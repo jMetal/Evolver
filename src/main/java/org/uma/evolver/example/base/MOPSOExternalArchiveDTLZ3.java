@@ -2,6 +2,9 @@ package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.mopso.MOPSO;
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
@@ -16,12 +19,14 @@ public class MOPSOExternalArchiveDTLZ3 {
   public static void main(String[] args) {
     DoubleProblem problem = new DTLZ3();
     String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml";
 
     String[] parameters =
         ("--swarmSize 100 "
                 + "--algorithmResult externalArchive "
                 + "--externalArchiveType unboundedArchive "
                 + "--leaderArchive crowdingDistanceArchive "
+                + "--swarmSizeWithArchive 100 "
                 + "--swarmInitialization default "
                 + "--velocityInitialization defaultVelocityInitialization "
                 + "--velocityUpdate constrainedVelocityUpdate "
@@ -45,11 +50,16 @@ public class MOPSOExternalArchiveDTLZ3 {
                 + "--velocityChangeWhenUpperLimitIsReached -1.0 "
                 + "--localBestInitialization defaultLocalBestInitialization "
                 + "--localBestUpdate defaultLocalBestUpdate "
-                + "--inertiaWeightMin 0.1 "
-                + "--inertiaWeightMax 0.5")
+                + "--randomInertiaWeightMin 0.1 "
+                + "--randomInertiaWeightMax 0.5")
             .split("\\s+");
 
-    var mopso = new MOPSO(problem, 100, 40000, new MOPSOParameterSpace());
+    var mopso =
+        new MOPSO(
+            problem,
+            100,
+            40000,
+            new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory()));
     mopso.parse(parameters);
 
     mopso.parameterSpace().topLevelParameters().forEach(System.out::println);

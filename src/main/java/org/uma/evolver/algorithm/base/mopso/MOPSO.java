@@ -1,7 +1,5 @@
 package org.uma.evolver.algorithm.base.mopso;
 
-import static org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace.*;
-
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.ParticleSwarmOptimizationBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -45,7 +43,7 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
 
 public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
 
-  private final MOPSOParameterSpace parameterSpace;
+  private final ParameterSpace parameterSpace;
 
   protected int leaderArchiveSize;
   protected DoubleProblem problem;
@@ -55,8 +53,8 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
   protected BoundedArchive<DoubleSolution> leaderArchive;
   protected Archive<DoubleSolution> externalArchive;
 
-  public MOPSO(int leaderArchiveSize) {
-    this.parameterSpace = new MOPSOParameterSpace();
+  public MOPSO(int leaderArchiveSize, ParameterSpace parameterSpace) {
+    this.parameterSpace = parameterSpace;
     this.leaderArchiveSize = leaderArchiveSize;
   }
 
@@ -64,7 +62,7 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
       DoubleProblem problem,
       int leaderArchiveSize,
       int maximumNumberOfEvaluations,
-      MOPSOParameterSpace parameterSpace) {
+      ParameterSpace parameterSpace) {
     this.problem = problem;
     this.leaderArchiveSize = leaderArchiveSize;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
@@ -119,47 +117,47 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
   }
 
   private void setNonConfigurableParameters() {
-    swarmSize = (int) parameterSpace.get(SWARM_SIZE).value();
+    swarmSize = (int) parameterSpace.get("swarmSize").value();
 
     var leaderArchiveParameter =
-        (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get(LEADER_ARCHIVE);
+        (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get("leaderArchive");
     leaderArchiveParameter.setSize(leaderArchiveSize);
     leaderArchive = (BoundedArchive<DoubleSolution>) leaderArchiveParameter.getExternalArchive();
 
     var velocityUpdateParameter =
-        ((VelocityUpdateParameter) parameterSpace.get(VELOCITY_UPDATE));
-    if (velocityUpdateParameter.value().equals(CONSTRAINED_VELOCITY_UPDATE)
-        || velocityUpdateParameter.value().equals(SPSO2011_VELOCITY_UPDATE)) {
+        ((VelocityUpdateParameter) parameterSpace.get("velocityUpdate"));
+    if (velocityUpdateParameter.value().equals("constrainedVelocityUpdate")
+        || velocityUpdateParameter.value().equals("SPSO2011VelocityUpdate")) {
       velocityUpdateParameter.addNonConfigurableSubParameter("problem", problem);
     }
 
-    var swarmSizeParameter = ((IntegerParameter) parameterSpace.get(SWARM_SIZE));
+    var swarmSizeParameter = ((IntegerParameter) parameterSpace.get("swarmSize"));
     var inertiaWeightComputingStrategyParameter =
-        ((InertiaWeightComputingParameter) parameterSpace.get(INERTIA_WEIGHT_COMPUTING_STRATEGY));
-    if (inertiaWeightComputingStrategyParameter.value().equals(LINEAR_DECREASING_VALUE)
-        || inertiaWeightComputingStrategyParameter.value().equals(LINEAR_INCREASING_VALUE)) {
+        ((InertiaWeightComputingParameter) parameterSpace.get("inertiaWeightComputingStrategy"));
+    if (inertiaWeightComputingStrategyParameter.value().equals("linearDecreasingValue")
+        || inertiaWeightComputingStrategyParameter.value().equals("linearIncreasingValue")) {
       inertiaWeightComputingStrategyParameter.addNonConfigurableSubParameter(
           "maxIterations", maximumNumberOfEvaluations / swarmSizeParameter.value());
       inertiaWeightComputingStrategyParameter.addNonConfigurableSubParameter(
           "swarmSize", swarmSizeParameter.value());
     }
 
-    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get(MUTATION);
+    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
         "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
+    if (mutationParameter.value().equals("nonUniform")) {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / swarmSize);
     }
 
-    if (mutationParameter.value().equals(UNIFORM)) {
+    if (mutationParameter.value().equals("uniform")) {
       mutationParameter.addNonConfigurableSubParameter(
-          UNIFORM_MUTATION_PERTURBATION, parameterSpace.get(UNIFORM_MUTATION_PERTURBATION));
+          "uniformMutationPerturbation", parameterSpace.get("uniformMutationPerturbation"));
     }
 
-    var PositionUpdateParameter = (PositionUpdateParameter) parameterSpace.get(POSITION_UPDATE);
-    if (PositionUpdateParameter.value().equals(DEFAULT_POSITION_UPDATE)) {
+    var PositionUpdateParameter = (PositionUpdateParameter) parameterSpace.get("positionUpdate");
+    if (PositionUpdateParameter.value().equals("defaultPositionUpdate")) {
       PositionUpdateParameter.addNonConfigurableSubParameter(
           "positionBounds", problem.variableBounds());
     }
@@ -172,9 +170,9 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
    */
   private boolean usingExternalArchive() {
     return parameterSpace
-        .get(ALGORITHM_RESULT)
+        .get("algorithmResult")
         .value()
-        .equals(EXTERNAL_ARCHIVE);
+        .equals("externalArchive");
   }
 
    /**
@@ -185,7 +183,7 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
    */
   protected Archive<DoubleSolution> createExternalArchive() {
     ExternalArchiveParameter<DoubleSolution> externalArchiveParameter =
-        (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get(EXTERNAL_ARCHIVE_TYPE);
+        (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get("externalArchiveType");
   
     externalArchiveParameter.setSize(leaderArchiveSize);
     Archive<DoubleSolution> archive = externalArchiveParameter.getExternalArchive();
@@ -197,7 +195,7 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
     return new MOPSO(
-        (DoubleProblem) problem, leaderArchiveSize, maximumNumberOfEvaluations, new MOPSOParameterSpace());
+        (DoubleProblem) problem, leaderArchiveSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /**
@@ -230,7 +228,7 @@ public class MOPSO implements BaseLevelAlgorithm<DoubleSolution> {
    */
   protected SolutionsCreation<DoubleSolution> createInitialSolutionsCreation() {
 return ((CreateInitialSolutionsParameter<DoubleSolution>)
-            parameterSpace.get(SWARM_INITIALIZATION))
+            parameterSpace.get("swarmInitialization"))
         .getCreateInitialSolutionsStrategy(problem, swarmSize);  }
 
   /**
@@ -239,7 +237,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the velocity initialization strategy
    */
   protected VelocityInitialization createVelocityInitialization() {
-    return ((VelocityInitializationParameter) parameterSpace.get(VELOCITY_INITIALIZATION))
+    return ((VelocityInitializationParameter) parameterSpace.get("velocityInitialization"))
         .getVelocityInitialization();
   }
 
@@ -249,7 +247,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the local best initialization strategy
    */
   protected LocalBestInitialization createLocalBestInitialization() {
-    return ((LocalBestInitializationParameter) parameterSpace.get(LOCAL_BEST_INITIALIZATION))
+    return ((LocalBestInitializationParameter) parameterSpace.get("localBestInitialization"))
         .getLocalBestInitialization();
   }
 
@@ -259,7 +257,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the global best initialization strategy
    */
   protected GlobalBestInitialization createGlobalBestInitialization() {
-    return ((GlobalBestInitializationParameter) parameterSpace.get(GLOBAL_BEST_INITIALIZATION))
+    return ((GlobalBestInitializationParameter) parameterSpace.get("globalBestInitialization"))
         .getGlobalBestInitialization();
   }
 
@@ -269,7 +267,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the inertia weight computing strategy
    */
   protected InertiaWeightComputingStrategy createInertiaWeightStrategy() {
-    return ((InertiaWeightComputingParameter) parameterSpace.get(INERTIA_WEIGHT_COMPUTING_STRATEGY))
+    return ((InertiaWeightComputingParameter) parameterSpace.get("inertiaWeightComputingStrategy"))
         .getInertiaWeightComputingStrategy();
   }
 
@@ -279,7 +277,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the velocity update operator
    */
   protected VelocityUpdate createVelocityUpdate() {
-    return ((VelocityUpdateParameter) parameterSpace.get(VELOCITY_UPDATE))
+    return ((VelocityUpdateParameter) parameterSpace.get("velocityUpdate"))
         .getVelocityUpdate();
   }
 
@@ -289,7 +287,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the position update operator
    */
   protected PositionUpdate createPositionUpdate() {
-    return ((PositionUpdateParameter) parameterSpace.get(POSITION_UPDATE))
+    return ((PositionUpdateParameter) parameterSpace.get("positionUpdate"))
         .getPositionUpdate();
   }
 
@@ -299,7 +297,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the perturbation operator
    */
   protected Perturbation createPerturbation() {
-    return ((PerturbationParameter) parameterSpace.get(PERTURBATION))
+    return ((PerturbationParameter) parameterSpace.get("perturbation"))
         .getPerturbation();
   }
 
@@ -309,7 +307,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the global best update strategy
    */
   protected GlobalBestUpdate createGlobalBestUpdate() {
-    return ((GlobalBestUpdateParameter) parameterSpace.get(GLOBAL_BEST_UPDATE))
+    return ((GlobalBestUpdateParameter) parameterSpace.get("globalBestUpdate"))
         .getGlobalBestUpdate();
   }
 
@@ -319,7 +317,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the local best update strategy
    */
   protected LocalBestUpdate createLocalBestUpdate() {
-    return ((LocalBestUpdateParameter) parameterSpace.get(LOCAL_BEST_UPDATE))
+    return ((LocalBestUpdateParameter) parameterSpace.get("localBestUpdate"))
         .getLocalBestUpdate(new DefaultDominanceComparator<>());
   }
 
@@ -329,7 +327,7 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the global best selection strategy
    */
   protected GlobalBestSelection createGlobalBestSelection() {
-    return ((GlobalBestSelectionParameter) parameterSpace.get(GLOBAL_BEST_SELECTION))
+    return ((GlobalBestSelectionParameter) parameterSpace.get("globalBestSelection"))
         .getGlobalBestSelection(leaderArchive.comparator());
   }
 }
