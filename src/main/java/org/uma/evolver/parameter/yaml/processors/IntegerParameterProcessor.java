@@ -101,11 +101,11 @@ public class IntegerParameterProcessor implements ParameterProcessor {
         "Range for parameter " + parameterName + " must contain exactly 2 values [min, max]");
     
     Check.that(
-        rangeList.get(0) instanceof Number && rangeList.get(1) instanceof Number,
+        rangeList.get(0) instanceof Integer && rangeList.get(1) instanceof Integer,
         "Both range values for parameter " + parameterName + " must be numbers");
     
-    int minValue = ((Number) rangeList.get(0)).intValue();
-    int maxValue = ((Number) rangeList.get(1)).intValue();
+    int minValue = ((Integer) rangeList.get(0)).intValue();
+    int maxValue = ((Integer) rangeList.get(1)).intValue();
     
     Check.that(minValue < maxValue, 
         "Minimum value must be less than maximum value in range for parameter " + parameterName);

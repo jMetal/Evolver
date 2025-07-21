@@ -3,14 +3,14 @@ package org.uma.evolver.base.nsgaii;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 
 @DisplayName("Unit tests for class NSGAIIDouble")
 class NSGAIIDoubleTest {
 
-  private NSGAIIDouble nsgaIIDouble;
+  private DoubleNSGAII nsgaIIDouble;
 
   @BeforeEach
   void setup() {
@@ -19,7 +19,7 @@ class NSGAIIDoubleTest {
     int maximumNumberOfEvaluations = 20000;
 
     nsgaIIDouble =
-        new NSGAIIDouble(problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
+        new DoubleNSGAII(problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
   }
 
   @Nested

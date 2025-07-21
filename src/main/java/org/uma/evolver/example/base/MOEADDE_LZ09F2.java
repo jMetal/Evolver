@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -45,7 +45,7 @@ public class MOEADDE_LZ09F2 {
             + "--neighborhoodSelectionProbability 0.9 ")
             .split("\\s+");
 
-    var evMOEAD = new MOEADDouble(problem, 300, 175000,
+    var evMOEAD = new DoubleMOEAD(problem, 300, 175000,
         "resources/weightVectors", new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
     evMOEAD.parse(parameters);
 

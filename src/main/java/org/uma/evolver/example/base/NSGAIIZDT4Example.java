@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -35,7 +35,7 @@ public class NSGAIIZDT4Example {
             .split("\\s+");
 
     var evNSGAII =
-        new NSGAIIDouble(
+        new DoubleNSGAII(
             new ZDT4(),
             100,
             25000,

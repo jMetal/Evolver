@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see MOEADDoubleParameterSpace
- * @see MOEADDouble
+ * @see DoubleMOEAD
  * @author Antonio J. Nebro
  */
 public class YamlMOEADDoubleParameterDescriptionGenerator {

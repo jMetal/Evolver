@@ -1,12 +1,11 @@
-package org.uma.evolver.algorithm.base.nsgaii;
+package org.uma.evolver.algorithm.base.rdsmoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.errorchecking.Check;
 
 /**
  * Configurable implementation of the NSGA-II algorithm for double-valued (real-coded) problems.
@@ -34,7 +33,15 @@ import org.uma.jmetal.util.errorchecking.Check;
  * @see NSGAIIDoubleParameterSpace
  * @see MutationParameter
  */
-public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
+public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
+  /**
+   * Constructs an NSGAIIDouble instance with the given population size and a default parameter space.
+   *
+   * @param populationSize the population size to use
+   */
+  public DoubleRDEMOEA(int populationSize) {
+    this(populationSize, new RDEMOEADoubleParameterSpace());
+  }
 
   /**
    * Constructs an NSGAIIDouble instance with the given population size and parameter space.
@@ -42,7 +49,7 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIDouble(int populationSize, ParameterSpace parameterSpace) {
+  public DoubleRDEMOEA(int populationSize, RDEMOEADoubleParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -54,9 +61,9 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @param populationSize the population size to use
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    */
-  public NSGAIIDouble(
-      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations, ParameterSpace parameterSpace) {
-   super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace) ;
+  public DoubleRDEMOEA(
+      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations) {
+   super(problem, populationSize, maximumNumberOfEvaluations, new RDEMOEADoubleParameterSpace()) ;
   }
 
   /**
@@ -67,11 +74,9 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    * @return a new configured instance of NSGAIIDouble
    */
   @Override
-  public synchronized BaseLevelAlgorithm<DoubleSolution> createInstance(
+  public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-   
-    return new NSGAIIDouble(
-        problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
+    return new DoubleRDEMOEA(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   /**
@@ -86,25 +91,22 @@ public class NSGAIIDouble extends AbstractNSGAII<DoubleSolution> {
    */
   @Override
   protected void setNonConfigurableParameters() {
-    var mutationParameter = (MutationParameter<DoubleSolution>) parameterSpace.get("mutation");
-    Check.notNull(mutationParameter);
+    RDEMOEADoubleParameterSpace parameterSpace = (RDEMOEADoubleParameterSpace) parameterSpace();
+
+    MutationParameter mutationParameter =
+            (MutationParameter) parameterSpace.get(parameterSpace.MUTATION);
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfProblemVariables", problem.numberOfVariables());
 
-    Check.that(maximumNumberOfEvaluations > 0, "Maximum number of evaluations must be greater than 0");
-    Check.that(populationSize > 0, "Population size must be greater than 0");
-    if (mutationParameter.value().equals("nonUniform")) {
+    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / populationSize);
     }
 
-    /*
-    if (mutationParameter.value().equals("uniform")) {
+    if (mutationParameter.value().equals(parameterSpace.UNIFORM)) {
       mutationParameter.addNonConfigurableSubParameter(
-              "uniformMutationPerturbation",
-              parameterSpace.get("uniformMutationPerturbation"));
+              parameterSpace.UNIFORM_MUTATION_PERTURBATION,
+              parameterSpace.get(parameterSpace.UNIFORM_MUTATION_PERTURBATION));
     }
-
-     */
   }
 }

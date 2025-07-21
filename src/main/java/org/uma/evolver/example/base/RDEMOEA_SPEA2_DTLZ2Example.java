@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEADouble;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -38,7 +38,7 @@ public class RDEMOEA_SPEA2_DTLZ2Example {
                 + "--removalPolicy sequential")
             .split("\\s+");
 
-    var evAlgorithm = new RDEMOEADouble(new DTLZ2(), 100, 50000);
+    var evAlgorithm = new DoubleRDEMOEA(new DTLZ2(), 100, 50000);
     evAlgorithm.parse(parameters);
 
     evAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);

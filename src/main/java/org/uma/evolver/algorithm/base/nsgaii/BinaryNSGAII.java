@@ -34,14 +34,14 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  *
  * @see MutationParameter
  */
-public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
+public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
   /**
    * Constructs an NSGAIIBinary instance with the given population size and parameter space.
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIBinary(int populationSize, ParameterSpace parameterSpace) {
+  public BinaryNSGAII(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -53,7 +53,7 @@ public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
    * @param populationSize the population size to use
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    */
-  public NSGAIIBinary(
+  public BinaryNSGAII(
       Problem<BinarySolution> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
@@ -73,7 +73,7 @@ public class NSGAIIBinary extends AbstractNSGAII<BinarySolution> {
   @Override
   public BaseLevelAlgorithm<BinarySolution> createInstance(
       Problem<BinarySolution> problem, int maximumNumberOfEvaluations) {
-    return new NSGAIIBinary(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
+    return new BinaryNSGAII(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */

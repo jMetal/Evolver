@@ -2,7 +2,7 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -20,7 +20,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link MOEADDouble} using
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD} using
  * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -40,7 +40,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     //var configurableAlgorithm = new MOEADDouble(100);
-    var configurableAlgorithm = new MOEADDouble(100, weightVectorFilesDirectory, parameterSpace);
+    var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 

@@ -3,7 +3,7 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
+import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
@@ -23,7 +23,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link NSGAIIPermutation} using
+ * Class for running NSGA-II as meta-optimizer to configure {@link PermutationNSGAII} using
  * problem {@link KroAB100TSP} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -43,7 +43,7 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
         new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory());
     System.out.println(parameterSpace);
     // var configurableAlgorithm = new MOEADDouble(100);
-    var baseAlgorithm = new NSGAIIPermutation(100, parameterSpace);
+    var baseAlgorithm = new PermutationNSGAII(100, parameterSpace);
     var maximumNumberOfEvaluations = List.of(15000);
     int numberOfIndependentRuns = 1;
 

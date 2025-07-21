@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEAPermutation;
+import org.uma.evolver.algorithm.base.rdsmoea.PermutationRDEMOEA;
 import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  *
  * @see RDEMOEAPermutationParameterSpace
- * @see RDEMOEAPermutation
+ * @see PermutationRDEMOEA
  * @author Antonio J. Nebro
  */
 public class YamlRDEMOEAPermutationParameterDescriptionGenerator {

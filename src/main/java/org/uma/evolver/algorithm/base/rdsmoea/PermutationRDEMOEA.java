@@ -1,41 +1,33 @@
-package org.uma.evolver.algorithm.base.nsgaii;
+package org.uma.evolver.algorithm.base.rdsmoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Configurable implementation of the NSGA-II algorithm for permutation-based problems.
+ * Implementation of RDS-MOEA for permutation problems.
  *
- * <p>This class provides a highly customizable version of NSGA-II, supporting:
- *
- * <ul>
- *   <li>Various selection strategies (e.g., tournament, random)
- *   <li>Multiple crossover operators (e.g., PMX, CX, OX, etc.)
- *   <li>Different mutation approaches (e.g., swap, scramble, insertion, etc.)
- *   <li>Optional external archive integration
- * </ul>
- *
- * <p><b>Usage example:</b>
- *
- * <pre>{@code
- * NSGAIIPermutation algorithm = new NSGAIIPermutation(problem, 100, 25000);
- * algorithm.parse(args);
- * EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaii = algorithm.build();
- * nsgaii.run();
- * }</pre>
- *
+ * @author Your Name
  */
-public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Integer>> {
-  
+public class PermutationRDEMOEA extends BaseRDEMOEA<PermutationSolution<Integer>> {
+  /**
+   * Constructs an NSGAIIPermutation instance with the given population size and a default parameter
+   * space.
+   *
+   * @param populationSize the population size to use
+   */
+  public PermutationRDEMOEA(int populationSize) {
+    this(populationSize, new RDEMOEAPermutationParameterSpace());
+  }
+
   /**
    * Constructs an NSGAIIPermutation instance with the given population size and parameter space.
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public NSGAIIPermutation(int populationSize, ParameterSpace parameterSpace) {
+  public PermutationRDEMOEA(int populationSize, RDEMOEAPermutationParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -47,13 +39,12 @@ public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Intege
    * @param populationSize the population size to use
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    */
-  public NSGAIIPermutation(
-      Problem<PermutationSolution<Integer>> problem,
-      int populationSize,
-      int maximumNumberOfEvaluations, 
-      ParameterSpace parameterSpace) {
+  public PermutationRDEMOEA(
+          Problem<PermutationSolution<Integer>> problem,
+          int populationSize,
+          int maximumNumberOfEvaluations) {
     super(
-        problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
+            problem, populationSize, maximumNumberOfEvaluations, new RDEMOEAPermutationParameterSpace());
   }
 
   /**
@@ -66,8 +57,8 @@ public class NSGAIIPermutation extends AbstractNSGAII<PermutationSolution<Intege
    */
   @Override
   public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
-      Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
-    return new NSGAIIPermutation(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
+          Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
+    return new PermutationRDEMOEA(problem, populationSize, maximumNumberOfEvaluations);
   }
 
   /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */

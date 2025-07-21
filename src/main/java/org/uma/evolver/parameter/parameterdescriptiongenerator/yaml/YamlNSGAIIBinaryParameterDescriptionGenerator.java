@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIBinary;
+import org.uma.evolver.algorithm.base.nsgaii.BinaryNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  * }</pre>
  *
  * @see NSGAIIBinaryParameterSpace
- * @see NSGAIIBinary
+ * @see BinaryNSGAII
  * @author Antonio J. Nebro
  */
 public class YamlNSGAIIBinaryParameterDescriptionGenerator {

@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEADouble;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see RDEMOEADoubleParameterSpace
- * @see RDEMOEADouble
+ * @see DoubleRDEMOEA
  * @author Antonio J. Nebro
  */
 public class IraceRDEMOEADoubleParameterDescriptionGenerator {

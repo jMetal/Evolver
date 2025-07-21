@@ -6,9 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
-import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.base.moead.PermutationMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -20,7 +21,7 @@ class MOEADTest {
   @Nested
   @DisplayName("When the class constructor is called: ")
   class ConstructorTestCases {
-    private MOEADDouble moeadDouble;
+    private DoubleMOEAD moeadDouble;
 
     @BeforeEach
     void setup() {
@@ -30,7 +31,7 @@ class MOEADTest {
       String weightVectorFilesDirectory = "resources/weightVectors";
 
       moeadDouble =
-          new MOEADDouble(
+          new DoubleMOEAD(
               problem,
               populationSize,
               maximumNumberOfEvaluations,
@@ -91,7 +92,7 @@ class MOEADTest {
       String weightVectorFilesDirectory = "resources/weightVectors";
 
       var moeadDouble =
-          new MOEADDouble(
+          new DoubleMOEAD(
               problem,
               populationSize,
               maximumNumberOfEvaluations,
@@ -151,12 +152,12 @@ class MOEADTest {
               .split("\\s+");
 
       var moead =
-          new MOEADPermutation(
+          new PermutationMOEAD(
                   new KroAB100TSP(),
                   100,
                   1000000,
                   "resources/weightVectors",
-                  new MOEADDoubleParameterSpace())
+                  new MOEADPermutationParameterSpace())
               .parse(parameters);
       var parameterSpace = moead.parameterSpace();
 
@@ -213,7 +214,7 @@ class MOEADTest {
       String weightVectorFilesDirectory = "resources/weightVectors";
 
       var moeadde =
-          new MOEADDouble(
+          new DoubleMOEAD(
               problem,
               populationSize,
               maximumNumberOfEvaluations,

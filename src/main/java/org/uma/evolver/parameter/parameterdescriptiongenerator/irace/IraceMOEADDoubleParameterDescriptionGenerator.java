@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see MOEADDoubleParameterSpace
- * @see MOEADDouble
+ * @see DoubleMOEAD
  * @author Antonio J. Nebro
  */
 public class IraceMOEADDoubleParameterDescriptionGenerator {

@@ -58,7 +58,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @param <S> the solution type handled by the algorithm
  */
-public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
@@ -77,7 +77,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  protected AbstractNSGAII(int populationSize, ParameterSpace parameterSpace) {
+  protected BaseNSGAII(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
   }
@@ -91,7 +91,7 @@ public abstract class AbstractNSGAII<S extends Solution<?>> implements BaseLevel
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    * @param parameterSpace the parameter space for configuration
    */
-  protected AbstractNSGAII(
+  protected BaseNSGAII(
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,

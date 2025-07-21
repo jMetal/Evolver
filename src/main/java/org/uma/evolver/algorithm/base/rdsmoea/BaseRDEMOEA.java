@@ -59,7 +59,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * @param <S> the solution type handled by the algorithm
  */
-public abstract class AbstractRDEMOEA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   private final RDEMOEACommonParameterSpace<S> parameterSpace;
 
   protected Ranking<S> ranking;
@@ -78,7 +78,7 @@ public abstract class AbstractRDEMOEA<S extends Solution<?>> implements BaseLeve
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  protected AbstractRDEMOEA(int populationSize, RDEMOEACommonParameterSpace<S> parameterSpace) {
+  protected BaseRDEMOEA(int populationSize, RDEMOEACommonParameterSpace<S> parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
   }
@@ -92,7 +92,7 @@ public abstract class AbstractRDEMOEA<S extends Solution<?>> implements BaseLeve
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    * @param parameterSpace the parameter space for configuration
    */
-  protected AbstractRDEMOEA(
+  protected BaseRDEMOEA(
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,

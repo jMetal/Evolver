@@ -1,15 +1,15 @@
 package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
+import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
+import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
 /**
- * Configurable implementation of the MOEA/D algorithm for permutation-based problems.
+ * Configurable implementation of the MOEA/D algorithm for binary-based problems.
  *
  * <p>This class provides a customizable version of MOEA/D, supporting various aggregation
  * functions, neighborhood strategies, crossover and mutation operators, and archive configurations
@@ -17,9 +17,9 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  *
  * <p>Typical usage:
  * <pre>{@code
- * MOEADPermutation algorithm = new MOEADPermutation(problem, 100, 25000, "weightsVectorDirectory");
+ * MOEADBinary algorithm = new MOEADBinary(problem, 100, 25000, "weightsVectorDirectory");
  * algorithm.parse(args);
- * EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = algorithm.build();
+ * EvolutionaryAlgorithm<BinarySolution> moead = algorithm.build();
  * moead.run();
  * }</pre>
  *
@@ -27,16 +27,15 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * replaced solutions, and derived values for mutation or neighborhood, are set automatically based
  * on the problem and algorithm configuration.
  *
- * @see MOEADPermutationParameterSpace
  * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
  */
-public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>> {
+public class BinaryMOEAD extends BaseMOEAD<BinarySolution> {
   /**
    * Constructs a MOEADDouble instance with the given population size and a default parameter space.
    *
    * @param populationSize the population size to use
    */
-  public MOEADPermutation(int populationSize, String weightVectorFilesDirectory, MOEADPermutationParameterSpace parameterSpace) {
+  public BinaryMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
@@ -49,11 +48,11 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    * @param weightVectorFilesDirectory the directory containing weight vector files
    */
-  public MOEADPermutation(
-      Problem<PermutationSolution<Integer>> problem,
+  public BinaryMOEAD(
+      Problem<BinarySolution> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      String weightVectorFilesDirectory, 
+      String weightVectorFilesDirectory,
       ParameterSpace parameterSpace) {
     super(
         problem,
@@ -71,9 +70,9 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
    * @return a new configured instance of MOEADDouble
    */
   @Override
-  public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
-      Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
-    return new MOEADPermutation(
+  public BaseLevelAlgorithm<BinarySolution> createInstance(
+      Problem<BinarySolution> problem, int maximumNumberOfEvaluations) {
+    return new BinaryMOEAD(
         problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory, parameterSpace().createInstance());
   }
 
@@ -115,8 +114,17 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
             .addNonConfigurableSubParameter(
                     "subProblemIdGenerator", subProblemIdGenerator);
 
-    if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
-      parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
+    parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
+
+    parameterSpace.get("mutation").addNonConfigurableSubParameter("numberOfBitsInASolution", ((BinaryProblem)problem).totalNumberOfBits());
+
+    if (parameterSpace
+        .get("variation")
+        .value()
+        .equals("crossoverAndMutationVariation")) {
+      parameterSpace
+          .get("variation")
+          .addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
   }
 }

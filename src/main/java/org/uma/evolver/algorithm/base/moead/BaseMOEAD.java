@@ -62,7 +62,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  *
  * @param <S> the solution type handled by the algorithm
  */
-public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   private ParameterSpace parameterSpace;
 
   protected Problem<S> problem;
@@ -75,13 +75,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
   protected AggregationFunction aggregationFunction;
   protected boolean normalizedObjectives;
 
-  public AbstractMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
+  public BaseMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     this.populationSize = populationSize;
     this.weightVectorFilesDirectory = weightVectorFilesDirectory ;
     this.parameterSpace = parameterSpace;
   }
 
-  public AbstractMOEAD(
+  public BaseMOEAD(
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,

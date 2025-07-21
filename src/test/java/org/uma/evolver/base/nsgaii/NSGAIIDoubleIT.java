@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.*;
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -39,7 +39,7 @@ class NSGAIIDoubleIT {
     int maximumNumberOfEvaluations = 20000;
 
     var nsgaII =
-        new NSGAIIDouble(
+        new DoubleNSGAII(
             problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
@@ -94,7 +94,7 @@ class NSGAIIDoubleIT {
     int maximumNumberOfEvaluations = 25000;
 
     var nsgaII =
-        new NSGAIIDouble(
+        new DoubleNSGAII(
             problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
@@ -151,7 +151,7 @@ class NSGAIIDoubleIT {
     int maximumNumberOfEvaluations = 25000;
 
     var nsgaII =
-        new NSGAIIDouble(
+        new DoubleNSGAII(
             problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =
@@ -209,7 +209,7 @@ class NSGAIIDoubleIT {
     int maximumNumberOfEvaluations = 40000;
 
     var nsgaII =
-        new NSGAIIDouble(
+        new DoubleNSGAII(
             problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
 
     var parameters =

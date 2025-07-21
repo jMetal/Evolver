@@ -1,9 +1,8 @@
 package org.uma.evolver.example.base;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
+import org.uma.evolver.algorithm.base.moead.PermutationMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
@@ -46,7 +45,7 @@ public class MOEADBiObjectiveTSP {
             .split("\\s+");
 
     var evMOEAD =
-        new MOEADPermutation(
+        new PermutationMOEAD(
             new KroAB100TSP(),
             100,
             1000000,

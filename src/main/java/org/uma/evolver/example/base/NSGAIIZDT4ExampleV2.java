@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -38,7 +38,7 @@ public class NSGAIIZDT4ExampleV2 {
     String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var evNSGAII = new NSGAIIDouble(new ZDT4(), 100, 25000, parameterSpace);
+    var evNSGAII = new DoubleNSGAII(new ZDT4(), 100, 25000, parameterSpace);
     evNSGAII.parse(parameters);
 
     System.out.println(parameterSpace) ;

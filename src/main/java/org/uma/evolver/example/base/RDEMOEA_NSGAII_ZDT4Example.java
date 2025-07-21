@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEADouble;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -36,7 +36,7 @@ public class RDEMOEA_NSGAII_ZDT4Example {
                 + "--removalPolicy oneShot")
             .split("\\s+");
 
-    var evAlgorithm = new RDEMOEADouble(new ZDT4(), 100, 25000);
+    var evAlgorithm = new DoubleRDEMOEA(new ZDT4(), 100, 25000);
     evAlgorithm.parse(parameters);
 
     evAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);

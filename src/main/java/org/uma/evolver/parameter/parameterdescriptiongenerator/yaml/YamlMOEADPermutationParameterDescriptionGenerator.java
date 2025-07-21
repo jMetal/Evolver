@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
+import org.uma.evolver.algorithm.base.moead.PermutationMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  *
  * @see MOEADPermutationParameterSpace
- * @see MOEADPermutation
+ * @see PermutationMOEAD
  * @author Antonio J. Nebro
  */
 public class YamlMOEADPermutationParameterDescriptionGenerator {

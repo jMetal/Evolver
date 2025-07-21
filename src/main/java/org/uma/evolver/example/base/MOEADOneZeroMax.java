@@ -1,7 +1,7 @@
 package org.uma.evolver.example.base;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.base.moead.MOEADBinary;
+import org.uma.evolver.algorithm.base.moead.BinaryMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
@@ -40,7 +40,7 @@ public class MOEADOneZeroMax {
             .split("\\s+");
 
     var baseAlgorithm =
-        new MOEADBinary(
+        new BinaryMOEAD(
             new OneZeroMax(),
             100,
             10000,

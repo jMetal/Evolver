@@ -1,6 +1,6 @@
 package org.uma.evolver.algorithm.meta;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -29,7 +29,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * </p>
  *
  * @see EvolutionaryAlgorithm
- * @see NSGAIIDouble
+ * @see DoubleNSGAII
  * @see MetaOptimizationProblem
  */
 public class MetaNSGAIIBuilder {
@@ -152,7 +152,7 @@ public class MetaNSGAIIBuilder {
                     + "--selectionTournamentSize 2")
                     .split("\\s+");
 
-    var evNSGAII = new NSGAIIDouble(problem, populationSize, maxEvaluations, parameterSpace);
+    var evNSGAII = new DoubleNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
     evNSGAII.parse(parameters);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = evNSGAII.build();

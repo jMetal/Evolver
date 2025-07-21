@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIPermutation;
+import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  *
  * @see NSGAIIPermutationParameterSpace
- * @see NSGAIIPermutation
+ * @see PermutationNSGAII
  * @author Antonio J. Nebro
  */
 public class YamlNSGAIIPermutationParameterDescriptionGenerator {

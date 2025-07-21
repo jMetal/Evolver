@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see NSGAIIDoubleParameterSpace
- * @see NSGAIIDouble
+ * @see DoubleNSGAII
  * @author Antonio J. Nebro
  */
 public class IraceNSGAIIDoubleParameterDescriptionGenerator {

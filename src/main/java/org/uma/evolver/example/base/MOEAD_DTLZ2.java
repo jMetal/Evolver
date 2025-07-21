@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -44,7 +44,7 @@ public class MOEAD_DTLZ2 {
             .split("\\s+");
 
     var evMOEAD =
-        new MOEADDouble(
+        new DoubleMOEAD(
             problem, 100, 40000, "resources/weightVectors", new MOEADDoubleParameterSpace());
     evMOEAD.parse(parameters);
 

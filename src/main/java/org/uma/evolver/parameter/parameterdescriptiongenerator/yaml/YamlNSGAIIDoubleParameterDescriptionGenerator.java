@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.nsgaii.NSGAIIDouble;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see NSGAIIDoubleParameterSpace
- * @see NSGAIIDouble
+ * @see DoubleNSGAII
  * @author Antonio J. Nebro
  */
 public class YamlNSGAIIDoubleParameterDescriptionGenerator {

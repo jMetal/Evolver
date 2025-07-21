@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEADouble;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see RDEMOEADoubleParameterSpace
- * @see RDEMOEADouble
+ * @see DoubleRDEMOEA
  * @author Antonio J. Nebro
  */
 public class YamlRDEMOEADoubleParameterDescriptionGenerator {

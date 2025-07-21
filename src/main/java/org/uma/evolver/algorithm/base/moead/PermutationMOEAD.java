@@ -1,27 +1,25 @@
 package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
-import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Configurable implementation of the MOEA/D algorithm for real-coded (double) problems.
+ * Configurable implementation of the MOEA/D algorithm for permutation-based problems.
  *
  * <p>This class provides a customizable version of MOEA/D, supporting various aggregation
  * functions, neighborhood strategies, crossover and mutation operators, and archive configurations
- * for double-valued problems.
+ * for permutation-valued problems.
  *
  * <p>Typical usage:
- *
  * <pre>{@code
- * MOEADDouble algorithm = new MOEADDouble(problem, 100, 25000, "weightsVectorDirectory");
+ * MOEADPermutation algorithm = new MOEADPermutation(problem, 100, 25000, "weightsVectorDirectory");
  * algorithm.parse(args);
- * EvolutionaryAlgorithm<DoubleSolution> moead = algorithm.build();
+ * EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = algorithm.build();
  * moead.run();
  * }</pre>
  *
@@ -29,16 +27,16 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * replaced solutions, and derived values for mutation or neighborhood, are set automatically based
  * on the problem and algorithm configuration.
  *
- * @see MOEADDoubleParameterSpace
- * @see MutationParameter
+ * @see MOEADPermutationParameterSpace
+ * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
  */
-public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
+public class PermutationMOEAD extends BaseMOEAD<PermutationSolution<Integer>> {
   /**
    * Constructs a MOEADDouble instance with the given population size and a default parameter space.
    *
    * @param populationSize the population size to use
    */
-  public MOEADDouble(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
+  public PermutationMOEAD(int populationSize, String weightVectorFilesDirectory, MOEADPermutationParameterSpace parameterSpace) {
     super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
@@ -51,11 +49,11 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    * @param weightVectorFilesDirectory the directory containing weight vector files
    */
-  public MOEADDouble(
-      Problem<DoubleSolution> problem,
+  public PermutationMOEAD(
+      Problem<PermutationSolution<Integer>> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      String weightVectorFilesDirectory,
+      String weightVectorFilesDirectory, 
       ParameterSpace parameterSpace) {
     super(
         problem,
@@ -73,14 +71,10 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
    * @return a new configured instance of MOEADDouble
    */
   @Override
-  public BaseLevelAlgorithm<DoubleSolution> createInstance(
-      Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-    return new MOEADDouble(
-        problem,
-        populationSize,
-        maximumNumberOfEvaluations,
-        weightVectorFilesDirectory,
-        parameterSpace().createInstance());
+  public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
+      Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
+    return new PermutationMOEAD(
+        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory, parameterSpace().createInstance());
   }
 
   /**
@@ -97,44 +91,29 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
    */
   @Override
   protected void setNonConfigurableParameters() {
-    // Set any additional non-configurable parameters specific to MOEADDouble here
     ParameterSpace parameterSpace = parameterSpace();
 
     maximumNumberOfReplacedSolutions =
-        (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
+            (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
     aggregationFunction =
-        ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction"))
-            .getAggregationFunction();
+            ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction")).getAggregationFunction();
 
     normalizedObjectives =
-        ((String) parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
+            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
-        (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
+            (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
     subProblemIdGeneratorParameter.sequenceLength(populationSize);
     subProblemIdGenerator = subProblemIdGeneratorParameter.getSequenceGenerator();
 
     neighborhood = getNeighborhood();
 
     parameterSpace
-        .get("selection")
-        .addNonConfigurableSubParameter("neighborhood", neighborhood)
-        .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
-
-    MutationParameter mutationParameter = (MutationParameter) parameterSpace.get("mutation");
-    mutationParameter.addNonConfigurableSubParameter(
-        "numberOfProblemVariables", problem.numberOfVariables());
-
-    if (mutationParameter.value().equals("nonUniform")) {
-      mutationParameter.addNonConfigurableSubParameter(
-          "maxIterations", maximumNumberOfEvaluations / populationSize);
-    }
-
-    if (mutationParameter.value().equals("uniform")) {
-      mutationParameter.addNonConfigurableSubParameter(
-          "uniformMutationPerturbation", parameterSpace.get("uniformMutationPerturbation"));
-    }
+            .get("selection")
+            .addNonConfigurableSubParameter("neighborhood", neighborhood)
+            .addNonConfigurableSubParameter(
+                    "subProblemIdGenerator", subProblemIdGenerator);
 
     if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
       parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);

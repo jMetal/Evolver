@@ -102,11 +102,11 @@ public class DoubleParameterProcessor implements ParameterProcessor {
         "Range for parameter " + parameterName + " must contain exactly 2 values [min, max]");
     
     Check.that(
-        rangeList.get(0) instanceof Number && rangeList.get(1) instanceof Number,
+        rangeList.get(0) instanceof Double && rangeList.get(1) instanceof Double,
         "Both range values for parameter " + parameterName + " must be numbers");
     
-    double minValue = ((Number) rangeList.get(0)).doubleValue();
-    double maxValue = ((Number) rangeList.get(1)).doubleValue();
+    double minValue = ((Double) rangeList.get(0)).doubleValue();
+    double maxValue = ((Double) rangeList.get(1)).doubleValue();
     
     Check.that(minValue < maxValue,
         "Minimum value must be less than maximum value in range for parameter " + parameterName);

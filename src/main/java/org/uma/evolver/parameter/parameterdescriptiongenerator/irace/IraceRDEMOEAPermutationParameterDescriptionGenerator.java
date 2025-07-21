@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
 
-import org.uma.evolver.algorithm.base.rdsmoea.RDEMOEAPermutation;
+import org.uma.evolver.algorithm.base.rdsmoea.PermutationRDEMOEA;
 import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -19,7 +19,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @see RDEMOEAPermutationParameterSpace
- * @see RDEMOEAPermutation
+ * @see PermutationRDEMOEA
  * @author Antonio J. Nebro
  */
 public class IraceRDEMOEAPermutationParameterDescriptionGenerator {
