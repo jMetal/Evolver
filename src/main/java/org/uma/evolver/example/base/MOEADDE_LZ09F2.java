@@ -1,6 +1,8 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
@@ -19,17 +21,19 @@ public class MOEADDE_LZ09F2 {
   public static void main(String[] args) {
     DoubleProblem problem = new LZ09F2() ;
     String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOEADDouble.yaml" ;
+
 
     String[] parameters =
         ("--neighborhoodSize 20 "
             + "--maximumNumberOfReplacedSolutions 2 "
             + "--aggregationFunction tschebyscheff "
-            + "--normalizeObjectives TRUE "
+            + "--normalizeObjectives true "
             + "--epsilonParameterForNormalization 4 "
             + "--algorithmResult population "
             + "--createInitialSolutions default "
             + "--variation differentialEvolutionVariation "
-            + "--subProblemIdGenerator permutation "
+            + "--subProblemIdGenerator randomPermutationCycle "
             + "--mutation polynomial "
             + "--mutationProbabilityFactor 1.0 "
             + "--mutationRepairStrategy bounds "
@@ -42,7 +46,7 @@ public class MOEADDE_LZ09F2 {
             .split("\\s+");
 
     var evMOEAD = new MOEADDouble(problem, 300, 175000,
-        "resources/weightVectors");
+        "resources/weightVectors", new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
     evMOEAD.parse(parameters);
 
     evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);

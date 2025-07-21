@@ -2,6 +2,7 @@ package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.jmetal.problem.Problem;
@@ -35,8 +36,8 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
    *
    * @param populationSize the population size to use
    */
-  public MOEADPermutation(int populationSize) {
-    super(populationSize, new MOEADPermutationParameterSpace());
+  public MOEADPermutation(int populationSize, String weightVectorFilesDirectory, MOEADPermutationParameterSpace parameterSpace) {
+    super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
   /**
@@ -52,13 +53,14 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
       Problem<PermutationSolution<Integer>> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      String weightVectorFilesDirectory) {
+      String weightVectorFilesDirectory, 
+      ParameterSpace parameterSpace) {
     super(
         problem,
         populationSize,
         maximumNumberOfEvaluations,
         weightVectorFilesDirectory,
-        new MOEADPermutationParameterSpace());
+        parameterSpace);
   }
 
   /**
@@ -72,7 +74,7 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
   public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
       Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
     return new MOEADPermutation(
-        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory, parameterSpace().createInstance());
   }
 
   /**
@@ -89,39 +91,32 @@ public class MOEADPermutation extends AbstractMOEAD<PermutationSolution<Integer>
    */
   @Override
   protected void setNonConfigurableParameters() {
-    MOEADPermutationParameterSpace parameterSpace =
-        (MOEADPermutationParameterSpace) parameterSpace();
+    ParameterSpace parameterSpace = parameterSpace();
 
     maximumNumberOfReplacedSolutions =
-            (int) parameterSpace.get(parameterSpace.MAXIMUM_NUMBER_OF_REPLACED_SOLUTIONS).value();
+            (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
     aggregationFunction =
-            ((AggregationFunctionParameter) parameterSpace.get(parameterSpace.AGGREGATION_FUNCTION))
-                    .getAggregationFunction();
+            ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction")).getAggregationFunction();
 
     normalizedObjectives =
-            (boolean) parameterSpace.get(parameterSpace.NORMALIZE_OBJECTIVES).value();
+            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
-            (SequenceGeneratorParameter) parameterSpace.get(parameterSpace.SUB_PROBLEM_ID_GENERATOR);
+            (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
     subProblemIdGeneratorParameter.sequenceLength(populationSize);
     subProblemIdGenerator = subProblemIdGeneratorParameter.getSequenceGenerator();
 
     neighborhood = getNeighborhood();
 
     parameterSpace
-            .get(parameterSpace.SELECTION)
+            .get("selection")
             .addNonConfigurableSubParameter("neighborhood", neighborhood)
             .addNonConfigurableSubParameter(
-                    parameterSpace.SUB_PROBLEM_ID_GENERATOR, subProblemIdGenerator);
+                    "subProblemIdGenerator", subProblemIdGenerator);
 
-    if (parameterSpace
-        .get(parameterSpace.VARIATION)
-        .value()
-        .equals(parameterSpace.CROSSOVER_AND_MUTATION_VARIATION)) {
-      parameterSpace
-          .get(parameterSpace.VARIATION)
-          .addNonConfigurableSubParameter("offspringPopulationSize", 1);
+    if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
+      parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
   }
 }

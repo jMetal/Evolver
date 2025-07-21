@@ -2,6 +2,7 @@ package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
@@ -28,9 +29,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * replaced solutions, and derived values for mutation or neighborhood, are set automatically based
  * on the problem and algorithm configuration.
  *
- * @see
- *     MOEADDoubleParameterSpace
- * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
+ * @see MOEADDoubleParameterSpace
+ * @see MutationParameter
  */
 public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
   /**
@@ -38,8 +38,8 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
    *
    * @param populationSize the population size to use
    */
-  public MOEADDouble(int populationSize) {
-    super(populationSize, new MOEADDoubleParameterSpace());
+  public MOEADDouble(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
+    super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
   /**
@@ -55,13 +55,14 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
       Problem<DoubleSolution> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      String weightVectorFilesDirectory) {
+      String weightVectorFilesDirectory,
+      ParameterSpace parameterSpace) {
     super(
         problem,
         populationSize,
         maximumNumberOfEvaluations,
         weightVectorFilesDirectory,
-        new MOEADDoubleParameterSpace());
+        parameterSpace);
   }
 
   /**
@@ -75,7 +76,11 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
     return new MOEADDouble(
-        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+        problem,
+        populationSize,
+        maximumNumberOfEvaluations,
+        weightVectorFilesDirectory,
+        parameterSpace().createInstance());
   }
 
   /**
@@ -93,54 +98,46 @@ public class MOEADDouble extends AbstractMOEAD<DoubleSolution> {
   @Override
   protected void setNonConfigurableParameters() {
     // Set any additional non-configurable parameters specific to MOEADDouble here
-    MOEADDoubleParameterSpace parameterSpace = (MOEADDoubleParameterSpace) parameterSpace();
+    ParameterSpace parameterSpace = parameterSpace();
 
     maximumNumberOfReplacedSolutions =
-        (int) parameterSpace.get(parameterSpace.MAXIMUM_NUMBER_OF_REPLACED_SOLUTIONS).value();
+        (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
     aggregationFunction =
-        ((AggregationFunctionParameter) parameterSpace.get(parameterSpace.AGGREGATION_FUNCTION))
+        ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction"))
             .getAggregationFunction();
 
     normalizedObjectives =
-        (boolean) parameterSpace.get(parameterSpace.NORMALIZE_OBJECTIVES).value();
+        ((String) parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
-        (SequenceGeneratorParameter) parameterSpace.get(parameterSpace.SUB_PROBLEM_ID_GENERATOR);
+        (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
     subProblemIdGeneratorParameter.sequenceLength(populationSize);
     subProblemIdGenerator = subProblemIdGeneratorParameter.getSequenceGenerator();
 
     neighborhood = getNeighborhood();
 
     parameterSpace
-        .get(parameterSpace.SELECTION)
+        .get("selection")
         .addNonConfigurableSubParameter("neighborhood", neighborhood)
-        .addNonConfigurableSubParameter(
-            parameterSpace.SUB_PROBLEM_ID_GENERATOR, subProblemIdGenerator);
+        .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
 
-    MutationParameter mutationParameter =
-        (MutationParameter) parameterSpace.get(parameterSpace.MUTATION);
+    MutationParameter mutationParameter = (MutationParameter) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
         "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
+    if (mutationParameter.value().equals("nonUniform")) {
       mutationParameter.addNonConfigurableSubParameter(
           "maxIterations", maximumNumberOfEvaluations / populationSize);
     }
 
-    if (mutationParameter.value().equals(parameterSpace.UNIFORM)) {
+    if (mutationParameter.value().equals("uniform")) {
       mutationParameter.addNonConfigurableSubParameter(
-          parameterSpace.UNIFORM_MUTATION_PERTURBATION,
-          parameterSpace.get(parameterSpace.UNIFORM_MUTATION_PERTURBATION));
+          "uniformMutationPerturbation", parameterSpace.get("uniformMutationPerturbation"));
     }
 
-    if (parameterSpace
-        .get(parameterSpace.VARIATION)
-        .value()
-        .equals(parameterSpace.CROSSOVER_AND_MUTATION_VARIATION)) {
-      parameterSpace
-          .get(parameterSpace.VARIATION)
-          .addNonConfigurableSubParameter("offspringPopulationSize", 1);
+    if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
+      parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
   }
 }

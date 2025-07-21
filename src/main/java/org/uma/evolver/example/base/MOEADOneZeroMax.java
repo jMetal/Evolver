@@ -2,6 +2,7 @@ package org.uma.evolver.example.base;
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.moead.MOEADBinary;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
@@ -23,12 +24,12 @@ public class MOEADOneZeroMax {
         ("--neighborhoodSize 20 "
                 + "--maximumNumberOfReplacedSolutions 2 "
                 + "--aggregationFunction penaltyBoundaryIntersection "
-                + "--normalizeObjectives True "
+                + "--normalizeObjectives true "
                 + "--epsilonParameterForNormalization 6 "
                 + "--pbiTheta 5.0 "
                 + "--algorithmResult population "
                 + "--createInitialSolutions default "
-                + "--subProblemIdGenerator permutation "
+                + "--subProblemIdGenerator randomPermutationCycle "
                 + "--variation crossoverAndMutationVariation "
                 + "--crossoverProbability 0.9 "
                 + "--mutation bitFlip "
@@ -38,7 +39,13 @@ public class MOEADOneZeroMax {
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var baseAlgorithm = new MOEADBinary(new OneZeroMax(), 100, 10000, "resources/weightVectors");
+    var baseAlgorithm =
+        new MOEADBinary(
+            new OneZeroMax(),
+            100,
+            10000,
+            "resources/weightVectors",
+            new MOEADBinaryParameterSpace());
 
     baseAlgorithm.parse(parameters);
 

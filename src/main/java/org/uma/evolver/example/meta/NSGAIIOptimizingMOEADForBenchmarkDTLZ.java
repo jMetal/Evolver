@@ -3,7 +3,6 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.moead.MOEADDouble;
-import org.uma.evolver.algorithm.base.moead.MOEADDoubleV2;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -14,7 +13,6 @@ import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -44,7 +42,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     //var configurableAlgorithm = new MOEADDouble(100);
-    var configurableAlgorithm = new MOEADDoubleV2(100, weightVectorFilesDirectory, parameterSpace);
+    var configurableAlgorithm = new MOEADDouble(100, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 

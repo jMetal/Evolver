@@ -63,7 +63,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
-  private MOEADCommonParameterSpace<S> parameterSpace;
+  private ParameterSpace parameterSpace;
 
   protected Problem<S> problem;
   protected int populationSize;
@@ -75,8 +75,9 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
   protected AggregationFunction aggregationFunction;
   protected boolean normalizedObjectives;
 
-  public AbstractMOEAD(int populationSize, MOEADCommonParameterSpace<S> parameterSpace) {
+  public AbstractMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     this.populationSize = populationSize;
+    this.weightVectorFilesDirectory = weightVectorFilesDirectory ;
     this.parameterSpace = parameterSpace;
   }
 
@@ -85,7 +86,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
       int populationSize,
       int maximumNumberOfEvaluations,
       String weightVectorFilesDirectory,
-      MOEADCommonParameterSpace<S> parameterSpace) {
+      ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.problem = problem;
     this.populationSize = populationSize;
@@ -150,7 +151,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
 
   private PopulationAndNeighborhoodSelection<S> createSelection(Variation<S> variation) {
     return (PopulationAndNeighborhoodSelection<S>)
-        ((SelectionParameter<S>) parameterSpace.get(parameterSpace.SELECTION))
+        ((SelectionParameter<S>) parameterSpace.get("selection"))
             .getSelection(variation.getMatingPoolSize(), null);
   }
 
@@ -161,19 +162,19 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
    */
   private boolean usingExternalArchive() {
     return parameterSpace
-        .get(parameterSpace.ALGORITHM_RESULT)
+        .get("algorithmResult")
         .value()
-        .equals(parameterSpace.EXTERNAL_ARCHIVE);
+        .equals("externalArchive");
   }
 
   private Variation<S> createVariation() {
     parameterSpace
-        .get(parameterSpace.VARIATION)
+        .get("variation")
         .addNonConfigurableSubParameter(
-            parameterSpace.SUB_PROBLEM_ID_GENERATOR, subProblemIdGenerator);
+            "subProblemIdGenerator", subProblemIdGenerator);
 
     Variation<S> variation =
-        ((VariationParameter<S>) parameterSpace.get(parameterSpace.VARIATION)).getVariation();
+        ((VariationParameter<S>) parameterSpace.get("variation")).getVariation();
     return variation;
   }
 
@@ -181,14 +182,14 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
     if (problem.numberOfObjectives() == 2) {
       neighborhood =
           new WeightVectorNeighborhood<>(
-              populationSize, (int) parameterSpace.get(parameterSpace.NEIGHBORHOOD_SIZE).value());
+              populationSize, (int) parameterSpace.get("neighborhoodSize").value());
     } else {
       try {
         neighborhood =
             new WeightVectorNeighborhood<>(
                 populationSize,
                 problem.numberOfObjectives(),
-                (int) parameterSpace.get(parameterSpace.NEIGHBORHOOD_SIZE).value(),
+                (int) parameterSpace.get("neighborhoodSize").value(),
                 weightVectorFilesDirectory);
       } catch (FileNotFoundException exception) {
         exception.printStackTrace();
@@ -210,7 +211,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
    */
   protected Archive<S> createExternalArchive() {
     ExternalArchiveParameter<S> externalArchiveParameter =
-        (ExternalArchiveParameter<S>) parameterSpace.get(parameterSpace.EXTERNAL_ARCHIVE);
+        (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
     Archive<S> archive = externalArchiveParameter.getExternalArchive();
@@ -220,7 +221,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements BaseLevelA
 
   private SolutionsCreation<S> createInitialSolutions() {
     return ((CreateInitialSolutionsParameter)
-            parameterSpace.get(parameterSpace.CREATE_INITIAL_SOLUTIONS))
+            parameterSpace.get("createInitialSolutions"))
         .getCreateInitialSolutionsStrategy(problem, populationSize);
   }
 

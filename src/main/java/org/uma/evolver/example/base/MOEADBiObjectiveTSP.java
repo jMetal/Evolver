@@ -2,6 +2,8 @@ package org.uma.evolver.example.base;
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
@@ -25,25 +27,31 @@ public class MOEADBiObjectiveTSP {
     String referenceFrontFileName = "resources/referenceFrontsTSP/KroAB100TSP.csv";
 
     String[] parameters =
-            ("--neighborhoodSize 20 "
-                    + "--maximumNumberOfReplacedSolutions 2 "
-                    + "--aggregationFunction penaltyBoundaryIntersection "
-                    + "--normalizeObjectives True "
-                    + "--epsilonParameterForNormalization 6 "
-                    + "--pbiTheta 5.0 "
-                    + "--algorithmResult population "
-                    + "--createInitialSolutions default "
-                    + "--subProblemIdGenerator permutation "
-                    + "--variation crossoverAndMutationVariation "
-                    + "--crossoverProbability 0.9 "
-                    + "--mutation swap "
-                    + "--mutationProbability 0.08 "
-                    + "--crossover PMX "
-                    + "--selection populationAndNeighborhoodMatingPoolSelection "
-                    + "--neighborhoodSelectionProbability 0.9")
+        ("--neighborhoodSize 20 "
+                + "--maximumNumberOfReplacedSolutions 2 "
+                + "--aggregationFunction penaltyBoundaryIntersection "
+                + "--normalizeObjectives true "
+                + "--epsilonParameterForNormalization 6 "
+                + "--pbiTheta 5.0 "
+                + "--algorithmResult population "
+                + "--createInitialSolutions default "
+                + "--subProblemIdGenerator randomPermutationCycle "
+                + "--variation crossoverAndMutationVariation "
+                + "--crossoverProbability 0.9 "
+                + "--mutation swap "
+                + "--mutationProbability 0.08 "
+                + "--crossover PMX "
+                + "--selection populationAndNeighborhoodMatingPoolSelection "
+                + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var evMOEAD = new MOEADPermutation(new KroAB100TSP(), 100, 1000000, "resources/weightVectors");
+    var evMOEAD =
+        new MOEADPermutation(
+            new KroAB100TSP(),
+            100,
+            1000000,
+            "resources/weightVectors",
+            new MOEADPermutationParameterSpace());
 
     evMOEAD.parse(parameters);
 

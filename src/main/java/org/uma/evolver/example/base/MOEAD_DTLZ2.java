@@ -1,6 +1,7 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.moead.MOEADDouble;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
@@ -24,7 +25,7 @@ public class MOEAD_DTLZ2 {
         ("--neighborhoodSize 20 "
                 + "--maximumNumberOfReplacedSolutions 2 "
                 + "--aggregationFunction penaltyBoundaryIntersection "
-                + "--normalizeObjectives False "
+                + "--normalizeObjectives false "
                 + "--pbiTheta 5.0 "
                 + "--algorithmResult population "
                 + "--createInitialSolutions default "
@@ -42,8 +43,9 @@ public class MOEAD_DTLZ2 {
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var evMOEAD = new MOEADDouble(problem, 100, 40000,
-        "resources/weightVectors");
+    var evMOEAD =
+        new MOEADDouble(
+            problem, 100, 40000, "resources/weightVectors", new MOEADDoubleParameterSpace());
     evMOEAD.parse(parameters);
 
     evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);

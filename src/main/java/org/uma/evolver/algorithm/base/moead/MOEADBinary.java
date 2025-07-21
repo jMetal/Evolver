@@ -2,9 +2,11 @@ package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
 /**
@@ -34,8 +36,8 @@ public class MOEADBinary extends AbstractMOEAD<BinarySolution> {
    *
    * @param populationSize the population size to use
    */
-  public MOEADBinary(int populationSize) {
-    super(populationSize, new MOEADBinaryParameterSpace());
+  public MOEADBinary(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
+    super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
   /**
@@ -51,13 +53,14 @@ public class MOEADBinary extends AbstractMOEAD<BinarySolution> {
       Problem<BinarySolution> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      String weightVectorFilesDirectory) {
+      String weightVectorFilesDirectory,
+      ParameterSpace parameterSpace) {
     super(
         problem,
         populationSize,
         maximumNumberOfEvaluations,
         weightVectorFilesDirectory,
-        new MOEADBinaryParameterSpace());
+        parameterSpace);
   }
 
   /**
@@ -71,7 +74,7 @@ public class MOEADBinary extends AbstractMOEAD<BinarySolution> {
   public BaseLevelAlgorithm<BinarySolution> createInstance(
       Problem<BinarySolution> problem, int maximumNumberOfEvaluations) {
     return new MOEADBinary(
-        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+        problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory, parameterSpace().createInstance());
   }
 
   /**
@@ -88,38 +91,40 @@ public class MOEADBinary extends AbstractMOEAD<BinarySolution> {
    */
   @Override
   protected void setNonConfigurableParameters() {
-    MOEADBinaryParameterSpace parameterSpace =
-        (MOEADBinaryParameterSpace) parameterSpace();
+    ParameterSpace parameterSpace = parameterSpace();
 
     maximumNumberOfReplacedSolutions =
-            (int) parameterSpace.get(parameterSpace.MAXIMUM_NUMBER_OF_REPLACED_SOLUTIONS).value();
+            (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
     aggregationFunction =
-            ((AggregationFunctionParameter) parameterSpace.get(parameterSpace.AGGREGATION_FUNCTION))
-                    .getAggregationFunction();
+            ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction")).getAggregationFunction();
 
     normalizedObjectives =
-            (boolean) parameterSpace.get(parameterSpace.NORMALIZE_OBJECTIVES).value();
+            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
-            (SequenceGeneratorParameter) parameterSpace.get(parameterSpace.SUB_PROBLEM_ID_GENERATOR);
+            (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
     subProblemIdGeneratorParameter.sequenceLength(populationSize);
     subProblemIdGenerator = subProblemIdGeneratorParameter.getSequenceGenerator();
 
     neighborhood = getNeighborhood();
 
     parameterSpace
-            .get(parameterSpace.SELECTION)
+            .get("selection")
             .addNonConfigurableSubParameter("neighborhood", neighborhood)
             .addNonConfigurableSubParameter(
-                    parameterSpace.SUB_PROBLEM_ID_GENERATOR, subProblemIdGenerator);
+                    "subProblemIdGenerator", subProblemIdGenerator);
+
+    parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
+
+    parameterSpace.get("mutation").addNonConfigurableSubParameter("numberOfBitsInASolution", ((BinaryProblem)problem).totalNumberOfBits());
 
     if (parameterSpace
-        .get(parameterSpace.VARIATION)
+        .get("variation")
         .value()
-        .equals(parameterSpace.CROSSOVER_AND_MUTATION_VARIATION)) {
+        .equals("crossoverAndMutationVariation")) {
       parameterSpace
-          .get(parameterSpace.VARIATION)
+          .get("variation")
           .addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
   }

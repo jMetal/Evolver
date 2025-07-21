@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.moead.MOEADDouble;
 import org.uma.evolver.algorithm.base.moead.MOEADPermutation;
+import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -30,7 +31,11 @@ class MOEADTest {
 
       moeadDouble =
           new MOEADDouble(
-              problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+              problem,
+              populationSize,
+              maximumNumberOfEvaluations,
+              weightVectorFilesDirectory,
+              new MOEADDoubleParameterSpace());
     }
 
     @Test
@@ -87,7 +92,11 @@ class MOEADTest {
 
       var moeadDouble =
           new MOEADDouble(
-              problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+              problem,
+              populationSize,
+              maximumNumberOfEvaluations,
+              weightVectorFilesDirectory,
+              new MOEADDoubleParameterSpace());
 
       moeadDouble.parse(parameters);
       var parameterSpace = moeadDouble.parameterSpace();
@@ -142,7 +151,12 @@ class MOEADTest {
               .split("\\s+");
 
       var moead =
-          new MOEADPermutation(new KroAB100TSP(), 100, 1000000, "resources/weightVectors")
+          new MOEADPermutation(
+                  new KroAB100TSP(),
+                  100,
+                  1000000,
+                  "resources/weightVectors",
+                  new MOEADDoubleParameterSpace())
               .parse(parameters);
       var parameterSpace = moead.parameterSpace();
 
@@ -200,7 +214,11 @@ class MOEADTest {
 
       var moeadde =
           new MOEADDouble(
-              problem, populationSize, maximumNumberOfEvaluations, weightVectorFilesDirectory);
+              problem,
+              populationSize,
+              maximumNumberOfEvaluations,
+              weightVectorFilesDirectory,
+              new MOEADDoubleParameterSpace());
 
       moeadde.parse(parameters);
       var parameterSpace = moeadde.parameterSpace();
