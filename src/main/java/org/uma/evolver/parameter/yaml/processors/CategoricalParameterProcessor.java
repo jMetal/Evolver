@@ -8,6 +8,7 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
+import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 import java.util.ArrayList;
@@ -50,20 +51,30 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     processGlobalSubParameters(parameterName, configMap, parameterSpace);
   }
   
+  /**
+   * Validates the configuration object for a parameter.
+   *
+   * @param parameterName the name of the parameter being validated
+   * @param parameterConfig the configuration object to validate
+   * @throws JMetalException if the configuration is null or not a Map
+   */
   private void validateParameterConfig(String parameterName, Object parameterConfig) {
-    if (parameterConfig == null) {
-      throw new JMetalException("Configuration for parameter " + parameterName + " cannot be null");
-    }
-    if (!(parameterConfig instanceof Map)) {
-      throw new JMetalException("Invalid configuration for parameter " + parameterName + ": expected a map");
-    }
+    Check.notNull(parameterConfig);
+    Check.that(parameterConfig instanceof Map, 
+        "Invalid configuration for parameter " + parameterName + ": expected a map");
   }
   
+  /**
+   * Processes the values for a parameter from the configuration map.
+   *
+   * @param parameterName the name of the parameter being processed
+   * @param configMap the configuration map containing the parameter values
+   * @param parameterSpace the parameter space to add the parameter to
+   * @throws JMetalException if the values format is unsupported or invalid
+   */
   private void processParameterValues(String parameterName, Map<String, Object> configMap, ParameterSpace parameterSpace) {
     Object parameterValues = configMap.get("values");
-    if (parameterValues == null) {
-      throw new JMetalException("No values defined for parameter " + parameterName);
-    }
+    Check.notNull(parameterValues);
     
     if (parameterValues instanceof List) {
       processListValues(parameterName, (List<?>) parameterValues, parameterSpace);
@@ -74,9 +85,16 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
   }
   
+  /**
+   * Processes a list of values for a categorical parameter.
+   *
+   * @param parameterName the name of the parameter being processed
+   * @param categoryList the list of category values (can be numbers or strings)
+   * @param parameterSpace the parameter space to add the parameter to
+   */
   private void processListValues(String parameterName, List<?> categoryList, ParameterSpace parameterSpace) {
     if (categoryList.isEmpty()) {
-      System.out.println("  - Creating empty categorical parameter: " + parameterName);
+
       parameterSpace.put(parameterFactory.createParameter(parameterName, new ArrayList<>()));
       return;
     }
@@ -88,35 +106,53 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
   }
   
+  /**
+   * Processes a map of values for a categorical parameter, using the keys as categories.
+   *
+   * @param parameterName the name of the parameter being processed
+   * @param categoryMap the map whose keys will be used as category values
+   * @param parameterSpace the parameter space to add the parameter to
+   */
   private void processMapValues(String parameterName, Map<String, Object> categoryMap, ParameterSpace parameterSpace) {
     List<String> stringCategories = new ArrayList<>(categoryMap.keySet());
-    System.out.println("  - Creating categorical parameter from map keys: " + parameterName + " = " + stringCategories);
+
     parameterSpace.put(parameterFactory.createParameter(parameterName, stringCategories));
   }
   
+  /**
+   * Processes a list of numeric values for a categorical parameter.
+   *
+   * @param parameterName the name of the parameter being processed
+   * @param categoryList the list of numeric category values
+   * @param parameterSpace the parameter space to add the parameter to
+   * @throws JMetalException if any value in the list is not a number
+   */
   private void processNumericCategories(String parameterName, List<?> categoryList, ParameterSpace parameterSpace) {
     List<Integer> numericCategories = new ArrayList<>();
     for (Object item : categoryList) {
-      if (item instanceof Number) {
-        numericCategories.add(((Number) item).intValue());
-      } else {
-        throw new JMetalException("All values in numeric category list must be numbers for parameter " + 
-            parameterName + ". Found: " + item);
-      }
+      Check.that(item instanceof Number, 
+          "All values in numeric category list must be numbers for parameter " + parameterName + ". Found: " + item);
+      numericCategories.add(((Number) item).intValue());
     }
-    System.out.println("  - Creating integer categorical parameter: " + parameterName + " = " + numericCategories);
+
     parameterSpace.put(new CategoricalIntegerParameter(parameterName, numericCategories));
   }
   
+  /**
+   * Processes a list of string values for a categorical parameter.
+   *
+   * @param parameterName the name of the parameter being processed
+   * @param categoryList the list of string category values
+   * @param parameterSpace the parameter space to add the parameter to
+   * @throws JMetalException if any value in the list is null
+   */
   private void processStringCategories(String parameterName, List<?> categoryList, ParameterSpace parameterSpace) {
     List<String> stringCategories = new ArrayList<>();
     for (Object item : categoryList) {
-      if (item == null) {
-        throw new JMetalException("Category values cannot be null for parameter " + parameterName);
-      }
+      Check.notNull(item);
       stringCategories.add(item.toString());
     }
-    System.out.println("  - Creating string categorical parameter: " + parameterName + " = " + stringCategories);
+
     parameterSpace.put(parameterFactory.createParameter(parameterName, stringCategories));
   }
   
@@ -160,19 +196,24 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
   }
 
+  /**
+   * Processes conditional parameters for a specific value of a parent parameter.
+   *
+   * @param parentParamName the name of the parent parameter
+   * @param valueName the value of the parent parameter that activates these sub-parameters
+   * @param valueConfigMap the configuration map containing the conditional parameters
+   * @param parameterSpace the parameter space to add parameters to
+   * @throws JMetalException if the parameter space is not a YAMLParameterSpace
+   */
   @SuppressWarnings("unchecked")
   private void processConditionalParametersForValue(String parentParamName, String valueName,
-                                                    Map<String, Object> valueConfigMap, ParameterSpace parameterSpace) {
-    // Check for both 'conditionalParameters' and 'conditionalParameters' (with typo)
-    String subParamsKey = valueConfigMap.containsKey("conditionalParameters")
-        ? "conditionalParameters"
-        : (valueConfigMap.containsKey("conditionalSuParameters") ? "conditionalSuParameters" : null);
-        
-    if (subParamsKey == null) {
+                                                  Map<String, Object> valueConfigMap, ParameterSpace parameterSpace) {
+    // Guard clauses for preconditions
+    if (!valueConfigMap.containsKey("conditionalParameters")) {
       return;
     }
     
-    Object subParamsObj = valueConfigMap.get(subParamsKey);
+    Object subParamsObj = valueConfigMap.get("conditionalParameters");
     if (!(subParamsObj instanceof Map)) {
       return;
     }
@@ -182,48 +223,72 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       return;
     }
     
-    String fullParentName = parentParamName + "." + valueName;
+    Check.that(parameterSpace instanceof YAMLParameterSpace, 
+        "Parameter space must be an instance of YAMLParameterSpace");
     
-    // Process each conditional subparameter
+    // Main processing logic
+    YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
+    processSubParameters(parentParamName, valueName, subParams, yamlParameterSpace);
+  }
+  
+  /**
+   * Processes a collection of sub-parameters for a specific parameter value.
+   *
+   * @param parentParamName the name of the parent parameter
+   * @param valueName the value of the parent parameter that activates these sub-parameters
+   * @param subParams the map of sub-parameter configurations to process
+   * @param yamlParameterSpace the YAML parameter space to add parameters to
+   */
+  private void processSubParameters(String parentParamName, String valueName,
+                                  Map<String, Object> subParams,
+                                  YAMLParameterSpace yamlParameterSpace) {
     for (Map.Entry<String, Object> subParamEntry : subParams.entrySet()) {
-      String subParamName = subParamEntry.getKey();
-      Object subParamConfig = subParamEntry.getValue();
+      processSingleConditionalParameter(
+          parentParamName, 
+          valueName, 
+          subParamEntry.getKey(), 
+          subParamEntry.getValue(), 
+          yamlParameterSpace
+      );
+    }
+  }
+  
+  /**
+   * Processes a single conditional sub-parameter.
+   *
+   * @param parentParamName the name of the parent parameter
+   * @param valueName the value of the parent parameter that activates this sub-parameter
+   * @param subParamName the name of the sub-parameter
+   * @param subParamConfig the configuration object for the sub-parameter
+   * @param yamlParameterSpace the YAML parameter space to add the parameter to
+   * @throws JMetalException if the sub-parameter configuration is invalid or processing fails
+   */
+  @SuppressWarnings("unchecked")
+  private void processSingleConditionalParameter(String parentParamName, String valueName,
+                                               String subParamName, Object subParamConfig,
+                                               YAMLParameterSpace yamlParameterSpace) {
+    Check.that(subParamConfig instanceof Map, 
+        "Sub-parameter configuration for " + subParamName + " should be a map");
+    
+    Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
+    String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
+    ParameterProcessor processor = yamlParameterSpace.getParameterProcessor(subParamType);
+    
+    Check.notNull(processor);
+    
+    try {
+      // Process the subparameter with just its base name
+      processor.process(subParamName, subParamConfigMap, yamlParameterSpace);
       
-      if (!(subParamConfig instanceof Map)) {
-        continue;
+      // Get the parent parameter and add this as a conditional parameter
+      Parameter<?> parentParam = yamlParameterSpace.get(parentParamName);
+      Parameter<?> subParam = parentParam != null ? yamlParameterSpace.get(subParamName) : null;
+      
+      if (parentParam != null && subParam != null) {
+        parentParam.addConditionalParameter(valueName, subParam);
       }
-      
-      Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
-      String subParamType = subParamConfigMap.getOrDefault("type", "unknown").toString();
-      
-      try {
-        // Process the conditional parameter using only its base name (without any prefix)
-        if (parameterSpace instanceof YAMLParameterSpace) {
-          YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
-          ParameterProcessor processor = yamlParameterSpace.getParameterProcessor(subParamType);
-          
-          if (processor != null) {
-            // Process the subparameter with just its base name
-            processor.process(subParamName, subParamConfigMap, parameterSpace);
-            
-            // Get the parent parameter and add this as a conditional parameter
-            Parameter<?> parentParam = parameterSpace.get(parentParamName);
-            if (parentParam != null) {
-              Parameter<?> subParam = parameterSpace.get(subParamName);
-              if (subParam != null) {
-                parentParam.addConditionalParameter(valueName, subParam);
-                //parameterSpace.get(parentParamName).addConditionalParameter(valueName, subParam) ;
-                System.out.println("      Added as conditional subparameter for " + parentParamName + " when value is " + valueName);
-              }
-            }
-          } else {
-            System.err.println("      Warning: No processor found for type " + subParamType);
-          }
-        }
-      } catch (Exception e) {
-        System.err.println("      Error processing specific subparameter " + subParamName + ": " + e.getMessage());
-        e.printStackTrace();
-      }
+    } catch (Exception e) {
+      throw new JMetalException("Error processing specific subparameter " + subParamName + ": " + e.getMessage(), e);
     }
   }
 
@@ -242,25 +307,18 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
     }
     
     Object subParamsObj = configMap.get("globalSubParameters");
-    if (!(subParamsObj instanceof Map)) {
-      System.err.println("Warning: globalSubParameters for " + parameterName + " should be a map");
-      return;
-    }
+    Check.that(subParamsObj instanceof Map, 
+        "globalSubParameters for " + parameterName + " should be a map");
     
     Map<String, Object> subParams = (Map<String, Object>) subParamsObj;
     if (subParams.isEmpty()) {
       return;
     }
     
-    System.out.println("  - Processing global sub-parameters for " + parameterName + ": " + 
-        String.join(", ", subParams.keySet()));
-    
-    // Get the parameter processors from the YAMLParameterSpace
-    if (!(parameterSpace instanceof YAMLParameterSpace)) {
-      System.err.println("Error: Parameter space must be an instance of YAMLParameterSpace");
-      return;
+    if (!(parameterSpace instanceof YAMLParameterSpace yamlParameterSpace)) {
+      throw new JMetalException("Parameter space must be an instance of YAMLParameterSpace");
     }
-    YAMLParameterSpace yamlParameterSpace = (YAMLParameterSpace) parameterSpace;
+
     Map<String, ParameterProcessor> parameterProcessors = yamlParameterSpace.getParameterProcessors();
     
     // Process each sub-parameter and add it to the parameter space
@@ -268,54 +326,36 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
       String subParamName = entry.getKey();
       Object subParamConfig = entry.getValue();
       
-      if (!(subParamConfig instanceof Map)) {
-        System.err.println("Warning: Sub-parameter configuration for " + subParamName + " should be a map");
-        continue;
-      }
+      Check.that(subParamConfig instanceof Map, 
+          "Sub-parameter configuration for " + subParamName + " should be a map");
       
       try {
         Map<String, Object> subParamConfigMap = (Map<String, Object>) subParamConfig;
         
         // Get the parameter type
         String paramType = (String) subParamConfigMap.get("type");
-        if (paramType == null) {
-          System.err.println("Warning: No type specified for sub-parameter " + subParamName);
-          continue;
-        }
+        Check.that(paramType != null, "No type specified for sub-parameter " + subParamName);
         
         // Get the appropriate processor for this parameter type
         ParameterProcessor processor = parameterProcessors.get(paramType);
-        if (processor == null) {
-          System.err.println("Warning: No processor found for type " + paramType + " for parameter " + subParamName);
-          continue;
-        }
+        Check.that(processor != null, 
+            "No processor found for type " + paramType + " for parameter " + subParamName);
         
         // Process the parameter with the appropriate processor
-        System.out.println("    - Processing global sub-parameter " + subParamName + " as type " + paramType);
         processor.process(subParamName, subParamConfig, parameterSpace);
         
         // Get the parent and sub-parameter from the parameter space
         Parameter<?> parentParameter = parameterSpace.get(parameterName);
         Parameter<?> subParameter = parameterSpace.get(subParamName);
         
-        if (subParameter == null) {
-          System.err.println("Warning: Failed to create sub-parameter " + subParamName);
-          continue;
-        }
+        Check.that(subParameter != null, "Failed to create sub-parameter " + subParamName);
         
         // Add the sub-parameter to the parent's global sub-parameters
-        if (parentParameter instanceof CategoricalParameter) {
-          ((CategoricalParameter) parentParameter).addGlobalSubParameter(subParameter);
-          System.out.println("      Added as global sub-parameter " + subParamName + " to " + parameterName);
-        } else if (parentParameter instanceof CategoricalIntegerParameter) {
-          ((CategoricalIntegerParameter) parentParameter).addGlobalSubParameter(subParameter);
-          System.out.println("      Added as global sub-parameter " + subParamName + " to " + parameterName);
-        } else {
-          System.err.println("Warning: Cannot add global sub-parameter to non-categorical parameter: " + parameterName);
-        }
+        Check.that(parentParameter instanceof CategoricalParameter, 
+            "Cannot add global sub-parameter to non-categorical parameter: " + parameterName);
+        ((CategoricalParameter) parentParameter).addGlobalSubParameter(subParameter);
       } catch (Exception e) {
-        System.err.println("Error processing global sub-parameter " + subParamName + ": " + e.getMessage());
-        e.printStackTrace();
+        throw new JMetalException("Error processing global sub-parameter " + subParamName + ": " + e.getMessage(), e);
       }
     }
   }

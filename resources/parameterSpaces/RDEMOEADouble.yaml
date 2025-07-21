@@ -3,7 +3,7 @@ algorithmResult:
   values:
     population:
     externalArchive:
-      specific_subparameter:
+      conditionalParameters:
         populationSizeWithArchive:
           type: integer
           range: [10, 200]
@@ -31,7 +31,7 @@ densityEstimator:
   values:
     crowdingDistance:
     knn:
-      specific_subparameter:
+      conditionalParameters:
         knnNeighborhoodSize:
           type: integer
           range: [1, 5]
@@ -55,7 +55,7 @@ variation:
   type: categorical
   values:
     crossoverAndMutationVariation:
-      specific_subparameter:
+      conditionalParameters:
         crossover:
           type: categorical
           global_subparameters:
@@ -70,19 +70,19 @@ variation:
                 bounds:
           values:
             SBX:
-              specific_subparameter:
+              conditionalParameters:
                 sbxDistributionIndex:
                   type: double
                   values: [5.0, 400.0]
             BLX_ALPHA:
-              specific_subparameter:
+              conditionalParameters:
                 blxAlphaCrossoverAlphaValue:
                   type: double
                   values: [0.0, 1.0]
             wholeArithmetic:
         mutation:
           type: categorical
-          global_subparameters:
+          globalSubParameters:
             mutationProbabilityFactor:
               type: double
               values: [0.0, 2.0]
@@ -94,22 +94,22 @@ variation:
                 bounds:
           values:
             uniform:
-              specific_subparameter:
+              conditionalParameters:
                 uniformMutationPerturbation:
                   type: double
                   values: [0.0, 1.0]
             polynomial:
-              specific_subparameter:
+              conditionalParameters:
                 polynomialMutationDistributionIndex:
                   type: double
                   values: [5.0, 400.0]
             linkedPolynomial:
-              specific_subparameter:
+              conditionalParameters:
                 linkedPolynomialMutationDistributionIndex:
                   type: double
                   values: [5.0, 400.0]
             nonUniform:
-              specific_subparameter:
+              conditionalParameters:
                 nonUniformMutationPerturbation:
                   type: double
                   values: [0.0, 1.0]
@@ -118,7 +118,7 @@ selection:
   type: categorical
   values:
     tournament:
-      specific_subparameter:
+      conditionalParameters:
         selectionTournamentSize:
           type: integer
           range: [2, 10]
@@ -129,7 +129,7 @@ replacement:
   type: categorical
   values:
     rankingAndDensityEstimator:
-      global_subparameters:
+      globalSubParameters:
         removalPolicy:
           values:
             oneShot:

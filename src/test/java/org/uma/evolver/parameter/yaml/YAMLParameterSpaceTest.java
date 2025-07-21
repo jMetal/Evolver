@@ -15,7 +15,6 @@ import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * Test class for {@link YAMLParameterSpace}.
