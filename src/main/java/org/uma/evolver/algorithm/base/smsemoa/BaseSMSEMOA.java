@@ -1,13 +1,12 @@
-package org.uma.evolver.algorithm.base.nsgaii;
+package org.uma.evolver.algorithm.base.smsemoa;
 
-import java.util.*;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter ;
+import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
@@ -16,36 +15,33 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
-import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.SMSEMOAReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
-import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
-import org.uma.jmetal.util.comparator.MultiComparator;
-import org.uma.jmetal.util.densityestimator.DensityEstimator;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.errorchecking.Check;
+import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
- * Abstract base class for configurable NSGA-II (Non-dominated Sorting Genetic Algorithm II) implementations.
+ * Abstract base class for configurable SMS-EMOA (S-Metric Selection Evolutionary Multi-Objective Algorithm)
+ * implementations for evolutionary algorithms.
  *
- * <p>This class provides a flexible and extensible foundation for building NSGA-II variants for
+ * <p>This class provides a flexible and extensible foundation for building SMS-EMOA variants for
  * different solution types. It manages the configuration and assembly of the main algorithmic
- * components (selection, variation, replacement, evaluation, termination, etc.) using a parameter
- * space abstraction. NSGA-II is a fast and elitist multi-objective genetic algorithm that uses
- * a non-dominated sorting approach with crowding distance for maintaining diversity.
+ * components (variation, selection, replacement, evaluation, termination, etc.) using a parameter
+ * space abstraction. SMS-EMOA is a steady-state MOEA that uses the hypervolume contribution as
+ * the main selection criterion.
  *
  * <p>Key features of this implementation include:
  * <ul>
- *   <li>Fast non-dominated sorting for ranking solutions</li>
- *   <li>Crowding distance calculation for diversity preservation</li>
- *   <li>Configurable selection, crossover, and mutation operators</li>
+ *   <li>Configurable variation operators (crossover and mutation)</li>
  *   <li>Support for external archives</li>
  *   <li>Flexible termination conditions</li>
+ *   <li>Parameter space for easy configuration</li>
  * </ul>
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
@@ -53,28 +49,25 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *
  * <p>Typical usage involves:
  * <ul>
- *   <li>Creating a concrete subclass for a specific solution type (e.g., permutation, double)</li>
- *   <li>Configuring the parameter space and problem instance</li>
- *   <li>Calling {@link #build()} to obtain a ready-to-run {@link EvolutionaryAlgorithm} instance</li>
- * </ul>
+ *   <li>Creating a concrete subclass for a specific solution type (e.g., permutation, double).</li>
+ *   <li>Configuring the parameter space and problem instance.</li>
+ *   <li>Calling {@link #build()} to obtain a ready-to-run {@link EvolutionaryAlgorithm} instance.</n * </ul>
  *
  * <p>Example usage:
  * <pre>{@code
- * NSGAIIPermutation algorithm = new NSGAIIPermutation(problem, 100, 25000);
+ * SMSEMOADouble algorithm = new SMSEMOADouble(problem, 100, 25000);
  * algorithm.parse(args);
- * EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaii = algorithm.build();
- * nsgaii.run();
+ * EvolutionaryAlgorithm<DoubleSolution> smsemoa = algorithm.build();
+ * smsemoa.run();
  * }</pre>
  *
+ * @see <a href="https://doi.org/10.1007/11732242_32">SMS-EMOA: Multiobjective selection based on dominated hypervolume</a>
  * @param <S> the solution type handled by the algorithm
- * @see <a href="https://ieeexplore.ieee.org/document/996017">A Fast Elitist Non-dominated Sorting Genetic Algorithm for Multi-objective Optimization: NSGA-II</a>
  */
-public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
-  protected DensityEstimator<S> densityEstimator;
-  protected MultiComparator<S> rankingAndCrowdingComparator;
 
   protected Problem<S> problem;
   protected int populationSize;
@@ -88,7 +81,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  protected BaseNSGAII(int populationSize, ParameterSpace parameterSpace) {
+  protected BaseSMSEMOA(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
   }
@@ -102,7 +95,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    * @param parameterSpace the parameter space for configuration
    */
-  protected BaseNSGAII(
+  protected BaseSMSEMOA(
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
@@ -113,12 +106,6 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     this.parameterSpace = parameterSpace;
 
     ranking = new FastNonDominatedSortRanking<>();
-    densityEstimator = new CrowdingDistanceDensityEstimator<>();
-    rankingAndCrowdingComparator =
-        new MultiComparator<>(
-            Arrays.asList(
-                Comparator.comparing(ranking::getRank),
-                Comparator.comparing(densityEstimator::value).reversed()));
   }
 
   /**
@@ -147,7 +134,6 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     Archive<S> archive = null;
     if (usingExternalArchive()) {
       archive = createExternalArchive();
-      updatePopulationSize(archive);
       Check.notNull(archive);
     }
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
@@ -158,7 +144,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     Termination termination = createTermination();
 
     return new EvolutionaryAlgorithmBuilder<S>().build(
-        "NSGAII",
+        "SMS-EMOA",
         initialSolutionsCreation,
         evaluation,
         termination,
@@ -205,19 +191,6 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   }
 
   /**
-   * Updates the population size if an external archive is being used.
-   * The new population size is retrieved from the parameter space.
-   *
-   * @param archive the external archive (should not be {@code null} if used)
-   */
-  private void updatePopulationSize(Archive<S> archive) {
-    if (archive != null) {
-      populationSize =
-          (int) parameterSpace.get("populationSizeWithArchive").value();
-    }
-  }
-
-  /**
    * Creates the termination condition for the algorithm.
    * By default, termination is based on the maximum number of evaluations.
    *
@@ -256,7 +229,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   protected Selection<S> createSelection(Variation<S> variation) {
     var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
-        variation.getMatingPoolSize(), rankingAndCrowdingComparator);
+        variation.getMatingPoolSize(), null);
   }
 
   /**
@@ -268,9 +241,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   protected Variation<S> createVariation() {
     VariationParameter<S> variationParameter =
         (VariationParameter<S>) parameterSpace.get("variation");
-    variationParameter.addNonConfigurableSubParameter(
-        "offspringPopulationSize",
-        parameterSpace.get("offspringPopulationSize").value());
+    variationParameter.addNonConfigurableSubParameter("offspringPopulationSize",1);
 
     return variationParameter.getVariation();
   }
@@ -292,9 +263,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @return the replacement operator
    */
   protected Replacement<S> createReplacement() {
-    RankingAndDensityEstimatorPreference<S> preferenceForReplacement =
-        new RankingAndDensityEstimatorPreference<>(ranking, densityEstimator);
-    return new RankingAndDensityEstimatorReplacement<>(
-        preferenceForReplacement, Replacement.RemovalPolicy.ONE_SHOT);
+    return new SMSEMOAReplacement<>(ranking, new PISAHypervolume<>());
   }
 }
+

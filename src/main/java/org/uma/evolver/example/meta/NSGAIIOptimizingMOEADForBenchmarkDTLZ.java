@@ -3,6 +3,7 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -59,8 +60,8 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     int maxEvaluations = 2000;
     int numberOfCores = 8;
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();
@@ -68,11 +69,11 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
         new OutputResults(
-            "NSGA-II",
+            "MOEAD",
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/NSGAII/" + trainingSet.get(0).name());
+            "RESULTS/MOEAD/" + trainingSet.get(0).name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
@@ -80,7 +81,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "MOEAD, " + "DTLZ",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

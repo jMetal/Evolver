@@ -42,7 +42,6 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    //var baseAlgorithm = new NSGAIIDouble(100) ;
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 

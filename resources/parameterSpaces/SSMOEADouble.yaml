@@ -101,51 +101,51 @@ variation:
                   type: double
                   values: [0.1, 0.5]
           mutation:
-              type: categorical
-              globalSubParameters: 
-                mutationProbabilityFactor:
-                  type: double
-                  values: [0.0, 2.0]
-                mutationRepairStrategy:
-                  type: categorical
-                  values: 
-                    random:
-                    round:
-                    bounds:
-              values: 
-                uniform:
-                  conditionalParameters: 
-                    uniformMutationPerturbation:
-                      type: double
-                      values: [0.0, 1.0]
-                polynomial:
-                  conditionalParameters: 
-                    polynomialMutationDistributionIndex:
-                      type: double
-                      values: [5.0, 400.0]
-                linkedPolynomial:
-                  conditionalParameters: 
-                    linkedPolynomialMutationDistributionIndex:
-                      type: double
-                      values: [5.0, 400.0]
-                nonUniform:
-                  conditionalParameters: 
-                    nonUniformMutationPerturbation:
-                      type: double
-                      values: [0.0, 1.0]
-                levyFlight:
-                  conditionalParameters: 
-                    levyFlightMutationBetaValue:
-                      type: double
-                      values: [1.0, 2.0]
-                    levyFlightMutationStepSizeValue:
-                      type: double
-                      values: [0.01, 1.0]
-                powerLaw:
-                  conditionalParameters: 
-                    powerLawMutationDelta:
-                      type: double
-                      values: [0.0, 10.0]
+            type: categorical
+            globalSubParameters: 
+              mutationProbabilityFactor:
+                type: double
+                values: [0.0, 2.0]
+              mutationRepairStrategy:
+                type: categorical
+                values: 
+                  random:
+                  round:
+                  bounds:
+            values: 
+              uniform:
+                conditionalParameters: 
+                  uniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              polynomial:
+                conditionalParameters: 
+                  polynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              linkedPolynomial:
+                conditionalParameters: 
+                  linkedPolynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              nonUniform:
+                conditionalParameters: 
+                  nonUniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              levyFlight:
+                conditionalParameters: 
+                  levyFlightMutationBetaValue:
+                    type: double
+                    values: [1.0, 2.0]
+                  levyFlightMutationStepSizeValue:
+                    type: double
+                    values: [0.01, 1.0]
+              powerLaw:
+                conditionalParameters: 
+                  powerLawMutationDelta:
+                    type: double
+                    values: [0.0, 10.0]
     differentialEvolutionVariation:
       conditionalParameters: 
         differentialEvolutionCrossover:
