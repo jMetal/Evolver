@@ -320,26 +320,58 @@ public class YAMLParameterSpace extends ParameterSpace {
    * where configuration files can be packaged with the application or
    * provided externally.
    *
-   * @param configFilePath path to the configuration file
+   * @param configFilePath path to the configuration file (relative to resources/parameterSpaces/)
    * @return an InputStream for reading the configuration file
    *
    * @throws FileNotFoundException if the file cannot be found in either
    *                               the classpath or filesystem
    */
   private InputStream openConfigFile(String configFilePath) throws FileNotFoundException {
+    // Normalize the path to ensure consistent handling of path separators
+    String normalizedPath = configFilePath.replace('\\', '/');
+    
     // First attempt to load from classpath
-    InputStream configStream = getClass().getClassLoader().getResourceAsStream(configFilePath);
+    // Try with the path as-is first
+    InputStream configStream = getClass().getClassLoader().getResourceAsStream(normalizedPath);
+    
+    // If not found, try prepending 'parameterSpaces/' if not already present
+    if (configStream == null && !normalizedPath.contains("parameterSpaces/")) {
+      String resourcePath = "parameterSpaces/" + normalizedPath;
+      configStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+    }
 
-    // If not found in classpath, try filesystem
+    // If still not found in classpath, try filesystem as a fallback
     if (configStream == null) {
       File configFile = new File(configFilePath);
       if (configFile.exists()) {
-        configStream = new FileInputStream(configFile);
+        try {
+          configStream = new FileInputStream(configFile);
+        } catch (FileNotFoundException e) {
+          throw new FileNotFoundException(String.format(
+              "Failed to load configuration file from filesystem: %s. Error: %s", 
+              configFile.getAbsolutePath(), e.getMessage()));
+        }
       } else {
-        throw new FileNotFoundException(
-                "Configuration file not found in classpath or filesystem: " + configFilePath);
+        // Try to find the file in the standard Maven resources directory
+        File resourceFile = new File("src/main/resources/parameterSpaces/" + normalizedPath);
+        if (resourceFile.exists()) {
+          try {
+            configStream = new FileInputStream(resourceFile);
+          } catch (FileNotFoundException e) {
+            throw new FileNotFoundException(String.format(
+                "Configuration file not found in classpath, filesystem, or resources directory. " +
+                "Tried: '%s', '%s', and '%s'.", 
+                normalizedPath, configFile.getAbsolutePath(), resourceFile.getAbsolutePath()));
+          }
+        } else {
+          throw new FileNotFoundException(String.format(
+              "Configuration file not found in classpath, filesystem, or resources directory. " +
+              "Tried: '%s', '%s', and '%s'.", 
+              normalizedPath, configFile.getAbsolutePath(), resourceFile.getAbsolutePath()));
+        }
       }
     }
+    
     return configStream;
   }
 

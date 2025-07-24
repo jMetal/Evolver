@@ -11,6 +11,9 @@ import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.re.RE31;
+import org.uma.jmetal.problem.multiobjective.re.RE33;
+import org.uma.jmetal.problem.multiobjective.re.RE36;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -25,14 +28,14 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
+public class NSGAIIOptimizingNSGAIIForProblemRE31 {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+    List<Problem<DoubleSolution>> trainingSet = List.of(new RE31());
+    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/RE31.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());

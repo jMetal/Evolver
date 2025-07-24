@@ -30,7 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/MOEADDouble.yaml" ;
+    String yamlParameterSpaceFile = "MOEADDouble.yaml" ;
     String weightVectorFilesDirectory = "resources/weightVectors" ;
 
     // Step 1: Select the target problem

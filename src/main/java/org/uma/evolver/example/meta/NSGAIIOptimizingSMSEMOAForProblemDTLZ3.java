@@ -34,7 +34,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingSMSEMOAForProblemDTLZ3 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/SMSEMOADouble.yaml" ;
+    String yamlParameterSpaceFile = "SMSEMOADouble.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());

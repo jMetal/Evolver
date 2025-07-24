@@ -29,7 +29,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT1());

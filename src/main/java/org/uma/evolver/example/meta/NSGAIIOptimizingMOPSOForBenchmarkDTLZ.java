@@ -30,7 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
+    String yamlParameterSpaceFile = "MOPSO.yaml" ;
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();

@@ -30,7 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo() ;

@@ -31,7 +31,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIPermutation.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIPermutation.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<PermutationSolution<Integer>>> trainingSet = List.of(new KroAB100TSP());

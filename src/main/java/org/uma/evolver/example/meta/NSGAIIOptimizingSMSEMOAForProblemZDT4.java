@@ -3,9 +3,7 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.base.smsemoa.DoubleSMSEMOA;
-import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -26,7 +24,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link DoubleSMSEMOA} using
@@ -37,7 +34,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/SMSEMOADouble.yaml" ;
+    String yamlParameterSpaceFile = "SMSEMOADouble.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());

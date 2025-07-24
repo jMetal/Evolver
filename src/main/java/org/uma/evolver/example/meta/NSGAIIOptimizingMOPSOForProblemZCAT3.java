@@ -30,7 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class NSGAIIOptimizingMOPSOForProblemZCAT3 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
+    String yamlParameterSpaceFile = "MOPSO.yaml" ;
 
     // Step 1: Select the target problem
     DefaultZCATSettings.numberOfObjectives = 3 ;
