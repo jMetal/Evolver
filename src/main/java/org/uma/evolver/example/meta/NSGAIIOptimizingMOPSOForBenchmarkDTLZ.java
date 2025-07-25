@@ -42,7 +42,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
-    System.out.println(parameterSpace);
+
     var baseAlgorithm = new MOPSO(100, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;

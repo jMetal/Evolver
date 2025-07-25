@@ -77,8 +77,8 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
         result = new CrowdingDistanceDensityEstimator<>();
         break;
       case "knn":
-        boolean normalizeObjectives =
-            (Boolean) findConditionalParameter("knnNormalizeObjectives").value();
+        String value = (String) findConditionalParameter("knnNormalizeObjectives").value();
+        boolean normalizeObjectives = value.toLowerCase().equals("true");
         int knnNeighborhoodSize =
             (Integer) findConditionalParameter("knnNeighborhoodSize").value();
         result = new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);

@@ -1,7 +1,7 @@
 algorithmResult:
   type: categorical
   values:
-    population:
+    population: {}
     externalArchive:
       conditionalParameters:
         populationSizeWithArchive:
@@ -12,7 +12,7 @@ algorithmResult:
           values:
             crowdingDistanceArchive:
             unboundedArchive:
-#
+
 createInitialSolutions:
   type: categorical
   values:
@@ -20,12 +20,10 @@ createInitialSolutions:
     latinHypercubeSampling:
     scatterSearch:
 
-#
 offspringPopulationSize:
   type: categorical
   values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
 
-#
 densityEstimator:
   type: categorical
   values:
@@ -36,21 +34,17 @@ densityEstimator:
           type: integer
           range: [1, 5]
         knnNormalizeObjectives:
-          type: boolean
+          type: categorical
           values:
-            true:
-            false:
-    hypervolumeContribution:
-    cosineSimilarity:
+            "true":
+            "false":
 
-#
 ranking:
   type: categorical
   values:
     dominanceRanking:
-    strength:
+    strengthRanking:
 
-#
 variation:
   type: categorical
   values:
@@ -58,10 +52,10 @@ variation:
       conditionalParameters:
         crossover:
           type: categorical
-          global_subparameters:
+          globalSubParameters:
             crossoverProbability:
               type: double
-              values: [0.0, 1.0]
+              range: [0.0, 1.0]
             crossoverRepairStrategy:
               type: categorical
               values:
@@ -73,19 +67,19 @@ variation:
               conditionalParameters:
                 sbxDistributionIndex:
                   type: double
-                  values: [5.0, 400.0]
-            BLX_ALPHA:
+                  range: [5.0, 400.0]
+            blxAlpha:
               conditionalParameters:
-                blxAlphaCrossoverAlphaValue:
+                blxAlphaCrossoverAlpha:
                   type: double
-                  values: [0.0, 1.0]
+                  range: [0.0, 1.0]
             wholeArithmetic:
         mutation:
           type: categorical
           globalSubParameters:
             mutationProbabilityFactor:
               type: double
-              values: [0.0, 2.0]
+              range: [0.0, 2.0]
             mutationRepairStrategy:
               type: categorical
               values:
@@ -97,22 +91,22 @@ variation:
               conditionalParameters:
                 uniformMutationPerturbation:
                   type: double
-                  values: [0.0, 1.0]
+                  range: [0.0, 1.0]
             polynomial:
               conditionalParameters:
                 polynomialMutationDistributionIndex:
                   type: double
-                  values: [5.0, 400.0]
+                  range: [5.0, 400.0]
             linkedPolynomial:
               conditionalParameters:
                 linkedPolynomialMutationDistributionIndex:
                   type: double
-                  values: [5.0, 400.0]
+                  range: [5.0, 400.0]
             nonUniform:
               conditionalParameters:
                 nonUniformMutationPerturbation:
                   type: double
-                  values: [0.0, 1.0]
+                  range: [0.0, 1.0]
 #
 selection:
   type: categorical
@@ -129,8 +123,9 @@ replacement:
   type: categorical
   values:
     rankingAndDensityEstimator:
-      globalSubParameters:
+      conditionalParameters:
         removalPolicy:
+          type: categorical
           values:
             oneShot:
             sequential:

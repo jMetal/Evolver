@@ -14,7 +14,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 public class NSGAIIZDT4Example {
   public static void main(String[] args) {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters =

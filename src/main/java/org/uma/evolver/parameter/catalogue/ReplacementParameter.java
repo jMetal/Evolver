@@ -73,10 +73,11 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
    * @throws IllegalStateException if ranking or densityEstimator have not been set
    */
   public Replacement<S> getReplacement() {
-    String removalPolicy = (String) findGlobalSubParameter("removalPolicy").value();
     Replacement<S> result;
     switch (value()) {
       case "rankingAndDensityEstimator" -> {
+        String removalPolicy = (String) findConditionalParameter("removalPolicy").value();
+
         if (removalPolicy.equals("oneShot")) {
           result =
               new RankingAndDensityEstimatorReplacement<>(

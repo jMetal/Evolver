@@ -93,7 +93,7 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
     put(new RankingParameter<>(RANKING, List.of(DOMINANCE_RANKING, STRENGTH_RANKING)));
     put(new DensityEstimatorParameter<>(DENSITY_ESTIMATOR, List.of(CROWDING_DISTANCE, KNN)));
     put(new IntegerParameter(KNN_NEIGHBORHOOD_SIZE, 1, 5));
-    put(new BooleanParameter(KNN_NORMALIZE_OBJECTIVES));
+    put(new CategoricalParameter(KNN_NORMALIZE_OBJECTIVES, List.of("true", "false")));
     put(new ReplacementParameter<>(List.of(RANKING_AND_DENSITY_ESTIMATOR)));
     put(new CategoricalParameter(REMOVAL_POLICY, List.of(ONE_SHOT, SEQUENTIAL)));
   }
@@ -109,7 +109,7 @@ public abstract class RDEMOEACommonParameterSpace<S extends Solution<?>> extends
 
     get(SELECTION).addConditionalParameter(TOURNAMENT, get(SELECTION_TOURNAMENT_SIZE));
 
-    get(REPLACEMENT).addGlobalSubParameter(get(REMOVAL_POLICY));
+    get(REPLACEMENT).addConditionalParameter(RANKING_AND_DENSITY_ESTIMATOR, get(REMOVAL_POLICY));
 
     get(DENSITY_ESTIMATOR)
         .addConditionalParameter(KNN, get(KNN_NEIGHBORHOOD_SIZE))

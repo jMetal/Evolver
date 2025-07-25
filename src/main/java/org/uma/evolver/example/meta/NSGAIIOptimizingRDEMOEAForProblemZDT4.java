@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEAV2;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -26,10 +28,10 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
+public class NSGAIIOptimizingRDEMOEAForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "RDEMOEADouble.yaml" ;
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
@@ -38,7 +40,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    var configurableAlgorithm = new DoubleRDEMOEAV2(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
@@ -54,7 +56,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8 ;
+    int numberOfCores = 1 ;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
@@ -65,11 +67,11 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
         new OutputResults(
-            "NSGA-II",
+            "RDEMOEA",
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/NSGAII/" + trainingSet.get(0).name());
+            "RESULTS/RDEMOEA/" + trainingSet.get(0).name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
@@ -77,7 +79,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "RDEMOEA, " + trainingSet.get(0).name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

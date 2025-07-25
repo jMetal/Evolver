@@ -33,7 +33,7 @@ public class RDEMOEADoubleParameterSpace extends RDEMOEACommonParameterSpace<Dou
 
   // Crossover strategies
   public static final String SBX = "SBX";
-  public static final String BLX_ALPHA = "BLX_ALPHA";
+  public static final String BLX_ALPHA = "blxAlpha";
   public static final String WHOLE_ARITHMETIC = "wholeArithmetic";
   public static final String SBX_DISTRIBUTION_INDEX = "sbxDistributionIndex";
   public static final String BLX_ALPHA_CROSSOVER_ALPHA_VALUE = "blxAlphaCrossoverAlphaValue";

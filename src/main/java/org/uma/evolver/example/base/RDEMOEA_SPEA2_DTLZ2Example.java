@@ -1,6 +1,11 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEAV2;
+import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -12,7 +17,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 public class RDEMOEA_SPEA2_DTLZ2Example {
   public static void main(String[] args) {
-
+    ParameterSpace parameterSpace = new YAMLParameterSpace("RDEMOEADouble.yaml", new DoubleParameterFactory());
     String referenceFrontFileName = "resources/referenceFronts/DTLZ2.3D.csv";
 
     String[] parameters =
@@ -38,7 +43,7 @@ public class RDEMOEA_SPEA2_DTLZ2Example {
                 + "--removalPolicy sequential")
             .split("\\s+");
 
-    var evAlgorithm = new DoubleRDEMOEA(new DTLZ2(), 100, 50000);
+    var evAlgorithm = new DoubleRDEMOEAV2(new DTLZ2(), 100, 40000, parameterSpace);
     evAlgorithm.parse(parameters);
 
     evAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
