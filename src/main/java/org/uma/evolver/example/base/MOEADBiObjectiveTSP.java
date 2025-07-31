@@ -44,7 +44,7 @@ public class MOEADBiObjectiveTSP {
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var evMOEAD =
+    var baseMOEAD =
         new PermutationMOEAD(
             new KroAB100TSP(),
             100,
@@ -52,11 +52,11 @@ public class MOEADBiObjectiveTSP {
             "resources/weightVectors",
             new MOEADPermutationParameterSpace());
 
-    evMOEAD.parse(parameters);
+    baseMOEAD.parse(parameters);
 
-    evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = evMOEAD.build();
+    EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = baseMOEAD.build();
 
     RunTimeChartObserver<PermutationSolution<Integer>> runTimeChartObserver =
         new RunTimeChartObserver<>("MOEA/D", 80, 1000, referenceFrontFileName, "F1", "F2");

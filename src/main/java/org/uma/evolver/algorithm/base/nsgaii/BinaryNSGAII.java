@@ -36,7 +36,8 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  */
 public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
   /**
-   * Constructs an NSGAIIBinary instance with the given population size and parameter space.
+   * Constructs an NSGAIIBinary instance with the given population size and parameter space. This is a partial instance that is 
+   * not fully usable until the createMethod() is called
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration

@@ -1,14 +1,10 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.smsemoa.DoubleSMSEMOA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -36,30 +32,30 @@ public class SMSEMOAExample {
                 + "--selection random ")
             .split("\\s+");
 
-    var evNSGAII =
+    var baseAlgorithm =
         new DoubleSMSEMOA(
             new DTLZ1(),
             100,
             40000,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
-    evNSGAII.parse(parameters);
+    baseAlgorithm.parse(parameters);
 
-    evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> algorithm = evNSGAII.build();
+    EvolutionaryAlgorithm<DoubleSolution> smsemoa = baseAlgorithm.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
         new RunTimeChartObserver<>("NSGA-II", 80, 1000, referenceFrontFileName, "F1", "F2");
 
-    algorithm.observable().register(evaluationObserver);
-    algorithm.observable().register(runTimeChartObserver);
+    smsemoa.observable().register(evaluationObserver);
+    smsemoa.observable().register(runTimeChartObserver);
 
-    algorithm.run();
+    smsemoa.run();
 
-    JMetalLogger.logger.info("Total computing time: " + algorithm.totalComputingTime());
+    JMetalLogger.logger.info("Total computing time: " + smsemoa.totalComputingTime());
 
-    new SolutionListOutput(algorithm.result())
+    new SolutionListOutput(smsemoa.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();

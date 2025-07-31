@@ -43,12 +43,12 @@ public class RDEMOEA_SPEA2_DTLZ2Example {
                 + "--removalPolicy sequential")
             .split("\\s+");
 
-    var evAlgorithm = new DoubleRDEMOEAV2(new DTLZ2(), 100, 40000, parameterSpace);
-    evAlgorithm.parse(parameters);
+    var baseAlgorithm = new DoubleRDEMOEAV2(new DTLZ2(), 100, 40000, parameterSpace);
+    baseAlgorithm.parse(parameters);
 
-    evAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> spea2 = evAlgorithm.build();
+    EvolutionaryAlgorithm<DoubleSolution> spea2 = baseAlgorithm.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

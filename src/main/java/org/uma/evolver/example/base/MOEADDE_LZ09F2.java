@@ -45,9 +45,9 @@ public class MOEADDE_LZ09F2 {
             + "--neighborhoodSelectionProbability 0.9 ")
             .split("\\s+");
 
-    var evMOEAD = new DoubleMOEAD(problem, 300, 175000,
+    var baseMOEAD = new DoubleMOEAD(problem, 300, 175000,
         "resources/weightVectors", new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
-    evMOEAD.parse(parameters);
+    baseMOEAD.parse(parameters);
 
     evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
 

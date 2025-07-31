@@ -43,12 +43,12 @@ public class MOEAD_DTLZ2 {
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var evMOEAD =
+    var baseMOEAD =
         new DoubleMOEAD(
             problem, 100, 40000, "resources/weightVectors", new MOEADDoubleParameterSpace());
-    evMOEAD.parse(parameters);
+    baseMOEAD.parse(parameters);
 
-    evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
 
     EvolutionaryAlgorithm<DoubleSolution> moead = evMOEAD.build();
 

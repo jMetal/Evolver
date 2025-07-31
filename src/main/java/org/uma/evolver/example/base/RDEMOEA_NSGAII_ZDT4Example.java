@@ -40,12 +40,12 @@ public class RDEMOEA_NSGAII_ZDT4Example {
                 + "--removalPolicy oneShot")
             .split("\\s+");
 
-    var evAlgorithm = new DoubleRDEMOEAV2(new ZDT4(), 100, 25000, parameterSpace);
-    evAlgorithm.parse(parameters);
+    var baseAlgorithm = new DoubleRDEMOEAV2(new ZDT4(), 100, 25000, parameterSpace);
+    baseAlgorithm.parse(parameters);
 
-    evAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = evAlgorithm.build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseAlgorithm.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

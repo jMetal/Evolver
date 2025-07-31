@@ -2,7 +2,6 @@ package org.uma.evolver.example.base;
 
 import java.io.IOException;
 
-import org.uma.evolver.algorithm.base.nsgaii.BaseNSGAIITemp2;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -39,14 +38,14 @@ public class NSGAIIBiObjectiveTSP {
                 + "--selection tournament --selectionTournamentSize 2 ")
             .split("\\s+");
 
-    var evNSGAII = BaseNSGAIITemp2.forPermutationProblems(
+    var baseNSGAII = new PermutationNSGAII(
             new KroAB100TSP(), 100, 1000000, new NSGAIIPermutationParameterSpace());
 
-    evNSGAII.parse(parameters);
+    baseNSGAII.parse(parameters);
 
-    evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaII = evNSGAII.build();
+    EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaII = baseNSGAII.build();
 
     RunTimeChartObserver<PermutationSolution<Integer>> runTimeChartObserver =
         new RunTimeChartObserver<>("NSGA-II", 80, 1000, referenceFrontFileName, "F1", "F2");

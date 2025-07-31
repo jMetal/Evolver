@@ -53,12 +53,12 @@ public class MOPSO_SMPSO_ZDT4 {
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
 
-    var mopso = new MOPSO(problem, 100, 15000, parameterSpace);
-    mopso.parse(parameters);
+    var baseMOPSO = new MOPSO(problem, 100, 15000, parameterSpace);
+    baseMOPSO.parse(parameters);
 
-    mopso.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseMOPSO.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    ParticleSwarmOptimizationAlgorithm algorithm = mopso.build();
+    ParticleSwarmOptimizationAlgorithm algorithm = baseMOPSO.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
