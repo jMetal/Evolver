@@ -281,14 +281,6 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     IntStream.range(0, indicators.size())
         .forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
-    /*
-    JMetalRandom.getInstance().setSeed(System.currentTimeMillis());
-    System.out.print("SEED: " + JMetalRandom.getInstance().getSeed() + ". ")  ;
-    for (String s : parameterArray) {
-      System.out.print(s + " ");
-    }
-    System.out.println();
-    */
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       var algorithm =
           baseAlgorithm

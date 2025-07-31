@@ -1,5 +1,6 @@
 package org.uma.evolver.example.base;
 
+import org.uma.evolver.algorithm.base.nsgaii.BaseNSGAIITemp2;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -35,7 +36,7 @@ public class NSGAIIDTLZ2Example {
                 + "--selectionTournamentSize 2")
             .split("\\s+");
 
-    var evNSGAII = new DoubleNSGAII(new DTLZ2(), 100, 25000, new NSGAIIDoubleParameterSpace());
+    var evNSGAII = BaseNSGAIITemp2.forDoubleProblems(new DTLZ2(), 100, 25000, new NSGAIIDoubleParameterSpace());
     evNSGAII.parse(parameters);
 
     evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);

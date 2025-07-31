@@ -42,8 +42,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    //var configurableAlgorithm = new MOEADDouble(100);
-    var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
+     var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 

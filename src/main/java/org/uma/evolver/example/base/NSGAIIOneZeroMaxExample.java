@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.BinaryNSGAII;
+import org.uma.evolver.algorithm.base.nsgaii.BaseNSGAIITemp2;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
@@ -11,7 +11,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class NSGAIIOneZeroMaxExample {  
+public class NSGAIIOneZeroMaxExample {
   public static void main(String[] args) {
 
     String[] parameters =
@@ -28,10 +28,9 @@ public class NSGAIIOneZeroMaxExample {
             .split("\\s+");
 
     var baseNSGAII =
-        new BinaryNSGAII(new OneZeroMax(), 100, 5000, new NSGAIIBinaryParameterSpace());
+        BaseNSGAIITemp2.forBinaryProblems(
+            new OneZeroMax(), 100, 5000, new NSGAIIBinaryParameterSpace());
     baseNSGAII.parse(parameters);
-
-    baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
 
     EvolutionaryAlgorithm<BinarySolution> nsgaII = baseNSGAII.build();
 

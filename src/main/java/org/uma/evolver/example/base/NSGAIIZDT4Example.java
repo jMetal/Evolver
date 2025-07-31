@@ -1,5 +1,7 @@
 package org.uma.evolver.example.base;
 
+import org.uma.evolver.algorithm.base.nsgaii.BaseNSGAIITemp;
+import org.uma.evolver.algorithm.base.nsgaii.BaseNSGAIITemp2;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -34,12 +36,11 @@ public class NSGAIIZDT4Example {
                 + "--selectionTournamentSize 2")
             .split("\\s+");
 
-    var evNSGAII =
-        new DoubleNSGAII(
-            new ZDT4(),
+    var evNSGAII = BaseNSGAIITemp2.forDoubleProblems(new ZDT4(),
             100,
             25000,
-            new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
+            new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory())) ;
+
     evNSGAII.parse(parameters);
 
     evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
