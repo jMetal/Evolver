@@ -12,44 +12,87 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 /**
  * Configurable implementation of the MOEA/D algorithm for real-coded (double) problems.
  *
- * <p>This class provides a customizable version of MOEA/D, supporting various aggregation
- * functions, neighborhood strategies, crossover and mutation operators, and archive configurations
- * for double-valued problems.
+ * <p>This class provides a customizable version of MOEA/D specifically designed for continuous
+ * optimization problems with real-valued decision variables. It extends the base {@link BaseMOEAD}
+ * class with double-specific configurations and operations.
  *
- * <p>Typical usage:
+ * <h2>Features</h2>
+ * <ul>
+ *   <li>Support for real-valued decision variables</li>
+ *   <li>Configurable crossover and mutation operators for real-coded optimization</li>
+ *   <li>Customizable weight vector generation and neighborhood structures</li>
+ *   <li>Support for various aggregation functions</li>
+ *   <li>Configurable termination conditions and evaluation strategies</li>
+ * </ul>
  *
+ * <h2>Usage Example</h2>
  * <pre>{@code
- * MOEADDouble algorithm = new MOEADDouble(problem, 100, 25000, "weightsVectorDirectory");
+ * // Create and configure the algorithm
+ * ParameterSpace parameterSpace = new MOEADDoubleParameterSpace();
+ * DoubleMOEAD algorithm = new DoubleMOEAD(100, "weightVectors/", parameterSpace);
+ * 
+ * // Parse command line arguments to override default parameters
  * algorithm.parse(args);
+ * 
+ * // Build and run the algorithm
  * EvolutionaryAlgorithm<DoubleSolution> moead = algorithm.build();
  * moead.run();
+ * 
+ * // Get the resulting non-dominated solutions
+ * List<DoubleSolution> result = moead.result();
  * }</pre>
+ *
+ * <h2>Configuration Parameters</h2>
+ * <p>The algorithm can be configured using the following parameters in the parameter space:
+ * <ul>
+ *   <li>{@code maximumNumberOfReplacedSolutions}: Controls how many solutions are replaced in the neighborhood</li>
+ *   <li>{@code aggregationFunction}: The aggregation function used to combine objectives</li>
+ *   <li>{@code sequenceGenerator}: The sequence generation strategy for weight vectors</li>
+ *   <li>And other parameters inherited from {@link BaseMOEAD}</li>
+ * </ul>
  *
  * <p>Non-configurable parameters, such as the number of problem variables, maximum number of
  * replaced solutions, and derived values for mutation or neighborhood, are set automatically based
  * on the problem and algorithm configuration.
  *
+ * @see BaseMOEAD
  * @see MOEADDoubleParameterSpace
  * @see MutationParameter
+ * @see org.uma.jmetal.solution.doublesolution.DoubleSolution
  */
 public class DoubleMOEAD extends BaseMOEAD<DoubleSolution> {
   /**
-   * Constructs a MOEADDouble instance with the given population size and a default parameter space.
+   * Constructs a new DoubleMOEAD instance with the specified population size, weight vector files directory,
+   * and parameter space.
    *
-   * @param populationSize the population size to use
+   * <p>This creates a partially configured instance. The {@link #createInstance(Problem, int)}
+   * method must be called with a problem instance before the algorithm can be used.
+   *
+   * @param populationSize the size of the population to be used in the algorithm. Must be positive.
+   * @param weightVectorFilesDirectory the directory containing weight vector files. Must not be null.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if populationSize is not positive or any parameter is null
    */
   public DoubleMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 
   /**
-   * Constructs a MOEADDouble instance with the given problem, population size, maximum number of
-   * evaluations, weight vector files directory, and a default parameter space.
+   * Constructs a fully configured DoubleMOEAD instance ready for execution.
    *
-   * @param problem the problem to solve
-   * @param populationSize the population size to use
-   * @param maximumNumberOfEvaluations the maximum number of evaluations
-   * @param weightVectorFilesDirectory the directory containing weight vector files
+   * <p>This constructor creates a fully configured instance that can be immediately built and executed.
+   * All parameters are validated before the instance is created.
+   *
+   * @param problem the optimization problem to be solved. Must not be null.
+   * @param populationSize the size of the population. Must be positive.
+   * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the algorithm.
+   *                                 Must be positive and greater than populationSize.
+   * @param weightVectorFilesDirectory the directory containing weight vector files. Must not be null.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
+   * @throws IllegalStateException if the weight vector files cannot be found or parsed
    */
   public DoubleMOEAD(
       Problem<DoubleSolution> problem,
@@ -66,11 +109,17 @@ public class DoubleMOEAD extends BaseMOEAD<DoubleSolution> {
   }
 
   /**
-   * Creates a new instance of MOEADDouble for the given problem and maximum number of evaluations.
+   * Creates a new instance of DoubleMOEAD for the given problem and maximum number of evaluations.
    *
-   * @param problem the problem to solve
-   * @param maximumNumberOfEvaluations the evaluation budget
-   * @return a new configured instance of MOEADDouble
+   * <p>This factory method creates a new instance of DoubleMOEAD with the same configuration as this
+   * instance but with the specified problem and evaluation budget. The parameter space is cloned
+   * to ensure independent configuration.
+   *
+   * @param problem the problem to solve. Must not be null.
+   * @param maximumNumberOfEvaluations the evaluation budget. Must be positive and greater than population size.
+   * @return a new configured instance of DoubleMOEAD
+   * @throws IllegalArgumentException if the problem is null or maximumNumberOfEvaluations is invalid
+   * @throws IllegalStateException if the parameter space cannot be cloned
    */
   @Override
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
@@ -86,18 +135,24 @@ public class DoubleMOEAD extends BaseMOEAD<DoubleSolution> {
   /**
    * Sets non-configurable parameters that depend on the problem or algorithm configuration.
    *
-   * <p>This method automatically sets:
+   * <p>This method is automatically called during the build process to configure parameters that
+   * cannot be set through the parameter space because they depend on the problem instance or
+   * other runtime factors.
    *
+   * <p>This implementation configures:
    * <ul>
-   *   <li>The number of problem variables for the mutation operator.
-   *   <li>The maximum number of replaced solutions and neighborhood configuration.
-   *   <li>Aggregation function and normalization settings.
-   *   <li>Sequence generator and other derived parameters.
+   *   <li>The maximum number of solutions to replace in each neighborhood update
+   *   <li>The aggregation function for combining objectives
+   *   <li>Objective normalization settings
+   *   <li>Sequence generation parameters
+   *   <li>Problem-specific parameters for real-valued optimization
    * </ul>
+   *
+   * @throws IllegalStateException if required parameters are missing or invalid
    */
   @Override
   protected void setNonConfigurableParameters() {
-    // Set any additional non-configurable parameters specific to MOEADDouble here
+    // Configure parameters specific to real-coded MOEA/D implementation
     ParameterSpace parameterSpace = parameterSpace();
 
     maximumNumberOfReplacedSolutions =
@@ -139,5 +194,27 @@ public class DoubleMOEAD extends BaseMOEAD<DoubleSolution> {
     if (parameterSpace.get("variation").value().equals("crossoverAndMutationVariation")) {
       parameterSpace.get("variation").addNonConfigurableSubParameter("offspringPopulationSize", 1);
     }
+  }
+
+  /**
+   * Creates and configures the variation operator for real-coded solutions.
+   * 
+   * <p>This method creates the variation operator (typically a combination of crossover and mutation)
+   * that will be used to generate new solutions. The specific operators are retrieved from the
+   * parameter space configuration.
+   *
+   * <p>The variation operator is responsible for creating new candidate solutions by combining
+   * and modifying existing solutions from the population. For real-coded problems, this typically
+   * involves polynomial mutation and SBX (Simulated Binary Crossover) or differential evolution.
+   *
+   * @return a configured variation operator for real-coded solutions
+   * @throws IllegalStateException if the variation operator cannot be created or configured
+   * @see org.uma.jmetal.operator.variation.Variation
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  protected Variation<DoubleSolution> createVariation() {
+    return ((VariationParameter<DoubleSolution>) parameterSpace.get("variation"))
+        .getVariation();
   }
 }

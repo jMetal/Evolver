@@ -2,7 +2,7 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
@@ -23,7 +23,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link MOPSO} using
+ * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO} using
  * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
@@ -44,7 +44,7 @@ public class NSGAIIOptimizingMOPSOForProblemZCAT3 {
         new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
     System.out.println(parameterSpace);
     // var configurableAlgorithm = new MOEADDouble(100);
-    var baseAlgorithm = new MOPSO(100, parameterSpace);
+    var baseAlgorithm = new BaseMOPSO(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(20000);
     int numberOfIndependentRuns = 1;

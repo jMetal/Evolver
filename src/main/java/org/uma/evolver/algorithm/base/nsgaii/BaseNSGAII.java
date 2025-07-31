@@ -58,59 +58,114 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *   <li>Calling {@link #build()} to obtain a ready-to-run {@link EvolutionaryAlgorithm} instance</li>
  * </ul>
  *
- * <p>Example usage:
+ * <p><b>Example usage:</b>
  * <pre>{@code
- * NSGAIIPermutation algorithm = new NSGAIIPermutation(problem, 100, 25000);
- * algorithm.parse(args);
- * EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaii = algorithm.build();
+ * // Create a problem instance
+ * Problem<MySolution> problem = new MyProblem();
+ * 
+ * // Configure the algorithm
+ * int populationSize = 100;
+ * int maxEvaluations = 25000;
+ * ParameterSpace parameterSpace = new ParameterSpace();
+ * // Configure parameter space with desired components and parameters
+ * 
+ * // Create and run the algorithm
+ * BaseNSGAII<MySolution> nsgaii = new MyNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
  * nsgaii.run();
+ * 
+ * // Get results
+ * List<MySolution> population = nsgaii.result();
  * }</pre>
  *
- * @param <S> the solution type handled by the algorithm
- * @see <a href="https://ieeexplore.ieee.org/document/996017">A Fast Elitist Non-dominated Sorting Genetic Algorithm for Multi-objective Optimization: NSGA-II</a>
+ * @param <S> the type of solutions handled by this algorithm, must extend {@link Solution}
+ * @see <a href="https://ieeexplore.ieee.org/document/996017">A Fast Elitist Non-dominated Sorting 
+ * Genetic Algorithm for Multi-objective Optimization: NSGA-II</a>
+ * @see BaseLevelAlgorithm
+ * @see EvolutionaryAlgorithm
+ * @since version
  */
 public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+  /**
+   * The parameter space containing all configurable components and parameters.
+   */
   protected final ParameterSpace parameterSpace;
 
-  protected Ranking<S> ranking;
-  protected DensityEstimator<S> densityEstimator;
-  protected MultiComparator<S> rankingAndCrowdingComparator;
-
-  protected Problem<S> problem;
-  protected int populationSize;
-  protected int maximumNumberOfEvaluations;
-
   /**
-   * Constructs an AbstractNSGAII with the given population size and parameter space.
-   * This constructor is typically used when the problem and maximum number of evaluations
-   * will be set later.
+   * Constructs a new BaseNSGAII instance with the specified population size and parameter space.
+   * 
+   * <p>This creates a partially configured instance. The {@link #createInstance(Problem, int)}
+   * method must be called with a problem instance before the algorithm can be used.
    *
-   * @param populationSize the population size to use
-   * @param parameterSpace the parameter space for configuration
+   * @param populationSize the size of the population to be used in the algorithm. Must be positive.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if populationSize is not positive or parameterSpace is null
    */
   protected BaseNSGAII(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
+    this.offspringPopulationSize = populationSize; // Default to same as population size
   }
 
   /**
-   * Constructs an AbstractNSGAII with the given problem, population size, maximum number of evaluations,
-   * and parameter space. Initializes the ranking and density estimator components.
+   * The ranking strategy used for non-dominated sorting of solutions.
+   */
+  protected Ranking<S> ranking;
+  
+  /**
+   * The density estimator used for maintaining diversity in the population.
+   */
+  protected DensityEstimator<S> densityEstimator;
+  
+  /**
+   * Comparator that combines ranking and crowding distance for solution comparison.
+   */
+  protected MultiComparator<S> rankingAndCrowdingComparator;
+
+  /**
+   * The optimization problem to be solved.
+   */
+  protected Problem<S> problem;
+  
+  /**
+   * The size of the population.
+   */
+  protected int populationSize;
+  
+  /**
+   * The size of the offspring population generated in each generation.
+   */
+  protected int offspringPopulationSize;
+  
+  /**
+   * The maximum number of evaluations allowed for the algorithm.
+   */
+  protected int maximumNumberOfEvaluations;
+
+  /**
+   * Optional external archive for storing non-dominated solutions.
+   */
+  protected Archive<S> externalArchive;
+
+  /**
+   * Constructs a fully configured BaseNSGAII instance ready for execution.
    *
-   * @param problem the problem to solve
-   * @param populationSize the population size to use
-   * @param maximumNumberOfEvaluations the maximum number of evaluations
-   * @param parameterSpace the parameter space for configuration
+   * @param problem the optimization problem to be solved. Must not be null.
+   * @param populationSize the size of the population. Must be positive.
+   * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the algorithm.
+   *                                 Must be positive and greater than populationSize.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
    */
   protected BaseNSGAII(
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
       ParameterSpace parameterSpace) {
+    this(populationSize, parameterSpace);
     this.problem = problem;
-    this.populationSize = populationSize;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
-    this.parameterSpace = parameterSpace;
 
     ranking = new FastNonDominatedSortRanking<>();
     densityEstimator = new CrowdingDistanceDensityEstimator<>();
@@ -126,6 +181,11 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    *
    * @return the parameter space
    */
+  /**
+   * Returns the parameter space used by this algorithm.
+   *
+   * @return the parameter space containing all configurable components and parameters
+   */
   @Override
   public ParameterSpace parameterSpace() {
     return parameterSpace;
@@ -140,6 +200,21 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * Subclasses should ensure that all required parameters are set before calling this method.
    *
    * @return a ready-to-run evolutionary algorithm instance
+   */
+  /**
+   * Builds and configures the NSGA-II algorithm based on the current parameter space.
+   * 
+   * <p>This method initializes all necessary components for the NSGA-II algorithm, including:
+   * <ul>
+   *   <li>Ranking and density estimation strategies</li>
+   *   <li>Population initialization</li>
+   *   <li>Selection, crossover, and mutation operators</li>
+   *   <li>Termination condition</li>
+   *   <li>Optional external archive</li>
+   * </ul>
+   *
+   * @return a fully configured EvolutionaryAlgorithm instance implementing NSGA-II
+   * @throws IllegalStateException if required parameters are not properly configured
    */
   @Override
   public EvolutionaryAlgorithm<S> build() {

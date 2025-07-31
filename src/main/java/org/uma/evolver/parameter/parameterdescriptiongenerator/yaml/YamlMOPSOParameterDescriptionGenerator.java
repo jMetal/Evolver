@@ -1,6 +1,6 @@
 package org.uma.evolver.parameter.parameterdescriptiongenerator.yaml;
 
-import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -18,7 +18,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see MOPSOParameterSpace
- * @see MOPSO
+ * @see BaseMOPSO
  * @author Antonio J. Nebro
  */
 public class YamlMOPSOParameterDescriptionGenerator {

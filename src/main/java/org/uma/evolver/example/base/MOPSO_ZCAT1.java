@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.mopso.MOPSO;
+import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
@@ -38,7 +38,7 @@ public class MOPSO_ZCAT1 {
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
 
-    var baseMOPSO = new MOPSO(problem, 100, 150000, parameterSpace);
+    var baseMOPSO = new BaseMOPSO(problem, 100, 150000, parameterSpace);
     baseMOPSO.parse(parameters);
 
     baseMOPSO.parameterSpace().topLevelParameters().forEach(System.out::println);

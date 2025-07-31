@@ -1,8 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.mopso.MOPSO;
-import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
@@ -55,7 +53,7 @@ public class MOPSOExternalArchiveDTLZ3 {
             .split("\\s+");
 
     var mopso =
-        new MOPSO(
+        new BaseMOPSO(
             problem,
             100,
             40000,
