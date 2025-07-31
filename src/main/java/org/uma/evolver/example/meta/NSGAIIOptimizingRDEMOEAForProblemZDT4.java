@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEAV2;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
+import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
@@ -40,7 +39,7 @@ public class NSGAIIOptimizingRDEMOEAForProblemZDT4 {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleRDEMOEAV2(100, parameterSpace);
+    var configurableAlgorithm = new DoubleRDEMOEA(100, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;

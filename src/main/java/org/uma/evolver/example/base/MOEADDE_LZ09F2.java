@@ -49,9 +49,9 @@ public class MOEADDE_LZ09F2 {
         "resources/weightVectors", new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
     baseMOEAD.parse(parameters);
 
-    evMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> moead = evMOEAD.build();
+    EvolutionaryAlgorithm<DoubleSolution> moead = baseMOEAD.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

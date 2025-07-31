@@ -3,7 +3,6 @@ package org.uma.evolver.algorithm.base.rdsmoea;
 import java.util.*;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEACommonParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
@@ -60,7 +59,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
-  private final RDEMOEACommonParameterSpace<S> parameterSpace;
+  protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
   protected DensityEstimator<S> densityEstimator;
@@ -78,7 +77,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  protected BaseRDEMOEA(int populationSize, RDEMOEACommonParameterSpace<S> parameterSpace) {
+  protected BaseRDEMOEA(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
   }
@@ -96,7 +95,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
       Problem<S> problem,
       int populationSize,
       int maximumNumberOfEvaluations,
-      RDEMOEACommonParameterSpace<S> parameterSpace) {
+      ParameterSpace parameterSpace) {
     this.problem = problem;
     this.populationSize = populationSize;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
@@ -147,8 +146,8 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder().build(
-        "NSGAII",
+    return new EvolutionaryAlgorithmBuilder<S>().build(
+        "RDEMOEA",
         initialSolutionsCreation,
         evaluation,
         termination,
@@ -159,10 +158,9 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
   }
 
   private void setRankingAndDensityEstimator() {
-    ranking = ((RankingParameter<S>) parameterSpace().get(parameterSpace.RANKING)).getRanking();
+    ranking = ((RankingParameter<S>) parameterSpace().get("ranking")).getRanking();
     densityEstimator =
-        ((DensityEstimatorParameter<S>) parameterSpace().get(parameterSpace.DENSITY_ESTIMATOR))
-            .getDensityEstimator();
+        ((DensityEstimatorParameter<S>) parameterSpace().get("densityEstimator")).getDensityEstimator();
     rankingAndCrowdingComparator =
         new MultiComparator<>(
             Arrays.asList(
@@ -187,7 +185,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   protected Archive<S> createExternalArchive() {
     ExternalArchiveParameter<S> externalArchiveParameter =
-        (ExternalArchiveParameter<S>) parameterSpace.get(parameterSpace.ARCHIVE_TYPE);
+        (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
     Archive<S> archive = externalArchiveParameter.getExternalArchive();
@@ -202,9 +200,9 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   private boolean usingExternalArchive() {
     return parameterSpace
-        .get(parameterSpace.ALGORITHM_RESULT)
+        .get("algorithmResult")
         .value()
-        .equals(parameterSpace.EXTERNAL_ARCHIVE);
+        .equals("externalArchive");
   }
 
   /**
@@ -216,7 +214,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
   private void updatePopulationSize(Archive<S> archive) {
     if (archive != null) {
       populationSize =
-          (int) parameterSpace.get(parameterSpace.POPULATION_SIZE_WITH_ARCHIVE).value();
+          (int) parameterSpace.get("populationSizeWithArchive").value();
     }
   }
 
@@ -256,7 +254,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    * @return the selection operator
    */
   protected Selection<S> createSelection(Variation<S> variation) {
-    var selectionParameter = (SelectionParameter<S>) parameterSpace.get(parameterSpace.SELECTION);
+    var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
         variation.getMatingPoolSize(), rankingAndCrowdingComparator);
   }
@@ -269,10 +267,10 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   protected Variation<S> createVariation() {
     VariationParameter<S> variationParameter =
-        (VariationParameter<S>) parameterSpace.get(parameterSpace.VARIATION);
+        (VariationParameter<S>) parameterSpace.get("variation");
     variationParameter.addNonConfigurableSubParameter(
-        parameterSpace.OFFSPRING_POPULATION_SIZE,
-        parameterSpace.get(parameterSpace.OFFSPRING_POPULATION_SIZE).value());
+        "offspringPopulationSize",
+        parameterSpace.get("offspringPopulationSize").value());
 
     return variationParameter.getVariation();
   }
@@ -284,7 +282,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   protected SolutionsCreation<S> createInitialSolutions() {
     return ((CreateInitialSolutionsParameter<S>)
-            parameterSpace.get(parameterSpace.CREATE_INITIAL_SOLUTIONS))
+            parameterSpace.get("createInitialSolutions"))
         .getCreateInitialSolutionsStrategy(problem, populationSize);
   }
 
@@ -295,7 +293,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   protected Replacement<S> createReplacement() {
 
-    var replacementParameter = (ReplacementParameter<S>) parameterSpace.get(parameterSpace.REPLACEMENT);
+    var replacementParameter = (ReplacementParameter<S>) parameterSpace.get("replacement");
     replacementParameter.setRanking(ranking);
     replacementParameter.setDensityEstimator(densityEstimator);
 

@@ -1,7 +1,7 @@
 package org.uma.evolver.algorithm.base.rdsmoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
@@ -12,22 +12,12 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  */
 public class PermutationRDEMOEA extends BaseRDEMOEA<PermutationSolution<Integer>> {
   /**
-   * Constructs an NSGAIIPermutation instance with the given population size and a default parameter
-   * space.
-   *
-   * @param populationSize the population size to use
-   */
-  public PermutationRDEMOEA(int populationSize) {
-    this(populationSize, new RDEMOEAPermutationParameterSpace());
-  }
-
-  /**
    * Constructs an NSGAIIPermutation instance with the given population size and parameter space.
    *
    * @param populationSize the population size to use
    * @param parameterSpace the parameter space for configuration
    */
-  public PermutationRDEMOEA(int populationSize, RDEMOEAPermutationParameterSpace parameterSpace) {
+  public PermutationRDEMOEA(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
@@ -42,9 +32,10 @@ public class PermutationRDEMOEA extends BaseRDEMOEA<PermutationSolution<Integer>
   public PermutationRDEMOEA(
           Problem<PermutationSolution<Integer>> problem,
           int populationSize,
-          int maximumNumberOfEvaluations) {
-    super(
-            problem, populationSize, maximumNumberOfEvaluations, new RDEMOEAPermutationParameterSpace());
+          int maximumNumberOfEvaluations,
+          ParameterSpace parameterSpace
+  ) {
+    super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
   }
 
   /**
@@ -58,7 +49,7 @@ public class PermutationRDEMOEA extends BaseRDEMOEA<PermutationSolution<Integer>
   @Override
   public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
           Problem<PermutationSolution<Integer>> problem, int maximumNumberOfEvaluations) {
-    return new PermutationRDEMOEA(problem, populationSize, maximumNumberOfEvaluations);
+    return new PermutationRDEMOEA(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */

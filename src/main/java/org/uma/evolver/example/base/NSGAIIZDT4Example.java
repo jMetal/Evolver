@@ -41,9 +41,9 @@ public class NSGAIIZDT4Example {
 
     baseNSGAII.parse(parameters);
 
-    evNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaII = evNSGAII.build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseNSGAII.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

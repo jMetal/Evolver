@@ -1,8 +1,6 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEAV2;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -43,7 +41,7 @@ public class RDEMOEA_SPEA2_DTLZ2Example {
                 + "--removalPolicy sequential")
             .split("\\s+");
 
-    var baseAlgorithm = new DoubleRDEMOEAV2(new DTLZ2(), 100, 40000, parameterSpace);
+    var baseAlgorithm = new DoubleRDEMOEA(new DTLZ2(), 100, 40000, parameterSpace);
     baseAlgorithm.parse(parameters);
 
     baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);

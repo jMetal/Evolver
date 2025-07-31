@@ -50,7 +50,7 @@ public class MOEAD_DTLZ2 {
 
     baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<DoubleSolution> moead = evMOEAD.build();
+    EvolutionaryAlgorithm<DoubleSolution> moead = baseMOEAD.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =

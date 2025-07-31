@@ -8,31 +8,49 @@ import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
 /**
- * Configurable implementation of the NSGA-II algorithm for Binary-based problems.
+ * A configurable implementation of the Non-dominated Sorting Genetic Algorithm II (NSGA-II) 
+ * specifically designed for binary-encoded optimization problems.
  *
- * <p>This class provides a highly customizable version of NSGA-II, supporting:
+ * <p>This class extends the base {@link BaseNSGAII} implementation to handle binary-encoded
+ * solutions, providing specialized support for binary-specific operations and parameters.
  *
+ * <p>Key features include:
  * <ul>
- *   <li>Various selection strategies (e.g., tournament, random)
- *   <li>Multiple crossover operators (e.g., PMX, CX, OX, etc.)
- *   <li>Different mutation approaches (e.g., swap, scramble, insertion, etc.)
- *   <li>Optional external archive integration
+ *   <li>Support for binary-encoded solution spaces
+ *   <li>Configurable genetic operators through the parameter space
+ *   <li>Automatic handling of solution encoding/decoding
+ *   <li>Integration with JMetal's binary problem interface
  * </ul>
  *
- * <p><b>Usage example:</b>
- *
+ * <p><b>Example usage:</b>
  * <pre>{@code
- * NSGAIIBinary algorithm = new NSGAIIBinary(problem, 100, 25000);
- * algorithm.parse(args);
- * EvolutionaryAlgorithm<BinarySolution> nsgaii = algorithm.build();
- * nsgaii.run();
+ * // Create a binary problem instance
+ * BinaryProblem problem = new MyBinaryProblem();
+ * 
+ * // Configure the algorithm
+ * int populationSize = 100;
+ * int maxEvaluations = 25000;
+ * ParameterSpace parameterSpace = new ParameterSpace();
+ * // Configure parameter space with desired operators and parameters
+ * 
+ * // Create and run the algorithm
+ * BinaryNSGAII algorithm = new BinaryNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
+ * algorithm.run();
+ * 
+ * // Get results
+ * List<BinarySolution> population = algorithm.result();
  * }</pre>
  *
- * <p>Non-configurable parameters, such as the number of problem variables and, depending on the
- * mutation operator, other derived values, are set automatically based on the problem and algorithm
- * configuration.
+ * <p>The algorithm automatically configures non-configurable parameters such as the number of bits
+ * in the solution based on the problem definition. For binary problems, the total number of bits
+ * is automatically determined from the problem instance.
  *
+ * @see BaseNSGAII
+ * @see BinaryProblem
+ * @see BinarySolution
  * @see MutationParameter
+ * @author Your Name (your.email@example.com)
+ * @since version
  */
 public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
   /**

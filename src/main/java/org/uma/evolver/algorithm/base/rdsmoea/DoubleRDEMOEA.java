@@ -1,8 +1,7 @@
 package org.uma.evolver.algorithm.base.rdsmoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -30,7 +29,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * operator, the maximum number of iterations or perturbation value, are set automatically based on the
  * problem and algorithm configuration.
  *
- * @see NSGAIIDoubleParameterSpace
  * @see MutationParameter
  */
 public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
@@ -39,19 +37,10 @@ public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
    *
    * @param populationSize the population size to use
    */
-  public DoubleRDEMOEA(int populationSize) {
-    this(populationSize, new RDEMOEADoubleParameterSpace());
-  }
-
-  /**
-   * Constructs an NSGAIIDouble instance with the given population size and parameter space.
-   *
-   * @param populationSize the population size to use
-   * @param parameterSpace the parameter space for configuration
-   */
-  public DoubleRDEMOEA(int populationSize, RDEMOEADoubleParameterSpace parameterSpace) {
+  public DoubleRDEMOEA(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
+
 
   /**
    * Constructs an NSGAIIDouble instance with the given problem, population size, and maximum number of evaluations.
@@ -62,8 +51,8 @@ public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
    * @param maximumNumberOfEvaluations the maximum number of evaluations
    */
   public DoubleRDEMOEA(
-      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations) {
-   super(problem, populationSize, maximumNumberOfEvaluations, new RDEMOEADoubleParameterSpace()) ;
+      Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations, ParameterSpace parameterSpace) {
+   super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace) ;
   }
 
   /**
@@ -76,7 +65,7 @@ public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
   @Override
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-    return new DoubleRDEMOEA(problem, populationSize, maximumNumberOfEvaluations);
+    return new DoubleRDEMOEA(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
   /**
@@ -91,22 +80,20 @@ public class DoubleRDEMOEA extends BaseRDEMOEA<DoubleSolution> {
    */
   @Override
   protected void setNonConfigurableParameters() {
-    RDEMOEADoubleParameterSpace parameterSpace = (RDEMOEADoubleParameterSpace) parameterSpace();
-
     MutationParameter mutationParameter =
-            (MutationParameter) parameterSpace.get(parameterSpace.MUTATION);
+            (MutationParameter) parameterSpace().get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfProblemVariables", problem.numberOfVariables());
 
-    if (mutationParameter.value().equals(parameterSpace.NON_UNIFORM)) {
+    if (mutationParameter.value().equals("nonUniform")) {
       mutationParameter.addNonConfigurableSubParameter(
               "maxIterations", maximumNumberOfEvaluations / populationSize);
     }
 
-    if (mutationParameter.value().equals(parameterSpace.UNIFORM)) {
+    if (mutationParameter.value().equals("uniform")) {
       mutationParameter.addNonConfigurableSubParameter(
-              parameterSpace.UNIFORM_MUTATION_PERTURBATION,
-              parameterSpace.get(parameterSpace.UNIFORM_MUTATION_PERTURBATION));
+              "perturbationValue",
+              parameterSpace.get("uniformMutationPerturbation"));
     }
   }
 }

@@ -1,7 +1,6 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEAV2;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -40,7 +39,7 @@ public class RDEMOEA_NSGAII_ZDT4Example {
                 + "--removalPolicy oneShot")
             .split("\\s+");
 
-    var baseAlgorithm = new DoubleRDEMOEAV2(new ZDT4(), 100, 25000, parameterSpace);
+    var baseAlgorithm = new DoubleRDEMOEA(new ZDT4(), 100, 25000, parameterSpace);
     baseAlgorithm.parse(parameters);
 
     baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
