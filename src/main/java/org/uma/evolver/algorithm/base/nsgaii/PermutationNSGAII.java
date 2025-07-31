@@ -6,46 +6,77 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Configurable implementation of the NSGA-II algorithm for permutation-based problems.
+ * A configurable implementation of the Non-dominated Sorting Genetic Algorithm II (NSGA-II) 
+ * specifically designed for permutation-based optimization problems.
  *
- * <p>This class provides a highly customizable version of NSGA-II, supporting:
+ * <p>This class extends the base {@link BaseNSGAII} implementation to handle permutation-encoded
+ * solutions, providing specialized support for combinatorial optimization problems where solutions
+ * are represented as permutations of integers.
  *
+ * <p>Key features include:
  * <ul>
- *   <li>Various selection strategies (e.g., tournament, random)
- *   <li>Multiple crossover operators (e.g., PMX, CX, OX, etc.)
- *   <li>Different mutation approaches (e.g., swap, scramble, insertion, etc.)
- *   <li>Optional external archive integration
+ *   <li>Support for permutation-based solution spaces</li>
+ *   <li>Configurable genetic operators through the parameter space</li>
+ *   <li>Specialized support for permutation-specific operators</li>
+ *   <li>Integration with JMetal's permutation solution interface</li>
  * </ul>
  *
- * <p><b>Usage example:</b>
- *
+ * <p><b>Example usage:</b>
  * <pre>{@code
- * NSGAIIPermutation algorithm = new NSGAIIPermutation(problem, 100, 25000);
- * algorithm.parse(args);
- * EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaii = algorithm.build();
- * nsgaii.run();
+ * // Create a permutation problem instance (e.g., TSP)
+ * PermutationProblem<Integer> problem = new TSP(...);
+ * 
+ * // Configure the algorithm
+ * int populationSize = 100;
+ * int maxEvaluations = 25000;
+ * ParameterSpace parameterSpace = new ParameterSpace();
+ * // Configure parameter space with desired operators and parameters
+ * 
+ * // Create and run the algorithm
+ * PermutationNSGAII algorithm = new PermutationNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
+ * algorithm.run();
+ * 
+ * // Get results
+ * List<PermutationSolution<Integer>> population = algorithm.result();
  * }</pre>
  *
+ * <p>The algorithm is particularly well-suited for combinatorial optimization problems
+ * such as the Traveling Salesman Problem (TSP), Quadratic Assignment Problem (QAP),
+ * and other permutation-based optimization tasks.
+ *
+ * @see BaseNSGAII
+ * @see PermutationSolution
+ * @see org.uma.jmetal.problem.permutationproblem.PermutationProblem
+ * @since version
  */
 public class PermutationNSGAII extends BaseNSGAII<PermutationSolution<Integer>> {
   
   /**
-   * Constructs an NSGAIIPermutation instance with the given population size and parameter space.
+   * Constructs a new instance of PermutationNSGAII with the specified population size and parameter space.
+   * 
+   * <p>Note: This creates a partially configured instance. The {@link #createInstance(Problem, int)} 
+   * method must be called with a problem instance before the algorithm can be used.
    *
-   * @param populationSize the population size to use
-   * @param parameterSpace the parameter space for configuration
+   * @param populationSize the size of the population to be used in the algorithm. Must be positive.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if populationSize is not positive or parameterSpace is null
    */
   public PermutationNSGAII(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
   /**
-   * Constructs an NSGAIIPermutation instance with the given problem, population size, and maximum
-   * number of evaluations. Uses a default parameter space.
+   * Constructs a fully configured PermutationNSGAII instance ready for execution.
    *
-   * @param problem the problem to solve
-   * @param populationSize the population size to use
-   * @param maximumNumberOfEvaluations the maximum number of evaluations
+   * @param problem the permutation-based optimization problem to be solved. Must implement the
+   *               PermutationProblem interface.
+   * @param populationSize the size of the population. Must be a positive integer.
+   * @param maximumNumberOfEvaluations the evaluation budget for the algorithm. The algorithm will
+   *                                 terminate once this number of evaluations is reached.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
+   * @throws ClassCastException if the provided problem does not implement PermutationProblem
    */
   public PermutationNSGAII(
       Problem<PermutationSolution<Integer>> problem,
@@ -57,12 +88,16 @@ public class PermutationNSGAII extends BaseNSGAII<PermutationSolution<Integer>> 
   }
 
   /**
-   * Creates a new instance of NSGAIIPermutation for the given problem and maximum number of
-   * evaluations.
+   * Creates and returns a new instance of PermutationNSGAII configured for the specified problem.
+   * 
+   * <p>This method implements the factory method pattern, allowing the creation of algorithm
+   * instances with the same configuration but potentially different problems or evaluation limits.
    *
-   * @param problem the problem to solve
-   * @param maximumNumberOfEvaluations the evaluation budget
-   * @return a new configured instance of NSGAIIPermutation
+   * @param problem the permutation-based optimization problem to solve. Must not be null.
+   * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the new instance.
+   *                                 Must be positive.
+   * @return a new, fully configured instance of PermutationNSGAII
+   * @throws IllegalArgumentException if problem is null or maximumNumberOfEvaluations is not positive
    */
   @Override
   public BaseLevelAlgorithm<PermutationSolution<Integer>> createInstance(
@@ -70,10 +105,19 @@ public class PermutationNSGAII extends BaseNSGAII<PermutationSolution<Integer>> 
     return new PermutationNSGAII(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
-  /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */
+  /**
+   * Configures non-configurable parameters based on the problem's characteristics.
+   * 
+   * <p>This method is automatically called during algorithm initialization. For the permutation-based
+   * NSGA-II implementation, no additional non-configurable parameters need to be set as all required
+   * parameters are handled by the base class or through the parameter space configuration.
+   * 
+   * @implNote This method is intentionally empty as no additional parameter configuration is needed
+   * for the permutation variant. It's maintained for consistency with the template method pattern
+   * and potential future extensions.
+   */
   @Override
   protected void setNonConfigurableParameters() {
-    // This method is intentionally left empty because the NSGAIIPermutation algorithm does not have
-    // non-configurable parameters.
+    // No non-configurable parameters need to be set for the permutation variant
   }
 }

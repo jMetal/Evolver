@@ -9,50 +9,77 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**
- * Configurable implementation of the NSGA-II algorithm for double-valued (real-coded) problems.
+ * A configurable implementation of the Non-dominated Sorting Genetic Algorithm II (NSGA-II) 
+ * specifically designed for continuous (real-valued) optimization problems.
  *
- * <p>This class provides a highly customizable version of NSGA-II, supporting:
+ * <p>This class extends the base {@link BaseNSGAII} implementation to handle double-encoded
+ * solutions, providing specialized support for continuous optimization problems with real-valued variables.
+ *
+ * <p>Key features include:
  * <ul>
- *   <li>Various selection strategies (e.g., tournament, random)</li>
- *   <li>Multiple crossover operators (e.g., SBX, BLX-Alpha, whole arithmetic)</li>
- *   <li>Different mutation approaches (e.g., uniform, polynomial, non-uniform)</li>
- *   <li>Optional external archive integration</li>
+ *   <li>Support for real-valued solution spaces</li>
+ *   <li>Configurable genetic operators through the parameter space</li>
+ *   <li>Automatic handling of solution bounds and constraints</li>
+ *   <li>Integration with JMetal's double solution interface</li>
+ *   <li>Support for various crossover and mutation operators</li>
  * </ul>
  *
- * <p><b>Usage example:</b>
+ * <p><b>Example usage:</b>
  * <pre>{@code
- * NSGAIIDouble algorithm = new NSGAIIDouble(problem, 100, 25000);
- * algorithm.parse(args);
- * EvolutionaryAlgorithm<DoubleSolution> nsgaii = algorithm.build();
- * nsgaii.run();
+ * // Create a continuous problem instance
+ * DoubleProblem problem = new MyDoubleProblem();
+ * 
+ * // Configure the algorithm
+ * int populationSize = 100;
+ * int maxEvaluations = 25000;
+ * ParameterSpace parameterSpace = new NSGAIIDoubleParameterSpace();
+ * // Configure parameter space with desired operators and parameters
+ * 
+ * // Create and run the algorithm
+ * DoubleNSGAII algorithm = new DoubleNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
+ * algorithm.run();
+ * 
+ * // Get results
+ * List<DoubleSolution> population = algorithm.result();
  * }</pre>
  *
- * <p>Non-configurable parameters such as the number of problem variables and, depending on the mutation
- * operator, the maximum number of iterations or perturbation value, are set automatically based on the
- * problem and algorithm configuration.
+ * <p>The algorithm automatically configures non-configurable parameters such as the number of variables
+ * and their bounds based on the problem definition. For mutation operators like non-uniform mutation,
+ * it also configures the maximum number of iterations based on the evaluation budget.
  *
+ * @see BaseNSGAII
+ * @see DoubleSolution
  * @see NSGAIIDoubleParameterSpace
  * @see MutationParameter
+ * @since version
  */
 public class DoubleNSGAII extends BaseNSGAII<DoubleSolution> {
 
   /**
-   * Constructs an NSGAIIDouble instance with the given population size and parameter space.
+   * Constructs a new instance of DoubleNSGAII with the specified population size and parameter space.
+   * 
+   * <p>Note: This creates a partially configured instance. The {@link #createInstance(Problem, int)} 
+   * method must be called with a problem instance before the algorithm can be used.
    *
-   * @param populationSize the population size to use
-   * @param parameterSpace the parameter space for configuration
+   * @param populationSize the size of the population to be used in the algorithm. Must be positive.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if populationSize is not positive or parameterSpace is null
    */
   public DoubleNSGAII(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
   /**
-   * Constructs an NSGAIIDouble instance with the given problem, population size, and maximum number of evaluations.
-   * Uses a default parameter space.
+   * Constructs a fully configured DoubleNSGAII instance ready for execution.
    *
-   * @param problem the problem to solve
-   * @param populationSize the population size to use
-   * @param maximumNumberOfEvaluations the maximum number of evaluations
+   * @param problem the continuous optimization problem to be solved. Must implement the DoubleProblem interface.
+   * @param populationSize the size of the population. Must be a positive integer.
+   * @param maximumNumberOfEvaluations the evaluation budget for the algorithm. The algorithm will
+   *                                 terminate once this number of evaluations is reached.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
+   * @throws ClassCastException if the provided problem does not implement DoubleProblem
    */
   public DoubleNSGAII(
       Problem<DoubleSolution> problem, int populationSize, int maximumNumberOfEvaluations, ParameterSpace parameterSpace) {
@@ -60,11 +87,16 @@ public class DoubleNSGAII extends BaseNSGAII<DoubleSolution> {
   }
 
   /**
-   * Creates a new instance of NSGAIIDouble for the given problem and maximum number of evaluations.
+   * Creates and returns a new instance of DoubleNSGAII configured for the specified problem.
+   * 
+   * <p>This method implements the factory method pattern, allowing the creation of algorithm
+   * instances with the same configuration but potentially different problems or evaluation limits.
    *
-   * @param problem the problem to solve
-   * @param maximumNumberOfEvaluations the evaluation budget
-   * @return a new configured instance of NSGAIIDouble
+   * @param problem the continuous optimization problem to solve. Must not be null.
+   * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the new instance.
+   *                                 Must be positive.
+   * @return a new, fully configured instance of DoubleNSGAII
+   * @throws IllegalArgumentException if problem is null or maximumNumberOfEvaluations is not positive
    */
   @Override
   public synchronized BaseLevelAlgorithm<DoubleSolution> createInstance(
@@ -75,14 +107,19 @@ public class DoubleNSGAII extends BaseNSGAII<DoubleSolution> {
   }
 
   /**
-   * Sets non-configurable parameters that depend on the problem or algorithm configuration.
-   * <p>
-   * This method automatically sets:
+   * Configures non-configurable parameters based on the problem's characteristics.
+   * 
+   * <p>This method is automatically called during algorithm initialization to set up parameters
+   * that depend on the specific problem instance. It handles:
    * <ul>
-   *   <li>The number of problem variables for the mutation operator.</li>
-   *   <li>The maximum number of iterations for non-uniform mutation.</li>
-   *   <li>The perturbation value for uniform mutation.</li>
+   *   <li>Number of problem variables for mutation operators</li>
+   *   <li>Maximum number of iterations for non-uniform mutation</li>
+   *   <li>Perturbation values for uniform mutation</li>
    * </ul>
+   * 
+   * @implNote This method is part of the template method pattern and should not be called directly.
+   * It is automatically invoked by the framework during algorithm initialization.
+   * @throws IllegalStateException if required parameters are not properly configured
    */
   @Override
   protected void setNonConfigurableParameters() {

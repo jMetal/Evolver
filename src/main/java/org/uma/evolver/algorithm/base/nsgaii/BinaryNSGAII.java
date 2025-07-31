@@ -54,23 +54,30 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
  */
 public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
   /**
-   * Constructs an NSGAIIBinary instance with the given population size and parameter space. This is a partial instance that is 
-   * not fully usable until the createMethod() is called
+   * Constructs a new instance of BinaryNSGAII with the specified population size and parameter space.
+   * 
+   * <p>Note: This creates a partially configured instance. The {@link #createInstance(Problem, int)} 
+   * method must be called with a problem instance before the algorithm can be used.
    *
-   * @param populationSize the population size to use
-   * @param parameterSpace the parameter space for configuration
+   * @param populationSize the size of the population to be used in the algorithm. Must be positive.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   *                      Must not be null.
+   * @throws IllegalArgumentException if populationSize is not positive or parameterSpace is null
    */
   public BinaryNSGAII(int populationSize, ParameterSpace parameterSpace) {
     super(populationSize, parameterSpace);
   }
 
   /**
-   * Constructs an NSGAIIBinary instance with the given problem, population size, and maximum
-   * number of evaluations. Uses a default parameter space.
+   * Constructs a fully configured BinaryNSGAII instance ready for execution.
    *
-   * @param problem the problem to solve
-   * @param populationSize the population size to use
-   * @param maximumNumberOfEvaluations the maximum number of evaluations
+   * @param problem the binary problem to be solved. Must implement the BinaryProblem interface.
+   * @param populationSize the size of the population. Must be a positive integer.
+   * @param maximumNumberOfEvaluations the evaluation budget for the algorithm. The algorithm will
+   *                                 terminate once this number of evaluations is reached.
+   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
+   * @throws ClassCastException if the provided problem does not implement BinaryProblem
    */
   public BinaryNSGAII(
       Problem<BinarySolution> problem,
@@ -82,12 +89,16 @@ public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
   }
 
   /**
-   * Creates a new instance of NSGAIIBinary for the given problem and maximum number of
-   * evaluations.
+   * Creates and returns a new instance of BinaryNSGAII configured for the specified problem.
+   * 
+   * <p>This method implements the factory method pattern, allowing the creation of algorithm
+   * instances with the same configuration but potentially different problems or evaluation limits.
    *
-   * @param problem the problem to solve
-   * @param maximumNumberOfEvaluations the evaluation budget
-   * @return a new configured instance of NSGAIIBinary
+   * @param problem the binary optimization problem to solve. Must not be null.
+   * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the new instance.
+   *                                 Must be positive.
+   * @return a new, fully configured instance of BinaryNSGAII
+   * @throws IllegalArgumentException if problem is null or maximumNumberOfEvaluations is not positive
    */
   @Override
   public BaseLevelAlgorithm<BinarySolution> createInstance(
@@ -95,7 +106,16 @@ public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
     return new BinaryNSGAII(problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
   }
 
-  /** Sets non-configurable parameters that depend on the problem or algorithm configuration. */
+  /**
+   * Configures non-configurable parameters based on the problem's characteristics.
+   * 
+   * <p>This method is automatically called during algorithm initialization to set up parameters
+   * that depend on the specific problem instance, such as the total number of bits in the solution.
+   * It configures mutation parameters based on the problem's binary encoding.
+   * 
+   * @implNote This method is part of the template method pattern and should not be called directly.
+   * It is automatically invoked by the framework during algorithm initialization.
+   */
   @Override
   protected void setNonConfigurableParameters() {
     int numberOfBitsInASolution = ((BinaryProblem)problem).totalNumberOfBits() ;
