@@ -6,6 +6,8 @@ import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
+import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
