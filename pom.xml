@@ -256,6 +256,11 @@
     </dependency>
     <dependency>
       <groupId>org.uma.jmetal</groupId>
+      <artifactId>jmetal-lab</artifactId>
+      <version>${jmetal.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.uma.jmetal</groupId>
       <artifactId>jmetal-problem</artifactId>
       <version>${jmetal.version}</version>
     </dependency>
