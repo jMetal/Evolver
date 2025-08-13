@@ -205,7 +205,6 @@ public class BinaryMOEAD extends BaseMOEAD<BinarySolution> {
    *
    * @return a configured variation operator for binary solutions
    * @throws IllegalStateException if the variation operator cannot be created or configured
-   * @see org.uma.jmetal.operator.variation.Variation
    */
   @Override
   @SuppressWarnings("unchecked")

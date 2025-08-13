@@ -40,7 +40,8 @@ public class NSGAIIOptimizingNSGAIIForProblemRE31 {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    int populationSize = 100;
+    var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
 
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
