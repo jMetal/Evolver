@@ -1,6 +1,5 @@
 package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
 
-import java.util.Objects;
 import java.util.Random;
 
 import org.uma.jmetal.util.errorchecking.Check;

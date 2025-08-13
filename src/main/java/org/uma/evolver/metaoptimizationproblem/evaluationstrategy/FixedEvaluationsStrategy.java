@@ -3,7 +3,6 @@ package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.uma.jmetal.util.errorchecking.Check;
 
@@ -26,6 +25,14 @@ public class FixedEvaluationsStrategy implements EvaluationStrategy {
   public FixedEvaluationsStrategy(List<Integer> evaluations) {
     Check.notNull(evaluations);
     Check.that(!evaluations.isEmpty(), "The evaluations list cannot be empty");
+    
+    // Validate all evaluation counts are positive
+    for (int i = 0; i < evaluations.size(); i++) {
+      Check.that(evaluations.get(i) > 0, 
+          "Evaluation count must be positive, but got " + evaluations.get(i) + 
+          " at index " + i);
+    }
+    
     this.evaluations = new ArrayList<>(evaluations);
   }
 
@@ -38,14 +45,11 @@ public class FixedEvaluationsStrategy implements EvaluationStrategy {
 
   @Override
   public void validate(int numberOfProblems) {
+    // We only need to check the number of problems here
+    // The constructor already ensures all evaluation counts are positive
     Check.that(evaluations.size() == numberOfProblems, 
         "Number of evaluation counts (" + evaluations.size() + 
         ") must match number of problems (" + numberOfProblems + ")");
-    for (int i = 0; i < evaluations.size(); i++) {
-      Check.that(evaluations.get(i) > 0, 
-          "Evaluation count must be positive, but got " + evaluations.get(i) + 
-          " at index " + i);
-    }
   }
 
   /**
