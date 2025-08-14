@@ -1,13 +1,13 @@
 package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
 
 /**
- * Interface defining the contract for different evaluation strategies in meta-optimization
+ * Interface defining the contract for different evaluation budget strategies in meta-optimization
  * problems. Implementations of this interface determine how the number of evaluations is determined
  * for each problem during the optimization process.
  *
  * @author Antonio J. Nebro
  */
-public interface EvaluationStrategy {
+public interface EvaluationBudgetStrategy {
   /**
    * Retrieves the number of evaluations to be performed for a specific problem. The implementation
    * should handle the logic for determining the evaluation count, which could be fixed, random, or
@@ -20,7 +20,7 @@ public interface EvaluationStrategy {
   int getEvaluations(int problemIndex);
 
   /**
-   * Validates the configuration of the evaluation strategy against the number of problems.
+   * Validates the configuration of the evaluation budget strategy against the number of problems.
    * Implementations should throw an {@link IllegalArgumentException} if the configuration is
    * invalid for the given number of problems.
    *

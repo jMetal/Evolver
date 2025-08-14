@@ -7,12 +7,12 @@ import java.util.List;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**
- * Implementation of EvaluationStrategy that uses fixed evaluation counts for each problem.
+ * Implementation of EvaluationBudgetStrategy that uses fixed evaluation counts for each problem.
  * The number of evaluations is specified explicitly for each problem in the constructor.
  *
  * @author Antonio J. Nebro
  */
-public class FixedEvaluationsStrategy implements EvaluationStrategy {
+public class FixedEvaluationsStrategy implements EvaluationBudgetStrategy {
   private final List<Integer> evaluations;
 
   /**

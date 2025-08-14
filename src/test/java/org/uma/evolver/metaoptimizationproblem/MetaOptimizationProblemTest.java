@@ -4,12 +4,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
@@ -32,13 +35,14 @@ class MetaOptimizationProblemTest {
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
+    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000));
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             configurableAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            List.of(25000),
+            evaluationStrategy,
             1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
@@ -65,13 +69,14 @@ class MetaOptimizationProblemTest {
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
+    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000, 25000, 25000, 25000, 25000));
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
             new MetaOptimizationProblem<>(
                     configurableAlgorithm,
                     trainingSet,
                     referenceFrontFileNames,
                     indicators,
-                    List.of(15000, 15000, 15000, 15000, 15000),
+                    evaluationStrategy,
                     1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
@@ -93,13 +98,14 @@ class MetaOptimizationProblemTest {
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume(), new Epsilon());
 
+    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000));
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
             new MetaOptimizationProblem<>(
                     configurableAlgorithm,
                     trainingSet,
                     referenceFrontFileNames,
                     indicators,
-                    List.of(25000),
+                    evaluationStrategy,
                     1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
@@ -119,14 +125,15 @@ class MetaOptimizationProblemTest {
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume());
 
+    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000, 25000));
     MetaOptimizationProblem<PermutationSolution<Integer>> metaOptimizationProblem =
-            new MetaOptimizationProblem<>(
-                    configurableAlgorithm,
-                    trainingSet,
-                    referenceFrontFileNames,
-                    indicators,
-                    List.of(25000),
-                    1);
+        new MetaOptimizationProblem<>(
+            configurableAlgorithm,
+            List.of(new KroAB100TSP(), new KroAB100TSP()),
+            List.of("resources/referenceFrontsTSP/KroAB100TSP1.csv", "resources/referenceFrontsTSP/KroAB100TSP2.csv"),
+            indicators,
+            evaluationStrategy,
+            1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
 

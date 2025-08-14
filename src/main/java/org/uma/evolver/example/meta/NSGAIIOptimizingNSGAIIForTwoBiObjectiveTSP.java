@@ -6,6 +6,8 @@ import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.OutputResults;
@@ -47,13 +49,15 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
     var configurableAlgorithm = new PermutationNSGAII(100, parameterSpace);
     int numberOfIndependentRuns = 1;
 
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+
     var metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             configurableAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            maximumNumberOfEvaluations,
+            evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder

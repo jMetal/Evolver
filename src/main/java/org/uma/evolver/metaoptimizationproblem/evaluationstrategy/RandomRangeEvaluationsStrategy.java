@@ -5,12 +5,12 @@ import java.util.Random;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**
- * Implementation of EvaluationStrategy that generates random evaluation counts within a specified range.
+ * Implementation of EvaluationBudgetStrategy that generates random evaluation counts within a specified range.
  * Each call to getEvaluations() returns a random value between minEvaluations and maxEvaluations (inclusive).
  *
  * @author Antonio J. Nebro
  */
-public class RandomRangeEvaluationsStrategy implements EvaluationStrategy {
+public class RandomRangeEvaluationsStrategy implements EvaluationBudgetStrategy {
   private final int minEvaluations;
   private final int maxEvaluations;
   private final Random random;

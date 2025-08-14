@@ -5,6 +5,8 @@ import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
@@ -46,13 +48,15 @@ public class NSGAIIOptimizingNSGAIIForProblemRE31 {
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             configurableAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            maximumNumberOfEvaluations,
+            evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder

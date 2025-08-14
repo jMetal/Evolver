@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.uma.evolver.algorithm.base.smsemoa.DoubleSMSEMOA;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
@@ -26,15 +28,15 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleSMSEMOA} using
- * problem {@link ZDT4} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleSMSEMOA} using problem
+ * {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "SMSEMOADouble.yaml" ;
+    String yamlParameterSpaceFile = "SMSEMOADouble.yaml";
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
@@ -49,16 +51,20 @@ public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
 
+    EvaluationBudgetStrategy evaluationBudgetStrategy =
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            maximumNumberOfEvaluations,
+            evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
+    // builder
     int maxEvaluations = 2000;
     int numberOfCores = 1;
 
@@ -71,7 +77,7 @@ public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
     var mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
     int populationSize = 100;
-    int offspringPopulationSize = 100 ;
+    int offspringPopulationSize = 100;
 
     Termination termination = new TerminationByEvaluations(1000);
 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.jmetal.problem.Problem;
@@ -42,8 +43,8 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
   /** Quality indicators used to evaluate solutions. */
   private final List<QualityIndicator> indicators;
   
-  /** Maximum number of evaluations for each problem. */
-  private final List<Integer> maxNumberOfEvaluations;
+  /** Strategy for determining number of evaluations per problem. */
+  private final EvaluationBudgetStrategy evaluationStrategy;
   
   /** List of parameters being optimized. */
   private final List<Parameter<?>> parameters;
@@ -64,23 +65,29 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
    * @param problems the list of problems to evaluate the algorithm on
    * @param referenceFrontFileNames list of file paths containing reference fronts for each problem
    * @param indicators list of quality indicators to evaluate solutions
-   * @param maxNumberOfEvaluations maximum number of evaluations for each problem
+   * @param evaluationStrategy strategy for determining number of evaluations per problem
    * @param numberOfIndependentRuns number of independent runs to perform for each evaluation
    * @throws NullPointerException if any parameter is null
-   * @throws IllegalArgumentException if the sizes of problems, referenceFrontFileNames,
-   *         and maxNumberOfEvaluations don't match
+   * @throws IllegalArgumentException if the sizes of problems and referenceFrontFileNames don't match,
+   *         or if the evaluation strategy is not compatible with the number of problems
    */
   public MetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
       List<Problem<S>> problems,
       List<String> referenceFrontFileNames,
       List<QualityIndicator> indicators,
-      List<Integer> maxNumberOfEvaluations,
+      EvaluationBudgetStrategy evaluationStrategy,
       int numberOfIndependentRuns) {
+    Check.notNull(baseAlgorithm);
+    Check.notNull(problems);
+    Check.notNull(referenceFrontFileNames);
+    Check.notNull(indicators);
+    Check.notNull(evaluationStrategy);
+    
     this.baseAlgorithm = baseAlgorithm;
-    this.problems = problems;
-    this.indicators = indicators;
-    this.maxNumberOfEvaluations = maxNumberOfEvaluations;
+    this.problems = new ArrayList<>(problems);
+    this.indicators = new ArrayList<>(indicators);
+    this.evaluationStrategy = evaluationStrategy;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
 
     this.parameters =
@@ -92,13 +99,9 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
             + problems.size()
             + " vs "
             + referenceFrontFileNames.size());
-
-    Check.that(
-        problems.size() == maxNumberOfEvaluations.size(),
-        "There must be the same number of problems as different evaluations: "
-            + problems.size()
-            + " vs "
-            + maxNumberOfEvaluations.size());
+            
+    // Validate that the evaluation strategy is compatible with the number of problems
+    evaluationStrategy.validate(problems.size());
 
     List<Double> lowerLimit = java.util.Collections.nCopies(parameters.size(), 0.0);
     List<Double> upperLimit = java.util.Collections.nCopies(parameters.size(), 1.0);
@@ -168,6 +171,15 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
   @Override
   public String name() {
     return "Meta-optimization problem";
+  }
+
+  /**
+   * Returns the evaluation strategy being used.
+   *
+   * @return the evaluation strategy
+   */
+  public EvaluationBudgetStrategy evaluationStrategy() {
+    return evaluationStrategy;
   }
 
   /**
@@ -280,9 +292,10 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
         .forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
+      int evaluations = evaluationStrategy.getEvaluations(problemId);
       var algorithm =
           baseAlgorithm
-              .createInstance(problems.get(problemId), maxNumberOfEvaluations.get(problemId))
+              .createInstance(problems.get(problemId), evaluations)
               .parse(parameterArray)
               .build();
 

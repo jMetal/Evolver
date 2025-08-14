@@ -6,6 +6,8 @@ import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -47,13 +49,15 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
     var maximumNumberOfEvaluations = List.of(15000);
     int numberOfIndependentRuns = 1;
 
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+
     var metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            maximumNumberOfEvaluations,
+            evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder

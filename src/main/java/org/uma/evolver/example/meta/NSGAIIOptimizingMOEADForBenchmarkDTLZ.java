@@ -6,6 +6,8 @@ import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
@@ -43,8 +45,9 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
      var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
+
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(problemFamilyInfo.evaluationsToOptimize());
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -52,7 +55,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
             trainingSet,
             referenceFrontFileNames,
             indicators,
-            maximumNumberOfEvaluations,
+            evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
