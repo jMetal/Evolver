@@ -1,4 +1,4 @@
-package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
+package org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy;
 
 import java.util.Random;
 

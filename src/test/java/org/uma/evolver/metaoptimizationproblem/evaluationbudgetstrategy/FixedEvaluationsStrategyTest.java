@@ -1,4 +1,4 @@
-package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
+package org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.uma.jmetal.util.errorchecking.exception.EmptyCollectionException;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
 import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
 

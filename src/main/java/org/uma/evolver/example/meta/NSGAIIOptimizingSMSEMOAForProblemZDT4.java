@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.uma.evolver.algorithm.base.smsemoa.DoubleSMSEMOA;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
-import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
-import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;

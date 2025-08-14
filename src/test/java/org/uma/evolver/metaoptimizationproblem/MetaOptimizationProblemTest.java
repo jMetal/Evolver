@@ -4,17 +4,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
+
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
-import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.EvaluationBudgetStrategy;
-import org.uma.evolver.metaoptimizationproblem.evaluationstrategy.FixedEvaluationsStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
+import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAC100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -57,7 +58,8 @@ class MetaOptimizationProblemTest {
   void workingTestForTheZDTProblemsWithNSGAII() {
     List<Problem<DoubleSolution>> trainingSet =
         List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
-    List<String> referenceFrontFileNames = List.of(
+    List<String> referenceFrontFileNames =
+        List.of(
             "resources/referenceFronts/ZDT1.csv",
             "resources/referenceFronts/ZDT2.csv",
             "resources/referenceFronts/ZDT3.csv",
@@ -69,15 +71,16 @@ class MetaOptimizationProblemTest {
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
-    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000, 25000, 25000, 25000, 25000));
+    EvaluationBudgetStrategy evaluationStrategy =
+        new FixedEvaluationsStrategy(List.of(25000, 25000, 25000, 25000, 25000));
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-            new MetaOptimizationProblem<>(
-                    configurableAlgorithm,
-                    trainingSet,
-                    referenceFrontFileNames,
-                    indicators,
-                    evaluationStrategy,
-                    1);
+        new MetaOptimizationProblem<>(
+            configurableAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            evaluationStrategy,
+            1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
 
@@ -100,13 +103,13 @@ class MetaOptimizationProblemTest {
 
     EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000));
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-            new MetaOptimizationProblem<>(
-                    configurableAlgorithm,
-                    trainingSet,
-                    referenceFrontFileNames,
-                    indicators,
-                    evaluationStrategy,
-                    1);
+        new MetaOptimizationProblem<>(
+            configurableAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            evaluationStrategy,
+            1);
 
     DoubleSolution solution = metaOptimizationProblem.createSolution();
 
@@ -118,19 +121,24 @@ class MetaOptimizationProblemTest {
 
   @Test
   void workingTestForATSPProblemWithNSGAII() throws IOException {
-    List<Problem<PermutationSolution<Integer>>> trainingSet = List.of(new KroAB100TSP());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFrontsTSP/KroAB100TSP.csv");
+    List<Problem<PermutationSolution<Integer>>> trainingSet = List.of(new KroAB100TSP(), new KroAC100TSP()) ;
+    List<String> referenceFrontFileNames =
+        List.of(
+            "resources/referenceFrontsTSP/KroAB100TSP.csv",
+            "resources/referenceFrontsTSP/KroAC100TSP.csv");
 
     var configurableAlgorithm = new PermutationNSGAII(100, new NSGAIIPermutationParameterSpace());
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume());
 
-    EvaluationBudgetStrategy evaluationStrategy = new FixedEvaluationsStrategy(List.of(25000, 25000));
+    EvaluationBudgetStrategy evaluationStrategy =
+        new FixedEvaluationsStrategy(List.of(25000, 25000));
+
     MetaOptimizationProblem<PermutationSolution<Integer>> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             configurableAlgorithm,
-            List.of(new KroAB100TSP(), new KroAB100TSP()),
-            List.of("resources/referenceFrontsTSP/KroAB100TSP1.csv", "resources/referenceFrontsTSP/KroAB100TSP2.csv"),
+            trainingSet,
+            referenceFrontFileNames,
             indicators,
             evaluationStrategy,
             1);

@@ -1,4 +1,4 @@
-package org.uma.evolver.metaoptimizationproblem.evaluationstrategy;
+package org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy;
 
 /**
  * Interface defining the contract for different evaluation budget strategies in meta-optimization
