@@ -11,6 +11,7 @@ import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
+import org.uma.evolver.util.EvaluationsQualityIndicator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -348,8 +349,13 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
 
       for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
         QualityIndicator indicator = indicators.get(indicatorId).newInstance();
+        if (indicator.name().equals("Evaluations")) {
+         ((EvaluationsQualityIndicator)indicator).setNumberOfEvaluations(evaluations);
+         indicatorValues[indicatorId][runId] = evaluations;
+        } else {
         indicator.referenceFront(normalizedReferenceFronts.get(problemId));
         indicatorValues[indicatorId][runId] = indicator.compute(normalizedFront);
+        }
       }
     }
 

@@ -22,7 +22,7 @@ import org.uma.jmetal.qualityindicator.QualityIndicator;
 public class EvaluationsQualityIndicator extends QualityIndicator {
 
   /** The number of evaluations to be returned by this indicator. */
-  private int numberOfEvaluations;
+  private int numberOfEvaluations = Integer.MAX_VALUE;
 
   /**
    * Sets the number of evaluations that this indicator should return.
@@ -35,6 +35,7 @@ public class EvaluationsQualityIndicator extends QualityIndicator {
 
   @Override
   public double compute(double[][] front) {
+    System.out.println(numberOfEvaluations);
     return numberOfEvaluations;
   }
 
