@@ -23,15 +23,37 @@ import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * A meta-optimization problem that optimizes the parameters of another optimization algorithm
+ * A meta-optimization problem that optimizes the parameters of an optimization algorithm
  * by evaluating its performance across multiple problem instances using quality indicators.
  * 
  * <p>This class implements a meta-optimization approach where the parameters of a base
- * algorithm are tuned by evaluating its performance on multiple problem instances using
- * various quality indicators. The optimization objective is to find parameter settings
- * that work well across all problem instances.</p>
+ * algorithm are automatically tuned by evaluating its performance on multiple problem 
+ * instances using various quality indicators. The optimization objective is to find parameter 
+ * settings that work well across all problem instances in the training set.</p>
+ * 
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>Supports optimization of any configurable algorithm that implements {@code BaseLevelAlgorithm}</li>
+ *   <li>Allows evaluation on multiple problem instances with different characteristics</li>
+ *   <li>Uses quality indicators to assess algorithm performance</li>
+ *   <li>Supports multiple independent runs to account for stochasticity</li>
+ *   <li>Provides flexible evaluation budget control through {@link EvaluationBudgetStrategy}</li>
+ * </ul>
  *
- * @param <S> The type of solutions used by the base algorithm
+ * <p>Typical usage involves:</p>
+ * <ol>
+ *   <li>Define the base algorithm with its parameter space</li>
+ *   <li>Select a set of training problems</li>
+ *   <li>Configure quality indicators for evaluation</li>
+ *   <li>Set up the evaluation budget strategy</li>
+ *   <li>Use an optimization algorithm to solve the meta-optimization problem</li>
+ * </ol>
+ *
+ * @param <S> The type of solutions used by the base algorithm being optimized
+ * 
+ * @see EvaluationBudgetStrategy
+ * @see BaseLevelAlgorithm
+ * @see org.uma.jmetal.qualityindicator.QualityIndicator
  */
 public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoubleProblem {
   /** The base algorithm whose parameters are being optimized. */
@@ -44,7 +66,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
   private final List<QualityIndicator> indicators;
   
   /** Strategy for determining number of evaluations per problem. */
-  private final EvaluationBudgetStrategy evaluationStrategy;
+  private final EvaluationBudgetStrategy evaluationBudgetStrategy;
   
   /** List of parameters being optimized. */
   private final List<Parameter<?>> parameters;
@@ -61,33 +83,38 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
   /**
    * Constructs a new meta-optimization problem instance.
    *
-   * @param baseAlgorithm the base algorithm whose parameters will be optimized
-   * @param problems the list of problems to evaluate the algorithm on
-   * @param referenceFrontFileNames list of file paths containing reference fronts for each problem
-   * @param indicators list of quality indicators to evaluate solutions
-   * @param evaluationStrategy strategy for determining number of evaluations per problem
+   * @param baseAlgorithm the base algorithm whose parameters will be optimized (must not be null)
+   * @param problems the list of problems to evaluate the algorithm on (must not be null or empty)
+   * @param referenceFrontFileNames list of file paths containing reference fronts for each problem 
+   *        (must match the size of problems list)
+   * @param indicators list of quality indicators to evaluate solutions (must not be null or empty)
+   * @param evaluationBudgetStrategy strategy for determining the evaluation budget for each problem
+   *        (must not be null and must be compatible with the number of problems)
    * @param numberOfIndependentRuns number of independent runs to perform for each evaluation
+   *        (must be positive)
    * @throws NullPointerException if any parameter is null
    * @throws IllegalArgumentException if the sizes of problems and referenceFrontFileNames don't match,
-   *         or if the evaluation strategy is not compatible with the number of problems
+   *         if the evaluation budget strategy is not compatible with the number of problems,
+   *         or if numberOfIndependentRuns is not positive
+   * @see EvaluationBudgetStrategy#validate(int)
    */
   public MetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
       List<Problem<S>> problems,
       List<String> referenceFrontFileNames,
       List<QualityIndicator> indicators,
-      EvaluationBudgetStrategy evaluationStrategy,
+      EvaluationBudgetStrategy evaluationBudgetStrategy,
       int numberOfIndependentRuns) {
     Check.notNull(baseAlgorithm);
     Check.notNull(problems);
     Check.notNull(referenceFrontFileNames);
     Check.notNull(indicators);
-    Check.notNull(evaluationStrategy);
+    Check.notNull(evaluationBudgetStrategy);
     
     this.baseAlgorithm = baseAlgorithm;
     this.problems = new ArrayList<>(problems);
     this.indicators = new ArrayList<>(indicators);
-    this.evaluationStrategy = evaluationStrategy;
+    this.evaluationBudgetStrategy = evaluationBudgetStrategy;
     this.numberOfIndependentRuns = numberOfIndependentRuns;
 
     this.parameters =
@@ -101,7 +128,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
             + referenceFrontFileNames.size());
             
     // Validate that the evaluation strategy is compatible with the number of problems
-    evaluationStrategy.validate(problems.size());
+    evaluationBudgetStrategy.validate(problems.size());
 
     List<Double> lowerLimit = java.util.Collections.nCopies(parameters.size(), 0.0);
     List<Double> upperLimit = java.util.Collections.nCopies(parameters.size(), 1.0);
@@ -178,8 +205,8 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
    *
    * @return the evaluation strategy
    */
-  public EvaluationBudgetStrategy evaluationStrategy() {
-    return evaluationStrategy;
+  public EvaluationBudgetStrategy evaluationBudgetStrategy() {
+    return evaluationBudgetStrategy;
   }
 
   /**
@@ -292,7 +319,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
         .forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
-      int evaluations = evaluationStrategy.getEvaluations(problemId);
+      int evaluations = evaluationBudgetStrategy.getEvaluations(problemId);
       var algorithm =
           baseAlgorithm
               .createInstance(problems.get(problemId), evaluations)
