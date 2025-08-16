@@ -8,3 +8,5 @@ build
 jMetal*.log
 .vscode
 *.iml
+.DS_Store
+_build
