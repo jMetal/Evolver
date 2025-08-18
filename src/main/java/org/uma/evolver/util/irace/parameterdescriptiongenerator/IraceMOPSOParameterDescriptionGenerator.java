@@ -1,4 +1,4 @@
-package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
+package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
 import org.uma.evolver.algorithm.base.mopso.MOPSOParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;

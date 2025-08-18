@@ -1,4 +1,4 @@
-package org.uma.evolver.parameter.parameterdescriptiongenerator.irace;
+package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
 import java.util.List;
 import org.uma.evolver.parameter.Parameter;
