@@ -5,14 +5,6 @@ Overview
 --------
 Evolver is Java-based framework designed to automate the configuration and design of multi-objective metaheuristics through meta-optimization. By treating algorithm configuration as an optimization problem itself, Evolver enables the automatic discovery of high-performance parameter settings tailored to specific problem domains.
 
-Key Features
-^^^^^^^^^^^^
-- **Automated Configuration**: Automatically finds optimal parameter settings for metaheuristics
-- **Flexible Architecture**: Supports various metaheuristics at both meta and base levels
-- **Multi-objective Optimization**: Optimizes multiple performance criteria simultaneously
-- **Extensible Design**: Easy integration of new algorithms, problems, and quality indicators
-- **Empirical Validation**: Includes comprehensive testing and benchmarking capabilities
-
 Approach    
 ^^^^^^^^
 Evolver follows a two-level optimization approach:
@@ -73,6 +65,19 @@ The flow is as follows:
 
 
 This hierarchical approach enables the automatic discovery of high-performance parameter settings tailored to specific problem domains and performance criteria.
+
+Key Features
+^^^^^^^^^^^^
+- **Automated Configuration**: Automatically finds accurate parameter settings for metaheuristics
+- **Flexible Architecture**: Supports various metaheuristics at both meta and base levels
+- **Multi-objective Optimization**: Optimizes multiple performance criteria simultaneously
+- **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
+- **Empirical Validation**: Includes comprehensive testing and benchmarking capabilities
+
+Other Features
+^^^^^^^^^^^^
+- **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
+
 
 Installation
 ------------
