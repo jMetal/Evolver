@@ -8,7 +8,6 @@ import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParamete
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
-import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.RandomRangeEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -18,9 +17,7 @@ import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;

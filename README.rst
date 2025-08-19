@@ -3,7 +3,10 @@ Evolver: Automated Metaheuristic Configuration Framework
 
 Overview
 --------
-Evolver is Java-based framework designed to automate the configuration and design of multi-objective metaheuristics through meta-optimization. By treating algorithm configuration as an optimization problem itself, Evolver enables the automatic discovery of high-performance parameter settings tailored to specific problem domains.
+Evolver is Java-based framework designed to automate the configuration and design 
+of multi-objective metaheuristics through meta-optimization. By treating algorithm 
+configuration as an optimization problem itself, Evolver enables the automatic discovery 
+of high-performance parameter settings tailored to specific problem domains.
 
 Approach    
 ^^^^^^^^
@@ -53,7 +56,7 @@ The components of the approach are:
 2. **Meta-level Components**
 
    * A **Meta-optimization Problem** that evaluates base-level configurations
-   * Quality indicators (e.g., Epsilon, Normalized Hypervolume) as optimization objectives
+   * Quality indicators (e.g., Epsilon, normalized Hypervolume, etc.) as optimization objectives
    * A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
 
 
@@ -64,15 +67,13 @@ The flow is as follows:
 3. The process repeats until stopping criteria are met
 
 
-This hierarchical approach enables the automatic discovery of high-performance parameter settings tailored to specific problem domains and performance criteria.
-
 Key Features
 ^^^^^^^^^^^^
 - **Automated Configuration**: Automatically finds accurate parameter settings for metaheuristics
 - **Flexible Architecture**: Supports various metaheuristics at both meta and base levels
-- **Multi-objective Optimization**: Optimizes multiple performance criteria simultaneously
+- **Multi-objective Optimization at the meta level**: Optimizes multiple performance criteria (quality indicators) simultaneously
 - **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
-- **Empirical Validation**: Includes comprehensive testing and benchmarking capabilities
+- **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics can be defined in a YAML file
 
 Other Features
 ^^^^^^^^^^^^
@@ -94,40 +95,45 @@ Installation
 
 Quick Start
 -----------
-The following example demonstrates how to use Evolver to optimize the parameters of an RDEMOEA algorithm for solving the DTLZ3 problem:
+The following example demonstrates how to use Evolver to optimize the parameters of the NSGA-II algorithm for solving the DTLZ3 problem:
 
 .. code-block:: java
 
-   // 1. Define the target problem
-   List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
-   List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ3.3D.csv");
+   // 1. Define the YAML parameter space file and target problem
+   String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+   List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
+   List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
 
    // 2. Set up the algorithm to be configured
    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-   var baseAlgorithm = new NSGAIIDouble(100);
+   var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+   var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
+
    var maximumNumberOfEvaluations = List.of(10000);
+   int numberOfIndependentRuns = 1;
+   EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
    // 3. Create the meta-optimization problem
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-        new MetaOptimizationProblem<>(
-            baseAlgorithm,
-            trainingSet,
-            referenceFrontFileNames,
-            indicators,
-            maximumNumberOfEvaluations,
-            numberOfIndependentRuns);
+   MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+       new MetaOptimizationProblem<>(
+           configurableAlgorithm,
+           trainingSet,
+           referenceFrontFileNames,
+           indicators,
+           evaluationBudgetStrategy,
+           numberOfIndependentRuns);
 
    // 4. Configure and run the meta-optimizer
-int maxEvaluations = 2000;
-    int numberOfCores = 8;
+   int maxEvaluations = 2000;
+   int numberOfCores = 8;
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem)
-            .setMaxEvaluations(maxEvaluations)
-            .setNumberOfCores(numberOfCores)
-            .build();
+   EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
+       new MetaNSGAIIBuilder(metaOptimizationProblem)
+           .setMaxEvaluations(maxEvaluations)
+           .setNumberOfCores(numberOfCores)
+           .build();
 
-   moea.run();
+   nsgaii.run();
 
 Documentation
 -------------

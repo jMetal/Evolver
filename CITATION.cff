@@ -1,0 +1,63 @@
+cff-version: 1.2.0
+title: 'Evolver: Meta-optimizing multi-objective metaheuristics'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: José F.
+    family-names: Aldana-Martín
+    orcid: 'https://orcid.org/0000-0002-4845-762X'
+    email: jfaldanam@uma.es
+    affiliation: >-
+      ITIS Software, Edificio de Investigación Ada Byron,
+      University of Málaga, Málaga, 29071, Spain Dept. de
+      Lenguajes y Ciencias de la Computación, University of
+      Málaga, Málaga, 29071, Spain
+  - family-names: Durillo
+    given-names: 'Juan J. '
+    email: durillo@lrz.de
+    affiliation: >-
+      Leibniz Supercomputing Centre of the Bavarian Academy
+      of Sciences and Humanities, Garching bei Muenchen,
+      Germany
+    orcid: 'https://orcid.org/0000-0002-8023-6392'
+  - given-names: Antonio J.
+    family-names: Nebro
+    email: ajnebro@uma.es
+    affiliation: >-
+      ITIS Software, Edificio de Investigación Ada Byron,
+      University of Málaga, Málaga, 29071, Spain Dept. de
+      Lenguajes y Ciencias de la Computación, University of
+      Málaga, Málaga, 29071, Spain
+    orcid: 'https://orcid.org/0000-0001-5580-0484'
+identifiers:
+  - type: doi
+    value: 10.1016/j.softx.2023.101551
+    description: Published DOI of the related paper
+repository-code: 'https://github.com/jMetal/Evolver'
+url: 'https://github.com/jMetal/Evolver/blob/main/README.md'
+abstract: >-
+  Evolver is a tool based on the formulation of the
+  automatic configuration and design of multi-objective
+  metaheuristics as a multi-objective optimization problem
+  that can be solved by using the same kind of algorithms;
+  i.e., we are applying a meta-optimization approach.
+  Evolver provides highly configurable implementations of
+  representative multi-objective solvers which can be
+  automatically configured from a number of multi-objective
+  problems used as the training set and a list of quality
+  indicators which are the objectives to be optimized. Our
+  tool is based on the jMetal framework, so a large number
+  of existing algorithms can be used as meta-optimizers. A
+  graphical user interface allows scientists to easily
+  define auto-configuration scenarios, thus simplifying the
+  complex process of finding high-quality algorithm
+  settings.
+keywords:
+  - Multi-objective optimization
+  - metaheuristics auto-configuration and auto-design
+  - framework
+  - jMetal
+license: MIT
+date-released: '2023-10-10'

@@ -1,5 +1,4 @@
-  package org.uma.evolver.util.irace;
-
+package org.uma.evolver.util.irace;
 
 import java.io.IOException;
 
@@ -13,51 +12,82 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
-
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
+/**
+ * A utility class for running NSGA-II with irace for automatic algorithm configuration.
+ * This class is designed to be called from the command line with specific parameters
+ * and returns the hypervolume value of the obtained solution set, which is used by irace
+ * to evaluate different configurations.
+ *
+ * <p>Expected command-line arguments:
+ * <ul>
+ *   <li>--problemName: Name of the problem to solve</li>
+ *   <li>--referenceFrontFileName: Name of the reference front file</li>
+ *   <li>--populationSize: Size of the population</li>
+ *   <li>--maximumNumberOfEvaluations: Stopping condition</li>
+ *   <li>Additional NSGA-II specific parameters</li>
+ * </ul>
+ *
+ * @author Antonio J. Nebro
+ */
 public class AutoNSGAIIIraceHV {
+  /**
+   * Main method that runs NSGA-II with the provided configuration and returns the hypervolume value.
+   * The result is printed to standard output for irace to capture.
+   *
+   * @param args Command line arguments containing the configuration parameters
+   * @throws IOException If there is an error reading the reference front file
+   */
   public static void main(String[] args) throws IOException {
+    // Parse problem name parameter and load the problem
     StringParameter problemNameParameter = new StringParameter("problemName");
     problemNameParameter.parse(args);
-    Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value()) ;
+    Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value());
 
+    // Parse reference front filename parameter
     StringParameter referenceFrontFilenameParameter = new StringParameter("referenceFrontFileName");
     referenceFrontFilenameParameter.parse(args);
     String referenceFrontFilename = referenceFrontFilenameParameter.value();
 
+    // Parse population size parameter
     StringParameter populationSizeParameter = new StringParameter("populationSize");
     populationSizeParameter.parse(args);
     int populationSize = Integer.parseInt(populationSizeParameter.value());
 
+    // Parse maximum number of evaluations parameter
     StringParameter maximumNumberOfEvaluationsParameter = new StringParameter("maximumNumberOfEvaluations");
     maximumNumberOfEvaluationsParameter.parse(args);
     int maximumNumberOfEvaluations = Integer.parseInt(maximumNumberOfEvaluationsParameter.value());
 
-    var baseNSGAII = new DoubleNSGAII(problem,
-            populationSize,
-            maximumNumberOfEvaluations,
-            new NSGAIIDoubleParameterSpace()) ;
+    // Create and configure the base NSGA-II algorithm
+    var baseNSGAII = new DoubleNSGAII(
+        problem,
+        populationSize,
+        maximumNumberOfEvaluations,
+        new NSGAIIDoubleParameterSpace());
 
+    // Parse any additional NSGA-II specific parameters
     baseNSGAII.parse(args);
 
+    // Build and run the algorithm
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseNSGAII.build();
     nsgaII.run();
 
-    String referenceFrontFile =
-        "resources/referenceFrontsCSV/" + referenceFrontFilename;
-
+    // Load and process the reference front
+    String referenceFrontFile = "resources/referenceFrontsCSV/" + referenceFrontFilename;
     double[][] referenceFront = VectorUtils.readVectors(referenceFrontFile, ",");
-    double[][] front = getMatrixWithObjectiveValues(nsgaII.result()) ;
+    double[][] front = getMatrixWithObjectiveValues(nsgaII.result());
 
+    // Normalize the fronts for hypervolume calculation
     double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
-    double[][] normalizedFront =
-            NormalizeUtils.normalize(
-                    front,
-                    NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-                    NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+    double[][] normalizedFront = NormalizeUtils.normalize(
+        front,
+        NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
+        NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
-    var qualityIndicator = new PISAHypervolume(normalizedReferenceFront) ;
-    System.out.println(qualityIndicator.compute(normalizedFront) * -1.0) ;
+    // Calculate and output the hypervolume (inverted for minimization)
+    var qualityIndicator = new PISAHypervolume(normalizedReferenceFront);
+    System.out.println(qualityIndicator.compute(normalizedFront) * -1.0);
   }
 }
