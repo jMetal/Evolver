@@ -1,3 +1,8 @@
+.. image:: https://readthedocs.org/projects/Evolver/badge/?version=latest
+   :alt: Documentation Status
+   :target: https://Evolver.readthedocs.io/?badge=latest
+
+
 Evolver: Automated Metaheuristic Configuration Framework
 ========================================================
 
