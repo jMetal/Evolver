@@ -1,7 +1,7 @@
 Evolver: Automated Metaheuristic Configuration Framework
 ========================================================
 
-DISCLAIMER: we are developing a new version of Evolver.The package is
+DISCLAIMER: we are developing a new version of Evolver. The package is
 ready to be used but we are still working on the documentation.
 
 Overview
