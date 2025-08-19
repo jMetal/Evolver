@@ -1,0 +1,4 @@
+# Parameter space with an invalid range for testing
+invalidRangeParam:
+  type: integer
+  range: [100, 1]  # Invalid: min > max

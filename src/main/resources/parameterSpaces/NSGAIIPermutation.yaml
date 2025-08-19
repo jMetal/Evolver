@@ -1,0 +1,64 @@
+algorithmResult:
+  type: categorical
+  values:
+    population:
+    externalArchive:
+      conditionalParameters:
+        populationSizeWithArchive:
+          type: integer
+          range: [10, 200]
+        archiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive:
+            unboundedArchive:
+#
+createInitialSolutions:
+  type: categorical
+  values:
+    default:
+#
+offspringPopulationSize:
+  type: categorical
+  values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
+#
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            PMX:
+            OXD:
+            CX:
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            swap:
+            insert:
+            scramble:
+            inversion:
+            simpleInversion:
+            displacement:
+#
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+    random:
+#
+

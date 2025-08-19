@@ -1,0 +1,193 @@
+algorithmResult:
+  type: categorical
+  values:
+    population:
+    externalArchive:
+      conditionalParameters:
+        populationSizeWithArchive:
+          type: integer
+          range: [10, 200]
+        archiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive:
+            unboundedArchive:
+#
+createInitialSolutions:
+  type: categorical
+  values:
+    default:
+    latinHypercubeSampling:
+    scatterSearch:
+
+#
+densityEstimator:
+  type: categorical
+  values:
+    crowdingDistance:
+    knn:
+      conditionalParameters:
+        knnNeighborhoodSize:
+          type: integer
+          range: [1, 2]
+        knnNormalizeObjectives:
+          type: boolean
+          values:
+            true:
+            false:
+
+#
+ranking:
+  type: categorical
+  values:
+    dominanceRanking:
+    strength:
+
+#
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters: 
+            crossoverProbability:
+              type: double
+              values: [0.0, 1.0]
+            crossoverRepairStrategy:
+              type: categorical
+              values: 
+                random:
+                round:
+                bounds:
+          values: 
+            SBX:
+              conditionalParameters: 
+                sbxDistributionIndex:
+                  type: double
+                  values: [5.0, 400.0]
+            BLX_ALPHA:
+              conditionalParameters: 
+                blxAlphaCrossoverAlpha:
+                  type: double
+                  values: [0.0, 1.0]
+            wholeArithmetic:
+            blxAlphaBeta:
+              conditionalParameters: 
+                blxAlphaBetaCrossoverBeta:
+                  type: double
+                  values: [0.0, 1.0]
+                blxAlphaBetaCrossoverAlpha:
+                  type: double
+                  values: [0.0, 1.0]
+            arithmetic:
+            laplace:
+              conditionalParameters: 
+                laplaceCrossoverScale:
+                  type: double
+                  values: [0.0, 1.0]
+            fuzzyRecombination:
+              conditionalParameters: 
+                fuzzyRecombinationCrossoverAlpha:
+                  type: double
+                  values: [0.0, 1.0]
+            undc:
+              conditionalParameters: 
+                undcCrossoverZeta:
+                  type: double
+                  values: [0.1, 1.0]
+                undcCrossoverEtaValue:
+                  type: double
+                  values: [0.1, 0.5]
+          mutation:
+            type: categorical
+            globalSubParameters: 
+              mutationProbabilityFactor:
+                type: double
+                values: [0.0, 2.0]
+              mutationRepairStrategy:
+                type: categorical
+                values: 
+                  random:
+                  round:
+                  bounds:
+            values: 
+              uniform:
+                conditionalParameters: 
+                  uniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              polynomial:
+                conditionalParameters: 
+                  polynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              linkedPolynomial:
+                conditionalParameters: 
+                  linkedPolynomialMutationDistributionIndex:
+                    type: double
+                    values: [5.0, 400.0]
+              nonUniform:
+                conditionalParameters: 
+                  nonUniformMutationPerturbation:
+                    type: double
+                    values: [0.0, 1.0]
+              levyFlight:
+                conditionalParameters: 
+                  levyFlightMutationBetaValue:
+                    type: double
+                    values: [1.0, 2.0]
+                  levyFlightMutationStepSizeValue:
+                    type: double
+                    values: [0.01, 1.0]
+              powerLaw:
+                conditionalParameters: 
+                  powerLawMutationDelta:
+                    type: double
+                    values: [0.0, 10.0]
+    differentialEvolutionVariation:
+      conditionalParameters: 
+        differentialEvolutionCrossover:
+          type: categorical
+          globalSubParameters: 
+            CR:
+              type: double
+              values: [0.0, 1.0]
+            F:
+              type: double
+              values: [0.0, 1.0]
+          values: 
+            rand_1_bin:
+            rand_1_exp:
+            rand_2_bin:
+            
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+    random:
+    differentialEvolutionSelection:
+      conditionalParameters:
+        sequenceGenerator:
+          type: categorical
+          values:
+            randomPermutationCycle:
+            cyclicIntegerSequence:
+        takeCurrentSolutionAsParent:
+          type: boolean
+          values:
+            true:
+            false:
+            
+
+#
+replacement:
+  type: categorical
+  values:
+    rankingAndDensityEstimator:
+

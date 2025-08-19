@@ -3,7 +3,6 @@ package org.uma.evolver.util;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -19,34 +18,15 @@ import org.uma.jmetal.util.observer.Observer;
  */
 public class WriteExecutionDataToFilesObserver implements Observer<Map<String, Object>> {
 
-  private List<Integer> evaluationsList;
-  private OutputResultsManagement outputResultsManagement;
-  private int evaluationsListIndex ;
+  private OutputResults outputResults;
+  private int frequency;
 
-  /**
-   * Constructor
-   */
-  public WriteExecutionDataToFilesObserver(List<Integer> evaluationsList,
-      OutputResultsManagement outputResultsManagement) {
-    this.evaluationsList = evaluationsList;
-    this.outputResultsManagement = outputResultsManagement;
-    evaluationsListIndex = 0 ;
+  /** Constructor */
+  public WriteExecutionDataToFilesObserver(
+      int frequency, int evaluationsLimit, OutputResults outputResultsManagement) {
+    this.outputResults = outputResultsManagement;
+    this.frequency = frequency;
   }
-
-  /**
-   * Constructor
-   */
-  public WriteExecutionDataToFilesObserver(int frequency, int evaluationsLimit,
-      OutputResultsManagement outputResultsManagement) {
-    evaluationsList = IntStream.rangeClosed(1, evaluationsLimit)
-        .filter(num -> (num) % frequency == 0)
-        .boxed()
-        .toList() ;
-
-    this.outputResultsManagement = outputResultsManagement;
-    evaluationsListIndex = 0 ;
-  }
-
 
   /**
    * This method gets the population
@@ -57,12 +37,11 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   public void update(Observable<Map<String, Object>> observable, Map<String, Object> data) {
     List<DoubleSolution> population = (List<DoubleSolution>) data.get("POPULATION");
     int evaluations = (int) data.get("EVALUATIONS");
-    if ((evaluationsListIndex < evaluationsList.size()) && (evaluations > evaluationsList.get(evaluationsListIndex))) {
+    if ((evaluations % frequency) == 0) {
       try {
-        JMetalLogger.logger.info("EVAlS -> "+evaluations) ;
-        outputResultsManagement.updateSuffix("." + evaluations + ".csv");
-        outputResultsManagement.writeResultsToFiles(population);
-        evaluationsListIndex ++ ;
+        JMetalLogger.logger.info("EVAlS -> " + evaluations);
+        outputResults.updateEvaluations(evaluations);
+        outputResults.writeResultsToFiles(population);
       } catch (IOException e) {
         throw new JMetalException(e);
       }
@@ -72,6 +51,6 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
   @Override
   public String toString() {
     return "Observer that writes output files from a list of numbers representing "
-        + "iterations where the outputs are required" ;
+        + "iterations where the outputs are required";
   }
 }

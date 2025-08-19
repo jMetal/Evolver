@@ -1,0 +1,189 @@
+swarmSize:
+  type: integer
+  range: [10, 200]
+#
+leaderArchive:
+  type: categorical
+  values:
+    crowdingDistanceArchive:
+    spatialSpreadDeviationArchive:
+#
+algorithmResult:
+  type: categorical
+  values:
+    leaderArchive: 
+    externalArchive:
+      conditionalParameters:
+        swarmSizeWithArchive:
+          type: integer
+          range: [10, 200]
+        externalArchiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive: {}
+            unboundedArchive: {}
+#
+swarmInitialization:
+  type: categorical
+  values:
+    default:
+    latinHypercubeSampling:
+    scatterSearch:
+#
+perturbation:
+  type: categorical
+  values:
+    frequencySelectionMutationBasedPerturbation:
+      conditionalParameters:
+        frequencyOfApplicationOfMutationOperator:
+          type: integer
+          range: [ 1, 10 ]
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbabilityFactor:
+              type: real
+              range: [0.0, 2.0]
+            mutationRepairStrategy:
+              type: categorical
+              values:
+                random:
+                round:
+                bounds:
+          values:
+            uniform:
+              conditionalParameters:
+                uniformMutationPerturbation:
+                  type: real
+                  range: [0.0, 1.0]
+            polynomial:
+              conditionalParameters:
+                polynomialMutationDistributionIndex:
+                  type: real
+                  range: [5.0, 400.0]
+            nonUniform:
+              conditionalParameters:
+                nonUniformMutationPerturbation:
+                  type: real
+                  range: [0.0, 1.0]
+            linkedPolynomial:
+              conditionalParameters:
+                linkedPolynomialMutationDistributionIndex:
+                  type: real
+                  range: [5.0, 400.0]
+            levyFlight:
+              conditionalParameters:
+                levyFlightMutationBeta:
+                  type: double
+                  range: [1.0, 2.0]
+                levyFlightMutationStepSize:
+                  type: double
+                  range: [0.01, 1.0]
+            powerLaw:
+              conditionalParameters:
+                powerLawMutationDelta:
+                  type: double
+                  range: [0.0, 10.0]
+#
+inertiaWeightComputingStrategy:
+  type: categorical
+  values:
+    constantValue:
+      conditionalParameters:
+        inertiaWeight:
+          type: real
+          range: [0.1, 1.0]
+    randomSelectedValue:
+      conditionalParameters:
+        randomInertiaWeightMin:
+          type: real
+          range: [0.1, 0.5]
+        randomInertiaWeightMax:
+          type: real
+          range: [0.5, 1.0]
+    linearIncreasingValue:
+      conditionalParameters:
+        linearIncreasingInertiaWeightMin:
+          type: real
+          range: [0.1, 0.5]
+        linearIncreasingInertiaWeightMax:
+          type: real
+          range: [0.5, 1.0]
+    linearDecreasingValue:
+      conditionalParameters:
+        linearDecreasingInertiaWeightMin:
+          type: real
+          range: [0.1, 0.5]
+        linearDecreasingInertiaWeightMax:
+          type: real
+          range: [0.5, 1.0]
+#
+velocityInitialization:
+  type: categorical
+  values:
+    defaultVelocityInitialization:
+    SPSO2007VelocityInitialization:
+    SPSO2011VelocityInitialization:
+#
+velocityUpdate:
+  type: categorical
+  globalSubParameters:
+    c1Min:
+      type: real
+      range: [1.0, 2.0]
+    c1Max:
+      type: real
+      range: [2.0, 3.0]
+    c2Min:
+      type: real
+      range: [1.0, 2.0]
+    c2Max:
+      type: real
+      range: [2.0, 3.0]
+  values:
+    defaultVelocityUpdate:
+    constrainedVelocityUpdate:
+    SPSO2011VelocityUpdate:
+#
+localBestInitialization:
+  type: categorical
+  values:
+    defaultLocalBestInitialization:
+#
+globalBestInitialization:
+  type: categorical
+  values:
+    defaultGlobalBestInitialization:
+#
+globalBestSelection:
+  type: categorical
+  values:
+    tournamentSelection:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+    randomSelection:
+#
+globalBestUpdate:
+  type: categorical
+  values:
+    defaultGlobalBestUpdate:
+#
+localBestUpdate:
+  type: categorical
+  values:
+    defaultLocalBestUpdate:
+#
+positionUpdate:
+  type: categorical
+  values:
+    defaultPositionUpdate:
+      conditionalParameters:
+        velocityChangeWhenLowerLimitIsReached:
+          type: double
+          range: [-1.0, 1.0]
+        velocityChangeWhenUpperLimitIsReached:
+          type: double
+          range: [-1.0, 1.0]
+#

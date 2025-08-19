@@ -1,0 +1,4 @@
+# Parameter space with an unsupported parameter type for testing
+unsupportedParam:
+  type: unsupported_type
+  values: [value1, value2]
