@@ -1,7 +1,7 @@
 Evolver: Automated Metaheuristic Configuration Framework
 ========================================================
 
-DISCLAIMER: we are developing a new version of Evolver. The package is
+DISCLAIMER: we are developing a new version of Evolver (version 2.0). The package is
 ready to be used but we are still working on the documentation.
 
 Overview
@@ -13,7 +13,7 @@ of the base-level algorithm and
 evaluating a solution involves a run of the metaheuristic under that configuration; the resulting solution front is evaluated against a combination of 
 quality indicators, which are the objective functions of the resulting multi-objective problem.
 
-The current stable version is 2.0 (https://github.com/jMetal/Evolver).
+The next stable version will be 2.0 (https://github.com/jMetal/Evolver).
 
 Evolver 2.0 is a full re-implementation of the original Evolver framework, which is described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
 
@@ -172,8 +172,8 @@ If you use Evolver in your research, please cite:
 Changelog
 ---------
 
-v2.0 beta (2024-06-30)
-^^^^^^^^^^^^^^^^^^^^^
+v2.0 (2025-08-19)
+^^^^^^^^^^^^^^^^^
 * Complete rewrite of the original Evolver framework
 * New architecture for improved flexibility and maintainability
 * Enhanced support for meta-optimization of multi-objective metaheuristics
