@@ -1,12 +1,23 @@
 Evolver: Automated Metaheuristic Configuration Framework
-======================================================
+========================================================
+
+DISCLAIMER: we are developing a new version of Evolver.The package is
+ready to be used but we are still working on the documentation.
 
 Overview
 --------
-Evolver is Java-based framework designed to automate the configuration and design 
-of multi-objective metaheuristics through meta-optimization. By treating algorithm 
-configuration as an optimization problem itself, Evolver enables the automatic discovery 
-of high-performance parameter settings tailored to specific problem domains.
+Evolver is a software tool designed for the automatic configuration of multi-objective metaheuristics. 
+Its core approach is meta-optimization, where the process of tuning the parameters of a base-level metaheuristic is framed as a multi-objective problem which
+is solvable by a multi-objective optimizer (i.e., the meta-optimization algorithm). In this problem, the variable encoding represents a particular configuration 
+of the base-level algorithm and 
+evaluating a solution involves a run of the metaheuristic under that configuration; the resulting solution front is evaluated against a combination of 
+quality indicators, which are the objective functions of the resulting multi-objective problem.
+
+The current stable version is 2.0 (https://github.com/jMetal/Evolver).
+
+Evolver 2.0 is a full re-implementation of the original Evolver framework, which is described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
+
+The development of Evolver 2.0 was motivated by two key objectives: enhancing the original framework's capabilities and serving as a case study in AI-assisted software development. Throughout this project, we've extensively utilized generative AI tools including Windsurf, ChatGPT, and Claude to support various aspects of the development process.
 
 Approach    
 ^^^^^^^^
@@ -95,7 +106,7 @@ Installation
 
 Quick Start
 -----------
-The following example demonstrates how to use Evolver to optimize the parameters of the NSGA-II algorithm for solving the DTLZ3 problem:
+The following example demonstrates how to use Evolver to optimize the parameters of the NSGA-II algorithm for solving the ZDT4 problem:
 
 .. code-block:: java
 
