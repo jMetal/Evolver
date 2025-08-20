@@ -111,21 +111,25 @@ Installation
 
 Quick Start
 -----------
+Let us suppose that we want to optimize the parameters of the NSGA-II algorithm for solving the DTLZ1 problem. 
+First, we load the parameter space of the NSGA-II algorithm from the YAML file named `NSGAIIDouble.yaml<https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_ located in the resources
+folder of the project.
+
 The following example demonstrates how to use Evolver to optimize the parameters of the NSGA-II algorithm for solving the ZDT4 problem:
 
 .. code-block:: java
 
    // 1. Define the YAML parameter space file and target problem
    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
-   List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
-   List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+   List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ1());
+   List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ1.3D.csv");
 
    // 2. Set up the algorithm to be configured
    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
 
-   var maximumNumberOfEvaluations = List.of(10000);
+   var maximumNumberOfEvaluations = List.of(15000);
    int numberOfIndependentRuns = 1;
    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
