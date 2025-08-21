@@ -111,29 +111,33 @@ Installation
 
 Quick Start
 -----------
-Let us suppose that we want to optimize the parameters of the NSGA-II algorithm for solving the DTLZ1 problem. 
-First, we load the parameter space of the NSGA-II algorithm from the YAML file named `NSGAIIDouble.yaml <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_ located in the resources
-folder of the project.
+Let us suppose that we want to optimize the parameters of the NSGA-II algorithm the base-level metaheuristic) for solving the DTLZ1 problem with NSGA-II (the meta-optimizer).
+We first load the parameter space from the NSGAIIDouble.yaml file in the resources folder. 
+Next, we configure the training set with DTLZ1 and its reference front. 
+We then set up quality indicators (epsilon and normalized hypervolume) and initialize NSGA-II with a population size of 100. 
+The meta-optimization is configured with a single independent run and 15,000 evaluations. 
+Finally, we run the meta-optimizer, which stores results in the RESULTS directory as CSV files
 
-The following example demonstrates how to use Evolver to optimize the parameters of the NSGA-II algorithm for solving the ZDT4 problem:
+The following code snippet includes the main steps:
 
 .. code-block:: java
 
-   // 1. Define the YAML parameter space file and target problem
+   // 1. Define the YAML parameter space file and the training set
    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+   var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
    List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ1());
    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ1.3D.csv");
 
    // 2. Set up the algorithm to be configured
    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-   var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-   var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
-
-   var maximumNumberOfEvaluations = List.of(15000);
-   int numberOfIndependentRuns = 1;
-   EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+   int populationSize = 100 ;
+   var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
 
    // 3. Create the meta-optimization problem
+   int numberOfIndependentRuns = 1;
+   var maximumNumberOfEvaluations = List.of(15000);
+   EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+
    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
        new MetaOptimizationProblem<>(
            configurableAlgorithm,
@@ -153,6 +157,22 @@ The following example demonstrates how to use Evolver to optimize the parameters
            .setNumberOfCores(numberOfCores)
            .build();
 
+   // 5. Define an observer to write the execution data to files    
+   String outputFolder = "RESULTS/NSGAII/DTLZ1"
+   var outputResults =
+        new OutputResults(
+            "NSGA-II",
+            metaOptimizationProblem,
+            "DTLZ1",
+            indicators,
+            outputFolder);
+
+   var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+
+   nsgaii.observable().register(writeExecutionDataToFilesObserver);
+     
+   // 6. Run the meta-optimizer  
    nsgaii.run();
 
 Documentation
