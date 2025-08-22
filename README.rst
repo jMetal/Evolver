@@ -11,12 +11,13 @@ ready to be used but we are still working on the documentation.
 
 Overview
 --------
-Evolver is a software tool designed for the automatic configuration of multi-objective metaheuristics. 
-Its core approach is meta-optimization, where the process of tuning the parameters of a base-level metaheuristic is framed as a multi-objective problem which
+Evolver is a Java-based software tool designed for the automatic configuration of multi-objective metaheuristics. 
+Its core approach is meta-optimization, where the process of tuning the parameters of a base-level metaheuristic for a set of problems is framed as a multi-objective problem which
 is solvable by a multi-objective optimizer (i.e., the meta-optimization algorithm). In this problem, the variable encoding represents a particular configuration 
 of the base-level algorithm and 
 evaluating a solution involves a run of the metaheuristic under that configuration; the resulting solution front is evaluated against a combination of 
-quality indicators, which are the objective functions of the resulting multi-objective problem.
+quality indicators, which are the objective functions of the resulting multi-objective problem. 
+Evolver relies on the `jMetal framework <https://github.com/jMetal/jMetal>`_ for the optimization problems, algorithms, and quality indicators.
 
 The next stable version will be 2.0 (https://github.com/jMetal/Evolver).
 
@@ -116,7 +117,7 @@ We first load the parameter space from the NSGAIIDouble.yaml file in the resourc
 Next, we configure the training set with DTLZ1 and its reference front. 
 We then set up quality indicators (epsilon and normalized hypervolume) and initialize NSGA-II with a population size of 100. 
 The meta-optimization is configured with a single independent run and 15,000 evaluations. 
-Finally, we run the meta-optimizer, which stores results in the RESULTS directory as CSV files
+Finally, we run the meta-optimizer, which stores results in the RESULTS directory as CSV files.
 
 The following code snippet includes the main steps:
 
@@ -174,6 +175,9 @@ The following code snippet includes the main steps:
      
    // 6. Run the meta-optimizer  
    nsgaii.run();
+
+
+
 
 Documentation
 -------------
