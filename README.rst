@@ -106,7 +106,7 @@ Evolver currently supports the following base-level and meta-optimization algori
   - MOPSO (multi-objective particle swarm optimization)
   - RDEMOEA (ranking and density estimator MOEA)
 
-Meta-optimization algorithms:
+- Meta-optimization algorithms:
 
   - NSGA-II
   - Async NSGA-II
