@@ -34,6 +34,7 @@ The concept of *parameter space* is key in Evolver, as it defines the space of p
 Parameter spaces in Evolver are defined in YAML files. As an example, the parameter space of NSGA-II for solving continuous problems is defined in the file `NSGAIIDouble.yaml <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_. The contents of this file are as follows:
 
 .. code-block:: yaml
+    
     algorithmResult:
       type: categorical
       values: 
