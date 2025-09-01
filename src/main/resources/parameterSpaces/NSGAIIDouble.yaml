@@ -134,7 +134,7 @@ variation:
               conditionalParameters:
                 powerLawMutationDelta:
                   type: double
-                  range: [0.0, 10.0]
+                  range: [0.1, 10.0]
 
 selection:
   type: categorical
