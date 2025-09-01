@@ -21,11 +21,11 @@ Meta-Optimization Approach
 .. figure:: figures/metaOptimizationApproach.png
    :align: center
    :alt: Meta-optimization approach
-   :figwidth: 80%
+   :figwidth: 50%
 
    Overview of the meta-optimization approach in Evolver.
 
-The meta-optimization approach adopted by Evolver considers as goal to find the best configuration of a base-level multi-objective metaheuristic to efficiently solve a set of base-level problems, which we call the training set. This goal is formulated as a meta-optimization problem, where the solution space is composed of algorithm configurations for the base-level optimizer, and the objective space is defined by set of quality indicators that must be minimized. The resulting meta-optimization problem is solvable by a metaheuristic, which we call the meta-optimization algorithm.
+The meta-optimization approach adopted by Evolver follows the scheme of the figure above. It considers as goal to find the best configuration of a base-level multi-objective metaheuristic to efficiently solve a set of base-level problems, which we call the training set. This goal is formulated as a meta-optimization problem, where the solution space is composed of algorithm configurations for the base-level optimizer, and the objective space is defined by set of quality indicators that must be minimized. The resulting meta-optimization problem is solvable by a metaheuristic, which we call the meta-optimization algorithm.
 
 Under this approach, a solution of the meta-optimization problem is a particular configuration of the base-level algorithm, 
 and evaluating the solution by the meta-optimizer involves running the base-level algorithm on the training set. Then, the quality of the obtained front approximations is assessed by applying a number of quality indicators, which constitute the objective values of the solution.   
