@@ -96,21 +96,21 @@ Other Features
 
 Available algorithms
 --------------------
-Evolver currently supports the following algorithms base- and meta-optimization algorithms:
+Evolver currently supports the following base-level and meta-optimization algorithms:
 
-Base-optimization algorithms:
+- Base-optimization algorithms:
 
-- NSGA-II
-- MOEA/D
-- SMS/EMOA
-- MOPSO (multi-objective particle swarm optimization)
-- RDEMOEA (ranking and density estimator MOEA)
+  - NSGA-II
+  - MOEA/D
+  - SMS/EMOA
+  - MOPSO (multi-objective particle swarm optimization)
+  - RDEMOEA (ranking and density estimator MOEA)
 
 Meta-optimization algorithms:
 
-- NSGA-II
-- Async NSGA-II
-- SMPSO
+  - NSGA-II
+  - Async NSGA-II
+  - SMPSO
 
 
 Installation
