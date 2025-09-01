@@ -112,7 +112,7 @@ Installation
 Quick Start
 -----------
 Let us suppose that we want to optimize the parameters of the NSGA-II algorithm (the base-level metaheuristic) for solving the DTLZ1 problem with NSGA-II (the meta-optimizer).
-We first load the parameter space from the `NSGAIIDouble.yaml` file in the resources folder. 
+We first load the parameter space from the ``NSGAIIDouble.yaml`` file in the resources folder. 
 Next, we configure the training set with DTLZ1 and its reference front. 
 We then set up the epsilon and normalized hypervolume quality indicators (i.e., the objectives to minimize) and initialize the base NSGA-II with a population size of 100. 
 The meta-optimization is configured with a single independent run and 15,000 evaluations. 
