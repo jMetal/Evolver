@@ -7,7 +7,7 @@ This guide will help you install Evolver and its dependencies.
 
 Prerequisites
 ------------
-- Java 11 or higher
+- Java 17 or higher
 - Maven 3.6 or higher
 - Python 3.8+ (for documentation)
 

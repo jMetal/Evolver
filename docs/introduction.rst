@@ -38,7 +38,7 @@ If we consider classical multi-objective metaheuristics, such as NSGA-II or MOEA
 
 The concept of *parameter space* is key in Evolver, as it defines the space of possible configurations of a base-level metaheuristic. A parameter space is defined by a set of parameters, each with a name, a type (integer, double, categorical), and a definition of the values it can take. In the case of categorical parameters, they can include a list of conditional parameters, which are only considered if the categorical parameter takes a specific value. A parameter can also have a list of global sub-parameters, which are always considered independently of the value of the parameter.
 
-Parameter spaces in Evolver are defined in YAML files. As an example, the parameter space of NSGA-II for solving continuous problems is defined in the file `NSGAIIDouble.yaml <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_. The contents of this file are as follows:
+Parameter spaces in Evolver are defined in YAML files. As an example, the parameter space of NSGA-II for solving continuous problems is defined in the file `NSGAIIDouble.yaml <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_. A subset of the contents of this file are as follows:
 
 .. code-block:: yaml
     
@@ -63,122 +63,6 @@ Parameter spaces in Evolver are defined in YAML files. As an example, the parame
         default: {}
         latinHypercubeSampling: {}
         scatterSearch: {}
-
-    offspringPopulationSize:
-      type: categorical
-      values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
-
-    variation:
-      type: categorical
-      values:
-        crossoverAndMutationVariation:
-          conditionalParameters:
-            crossover:
-              type: categorical
-          globalSubParameters:
-            crossoverProbability:
-              type: double
-              range: [0.0, 1.0]
-            crossoverRepairStrategy:
-              type: categorical
-              values:
-                random: {}
-                round: {}
-                bounds: {}
-          values:
-            SBX:
-              conditionalParameters:
-                sbxDistributionIndex:
-                  type: double
-                  range: [5.0, 400.0]
-            blxAlpha:
-              conditionalParameters:
-                blxAlphaCrossoverAlpha:
-                  type: double
-                  range: [0.0, 1.0]
-            wholeArithmetic: {}
-            blxAlphaBeta:
-              conditionalParameters:
-                blxAlphaBetaCrossoverBeta:
-                  type: double
-                  range: [0.0, 1.0]
-                blxAlphaBetaCrossoverAlpha:
-                  type: double
-                  range: [0.0, 1.0]
-            arithmetic: {}
-            laplace:
-              conditionalParameters:
-                laplaceCrossoverScale:
-                  type: double
-                  range: [0.1, 0.5]
-            fuzzyRecombination:
-              conditionalParameters:
-                fuzzyRecombinationCrossoverAlpha:
-                  type: double
-                  range: [0.0, 1.0]
-            PCX:
-              conditionalParameters:
-                pcxCrossoverZeta:
-                  type: double
-                  range: [0.0, 1.0]
-                pcxCrossoverEta:
-                  type: double
-                  range: [0.0, 1.0]
-            UNDC:
-              conditionalParameters:
-                undcCrossoverZeta:
-                  type: double
-                  range: [0.1, 1.0]
-                undcCrossoverEta:
-                  type: double
-                  range: [0.1, 0.5]
-
-        mutation:
-          type: categorical
-          globalSubParameters:
-            mutationProbabilityFactor:
-              type: double
-              range: [0.0, 2.0]
-            mutationRepairStrategy:
-              type: categorical
-              values:
-                random: {}
-                round: {}
-                bounds: {}
-          values:
-            uniform:
-              conditionalParameters:
-                uniformMutationPerturbation:
-                  type: double
-                  range: [0.0, 1.0]
-            polynomial:
-              conditionalParameters:
-                polynomialMutationDistributionIndex:
-                  type: double
-                  range: [5.0, 400.0]
-            linkedPolynomial:
-              conditionalParameters:
-                linkedPolynomialMutationDistributionIndex:
-                  type: double
-                  range: [5.0, 400.0]
-            nonUniform:
-              conditionalParameters:
-                nonUniformMutationPerturbation:
-                  type: double
-                  range: [0.0, 1.0]
-            levyFlight:
-              conditionalParameters:
-                levyFlightMutationBeta:
-                  type: double
-                  range: [1.0, 2.0]
-                levyFlightMutationStepSize:
-                  type: double
-                  range: [0.01, 1.0]
-            powerLaw:
-              conditionalParameters:
-                powerLawMutationDelta:
-                  type: double
-                  range: [0.1, 10.0]
 
     selection:
       type: categorical
@@ -220,8 +104,46 @@ jMetal provides a wide range of quality indicators that measure the degree of co
 
 As mentioned before, the objective functions of the meta-optimization problem are based on a list of the desired quality indicators. All quality indicators used as objective functions are intended to be minimized in Evolver. Therefore, special care is needed when selecting HV as an objective, as it represents a volume to be maximized. Instead of HV, it can be replaced by the normalized hypervolume (NHV), defined as :math:`1 - HV_f/HV_{rf}`, where :math:`HV_f` is the HV of a Pareto front approximation and :math:`HV_{rf}` is the HV of the reference front used to compute the HV of the front. NHV values range from 0.0 to 1.0, with lower NHV values indicating better performance.
 
-Meta-Optimizer Multi-Objective Metaheuristics
----------------------------------------------
+
+Base-Level metaheuristics
+-------------------------
+A base-level metaheuristic is a multi-objective metaheuristic that must be configured from any given valid configuration of its parameter space. As a consequence, the existing algorithms in jMetal cannot be used as provided in that framework because their implementation is not generic enough. 
+
+Evolver includes a set of algorithms that have been modified to be used as base-level metaheuristics. Concretely, a base-level metaheuristic can be configured by setting the values of a parameter space as a string of pairs <--parameterName, value>. For example, the configuration of the base-level NSGA-II algorithm for solving continuous problems (ZDT4 in the exampleusing standard settings can be specified as shown in this code snippet:
+
+.. code-block:: java
+
+    String[] parameters =
+        ("--algorithmResult population "
+                + "--createInitialSolutions default "
+                + "--variation crossoverAndMutationVariation "
+                + "--offspringPopulationSize 100 "
+                + "--crossover SBX "
+                + "--crossoverProbability 0.9 "
+                + "--crossoverRepairStrategy bounds "
+                + "--sbxDistributionIndex 20.0 "
+                + "--mutation polynomial "
+                + "--mutationProbabilityFactor 1.0 "
+                + "--mutationRepairStrategy bounds "
+                + "--polynomialMutationDistributionIndex 20.0 "
+                + "--selection tournament "
+                + "--selectionTournamentSize 2")
+            .split("\\s+");
+
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    int populationSize = 100 ;
+    int maximumNumberOfEvaluations = 20000 ;
+
+    var baseNSGAII = new DoubleNSGAII(new ZDT4(), populationSize, maximumNumberOfEvaluations, parameterSpace);
+    baseNSGAII.parse(parameters);
+
+    EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseNSGAII.build();
+
+
+Meta-Optimizers 
+---------------
 
 As previously mentioned, choosing a real encoding for the meta-optimizer allows the use of most multi-objective metaheuristics available in jMetal, including evolutionary algorithms (NSGA-II, MOEA/D, SMS-EMOA, SPEA2, etc.), differential evolution (GDE3, MOEA/D-DE) and particle swarm optimization algorithms (OMOPSO, SMPSO).
 

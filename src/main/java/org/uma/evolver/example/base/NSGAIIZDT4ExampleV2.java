@@ -38,7 +38,9 @@ public class NSGAIIZDT4ExampleV2 {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseNSGAII = new DoubleNSGAII(new ZDT4(), 100, 25000, parameterSpace);
+    int populationSize = 100 ;
+    int maximumNumberOfEvaluations = 20000 ;
+    var baseNSGAII = new DoubleNSGAII(new ZDT4(), populationSize, maximumNumberOfEvaluations, parameterSpace);
     baseNSGAII.parse(parameters);
 
     System.out.println(parameterSpace) ;
