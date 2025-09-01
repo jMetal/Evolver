@@ -23,9 +23,9 @@ The next stable version will be 2.0, which is a full re-implementation of the or
 
 The development of Evolver 2.0 was motivated by two key objectives: enhancing the original framework's capabilities and serving as a case study in AI-assisted software development. Throughout this project, we've extensively utilized generative AI tools including Windsurf, ChatGPT, and Claude to support various aspects of the development process.
 
-Approach    
-^^^^^^^^
-Evolver follows a two-level optimization approach:
+Architecture    
+^^^^^^^^^^^^
+Evolver follows a two-level optimization architecture:
 
 .. code-block:: none
 
@@ -60,7 +60,7 @@ Evolver follows a two-level optimization approach:
     |                                             |
     +---------------------------------------------+
 
-The components of the approach are:
+The components of the architecture are:
 
 1. **Base-level Components**
 
@@ -195,7 +195,7 @@ The following code snippet includes the main steps:
    // 6. Run the meta-optimizer  
    nsgaii.run();
 
-After running the meta-optimizer, a configuration is located in the VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt file in the RESULTS directory:
+After running the meta-optimizer, a configuration is located in the ``VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt`` file in the RESULTS directory:
 
 .. code-block:: bash
 

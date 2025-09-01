@@ -36,10 +36,9 @@ The development of Evolver 2.0 was motivated by two key objectives: enhancing th
    changelog
    faq
 
-Architecture Overview
-====================
-
-Evolver implements a two-level optimization architecture:
+Architecture  
+^^^^^^^^^^^^
+Evolver follows a two-level optimization architecture:
 
 .. code-block:: none
 
@@ -62,9 +61,9 @@ Evolver implements a two-level optimization architecture:
     +---------------------|-----------------------+
     |  Base-level         v                       |
     |  +------------------+--------------------+  |
-    |  | Base-level Metaheuristic             |  |
-    |  | - Configurable parameters            |  |
-    |  | - Solves base-level problems         |  |
+    |  | Base-level Metaheuristic              |  |
+    |  | - Parameter space                     |  |
+    |  | - Solves base-level problems          |  |
     |  +------------------+--------------------+  |
     |                     |                       |
     |  +------------------v--------------------+  |
@@ -74,11 +73,58 @@ Evolver implements a two-level optimization architecture:
     |                                             |
     +---------------------------------------------+
 
-Flow:
-1. Meta-optimization algorithm generates configurations
-2. Each configuration is evaluated on base-level problems
-3. Performance metrics are fed back to the meta-level
-4. The process repeats until stopping criteria are met
+The components of the architecture are:
+
+1. **Base-level Components**
+
+   * A set of **Base-level Problems** serving as training instances
+   * A **Base-level Multi-objective Metaheuristic** to be configured
+   * A parameter space defining the algorithm's configurable parameters and their constraints
+
+2. **Meta-level Components**
+
+   * A **Meta-optimization Problem** that evaluates base-level configurations
+   * Quality indicators (e.g., Epsilon, normalized Hypervolume, etc.) as optimization objectives
+   * A **Meta-optimization Multi-objective Metaheuristic** that searches for optimal configurations of a meta-optimization problem
+
+
+The flow is as follows:
+
+1. Given a set of base-level problems, the meta-optimization algorithm generates configurations for a base-level metaheuristic
+2. Each configuration is evaluated in the meta-optimization problem using quality indicators
+3. The process repeats until stopping criteria are met
+
+
+Key Features
+^^^^^^^^^^^^
+- **Automated Configuration**: Automatically finds accurate parameter settings for metaheuristics
+- **Flexible Architecture**: Supports various metaheuristics at both meta and base levels and several encodings (double, binary, permutation, etc.)
+- **Multi-objective Optimization at the meta level**: Optimizes multiple performance criteria (quality indicators) simultaneously
+- **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
+- **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics can be defined in a YAML file
+
+Other Features
+^^^^^^^^^^^^
+- **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
+
+Available algorithms
+--------------------
+Evolver currently supports the following base-level and meta-optimization algorithms:
+
+- Base-optimization algorithms:
+
+  - NSGA-II
+  - MOEA/D
+  - SMS/EMOA
+  - MOPSO (multi-objective particle swarm optimization)
+  - RDEMOEA (ranking and density estimator MOEA)
+
+- Meta-optimization algorithms:
+
+  - NSGA-II
+  - Async NSGA-II
+  - SMPSO
+
 
 Indices and tables
 ==================

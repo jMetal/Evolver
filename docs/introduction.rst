@@ -1,7 +1,7 @@
 .. _introduction:
 
 Introduction
-===========
+============
 
 Welcome to the Evolver documentation! Evolver is a powerful framework for metaheuristic optimization, built on top of the jMetal framework.
 
