@@ -13,3 +13,5 @@ This section covers the fundamental concepts behind Evolver's design and operati
    parameter_spaces
    solution_encoding
    evaluation
+   objective_functions
+   base_level_metaheuristics
