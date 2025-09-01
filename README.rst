@@ -246,12 +246,12 @@ The obtained front and the one obtained with NSGA-II with default settings are s
 
 .. image:: resources/scripts/DTLZ3.Evolver.png
    :alt: DTLZ1-Evolver
-   :width: 400
+   :width: 300
    :align: center
 
 .. image:: resources/scripts/DTLZ3.NSGAII.png
    :alt: DTLZ1-OriginalNSGAII
-   :width: 400
+   :width: 300
    :align: center
 
 
