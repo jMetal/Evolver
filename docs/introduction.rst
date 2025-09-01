@@ -109,7 +109,7 @@ Base-Level metaheuristics
 -------------------------
 A base-level metaheuristic is a multi-objective metaheuristic that must be configured from any given valid configuration of its parameter space. As a consequence, the existing algorithms in jMetal cannot be used as provided in that framework because their implementation is not generic enough. 
 
-Evolver includes a set of algorithms that have been modified to be used as base-level metaheuristics. Concretely, a base-level metaheuristic can be configured by setting the values of a parameter space as a string of pairs <--parameterName, value>. For example, the configuration of the base-level NSGA-II algorithm for solving continuous problems (ZDT4 in the exampleusing standard settings can be specified as shown in this code snippet:
+Evolver includes a set of algorithms that have been modified to be used as base-level metaheuristics. Concretely, a base-level metaheuristic can be configured by setting the values of a parameter space as a string of pairs "--parameterName1 value1 --parameterName2 value2 ...". For example, the configuration of the base-level NSGA-II algorithm for solving continuous problems (ZDT4 in the exampleusing standard settings can be specified as shown in this code snippet:
 
 .. code-block:: java
 
