@@ -23,15 +23,40 @@ The development of Evolver 2.0 was motivated by two key objectives: enhancing th
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
-   :numbered:
+   :caption: Getting Started
+   :name: start
 
    introduction
    installation
    getting_started
-   user_guide/index
-   api_reference
    examples/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Core Concepts
+   :name: concepts
+
+   concepts/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Guide
+   :name: user_guide
+
+   user_guide/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+   :name: api
+
+   api_reference
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Project
+   :name: project
+
    contributing
    changelog
    faq

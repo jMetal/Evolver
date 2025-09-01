@@ -26,6 +26,7 @@ Parameter Space
 Configuration spaces in Evolver are defined using YAML files, allowing for various parameter types (integer, double, categorical), conditional parameters, and global sub-parameters.
 
 Example (simplified):
+
 .. code-block:: yaml
 
     algorithmResult:
