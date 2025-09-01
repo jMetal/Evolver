@@ -242,6 +242,18 @@ With this configuration, we can run the base-level NSGA-II as follows:
    }
    
 
+The obtained front and the one obtained with NSGA-II with default settings are shown in the following figures:
+
+.. image:: resources/scripts/FUN.DTLZ3.Evolver.png
+   :alt: DTLZ1-Evolver
+   :width: 400
+   :align: center
+
+.. image:: resources/scripts/FUN.DTLZ3.OriginalNSGAII.png
+   :alt: DTLZ1-OriginalNSGAII
+   :width: 400
+   :align: center
+
 
 Documentation
 -------------
