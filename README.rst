@@ -195,11 +195,11 @@ The following code snippet includes the main steps:
    // 6. Run the meta-optimizer  
    nsgaii.run();
 
-After running the meta-optimizer, a configuration is located in the VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt file in the RESULTS directory.
+After running the meta-optimizer, a configuration is located in the VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt file in the RESULTS directory:
 
 .. code-block:: bash
 
---algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9719337329527943 --crossoverRepairStrategy random --sbxDistributionIndex 133.8313543413145 --mutation uniform --mutationProbabilityFactor 0.5124086272844153 --mutationRepairStrategy random --uniformMutationPerturbation 0.22680609334711863 --selection tournament --selectionTournamentSize 5 
+   --algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9719337329527943 --crossoverRepairStrategy random --sbxDistributionIndex 133.8313543413145 --mutation uniform --mutationProbabilityFactor 0.5124086272844153 --mutationRepairStrategy random --uniformMutationPerturbation 0.22680609334711863 --selection tournament --selectionTournamentSize 5 
 
 With this configuration, we can run the base-level NSGA-II as follows:
 
