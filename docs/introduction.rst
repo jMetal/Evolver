@@ -19,7 +19,7 @@ Meta-Optimization Approach
 
 Evolver automates the configuration of metaheuristics by treating algorithm configuration as a multi-objective optimization problem, using quality indicators as objectives to minimize, and supporting various meta-optimization algorithms for configuration search.
 
-For detailed explanation, see :doc:`meta_optimization_approach`.
+For detailed explanation, see :doc:`concepts/meta_optimization_approach`.
 
 Parameter Space
 ~~~~~~~~~~~~~~~
@@ -34,7 +34,7 @@ Example (simplified):
         population: {}
         externalArchive: {}
 
-See :doc:`parameter_spaces` for comprehensive documentation.
+See :doc:`concepts/parameter_spaces` for comprehensive documentation.
 
 Solution Encoding & Evaluation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +42,7 @@ Solution Encoding & Evaluation
 - Evaluation involves running the configured algorithm on target problems
 - Multiple quality indicators can be used as objectives
 
-Refer to :doc:`solution_encoding` and :doc:`evaluation` for details.
+Refer to :doc:`concepts/solution_encoding` and :doc:`concepts/evaluation` for details.
 
 Getting Started
 ---------------
