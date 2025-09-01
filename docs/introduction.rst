@@ -21,9 +21,6 @@ Meta-Optimization Approach
 .. figure:: figures/metaOptimizationApproach.png
    :align: center
    :alt: Meta-optimization approach
-   :figwidth: 80%
-   :width: 100%
-   :scale: 100%
 
    Overview of the meta-optimization approach in Evolver.
 
