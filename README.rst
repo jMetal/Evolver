@@ -94,6 +94,24 @@ Other Features
 ^^^^^^^^^^^^
 - **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
 
+Available algorithms
+--------------------
+Evolver currently supports the following algorithms base- and meta-optimization algorithms:
+
+Base-optimization algorithms:
+
+- NSGA-II
+- MOEA/D
+- SMS/EMOA
+- MOPSO (multi-objective particle swarm optimization)
+- RDEMOEA (ranking and density estimator MOEA)
+
+Meta-optimization algorithms:
+
+- NSGA-II
+- Async NSGA-II
+- SMPSO
+
 
 Installation
 ------------
@@ -112,10 +130,12 @@ Installation
 Quick Start
 -----------
 Let us suppose that we want to optimize the parameters of the NSGA-II algorithm (the base-level metaheuristic) for solving the DTLZ1 problem with NSGA-II (the meta-optimizer).
-We first load the parameter space from the ``NSGAIIDouble.yaml`` file in the resources folder. 
+We first load the parameter space from the `NSGAIIDouble.yaml <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_ file in the resources folder. 
 Next, we configure the training set with DTLZ1 and its reference front. 
-We then set up the epsilon and normalized hypervolume quality indicators (i.e., the objectives to minimize) and initialize the base NSGA-II with a population size of 100. 
-The meta-optimization is configured with a single independent run and 15,000 evaluations. 
+We then set up the epsilon and normalized hypervolume quality indicators (i.e., the objectives to minimize) and initialize the base NSGA-II with a population size of 100 and
+a stopping criterion of 15,000 evaluations. 
+The meta-optimization is configured with execute a sigle independent run per configuration.
+Next, we configure the NSGA-II acting as meta-optimizer with a stopping criterion of 2,000 evaluations and 8 cores for parallel processing. 
 Finally, we run the meta-optimizer, which stores results in the RESULTS directory as CSV files.
 
 The following code snippet includes the main steps:
@@ -131,16 +151,16 @@ The following code snippet includes the main steps:
    // 2. Set up the algorithm to be configured
    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
    int populationSize = 100 ;
-   var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
+   var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
+   var maximumNumberOfEvaluations = List.of(15000);
 
    // 3. Create the meta-optimization problem
    int numberOfIndependentRuns = 1;
-   var maximumNumberOfEvaluations = List.of(15000);
    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
        new MetaOptimizationProblem<>(
-           configurableAlgorithm,
+           baseAlgorithm,
            trainingSet,
            referenceFrontFileNames,
            indicators,

@@ -13,6 +13,7 @@ import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.re.RE31;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -34,8 +35,8 @@ public class NSGAIIOptimizingNSGAIIForProblemRE31 {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new RE31());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/RE31.csv");
+    List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
+    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ3.3D.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -43,7 +44,7 @@ public class NSGAIIOptimizingNSGAIIForProblemRE31 {
     int populationSize = 100;
     var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
 
-    var maximumNumberOfEvaluations = List.of(10000);
+    var maximumNumberOfEvaluations = List.of(15000);
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
