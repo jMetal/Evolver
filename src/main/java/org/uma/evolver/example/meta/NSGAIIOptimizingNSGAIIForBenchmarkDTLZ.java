@@ -12,7 +12,6 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
-import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -80,7 +79,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
             "RESULTS/NSGAII/" + "DTLZ");
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =

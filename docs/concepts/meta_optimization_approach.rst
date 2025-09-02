@@ -113,34 +113,60 @@ The meta-optimization problem is then defined as follows:
 Note that the meta-optimization problem class includes a generic type to indicate the type of solutions of the problems of the training set. As we are using continuous optimization problems in our example, we include the ``DoubleSolution``class.
 
 
-Meta-Optimizer Selection and Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Meta-Optimizer Selection, Configuration and Execution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The meta-optimizer is the algorithm that will be used to find the best configuration of the base-level metaheuristic. Any metaheuristic included in jMetal able of solving continuous optimization problems can be used as a meta-optimizer but, as evaluating each solution can be very time consuming (as it requires running the base-level metaheuristic on the training set), it is recommended to use a parallel metaheuristic.
 
+To simply the process, Evolver provides a builder some meta-optimizers, such as NSGA-II and SMPSO. The next code snippet shows how to use NSGA-II as meta-optimizer:
+
+.. code-block:: java
+
+    int maxEvaluations = 2000;
+    int numberOfCores = 8;
+
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
+            .setMaxEvaluations(maxEvaluations)
+            .setNumberOfCores(numberOfCores)
+            .build();
+   
+Before running the meta-optimizer, we need to indicate where to store the results. This can be done create an instance of the ``OutputResults`` class:
+
+.. code-block:: java
+
+    String algorithmName = "NSGA-II" ;
+    String problemName = "WFG" ;
+    var outputResults =
+        new OutputResults(
+            algorithmName,
+            metaOptimizationProblem,
+            problemName,
+            indicators,
+            "RESULTS/NSGAII/" + problemName);
+
+This class is then passed an observer that is registered to the meta-optimizer:
+
+.. code-block:: java
+   writeFrequency = 1
+   var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);    
+        
+   nsgaii.observable().register(writeExecutionDataToFilesObserver);
+
+The ``WriteExecutionDataToFilesObserver`` class is a jMetal observer that writes the execution data to files. It takes as parameters the write frequency, the maximum number of evaluations and previously defined output results object. The write frequency is the number of evaluations between two consecutive writes to files. 
+
+The meta-optimizer is then run as follows:
+
+.. code-block:: java
+
+   nsgaii.run();
+
+Result Analysis
+~~~~~~~~~~~~~~~
 
 
 
-
-1. **Problem Definition**:
-   - Define the parameter space of your base-level metaheuristic
-   - Select a training set of optimization problems
-   - Choose quality indicators to optimize
-
-2. **Configuration Encoding**:
-   - Each configuration is encoded as a real-valued vector in [0,1]^n
-   - The encoding maps to specific parameter values in the defined space
-
-3. **Meta-Optimization Loop**:
-   - The meta-optimizer generates new configurations
-   - Each configuration is evaluated by running the base-level metaheuristic on all training problems
-   - Solution quality is measured using the selected indicators
-   - The process repeats, with the meta-optimizer using feedback to improve configurations
-
-4. **Result Analysis**:
-   - The output is a set of Pareto-optimal configurations
-   - Each configuration represents a different trade-off between the quality indicators
-   - The user can select the most suitable configuration based on their needs
 
 Practical Example: Tuning NSGA-II
 --------------------------------

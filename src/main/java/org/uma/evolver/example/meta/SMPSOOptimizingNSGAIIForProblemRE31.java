@@ -3,7 +3,6 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.algorithm.meta.MetaSMPSOBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -12,7 +11,6 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.re.RE31;
@@ -78,7 +76,7 @@ public class SMPSOOptimizingNSGAIIForProblemRE31 {
             "RESULTS/NSGAII/" + trainingSet.get(0).name());
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =

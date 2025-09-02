@@ -188,7 +188,7 @@ The following code snippet includes the main steps:
             outputFolder);
 
    var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(1, outputResults);
 
    nsgaii.observable().register(writeExecutionDataToFilesObserver);
      

@@ -77,7 +77,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
             "RESULTS/NSGAII/" + trainingSet.get(0).name());
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =

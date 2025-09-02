@@ -11,9 +11,11 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.util.problemfamilyinfo.WFG2DProblemFamilyInfo;
+import org.uma.evolver.util.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -28,28 +30,29 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
+public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT1());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZCAT1.2D.csv");
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new ZDTProblemFamilyInfo();
+
+    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
-
-    var maximumNumberOfEvaluations = List.of(10000);
+    var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
-    
+
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+                baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -58,7 +61,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 8 ;
+    int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
@@ -67,16 +70,19 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "NSGA-II" ;
+    String problemName = "WFG" ;
     var outputResults =
         new OutputResults(
-            "NSGA-II",
+            algorithmName,
             metaOptimizationProblem,
-            trainingSet.get(0).name(),
+            problemName,
             indicators,
-            "RESULTS/NSGAII/" + trainingSet.get(0).name());
+            "RESULTS/NSGAII/" + problemName);
 
+    int writeFrequency = 1 ;
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, outputResults);
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =

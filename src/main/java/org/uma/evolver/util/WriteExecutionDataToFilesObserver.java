@@ -23,7 +23,7 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
 
   /** Constructor */
   public WriteExecutionDataToFilesObserver(
-      int frequency, int evaluationsLimit, OutputResults outputResultsManagement) {
+          int frequency, OutputResults outputResultsManagement) {
     this.outputResults = outputResultsManagement;
     this.frequency = frequency;
   }

@@ -69,16 +69,19 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "NSGA-II" ;
+    String problemName = "WFG" ;
     var outputResults =
         new OutputResults(
-            "NSGA-II",
+            algorithmName,
             metaOptimizationProblem,
-            "WFG",
+            problemName,
             indicators,
-            "RESULTS/NSGAII/" + "WFG");
+            "RESULTS/NSGAII/" + problemName);
 
+    int writeFrequency = 1 ;
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =

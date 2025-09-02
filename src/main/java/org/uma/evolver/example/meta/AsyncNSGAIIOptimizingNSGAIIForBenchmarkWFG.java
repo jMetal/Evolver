@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.meta.MetaAsyncNSGAIIBuilder;
-import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
@@ -14,17 +13,12 @@ import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.WFG2DProblemFamilyInfo;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
-import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
-import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
@@ -84,7 +78,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
             "RESULTS/NSGAII/" + "WFG");
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, maxEvaluations, outputResults);
+        new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
