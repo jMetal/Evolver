@@ -43,7 +43,8 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4MinimizingEvaluations {
         List.of(new EvaluationsQualityIndicator(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    int populationSize = 100 ;
+    var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
 
     int numberOfIndependentRuns = 1;
 
