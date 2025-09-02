@@ -78,16 +78,16 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
             "RESULTS/NSGAII/" + "WFG");
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, outputResults);
+        new WriteExecutionDataToFilesObserver(100, outputResults);
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(500);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "NSGA-II, " + "WFG",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),
-            1);
+            100);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
@@ -98,7 +98,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
     // Step 6: Write results
     outputResults.updateEvaluations(maxEvaluations);
-    outputResults.writeResultsToFiles(nsgaii.getResult());
+    outputResults.writeResultsToFiles(nsgaii.result());
 
     System.exit(0);
   }
