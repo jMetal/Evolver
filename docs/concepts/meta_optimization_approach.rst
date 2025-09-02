@@ -47,6 +47,22 @@ After creating the parameter space, the *DoubleNSGAII* class is used to configur
 
 Training Set Definition
 ~~~~~~~~~~~~~~~~~~~~~~~
+The traning set is simply a collection of optimization problems that must be accompanied by files containing the reference front of each problem. This is a requirement as most of quality indicators need reference fronts to compute their values. 
+
+The next code snippet shows how to define a training set assuming that we are interested in finding a configuration of NSGA-II for solving the ZDT benchmark problem family:
+
+.. code-block:: java
+
+   List<Problem<DoubleSolution>> trainingSet =
+      List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
+
+   List<String> referenceFrontFileName =
+          List.of("resources/referenceFronts/ZDT1.csv",
+                  "resources/referenceFronts/ZDT2.csv",
+                  "resources/referenceFronts/ZDT3.csv",
+                  "resources/referenceFronts/ZDT4.csv",
+                  "resources/referenceFronts/ZDT6.csv") ;
+
 
 
 
