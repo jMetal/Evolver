@@ -29,9 +29,10 @@ Numeric parameter types (integer and double) define a range of valid values usin
     type: double
     range: [0.1, 1.5] # Inclusive range
 
-Categorical parameters define a set of valid values using the ``values`` attribute, and can be defined in two ways::
+Categorical parameters define a set of valid values using the ``values`` attribute, and can be defined in two ways:
 
 .. code-block:: yaml
+
     createInitialSolutions:
       type: categorical
       values:
@@ -48,19 +49,24 @@ The first option is useful when the parameter can have conditional parameters. I
 Conditional Parameters
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Parameters that only apply when a parent parameter has a specific value:
+A conditional parameter is a parameter that only applies when a parent categorical parameter has a specific value. Let us consider the following example:
 
 .. code-block:: yaml
 
-    parentParameter:
-      type: categorical
-      values:
-        value1: {}
-        value2:
-          conditionalParameters:
-            childParameter:
-              type: integer
-              range: [1, 10]
+  algorithmResult:
+    type: categorical
+    values: 
+      population: {}
+      externalArchive:
+        conditionalParameters:
+          populationSizeWithArchive:
+            type: integer
+            range: [10, 200]
+          archiveType:
+            type: categorical
+            values:
+              crowdingDistanceArchive: {}
+              unboundedArchive: {}
 
 Global Sub-Parameters
 --------------------
