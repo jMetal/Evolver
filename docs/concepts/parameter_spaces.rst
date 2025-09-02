@@ -3,47 +3,51 @@
 Parameter Spaces
 ===============
 
-Parameter spaces in Evolver define the configuration space for metaheuristics using YAML files. These files specify the parameters, their types, and possible values that can be tuned during the meta-optimization process.
+Parameter spaces in Evolver define the whole set of parameters that can be configured in an automatic way for base-level metaheuristics. Parameters can be categorical, such as the crossover operator in evolutionary algorithms, or numerical, such as the mutation probability (double parameter) or the offspring population size (integer parameter). 
 
-Basic Structure
----------------
-A parameter space is defined by a set of parameters, each with:
+This document describes the structure of a parameter space and how they can be defined in YAML files.
+
+Parameters in Evolver
+---------------------
+A parameter is defined by:
 - A unique name
 - A type (integer, double, categorical)
 - A definition of valid values
-- Optional constraints and conditions
+- Relationships with other parameters (conditional parameters and global sub-parameters)
 
-Parameter Types
----------------
+By convention, the name of a parameter should be self-explanatory and defined in camel case such as, for example, ``offspringPopulationSize`` or ``mutationProbability``.
 
-Integer Parameters
-~~~~~~~~~~~~~~~~~~
+Numeric parameter types (integer and double) define a range of valid values using the ``range`` attribute, which is an inclusive range:
+
 .. code-block:: yaml
 
-    parameterName:
-      type: integer
-      range: [min, max]  # Inclusive range
+  neighborhoodSize:
+    type: integer
+    range: [5, 50]  # Inclusive range
 
-Double Parameters
-~~~~~~~~~~~~~~~~
+  laplaceCrossoverScale:
+    type: double
+    range: [0.1, 1.5] # Inclusive range
+
+Categorical parameters define a set of valid values using the ``values`` attribute, and can be defined in two ways::
+
 .. code-block:: yaml
-
-    parameterName:
-      type: double
-      range: [min, max]  # Inclusive range
-
-Categorical Parameters
-~~~~~~~~~~~~~~~~~~~~~
-.. code-block:: yaml
-
-    parameterName:
+    createInitialSolutions:
       type: categorical
       values:
-        value1: {}
-        value2: {}
+        default: {}
+        latinHypercubeSampling: {}
+        scatterSearch: {}
+
+    offspringPopulationSize:
+      type: categorical
+      values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
+
+The first option is useful when the parameter can have conditional parameters. If this is not the case, the second option is more compact and concise.
 
 Conditional Parameters
----------------------
+~~~~~~~~~~~~~~~~~~~~~~
+
 Parameters that only apply when a parent parameter has a specific value:
 
 .. code-block:: yaml
