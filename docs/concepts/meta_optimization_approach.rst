@@ -41,7 +41,7 @@ The base-level metaheuristic is characterized by a parameter space, i.e, a set o
    int populationSize = 100;
    var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
     
-In this example, "NSGAIIDouble.yaml" is a YAML file that defines the parameter space of the NSGA-II algorithm for solving continuous optimization problems. The file is contained in the resources folder of the Evolver project. You are free to modify this file to refine the parameter space of the NSGA-II algorithm.
+In this example, ``NSGAIIDouble.yaml`` is a YAML file that defines the parameter space of the NSGA-II algorithm for solving continuous optimization problems. The file is contained in the resources folder of the Evolver project. You are free to modify this file to refine the parameter space of the NSGA-II algorithm.
 
 After creating the parameter space, the *DoubleNSGAII* class is used to configure the base-level metaheuristic. It takes as parameters the population size and the parameter space. 
 
@@ -63,7 +63,20 @@ The next code snippet shows how to define a training set assuming that we are in
                   "resources/referenceFronts/ZDT4.csv",
                   "resources/referenceFronts/ZDT6.csv") ;
 
+Quality Indicators Selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Quality indicators are metrics that assess the performance of a configuration from the fronts obtained by running the base-level metaheuristic with that configuration on the training set. As Evolver is based on jMetal, which assumess that all objective functions of optimizations problems have to be minimized, care must be taken when selecting quality indicators such as HV, which is a maximization indicator. If we are interested in the HV, the normalized HV or NHV can be used instead. 
+
+The next code snippet shows how to select the EP and NHV indicators, so the resulting meta-optimization problem will have two objectives:
+
+.. code-block:: java
+
+   List<Indicator<DoubleSolution>> qualityIndicators =
+      List.of(new Epsilon(), new NormalizedHypervolume());
+
+
+Suggestions for selecting quality indicators can be found in :doc:`concepts/objective_functions`.
 
 
 1. **Problem Definition**:
