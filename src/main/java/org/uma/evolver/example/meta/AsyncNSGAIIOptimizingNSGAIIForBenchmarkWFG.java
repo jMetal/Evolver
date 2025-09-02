@@ -23,8 +23,8 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
- * problem {@link ZDT4} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the WFG
+ * problems as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
