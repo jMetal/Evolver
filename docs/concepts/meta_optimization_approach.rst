@@ -72,11 +72,30 @@ The next code snippet shows how to select the EP and NHV indicators, so the resu
 
 .. code-block:: java
 
-   List<Indicator<DoubleSolution>> qualityIndicators =
-      List.of(new Epsilon(), new NormalizedHypervolume());
+   var qualityIndicators = List.of(new Epsilon(), new NormalizedHypervolume());
 
 
-Suggestions for selecting quality indicators can be found in :doc:`concepts/objective_functions`.
+Suggestions for selecting quality indicators can be found in :doc:`objective_functions`.
+
+Meta-Optimization Problem Definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Besides the base-level metaheuristic, the training set and the quality indicators, to define the meta-optimization problem two additional parameters are needed: the evaluation strategy and the number of independent runs per configuration. 
+
+The evaluation strategy defines the stopping condition of the base-level metaheuristic in terms of the maximum number of evaluations. The default strategy is to fix the evaluations giving a list of evalutions per problem. In the example we are using, the list for the ZDT problems could be:
+
+.. code-block:: java
+
+   var maximumNumberOfEvaluations = List.of(10000, 10000, 10000, 15000, 10000) ;
+   var evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+
+Each value in the list corresponds to the corresponding problem in the training set. In this example, we are assuming that the ZDT4 problem is more computationally expensive to solve than the other four instances, so we set a higher value for the maximum number of evaluations of the base-level metaheuristic. Note that this is just a suggestion; we could just use the same
+value for all the problems.
+
+
+
+.. code-block:: java
+
+   var numberOfIndependentRuns = List.of(1, 1, 1, 1, 1) ;
 
 
 1. **Problem Definition**:
