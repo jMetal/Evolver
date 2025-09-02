@@ -14,11 +14,6 @@ Using this string as a solution encoding would involve the design and implementa
 
 Encoding Scheme
 ---------------
-
-
-
-
-
 All parameters are encoded as real numbers in the range [0.0, 1.0], regardless of their original type. This uniform encoding allows the use of any continuous metaheuristic as a meta-optimizer.
 
 ### Type Conversion
@@ -52,15 +47,10 @@ An encoded solution `[0.7, 0.4, 0.25]` would decode to:
 - `crossover = BLX` (0.4 falls in second bin)
 - `populationSize = 25` (0 + (100-0)*0.25)
 
-### Implications
-1. **Parameter Independence**: The encoding treats all parameters as independent, which may not always reflect their relationships in the actual algorithm.
-2. **Mutation Effects**: Small changes in encoded values may or may not change the decoded parameter values, especially for boolean and categorical parameters.
-3. **Constraint Handling**: The encoding doesn't enforce constraints between parameters. Invalid configurations must be handled during decoding or evaluation.
+Implications
+------------
+The adopted encoding scheme introduces two potential drawbacks that must be considered. First, all parameters in the parameter space are flattened in the encoding, and dependencies among parameters are not taken into account. This means that, for example, the uniform mutation perturbation will be included in any configuration, independently of whether the selected mutation operator is uniform mutation or another type. Second, encoding boolean and categorical parameters within the range [0.0, 1.0] can lead to situations where a mutation does not alter the decoded value of the parameter. For instance, if a variable representing a boolean parameter has a value of 0.2 and is changed to 0.4, the decoded value remains False in both cases. This is because values below 0.5 are decoded as False, while values of 0.5 or higher are decoded as True.
 
-### Best Practices
-1. **Parameter Ordering**: Place related parameters close to each other in the encoding for better performance with some meta-optimizers.
-2. **Parameter Scaling**: Consider the scale of numerical parameters to ensure balanced optimization.
-3. **Validation**: Always validate decoded configurations before evaluation.
-4. **Logging**: Log both encoded and decoded parameter values for debugging.
+While these potential effects can be mitigated by increasing the probability of the mutation operator used by the meta-optimizer, it is important to note that applying a variation operator (such as mutation) to a solution may not alter the decoded value of the parameters, so the original configuration might not be changed and evaluating it is useless. 
 
 For more details on how these encodings are used in practice, see the :doc:`evaluation` documentation.
