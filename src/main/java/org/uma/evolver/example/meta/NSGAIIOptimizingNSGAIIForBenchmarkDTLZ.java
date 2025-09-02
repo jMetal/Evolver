@@ -35,7 +35,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+    var problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
 
     List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
@@ -43,7 +43,9 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
+
+    int populationSize = 100;
+    var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 

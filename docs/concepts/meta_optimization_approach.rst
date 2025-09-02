@@ -5,23 +5,46 @@ Meta-Optimization Approach
 
 Evolver automates the process of finding optimal configurations for multi-objective metaheuristics through meta-optimization, which treats the algorithm configuration task itself as a multi-objective optimization problem.
 
+Components
+----------
 The approach is based on the following components:
 
-- *Base-Level Metaheuristic*: This is the multi-objective optimization algorithm we want to configure, such as NSGA-II, MOEA/D, or MOPSO. The meta-optimization process will automatically adjust its parameters to achieve the best performance.
+- **Base-Level Metaheuristic**: This is the multi-objective optimization algorithm we want to configure, such as NSGA-II, MOEA/D, or MOPSO. The meta-optimization process will automatically adjust its parameters to achieve the best performance.
 
-- *Meta-Optimizer*: The algorithm that searches for optimal configurations of the base-level metaheuristic. Evolver uses standard multi-objective algorithms (like NSGA-II or MOEA/D) at this level to explore the space of possible configurations. 
+- **Meta-Optimizer**: The algorithm that searches for optimal configurations of the base-level metaheuristic. Evolver uses standard multi-objective algorithms (like NSGA-II or MOEA/D) at this level to explore the space of possible configurations. 
 
-- *Parameter Space*: Defines all possible configurations of the base-level metaheuristic. This includes:
+- **Parameter Space**: Defines all possible configurations of the base-level metaheuristic. This includes:
     - Numerical parameters (e.g., population size, mutation rate)
     - Categorical parameters (e.g., selection operator type)
     - Conditional parameters that depend on other parameters' values (e.g., the distribution index of the SBX operator)
 
-- *Training Set*: A collection of optimization problems used to evaluate configurations. The meta-optimizer seeks configurations that perform well across all problems in this set.
+- **Training Set**: A collection of optimization problems used to evaluate configurations. The meta-optimizer seeks configurations that perform well across all problems in this set.
 
-- *Quality Indicators*: Metrics that assess the performance of a configuration from the fronts obtained by running the base-level metaheuristic with that configuration on the training set. Common indicators include NHV, EP, IGD, and IGD+.
+- **Quality Indicators**: Metrics that assess the performance of a configuration from the fronts obtained by running the base-level metaheuristic with that configuration on the training set. Common indicators include NHV, EP, IGD, and IGD+.
+
+- **Meta-Optimization Problem**: Problem that the meta-optimizer solves to find the best configuration of the base-level metaheuristic. 
 
 How It Works
 ------------
+The goal of a meta-optimization process is, given a base-level multi-objective metaheuristic and a training set of optimization problems, to find the best configuration of the base-level metaheuristic to efficiently solve the training set. The first step is, then, to define these two components.
+
+Defining the Base-Level Metaheuristic
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The base-level metaheuristic is characterized by a parameter space, i.e, a set of parameters that can be adjusted to improve its performance. The next code snippet shows how to configure a base-level NSGA-II algorithm for solving continuous optimization problems:
+
+.. code-block:: java
+
+   String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+   var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+   
+   int populationSize = 100;
+   var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
+    
+
+
+
+
 1. **Problem Definition**:
    - Define the parameter space of your base-level metaheuristic
    - Select a training set of optimization problems
