@@ -25,53 +25,56 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
- * problem {@link ZDT4} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using problem
+ * {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
     ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new ZDTProblemFamilyInfo();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
+    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+    EvaluationBudgetStrategy evaluationBudgetStrategy =
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-                baseAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
+    // builder
     int maxEvaluations = 2000;
     int numberOfCores = 8;
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    String algorithmName = "NSGA-II" ;
-    String problemName = "WFG" ;
+    String algorithmName = "NSGA-II";
+    String problemName = "ZDT";
     var outputResults =
         new OutputResults(
             algorithmName,
@@ -80,18 +83,19 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
             indicators,
             "RESULTS/NSGAII/" + problemName);
 
-    int writeFrequency = 1 ;
+    int writeFrequency = 1;
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
+    int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "NSGA-II, " + "ZDT",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),
-            1);
+            plotUpdateFrequency);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);

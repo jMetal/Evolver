@@ -156,11 +156,35 @@ This class is then passed an observer that is registered to the meta-optimizer:
 
 The ``WriteExecutionDataToFilesObserver`` class is a jMetal observer that writes the execution data to files. It takes as parameters the write frequency, the maximum number of evaluations and previously defined output results object. The write frequency is the number of evaluations between two consecutive writes to files. 
 
+Additionally, a useful observer is the ``FrontPlotObserver`` class, which plots the front of the meta-optimization problem at regular intervals:
+
+.. code-block:: java
+
+    int plotUpdateFrequency = 1;
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>(
+            "NSGA-II, " + "ZDT",
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            trainingSet.get(0).name(),
+            plotUpdateFrequency);
+
+    nsgaii.observable().register(frontChartObserver);
+
 The meta-optimizer is then run as follows:
 
 .. code-block:: java
 
    nsgaii.run();
+
+
+The following figure shows the a plot of the population of the meta-optimizer after 400 function evaluations:
+
+.. figure:: figures/front.ZDT.400.png
+   :align: center
+   :alt: Chart
+   :figwidth: 50%
+
 
 Result Analysis
 ~~~~~~~~~~~~~~~
