@@ -56,7 +56,7 @@ The next code snippet shows how to define a training set assuming that we are in
    List<Problem<DoubleSolution>> trainingSet =
       List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
 
-   List<String> referenceFrontFileName =
+   List<String> referenceFrontFileNames =
           List.of("resources/referenceFronts/ZDT1.csv",
                   "resources/referenceFronts/ZDT2.csv",
                   "resources/referenceFronts/ZDT3.csv",
@@ -91,11 +91,35 @@ The evaluation strategy defines the stopping condition of the base-level metaheu
 Each value in the list corresponds to the corresponding problem in the training set. In this example, we are assuming that the ZDT4 problem is more computationally expensive to solve than the other four instances, so we set a higher value for the maximum number of evaluations of the base-level metaheuristic. Note that this is just a suggestion; we could just use the same
 value for all the problems.
 
-
+The number of independent runs per configuration defines the number of times the base-level metaheuristic is run for each configuration (see :doc:`evaluation` for more details). The default strategy is to run the base-level metaheuristic once for each configuration:
 
 .. code-block:: java
 
-   var numberOfIndependentRuns = List.of(1, 1, 1, 1, 1) ;
+   int numberOfIndependentRuns = 1 ;
+
+The meta-optimization problem is then defined as follows:
+
+.. code-block:: java
+
+   MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+      new MetaOptimizationProblem<>(
+            baseAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            evaluationBudgetStrategy,
+            numberOfIndependentRuns);
+
+Note that the meta-optimization problem class includes a generic type to indicate the type of solutions of the problems of the training set. As we are using continuous optimization problems in our example, we include the ``DoubleSolution``class.
+
+
+Meta-Optimizer Selection and Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The meta-optimizer is the algorithm that will be used to find the best configuration of the base-level metaheuristic. Any metaheuristic included in jMetal able of solving continuous optimization problems can be used as a meta-optimizer but, as evaluating each solution can be very time consuming (as it requires running the base-level metaheuristic on the training set), it is recommended to use a parallel metaheuristic.
+
+
+
 
 
 1. **Problem Definition**:
