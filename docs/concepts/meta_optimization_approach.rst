@@ -29,7 +29,7 @@ How It Works
 The goal of a meta-optimization process is, given a base-level multi-objective metaheuristic and a training set of optimization problems, to find the best configuration of the base-level metaheuristic to efficiently solve the training set. The first step is, then, to define these two components.
 
 Defining the Base-Level Metaheuristic
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The base-level metaheuristic is characterized by a parameter space, i.e, a set of parameters that can be adjusted to improve its performance. The next code snippet shows how to configure a base-level NSGA-II algorithm for solving continuous optimization problems:
 
@@ -41,7 +41,9 @@ The base-level metaheuristic is characterized by a parameter space, i.e, a set o
    int populationSize = 100;
    var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
     
+In this example, "NSGAIIDouble.yaml" is a YAML file that defines the parameter space of the NSGA-II algorithm for solving continuous optimization problems. The file is contained in the resources folder of the Evolver project. You are free to modify this file to refine the parameter space of the NSGA-II algorithm.
 
+After creating the parameter space, the *DoubleNSGAII* class is used to configure the base-level metaheuristic. It takes as parameters the population size and the parameter space. 
 
 
 
