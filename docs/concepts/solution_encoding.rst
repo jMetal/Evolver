@@ -16,8 +16,7 @@ Encoding Scheme
 ---------------
 All parameters are encoded as real numbers in the range [0.0, 1.0], regardless of their original type. This uniform encoding allows the use of any continuous metaheuristic as a meta-optimizer.
 
-Type Conversions
-~~~~~~~~~~~~~~~~
+The following list shows the type conversions:
 
 **Boolean Parameters**:
 

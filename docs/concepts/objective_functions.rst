@@ -39,7 +39,7 @@ Evolver’s meta-optimization approach may initially seem challenging to be appl
 
 Using only HV- can lead to stagnation, particularly in early iterations, when configurations produce HV- values of zero if no solution in the current population dominates the reference point. At this stage, the search may plateau, preventing further progress. To overcome this limitation, the EP indicator can serve as a secondary objective. When every solution has an HV- of zero, the meta-optimizer can rely on EP to refine configurations, enhance convergence, and eventually reach regions where solutions fall below the reference point, so that the meta-optimizer can work in an effective way.
 
-Minimizing the Number Of Evaluations as Objective
+Minimizing the Number Of Evaluations as an Objective
 -------------------------------------------------
 
 Finding good configurations of base-level metaheuristics is the main goal of meta-optimization. Here, the number of evaluations set in the stopping conditio of the meta-optimization algorithm is a parameter that must be carefully selected. The higher the number of evaluations, the larger the number of generated configurations and thus the probability of finding more accurate configurations of the base-leve metaheuristic at the const of a increasing the computing time.
