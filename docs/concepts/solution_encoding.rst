@@ -5,8 +5,20 @@ Solution Encoding
 
 Evolver encodes metaheuristic configurations as real-valued vectors to enable efficient optimization. This document explains the encoding scheme and its implications.
 
+
+Configurations for Base-Level Metaheuristics
+-------------------------------------------
+All the base-level metaheuristics in Evolver are configured from a string containing all the parameters. This string has this scheme: "--parameterName1 parameterValue1 --parameterName2 parameterValue2 ... --parameterNameN parameterValueN". This string is parsed and the corresponding parameter values are set in the base-level metaheuristic. 
+
+Using this string as a solution encoding would involve the design and implementation of specific mutation and crossover operators. Our approach, on the other hand, adopts a very simple scheme: each parameter is encoded as a real number. This approach simplifies the meta-optimization problem by making it continuous, allowing us to use any metaheuristic included in jMetal that can solve continuous optimization problems as a meta-optimizer. This includes not only evolutionary algorithms like NSGA-II, but also particle swarm optimization algorithms like SMPSO.
+
 Encoding Scheme
 ---------------
+
+
+
+
+
 All parameters are encoded as real numbers in the range [0.0, 1.0], regardless of their original type. This uniform encoding allows the use of any continuous metaheuristic as a meta-optimizer.
 
 ### Type Conversion

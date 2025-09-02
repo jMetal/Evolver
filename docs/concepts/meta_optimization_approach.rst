@@ -47,7 +47,7 @@ After creating the parameter space, the *DoubleNSGAII* class is used to configur
 
 Training Set Definition
 ~~~~~~~~~~~~~~~~~~~~~~~
-The traning set is simply a collection of optimization problems that must be accompanied by files containing the reference front of each problem. This is a requirement as most of quality indicators need reference fronts to compute their values. 
+The training set is simply a collection of optimization problems that must be accompanied by files containing the reference front of each problem. This is a requirement as most of quality indicators need reference fronts to compute their values. 
 
 The next code snippet shows how to define a training set assuming that we are interested in finding a configuration of NSGA-II for solving the ZDT benchmark problem family:
 
@@ -118,7 +118,7 @@ Meta-Optimizer Selection, Configuration and Execution
 
 The meta-optimizer is the algorithm that will be used to find the best configuration of the base-level metaheuristic. Any metaheuristic included in jMetal able of solving continuous optimization problems can be used as a meta-optimizer but, as evaluating each solution can be very time consuming (as it requires running the base-level metaheuristic on the training set), it is recommended to use a parallel metaheuristic.
 
-To simply the process, Evolver provides a builder some meta-optimizers, such as NSGA-II and SMPSO. The next code snippet shows how to use NSGA-II as meta-optimizer:
+To simplify the process, Evolver provides a builder some meta-optimizers, such as NSGA-II and SMPSO. The next code snippet shows how to use NSGA-II as meta-optimizer:
 
 .. code-block:: java
 
@@ -154,7 +154,7 @@ This class is then passed an observer that is registered to the meta-optimizer:
         
    nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
-The ``WriteExecutionDataToFilesObserver`` class is a jMetal observer that writes the execution data to files. It takes as parameters the write frequency, the maximum number of evaluations and previously defined output results object. The write frequency is the number of evaluations between two consecutive writes to files. 
+The ``WriteExecutionDataToFilesObserver`` class is a jMetal observer that writes the execution data to files. It takes as parameters the write frequency and the previously defined output results object. The write frequency is the number of evaluations between two consecutive writes to files. 
 
 Additionally, a useful observer is the ``FrontPlotObserver`` class, which plots the front of the meta-optimization problem at regular intervals:
 
@@ -178,56 +178,16 @@ The meta-optimizer is then run as follows:
    nsgaii.run();
 
 
-The following figure shows the a plot of the population of the meta-optimizer after 400 function evaluations:
+The following figure shows a plot of the population of the meta-optimizer after 400 function evaluations:
 
-.. figure:: figures/front.ZDT.400.png
+.. figure:: ../figures/front.ZDT.400.png
    :align: center
    :alt: Chart
-   :figwidth: 50%
+   :figwidth: 80%
 
 
 Result Analysis
 ~~~~~~~~~~~~~~~
 
-
-
-
-Practical Example: Tuning NSGA-II
---------------------------------
-Let's say you want to optimize NSGA-II for solving a set of benchmark problems:
-
-1. **Define Parameter Space**:
-   - Population size: 50-200
-   - Crossover probability: 0.7-1.0
-   - Mutation probability: 1/n (where n is problem dimension)
-   - Selection operator: Tournament or random selection
-
-2. **Select Training Problems**:
-   - ZDT1, ZDT2, ZDT3 (for 2-objective problems)
-   - DTLZ1, DTLZ2 (for 3+ objectives)
-
-3. **Choose Quality Indicators**:
-   - IGD (for convergence and diversity)
-   - Spread (for solution distribution)
-   - Hypervolume (for overall performance)
-
-4. **Run Meta-Optimization**:
-   - Evolver will automatically find configurations that balance these indicators
-   - The process typically takes several hours to days, depending on problem complexity
-
-5. **Analyze Results**:
-   - Compare different configurations in the obtained Pareto front
-   - Select the one that best fits your requirements
-   - Optionally, validate on unseen test problems
-
-Key Benefits
-------------
-- **Automated Tuning**: Saves time compared to manual parameter tuning
-- **Multi-Objective Optimization**: Considers multiple performance criteria simultaneously
-- **Flexible**: Works with any base-level metaheuristic that can be parameterized
-- **Extensible**: New algorithms, problems, and quality indicators can be easily added
-3. Choose a meta-optimizer (e.g., SMPSO, NSGA-II)
-4. Run the meta-optimization process
-5. Analyze and validate the resulting configurations
 
 For implementation details and examples, see the :doc:`/examples` section.
