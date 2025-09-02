@@ -49,7 +49,9 @@ The first option is useful when the parameter can have conditional parameters. I
 Conditional Parameters
 ~~~~~~~~~~~~~~~~~~~~~~
 
-A conditional parameter is a parameter that only applies when a parent categorical parameter has a specific value. Let us consider the following example:
+In the parameter space, a parameter can have conditional parameters. Conditional parameters are parameters that only apply when a parent categorical parameter has a specific value. 
+
+Let's consider the following example to illustrate this concept:
 
 .. code-block:: yaml
 
@@ -68,37 +70,59 @@ A conditional parameter is a parameter that only applies when a parent categoric
               crowdingDistanceArchive: {}
               unboundedArchive: {}
 
+The ``algorithmResult`` parameter is a categorical parameter that can take two values: ``population`` or ``externalArchive``. If the value is ``population``, then the ``populationSizeWithArchive`` parameter is not considered. If the value is ``externalArchive``, then the ``populationSizeWithArchive`` and ``archiveType`` parameters are considered. The ``archiveType`` parameter is a categorical parameter that can take two values: ``crowdingDistanceArchive`` or ``unboundedArchive``.
+
 Global Sub-Parameters
---------------------
-Parameters that always apply, regardless of other parameter values:
+~~~~~~~~~~~~~~~~~~~~~
+
+Besides conditional parameters, a categorical parameter can have also global sub-parameters. Global sub-parameters are parameters that always apply, regardless of other parameter values. Let's take a look to the next example:
 
 .. code-block:: yaml
 
-    mainParameter:
+    crossover:
       type: categorical
-      values:
-        value1: {}
-        value2: {}
       globalSubParameters:
-        globalParam:
+        crossoverProbability:
           type: double
           range: [0.0, 1.0]
+        crossoverRepairStrategy:
+          type: categorical
+          values: [random, round, bounds]
+      values:
+        SBX:
+          conditionalParameters:
+            sbxDistributionIndex:
+              type: double
+              range: [5.0, 400.0]
+          conditionalParameters:
+        blxAlphaCrossoverAlpha:
+              type: double
+              range: [0.0, 1.0]
+        wholeArithmetic: {}
 
-Example: NSGA-II Parameter Space
--------------------------------
-A simplified example of NSGA-II's parameter space:
+The ``crossover`` parameter is a categorical parameter that can take three values: ``SBX``, ``blxAlpha``, or ``wholeArithmetic``. In contrast to conditional parameters, global sub-parameters always applies. In the example, any crossover has a ``crossoverProbability`` and ``crossoverRepairStrategy`` parameter. We can see that the ``SBX``and ``blxAlpha`` crossovers have a ``sbxDistributionIndex`` and ``blxAlphaCrossoverAlpha`` parameter, respectively, while the ``wholeArithmetic`` crossover does not have these parameters.   
 
-.. literalinclude:: ../../src/main/resources/parameterSpaces/NSGAIIDouble.yaml
-   :language: yaml
-   :lines: 1-20
-   :caption: NSGAIIDouble.yaml (excerpt)
+First-Level Parameters in a Parameter Space
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The first-level parameters in a parameter space are the root nodes of a hierarchy, and they do not have parents. The rest of parameters of the parameter space are children of these first-level parameters, which can be either conditional or global sub-parameters.
 
-Best Practices
---------------
-1. **Start Simple**: Begin with essential parameters
-2. **Use Meaningful Names**: Make parameter names descriptive
-3. **Define Reasonable Ranges**: Set appropriate min/max values
-4. **Document Parameters**: Add comments in the YAML file
-5. **Test Configurations**: Verify that example configurations work
+If we take a look to the `parameter space for NSGA-II for double problems <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/NSGAIIDouble.yaml>`_, we can observe that the number of first-level parameters is five:
+
+- algorithmResult
+- createInitialSolutions
+- offspringPopulationSize
+- variation
+- selection
+
+However, the first-level parameters of the `base-level MOEA/D parameter space <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/MOEADouble.yaml>`_ are eight:
+
+- neighborhoodSize
+- maximumNumberOfReplacedSolutions
+- aggregationFunction
+- algorithmResult
+- createInitialSolutions
+- subProblemIdGenerator
+- variation
+- selection
 
 For more examples, see the `parameterSpaces <https://github.com/jMetal/Evolver/tree/main/src/main/resources/parameterSpaces>`_ directory in the source code.

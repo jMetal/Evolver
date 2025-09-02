@@ -37,10 +37,7 @@ variation:
               range: [0.0, 1.0]
             crossoverRepairStrategy:
               type: categorical
-              values:
-                random: {}
-                round: {}
-                bounds: {}
+              values: [random, round, bounds]
           values:
             SBX:
               conditionalParameters:
