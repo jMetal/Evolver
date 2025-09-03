@@ -1,7 +1,7 @@
 .. _parameter-spaces:
 
 Parameter Spaces
-===============
+================
 
 Parameter spaces in Evolver define the whole set of parameters that can be configured in an automatic way for base-level metaheuristics. Parameters can be categorical, such as the crossover operator in evolutionary algorithms, or numerical, such as the mutation probability (double parameter) or the offspring population size (integer parameter). 
 

@@ -6,7 +6,7 @@ Base-Level Metaheuristics
 Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This document describes the supported algorithms and their configuration options.
 
 Supported Algorithms
--------------------
+--------------------
 
 ### NSGA-II (Non-dominated Sorting Genetic Algorithm II)
 - **Type**: Evolutionary Algorithm
