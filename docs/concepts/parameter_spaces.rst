@@ -214,88 +214,30 @@ An alternative way to define parameter spaces use YAML files is to create a subc
 3. Register top-level parameters using ``addTopLevelParameter()``
 4. Implement the ``createInstance()`` method to return a new instance of the parameter space  
 
-We explain here how to define the parameter spaces for flavours of the base-level NSGA-II to optimize double, binary, and permutation problems. The code is included in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package.  
+We explain here how to define the parameter spaces for flavours of the base-level NSGA-II to optimize double, binary, and permutation problems. The code is included in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package. The following UML class diagram illustrates the inheritance hierarchy of parameter space classes used in the NSGA-II algorithm implementation:
 
-.. graphviz::
+.. figure:: ../../docs/figures/NSGAIIParameterSpacesUML.png
    :align: center
-   :caption: NSGA-II Parameter Space Class Hierarchy
+   :alt: NSGA-II Parameter Space Class Hierarchy
+   :figclass: align-center
+   
+   NSGA-II Parameter Space Class Hierarchy
 
-   digraph G {
-       node [shape=plaintext, fontname=Arial, fontsize=10];
-       
-       // Base class
-       ParameterSpace [label=<
-           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-               <TR><TD BORDER="0" ALIGN="CENTER"><B>«Abstract»<BR/>ParameterSpace</B></TD></TR>
-               <TR><TD BORDER="1" BORDERCOLOR="#000000">
-                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
-                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
-                   </TABLE>
-               </TD></TR>
-           </TABLE>>];
-           
-       // NSGAIICommonParameterSpace with methods
-       NSGAIICommon [label=<
-           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-               <TR><TD BORDER="0" ALIGN="CENTER"><B>«Abstract»<BR/>NSGAIICommonParameterSpace</B></TD></TR>
-               <TR><TD BORDER="1" BORDERCOLOR="#000000">
-                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
-                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
-                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
-                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
-                   </TABLE>
-               </TD></TR>
-           </TABLE>>];
-           
-       // NSGAIIDoubleParameterSpace with methods
-       DoubleSpace [label=<
-           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIDoubleParameterSpace</B></TD></TR>
-               <TR><TD BORDER="1" BORDERCOLOR="#000000">
-                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
-                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
-                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
-                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
-                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
-                   </TABLE>
-               </TD></TR>
-           </TABLE>>];
-           
-       // NSGAIIBinaryParameterSpace with methods
-       BinarySpace [label=<
-           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIBinaryParameterSpace</B></TD></TR>
-               <TR><TD BORDER="1" BORDERCOLOR="#000000">
-                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
-                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
-                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
-                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
-                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
-                   </TABLE>
-               </TD></TR>
-           </TABLE>>];
-           
-       // NSGAIIPermutationParameterSpace with methods
-       PermutationSpace [label=<
-           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIPermutationParameterSpace</B></TD></TR>
-               <TR><TD BORDER="1" BORDERCOLOR="#000000">
-                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
-                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
-                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
-                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
-                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
-                   </TABLE>
-               </TD></TR>
-           </TABLE>>];
-       
-       // Inheritance
-       edge [arrowhead=empty];
-       ParameterSpace -> NSGAIICommon;
-       NSGAIICommon -> DoubleSpace;
-       NSGAIICommon -> BinarySpace;
-       NSGAIICommon -> PermutationSpace;
-       
-       // Graph settings
-       graph [rankdir=BT, fontname=Arial, fontsize=12];
-   }
+Extending ParameterSpace is the 
+``NSGAIICommonParameterSpace`` is an abstract class that introduces three key methods for parameter management: 
+``setParameterSpace()``
+, 
+``setParameterRelationships()``
+, and 
+``setTopLevelParameters()``
+. These methods establish a structured approach to defining and organizing parameters, including their dependencies and hierarchical relationships. The abstract nature of this class indicates it's designed to be extended by specific implementations rather than used directly.
+
+The diagram shows three concrete implementations that inherit from 
+NSGAIICommonParameterSpace
+, each tailored to a specific solution representation: 
+NSGAIIDoubleParameterSpace
+, NSGAIIBinaryParameterSpace, and NSGAIIPermutationParameterSpace. These concrete classes implement the parameter space for NSGA-II when working with double, binary, and permutation-encoded solutions respectively. Each concrete class overrides the 
+createInstance()
+ method to return a new instance of its specific type, ensuring proper polymorphic behavior. The inheritance structure demonstrates a clean separation of concerns, where common parameter management logic is centralized in the abstract base classes while allowing for specific parameter configurations in the concrete implementations.
+
+
