@@ -223,14 +223,52 @@ We explain here how to define the parameter spaces for flavours of the base-leve
    
    NSGA-II Parameter Space Class Hierarchy
 
-Extending ParameterSpace is the 
-``NSGAIICommonParameterSpace`` is an abstract class that introduces three key methods for parameter management: 
-``setParameterSpace()``
-, 
-``setParameterRelationships()``
-, and 
-``setTopLevelParameters()``
-. These methods establish a structured approach to defining and organizing parameters, including their dependencies and hierarchical relationships. The abstract nature of this class indicates it's designed to be extended by specific implementations rather than used directly.
+The idea is that the ``NSGAIICommonParameterSpace`` abstract class defines the common parameters a generic NSGA-II algorithm for any encoding, while the concrete classes define the specific parameters for each flavour of NSGA-II.
+This is a code snippet of the ``NSGAIICommonParameterSpace`` class:
+
+.. code-block:: java
+
+   public abstract class NSGAIICommonParameterSpace extends ParameterSpace {
+
+    // Algorithm result options
+    public static final String ALGORITHM_RESULT = "algorithmResult";
+    public static final String POPULATION = "population";
+    public static final String EXTERNAL_ARCHIVE = "externalArchive";
+    public static final String ARCHIVE_TYPE = "archiveType";
+    public static final String POPULATION_SIZE_WITH_ARCHIVE = "populationSizeWithArchive";
+
+    // Algorithm result options
+    public static final String ALGORITHM_RESULT = "algorithmResult";
+    public static final String POPULATION = "population";
+    public static final String EXTERNAL_ARCHIVE = "externalArchive";
+    public static final String ARCHIVE_TYPE = "archiveType";
+    public static final String POPULATION_SIZE_WITH_ARCHIVE = "populationSizeWithArchive";
+
+    ...
+  
+    protected void setParameterSpace() {
+      put(new CategoricalParameter(ALGORITHM_RESULT, List.of(POPULATION, EXTERNAL_ARCHIVE)));
+      put(new IntegerParameter(POPULATION_SIZE_WITH_ARCHIVE, 10, 200));
+    
+      ...
+    }
+   
+    protected void setParameterRelationships() {
+      // AlgorithmResult dependencies
+      get(ALGORITHM_RESULT)
+          .addConditionalParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
+          .addConditionalParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
+
+      ...
+    }
+
+    protected void setTopLevelParameters() {
+      topLevelParameters.add(parameterSpace.get(ALGORITHM_RESULT));
+      topLevelParameters.add(parameterSpace.get(CREATE_INITIAL_SOLUTIONS));
+      topLevelParameters.add(parameterSpace.get(OFFSPRING_POPULATION_SIZE));
+      topLevelParameters.add(parameterSpace.get(VARIATION));
+      topLevelParameters.add(parameterSpace.get(SELECTION));
+  }
 
 The diagram shows three concrete implementations that inherit from 
 NSGAIICommonParameterSpace
