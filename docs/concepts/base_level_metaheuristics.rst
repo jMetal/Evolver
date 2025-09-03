@@ -1,16 +1,16 @@
 .. _base-level-metaheuristics:
 
 Base-Level Metaheuristics
-========================
+=========================
 
 Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This section describes the how to implement the algorithms, the provided solveres, and  their configuration options.
 
-The base-level metaheuristics are implemented in the `org.uma.evolver.algorithm.base` package. This package contains the `BaseLevelAlgorithm` interface that defines the contract for all configurable metaheuristics in Evolver.
+The base-level metaheuristics are implemented in the ``org.uma.evolver.algorithm.base`` package. This package contains the ``BaseLevelAlgorithm`` interface that defines the contract for all configurable metaheuristics in Evolver.
 
 BaseLevelAlgorithm Interface
 ----------------------------
 
-The `BaseLevelAlgorithm` interface serves as the foundation for all configurable metaheuristics. It provides the necessary methods to:
+The ``BaseLevelAlgorithm`` interface serves as the foundation for all configurable metaheuristics. It provides the necessary methods to:
 
 1. Define and access the parameter space of the algorithm
 2. Build configured algorithm instances

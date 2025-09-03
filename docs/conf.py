@@ -16,6 +16,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.graphviz',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,6 +49,9 @@ autodoc_default_options = {
 
 # Napoleon settings
 napoleon_google_docstring = True
+
+# Graphviz configuration
+graphviz_output_format = 'svg'
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = False
 napoleon_include_private_with_doc = False

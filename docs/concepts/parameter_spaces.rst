@@ -5,7 +5,7 @@ Parameter Spaces
 
 Parameter spaces in Evolver define the whole set of parameters that can be configured in an automatic way for base-level metaheuristics. Parameters can be categorical, such as the crossover operator in evolutionary algorithms, or numerical, such as the mutation probability (double parameter) or the offspring population size (integer parameter). 
 
-This section describes the structure of a parameter space and how they can be defined in YAML files.
+This section describes the structure of a parameter space and how they can be defined in YAML files. At the end of this section, we will show an alternartive way to define parameter spaces programatically.
 
 Parameters in Evolver
 ---------------------
@@ -128,7 +128,7 @@ However, the first-level parameters of the `base-level MOEA/D parameter space <h
 For more examples, see the `parameterSpaces <https://github.com/jMetal/Evolver/tree/main/src/main/resources/parameterSpaces>`_ directory in the source code.
 
 Implementation Details
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 The parameter space functionality in Evolver is implemented through the abstract ``ParameterSpace`` class, which provides a framework for managing algorithm parameters in a hierarchical structure. This class is a key component in Evolver's configuration system.
 
@@ -191,7 +191,7 @@ Core Components
    - ``createInstance()``: Abstract method that subclasses must implement to create and configure the parameter space
 
 Usage Example
-^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 .. code-block:: java
 
@@ -204,11 +204,98 @@ Usage Example
    // Get all top-level parameters
    List<Parameter<?>> mainParameters = parameterSpace.topLevelParameters();
 
-Subclassing
-^^^^^^^^^^
-To create a custom parameter space, extend the ``ParameterSpace`` class and implement the following:
+
+Defininig Parameter Spaces Programatically. Case Study: NSGA-II
+---------------------------------------------------------------
+An alternative way to define parameter spaces use YAML files is to create a subclass of the ``ParameterSpace`` and implement the following:
 
 1. Define all parameters in the constructor
 2. Set up parameter relationships (conditional parameters and global sub-parameters)
 3. Register top-level parameters using ``addTopLevelParameter()``
-4. Implement the ``createInstance()`` method to return a new instance of the parameter space
+4. Implement the ``createInstance()`` method to return a new instance of the parameter space  
+
+We explain here how to define the parameter spaces for flavours of the base-level NSGA-II to optimize double, binary, and permutation problems. The code is included in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package.  
+
+.. graphviz::
+   :align: center
+   :caption: NSGA-II Parameter Space Class Hierarchy
+
+   digraph G {
+       node [shape=plaintext, fontname=Arial, fontsize=10];
+       
+       // Base class
+       ParameterSpace [label=<
+           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+               <TR><TD BORDER="0" ALIGN="CENTER"><B>«Abstract»<BR/>ParameterSpace</B></TD></TR>
+               <TR><TD BORDER="1" BORDERCOLOR="#000000">
+                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
+                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
+                   </TABLE>
+               </TD></TR>
+           </TABLE>>];
+           
+       // NSGAIICommonParameterSpace with methods
+       NSGAIICommon [label=<
+           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+               <TR><TD BORDER="0" ALIGN="CENTER"><B>«Abstract»<BR/>NSGAIICommonParameterSpace</B></TD></TR>
+               <TR><TD BORDER="1" BORDERCOLOR="#000000">
+                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
+                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
+                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
+                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
+                   </TABLE>
+               </TD></TR>
+           </TABLE>>];
+           
+       // NSGAIIDoubleParameterSpace with methods
+       DoubleSpace [label=<
+           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIDoubleParameterSpace</B></TD></TR>
+               <TR><TD BORDER="1" BORDERCOLOR="#000000">
+                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
+                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
+                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
+                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
+                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
+                   </TABLE>
+               </TD></TR>
+           </TABLE>>];
+           
+       // NSGAIIBinaryParameterSpace with methods
+       BinarySpace [label=<
+           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIBinaryParameterSpace</B></TD></TR>
+               <TR><TD BORDER="1" BORDERCOLOR="#000000">
+                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
+                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
+                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
+                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
+                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
+                   </TABLE>
+               </TD></TR>
+           </TABLE>>];
+           
+       // NSGAIIPermutationParameterSpace with methods
+       PermutationSpace [label=<
+           <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+               <TR><TD BORDER="0" ALIGN="CENTER"><B>NSGAIIPermutationParameterSpace</B></TD></TR>
+               <TR><TD BORDER="1" BORDERCOLOR="#000000">
+                   <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="0">
+                       <TR><TD ALIGN="left">+ setParameterSpace()</TD></TR>
+                       <TR><TD ALIGN="left">+ setParameterRelationships()</TD></TR>
+                       <TR><TD ALIGN="left">+ setTopLevelParameters()</TD></TR>
+                       <TR><TD ALIGN="left">+ createInstance()</TD></TR>
+                   </TABLE>
+               </TD></TR>
+           </TABLE>>];
+       
+       // Inheritance
+       edge [arrowhead=empty];
+       ParameterSpace -> NSGAIICommon;
+       NSGAIICommon -> DoubleSpace;
+       NSGAIICommon -> BinarySpace;
+       NSGAIICommon -> PermutationSpace;
+       
+       // Graph settings
+       graph [rankdir=BT, fontname=Arial, fontsize=12];
+   }
