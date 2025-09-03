@@ -132,6 +132,34 @@ Implementation Details
 
 The parameter space functionality in Evolver is implemented through the abstract ``ParameterSpace`` class, which provides a framework for managing algorithm parameters in a hierarchical structure. This class is a key component in Evolver's configuration system.
 
+Here's the basic structure of the ``ParameterSpace`` class with its key method signatures:
+
+.. code-block:: java
+
+   public abstract class ParameterSpace {
+       // Contains all parameters in the parameter space, stored by parameter name
+       // This includes both top-level and nested parameters
+       protected final Map<String, Parameter<?>> parameterSpace;
+       
+       // Contains only the top-level parameters that serve as entry points
+       // These parameters are also included in the parameterSpace map
+       protected final List<Parameter<?>> topLevelParameters;
+   
+       public ParameterSpace() { ... }
+       
+       public void put(Parameter<?> parameter) { ... }
+       
+       public Parameter<?> get(String parameterName) { ... }
+       
+       public Map<String, Parameter<?>> parameters() { ... }
+       
+       public List<Parameter<?>> topLevelParameters() { ... }
+       
+       public void addTopLevelParameter(Parameter<?> parameter) { ... }
+       
+       public abstract ParameterSpace createInstance();
+   }
+
 Key Features
 ^^^^^^^^^^^^
 - **Parameter Storage**: Maintains a map of parameters for easy access by name
@@ -144,11 +172,14 @@ Core Components
 
 1. **Parameter Storage**
    - Uses a ``Map<String, Parameter<?>>`` to store all parameters by name
-   - Provides type-safe access to parameters through the ``get()`` method
+   - Contains both top-level and nested parameters in a flattened structure
+   - Provides type-safe access to any parameter through the ``get()`` method
+   - Maintains a one-to-one mapping between parameter names and parameter objects
 
 2. **Top-Level Parameters**
    - Maintains an ordered list of top-level parameters via ``topLevelParameters``
    - These parameters serve as the main entry points for algorithm configuration
+   - Each top-level parameter is also included in the main ``parameterSpace`` map
    - Can be accessed via the ``topLevelParameters()`` method
 
 3. **Parameter Management**
