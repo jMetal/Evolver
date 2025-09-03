@@ -3,12 +3,8 @@
 Solution Evaluation
 ==================
 
-Evaluating solutions (i.e., configurations of the base-level metaheuristic) is a critical component of the meta-optimization process in Evolver. This document explains how configurations are evaluated and how their quality is assessed.
+Evaluating solutions (i.e., configurations of the base-level metaheuristic) is a critical component of the meta-optimization process in Evolver and it is performed by class ``MetaOptimizationProblem``. This section explains how configurations are evaluated and how their quality is assessed.
 
-
-
-Evaluation Process
------------------
 As any other multi-objective optimization problem in jMetal, class ``MetaOptimizationProblem`` has a method ``evaluate(solution)`` that takes a solution as a parameter and returns the same solution with the objective values set. 
 
 The evaluation of a solution is as follows:
