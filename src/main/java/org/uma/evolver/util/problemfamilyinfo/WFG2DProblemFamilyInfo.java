@@ -7,7 +7,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-public class WFG2DProblemFamilyInfo implements ProblemFamilyInfo {
+public class WFG2DProblemFamilyInfo implements ProblemFamilyInfo<DoubleSolution> {
   private static final List<Problem<DoubleSolution>> problemList =
       List.of(
           new WFG1(),
