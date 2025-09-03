@@ -17,6 +17,7 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -40,7 +41,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
     var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;

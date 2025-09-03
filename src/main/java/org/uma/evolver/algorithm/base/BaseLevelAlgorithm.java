@@ -53,9 +53,11 @@ public interface BaseLevelAlgorithm<S extends Solution<?>> {
 
   /**
    * Parses the given arguments and configures all top-level parameters in the parameter space.
+   * The arguments should be provided as an array of strings in the format
+   * ["--param1", "value1", "--param2", "value2", ...].
    * Returns {@code this} for fluent usage.
    *
-   * @param args the arguments to parse
+   * @param args the arguments to parse, in the format ["--param1", "value1", "--param2", "value2", ...]
    * @return this algorithm instance, configured according to the arguments
    */
   default BaseLevelAlgorithm<S> parse(String[] args) {

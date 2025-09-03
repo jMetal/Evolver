@@ -3,119 +3,115 @@
 Base-Level Metaheuristics
 ========================
 
-Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This section describes the supported algorithms, how they are implemented, and their configuration options.
+Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This section describes the how to implement the algorithms, the provided solveres, and  their configuration options.
 
-Supported Algorithms
---------------------
+The base-level metaheuristics are implemented in the `org.uma.evolver.algorithm.base` package. This package contains the `BaseLevelAlgorithm` interface that defines the contract for all configurable metaheuristics in Evolver.
 
-### NSGA-II (Non-dominated Sorting Genetic Algorithm II)
-- **Type**: Evolutionary Algorithm
-- **Key Features**: Fast non-dominated sorting, crowding distance
-- **Parameters**: Population size, crossover/mutation probabilities, selection operators
-- **Reference**: Deb, K., et al. (2002). A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II. *IEEE Transactions on Evolutionary Computation*.
+BaseLevelAlgorithm Interface
+----------------------------
 
-### MOEA/D (Multi-Objective Evolutionary Algorithm Based on Decomposition)
-- **Type**: Decomposition-based Evolutionary Algorithm
-- **Key Features**: Decomposes MOP into scalar subproblems
-- **Parameters**: Neighborhood size, aggregation function, update strategy
+The `BaseLevelAlgorithm` interface serves as the foundation for all configurable metaheuristics. It provides the necessary methods to:
 
-### SMS-EMOA (S-metric Selection Evolutionary Multi-Objective Algorithm)
-- **Type**: Indicator-based Evolutionary Algorithm
-- **Key Features**: Uses hypervolume contribution for selection
-- **Parameters**: Reference point, population size
+1. Define and access the parameter space of the algorithm
+2. Build configured algorithm instances
+3. Create new instances with different problem configurations
+4. Parse arguments for parameter configuration
 
-### MOPSO (Multi-Objective Particle Swarm Optimization)
-- **Type**: Swarm Intelligence
-- **Key Features**: Particle movement based on personal and global best
-- **Parameters**: Inertia weight, cognitive/social coefficients
+Key characteristics:
 
-### RDEMOEA (Ranking and Density Estimator Multi-Objective Evolutionary Algorithm)
-- **Type**: Hybrid Evolutionary Algorithm
-- **Key Features**: Combines ranking and density estimation
-- **Parameters**: Ranking weights, density estimation parameters
+- **Generic Type Parameter**: ``<S extends Solution<?>>`` ensures type safety for the solutions managed by the algorithm
+- **Immutable Configuration**: The interface encourages immutable configuration through the builder pattern
+- **Parameter Space Integration**: Tightly integrated with the `ParameterSpace` class for flexible parameter management
 
-Configuration
-------------
-
-### Parameter Space Definition
-Base-level metaheuristics are configured through YAML files that define their parameter spaces. Example:
-
-.. code-block:: yaml
-
-    populationSize:
-      type: integer
-      range: [20, 200]
-    
-    variationOperator:
-      type: categorical
-      values:
-        sbx:
-          conditionalParameters:
-            distributionIndex:
-              type: double
-              range: [5.0, 400.0]
-        de:
-          conditionalParameters:
-            cr:
-              type: double
-              range: [0.0, 1.0]
-            f:
-              type: double
-              range: [0.1, 1.0]
-
-### Common Parameters
-Most algorithms support these common parameter groups:
-
-1. **Population**
-   - `populationSize`: Number of solutions
-   - `offspringPopulationSize`: Number of offspring generated
-
-2. **Variation Operators**
-   - Crossover type and parameters
-   - Mutation type and parameters
-   - Selection mechanisms
-
-3. **Termination Criteria**
-   - Maximum evaluations/generations
-   - Quality thresholds
-
-4. **Archive**
-   - Archive size
-   - Archive update strategy
-
-Implementation Details
----------------------
-
-### Algorithm Interface
-All base-level metaheuristics implement the `BaseMetaheuristic` interface:
+Here's the interface definition with detailed method documentation:
 
 .. code-block:: java
 
-    public interface BaseMetaheuristic {
-        void parse(String[] parameters);
-        List<DoubleSolution> run();
-        String getName();
-        Map<String, Object> getParameters();
+  /**
+   * Interface representing a configurable evolutionary algorithm.
+   * 
+   * @param <S> the solution type handled by the algorithm
+   */
+  public interface BaseLevelAlgorithm<S extends Solution<?>> {
+    
+    /**
+     * Returns the parameter space associated with this algorithm.
+     */
+    ParameterSpace parameterSpace();
+
+    /**
+     * Builds and returns a configured {@link Algorithm} instance.
+     */
+    Algorithm<List<S>> build();
+
+    /**
+     * Creates a new instance of the algorithm for the given problem and maximum number of evaluations.
+     */
+    BaseLevelAlgorithm<S> createInstance(Problem<S> problem, int maximumNumberOfEvaluations);
+
+    /**
+     * Parses the given arguments and configures all top-level parameters in the parameter space.
+     * The arguments should be provided as an array of strings in the format
+     * ["--param1", "value1", "--param2", "value2", ...].
+     * Returns {@code this} for fluent usage.
+     *
+     * @param args the arguments to parse, in the format ["--param1", "value1", "--param2", "value2", ...]
+     * @return this algorithm instance, configured according to the arguments
+     */
+    default BaseLevelAlgorithm<S> parse(String[] args) {
+      for (Parameter<?> parameter : parameterSpace().topLevelParameters()) {
+        parameter.parse(args);
+      }
+      return this;
     }
+  }
+        
 
-### Configuration Example
+
+
+Example Implementation
+----------------------
+
+Here's a simplified example of how to implement the `BaseLevelAlgorithm` interface:
 
 .. code-block:: java
 
-    // Load parameter space
-    var parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml");
-    
-    // Create and configure algorithm
-    var algorithm = new NSGAIIBuilder(problem, parameterSpace)
-        .setPopulationSize(100)
-        .setMaxEvaluations(25000)
-        .build();
-    
-    // Run optimization
-    List<DoubleSolution> population = algorithm.run();
+   public class NSGAIIAlgorithm implements BaseLevelAlgorithm<DoubleSolution> {
+       private final Problem<DoubleSolution> problem;
+       private final int maxEvaluations;
+       private final ParameterSpace parameterSpace;
+
+       public NSGAIIAlgorithm(Problem<DoubleSolution> problem, int maxEvaluations) {
+           this.problem = problem;
+           this.maxEvaluations = maxEvaluations;
+           this.parameterSpace = createParameterSpace();
+       }
+
+       private ParameterSpace createParameterSpace() {
+           // Define and return the parameter space
+           // ...
+       }
+
+       @Override
+       public ParameterSpace parameterSpace() {
+           return parameterSpace;
+       }
+
+       @Override
+       public Algorithm<List<DoubleSolution>> build() {
+           // Build and return a configured NSGA-II instance
+           // ...
+       }
+
+       @Override
+       public BaseLevelAlgorithm<DoubleSolution> createInstance(Problem<DoubleSolution> problem, 
+               int maximumNumberOfEvaluations) {
+           return new NSGAIIAlgorithm(problem, maximumNumberOfEvaluations);
+       }
+   }
 
 Best Practices
---------------
+-------------
 
 1. **Start Simple**: Begin with a small set of key parameters
 2. **Use Sensible Ranges**: Define reasonable bounds for numerical parameters
