@@ -14,27 +14,29 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * <p>This class extends {@link NSGAIICommonParameterSpace} and adds parameters and relationships
  * specific to real-coded problems, such as real-valued crossover and mutation operators.
  *
- * <p>It defines and configures all relevant parameters for the NSGA-II algorithm when
- * working with {@code DoubleSolution} representations.
+ * <p>It defines and configures all relevant parameters for the NSGA-II algorithm when working with
+ * {@code DoubleSolution} representations.
  *
  * <p>Typical usage:
+ *
  * <pre>{@code
  * NSGAIIDoubleParameterSpace parameterSpace = new NSGAIIDoubleParameterSpace();
  * // Configure parameters as needed
  * }</pre>
  */
 public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<DoubleSolution> {
-    public NSGAIIDoubleParameterSpace() {
-        super();
-        setParameterSpace();
-        setParameterRelationships();
-        setTopLevelParameters();
-      }
-   
-      @Override
-      public NSGAIIDoubleParameterSpace createInstance() {
-        return new NSGAIIDoubleParameterSpace();
-      }
+  public NSGAIIDoubleParameterSpace() {
+    super();
+    setParameterSpace();
+    setParameterRelationships();
+    setTopLevelParameters();
+  }
+
+  @Override
+  public NSGAIIDoubleParameterSpace createInstance() {
+    return new NSGAIIDoubleParameterSpace();
+  }
+
   // Initial solutions creation
   public static final String DEFAULT = "default";
   public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
@@ -62,7 +64,8 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
   public static final String BLX_ALPHA_BETA_CROSSOVER_BETA = "blxAlphaBetaCrossoverBeta";
   public static final String BLX_ALPHA_BETA_CROSSOVER_ALPHA = "blxAlphaBetaCrossoverAlpha";
   public static final String LAPLACE_CROSSOVER_SCALE = "laplaceCrossoverScale";
-  public static final String FUZZY_RECOMBINATION_CROSSOVER_ALPHA = "fuzzyRecombinationCrossoverAlpha";
+  public static final String FUZZY_RECOMBINATION_CROSSOVER_ALPHA =
+      "fuzzyRecombinationCrossoverAlpha";
 
   // Mutation
   public static final String MUTATION_PROBABILITY_FACTOR = "mutationProbabilityFactor";
@@ -91,10 +94,9 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
 
   /**
    * Defines and adds all parameters specific to real-coded NSGA-II to the parameter space.
-   * <p>
-   * This method should call {@code super.setParameterSpace()} and then add any double-specific
+   *
+   * <p>This method should call {@code super.setParameterSpace()} and then add any double-specific
    * parameters, such as real-valued crossover and mutation operators.
-   * </p>
    */
   protected void setParameterSpace() {
     super.setParameterSpace();
@@ -102,7 +104,17 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
         new CreateInitialSolutionsDoubleParameter(
             List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
 
-    put(new DoubleCrossoverParameter(List.of(SBX, BLX_ALPHA, WHOLE_ARITHMETIC, BLX_ALPHA_BETA, ARITHMETIC, LAPLACE, FUZZY_RECOMBINATION, PCX)));
+    put(
+        new DoubleCrossoverParameter(
+            List.of(
+                SBX,
+                BLX_ALPHA,
+                WHOLE_ARITHMETIC,
+                BLX_ALPHA_BETA,
+                ARITHMETIC,
+                LAPLACE,
+                FUZZY_RECOMBINATION,
+                PCX)));
     put(new DoubleParameter(CROSSOVER_PROBABILITY, 0.0, 1.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
@@ -115,7 +127,9 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
     put(new DoubleParameter(BLX_ALPHA_BETA_CROSSOVER_ALPHA, 0.0, 1.0));
     put(new DoubleParameter(LAPLACE_CROSSOVER_SCALE, 0.0, 1.0));
     put(new DoubleParameter(FUZZY_RECOMBINATION_CROSSOVER_ALPHA, 0.0, 1.0));
-    put(new DoubleMutationParameter(List.of(UNIFORM, POLYNOMIAL, LINKED_POLYNOMIAL, NON_UNIFORM, LEVY_FLIGHT, POWER_LAW)));
+    put(
+        new DoubleMutationParameter(
+            List.of(UNIFORM, POLYNOMIAL, LINKED_POLYNOMIAL, NON_UNIFORM, LEVY_FLIGHT, POWER_LAW)));
     put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
     put(
         new RepairDoubleSolutionStrategyParameter(
@@ -133,10 +147,9 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
 
   /**
    * Establishes relationships and dependencies between parameters specific to real-coded NSGA-II.
-   * <p>
-   * This method should call {@code super.setParameterRelationships()} and then add any
+   *
+   * <p>This method should call {@code super.setParameterRelationships()} and then add any
    * additional relationships for double-specific parameters.
-   * </p>
    */
   protected void setParameterRelationships() {
     super.setParameterRelationships();
@@ -163,6 +176,6 @@ public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<Doubl
             LINKED_POLYNOMIAL, get(LINKED_POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX))
         .addConditionalParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_BETA))
         .addConditionalParameter(LEVY_FLIGHT, get(LEVY_FLIGHT_MUTATION_STEP_SIZE))
-        .addConditionalParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA)) ;
+        .addConditionalParameter(POWER_LAW, get(POWER_LAW_MUTATION_DELTA));
   }
 }

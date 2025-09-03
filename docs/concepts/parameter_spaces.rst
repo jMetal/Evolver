@@ -205,16 +205,17 @@ Usage Example
    List<Parameter<?>> mainParameters = parameterSpace.topLevelParameters();
 
 
-Defininig Parameter Spaces Programatically. Case Study: NSGA-II
+Defining Parameter Spaces Programmatically: NSGA-II Case Study
 ---------------------------------------------------------------
-An alternative way to define parameter spaces use YAML files is to create a subclass of the ``ParameterSpace`` and implement the following:
+While YAML files provide a declarative way to define parameter spaces, you can also define them programmatically by extending the ``ParameterSpace`` class. This approach offers more flexibility and type safety. Here's how to implement a programmatic parameter space:
 
-1. Define all parameters in the constructor
-2. Set up parameter relationships (conditional parameters and global sub-parameters)
-3. Register top-level parameters using ``addTopLevelParameter()``
-4. Implement the ``createInstance()`` method to return a new instance of the parameter space  
+1. **Class Structure**: Create a subclass of ``ParameterSpace``
+2. **Parameter Definition**: Define all parameters in the constructor
+3. **Parameter Relationships**: Set up conditional parameters and global sub-parameters
+4. **Top-level Parameters**: Register parameters using ``addTopLevelParameter()``
+5. **Instance Creation**: Implement the ``createInstance()`` method for the factory pattern
 
-We explain here how to define the parameter spaces for flavours of the base-level NSGA-II to optimize double, binary, and permutation problems. The code is included in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package. The following UML class diagram illustrates the inheritance hierarchy of parameter space classes used in the NSGA-II algorithm implementation:
+The following sections demonstrate how to define parameter spaces for different implementations of NSGA-II, specifically optimized for double, binary, and permutation problems. The implementation is organized in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package. The UML class diagram below shows the inheritance structure of the parameter space classes for NSGA-II:
 
 .. figure:: ../../docs/figures/NSGAIIParameterSpacesUML.png
    :align: center
@@ -270,12 +271,94 @@ This is a code snippet of the ``NSGAIICommonParameterSpace`` class:
       topLevelParameters.add(parameterSpace.get(SELECTION));
   }
 
-The diagram shows three concrete implementations that inherit from 
-NSGAIICommonParameterSpace
-, each tailored to a specific solution representation: 
-NSGAIIDoubleParameterSpace
-, NSGAIIBinaryParameterSpace, and NSGAIIPermutationParameterSpace. These concrete classes implement the parameter space for NSGA-II when working with double, binary, and permutation-encoded solutions respectively. Each concrete class overrides the 
-createInstance()
- method to return a new instance of its specific type, ensuring proper polymorphic behavior. The inheritance structure demonstrates a clean separation of concerns, where common parameter management logic is centralized in the abstract base classes while allowing for specific parameter configurations in the concrete implementations.
+As the diagram shows three are three concrete implementations that inherit from 
+NSGAIICommonParameterSpace: NSGAIIDoubleParameterSpace, NSGAIIBinaryParameterSpace, and NSGAIIPermutationParameterSpace. These concrete classes implement the parameter space for NSGA-II when working with double, binary, and permutation-encoded solutions respectively. Each concrete class overrides the createInstance() method to return a new instance of its specific type, ensuring proper polymorphic behavior. The inheritance structure demonstrates a clean separation of concerns, where common parameter management logic is centralized in the abstract base classes while allowing for specific parameter configurations in the concrete implementations.
 
+We include here a code snippet of the NSGAIIDoubleParameterSpace class:
+
+.. code-block:: java
+
+  public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<DoubleSolution> {
+    public NSGAIIDoubleParameterSpace() {
+      super();
+      setParameterSpace();
+      setParameterRelationships();
+      setTopLevelParameters();
+    }
+
+    @Override
+    public NSGAIIDoubleParameterSpace createInstance() {
+      return new NSGAIIDoubleParameterSpace();
+    }
+
+    // Initial solutions creation
+    public static final String DEFAULT = "default";
+    public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
+    public static final String SCATTER_SEARCH = "scatterSearch";
+
+    // Crossover
+    public static final String CROSSOVER_PROBABILITY = "crossoverProbability";
+    public static final String CROSSOVER_REPAIR_STRATEGY = "crossoverRepairStrategy";
+
+    // Crossover strategies
+    public static final String SBX = "SBX";
+    public static final String PCX = "PCX";
+    public static final String BLX_ALPHA = "blxAlpha";
+  
+    ...
+
+    // Mutation
+    public static final String MUTATION_PROBABILITY_FACTOR = "mutationProbabilityFactor";
+    public static final String MUTATION_REPAIR_STRATEGY = "mutationRepairStrategy";
+
+    // Mutation strategies
+    public static final String UNIFORM = "uniform";
+    public static final String POLYNOMIAL = "polynomial";
+
+    ...
+
+    @Override
+    protected void setParameterSpace() {
+      super.setParameterSpace();
+      put(
+          new CreateInitialSolutionsDoubleParameter(
+              List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
+
+      put(
+        new DoubleCrossoverParameter(
+            List.of(
+                SBX,
+                BLX_ALPHA,
+                PCX)));
+
+      ... 
+      
+      put(
+        new DoubleMutationParameter(
+            List.of(UNIFORM, POLYNOMIAL)));
+      put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
+      
+      ...
+    }
+
+    @Override
+    protected void setParameterRelationships() {
+      super.setParameterRelationships();
+      // Variation dependencies
+      get(CROSSOVER)
+          .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
+          .addConditionalParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
+          .addConditionalParameter(PCX, get(PCX_CROSSOVER_ZETA))
+          .addConditionalParameter(PCX, get(PCX_CROSSOVER_ETA))
+          .addConditionalParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA));
+      get(MUTATION)
+          .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
+          .addConditionalParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
+          .addConditionalParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
+    }
+}
+    
+We can observe as this incorporates the parameters for the crossover and mutation operators, as well as the parameters for the initial solutions creation, related to deal with continuous problems. The above code snippets include examples of how conditional and global sub-parameters are set up.
+
+Defining a parameter space programmatically is more flexible and type-safe than using YAML files. It allows for dynamic parameter definition and ensures type safety. However, it can be more cumbersome, especially when making changes to the parameter space (e.g., removing crossover operators). Such changes require modifying the code of the parameter space class.
 
