@@ -20,48 +20,6 @@ Evolver 2.0 is a full re-implementation of the original Evolver framework, which
 
 The development of Evolver 2.0 was motivated by two key objectives: enhancing the original framework's capabilities and serving as a case study in AI-assisted software development. Throughout this project, we've extensively utilized generative AI tools including Windsurf, ChatGPT, and Claude to support various aspects of the development process.
 
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Getting Started
-   :name: start
-
-   introduction
-   installation
-   quick_start
-   examples/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: BASICS
-   :name: concepts
-
-   concepts/index
-   project_structure
-
-#.. toctree::
-#   :maxdepth: 2
-#   :caption: User Guide
-#   :name: user_guide
-#
-#   user_guide/index
-#
-#.. toctree::
-#   :maxdepth: 2
-#   :caption: API Reference
-#   :name: api
-#
-#   #api_reference
-#
-#.. toctree::
-#   :maxdepth: 2
-#   :caption: Project
-#   :name: project
-#
-#   #contributing
-#   #changelog
-#   #faq
-
 Architecture  
 ^^^^^^^^^^^^
 Evolver follows a two-level optimization architecture:
@@ -150,6 +108,25 @@ Evolver currently supports the following base-level and meta-optimization algori
   - NSGA-II
   - Async NSGA-II
   - SMPSO
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting Started
+   :name: start
+
+   introduction
+   installation
+   quick_start
+   examples/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: BASICS
+   :name: concepts
+
+   concepts/index
+   project_structure
 
 
 Indices and tables
