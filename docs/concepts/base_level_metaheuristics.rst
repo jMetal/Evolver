@@ -3,7 +3,7 @@
 Base-Level Metaheuristics
 ========================
 
-Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This document describes the supported algorithms and their configuration options.
+Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This section describes the supported algorithms, how they are implemented, and their configuration options.
 
 Supported Algorithms
 --------------------

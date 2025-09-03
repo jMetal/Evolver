@@ -5,7 +5,7 @@ Parameter Spaces
 
 Parameter spaces in Evolver define the whole set of parameters that can be configured in an automatic way for base-level metaheuristics. Parameters can be categorical, such as the crossover operator in evolutionary algorithms, or numerical, such as the mutation probability (double parameter) or the offspring population size (integer parameter). 
 
-This document describes the structure of a parameter space and how they can be defined in YAML files.
+This section describes the structure of a parameter space and how they can be defined in YAML files.
 
 Parameters in Evolver
 ---------------------
@@ -126,3 +126,58 @@ However, the first-level parameters of the `base-level MOEA/D parameter space <h
 - selection
 
 For more examples, see the `parameterSpaces <https://github.com/jMetal/Evolver/tree/main/src/main/resources/parameterSpaces>`_ directory in the source code.
+
+Implementation Details
+~~~~~~~~~~~~~~~~~~~~~~
+
+The parameter space functionality in Evolver is implemented through the abstract ``ParameterSpace`` class, which provides a framework for managing algorithm parameters in a hierarchical structure. This class is a key component in Evolver's configuration system.
+
+Key Features
+^^^^^^^^^^^^
+- **Parameter Storage**: Maintains a map of parameters for easy access by name
+- **Hierarchical Structure**: Supports top-level parameters that serve as entry points for configurations
+- **Type Safety**: Uses Java generics to ensure type safety for parameter values
+- **Immutable Views**: Provides unmodifiable views of parameters and top-level parameter lists
+
+Core Components
+^^^^^^^^^^^^^^
+
+1. **Parameter Storage**
+   - Uses a ``Map<String, Parameter<?>>`` to store all parameters by name
+   - Provides type-safe access to parameters through the ``get()`` method
+
+2. **Top-Level Parameters**
+   - Maintains an ordered list of top-level parameters via ``topLevelParameters``
+   - These parameters serve as the main entry points for algorithm configuration
+   - Can be accessed via the ``topLevelParameters()`` method
+
+3. **Parameter Management**
+   - ``put(Parameter<?> parameter)``: Adds a parameter to the parameter space
+   - ``get(String parameterName)``: Retrieves a parameter by name
+   - ``parameters()``: Returns an unmodifiable view of all parameters
+
+4. **Abstract Factory Method**
+   - ``createInstance()``: Abstract method that subclasses must implement to create and configure the parameter space
+
+Usage Example
+^^^^^^^^^^^^
+
+.. code-block:: java
+
+   // Create a parameter space instance
+   ParameterSpace parameterSpace = new MyAlgorithmParameterSpace();
+   
+   // Access a specific parameter
+   Parameter<?> populationSize = parameterSpace.get("populationSize");
+   
+   // Get all top-level parameters
+   List<Parameter<?>> mainParameters = parameterSpace.topLevelParameters();
+
+Subclassing
+^^^^^^^^^^
+To create a custom parameter space, extend the ``ParameterSpace`` class and implement the following:
+
+1. Define all parameters in the constructor
+2. Set up parameter relationships (conditional parameters and global sub-parameters)
+3. Register top-level parameters using ``addTopLevelParameter()``
+4. Implement the ``createInstance()`` method to return a new instance of the parameter space

@@ -3,7 +3,7 @@
 Objective Functions
 ==================
 
-Quality indicators are essential components in Evolver's meta-optimization process, serving as objective functions that guide the search for optimal algorithm configurations. This document describes the available quality indicators and their usage in Evolver.
+Quality indicators are essential components in Evolver's meta-optimization process, serving as objective functions that guide the search for optimal algorithm configurations. This section describes the available quality indicators and their usage in Evolver.
 
 Available Quality Indicators
 ----------------------------
