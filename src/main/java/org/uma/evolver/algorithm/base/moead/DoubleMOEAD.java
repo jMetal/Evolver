@@ -211,12 +211,16 @@ public class DoubleMOEAD extends BaseMOEAD<DoubleSolution> {
    *
    * @return a configured variation operator for real-coded solutions
    * @throws IllegalStateException if the variation operator cannot be created or configured
-   * @see org.uma.jmetal.operator.variation.Variation
    */
   @Override
   @SuppressWarnings("unchecked")
   protected Variation<DoubleSolution> createVariation() {
-    return ((VariationParameter<DoubleSolution>) parameterSpace.get("variation"))
-        .getVariation();
+    parameterSpace
+            .get("variation")
+            .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
+
+    Variation<DoubleSolution> variation =
+            ((VariationParameter<DoubleSolution>) parameterSpace.get("variation")).getVariation();
+    return variation;
   }
 }

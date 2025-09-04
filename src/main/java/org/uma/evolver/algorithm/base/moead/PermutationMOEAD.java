@@ -202,6 +202,10 @@ public class PermutationMOEAD extends BaseMOEAD<PermutationSolution<Integer>> {
   @Override
   @SuppressWarnings("unchecked")
   protected Variation<PermutationSolution<Integer>> createVariation() {
+    parameterSpace
+            .get("variation")
+            .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
+
     return ((VariationParameter<PermutationSolution<Integer>>) parameterSpace.get("variation"))
         .getVariation();
   }

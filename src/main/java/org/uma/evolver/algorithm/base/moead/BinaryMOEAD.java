@@ -209,6 +209,10 @@ public class BinaryMOEAD extends BaseMOEAD<BinarySolution> {
   @Override
   @SuppressWarnings("unchecked")
   protected Variation<BinarySolution> createVariation() {
+    parameterSpace
+            .get("variation")
+            .addNonConfigurableSubParameter("subProblemIdGenerator", subProblemIdGenerator);
+
     return ((VariationParameter<BinarySolution>) parameterSpace.get("variation"))
         .getVariation();
   }

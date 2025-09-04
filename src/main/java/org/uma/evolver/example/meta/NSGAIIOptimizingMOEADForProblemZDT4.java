@@ -3,6 +3,7 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -41,7 +42,6 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    //var configurableAlgorithm = new MOEADDouble(100);
     var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = List.of(10000);
     int numberOfIndependentRuns = 1;
@@ -61,8 +61,8 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
     int maxEvaluations = 2000;
     int numberOfCores = 8;
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();

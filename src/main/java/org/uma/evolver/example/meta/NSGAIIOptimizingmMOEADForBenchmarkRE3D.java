@@ -2,7 +2,9 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
@@ -12,48 +14,49 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.util.problemfamilyinfo.RE3DProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD} using problem the
- * DTLZ problem family as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
+ * the RE problems with three objectives as the training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
+public class NSGAIIOptimizingmMOEADForBenchmarkRE3D {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "MOEADDouble.yaml";
-    String weightVectorFilesDirectory = "resources/weightVectors";
+    String weightVectorFilesDirectory = "resources/weightVectors" ;
 
     // Step 1: Select the target problem
-    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new RE3DProblemFamilyInfo();
+
     List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
+    var baseAlgorithm = new DoubleMOEAD(100, weightVectorFilesDirectory, parameterSpace);
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
-        new FixedEvaluationsStrategy(problemFamilyInfo.evaluationsToOptimize());
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -72,24 +75,29 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "MOEAD";
+    String problemName = "RE3D";
     var outputResults =
         new OutputResults(
-            "MOEAD",
+            algorithmName,
             metaOptimizationProblem,
-            trainingSet.get(0).name(),
+            problemName,
             indicators,
-            "RESULTS/MOEAD/" + trainingSet.get(0).name());
+            "RESULTS/MOEAD/" + problemName);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
+    int writeFrequency = 1;
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
+    int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "MOEAD, " + "DTLZ",
+            "MOEAD, " + "RE3D",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),
-            1);
+            plotUpdateFrequency);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);

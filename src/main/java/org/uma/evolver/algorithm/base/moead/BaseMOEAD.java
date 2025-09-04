@@ -387,7 +387,7 @@ public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgor
   @SuppressWarnings("unchecked")
   private Archive<S> createExternalArchive() {
     ExternalArchiveParameter<S> externalArchiveParameter =
-        (ExternalArchiveParameter<S>) parameterSpace.get("externalArchiveType");
+        (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
     externalArchiveParameter.setSize(populationSize);
     return externalArchiveParameter.getExternalArchive();
   }
