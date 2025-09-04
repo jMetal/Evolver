@@ -84,7 +84,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "NSGA-II, " + "DTLZ",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

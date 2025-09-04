@@ -12,12 +12,13 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
-import org.uma.evolver.util.problemfamilyinfo.WFG2DProblemFamilyInfo;
+import org.uma.evolver.util.problemfamilyinfo.RE3DProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.ZDTProblemFamilyInfo;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -25,24 +26,24 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the ZDT
- * problems as the training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
+ * the RE problems with three objectives as the training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
+public class NSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new ZDTProblemFamilyInfo();
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new RE3DProblemFamilyInfo();
 
     List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
@@ -74,7 +75,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II";
-    String problemName = "ZDT";
+    String problemName = "RE";
     var outputResults =
         new OutputResults(
             algorithmName,
@@ -91,7 +92,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
     int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "ZDT",
+            "NSGA-II, " + "RE3D",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

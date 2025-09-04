@@ -8,6 +8,9 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
+/**
+ * Class implementing the interface ProblemFamilyInfo for the RE  problems having three objective functions.
+ */
 public class RE3DProblemFamilyInfo implements ProblemFamilyInfo<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 8000;
 
