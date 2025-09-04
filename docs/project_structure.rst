@@ -25,6 +25,7 @@ The Evolver project is structured as follows:
     │   │   ├── java/        # Java source files
     │   │   └── resources/   # Resources for the main application
     │   │       └── parameterSpaces/ # YAML files defining algorithm parameter spaces
+    │   │       └── irace/ # irace configuration files
     │   └── test/            # Test source code
     │       ├── java/        # Test source files
     │       └── resources/   # Test resources
@@ -42,30 +43,10 @@ The main source code is organized into the following key packages:
 - ``org.uma.evolver.util``: Utility classes and helper functions
 
 Resource Files
-~~~~~~~~~~~~~~
+--------------
 
 The ``resources/`` directory contains important configuration and data files:
 
 - ``parameterSpaces/``: YAML files defining the search space for algorithm parameters
+- ``irace/``: irace configuration files to find configurations for base-level metaheuristics
 
-Build System
-~~~~~~~~~~~~
-
-The project uses Maven for dependency management and build automation. The main build file is ``pom.xml``, which defines:
-
-- Project metadata and versioning
-- Dependencies on external libraries
-- Build plugins and configurations
-- Test configurations
-
-Documentation
-~~~~~~~~~~~~~
-
-Project documentation is maintained in the ``docs/`` directory using reStructuredText format. The documentation includes:
-
-- User guides and tutorials
-- API reference
-- Conceptual documentation
-- Examples and use cases
-
-For more detailed information about specific components, please refer to the :ref:`api_reference` section.
