@@ -117,6 +117,7 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    introduction
    installation
+   project_structure
    quick_start
    examples/index
 
@@ -126,7 +127,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    :name: concepts
 
    concepts/index
-   project_structure
 
 
 Indices and tables
