@@ -16,7 +16,7 @@ The Evolver project is structured as follows:
     ├── docs/                # Project documentation
     ├── resources/           # Resource files including reference fronts and weight vectors
     │   ├── referenceFronts/ # Reference Pareto fronts for benchmark problems
-    referenceFrontsTSP/ # Reference Pareto fronts for multi-objective TSP problems
+    │   ├── referenceFrontsTSP/ # Reference Pareto fronts for multi-objective TSP problems
     │   ├── weightVectors/   # Weight vectors for benchmark problems
     │   ├── tspInstances/    # TSP instances for benchmark problems
     │   └── scripts/         # Utility scripts for analysis and visualization
@@ -25,7 +25,7 @@ The Evolver project is structured as follows:
     │   │   ├── java/        # Java source files
     │   │   └── resources/   # Resources for the main application
     │   │       └── parameterSpaces/ # YAML files defining algorithm parameter spaces
-    │   │       └── irace/ # irace configuration files
+    │   │       └── irace/   # irace configuration files
     │   └── test/            # Test source code
     │       ├── java/        # Test source files
     │       └── resources/   # Test resources
@@ -34,10 +34,14 @@ The Evolver project is structured as follows:
 Source Code Organization
 ------------------------
 
-The main source code is organized into the following key packages:
+The main source code is organized into the following packages:
 
 - ``org.uma.evolver``: Core framework components and interfaces
 - ``org.uma.evolver.algorithm``: Implementation of base- and meta-optimization algorithms
+- ``org.uma.evolver.algorithm.example`` 
+
+    - ``org.uma.evolver.algorithm.example.base``: Examples of base-level metaheuristics
+    - ``org.uma.evolver.algorithm.example.meta``: Examples of meta-optimization algorithms
 - ``org.uma.evolver.parameter``: Parameter handling and parameter space management
 - ``org.uma.evolver.metaoptimizationproblem``: Meta-optimization problem definitions
 - ``org.uma.evolver.util``: Utility classes and helper functions
