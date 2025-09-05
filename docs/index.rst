@@ -127,6 +127,8 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    concepts/index
    project_structure
+   base_level_optimizers
+   meta_optimizers
    parameter_spaces
 
 .. toctree::
@@ -135,6 +137,7 @@ Evolver currently supports the following base-level and meta-optimization algori
    :name: advanced
 
    irace
+   reference_fronts
    
 
 

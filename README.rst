@@ -6,9 +6,6 @@
 Evolver: Automated Metaheuristic Configuration Framework
 ========================================================
 
-DISCLAIMER: we are developing a new version of Evolver (version 2.0). The package is
-ready to be used but we are still working on the documentation.
-
 Overview
 --------
 Evolver is a Java-based software tool designed for the automatic configuration of multi-objective metaheuristics. 
@@ -19,7 +16,7 @@ evaluating a solution involves a run of the metaheuristic under that configurati
 quality indicators, which are the objective functions of the resulting multi-objective problem. 
 Evolver relies on the `jMetal framework <https://github.com/jMetal/jMetal>`_ for the optimization problems, algorithms, and quality indicators.
 
-The next stable version will be 2.0, which is a full re-implementation of the original Evolver framework described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
+The next stable version is 2.0, which is a full re-implementation of the original Evolver framework described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
 
 The development of Evolver 2.0 was motivated by two key objectives: enhancing the original framework's capabilities and serving as a case study in AI-assisted software development. Throughout this project, we've extensively utilized generative AI tools including Windsurf, ChatGPT, and Claude to support various aspects of the development process.
 
