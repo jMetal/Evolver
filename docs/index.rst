@@ -127,6 +127,7 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    concepts/index
    project_structure
+   parameter_spaces
 
 .. toctree::
    :maxdepth: 2

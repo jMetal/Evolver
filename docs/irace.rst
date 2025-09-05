@@ -9,7 +9,7 @@ We assume that the reader is already familiar with irace, so we will focus on ho
 
 Prerequisites
 -------------
-Evolver contains a sub-package called `irace <https://github.com/jMetal/Evolver/tree/main/src/main/java/org/uma/evolver/util/irace>`_, which contains the AutoNSGAIIIraceHV class. This class uses the HV indicator as metric to evaluate the configurations produced by irace. You cat modify this class according to your needs, in particular the base directory where the reference fronts of the problems are expected to be located.
+Evolver contains a sub-package called `irace <https://github.com/jMetal/Evolver/tree/main/src/main/java/org/uma/evolver/util/irace>`_, which contains the AutoNSGAIIIraceHV class. This class uses the HV indicator as metric to evaluate the configurations produced by irace. You can modify the class according to your needs, in particular the base directory where the reference fronts of the problems are expected to be located.
 
 Before running irace, we need to generate a .jar file with the Evolver project. This can be done by running the following command:
 
