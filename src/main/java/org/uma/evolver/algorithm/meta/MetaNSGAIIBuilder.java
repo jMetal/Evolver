@@ -48,6 +48,9 @@ public class MetaNSGAIIBuilder {
   /** The number of cores to use for parallel evaluation (default: available processors) */
   private int numberOfCores = Runtime.getRuntime().availableProcessors();
 
+  /** The mutation probability factor (default: 1.0) */
+  private double mutationProbabilityFactor = 1.0;
+
   /** The parameter space */
   private ParameterSpace parameterSpace;
 
@@ -119,6 +122,19 @@ public class MetaNSGAIIBuilder {
   }
 
   /**
+   * Sets the mutation probability factor for the NSGA-II algorithm.
+   *
+   * @param mutationProbabilityFactor the mutation probability factor (must be non-negative)
+   * @return this builder instance for method chaining
+   * @throws JMetalException if mutationProbabilityFactor is negative
+   */
+  public MetaNSGAIIBuilder setMutationProbabilityFactor(double mutationProbabilityFactor) {
+    Check.valueIsNotNegative(mutationProbabilityFactor);
+    this.mutationProbabilityFactor = mutationProbabilityFactor;
+    return this;
+  }
+
+  /**
    * Builds and configures an NSGA-II instance with the specified parameters.
    *
    * <p>The returned NSGA-II instance is configured with the following default operators:
@@ -145,7 +161,7 @@ public class MetaNSGAIIBuilder {
                     + "--crossoverRepairStrategy bounds "
                     + "--sbxDistributionIndex 20.0 "
                     + "--mutation polynomial "
-                    + "--mutationProbabilityFactor 1.0 "
+                    + "--mutationProbabilityFactor " + mutationProbabilityFactor + " "
                     + "--mutationRepairStrategy bounds "
                     + "--polynomialMutationDistributionIndex 20.0 "
                     + "--selection tournament "

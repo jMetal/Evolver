@@ -2,7 +2,6 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
@@ -15,6 +14,7 @@ import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -25,26 +25,26 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using problem
- * {@link ZDT4} as the training set.
+ * {@link DTLZ3} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
+public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+    List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
+    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ3.3D.csv");
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseNSGAII = new DoubleNSGAII(100, parameterSpace);
+    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
 
-    var maximumNumberOfEvaluations = List.of(12000);
+    var maximumNumberOfEvaluations = List.of(15000);
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
@@ -52,7 +52,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            baseNSGAII,
+            configurableAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
@@ -69,7 +69,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .setPopulationSize(100)
-            .setMutationProbabilityFactor(1.5)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -79,14 +78,14 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/NSGAII/" + "ZDT4");
+            "RESULTS/NSGAII/" + "DTLZ3");
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(100);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "NSGA-II, " + "DTLZ3",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),

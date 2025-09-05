@@ -14,22 +14,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class NSGAIIDTLZ3Example {
   public static void main(String[] args) {
     String[] parameters =
-        ("--algorithmResult externalArchive " +
-                "--populationSizeWithArchive 133 " +
-                "--archiveType unboundedArchive " +
-                "--createInitialSolutions default " +
-                "--offspringPopulationSize 2 " +
-                "--variation crossoverAndMutationVariation " +
-                "--crossover SBX " +
-                "--crossoverProbability 0.9719337329527943 " +
-                "--crossoverRepairStrategy random " +
-                "--sbxDistributionIndex 133.8313543413145 " +
-                "--mutation uniform " +
-                "--mutationProbabilityFactor 0.5124086272844153 " +
-                "--mutationRepairStrategy random " +
-                "--uniformMutationPerturbation 0.22680609334711863 " +
-                "--selection tournament " +
-                "--selectionTournamentSize 5 \n")
+        ("--algorithmResult externalArchive --populationSizeWithArchive 80 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8992315108160078 --crossoverRepairStrategy random --sbxDistributionIndex 46.97567805077092 --blxAlphaCrossoverAlpha 0.11245872234078169 --mutation uniform --mutationProbabilityFactor 0.9357403262498191 --mutationRepairStrategy round --uniformMutationPerturbation 0.42674707842462856 --polynomialMutationDistributionIndex 239.70699011444998 --linkedPolynomialMutationDistributionIndex 149.12908658424027 --nonUniformMutationPerturbation 0.9253100426929715 --selection tournament --selectionTournamentSize 3 \n")
             .split("\\s+");
 
     var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, new NSGAIIDoubleParameterSpace());
