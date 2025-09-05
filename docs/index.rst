@@ -129,9 +129,3 @@ Evolver currently supports the following base-level and meta-optimization algori
    concepts/index
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
