@@ -117,15 +117,23 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    introduction
    installation
-   project_structure
    quick_start
    examples/index
 
 .. toctree::
    :maxdepth: 2
    :caption: BASICS
-   :name: concepts
+   :name: basics
 
    concepts/index
+   project_structure
+
+.. toctree::
+   :maxdepth: 2
+   :caption: ADVANCED
+   :name: advanced
+
+   irace
+   
 
 

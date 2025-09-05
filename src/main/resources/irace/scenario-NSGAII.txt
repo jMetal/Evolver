@@ -7,7 +7,7 @@
 ## value on the command line).
 
 ## File that contains the description of the parameters.
-parameterFile = "../parameters-NSGAII.txt"
+parameterFile = "parameters-NSGAII.txt"
 
 ## Directory where the programs will be run.
 execDir = "./execdir"
@@ -24,7 +24,7 @@ trainInstancesDir = ""
 ## File that contains a list of training instances and optionally additional
 ## parameters for them. If trainInstancesDir is provided, irace will search
 ## for the files in this folder.
-trainInstancesFile = "../instances-list-ZDT.txt"
+trainInstancesFile = "instances-list-ZDT.txt"
 
 ## Directory where testing instances are located, either absolute or relative
 ## to current directory.
@@ -32,7 +32,7 @@ testInstancesDir = ""
 
 ## File containing a list of test instances and optionally additional
 ## parameters for them.  If empty or NULL, do not use a file.
-#testInstancesFile = "../instances-list-ZDT-DTLZ-WFG-RE_2D.txt" 
+#testInstancesFile = 
 
 ## Number of elite configurations returned by irace that will be tested
 ## if test instances are provided.
@@ -43,7 +43,7 @@ testIterationElites = 1
 
 ## File that contains a table of initial configurations. If empty or NULL, all
 ## initial configurations are randomly generated.
-#configurationsFile = "../configurations.txt"
+#configurationsFile = "configurations.txt"
 
 ## File that contains a list of logical expressions that cannot be TRUE for
 ## any evaluated configuration. If empty or NULL, do not use forbidden
@@ -53,7 +53,7 @@ testIterationElites = 1
 ## Executable called for each configuration that executes the target algorithm
 ## to be tuned. See the templates and examples provided.
 # targetRunner = "../target-runner-AutoMOPSOIraceHV"
-targetRunner = "../Evolver-2.0-SNAPSHOT-jar-with-dependencies.jar"
+targetRunner = "Evolver-2.0-SNAPSHOT-jar-with-dependencies.jar"
 
 ## Executable that will be used to launch the target runner, when targetRunner
 ## cannot be executed directly (e.g., a Python script in Windows).
@@ -86,7 +86,7 @@ targetCmdline = "-cp {targetRunner} org.uma.evolver.util.irace.AutoNSGAIIIraceHV
 
 ## Maximum number of runs (invocations of targetRunner) that will be
 ## performed. It determines the maximum budget of experiments for the tuning.
-maxExperiments = 100000
+maxExperiments = 20000
 
 ## Maximum total execution time in seconds for the executions of targetRunner.
 ## targetRunner must return two values: cost and time.
