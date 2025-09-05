@@ -20,15 +20,6 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
  * and returns the hypervolume value of the obtained solution set, which is used by irace
  * to evaluate different configurations.
  *
- * <p>Expected command-line arguments:
- * <ul>
- *   <li>--problemName: Name of the problem to solve</li>
- *   <li>--referenceFrontFileName: Name of the reference front file</li>
- *   <li>--populationSize: Size of the population</li>
- *   <li>--maximumNumberOfEvaluations: Stopping condition</li>
- *   <li>Additional NSGA-II specific parameters</li>
- * </ul>
- *
  * @author Antonio J. Nebro
  */
 public class AutoNSGAIIIraceHV {
