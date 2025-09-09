@@ -14,7 +14,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 public class SMSEMOAExample {
   public static void main(String[] args) {
-    String yamlParameterSpaceFile = "resources/parameterSpaces/SMSEMOADouble.yaml" ;
+    String yamlParameterSpaceFile = "SMSEMOADouble.yaml" ;
     String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
 
     String[] parameters =
