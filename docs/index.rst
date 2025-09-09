@@ -132,7 +132,7 @@ Evolver currently supports the following base-level and meta-optimization algori
    :caption: ADVANCED TOPICS
    :name: advanced
 
-   irace
+   irace_integration
    reference_fronts
    api_reference
    glossary

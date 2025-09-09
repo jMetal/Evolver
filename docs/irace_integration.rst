@@ -1,4 +1,4 @@
-.. _irace:
+.. _irace_integration:
 
 irace
 =====

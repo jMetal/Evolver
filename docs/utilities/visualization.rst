@@ -6,7 +6,7 @@ Visualization Utilities
 This section contains visualization tools for analyzing and presenting optimization results.
 
 plot_optimization_progress.py
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A Python script for visualizing the progression of multi-objective optimization runs.
 
