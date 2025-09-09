@@ -29,7 +29,7 @@ How It Works
 The goal of a meta-optimization process is, given a base-level multi-objective metaheuristic and a training set of optimization problems, to find the best configuration of the base-level metaheuristic to efficiently solve the training set. The first steps are, then, to define these two components.
 
 Base-Level Metaheuristic Selection and Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The base-level metaheuristic is characterized by a parameter space, i.e, a set of parameters that can be adjusted to improve its performance. The next code snippet shows how to configure a base-level NSGA-II algorithm for solving continuous optimization problems:
 
@@ -110,11 +110,11 @@ The meta-optimization problem is then defined as follows:
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-Note that the meta-optimization problem class includes a generic type to indicate the type of solutions of the problems of the training set. As we are using continuous optimization problems in our example, we include the ``DoubleSolution``class.
+Note that the meta-optimization problem class includes a generic type to indicate the type of solutions of the problems of the training set. As we are using continuous optimization problems in our example, we include the ``DoubleSolution`` class.
 
 
 Meta-Optimizer Selection, Configuration and Execution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The meta-optimizer is the algorithm that will be used to find the best configuration of the base-level metaheuristic. Any metaheuristic included in jMetal able of solving continuous optimization problems can be used as a meta-optimizer but, as evaluating each solution can be very time consuming (as it requires running the base-level metaheuristic on the training set), it is recommended to use a parallel metaheuristic.
 
@@ -148,7 +148,8 @@ Before running the meta-optimizer, we need to indicate where to store the result
 This class is then passed an observer that is registered to the meta-optimizer:
 
 .. code-block:: java
-   writeFrequency = 1
+
+   int writeFrequency = 1;
    var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);    
         

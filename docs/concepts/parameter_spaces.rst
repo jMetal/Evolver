@@ -161,14 +161,15 @@ Here's the basic structure of the ``ParameterSpace`` class with its key method s
    }
 
 Key Features
-^^^^^^^^^^^^
+~~~~~~~~~~~~~
+
 - **Parameter Storage**: Maintains a map of parameters for easy access by name
 - **Hierarchical Structure**: Supports top-level parameters that serve as entry points for configurations
 - **Type Safety**: Uses Java generics to ensure type safety for parameter values
 - **Immutable Views**: Provides unmodifiable views of parameters and top-level parameter lists
 
 Core Components
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
 1. **Parameter Storage**
    - Uses a ``Map<String, Parameter<?>>`` to store all parameters by name
@@ -191,7 +192,7 @@ Core Components
    - ``createInstance()``: Abstract method that subclasses must implement to create and configure the parameter space
 
 Usage Example
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 .. code-block:: java
 
@@ -356,7 +357,7 @@ We include here a code snippet of the NSGAIIDoubleParameterSpace class:
           .addConditionalParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
           .addConditionalParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
     }
-}
+  }
     
 We can observe as this incorporates the parameters for the crossover and mutation operators, as well as the parameters for the initial solutions creation, related to deal with continuous problems. The above code snippets include examples of how conditional and global sub-parameters are set up.
 

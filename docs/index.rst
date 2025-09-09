@@ -81,7 +81,7 @@ Key Features
 - **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics can be defined in a YAML file
 
 Other Features
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 - **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
 
 Available algorithms
@@ -129,6 +129,7 @@ Evolver currently supports the following base-level and meta-optimization algori
    irace
    reference_fronts
    changelog
+   contributing
    
 
 

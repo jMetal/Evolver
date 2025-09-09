@@ -22,6 +22,7 @@ The Async NSGA-II variant uses an asynchronous parallel scheme, where new soluti
 To facilitate the instantion of meta-optimizers, Evolver includes three builders: ``MetaNSGAIIBuilder``, ``MetaSMPSOBuilder``, and ``MetaAsyncNSGAIIBuilder``. These builders provide a simple way to create the meta-optimizers using typical parameter settings. For example, class ``MetaNSGAIIBuilder`` can be used in this way:
 
 .. code-block:: java
+  
     int maxEvaluations = 2000;
     int numberOfCores = 8 ;
 

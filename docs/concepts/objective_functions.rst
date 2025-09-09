@@ -1,7 +1,7 @@
 .. _objective-functions:
 
 Objective Functions
-==================
+===================
 
 Quality indicators are essential components in Evolver's meta-optimization process, serving as objective functions that guide the search for optimal algorithm configurations. This section describes the available quality indicators and their usage in Evolver.
 
@@ -53,6 +53,7 @@ However, the number of evaluations is not a quality indicator. To overcome this 
 There remains the issue of how to indicate the range of values for the number of evaluations and how to generate values in that range. To address this issue, we provide a class ``RandomRangeEvaluationsStrategy``. We illustrate the approach in the following code snippet, where we assume a simple case in which the training set is composed only of one problem (ZDT4):
 
 .. code-block:: java
+
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem and its reference front

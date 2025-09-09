@@ -1,12 +1,12 @@
 .. _contributing:
 
 Contributing to Evolver
-======================
+=======================
 
 Thank you for your interest in contributing to Evolver! We welcome all contributions, including bug reports, feature requests, documentation improvements, and code contributions.
 
 How to Contribute
-----------------
+-----------------
 1. **Report Bugs**
    - Check if the bug has already been reported in the `GitHub Issues <https://github.com/jMetal/Evolver/issues>`_
    - If not, create a new issue with a clear title and description
@@ -25,7 +25,7 @@ How to Contribute
    - Submit a pull request with a clear description of your changes
 
 Coding Standards
----------------
+----------------
 - Follow the existing code style
 - Write clear, concise commit messages
 - Document new features and changes
@@ -33,7 +33,7 @@ Coding Standards
 - Update documentation as needed
 
 Development Setup
-----------------
+-----------------
 1. Fork and clone the repository
 2. Set up your development environment:
    .. code-block:: bash
@@ -56,7 +56,7 @@ Development Setup
 5. Push your changes and create a pull request
 
 Code of Conduct
---------------
+---------------
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms.
 
 License

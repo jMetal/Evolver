@@ -6,13 +6,13 @@ Installation
 This guide will help you install Evolver and its dependencies.
 
 Prerequisites
-------------
+-------------
 - Java 17 or higher
 - Maven 3.6 or higher
 - Python 3.8+ (for documentation)
 
 Installation Steps
------------------
+------------------
 
 1. Clone the repository:
    .. code-block:: bash
@@ -31,7 +31,7 @@ Installation Steps
       pip install -r requirements-docs.txt
 
 Verification
------------
+------------
 To verify the installation, run the following command:
 
 .. code-block:: bash
@@ -41,7 +41,7 @@ To verify the installation, run the following command:
 This should run all the tests and complete successfully.
 
 Troubleshooting
---------------
+---------------
 - If you encounter any build issues, ensure all prerequisites are installed
 - Check that your JAVA_HOME environment variable is set correctly
 - For Maven issues, try cleaning the local Maven repository:

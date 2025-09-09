@@ -20,13 +20,13 @@ Installation
 ------------
 
 What are the system requirements?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Java 11 or higher
 - Maven 3.6 or higher
 - (Optional) Python 3.8+ for documentation
 
 I'm getting build errors. What should I do?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Make sure you have all prerequisites installed
 2. Try cleaning the Maven repository:
    .. code-block:: bash
@@ -39,18 +39,18 @@ Usage
 -----
 
 How do I create a custom optimization problem?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 See the :ref:`getting_started` guide for an example of creating a custom problem.
 
 How do I configure an algorithm?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Algorithms can be configured using YAML configuration files. See the :ref:`user_guide` for examples.
 
 Troubleshooting
 ---------------
 
 The algorithm is not converging. What should I do?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Check your problem formulation
 2. Try adjusting the algorithm parameters
 3. Increase the number of evaluations
@@ -69,9 +69,9 @@ Contributing
 ------------
 
 How can I contribute to Evolver?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 See our :ref:`contributing` guide for details on how to contribute code, report bugs, or request features.
 
 Can I add a new algorithm to Evolver?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Yes! We welcome contributions of new algorithms. Please follow the :ref:`contributing` guide and make sure to include appropriate tests and documentation.

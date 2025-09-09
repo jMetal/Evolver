@@ -1,7 +1,7 @@
 .. _evaluation:
 
 Solution Evaluation
-==================
+===================
 
 Evaluating solutions (i.e., configurations of the base-level metaheuristic) is a critical component of the meta-optimization process in Evolver and it is performed by class ``MetaOptimizationProblem``. This section explains how configurations are evaluated and how their quality is assessed.
 
