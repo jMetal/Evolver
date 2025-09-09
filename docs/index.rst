@@ -135,6 +135,7 @@ Evolver currently supports the following base-level and meta-optimization algori
    irace
    reference_fronts
    api_reference
+   glossary
 
 .. toctree::
    :maxdepth: 2
@@ -143,6 +144,4 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    contributing
    changelog
-   
-
-
+   faq

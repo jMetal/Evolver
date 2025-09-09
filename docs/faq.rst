@@ -49,6 +49,41 @@ Algorithms can be configured using YAML configuration files. See the :ref:`user_
 Troubleshooting
 ---------------
 
+Getting Help
+-----------
+
+Where can I get help with Evolver?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Check the :ref:`troubleshooting` section for common issues
+- Search the `GitHub issues <https://github.com/jMetal/Evolver/issues>`_ to see if your question has been asked before
+- Open a new issue on GitHub for bug reports or feature requests
+- For general discussions, use the jMetal discussion forum
+
+Troubleshooting
+---------------
+Common Issues and Solutions:
+
+Algorithm Not Converging
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Check if your problem's search space is properly defined
+- Verify that your objective functions are correctly implemented
+- Try increasing the population size or number of evaluations
+- Review the algorithm's parameter settings in the configuration
+
+Performance Issues
+~~~~~~~~~~~~~~~~~
+- Enable parallel evaluation if not already enabled
+- Consider using a more efficient solution representation
+- Check for memory leaks in custom operators
+- Review the performance tuning guide for optimization tips
+
+Build/Compilation Errors
+~~~~~~~~~~~~~~~~~~~~~~~
+- Ensure all dependencies are correctly specified in pom.xml
+- Check for version conflicts between dependencies
+- Run `mvn clean install -U` to update dependencies
+- Verify your Java version matches the project requirements
+
 I found a bug. What should I do?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Please report bugs by opening an issue on our `GitHub repository <https://github.com/jMetal/Evolver/issues>`_. Include:
@@ -57,6 +92,7 @@ Please report bugs by opening an issue on our `GitHub repository <https://github
 3. Expected behavior
 4. Actual behavior
 5. Any error messages or logs
+6. Version information (Evolver, Java, Maven)
 
 Contributing
 ------------
