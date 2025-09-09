@@ -33,14 +33,16 @@ In Evolver, users can select any combination of quality indicators. However, for
 The key point is that most interesting goal of meta-optimization is not to generate a diverse set of solutions but to converge quickly and accurately to optimal configurations of the base-level metaheuristic. An approach is to consider the NHV as primary objective thinking on the fact that it is desirable to find configurations of the base-level metaheuristic promoting both diversity and convergence; the EP can be used as secondary objective. In this scenario, the NHV could be replaced by the IGD or IGD+.
 
 Alternatives when The Reference Fronts are Not Available
-------------------------------------------------------
+--------------------------------------------------------
 
 Evolver’s meta-optimization approach may initially seem challenging to be applied in real-world settings since Pareto fronts are generally unknown, making it impractical to use quality indicators as optimization objectives, as most of them require a reference front. The exception is the hypervolume (HV), which only needs a reference point. It the reference point of the problems can be estimated, HV- can serve as the primary objective in the meta-optimization problem
 
 Using only HV- can lead to stagnation, particularly in early iterations, when configurations produce HV- values of zero if no solution in the current population dominates the reference point. At this stage, the search may plateau, preventing further progress. To overcome this limitation, the EP indicator can serve as a secondary objective. When every solution has an HV- of zero, the meta-optimizer can rely on EP to refine configurations, enhance convergence, and eventually reach regions where solutions fall below the reference point, so that the meta-optimizer can work in an effective way.
 
+For more information on how to define reference fronts and an example of using the EP and HV- indicators, see the :ref:`reference_fronts` section.
+
 Minimizing the Number Of Evaluations as an Objective
--------------------------------------------------
+----------------------------------------------------
 
 Finding good configurations of base-level metaheuristics is the main goal of meta-optimization. Here, the number of evaluations set in the stopping conditio of the meta-optimization algorithm is a parameter that must be carefully selected. The higher the number of evaluations, the larger the number of generated configurations and thus the probability of finding more accurate configurations of the base-leve metaheuristic at the const of a increasing the computing time.
 

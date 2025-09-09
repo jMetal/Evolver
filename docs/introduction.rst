@@ -56,16 +56,18 @@ As mentioned before, the objective functions of the meta-optimization problem ar
 
 Additional information can be found in :doc:`concepts/objective_functions`.
 
-Base-Level metaheuristics
+Base-Level Metaheuristics
 -------------------------
 
 A base-level metaheuristic is a multi-objective algorithm that must be configured from any given valid configuration of its parameter space. As a consequence, the existing algorithms in jMetal cannot be used as provided in that framework because their implementation is not generic enough. 
 
 Evolver includes a set of algorithms that have been modified to be used as base-level metaheuristics. See :doc:`concepts/base_level_metaheuristics` for more information.
 
-Meta-Optimizers 
----------------
+Meta-Optimization-Level Metaheuristics 
+--------------------------------------
 
-As previously mentioned, choosing a real encoding for the meta-optimizer allows the use of most multi-objective metaheuristics available in jMetal, including evolutionary algorithms (NSGA-II, MOEA/D, SMS-EMOA, SPEA2, etc.), differential evolution (GDE3, MOEA/D-DE) and particle swarm optimization algorithms (OMOPSO, SMPSO).
+As previously mentioned, choosing a real encoding for the meta-optimizer allows the use of most multi-objective metaheuristics available in jMetal. This includes evolutionary algorithms (NSGA-II, MOEA/D, SMS-EMOA, SPEA2, etc.), differential evolution (GDE3, MOEA/D-DE), and particle swarm optimization algorithms (OMOPSO, SMPSO).
 
-Some of these algorithms can evaluate the population or swarm in parallel using a synchronous parallel scheme to speed up execution. For NSGA-II, a more efficient asynchronous parallel version is also available. Using parallel meta-optimizers is highly desirable as a meta-optimization can take a long time to complete, and parallelization can significantly reduce the total running time.
+The ability to evaluate the population or swarm in parallel using a synchronous parallel scheme can significantly speed up execution. For NSGA-II, an asynchronous parallel version is also available. Using parallel meta-optimizers is highly desirable as a meta-optimization can take a long time to complete, and parallelization can significantly reduce the total running time.
+
+More details on this issue can be found in section :ref:`meta-optimization-level-metaheuristics`.

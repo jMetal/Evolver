@@ -15,3 +15,4 @@ This section covers the fundamental concepts behind Evolver's design and operati
    evaluation
    objective_functions
    base_level_metaheuristics
+   meta_optimization_level_metaheuristics
