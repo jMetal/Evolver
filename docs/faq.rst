@@ -42,19 +42,12 @@ How do I create a custom optimization problem?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 See the :ref:`getting_started` guide for an example of creating a custom problem.
 
-How do I configure an algorithm?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How do I configure a base-level metaheuristic?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Algorithms can be configured using YAML configuration files. See the :ref:`user_guide` for examples.
 
 Troubleshooting
 ---------------
-
-The algorithm is not converging. What should I do?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-1. Check your problem formulation
-2. Try adjusting the algorithm parameters
-3. Increase the number of evaluations
-4. Check the algorithm's documentation for specific guidance
 
 I found a bug. What should I do?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
