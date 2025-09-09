@@ -12,7 +12,6 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class NSGAIIZDT4Example {
    * parameters variable.
    */
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
     String[] parameters ;
@@ -91,6 +90,7 @@ public class NSGAIIZDT4Example {
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
 
+    // 8. Print quality indicators
     QualityIndicatorUtils.printQualityIndicators(
             SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
             VectorUtils.readVectors(referenceFrontFileName, ","));

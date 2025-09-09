@@ -2,6 +2,8 @@ package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
@@ -31,7 +33,8 @@ public class IraceNSGAIIDoubleParameterDescriptionGenerator {
    */
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>() ;
-    var parameterSpace = new NSGAIIDoubleParameterSpace();
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

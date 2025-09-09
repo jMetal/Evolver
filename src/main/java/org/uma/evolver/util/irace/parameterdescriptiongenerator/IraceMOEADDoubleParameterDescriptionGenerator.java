@@ -2,6 +2,8 @@ package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
@@ -31,7 +33,8 @@ public class IraceMOEADDoubleParameterDescriptionGenerator {
    */
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>() ;
-    var parameterSpace = new MOEADDoubleParameterSpace();
+    String yamlParameterSpaceFile = "MOEADDouble.yaml" ;
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }
