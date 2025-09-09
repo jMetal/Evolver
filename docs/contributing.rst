@@ -1,7 +1,7 @@
 .. _contributing:
 
-Contributing to Evolver
-=======================
+Contributing
+============
 
 Thank you for your interest in contributing to Evolver! We welcome all contributions, including bug reports, feature requests, documentation improvements, and code contributions.
 

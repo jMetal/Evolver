@@ -1,7 +1,7 @@
 .. _faq:
 
 Frequently Asked Questions
-=========================
+==========================
 
 Here are some common questions about Evolver.
 

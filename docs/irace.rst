@@ -1,7 +1,5 @@
-.. _irace:
-
-irace Integration
-=================
+irace
+=====
 
 This section demonstrates how to use irace to automatically configure base-level metaheuristics. We use NSGA-II as the base-level metaheuristic and the ZDT problem set as our training benchmark.
 
