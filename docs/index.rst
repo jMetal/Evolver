@@ -111,7 +111,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    introduction
    installation
    quick_start
-   examples/index
 
 .. toctree::
    :maxdepth: 2
@@ -120,6 +119,7 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    concepts/index
    project_structure
+   examples/index
 
 .. toctree::
    :maxdepth: 2
@@ -128,8 +128,9 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    irace
    reference_fronts
-   changelog
+   api_reference
    contributing
+   changelog
    
 
 

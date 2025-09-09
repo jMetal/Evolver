@@ -3,4 +3,12 @@
 API Reference
 =============
 
-This section provides detailed documentation of the Evolver API.
+This section provides links to the Javadoc API documentation.
+
+To view the complete API documentation, please visit the `Evolver Javadoc <_static/javadoc/index.html>`_.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API Documentation
+
+   api/modules
