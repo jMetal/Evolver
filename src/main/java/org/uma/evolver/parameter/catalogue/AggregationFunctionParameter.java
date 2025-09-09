@@ -1,7 +1,6 @@
 package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
-import org.uma.evolver.parameter.type.BooleanParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.util.aggregationfunction.AggregationFunction;
 import org.uma.jmetal.util.aggregationfunction.impl.ModifiedTschebyscheff;

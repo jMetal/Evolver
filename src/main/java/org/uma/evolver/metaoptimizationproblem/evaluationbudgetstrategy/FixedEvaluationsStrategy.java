@@ -3,7 +3,6 @@ package org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**

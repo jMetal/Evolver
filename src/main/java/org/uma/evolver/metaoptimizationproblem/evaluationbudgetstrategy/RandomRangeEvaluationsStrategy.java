@@ -1,7 +1,6 @@
 package org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy;
 
 import java.util.Random;
-
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**

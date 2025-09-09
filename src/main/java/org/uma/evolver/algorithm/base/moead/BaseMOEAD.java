@@ -3,7 +3,6 @@ package org.uma.evolver.algorithm.base.moead;
 import java.io.FileNotFoundException;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.EvolutionaryAlgorithmBuilder;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADCommonParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;

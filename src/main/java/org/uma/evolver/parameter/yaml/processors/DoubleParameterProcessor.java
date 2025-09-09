@@ -1,14 +1,12 @@
 package org.uma.evolver.parameter.yaml.processors;
 
+import java.util.List;
+import java.util.Map;
 import org.uma.evolver.parameter.ParameterSpace;
-
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Processes double/real parameters from YAML configuration.

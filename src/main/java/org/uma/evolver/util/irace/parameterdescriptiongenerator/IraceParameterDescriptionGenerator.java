@@ -1,9 +1,9 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
 import java.util.List;
+import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.JMetalException;

@@ -1,5 +1,9 @@
 package org.uma.evolver.parameter;
 
+import org.uma.evolver.parameter.type.CategoricalParameter;
+import org.uma.evolver.parameter.type.DoubleParameter;
+import org.uma.evolver.parameter.type.IntegerParameter;
+
 import java.util.*;
 
 /**

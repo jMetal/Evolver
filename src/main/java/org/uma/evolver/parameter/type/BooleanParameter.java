@@ -1,7 +1,7 @@
 package org.uma.evolver.parameter.type;
 
-import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ConditionalParameter;
+import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.util.errorchecking.Check;
 
 /**

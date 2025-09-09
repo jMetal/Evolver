@@ -1,8 +1,8 @@
 package org.uma.evolver.parameter.factory;
 
+import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
-import java.util.List;
 
 /**
  * A factory interface for creating {@link CategoricalParameter} instances specific to different types of solutions.

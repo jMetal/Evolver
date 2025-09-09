@@ -2,8 +2,8 @@ package org.uma.evolver.parameter.type;
 
 import java.util.List;
 import java.util.function.Predicate;
-import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ConditionalParameter;
+import org.uma.evolver.parameter.Parameter;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 

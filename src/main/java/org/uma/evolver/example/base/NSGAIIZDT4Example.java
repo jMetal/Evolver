@@ -1,5 +1,6 @@
 package org.uma.evolver.example.base;
 
+import java.io.IOException;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -13,8 +14,6 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
-
-import java.io.IOException;
 
 /**
  * Example: Running NSGA-II on ZDT4 Problem

@@ -5,7 +5,6 @@ import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.DoubleVariationParameter;
-import org.uma.evolver.parameter.type.BooleanParameter;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;

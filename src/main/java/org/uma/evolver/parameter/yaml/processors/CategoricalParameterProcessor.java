@@ -1,18 +1,17 @@
 package org.uma.evolver.parameter.yaml.processors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.ParameterFactory;
-import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Processes categorical parameters from YAML configuration.

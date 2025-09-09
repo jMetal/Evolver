@@ -1,9 +1,7 @@
 package org.uma.evolver.parameter.type;
 
 import java.util.function.Function;
-
 import org.uma.evolver.parameter.Parameter;
-import org.uma.jmetal.util.errorchecking.Check;
 
 public class StringParameter extends Parameter<String> {
 

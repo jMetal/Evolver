@@ -2,17 +2,14 @@ package org.uma.evolver.parameter.yaml;
 
 import java.io.*;
 import java.util.*;
-
-import org.uma.evolver.parameter.ParameterSpace;
+import java.util.HashMap;
+import java.util.Map;
 import org.uma.evolver.parameter.Parameter;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.ParameterFactory;
 import org.uma.evolver.parameter.yaml.processors.*;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A YAML-based parameter space implementation that loads multi-objective metaheuristic

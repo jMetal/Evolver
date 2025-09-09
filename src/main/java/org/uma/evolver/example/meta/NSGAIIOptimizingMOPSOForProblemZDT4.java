@@ -2,7 +2,6 @@ package org.uma.evolver.example.meta;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;

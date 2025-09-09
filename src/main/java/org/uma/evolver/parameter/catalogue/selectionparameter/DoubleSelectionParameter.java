@@ -1,7 +1,6 @@
 package org.uma.evolver.parameter.catalogue.selectionparameter;
 
 import java.util.List;
-
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.evolver.parameter.type.BooleanParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;

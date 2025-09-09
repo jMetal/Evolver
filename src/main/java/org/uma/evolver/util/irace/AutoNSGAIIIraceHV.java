@@ -1,7 +1,8 @@
 package org.uma.evolver.util.irace;
 
-import java.io.IOException;
+import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
+import java.io.IOException;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.parameter.type.StringParameter;
@@ -12,7 +13,6 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
-import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
 
 /**
  * A utility class for running NSGA-II with irace for automatic algorithm configuration.
