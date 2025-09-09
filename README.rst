@@ -278,7 +278,7 @@ If you use Evolver in your research, please cite:
 Changelog
 ---------
 
-v2.0 (2025-08-19)
+v2.0 (2025-09-09)
 ^^^^^^^^^^^^^^^^^
 * Complete rewrite of the original Evolver framework
 * New architecture for improved flexibility and maintainability

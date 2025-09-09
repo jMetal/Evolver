@@ -5,25 +5,22 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
-[Unreleased]
------------
+[2.0] - 2025-09-09
+------------------
 
 ### Added
-- Initial project setup and documentation
-- Core optimization framework
-- Support for configurable algorithms
-- Basic optimization problems
+- Documentation
+- Examples
 
 ### Changed
-- Updated build configuration
-- Improved documentation structure
+
+* Complete rewrite of the original Evolver framework
+* New architecture for improved flexibility and maintainability
+* Enhanced support for meta-optimization of multi-objective metaheuristics
+* Improved documentation and examples
+* The Docker images are not available for this version
+* The GUI-based dashboard has been removed
 
 ### Fixed
 - Minor bug fixes and improvements
 
-[0.1.0] - 2025-01-01
--------------------
-### Added
-- Initial release of Evolver
-- Basic optimization algorithms
-- Example problems and configurations
