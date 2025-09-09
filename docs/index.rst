@@ -105,30 +105,42 @@ Evolver currently supports the following base-level and meta-optimization algori
 
 .. toctree::
    :maxdepth: 2
-   :caption: Getting Started
+   :caption: GETTING STARTED
    :name: start
 
    introduction
    installation
    quick_start
-
-.. toctree::
-   :maxdepth: 2
-   :caption: BASICS
-   :name: basics
-
-   concepts/index
    project_structure
    examples/index
 
 .. toctree::
    :maxdepth: 2
-   :caption: ADVANCED
+   :caption: CONCEPTS
+   :name: concepts
+
+   concepts/meta_optimization_approach
+   concepts/parameter_spaces
+   concepts/solution_encoding
+   concepts/evaluation
+   concepts/objective_functions
+   concepts/base_level_metaheuristics
+   concepts/meta_optimization_level_metaheuristics
+
+.. toctree::
+   :maxdepth: 2
+   :caption: ADVANCED TOPICS
    :name: advanced
 
    irace
    reference_fronts
    api_reference
+
+.. toctree::
+   :maxdepth: 2
+   :caption: PROJECT INFO
+   :name: project
+
    contributing
    changelog
    
