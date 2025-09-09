@@ -139,6 +139,13 @@ Evolver currently supports the following base-level and meta-optimization algori
 
 .. toctree::
    :maxdepth: 2
+   :caption: UTILITIES
+   :name: utilities
+
+   utilities/visualization
+
+.. toctree::
+   :maxdepth: 2
    :caption: PROJECT INFO
    :name: project
 

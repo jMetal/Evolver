@@ -50,7 +50,7 @@ Troubleshooting
 ---------------
 
 Getting Help
------------
+------------
 
 Where can I get help with Evolver?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,14 +71,14 @@ Algorithm Not Converging
 - Review the algorithm's parameter settings in the configuration
 
 Performance Issues
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 - Enable parallel evaluation if not already enabled
 - Consider using a more efficient solution representation
 - Check for memory leaks in custom operators
 - Review the performance tuning guide for optimization tips
 
 Build/Compilation Errors
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 - Ensure all dependencies are correctly specified in pom.xml
 - Check for version conflicts between dependencies
 - Run `mvn clean install -U` to update dependencies
