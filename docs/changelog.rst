@@ -5,6 +5,14 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
+2.1-SNAPSHOT
+------------
+
+Added
+~~~~~
+
+- Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
+
 2.0 (2025-09-09)
 ----------------
 
