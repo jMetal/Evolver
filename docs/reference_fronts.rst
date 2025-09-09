@@ -43,4 +43,4 @@ The approach presented in this section to define reference fronts does not allow
 
 However, using only the HV- as unique objective function is undesired, as at the begining of the optimization process, the first generated fronts usually have a poor quality and are not able to dominate the reference point, so the HV- values are 0.0. This means that there is a plateau in the search space and the meta-optimizer may get stuck there. To avoid this issue, we can use the EP as a secondary objective function. The idea is that the EP acts as a helper objective function to guide the search towards the Pareto front until some solution have negative HV- values.
 
-We include an example in class `NSGAIIOptimizingNSGAIIForBiObjetiveTSP <https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/example/meta/NSGAIIOptimizingNSGAIIForBiObjetiveTSP.java>`_
+We include an example of meta-optimizing the NSGA-II algorithm for solving the bi-objective TSP problem in class `NSGAIIOptimizingNSGAIIForBiObjectiveTSP <https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/example/meta/NSGAIIOptimizingNSGAIIForBiObjectiveTSP.java>`_.
