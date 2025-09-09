@@ -53,3 +53,63 @@ To execute irace with the provided configuration, run:
 
 This will generate output files in the ``execdir-1`` directory.
     
+Generation of irace Configuration Files
+---------------------------------------
+
+The manual generation of irace configuration files from the YAML parameter space definition files can be cumbersome. We provide a package called `irace <https://github.com/jMetal/Evolver/tree/main/src/main/java/org/uma/evolver/util/irace/parameterdescriptiongenerator>`_ that contains classes that simplify this process.
+
+For example, to generate irace configuration files for NSGA-II to tune it for continuous problems, we can use the ``IraceNSGAIIDoubleParameterDescriptionGenerator`` class:
+
+.. literalinclude:: ../src/main/java/org/uma/evolver/util/irace/parameterdescriptiongenerator/IraceNSGAIIDoubleParameterDescriptionGenerator.java
+   :language: java
+   :linenos:
+   :name: irace-nsgaii-double-parameter-description-generator
+
+When running this class, it will print the irace configuration files to the console. It is recommended to redirect the output to a file for easier management.
+
+To generate the irace configuration files for a specific parameter space, you can run:
+
+.. code-block:: bash
+
+    java org.uma.evolver.util.irace.parameterdescriptiongenerator.IraceNSGAIIDoubleParameterDescriptionGenerator > irace-nsgaii-double-config.txt
+
+This will generate the irace configuration files in the ``irace-nsgaii-double-config.txt`` file.
+
+Running irace
+-------------
+
+To execute irace with the generated configuration, you can use the provided shell script:
+
+.. code-block:: bash
+
+    ./run.sh scenario-NSGAII.txt 1  
+
+This will generate output files in the ``execdir-1`` directory.
+
+Please note that the provided shell script assumes that the necessary files are in the same directory as the script. If you move the files, you will need to update the paths in the script accordingly.
+
+Finally, you can generate the irace configuration files for other parameter spaces by running the appropriate generator class and modifying the irace configuration files as needed.
+
+.. code-block:: bash
+
+    algorithmResult                          "--algorithmResult "                     c       (population, externalArchive)                      
+    populationSizeWithArchive                "--populationSizeWithArchive "           i       (10 , 200)                     | algorithmResult %in% c("externalArchive")
+    archiveType                              "--archiveType "                         c       (crowdingDistanceArchive, unboundedArchive) | algorithmResult %in% c("externalArchive")
+    createInitialSolutions                   "--createInitialSolutions "              c       (default, latinHypercubeSampling, scatterSearch)                     
+    offspringPopulationSize                  "--offspringPopulationSize "             c       (1, 2, 5, 10, 20, 50, 100, 200, 400)                     
+    variation                                "--variation "                           c       (crossoverAndMutationVariation)                     
+    crossover                                "--crossover "                           c       (SBX, blxAlpha, wholeArithmetic) | variation %in% c("crossoverAndMutationVariation")
+    crossoverProbability                     "--crossoverProbability "                r       (0.0 , 1.0)                    | crossover %in% c("SBX","blxAlpha","wholeArithmetic")
+    crossoverRepairStrategy                  "--crossoverRepairStrategy "             c       (random, round, bounds)        | crossover %in% c("SBX","blxAlpha","wholeArithmetic")
+    sbxDistributionIndex                     "--sbxDistributionIndex "                r       (5.0 , 400.0)                  | crossover %in% c("SBX")
+    blxAlphaCrossoverAlpha                   "--blxAlphaCrossoverAlpha "              r       (0.0 , 1.0)                    | crossover %in% c("blxAlpha")
+    mutation                                 "--mutation "                            c       (uniform, polynomial, linkedPolynomial, nonUniform) | variation %in% c("crossoverAndMutationVariation")
+    mutationProbabilityFactor                "--mutationProbabilityFactor "           r       (0.0 , 2.0)                    | mutation %in% c("uniform","polynomial","linkedPolynomial","nonUniform")
+    mutationRepairStrategy                   "--mutationRepairStrategy "              c       (random, round, bounds)        | mutation %in% c("uniform","polynomial","linkedPolynomial","nonUniform")
+    uniformMutationPerturbation              "--uniformMutationPerturbation "         r       (0.0 , 1.0)                    | mutation %in% c("uniform")
+    polynomialMutationDistributionIndex      "--polynomialMutationDistributionIndex " r       (5.0 , 400.0)                  | mutation %in% c("polynomial")
+    linkedPolynomialMutationDistributionIndex "--linkedPolynomialMutationDistributionIndex " r       (5.0 , 400.0)                  | mutation %in% c("linkedPolynomial")
+    nonUniformMutationPerturbation           "--nonUniformMutationPerturbation "      r       (0.0 , 1.0)                    | mutation %in% c("nonUniform")
+    selection                                "--selection "                           c       (tournament, random)                               
+    selectionTournamentSize                  "--selectionTournamentSize "             i       (2 , 10)                       | selection %in% c("tournament")
+
