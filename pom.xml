@@ -8,6 +8,7 @@
   <packaging>jar</packaging>
 
   <name>Evolver</name>
+  <description>Java framework for the automatic configuration of multi-objective metaheuristics.</description>
   <url>http://maven.apache.org</url>
 
   <properties>
