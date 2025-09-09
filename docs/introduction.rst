@@ -69,9 +69,3 @@ Meta-Optimizers
 As previously mentioned, choosing a real encoding for the meta-optimizer allows the use of most multi-objective metaheuristics available in jMetal, including evolutionary algorithms (NSGA-II, MOEA/D, SMS-EMOA, SPEA2, etc.), differential evolution (GDE3, MOEA/D-DE) and particle swarm optimization algorithms (OMOPSO, SMPSO).
 
 Some of these algorithms can evaluate the population or swarm in parallel using a synchronous parallel scheme to speed up execution. For NSGA-II, a more efficient asynchronous parallel version is also available. Using parallel meta-optimizers is highly desirable as a meta-optimization can take a long time to complete, and parallelization can significantly reduce the total running time.
-
-Next Steps
-----------
-- Learn about :doc:`available meta-optimizers </meta_optimizers>`
-- Explore :doc:`advanced configuration </user_guide/advanced_configuration>`
-- Check out the :doc:`API reference </api_reference>`

@@ -7,7 +7,7 @@ import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter ;
+import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
@@ -31,74 +31,76 @@ import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
- * Abstract base class for configurable NSGA-II (Non-dominated Sorting Genetic Algorithm II) implementations.
+ * Abstract base class for configurable NSGA-II (Non-dominated Sorting Genetic Algorithm II)
+ * implementations.
  *
  * <p>This class provides a flexible and extensible foundation for building NSGA-II variants for
  * different solution types. It manages the configuration and assembly of the main algorithmic
  * components (selection, variation, replacement, evaluation, termination, etc.) using a parameter
- * space abstraction. NSGA-II is a fast and elitist multi-objective genetic algorithm that uses
- * a non-dominated sorting approach with crowding distance for maintaining diversity.
+ * space abstraction. NSGA-II is a fast and elitist multi-objective genetic algorithm that uses a
+ * non-dominated sorting approach with crowding distance for maintaining diversity.
  *
  * <p>Key features of this implementation include:
+ *
  * <ul>
- *   <li>Fast non-dominated sorting for ranking solutions</li>
- *   <li>Crowding distance calculation for diversity preservation</li>
- *   <li>Configurable selection, crossover, and mutation operators</li>
- *   <li>Support for external archives</li>
- *   <li>Flexible termination conditions</li>
+ *   <li>Fast non-dominated sorting for ranking solutions
+ *   <li>Crowding distance calculation for diversity preservation
+ *   <li>Configurable selection, crossover, and mutation operators
+ *   <li>Support for external archives
+ *   <li>Flexible termination conditions
  * </ul>
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
  * parameters that are fixed or derived from the problem instance.
  *
  * <p>Typical usage involves:
+ *
  * <ul>
- *   <li>Creating a concrete subclass for a specific solution type (e.g., permutation, double)</li>
- *   <li>Configuring the parameter space and problem instance</li>
- *   <li>Calling {@link #build()} to obtain a ready-to-run {@link EvolutionaryAlgorithm} instance</li>
+ *   <li>Creating a concrete subclass for a specific solution type (e.g., permutation, double)
+ *   <li>Configuring the parameter space and problem instance
+ *   <li>Calling {@link #build()} to obtain a ready-to-run {@link EvolutionaryAlgorithm} instance
  * </ul>
  *
  * <p><b>Example usage:</b>
+ *
  * <pre>{@code
  * // Create a problem instance
  * Problem<MySolution> problem = new MyProblem();
- * 
+ *
  * // Configure the algorithm
  * int populationSize = 100;
  * int maxEvaluations = 25000;
  * ParameterSpace parameterSpace = new ParameterSpace();
  * // Configure parameter space with desired components and parameters
- * 
+ *
  * // Create and run the algorithm
  * BaseNSGAII<MySolution> nsgaii = new MyNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
  * nsgaii.run();
- * 
+ *
  * // Get results
  * List<MySolution> population = nsgaii.result();
  * }</pre>
  *
  * @param <S> the type of solutions handled by this algorithm, must extend {@link Solution}
- * @see <a href="https://ieeexplore.ieee.org/document/996017">A Fast Elitist Non-dominated Sorting 
- * Genetic Algorithm for Multi-objective Optimization: NSGA-II</a>
+ * @see <a href="https://ieeexplore.ieee.org/document/996017">A Fast Elitist Non-dominated Sorting
+ *     Genetic Algorithm for Multi-objective Optimization: NSGA-II</a>
  * @see BaseLevelAlgorithm
  * @see EvolutionaryAlgorithm
  * @since version
  */
 public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
-  /**
-   * The parameter space containing all configurable components and parameters.
-   */
+  /** The parameter space containing all configurable components and parameters. */
   protected final ParameterSpace parameterSpace;
 
   /**
    * Constructs a new BaseNSGAII instance with the specified population size and parameter space.
-   * 
+   *
    * <p>This creates a partially configured instance. The {@link #createInstance(Problem, int)}
    * method must be called with a problem instance before the algorithm can be used.
    *
    * @param populationSize the size of the population to be used in the algorithm. Must be positive.
-   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
-   *                      Must not be null.
+   * @param parameterSpace the parameter space containing configuration parameters for the
+   *     algorithm. Must not be null.
    * @throws IllegalArgumentException if populationSize is not positive or parameterSpace is null
    */
   protected BaseNSGAII(int populationSize, ParameterSpace parameterSpace) {
@@ -107,44 +109,28 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     this.offspringPopulationSize = populationSize; // Default to same as population size
   }
 
-  /**
-   * The ranking strategy used for non-dominated sorting of solutions.
-   */
+  /** The ranking strategy used for non-dominated sorting of solutions. */
   protected Ranking<S> ranking;
-  
-  /**
-   * The density estimator used for maintaining diversity in the population.
-   */
+
+  /** The density estimator used for maintaining diversity in the population. */
   protected DensityEstimator<S> densityEstimator;
-  
-  /**
-   * Comparator that combines ranking and crowding distance for solution comparison.
-   */
+
+  /** Comparator that combines ranking and crowding distance for solution comparison. */
   protected MultiComparator<S> rankingAndCrowdingComparator;
 
-  /**
-   * The optimization problem to be solved.
-   */
+  /** The optimization problem to be solved. */
   protected Problem<S> problem;
-  
-  /**
-   * The size of the population.
-   */
+
+  /** The size of the population. */
   protected int populationSize;
-  
-  /**
-   * The size of the offspring population generated in each generation.
-   */
+
+  /** The size of the offspring population generated in each generation. */
   protected int offspringPopulationSize;
-  
-  /**
-   * The maximum number of evaluations allowed for the algorithm.
-   */
+
+  /** The maximum number of evaluations allowed for the algorithm. */
   protected int maximumNumberOfEvaluations;
 
-  /**
-   * Optional external archive for storing non-dominated solutions.
-   */
+  /** Optional external archive for storing non-dominated solutions. */
   protected Archive<S> externalArchive;
 
   /**
@@ -153,10 +139,11 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @param problem the optimization problem to be solved. Must not be null.
    * @param populationSize the size of the population. Must be positive.
    * @param maximumNumberOfEvaluations the maximum number of evaluations allowed for the algorithm.
-   *                                 Must be positive and greater than populationSize.
-   * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
-   *                      Must not be null.
-   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where required)
+   *     Must be positive and greater than populationSize.
+   * @param parameterSpace the parameter space containing configuration parameters for the
+   *     algorithm. Must not be null.
+   * @throws IllegalArgumentException if any parameter is invalid (null or non-positive values where
+   *     required)
    */
   protected BaseNSGAII(
       Problem<S> problem,
@@ -194,8 +181,8 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   /**
    * Builds and returns a configured {@link EvolutionaryAlgorithm} instance using the current
    * parameter space and problem settings.
-   * <p>
-   * This method assembles all the main components of the NSGA-II algorithm, including archive,
+   *
+   * <p>This method assembles all the main components of the NSGA-II algorithm, including archive,
    * initial solutions creation, variation, selection, evaluation, replacement, and termination.
    * Subclasses should ensure that all required parameters are set before calling this method.
    *
@@ -203,14 +190,15 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    */
   /**
    * Builds and configures the NSGA-II algorithm based on the current parameter space.
-   * 
+   *
    * <p>This method initializes all necessary components for the NSGA-II algorithm, including:
+   *
    * <ul>
-   *   <li>Ranking and density estimation strategies</li>
-   *   <li>Population initialization</li>
-   *   <li>Selection, crossover, and mutation operators</li>
-   *   <li>Termination condition</li>
-   *   <li>Optional external archive</li>
+   *   <li>Ranking and density estimation strategies
+   *   <li>Population initialization
+   *   <li>Selection, crossover, and mutation operators
+   *   <li>Termination condition
+   *   <li>Optional external archive
    * </ul>
    *
    * @return a fully configured EvolutionaryAlgorithm instance implementing NSGA-II
@@ -232,29 +220,30 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>().build(
-        "NSGAII",
-        initialSolutionsCreation,
-        evaluation,
-        termination,
-        selection,
-        variation,
-        replacement,
-        archive);
+    return new EvolutionaryAlgorithmBuilder<S>()
+        .build(
+            "NSGAII",
+            initialSolutionsCreation,
+            evaluation,
+            termination,
+            selection,
+            variation,
+            replacement,
+            archive);
   }
 
   /**
    * Configures any parameters that are fixed or derived from the problem instance.
-   * <p>
-   * Subclasses must implement this method to set non-configurable parameters before building the algorithm.
-   * If there are not non-configurable parameters, the implementation of this method will be empty.
-   * </p>
+   *
+   * <p>Subclasses must implement this method to set non-configurable parameters before building the
+   * algorithm. If there are not non-configurable parameters, the implementation of this method will
+   * be empty.
    */
   protected abstract void setNonConfigurableParameters();
 
   /**
-   * Creates and configures the external archive if required by the parameter space.
-   * The archive size is set according to the current population size.
+   * Creates and configures the external archive if required by the parameter space. The archive
+   * size is set according to the current population size.
    *
    * @return the configured external archive, or {@code null} if not used
    */
@@ -263,8 +252,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    Archive<S> archive = externalArchiveParameter.getExternalArchive();
-    return archive;
+    return externalArchiveParameter.getExternalArchive();
   }
 
   /**
@@ -273,28 +261,24 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @return {@code true} if an external archive is used, {@code false} otherwise
    */
   private boolean usingExternalArchive() {
-    return parameterSpace
-        .get("algorithmResult")
-        .value()
-        .equals("externalArchive");
+    return parameterSpace.get("algorithmResult").value().equals("externalArchive");
   }
 
   /**
-   * Updates the population size if an external archive is being used.
-   * The new population size is retrieved from the parameter space.
+   * Updates the population size if an external archive is being used. The new population size is
+   * retrieved from the parameter space.
    *
    * @param archive the external archive (should not be {@code null} if used)
    */
   private void updatePopulationSize(Archive<S> archive) {
     if (archive != null) {
-      populationSize =
-          (int) parameterSpace.get("populationSizeWithArchive").value();
+      populationSize = (int) parameterSpace.get("populationSizeWithArchive").value();
     }
   }
 
   /**
-   * Creates the termination condition for the algorithm.
-   * By default, termination is based on the maximum number of evaluations.
+   * Creates the termination condition for the algorithm. By default, termination is based on the
+   * maximum number of evaluations.
    *
    * @return the termination condition
    */
@@ -303,9 +287,9 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   }
 
   /**
-   * Creates the evaluation component for the algorithm.
-   * If an external archive is used, a sequential evaluation with archive is created;
-   * otherwise, a standard sequential evaluation is used.
+   * Creates the evaluation component for the algorithm. If an external archive is used, a
+   * sequential evaluation with archive is created; otherwise, a standard sequential evaluation is
+   * used.
    *
    * @param archive the external archive, or {@code null} if not used
    * @return the evaluation component
@@ -322,8 +306,8 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   }
 
   /**
-   * Creates the selection operator for the algorithm using the configured selection parameter.
-   * The mating pool size is obtained from the variation operator.
+   * Creates the selection operator for the algorithm using the configured selection parameter. The
+   * mating pool size is obtained from the variation operator.
    *
    * @param variation the variation operator
    * @return the selection operator
@@ -335,8 +319,8 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   }
 
   /**
-   * Creates the variation operator for the algorithm using the configured variation parameter.
-   * Sets the offspring population size as a non-configurable sub-parameter.
+   * Creates the variation operator for the algorithm using the configured variation parameter. Sets
+   * the offspring population size as a non-configurable sub-parameter.
    *
    * @return the variation operator
    */
@@ -344,8 +328,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     VariationParameter<S> variationParameter =
         (VariationParameter<S>) parameterSpace.get("variation");
     variationParameter.addNonConfigurableSubParameter(
-        "offspringPopulationSize",
-        parameterSpace.get("offspringPopulationSize").value());
+        "offspringPopulationSize", parameterSpace.get("offspringPopulationSize").value());
 
     return variationParameter.getVariation();
   }
@@ -356,8 +339,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
    * @return the solutions creation strategy
    */
   protected SolutionsCreation<S> createInitialSolutions() {
-    return ((CreateInitialSolutionsParameter<S>)
-            parameterSpace.get("createInitialSolutions"))
+    return ((CreateInitialSolutionsParameter<S>) parameterSpace.get("createInitialSolutions"))
         .getCreateInitialSolutionsStrategy(problem, populationSize);
   }
 

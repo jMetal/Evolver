@@ -64,7 +64,7 @@ The next code snippet shows how to define a training set assuming that we are in
                   "resources/referenceFronts/ZDT6.csv") ;
 
 Quality Indicators Selection
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Quality indicators are metrics that assess the performance of a configuration from the fronts obtained by running the base-level metaheuristic with that configuration on the training set. As Evolver is based on jMetal, which assumess that all objective functions of optimizations problems have to be minimized, care must be taken when selecting quality indicators such as HV, which is a maximization indicator. If we are interested in the HV, the normalized HV or NHV can be used instead. 
 
@@ -78,7 +78,7 @@ The next code snippet shows how to select the EP and NHV indicators, so the resu
 Suggestions for selecting quality indicators can be found in :doc:`objective_functions`.
 
 Meta-Optimization Problem Definition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Besides the base-level metaheuristic, the training set and the quality indicators, to define the meta-optimization problem two additional parameters are needed: the evaluation strategy and the number of independent runs per configuration. 
 
 The evaluation strategy defines the stopping condition of the base-level metaheuristic in terms of the maximum number of evaluations. The default strategy is to fix the evaluations giving a list of evalutions per problem. In the example we are using, the list for the ZDT problems could be:
@@ -136,7 +136,7 @@ Before running the meta-optimizer, we need to indicate where to store the result
 .. code-block:: java
 
     String algorithmName = "NSGA-II" ;
-    String problemName = "WFG" ;
+    String problemName = "ZDT" ;
     var outputResults =
         new OutputResults(
             algorithmName,
@@ -186,8 +186,16 @@ The following figure shows a plot of the population of the meta-optimizer after 
    :figwidth: 80%
 
 
-Result Analysis
-~~~~~~~~~~~~~~~
+Output Results
+~~~~~~~~~~~~~~
+
+During the execution of the meta-optimizer, outfile files are written in the results directory. These files include:
+
+- ``FUN.NSGA-II.ZDT.EP.NHV.XX.csv``: contain the values of the EP and NHV indicators for the non-dominited solutions of the population of the optimizer after XX evaluations.
+- ``VAR.NSGA-II.ZDT.EP.NHV.XX.txt``: contain the configurations corresponding to the non-dominited solutions of the population of the optimizer after XX evaluations.
+
+As the stopping condition of the meta-optimizer is set to 2000 function evaluations, the file  and ``VAR.NSGA-II.ZDT.EP.NHV.2000.txt`` will contain the non-dominited solutions of the population, which corresponds to the best configurations found during the search. 
 
 
-For implementation details and examples, see the :doc:`/examples` section.
+
+

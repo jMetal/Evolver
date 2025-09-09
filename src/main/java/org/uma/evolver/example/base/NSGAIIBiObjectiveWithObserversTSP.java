@@ -1,7 +1,6 @@
 package org.uma.evolver.example.base;
 
 import java.io.IOException;
-
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -17,11 +16,23 @@ import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * This class demonstrates the configuration and execution of the NSGA-II (Non-dominated Sorting Genetic Algorithm II)
- * for solving bi-objective Traveling Salesman Problem (TSP) instances. It specifically uses the KroAB100 TSP instance
- * as a benchmark problem, which involves finding optimal routes between 100 cities with two objectives:
- * 1. Minimizing the total distance of the tour
- * 2. Minimizing a second objective (specific to the KroAB100 instance)
+ * This class demonstrates the configuration and execution of NSGA-II (Non-dominated Sorting Genetic Algorithm II)
+ * for solving bi-objective Traveling Salesman Problem (TSP) instances, with additional runtime visualization.
+ * It extends the basic NSGA-II implementation by incorporating multiple observers for monitoring the algorithm's
+ * progress in real-time.
+ *
+ * <p>Key features of this implementation:
+ * <ul>
+ *   <li>Solves the KroAB100 TSP instance with 100 cities</li>
+ *   <li>Uses a reference front from 'resources/referenceFrontsTSP/KroAB100TSP.csv' for comparison</li>
+ *   <li>Provides three types of runtime visualization:
+ *     <ul>
+ *       <li>Run-time chart showing the evolution of solutions in the objective space</li>
+ *       <li>Epsilon indicator plot for convergence analysis</li>
+ *       <li>Hypervolume indicator plot for diversity and convergence analysis</li>
+ *     </ul>
+ *   </li>
+ * </ul>
  *
  * <p>The algorithm is configured with the following components by default:
  * <ul>
@@ -41,10 +52,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  * @author Antonio J. Nebro (ajnebro@uma.es)
  * @see org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII
  * @see org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP
+ * @see org.uma.jmetal.util.observer.impl.RunTimeChartObserver
+ * @see org.uma.jmetal.util.observer.impl.IndicatorPlotObserver
  */
-public class NSGAIIBiObjectiveTSP {
+public class NSGAIIBiObjectiveWithObserversTSP {
 
   public static void main(String[] args) throws IOException {
+    String referenceFrontFileName = "resources/referenceFrontsTSP/KroAB100TSP.csv";
 
     String[] parameters =
         ("--algorithmResult population "
@@ -60,7 +74,7 @@ public class NSGAIIBiObjectiveTSP {
             .split("\\s+");
 
     var baseNSGAII = new PermutationNSGAII(
-            new KroAB100TSP(), 100, 1000000, new NSGAIIPermutationParameterSpace());
+            new KroAB100TSP(), 100, 100000, new NSGAIIPermutationParameterSpace());
 
     baseNSGAII.parse(parameters);
 
@@ -69,9 +83,17 @@ public class NSGAIIBiObjectiveTSP {
     EvolutionaryAlgorithm<PermutationSolution<Integer>> nsgaII = baseNSGAII.build();
 
     RunTimeChartObserver<PermutationSolution<Integer>> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, 1000, null, "F1", "F2");
+        new RunTimeChartObserver<>("NSGA-II", 80, 1000, referenceFrontFileName, "F1", "F2");
+
+    IndicatorPlotObserver<DoubleSolution> indicatorPlotObserver =
+        new IndicatorPlotObserver<>("NSGA-II", new Epsilon(), referenceFrontFileName, 100);
+    IndicatorPlotObserver<DoubleSolution> hvPlotObserver =
+        new IndicatorPlotObserver<>("NSGA-II", new HypervolumeMinus(), referenceFrontFileName, 1000);
 
     nsgaII.observable().register(runTimeChartObserver);
+    nsgaII.observable().register(indicatorPlotObserver);
+    nsgaII.observable().register(hvPlotObserver);
+
     nsgaII.run();
 
     JMetalLogger.logger.info("Total computing time: " + nsgaII.totalComputingTime());

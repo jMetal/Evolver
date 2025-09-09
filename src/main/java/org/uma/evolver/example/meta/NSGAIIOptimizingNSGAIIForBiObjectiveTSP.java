@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -43,10 +45,8 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
     List<QualityIndicator> indicators = List.of(new HypervolumeMinus(), new Epsilon());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory());
-    System.out.println(parameterSpace);
-    // var configurableAlgorithm = new MOEADDouble(100);
     var baseAlgorithm = new PermutationNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = List.of(15000);
+    var maximumNumberOfEvaluations = List.of(50000);
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
@@ -65,10 +65,10 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
     int numberOfCores = 8;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-            new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
-                    .setMaxEvaluations(maxEvaluations)
-                    .setNumberOfCores(numberOfCores)
-                    .build();
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
+            .setMaxEvaluations(maxEvaluations)
+            .setNumberOfCores(numberOfCores)
+            .build();
 
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
