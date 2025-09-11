@@ -22,17 +22,17 @@ import java.io.IOException;
 
 public class SMSEMOABiobjectiveTSP {
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "SMSEMOAPermutation.yaml" ;
+    String yamlParameterSpaceFile = "SMSEMOABinary.yaml" ;
 
     String[] parameters =
         ("--algorithmResult population "
-                + "--createInitialSolutions default  "
-                + "--offspringPopulationSize 100 "
+                + "--createInitialSolutions default "
                 + "--variation crossoverAndMutationVariation "
-                + "--crossover PMX "
-                + "--crossoverProbability 0.68 "
-                + "--mutation swap "
-                + "--mutationProbability 0.01 "
+                + "--offspringPopulationSize 1 "
+                + "--crossover singlePoint "
+                + "--crossoverProbability 0.9 "
+                + "--mutation bitFlip "
+                + "--mutationProbabilityFactor 1.0 "
                 + "--selection random ")
             .split("\\s+");
 

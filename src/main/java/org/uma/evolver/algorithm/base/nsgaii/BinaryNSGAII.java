@@ -123,6 +123,5 @@ public class BinaryNSGAII extends BaseNSGAII<BinarySolution> {
     var mutationParameter = (MutationParameter<BinarySolution>) parameterSpace.get("mutation");
     mutationParameter.addNonConfigurableSubParameter(
             "numberOfBitsInASolution", numberOfBitsInASolution);
-
   }
 }

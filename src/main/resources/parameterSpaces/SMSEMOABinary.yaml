@@ -1,27 +1,22 @@
 algorithmResult:
   type: categorical
-  values:
-    population:
+  values: 
+    population: {}
     externalArchive:
       conditionalParameters:
-        populationSizeWithArchive:
-          type: integer
-          range: [10, 200]
         archiveType:
           type: categorical
           values:
-            crowdingDistanceArchive:
-            unboundedArchive:
-#
+            crowdingDistanceArchive: {}
+            unboundedArchive: {}
+
 createInitialSolutions:
   type: categorical
   values:
-    default:
-#
-offspringPopulationSize:
-  type: categorical
-  values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
-#
+    default: {}
+    latinHypercubeSampling: {}
+    scatterSearch: {}
+
 variation:
   type: categorical
   values:
@@ -45,15 +40,8 @@ variation:
               range: [0.0, 2.0]
           values:
             bitFlip:
-#
+
 selection:
   type: categorical
   values:
-    tournament:
-      conditionalParameters:
-        selectionTournamentSize:
-          type: integer
-          range: [2, 10]
-    random:
-#
-
+    random: {}

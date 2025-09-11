@@ -1,7 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.nsgaii.BinaryNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
+import org.uma.evolver.algorithm.base.smsemoa.BinarySMSEMOA;
 import org.uma.evolver.parameter.factory.BinaryParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -13,9 +12,11 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class NSGAIIOneZeroMaxExample {
+public class SMSEMOAOneZeroMax {
   public static void main(String[] args) {
-    String yamlParameterSpaceFile = "NSGAIIBinary.yaml";
+    String yamlParameterSpaceFile = "SMSEMOABinary.yaml" ;
+
+    var p = new YAMLParameterSpace(yamlParameterSpaceFile, new BinaryParameterFactory());
 
     String[] parameters =
         ("--algorithmResult population "
@@ -26,32 +27,31 @@ public class NSGAIIOneZeroMaxExample {
                 + "--crossoverProbability 0.9 "
                 + "--mutation bitFlip "
                 + "--mutationProbabilityFactor 1.0 "
-                + "--selection tournament "
-                + "--selectionTournamentSize 2")
+                + "--selection random ")
             .split("\\s+");
 
-    var baseNSGAII =
-        new BinaryNSGAII(
-            new OneZeroMax(),
+    var baseAlgorithm =
+        new BinarySMSEMOA(
+            new OneZeroMax(1000),
             100,
-            5000,
+            100000,
             new YAMLParameterSpace(yamlParameterSpaceFile, new BinaryParameterFactory()));
-    baseNSGAII.parse(parameters);
+    baseAlgorithm.parse(parameters);
 
-    EvolutionaryAlgorithm<BinarySolution> nsgaII = baseNSGAII.build();
+    EvolutionaryAlgorithm<BinarySolution> smsemoa = baseAlgorithm.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
     RunTimeChartObserver<BinarySolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, 1000, null, "F1", "F2");
+        new RunTimeChartObserver<>("SMSEMOA", 80, 1000, null, "F1", "F2");
 
-    nsgaII.observable().register(evaluationObserver);
-    nsgaII.observable().register(runTimeChartObserver);
+    smsemoa.observable().register(evaluationObserver);
+    smsemoa.observable().register(runTimeChartObserver);
 
-    nsgaII.run();
+    smsemoa.run();
 
-    JMetalLogger.logger.info("Total computing time: " + nsgaII.totalComputingTime());
+    JMetalLogger.logger.info("Total computing time: " + smsemoa.totalComputingTime());
 
-    new SolutionListOutput(nsgaII.result())
+    new SolutionListOutput(smsemoa.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
