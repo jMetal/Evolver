@@ -12,6 +12,13 @@ Added
 ~~~~~
 
 - Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
+- Add permutation and binary base-level SMSEMOA
+
+Fixed
+~~~~~
+
+- Fix a bug in class MOEADCommonParameterSpace
+
 
 2.0 (2025-09-09)
 ----------------
