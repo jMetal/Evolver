@@ -66,27 +66,79 @@ def parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
-def get_fun_files(data_dir: str) -> List[Tuple[int, str]]:
+def get_fun_files(data_dir: str, frequency: Optional[int] = None) -> List[Tuple[int, str]]:
     """
     Get all FUN.*.csv files in the directory and extract their evaluation numbers.
     
     Args:
         data_dir: Directory containing the FUN.*.csv files
+        frequency: If provided, checks that files exist for multiples of this frequency
         
     Returns:
         List of tuples (evaluation_number, file_path) sorted by evaluation number
+        
+    Raises:
+        ValueError: If required frequency multiples are missing
     """
+    print(f"\nSearching for files in: {data_dir}")
+    print(f"Requested frequency: {frequency} evaluations")
+    
     pattern = re.compile(r'FUN\..*\.(\d+)\.csv$')
     files = []
+    evaluation_numbers = set()
     
+    # First pass: collect all files and their evaluation numbers
     for f in Path(data_dir).glob('FUN.*.csv'):
         match = pattern.search(str(f))
         if match:
             eval_num = int(match.group(1))
+            evaluation_numbers.add(eval_num)
             files.append((eval_num, str(f)))
     
+    if not files:
+        return []
+        
+    # If frequency is provided, filter files to only include the specified frequency points
+    if frequency is not None and frequency > 0:
+        print("\nAll available evaluation points:", sorted(evaluation_numbers))
+        first_eval = min(evaluation_numbers)
+        filtered_files = []
+        
+        # Always include the first evaluation
+        if first_eval in evaluation_numbers:
+            file_path = next(f[1] for f in files if f[0] == first_eval)
+            filtered_files.append((first_eval, file_path))
+            print(f"Including first evaluation: {first_eval} - {file_path}")
+        
+        # Include files at the specified frequency intervals
+        max_eval = max(evaluation_numbers)
+        for eval_num in range(frequency, max_eval + 1, frequency):
+            if eval_num in evaluation_numbers and eval_num != first_eval:  # Skip if it's the first eval we already added
+                file_path = next(f[1] for f in files if f[0] == eval_num)
+                filtered_files.append((eval_num, file_path))
+                print(f"Including frequency point: {eval_num} - {file_path}")
+        
+        # If the last evaluation doesn't align with the frequency, include it
+        last_eval = max(evaluation_numbers)
+        if last_eval % frequency != 0 and last_eval != first_eval:
+            if last_eval in evaluation_numbers:
+                file_path = next(f[1] for f in files if f[0] == last_eval)
+                filtered_files.append((last_eval, file_path))
+                print(f"Including last evaluation: {last_eval} - {file_path}")
+        
+        files = filtered_files
+        print(f"\nTotal files selected: {len(files)}")
+        
+        # Verify we have the expected number of files
+        expected_count = (max_eval // frequency) + 1  # +1 for the first evaluation
+        if len(files) < expected_count - 1:  # Allow for some flexibility with the last point
+            print(f"Warning: Expected around {expected_count} files, but only found {len(files)} files"
+                  f" for frequency {frequency} up to evaluation {max_eval}")
+    
     # Sort by evaluation number
-    return sorted(files, key=lambda x: x[0])
+    files.sort(key=lambda x: x[0])
+    
+    return files
 
 def read_objectives(file_path: str) -> np.ndarray:
     """
@@ -102,30 +154,39 @@ def read_objectives(file_path: str) -> np.ndarray:
         data = np.loadtxt(file_path, delimiter=',')
         # Ensure data is 2D: (n_solutions, n_objectives)
         if data.ndim == 1:
-            return data.reshape(1, -1)  # Convert to 2D with shape (1, n_objectives)
+            data = data.reshape(1, -1)  # Convert to 2D with shape (1, n_objectives)
+        
+        # Print debug info
+        print(f"\nFile: {Path(file_path).name}")
+        print(f"Data shape: {data.shape}")
+        if len(data) > 0:
+            print(f"First point: {data[0]}")
+            if len(data) > 1:
+                print(f"Last point: {data[-1]}")
+        else:
+            print("No data points in file")
+            
         return data
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
         return np.array([]).reshape(0, 2)  # Return empty 2D array
 
 def plot_fronts(fronts_data: List[Tuple[int, np.ndarray]], ax):
-    """Plot all fronts with different colors."""
-    # Create a colormap with enough distinct colors
+    """Plot all fronts with different colors and consistent point style."""
+    # Use a colormap for smooth color transitions
     colors = cm.rainbow(np.linspace(0, 1, len(fronts_data)))
     
-    for (eval_num, objectives), color in zip(fronts_data, colors):
+    # Plot each front with a different color but same marker
+    for i, (eval_num, objectives) in enumerate(fronts_data):
         if len(objectives) > 0:
             ax.scatter(objectives[:, 0], objectives[:, 1], 
-                      color=color, alpha=0.6, 
+                      color=colors[i], 
+                      alpha=0.7,
+                      s=40,
+                      marker='o',  # Consistent circle marker
+                      edgecolors='w',
+                      linewidth=0.5,
                       label=f'Eval {eval_num}')
-    
-    # Add a colorbar to show the progression
-    sm = plt.cm.ScalarMappable(cmap='rainbow', 
-                              norm=plt.Normalize(vmin=0, vmax=len(fronts_data)-1))
-    sm.set_array([])
-    cbar = plt.colorbar(sm, ax=ax, label='Optimization Progress')
-    cbar.set_ticks([0, len(fronts_data)-1])
-    cbar.set_ticklabels(['Start', 'End'])
 
 def parse_filename_info(filename: str) -> tuple:
     """Parse algorithm name, training set, x-label, and y-label from filename."""
@@ -147,38 +208,47 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str):
         data_dir: Directory containing FUN.*.csv files
         frequency: Plot every N evaluations
         output_file: Output file name for the plot
+        
+    Raises:
+        ValueError: If frequency doesn't match the evaluation numbers in filenames
     """
-    # Get and filter files based on frequency
-    files = get_fun_files(data_dir)
+    # Get and validate files based on frequency
+    try:
+        files = get_fun_files(data_dir, frequency)
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Please ensure the frequency matches the evaluation numbers in the filenames.")
+        return
     if not files:
         print(f"No FUN.*.csv files found in {data_dir}")
         return
     
-    # Always include first and last files, and others based on frequency
-    filtered_files = [files[0]]  # Always include first file
-    for f in files[1:-1]:  # Skip first and last
-        if f[0] % frequency == 0:
-            filtered_files.append(f)
-    if len(files) > 1:  # Always include last file if it exists
-        filtered_files.append(files[-1])
-    
     # Parse filename info from the first file
-    algorithm, training_set, x_label, y_label = parse_filename_info(filtered_files[0][1])
+    algorithm, training_set, x_label, y_label = parse_filename_info(files[0][1])
     
-    # Read all data
-    fronts_data = [(eval_num, read_objectives(f)) for eval_num, f in filtered_files]
+    # Read all data - files are already filtered by frequency in get_fun_files
+    fronts_data = [(eval_num, read_objectives(f)) for eval_num, f in files]
     
     # Skip if no valid data
     if not any(len(obj) > 0 for _, obj in fronts_data):
         print("No valid data found in any of the files.")
         return
     
-    # Set up the figure
-    plt.figure(figsize=(12, 8))
+    # Set up the figure with adjusted size and margins
+    plt.figure(figsize=(14, 10))
     ax = plt.gca()
     
-    # Plot all fronts
-    plot_fronts(fronts_data, ax)
+    # Adjust layout to make room for legend
+    plt.subplots_adjust(right=0.75, left=0.1, top=0.95, bottom=0.1)
+    
+    # Filter out empty data points before plotting
+    valid_fronts = [(eval_num, obj) for eval_num, obj in fronts_data if len(obj) > 0]
+    if not valid_fronts:
+        print("No valid data points to plot.")
+        return
+    
+    # Plot only valid fronts
+    plot_fronts(valid_fronts, ax)
     
     # Set axis labels and title
     ax.set_xlabel(x_label)
@@ -186,22 +256,23 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str):
     ax.set_title(f'Optimization Progress\nAlgorithm: {algorithm} | Training Set: {training_set}')
     ax.grid(True, alpha=0.3)
     
-    # Add a legend with a subset of the labels to avoid overcrowding
+    # Get handles and labels from the plot
     handles, labels = ax.get_legend_handles_labels()
     
-    # Reverse the order of handles and labels to show earliest evaluations first in legend
-    handles = handles[::-1]
-    labels = labels[::-1]
-    
-    if len(handles) > 10:  # If too many fronts, show only some key points
-        step = max(1, len(handles) // 5)
-        handles = handles[::step] + [handles[-1]] if handles[-1] not in handles[::step] else handles[::step]
-        labels = labels[::step] + [labels[-1]] if len(labels) > 1 and labels[-1] not in labels[::step] else labels[::step]
-    
-    ax.legend(handles, labels, title='Evaluation', bbox_to_anchor=(1.05, 1), loc='upper left')
+    # Only create legend if we have valid points
+    if handles and labels:
+        ax.legend(handles, labels, 
+                 title='Evaluation Points',
+                 loc='center left',
+                 bbox_to_anchor=(1.05, 0.5),
+                 frameon=True,
+                 framealpha=0.9,
+                 fancybox=True)
+    else:
+        print("No valid data points to show in legend.")
     
     # Adjust layout to make room for the legend
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 0.85, 1])  # Adjust the right margin
     
     # Save the figure
     try:
