@@ -23,7 +23,6 @@ public class MOEADDE_LZ09F2 {
     String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
     String yamlParameterSpaceFile = "resources/parameterSpaces/MOEADDouble.yaml" ;
 
-
     String[] parameters =
         ("--neighborhoodSize 20 "
             + "--maximumNumberOfReplacedSolutions 2 "

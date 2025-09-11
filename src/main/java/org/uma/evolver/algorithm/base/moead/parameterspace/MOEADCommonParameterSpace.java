@@ -6,6 +6,7 @@ import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
+import smile.timeseries.AR;
 
 /**
  * Base parameter space for the MOEA/D algorithm.
@@ -96,6 +97,7 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
   // Algorithm result parameters
   public static final String ALGORITHM_RESULT = "algorithmResult";
   public static final String EXTERNAL_ARCHIVE = "externalArchive";
+  public static final String ARCHIVE_TYPE = "archiveType";
 
   // Variation parameters
   public static final String VARIATION = "variation";
@@ -142,8 +144,10 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
         TSCHEBYSCHEFF, WEIGHTED_SUM, PENALTY_BOUNDARY_INTERSECTION, MODIFIED_TSCHEBYSCHEFF)));
     put(new SelectionParameter<>(List.of(POPULATION_AND_NEIGHBORHOOD_MATING_POOL_SELECTION)));
     put(new DoubleParameter(PBI_THETA, 1.0, 200.0));
-    put(new CategoricalParameter(ALGORITHM_RESULT, List.of(EXTERNAL_ARCHIVE, POPULATION)));
-    put(new ExternalArchiveParameter<>(EXTERNAL_ARCHIVE, List.of(CROWDING_DISTANCE_ARCHIVE, UNBOUNDED_ARCHIVE)));
+    put(new CategoricalParameter(ALGORITHM_RESULT, List.of(POPULATION, EXTERNAL_ARCHIVE)));
+    put(
+            new ExternalArchiveParameter<>(
+                    ARCHIVE_TYPE, List.of(CROWDING_DISTANCE_ARCHIVE, UNBOUNDED_ARCHIVE)));
    }
 
   /**
