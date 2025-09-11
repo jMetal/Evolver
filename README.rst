@@ -99,7 +99,7 @@ Evolver currently supports the following base-level and meta-optimization algori
 
   - NSGA-II (double, binary, permutation encodings)
   - MOEA/D (double, binary, permutation encodings)
-  - SMS/EMOA (double encoding)
+  - SMS/EMOA (double, binary, permutation encoding)
   - MOPSO – multi-objective particle swarm optimization (double encoding)
   - RDEMOEA – ranking and density estimator MOEA (double, permutation encodings)
 
@@ -281,6 +281,7 @@ Changelog
 
 v2.1-SNAPSHOT
 ^^^^^^^^^^^^^
+* Add permutation and binary base-level SMSEMOA
 * Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
 
 v2.0 (2025-09-09)
