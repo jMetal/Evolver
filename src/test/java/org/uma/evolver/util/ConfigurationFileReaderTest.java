@@ -2,8 +2,10 @@ package org.uma.evolver.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -103,11 +105,47 @@ class ConfigurationFileReaderTest {
   }
 
   @Test
+  void shouldLoadFileFromResourcesWhenNoAbsolutePathProvided() throws IOException {
+    // Given: A configuration file that exists in src/main/resources
+    String relativePath = TEST_CONFIG_FILE;
+    
+    // When: Creating a ConfigurationFileReader with just the filename
+    ConfigurationFileReader reader = new ConfigurationFileReader(relativePath);
+    
+    // Then: The file should be loaded successfully from src/main/resources
+    assertNotNull(reader.getConfiguration(1), "Should load configuration from src/main/resources");
+  }
+  
+  @Test
+  void shouldFallBackToOriginalPathWhenNotInResources() throws IOException {
+    // Given: A temporary file that exists outside the resources directory
+    Path tempFile = Files.createTempFile("test-config-", ".txt");
+    Files.writeString(tempFile, "test configuration");
+    
+    // When: Creating a ConfigurationFileReader with the temp file path
+    ConfigurationFileReader reader = new ConfigurationFileReader(tempFile.toString());
+    
+    // Then: The file should be loaded successfully from the original path
+    assertEquals("test configuration", reader.getConfiguration(1).trim(), 
+        "Should load configuration from the original path when not in resources");
+    
+    // Cleanup
+    Files.deleteIfExists(tempFile);
+  }
+  
+  @Test
   void shouldThrowExceptionForNonExistentFile() {
     // When/Then: Creating with non-existent file should throw IOException
-    assertThrows(
+    String nonExistentPath = "nonexistent/file/path.txt";
+    IOException exception = assertThrows(
         IOException.class,
-        () -> new ConfigurationFileReader("nonexistent/file/path.txt"),
+        () -> new ConfigurationFileReader(nonExistentPath),
         "Should throw for non-existent file");
+        
+    // Verify the error message contains both checked locations
+    assertTrue(exception.getMessage().contains("src/main/resources/" + nonExistentPath), 
+        "Error message should mention resources directory");
+    assertTrue(exception.getMessage().contains(nonExistentPath), 
+        "Error message should mention the original path");
   }
 }

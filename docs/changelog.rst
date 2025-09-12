@@ -10,7 +10,7 @@ All notable changes to Evolver will be documented in this file.
 
 Added
 ~~~~~
-
+- Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 - Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
 - Add permutation and binary base-level SMSEMOA
 

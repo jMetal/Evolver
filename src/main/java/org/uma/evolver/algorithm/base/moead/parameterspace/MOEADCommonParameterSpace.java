@@ -162,7 +162,7 @@ public abstract class MOEADCommonParameterSpace<S extends Solution<?>> extends P
         .addConditionalParameter(PENALTY_BOUNDARY_INTERSECTION, get(PBI_THETA));
 
     // AlgorithmResult dependencies
-    get(ALGORITHM_RESULT).addConditionalParameter(EXTERNAL_ARCHIVE, get(EXTERNAL_ARCHIVE));
+    get(ALGORITHM_RESULT).addConditionalParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
 
     // Selection dependencies
     get(SELECTION)

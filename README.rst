@@ -281,6 +281,7 @@ Changelog
 
 v2.1-SNAPSHOT
 ^^^^^^^^^^^^^
+* Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
 * Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
 
