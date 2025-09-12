@@ -49,7 +49,7 @@ public class MOPSO_SMPSO_ZDT4 {
                 + "--randomInertiaWeightMax 0.5")
             .split("\\s+");
 
-    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml" ;
+    String yamlParameterSpaceFile = "MOPSO.yaml" ;
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
 

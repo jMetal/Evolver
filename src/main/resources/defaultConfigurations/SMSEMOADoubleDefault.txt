@@ -1,0 +1,1 @@
+--algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds --sbxDistributionIndex 20.0 --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0 --selection random
