@@ -1,6 +1,6 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;

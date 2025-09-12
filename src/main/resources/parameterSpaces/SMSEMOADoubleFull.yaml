@@ -80,6 +80,19 @@ variation:
                 nonUniformMutationPerturbation:
                   type: double
                   range: [0.0, 1.0]
+            levyFlight:
+              conditionalParameters:
+                levyFlightMutationBeta:
+                  type: double
+                  range: [1.0, 2.0]
+                levyFlightMutationStepSize:
+                  type: double
+                  range: [0.01, 1.0]
+            powerLaw:
+              conditionalParameters:
+                powerLawMutationDelta:
+                  type: double
+                  range: [0.0, 10.0]
 
 selection:
   type: categorical

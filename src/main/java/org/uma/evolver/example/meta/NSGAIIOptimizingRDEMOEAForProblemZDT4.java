@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;

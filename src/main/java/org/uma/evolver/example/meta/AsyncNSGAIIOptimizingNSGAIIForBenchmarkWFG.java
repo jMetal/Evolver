@@ -30,51 +30,50 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo() ;
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
+    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+    EvaluationBudgetStrategy evaluationBudgetStrategy =
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-                baseAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
+    // builder
     int maxEvaluations = 2000;
     int numberOfCores = 8;
 
-    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii = new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
-                    .setNumberOfCores(numberOfCores)
-                    .setPopulationSize(50)
-                    .setMaxEvaluations(2000)
-                    .build() ;
-
+    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
+        new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
+            .setNumberOfCores(numberOfCores)
+            .setPopulationSize(50)
+            .setMaxEvaluations(2000)
+            .build();
 
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
         new OutputResults(
-            "AsyncNSGA-II",
-            metaOptimizationProblem,
-            "WFG",
-            indicators,
-            "RESULTS/NSGAII/" + "WFG");
+            "AsyncNSGA-II", metaOptimizationProblem, "WFG", indicators, "RESULTS/NSGAII/" + "WFG");
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(100, outputResults);

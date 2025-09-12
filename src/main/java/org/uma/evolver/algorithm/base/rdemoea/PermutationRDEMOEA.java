@@ -1,4 +1,4 @@
-package org.uma.evolver.algorithm.base.rdsmoea;
+package org.uma.evolver.algorithm.base.rdemoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.parameter.ParameterSpace;

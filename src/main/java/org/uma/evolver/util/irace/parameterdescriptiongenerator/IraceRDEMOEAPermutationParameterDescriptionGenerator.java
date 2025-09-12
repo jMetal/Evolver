@@ -1,7 +1,7 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.rdsmoea.PermutationRDEMOEA;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEAPermutationParameterSpace;
+import org.uma.evolver.algorithm.base.rdemoea.PermutationRDEMOEA;
+import org.uma.evolver.algorithm.base.rdemoea.parameterspace.RDEMOEAPermutationParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**

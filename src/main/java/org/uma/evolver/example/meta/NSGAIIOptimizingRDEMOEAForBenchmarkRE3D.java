@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -20,7 +20,6 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -64,7 +63,7 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     int maxEvaluations = 2000;
-    int numberOfCores = 1 ;
+    int numberOfCores = 8 ;
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())

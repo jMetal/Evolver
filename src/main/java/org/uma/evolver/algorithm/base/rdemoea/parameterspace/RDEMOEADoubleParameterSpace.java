@@ -1,4 +1,4 @@
-package org.uma.evolver.algorithm.base.rdsmoea.parameterspace;
+package org.uma.evolver.algorithm.base.rdemoea.parameterspace;
 
 import java.util.List;
 import org.uma.evolver.parameter.catalogue.*;

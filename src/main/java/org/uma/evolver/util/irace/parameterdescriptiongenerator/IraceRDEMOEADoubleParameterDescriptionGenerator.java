@@ -1,7 +1,7 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.rdsmoea.DoubleRDEMOEA;
-import org.uma.evolver.algorithm.base.rdsmoea.parameterspace.RDEMOEADoubleParameterSpace;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
+import org.uma.evolver.algorithm.base.rdemoea.parameterspace.RDEMOEADoubleParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**

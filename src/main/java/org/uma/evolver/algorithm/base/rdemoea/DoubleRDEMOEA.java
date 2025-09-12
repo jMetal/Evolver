@@ -1,4 +1,4 @@
-package org.uma.evolver.algorithm.base.rdsmoea;
+package org.uma.evolver.algorithm.base.rdemoea;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -7,7 +7,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Configurable implementation of the NSGA-II algorithm for double-valued (real-coded) problems.
+ * Configurable implementation of the RDEMOEA algorithm for double-valued (real-coded) problems.
  *
  * <p>This class provides a highly customizable version of NSGA-II, supporting:
  * <ul>
