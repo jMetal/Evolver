@@ -65,7 +65,7 @@ public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
     // builder
     int maxEvaluations = 2000;
-    int numberOfCores = 1;
+    int numberOfCores = 8;
 
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
@@ -88,7 +88,7 @@ public class NSGAIIOptimizingSMSEMOAForProblemZDT4 {
                 crossover,
                 mutation)
             .setTermination(termination)
-            .setEvaluation(new MultiThreadedEvaluation<>(8, metaOptimizationProblem))
+            .setEvaluation(new MultiThreadedEvaluation<>(numberOfCores, metaOptimizationProblem))
             .build();
 
     // Step 4: Create observers for the meta-optimizer

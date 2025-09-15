@@ -52,6 +52,9 @@ public class MetaAsyncNSGAIIBuilder {
   /** The mutation operator (default: Polynomial with distribution index 20.0) */
   private MutationOperator<DoubleSolution> mutation;
 
+  /** The mutation probability factor (default: 1.0) */
+private double mutationProbabilityFactor = 1.0  ;
+
   /**
    * Creates a new builder with the specified problem.
    *
@@ -68,7 +71,7 @@ public class MetaAsyncNSGAIIBuilder {
     Check.notNull(problem);
     this.problem = problem;
     this.crossover = new SBXCrossover(1.0, 20.0);
-    this.mutation = new PolynomialMutation(1.0, 20.0);
+    this.mutation = new PolynomialMutation(mutationProbabilityFactor * 1./problem.numberOfVariables() , 20.0);
   }
 
   /**
@@ -96,6 +99,19 @@ public class MetaAsyncNSGAIIBuilder {
     this.maxEvaluations = maxEvaluations;
     return this;
   }
+
+  /**
+   * Sets the mutation probability factor for the mutation operator.
+   *
+   * @param mutationProbabilityFactor the mutation probability factor (must be non-negative)
+   * @return this builder instance for method chaining
+   * @throws IllegalArgumentException if mutationProbabilityFactor is negative
+   */
+  public MetaAsyncNSGAIIBuilder setMutationProbabilityFactor(double mutationProbabilityFactor) {
+    Check.valueIsNotNegative(mutationProbabilityFactor);
+    this.mutationProbabilityFactor = mutationProbabilityFactor;
+    return this;
+  } 
 
   /**
    * Sets the number of CPU cores to use for parallel evaluation.
