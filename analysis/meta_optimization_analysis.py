@@ -305,28 +305,80 @@ def analyze_convergence(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
                         output_dir: Path, top_params: list[str]):
     """
     Analyze how parameters converge over evaluations.
+    Excludes categorical parameters with few unique values (<=5) as their 
+    mean evolution is not meaningful.
     """
     print("\n=== Convergence Analysis ===")
     
-    # Plot parameter evolution for top correlated parameters
-    n_params = min(6, len(top_params))
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    axes = axes.flatten()
+    # Filter out categorical parameters with few values (<=5 unique values)
+    # These should be analyzed with frequency distributions, not mean evolution
+    LOW_CARDINALITY_THRESHOLD = 5
+    continuous_params = []
+    excluded_params = []
     
-    for i, param in enumerate(top_params[:n_params]):
-        ax = axes[i]
-        grouped = configs_df.groupby("evaluation")[param].agg(["mean", "std", "min", "max"])
-        grouped = grouped.sort_index()
+    for param in top_params:
+        n_unique = configs_df[param].nunique()
+        if n_unique > LOW_CARDINALITY_THRESHOLD:
+            continuous_params.append(param)
+        else:
+            excluded_params.append((param, n_unique))
+    
+    if excluded_params:
+        print(f"  Excluded from convergence plot (categorical with ≤{LOW_CARDINALITY_THRESHOLD} values):")
+        for param, n in excluded_params:
+            print(f"    - {param}: {n} unique values")
+    
+    # Plot parameter evolution for continuous/high-cardinality parameters
+    params_to_plot = continuous_params[:6]  # Max 6 plots
+    
+    if len(params_to_plot) == 0:
+        print("  No continuous parameters to plot for convergence analysis.")
+    else:
+        n_plots = len(params_to_plot)
+        n_cols = min(3, n_plots)
+        n_rows = (n_plots + n_cols - 1) // n_cols
         
-        ax.fill_between(grouped.index, grouped["min"], grouped["max"], alpha=0.2)
-        ax.plot(grouped.index, grouped["mean"], 'b-', linewidth=2, label="Mean")
-        ax.set_xlabel("Evaluation")
-        ax.set_ylabel(param)
-        ax.set_title(f"Evolution of {param}")
-    
-    plt.tight_layout()
-    plt.savefig(output_dir / "parameter_convergence.png", dpi=150)
-    plt.close()
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 5 * n_rows))
+        if n_plots == 1:
+            axes = [axes]
+        else:
+            axes = axes.flatten() if n_plots > 1 else [axes]
+        
+        for i, param in enumerate(params_to_plot):
+            ax = axes[i]
+            # Use percentiles for more robust visualization
+            grouped = configs_df.groupby("evaluation")[param].agg(
+                ["mean", "median", "count",
+                 lambda x: x.quantile(0.25),  # Q1
+                 lambda x: x.quantile(0.75)]  # Q3
+            )
+            grouped.columns = ["mean", "median", "count", "q25", "q75"]
+            grouped = grouped.sort_index()
+            
+            # IQR band (25th-75th percentile) - more robust than min-max
+            ax.fill_between(grouped.index, grouped["q25"], grouped["q75"], 
+                           alpha=0.3, color='blue', label="IQR (25%-75%)")
+            ax.plot(grouped.index, grouped["median"], 'b-', linewidth=2, label="Median")
+            ax.plot(grouped.index, grouped["mean"], 'r--', linewidth=1, alpha=0.7, label="Mean")
+            
+            ax.set_xlabel("Evaluation")
+            ax.set_ylabel(param)
+            ax.set_title(f"Evolution of {param}")
+            ax.legend(fontsize=8, loc='best')
+            
+            # Add sample count info in subtitle
+            avg_n = grouped["count"].mean()
+            ax.text(0.02, 0.98, f"avg n={avg_n:.1f}/eval", transform=ax.transAxes,
+                   fontsize=8, va='top', ha='left', 
+                   bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+        
+        # Hide unused axes
+        for j in range(len(params_to_plot), len(axes)):
+            axes[j].set_visible(False)
+        
+        plt.tight_layout()
+        plt.savefig(output_dir / "parameter_convergence.png", dpi=150)
+        plt.close()
     
     # Objective convergence
     if not objectives_df.empty:
@@ -350,12 +402,29 @@ def analyze_convergence(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
         plt.close()
 
 
+# Mapping of categorical parameter encoded values to their labels
+CATEGORICAL_VALUE_LABELS = {
+    "algorithmResult": {0.0: "population", 1.0: "externalArchive"},
+    "archiveType": {0.0: "crowdingDistanceArchive", 1.0: "unboundedArchive"},
+    "createInitialSolutions": {0.0: "random", 1.0: "latinHypercubeSampling", 2.0: "scatterSearch"},
+    "variation": {0.0: "crossoverAndMutationVariation"},
+    "crossover": {0.0: "SBX", 1.0: "BLX_ALPHA", 2.0: "wholeArithmetic"},
+    "crossoverRepairStrategy": {0.0: "bounds", 1.0: "random", 2.0: "round"},
+    "mutation": {0.0: "polynomial", 1.0: "linkedPolynomial", 2.0: "uniform", 3.0: "nonUniform"},
+    "mutationRepairStrategy": {0.0: "bounds", 1.0: "random", 2.0: "round"},
+    "selection": {0.0: "tournament", 1.0: "random"},
+}
+
+
 def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                                   output_dir: Path):
+                                   output_dir: Path) -> pd.DataFrame:
     """
-    Analyze categorical parameters (encoded as integers).
+    Analyze categorical parameters using Kruskal-Wallis test and boxplots.
+    
+    Kruskal-Wallis is a non-parametric test that determines if there are 
+    statistically significant differences between groups (categories).
     """
-    print("\n=== Categorical Parameter Analysis ===")
+    print("\n=== Categorical Parameter Analysis (Kruskal-Wallis) ===")
     
     categorical_params = [
         "algorithmResult", "archiveType", "createInitialSolutions",
@@ -368,37 +437,144 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
     
     if not existing_cats or objectives_df.empty:
         print("No categorical parameters or objectives to analyze")
-        return
+        return pd.DataFrame()
     
     obj_means = objectives_df.groupby("evaluation").mean().reset_index()
     merged = configs_df.merge(obj_means, on="evaluation", how="inner")
     
-    # Box plots for each categorical parameter
-    n_cats = len(existing_cats)
-    n_rows = (n_cats + 2) // 3
+    # Perform Kruskal-Wallis test for each categorical parameter
+    kruskal_results = []
     
-    fig, axes = plt.subplots(n_rows, 3, figsize=(15, 4 * n_rows))
-    axes = axes.flatten() if n_rows > 1 else [axes] if n_cats == 1 else axes
+    for param in existing_cats:
+        unique_values = merged[param].unique()
+        
+        if len(unique_values) < 2:
+            # Skip if only one category present
+            continue
+        
+        # Group data by category
+        groups_eps = [merged[merged[param] == val]["Epsilon"].values for val in unique_values]
+        groups_nhv = [merged[merged[param] == val]["NormHypervolume"].values for val in unique_values]
+        
+        # Filter out empty groups
+        groups_eps = [g for g in groups_eps if len(g) > 0]
+        groups_nhv = [g for g in groups_nhv if len(g) > 0]
+        
+        if len(groups_eps) < 2:
+            continue
+        
+        # Kruskal-Wallis test
+        stat_eps, p_eps = stats.kruskal(*groups_eps)
+        stat_nhv, p_nhv = stats.kruskal(*groups_nhv)
+        
+        # Calculate effect size (eta-squared approximation)
+        n_total = len(merged)
+        eta_sq_eps = (stat_eps - len(groups_eps) + 1) / (n_total - len(groups_eps))
+        eta_sq_nhv = (stat_nhv - len(groups_nhv) + 1) / (n_total - len(groups_nhv))
+        
+        # Get category labels
+        labels = CATEGORICAL_VALUE_LABELS.get(param, {})
+        categories_str = ", ".join([labels.get(v, str(v)) for v in sorted(unique_values)])
+        
+        kruskal_results.append({
+            "parameter": param,
+            "n_categories": len(unique_values),
+            "categories": categories_str,
+            "H_statistic_eps": stat_eps,
+            "p_value_eps": p_eps,
+            "significant_eps": p_eps < 0.05,
+            "H_statistic_nhv": stat_nhv,
+            "p_value_nhv": p_nhv,
+            "significant_nhv": p_nhv < 0.05,
+            "eta_sq_eps": max(0, eta_sq_eps),  # Clamp to 0 if negative
+            "eta_sq_nhv": max(0, eta_sq_nhv),
+        })
     
-    for i, param in enumerate(existing_cats):
-        if i < len(axes):
+    kruskal_df = pd.DataFrame(kruskal_results)
+    
+    if len(kruskal_df) > 0:
+        kruskal_df = kruskal_df.sort_values("p_value_eps")
+        
+        print("\nKruskal-Wallis Test Results (H0: no difference between categories):")
+        print("-" * 80)
+        for _, row in kruskal_df.iterrows():
+            sig_eps = "***" if row["p_value_eps"] < 0.001 else "**" if row["p_value_eps"] < 0.01 else "*" if row["p_value_eps"] < 0.05 else ""
+            sig_nhv = "***" if row["p_value_nhv"] < 0.001 else "**" if row["p_value_nhv"] < 0.01 else "*" if row["p_value_nhv"] < 0.05 else ""
+            print(f"\n{row['parameter']} ({row['n_categories']} categories: {row['categories']})")
+            print(f"  Epsilon:    H={row['H_statistic_eps']:.2f}, p={row['p_value_eps']:.4f} {sig_eps}, η²={row['eta_sq_eps']:.3f}")
+            print(f"  NormHV:     H={row['H_statistic_nhv']:.2f}, p={row['p_value_nhv']:.4f} {sig_nhv}, η²={row['eta_sq_nhv']:.3f}")
+        
+        print("\n(* p<0.05, ** p<0.01, *** p<0.001)")
+        print("η² (eta-squared): effect size - small≈0.01, medium≈0.06, large≈0.14")
+        
+        # Save results
+        kruskal_df.to_csv(output_dir / "categorical_kruskal_wallis.csv", index=False)
+    
+    # Create improved boxplots with category labels
+    params_to_plot = [p for p in existing_cats if merged[p].nunique() > 1]
+    n_params = len(params_to_plot)
+    
+    if n_params > 0:
+        n_cols = min(3, n_params)
+        n_rows = (n_params + n_cols - 1) // n_cols
+        
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows))
+        if n_params == 1:
+            axes = [axes]
+        else:
+            axes = axes.flatten() if n_rows > 1 else axes
+        
+        for i, param in enumerate(params_to_plot):
             ax = axes[i]
-            merged.boxplot(column="Epsilon", by=param, ax=ax)
-            ax.set_title(f"Epsilon by {param}")
-            ax.set_xlabel(param)
+            
+            # Create labeled data
+            labels_map = CATEGORICAL_VALUE_LABELS.get(param, {})
+            plot_data = []
+            plot_labels = []
+            
+            for val in sorted(merged[param].unique()):
+                data = merged[merged[param] == val]["Epsilon"].values
+                if len(data) > 0:
+                    plot_data.append(data)
+                    label = labels_map.get(val, f"{val}")
+                    plot_labels.append(f"{label}\n(n={len(data)})")
+            
+            bp = ax.boxplot(plot_data, tick_labels=plot_labels, patch_artist=True)
+            
+            # Color boxes using tab10 colormap
+            cmap = plt.colormaps.get_cmap('tab10')
+            colors = [cmap(i / max(len(plot_data) - 1, 1)) for i in range(len(plot_data))]
+            for patch, color in zip(bp['boxes'], colors):
+                patch.set_facecolor(color)
+            
+            ax.set_ylabel("Epsilon")
+            ax.set_title(f"{param}")
+            ax.tick_params(axis='x', rotation=45)
+            
+            # Add significance annotation if available
+            if len(kruskal_df) > 0:
+                row = kruskal_df[kruskal_df["parameter"] == param]
+                if len(row) > 0:
+                    p_val = row.iloc[0]["p_value_eps"]
+                    sig = "***" if p_val < 0.001 else "**" if p_val < 0.01 else "*" if p_val < 0.05 else "ns"
+                    ax.annotate(f"p={p_val:.3f} {sig}", xy=(0.95, 0.95), xycoords='axes fraction',
+                               ha='right', va='top', fontsize=9,
+                               bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+        
+        # Hide unused axes
+        for j in range(i + 1, len(axes)):
+            axes[j].set_visible(False)
+        
+        plt.suptitle("Categorical Parameter Impact on Epsilon (Kruskal-Wallis)", y=1.02, fontsize=12)
+        plt.tight_layout()
+        plt.savefig(output_dir / "categorical_analysis.png", dpi=150, bbox_inches='tight')
+        plt.close()
     
-    # Hide unused axes
-    for j in range(i + 1, len(axes)):
-        axes[j].set_visible(False)
-    
-    plt.suptitle("Categorical Parameter Impact on Epsilon", y=1.02)
-    plt.tight_layout()
-    plt.savefig(output_dir / "categorical_analysis.png", dpi=150)
-    plt.close()
+    return kruskal_df
 
 
 def generate_report(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                    corr_df: pd.DataFrame, output_dir: Path):
+                    corr_df: pd.DataFrame, kruskal_df: pd.DataFrame, output_dir: Path):
     """
     Generate a summary report.
     """
@@ -435,15 +611,39 @@ def generate_report(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
         for param, row in conditional_params.iterrows():
             report.append(f"| {param} | {row['parent_param']} | {row['parent_value']} | {int(row['n_samples'])} |")
     
+    # Add Kruskal-Wallis results for categorical parameters
+    if len(kruskal_df) > 0:
+        report.append("\n## Categorical Parameters (Kruskal-Wallis Test)\n")
+        report.append("*For categorical parameters, Spearman correlation is not appropriate. Kruskal-Wallis H-test is used to determine if there are statistically significant differences between groups.*\n")
+        report.append("\n| Parameter | H-statistic (ε) | p-value (ε) | H-statistic (HV) | p-value (HV) | Groups | Significant? |")
+        report.append("|-----------|-----------------|-------------|------------------|--------------|--------|--------------|")
+        for _, row in kruskal_df.iterrows():
+            sig_eps = row['p_value_eps'] < 0.05
+            sig_nhv = row['p_value_nhv'] < 0.05
+            sig = "Yes" if (sig_eps or sig_nhv) else "No"
+            report.append(f"| {row['parameter']} | {row['H_statistic_eps']:.2f} | {row['p_value_eps']:.4f} | {row['H_statistic_nhv']:.2f} | {row['p_value_nhv']:.4f} | {row['n_categories']} | {sig} |")
+        
+        # Interpretation
+        report.append("\n### Interpretation\n")
+        significant = kruskal_df[kruskal_df['p_value_eps'] < 0.05]
+        if len(significant) > 0:
+            report.append("The following categorical parameters show **statistically significant** impact on Epsilon (p < 0.05):\n")
+            for _, row in significant.iterrows():
+                effect = "large" if row['H_statistic_eps'] > 50 else "medium" if row['H_statistic_eps'] > 20 else "small"
+                report.append(f"- **{row['parameter']}**: H={row['H_statistic_eps']:.2f}, p={row['p_value_eps']:.4f} ({effect} effect)")
+        else:
+            report.append("No categorical parameters show statistically significant impact on objectives at α=0.05 level.")
+    
     report.append("\n## Generated Files\n")
     report.append("- `parameter_correlations.csv`: Full correlation analysis (with conditional info)")
     report.append("- `pca_loadings.csv`: PCA component loadings")
+    report.append("- `kruskal_wallis_results.csv`: Kruskal-Wallis test results for categorical parameters")
     report.append("- `correlation_heatmap.png`: Parameter-objective correlation matrix")
     report.append("- `pca_variance.png`: PCA explained variance plots")
     report.append("- `pca_scatter.png`: Configuration space in PC1-PC2")
     report.append("- `parameter_convergence.png`: Evolution of top parameters")
     report.append("- `objective_convergence.png`: Objective convergence over evaluations")
-    report.append("- `categorical_analysis.png`: Impact of categorical parameters")
+    report.append("- `categorical_analysis.png`: Impact of categorical parameters (boxplots)")
     
     report_text = "\n".join(report)
     (output_dir / "analysis_report.md").write_text(report_text)
@@ -475,10 +675,14 @@ def main():
     
     top_params = corr_df.head(10).index.tolist()
     analyze_convergence(configs_df, objectives_df, output_dir, top_params)
-    analyze_categorical_parameters(configs_df, objectives_df, output_dir)
+    kruskal_df = analyze_categorical_parameters(configs_df, objectives_df, output_dir)
+    
+    # Save Kruskal-Wallis results
+    if len(kruskal_df) > 0:
+        kruskal_df.to_csv(output_dir / "kruskal_wallis_results.csv", index=False)
     
     # Generate report
-    generate_report(configs_df, objectives_df, corr_df, output_dir)
+    generate_report(configs_df, objectives_df, corr_df, kruskal_df, output_dir)
     
     print(f"\nAnalysis complete! Results saved to {output_dir}")
 
