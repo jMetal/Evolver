@@ -24,6 +24,19 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 
+# Known quality indicator abbreviations and their full names
+INDICATOR_NAMES = {
+    "EP": "Epsilon",
+    "IGD": "IGD",
+    "IGD+": "IGD+",
+    "IGDP": "IGD+",  # Alternative notation
+    "NHV": "NormHypervolume",
+    "HV": "Hypervolume",
+    "SPREAD": "Spread",
+    "GD": "GenerationalDistance",
+}
+
+
 # Conditional parameter mappings
 # Maps parent parameter -> {parent_value: [conditional_params]}
 # Values are the encoded numeric values from the CSV files
@@ -57,16 +70,67 @@ for parent, value_map in CONDITIONAL_PARAMETERS.items():
             PARAM_TO_PARENT[param] = (parent, value)
 
 
-def load_configurations(results_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+def detect_objective_names(results_dir: Path) -> list[str]:
+    """
+    Detect objective/indicator names from FUN file names.
+    
+    File naming convention: FUN.<algorithm>.<problem>.<indicator1>.<indicator2>[.<indicatorN>].<eval>.csv
+    Example: FUN.NSGA-II.DTLZ3.EP.NHV.100.csv -> ["EP", "NHV"]
+    """
+    fun_files = list(results_dir.glob("FUN.*.csv"))
+    if not fun_files:
+        raise ValueError(f"No FUN.*.csv files found in {results_dir}")
+    
+    # Parse the first FUN file to extract indicator names
+    sample_file = fun_files[0].name
+    parts = sample_file.replace(".csv", "").split(".")
+    
+    # Format: FUN.<algo>.<problem>.<ind1>.<ind2>...<eval>
+    # The last part is the evaluation number, indicators are in between
+    if len(parts) < 5:
+        raise ValueError(f"Unexpected FUN file format: {sample_file}")
+    
+    # Find indicator parts: after algorithm and problem, before evaluation number
+    # Indicators are uppercase abbreviations, eval number is numeric
+    indicators = []
+    for part in parts[3:-1]:  # Skip FUN, algo, problem, and eval number
+        if part.isnumeric():
+            break
+        # Check if it's a known indicator or looks like one (uppercase, short)
+        if part in INDICATOR_NAMES or (part.isupper() and len(part) <= 6):
+            indicators.append(part)
+    
+    if not indicators:
+        raise ValueError(f"Could not detect indicators from filename: {sample_file}")
+    
+    # Count columns in the file to verify
+    with open(fun_files[0], 'r') as f:
+        first_line = f.readline().strip()
+        n_cols = len(first_line.split(','))
+    
+    if n_cols != len(indicators):
+        print(f"Warning: Detected {len(indicators)} indicators from filename but file has {n_cols} columns")
+        # Fall back to generic names if mismatch
+        indicators = [f"Objective{i+1}" for i in range(n_cols)]
+    
+    print(f"Detected quality indicators: {indicators}")
+    return indicators
+
+
+def load_configurations(results_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
     """
     Load all configuration files and objective values from a results directory.
     
     Returns:
         configs_df: DataFrame with parameter values indexed by evaluation number
         objectives_df: DataFrame with objective values indexed by evaluation number
+        objective_names: List of detected objective/indicator names
     """
     configs = []
     objectives = []
+    
+    # Detect objective names from FUN file naming convention
+    objective_names = detect_objective_names(results_dir)
     
     # Find all DoubleValues configuration files
     config_pattern = re.compile(r"VAR\..*\.Conf\.DoubleValues\.(\d+)\.csv")
@@ -83,12 +147,12 @@ def load_configurations(results_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
             df["evaluation"] = eval_num
             configs.append(df)
     
-    # Load objectives
+    # Load objectives with detected column names
     for fun_file in sorted(results_path.glob("FUN.*.csv")):
         match = fun_pattern.search(fun_file.name)
         if match:
             eval_num = int(match.group(1))
-            obj_df = pd.read_csv(fun_file, header=None, names=["Epsilon", "NormHypervolume"])
+            obj_df = pd.read_csv(fun_file, header=None, names=objective_names)
             obj_df["evaluation"] = eval_num
             objectives.append(obj_df)
     
@@ -98,11 +162,11 @@ def load_configurations(results_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     configs_df = pd.concat(configs, ignore_index=True)
     objectives_df = pd.concat(objectives, ignore_index=True) if objectives else pd.DataFrame()
     
-    return configs_df, objectives_df
+    return configs_df, objectives_df, objective_names
 
 
 def analyze_correlations(configs_df: pd.DataFrame, objectives_df: pd.DataFrame, 
-                         output_dir: Path) -> pd.DataFrame:
+                         output_dir: Path, objective_names: list[str]) -> pd.DataFrame:
     """
     Analyze correlations between parameters and objectives.
     
@@ -118,7 +182,7 @@ def analyze_correlations(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
     obj_means = objectives_df.groupby("evaluation").mean().reset_index()
     merged = configs_df.merge(obj_means, on="evaluation", how="inner")
     
-    # Calculate correlations with objectives
+    # Calculate correlations with all objectives
     correlations = {}
     for param in param_cols:
         if merged[param].std() > 0:  # Skip constant parameters
@@ -135,43 +199,36 @@ def analyze_correlations(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
                         continue
                     
                     if filtered[param].std() > 0:
-                        corr_eps, p_eps = stats.spearmanr(filtered[param], filtered["Epsilon"])
-                        corr_nhv, p_nhv = stats.spearmanr(filtered[param], filtered["NormHypervolume"])
-                        correlations[param] = {
-                            "Epsilon_corr": corr_eps,
-                            "Epsilon_pvalue": p_eps,
-                            "NormHV_corr": corr_nhv,
-                            "NormHV_pvalue": p_nhv,
-                            "n_samples": n_samples,
-                            "is_conditional": True,
-                            "parent_param": parent_param,
-                            "parent_value": valid_value,
-                        }
+                        param_corr = {"n_samples": n_samples, "is_conditional": True,
+                                      "parent_param": parent_param, "parent_value": valid_value}
+                        for obj in objective_names:
+                            corr, p_val = stats.spearmanr(filtered[param], filtered[obj])
+                            param_corr[f"{obj}_corr"] = corr
+                            param_corr[f"{obj}_pvalue"] = p_val
+                        correlations[param] = param_corr
                 else:
                     # Parent not in data, skip
                     continue
             else:
                 # Non-conditional parameter: use all samples
-                corr_eps, p_eps = stats.spearmanr(merged[param], merged["Epsilon"])
-                corr_nhv, p_nhv = stats.spearmanr(merged[param], merged["NormHypervolume"])
-                correlations[param] = {
-                    "Epsilon_corr": corr_eps,
-                    "Epsilon_pvalue": p_eps,
-                    "NormHV_corr": corr_nhv,
-                    "NormHV_pvalue": p_nhv,
-                    "n_samples": len(merged),
-                    "is_conditional": False,
-                    "parent_param": None,
-                    "parent_value": None,
-                }
+                param_corr = {"n_samples": len(merged), "is_conditional": False,
+                              "parent_param": None, "parent_value": None}
+                for obj in objective_names:
+                    corr, p_val = stats.spearmanr(merged[param], merged[obj])
+                    param_corr[f"{obj}_corr"] = corr
+                    param_corr[f"{obj}_pvalue"] = p_val
+                correlations[param] = param_corr
     
     corr_df = pd.DataFrame(correlations).T
-    corr_df["abs_mean_corr"] = (corr_df["Epsilon_corr"].abs() + corr_df["NormHV_corr"].abs()) / 2
+    
+    # Calculate average absolute correlation across all objectives
+    corr_cols = [f"{obj}_corr" for obj in objective_names]
+    corr_df["abs_mean_corr"] = corr_df[corr_cols].abs().mean(axis=1)
     corr_df = corr_df.sort_values("abs_mean_corr", ascending=False)
     
     print("\nTop 10 parameters by correlation with objectives:")
     print("(n = number of valid samples for conditional parameters)")
-    display_cols = ["Epsilon_corr", "NormHV_corr", "abs_mean_corr", "n_samples", "is_conditional"]
+    display_cols = corr_cols + ["abs_mean_corr", "n_samples", "is_conditional"]
     print(corr_df.head(10)[display_cols])
     
     # Show conditional parameters separately
@@ -189,10 +246,10 @@ def analyze_correlations(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
     top_params = corr_df.head(15).index.tolist()
     
     fig, ax = plt.subplots(figsize=(10, 8))
-    corr_matrix = merged[top_params + ["Epsilon", "NormHypervolume"]].corr()
+    corr_matrix = merged[top_params + objective_names].corr()
     sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="RdBu_r", center=0,
                 ax=ax, square=True, linewidths=0.5)
-    plt.title("Parameter-Objective Correlation Matrix (Top 15 Parameters)")
+    plt.title(f"Parameter-Objective Correlation Matrix (Top 15 Parameters)\nObjectives: {', '.join(objective_names)}")
     plt.tight_layout()
     plt.savefig(output_dir / "correlation_heatmap.png", dpi=150)
     plt.close()
@@ -201,7 +258,7 @@ def analyze_correlations(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
 
 
 def perform_pca(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                output_dir: Path) -> tuple[PCA, np.ndarray]:
+                output_dir: Path, objective_names: list[str]) -> tuple[PCA, np.ndarray]:
     """
     Perform PCA on the configuration space.
     """
@@ -273,26 +330,33 @@ def perform_pca(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
         obj_means = objectives_df.groupby("evaluation").mean().reset_index()
         merged = configs_df.merge(obj_means, on="evaluation", how="inner")
         
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+        # Create subplots for each objective
+        n_obj = len(objective_names)
+        n_cols = min(3, n_obj)
+        n_rows = (n_obj + n_cols - 1) // n_cols
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(6 * n_cols, 5 * n_rows))
+        if n_obj == 1:
+            axes = [axes]
+        else:
+            axes = axes.flatten() if n_rows > 1 else (axes if n_obj > 1 else [axes])
         
         # Match PCA indices with merged data
         merged_params = merged[non_constant].values
         merged_scaled = scaler.transform(merged_params)
         merged_pca = pca.transform(merged_scaled)
         
-        sc1 = axes[0].scatter(merged_pca[:, 0], merged_pca[:, 1], 
-                              c=merged["Epsilon"], cmap="viridis", alpha=0.7)
-        axes[0].set_xlabel("PC1")
-        axes[0].set_ylabel("PC2")
-        axes[0].set_title("PCA - Colored by Epsilon")
-        plt.colorbar(sc1, ax=axes[0], label="Epsilon")
+        for i, obj in enumerate(objective_names):
+            ax = axes[i]
+            sc = ax.scatter(merged_pca[:, 0], merged_pca[:, 1], 
+                           c=merged[obj], cmap="viridis", alpha=0.7)
+            ax.set_xlabel("PC1")
+            ax.set_ylabel("PC2")
+            ax.set_title(f"PCA - Colored by {obj}")
+            plt.colorbar(sc, ax=ax, label=obj)
         
-        sc2 = axes[1].scatter(merged_pca[:, 0], merged_pca[:, 1], 
-                              c=merged["NormHypervolume"], cmap="viridis", alpha=0.7)
-        axes[1].set_xlabel("PC1")
-        axes[1].set_ylabel("PC2")
-        axes[1].set_title("PCA - Colored by NormHypervolume")
-        plt.colorbar(sc2, ax=axes[1], label="NormHypervolume")
+        # Hide unused axes
+        for j in range(n_obj, len(axes)):
+            axes[j].set_visible(False)
         
         plt.tight_layout()
         plt.savefig(output_dir / "pca_scatter.png", dpi=150)
@@ -302,7 +366,7 @@ def perform_pca(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
 
 
 def analyze_convergence(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                        output_dir: Path, top_params: list[str]):
+                        output_dir: Path, top_params: list[str], objective_names: list[str]):
     """
     Analyze how parameters converge over evaluations.
     Excludes categorical parameters with few unique values (<=5) as their 
@@ -382,9 +446,16 @@ def analyze_convergence(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
     
     # Objective convergence
     if not objectives_df.empty:
-        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+        n_obj = len(objective_names)
+        n_cols = min(3, n_obj)
+        n_rows = (n_obj + n_cols - 1) // n_cols
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(6 * n_cols, 4 * n_rows))
+        if n_obj == 1:
+            axes = [axes]
+        else:
+            axes = axes.flatten() if n_rows > 1 else (axes if n_obj > 1 else [axes])
         
-        for i, obj in enumerate(["Epsilon", "NormHypervolume"]):
+        for i, obj in enumerate(objective_names):
             ax = axes[i]
             grouped = objectives_df.groupby("evaluation")[obj].agg(["mean", "min", "max"])
             grouped = grouped.sort_index()
@@ -396,6 +467,10 @@ def analyze_convergence(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
             ax.set_ylabel(obj)
             ax.set_title(f"Convergence of {obj}")
             ax.legend()
+        
+        # Hide unused axes
+        for j in range(n_obj, len(axes)):
+            axes[j].set_visible(False)
         
         plt.tight_layout()
         plt.savefig(output_dir / "objective_convergence.png", dpi=150)
@@ -417,7 +492,7 @@ CATEGORICAL_VALUE_LABELS = {
 
 
 def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                                   output_dir: Path) -> pd.DataFrame:
+                                   output_dir: Path, objective_names: list[str]) -> pd.DataFrame:
     """
     Analyze categorical parameters using Kruskal-Wallis test and boxplots.
     
@@ -442,7 +517,10 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
     obj_means = objectives_df.groupby("evaluation").mean().reset_index()
     merged = configs_df.merge(obj_means, on="evaluation", how="inner")
     
-    # Perform Kruskal-Wallis test for each categorical parameter
+    # Use first objective for primary analysis (typically the most important)
+    primary_objective = objective_names[0]
+    
+    # Perform Kruskal-Wallis test for each categorical parameter and each objective
     kruskal_results = []
     
     for param in existing_cats:
@@ -452,57 +530,56 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
             # Skip if only one category present
             continue
         
-        # Group data by category
-        groups_eps = [merged[merged[param] == val]["Epsilon"].values for val in unique_values]
-        groups_nhv = [merged[merged[param] == val]["NormHypervolume"].values for val in unique_values]
-        
-        # Filter out empty groups
-        groups_eps = [g for g in groups_eps if len(g) > 0]
-        groups_nhv = [g for g in groups_nhv if len(g) > 0]
-        
-        if len(groups_eps) < 2:
-            continue
-        
-        # Kruskal-Wallis test
-        stat_eps, p_eps = stats.kruskal(*groups_eps)
-        stat_nhv, p_nhv = stats.kruskal(*groups_nhv)
-        
-        # Calculate effect size (eta-squared approximation)
-        n_total = len(merged)
-        eta_sq_eps = (stat_eps - len(groups_eps) + 1) / (n_total - len(groups_eps))
-        eta_sq_nhv = (stat_nhv - len(groups_nhv) + 1) / (n_total - len(groups_nhv))
-        
         # Get category labels
         labels = CATEGORICAL_VALUE_LABELS.get(param, {})
         categories_str = ", ".join([labels.get(v, str(v)) for v in sorted(unique_values)])
         
-        kruskal_results.append({
+        result_row = {
             "parameter": param,
             "n_categories": len(unique_values),
             "categories": categories_str,
-            "H_statistic_eps": stat_eps,
-            "p_value_eps": p_eps,
-            "significant_eps": p_eps < 0.05,
-            "H_statistic_nhv": stat_nhv,
-            "p_value_nhv": p_nhv,
-            "significant_nhv": p_nhv < 0.05,
-            "eta_sq_eps": max(0, eta_sq_eps),  # Clamp to 0 if negative
-            "eta_sq_nhv": max(0, eta_sq_nhv),
-        })
+        }
+        
+        # Perform Kruskal-Wallis test for each objective
+        for obj in objective_names:
+            groups = [merged[merged[param] == val][obj].values for val in unique_values]
+            groups = [g for g in groups if len(g) > 0]
+            
+            if len(groups) < 2:
+                continue
+            
+            stat, p_val = stats.kruskal(*groups)
+            n_total = len(merged)
+            eta_sq = max(0, (stat - len(groups) + 1) / (n_total - len(groups)))
+            
+            result_row[f"H_stat_{obj}"] = stat
+            result_row[f"p_value_{obj}"] = p_val
+            result_row[f"significant_{obj}"] = p_val < 0.05
+            result_row[f"eta_sq_{obj}"] = eta_sq
+        
+        kruskal_results.append(result_row)
     
     kruskal_df = pd.DataFrame(kruskal_results)
     
     if len(kruskal_df) > 0:
-        kruskal_df = kruskal_df.sort_values("p_value_eps")
+        # Sort by p-value of primary objective
+        p_col = f"p_value_{primary_objective}"
+        if p_col in kruskal_df.columns:
+            kruskal_df = kruskal_df.sort_values(p_col)
         
-        print("\nKruskal-Wallis Test Results (H0: no difference between categories):")
+        print(f"\nKruskal-Wallis Test Results (H0: no difference between categories):")
+        print(f"Objectives: {', '.join(objective_names)}")
         print("-" * 80)
         for _, row in kruskal_df.iterrows():
-            sig_eps = "***" if row["p_value_eps"] < 0.001 else "**" if row["p_value_eps"] < 0.01 else "*" if row["p_value_eps"] < 0.05 else ""
-            sig_nhv = "***" if row["p_value_nhv"] < 0.001 else "**" if row["p_value_nhv"] < 0.01 else "*" if row["p_value_nhv"] < 0.05 else ""
             print(f"\n{row['parameter']} ({row['n_categories']} categories: {row['categories']})")
-            print(f"  Epsilon:    H={row['H_statistic_eps']:.2f}, p={row['p_value_eps']:.4f} {sig_eps}, η²={row['eta_sq_eps']:.3f}")
-            print(f"  NormHV:     H={row['H_statistic_nhv']:.2f}, p={row['p_value_nhv']:.4f} {sig_nhv}, η²={row['eta_sq_nhv']:.3f}")
+            for obj in objective_names:
+                h_col = f"H_stat_{obj}"
+                p_col = f"p_value_{obj}"
+                eta_col = f"eta_sq_{obj}"
+                if h_col in row and pd.notna(row[h_col]):
+                    p_val = row[p_col]
+                    sig = "***" if p_val < 0.001 else "**" if p_val < 0.01 else "*" if p_val < 0.05 else ""
+                    print(f"  {obj}: H={row[h_col]:.2f}, p={p_val:.4f} {sig}, η²={row[eta_col]:.3f}")
         
         print("\n(* p<0.05, ** p<0.01, *** p<0.001)")
         print("η² (eta-squared): effect size - small≈0.01, medium≈0.06, large≈0.14")
@@ -510,7 +587,7 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
         # Save results
         kruskal_df.to_csv(output_dir / "categorical_kruskal_wallis.csv", index=False)
     
-    # Create improved boxplots with category labels
+    # Create improved boxplots with category labels (using primary objective)
     params_to_plot = [p for p in existing_cats if merged[p].nunique() > 1]
     n_params = len(params_to_plot)
     
@@ -527,13 +604,13 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
         for i, param in enumerate(params_to_plot):
             ax = axes[i]
             
-            # Create labeled data
+            # Create labeled data using primary objective
             labels_map = CATEGORICAL_VALUE_LABELS.get(param, {})
             plot_data = []
             plot_labels = []
             
             for val in sorted(merged[param].unique()):
-                data = merged[merged[param] == val]["Epsilon"].values
+                data = merged[merged[param] == val][primary_objective].values
                 if len(data) > 0:
                     plot_data.append(data)
                     label = labels_map.get(val, f"{val}")
@@ -547,15 +624,16 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
             for patch, color in zip(bp['boxes'], colors):
                 patch.set_facecolor(color)
             
-            ax.set_ylabel("Epsilon")
+            ax.set_ylabel(primary_objective)
             ax.set_title(f"{param}")
             ax.tick_params(axis='x', rotation=45)
             
             # Add significance annotation if available
-            if len(kruskal_df) > 0:
+            p_col = f"p_value_{primary_objective}"
+            if len(kruskal_df) > 0 and p_col in kruskal_df.columns:
                 row = kruskal_df[kruskal_df["parameter"] == param]
                 if len(row) > 0:
-                    p_val = row.iloc[0]["p_value_eps"]
+                    p_val = row.iloc[0][p_col]
                     sig = "***" if p_val < 0.001 else "**" if p_val < 0.01 else "*" if p_val < 0.05 else "ns"
                     ax.annotate(f"p={p_val:.3f} {sig}", xy=(0.95, 0.95), xycoords='axes fraction',
                                ha='right', va='top', fontsize=9,
@@ -565,7 +643,7 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
         for j in range(i + 1, len(axes)):
             axes[j].set_visible(False)
         
-        plt.suptitle("Categorical Parameter Impact on Epsilon (Kruskal-Wallis)", y=1.02, fontsize=12)
+        plt.suptitle(f"Categorical Parameter Impact on {primary_objective} (Kruskal-Wallis)", y=1.02, fontsize=12)
         plt.tight_layout()
         plt.savefig(output_dir / "categorical_analysis.png", dpi=150, bbox_inches='tight')
         plt.close()
@@ -574,7 +652,8 @@ def analyze_categorical_parameters(configs_df: pd.DataFrame, objectives_df: pd.D
 
 
 def generate_report(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
-                    corr_df: pd.DataFrame, kruskal_df: pd.DataFrame, output_dir: Path):
+                    corr_df: pd.DataFrame, kruskal_df: pd.DataFrame, 
+                    output_dir: Path, objective_names: list[str]):
     """
     Generate a summary report.
     """
@@ -586,21 +665,36 @@ def generate_report(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
     report.append(f"- Total configurations: {len(configs_df)}")
     report.append(f"- Evaluation range: {configs_df['evaluation'].min()} - {configs_df['evaluation'].max()}")
     report.append(f"- Number of parameters: {len(configs_df.columns) - 1}")
+    report.append(f"- Quality indicators: {', '.join(objective_names)}")
     
     if not objectives_df.empty:
         report.append("\n## Objective Statistics\n")
-        report.append(f"- Best Epsilon: {objectives_df['Epsilon'].min():.4f}")
-        report.append(f"- Best NormHypervolume: {objectives_df['NormHypervolume'].min():.4f}")
+        for obj in objective_names:
+            report.append(f"- Best {obj}: {objectives_df[obj].min():.4f}")
         report.append(f"- Final Pareto front size: {len(objectives_df[objectives_df['evaluation'] == objectives_df['evaluation'].max()])}")
     
     report.append("\n## Top 10 Most Important Parameters (by correlation)\n")
     report.append("*Note: Conditional parameters are only correlated using samples where the parent parameter has the appropriate value.*\n")
-    report.append("| Parameter | Epsilon Corr | NormHV Corr | Avg |Abs| Corr | n | Conditional |")
-    report.append("|-----------|--------------|-------------|-----------------|---|-------------|")
+    
+    # Build dynamic header
+    header_parts = ["Parameter"]
+    header_parts.extend([f"{obj} Corr" for obj in objective_names])
+    header_parts.extend(["Avg |Abs| Corr", "n", "Conditional"])
+    report.append("| " + " | ".join(header_parts) + " |")
+    report.append("|" + "|".join(["---" for _ in header_parts]) + "|")
+    
     for param, row in corr_df.head(10).iterrows():
         is_cond = "Yes" if row.get("is_conditional", False) else "No"
         n_samples = int(row.get("n_samples", 0))
-        report.append(f"| {param} | {row['Epsilon_corr']:.3f} | {row['NormHV_corr']:.3f} | {row['abs_mean_corr']:.3f} | {n_samples} | {is_cond} |")
+        row_parts: list[str] = [str(param)]
+        for obj in objective_names:
+            corr_col = f"{obj}_corr"
+            if corr_col in row:
+                row_parts.append(f"{row[corr_col]:.3f}")
+            else:
+                row_parts.append("N/A")
+        row_parts.extend([f"{row['abs_mean_corr']:.3f}", str(n_samples), is_cond])
+        report.append("| " + " | ".join(row_parts) + " |")
     
     # Add conditional parameters section
     conditional_params = corr_df[corr_df.get("is_conditional", False) == True]
@@ -615,24 +709,46 @@ def generate_report(configs_df: pd.DataFrame, objectives_df: pd.DataFrame,
     if len(kruskal_df) > 0:
         report.append("\n## Categorical Parameters (Kruskal-Wallis Test)\n")
         report.append("*For categorical parameters, Spearman correlation is not appropriate. Kruskal-Wallis H-test is used to determine if there are statistically significant differences between groups.*\n")
-        report.append("\n| Parameter | H-statistic (ε) | p-value (ε) | H-statistic (HV) | p-value (HV) | Groups | Significant? |")
-        report.append("|-----------|-----------------|-------------|------------------|--------------|--------|--------------|")
-        for _, row in kruskal_df.iterrows():
-            sig_eps = row['p_value_eps'] < 0.05
-            sig_nhv = row['p_value_nhv'] < 0.05
-            sig = "Yes" if (sig_eps or sig_nhv) else "No"
-            report.append(f"| {row['parameter']} | {row['H_statistic_eps']:.2f} | {row['p_value_eps']:.4f} | {row['H_statistic_nhv']:.2f} | {row['p_value_nhv']:.4f} | {row['n_categories']} | {sig} |")
         
-        # Interpretation
+        # Build dynamic header for Kruskal-Wallis
+        kw_header = ["Parameter"]
+        for obj in objective_names:
+            kw_header.extend([f"H ({obj})", f"p ({obj})"])
+        kw_header.extend(["Groups", "Significant?"])
+        report.append("| " + " | ".join(kw_header) + " |")
+        report.append("|" + "|".join(["---" for _ in kw_header]) + "|")
+        
+        for _, row in kruskal_df.iterrows():
+            row_parts = [row['parameter']]
+            any_significant = False
+            for obj in objective_names:
+                h_col = f"H_stat_{obj}"
+                p_col = f"p_value_{obj}"
+                if h_col in row and pd.notna(row[h_col]):
+                    row_parts.append(f"{row[h_col]:.2f}")
+                    row_parts.append(f"{row[p_col]:.4f}")
+                    if row[p_col] < 0.05:
+                        any_significant = True
+                else:
+                    row_parts.extend(["N/A", "N/A"])
+            row_parts.append(str(row['n_categories']))
+            row_parts.append("Yes" if any_significant else "No")
+            report.append("| " + " | ".join(row_parts) + " |")
+        
+        # Interpretation using primary objective
+        primary = objective_names[0]
+        p_col = f"p_value_{primary}"
+        h_col = f"H_stat_{primary}"
         report.append("\n### Interpretation\n")
-        significant = kruskal_df[kruskal_df['p_value_eps'] < 0.05]
-        if len(significant) > 0:
-            report.append("The following categorical parameters show **statistically significant** impact on Epsilon (p < 0.05):\n")
-            for _, row in significant.iterrows():
-                effect = "large" if row['H_statistic_eps'] > 50 else "medium" if row['H_statistic_eps'] > 20 else "small"
-                report.append(f"- **{row['parameter']}**: H={row['H_statistic_eps']:.2f}, p={row['p_value_eps']:.4f} ({effect} effect)")
-        else:
-            report.append("No categorical parameters show statistically significant impact on objectives at α=0.05 level.")
+        if p_col in kruskal_df.columns:
+            significant = kruskal_df[kruskal_df[p_col] < 0.05]
+            if len(significant) > 0:
+                report.append(f"The following categorical parameters show **statistically significant** impact on {primary} (p < 0.05):\n")
+                for _, row in significant.iterrows():
+                    effect = "large" if row[h_col] > 50 else "medium" if row[h_col] > 20 else "small"
+                    report.append(f"- **{row['parameter']}**: H={row[h_col]:.2f}, p={row[p_col]:.4f} ({effect} effect)")
+            else:
+                report.append(f"No categorical parameters show statistically significant impact on {primary} at α=0.05 level.")
     
     report.append("\n## Generated Files\n")
     report.append("- `parameter_correlations.csv`: Full correlation analysis (with conditional info)")
@@ -665,24 +781,25 @@ def main():
     print(f"Loading data from: {input_dir}")
     print(f"Output directory: {output_dir}")
     
-    # Load data
-    configs_df, objectives_df = load_configurations(input_dir)
+    # Load data (now also returns detected objective names)
+    configs_df, objectives_df, objective_names = load_configurations(input_dir)
     print(f"Loaded {len(configs_df)} configurations across {configs_df['evaluation'].nunique()} evaluations")
+    print(f"Quality indicators: {', '.join(objective_names)}")
     
-    # Run analyses
-    corr_df = analyze_correlations(configs_df, objectives_df, output_dir)
-    pca, X_pca = perform_pca(configs_df, objectives_df, output_dir)
+    # Run analyses (passing objective_names to all functions)
+    corr_df = analyze_correlations(configs_df, objectives_df, output_dir, objective_names)
+    pca, X_pca = perform_pca(configs_df, objectives_df, output_dir, objective_names)
     
     top_params = corr_df.head(10).index.tolist()
-    analyze_convergence(configs_df, objectives_df, output_dir, top_params)
-    kruskal_df = analyze_categorical_parameters(configs_df, objectives_df, output_dir)
+    analyze_convergence(configs_df, objectives_df, output_dir, top_params, objective_names)
+    kruskal_df = analyze_categorical_parameters(configs_df, objectives_df, output_dir, objective_names)
     
     # Save Kruskal-Wallis results
     if len(kruskal_df) > 0:
         kruskal_df.to_csv(output_dir / "kruskal_wallis_results.csv", index=False)
     
     # Generate report
-    generate_report(configs_df, objectives_df, corr_df, kruskal_df, output_dir)
+    generate_report(configs_df, objectives_df, corr_df, kruskal_df, output_dir, objective_names)
     
     print(f"\nAnalysis complete! Results saved to {output_dir}")
 
