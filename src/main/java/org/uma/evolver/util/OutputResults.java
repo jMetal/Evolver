@@ -12,8 +12,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
-public class OutputResults {
-  private int evaluations ;
+public class OutputResults implements EvaluationOutputWriter {
+  private int evaluations;
 
   String algorithmName;
   MetaOptimizationProblem<?> configurableAlgorithmProblem;
@@ -71,8 +71,8 @@ public class OutputResults {
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription)
       throws IOException {
-    var varWithDecodedDoubleValuesSolutionsFileName =
-        outputDirectoryName + "/VAR." + problemDescription + ".Conf.DoubleValues" + "." + evaluations + ".csv" ;
+    var varWithDecodedDoubleValuesSolutionsFileName = outputDirectoryName + "/VAR." + problemDescription
+        + ".Conf.DoubleValues" + "." + evaluations + ".csv";
 
     ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
         configurableAlgorithmProblem.parameters(),
@@ -85,8 +85,8 @@ public class OutputResults {
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription)
       throws IOException {
-    var varWithDecodedSolutionsFileName =
-        outputDirectoryName + "/VAR." + problemDescription + ".Conf." + evaluations + ".txt" ;
+    var varWithDecodedSolutionsFileName = outputDirectoryName + "/VAR." + problemDescription + ".Conf." + evaluations
+        + ".txt";
 
     ParameterManagement.writeDecodedSolutionsFoFile(
         configurableAlgorithmProblem.parameters(),
@@ -98,7 +98,7 @@ public class OutputResults {
       NonDominatedSolutionListArchive<DoubleSolution> nonDominatedSolutionsArchive,
       String problemDescription) {
     var varFileName = outputDirectoryName + "/VAR." + problemDescription + "." + evaluations + ".csv";
-    var funFileName = outputDirectoryName + "/FUN." + problemDescription + "." + evaluations + ".csv" ;
+    var funFileName = outputDirectoryName + "/FUN." + problemDescription + "." + evaluations + ".csv";
     new SolutionListOutput(nonDominatedSolutionsArchive.solutions())
         .setVarFileOutputContext(new DefaultFileOutputContext(varFileName, ","))
         .setFunFileOutputContext(new DefaultFileOutputContext(funFileName, ","))

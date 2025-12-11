@@ -10,20 +10,22 @@ import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
 
 /**
- * This observer stores a solution list in files. Concretely, the variables and objectives are
- * written in files called VAR.x.tsv and VAR.x.tsv, respectively (x is an iteration counter). The
+ * This observer stores a solution list in files. Concretely, the variables and
+ * objectives are
+ * written in files called VAR.x.tsv and VAR.x.tsv, respectively (x is an
+ * iteration counter). The
  * frequency of the writes are set by a parameter.
  *
  * @author Antonio J. Nebro
  */
 public class WriteExecutionDataToFilesObserver implements Observer<Map<String, Object>> {
 
-  private OutputResults outputResults;
+  private EvaluationOutputWriter outputResults;
   private int frequency;
 
   /** Constructor */
   public WriteExecutionDataToFilesObserver(
-          int frequency, OutputResults outputResultsManagement) {
+      int frequency, EvaluationOutputWriter outputResultsManagement) {
     this.outputResults = outputResultsManagement;
     this.frequency = frequency;
   }
