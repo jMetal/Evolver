@@ -22,7 +22,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <p>
  * Generates:
  * <ul>
- * <li>METADATA.txt: Experiment context and timestamp.
+ * <li>METADATA.txt: Comprehensive experiment metadata including both
+ * algorithms.
  * <li>INDICATORS.csv: Quality indicator values for each solution over time.
  * <li>CONFIGURATIONS.csv: Decoded parameter values for each solution over time.
  * <li>VAR_CONF.txt: Human-readable configurations with indicator values,
@@ -32,11 +33,11 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
     private int evaluations;
-    private final String algorithmName;
     private final MetaOptimizationProblem<?> configurableAlgorithmProblem;
     private final String problemName;
     private final List<QualityIndicator> indicators;
     private final String outputDirectoryName;
+    private final MetaOptimizerConfig config;
 
     private boolean headersWritten = false;
 
@@ -46,11 +47,23 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             String problemName,
             List<QualityIndicator> indicators,
             String outputDirectoryName) {
-        this.algorithmName = algorithmName;
+        this(configurableAlgorithmProblem, problemName, indicators, outputDirectoryName,
+                MetaOptimizerConfig.builder()
+                        .baseLevelAlgorithmName(algorithmName)
+                        .build());
+    }
+
+    public ConsolidatedOutputResults(
+            MetaOptimizationProblem<?> configurableAlgorithmProblem,
+            String problemName,
+            List<QualityIndicator> indicators,
+            String outputDirectoryName,
+            MetaOptimizerConfig config) {
         this.configurableAlgorithmProblem = configurableAlgorithmProblem;
         this.problemName = problemName;
         this.indicators = indicators;
         this.outputDirectoryName = outputDirectoryName;
+        this.config = config;
 
         createOutputDirectory();
         writeMetadata();
@@ -73,21 +86,58 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile))) {
-            writer.write("Algorithm: " + algorithmName);
-            writer.newLine();
-            writer.write("Problem: " + problemName);
+            // Header
+            writer.write("=== Meta-Optimization Experiment ===");
             writer.newLine();
             writer.write("Date: " + LocalDateTime.now());
             writer.newLine();
-            writer.write("Objectives: "
-                    + indicators.stream().map(QualityIndicator::name).collect(Collectors.joining(", ")));
+            writer.newLine();
+
+            // Meta-Optimizer Section
+            writer.write("--- Meta-Optimizer ---");
+            writer.newLine();
+            writer.write("Algorithm: " + config.metaOptimizerName());
+            writer.newLine();
+            writer.write("Max Evaluations: " + config.metaMaxEvaluations());
+            writer.newLine();
+            writer.write("Population Size: " + config.metaPopulationSize());
+            writer.newLine();
+            writer.write("Cores: " + config.numberOfCores());
+            writer.newLine();
+            writer.newLine();
+
+            // Base-Level Algorithm Section
+            writer.write("--- Base-Level Algorithm ---");
+            writer.newLine();
+            writer.write("Algorithm: " + config.baseLevelAlgorithmName());
+            writer.newLine();
+            writer.write("Population/Swarm Size: " + config.baseLevelPopulationSize());
+            writer.newLine();
+            writer.write("Evaluation Strategy: " + config.evaluationBudgetStrategy());
+            writer.newLine();
+            writer.write("Parameter Space: " + config.yamlParameterSpaceFile());
             writer.newLine();
             writer.write("Optimizable Parameters: " + configurableAlgorithmProblem.numberOfVariables());
+            writer.newLine();
+            writer.newLine();
+
+            // Training Problems Section
+            writer.write("--- Training Set ---");
+            writer.newLine();
+            writer.write("Problem Family: " + problemName);
             writer.newLine();
             writer.write("Problems: "
                     + configurableAlgorithmProblem.getProblems().stream()
                             .map(Problem::name)
                             .collect(Collectors.joining(", ")));
+            writer.newLine();
+            writer.newLine();
+
+            // Objectives Section
+            writer.write("--- Quality Indicators ---");
+            writer.newLine();
+            writer.write("Indicators: "
+                    + indicators.stream().map(QualityIndicator::name).collect(Collectors.joining(", ")));
             writer.newLine();
         } catch (IOException e) {
             throw new JMetalException("Error writing metadata", e);
