@@ -22,77 +22,83 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII}
- * using the WFG
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the WFG
  * problems as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
-    public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+  public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
-        // Step 1: Select the target problem
-        ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo();
+    // Step 1: Select the target problem
+    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new WFG2DProblemFamilyInfo();
 
-        List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-        List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
+    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
 
-        // Step 2: Set the parameters for the algorithm to be configured
-        var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-        var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-        var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
-        int numberOfIndependentRuns = 1;
+    // Step 2: Set the parameters for the algorithm to be configured
+    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
+    int numberOfIndependentRuns = 1;
 
-        EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+    EvaluationBudgetStrategy evaluationBudgetStrategy =
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
-        MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
-                baseAlgorithm,
-                trainingSet,
-                referenceFrontFileNames,
-                indicators,
-                evaluationBudgetStrategy,
-                numberOfIndependentRuns);
+    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+        new MetaOptimizationProblem<>(
+            baseAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            evaluationBudgetStrategy,
+            numberOfIndependentRuns);
 
-        // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
-        // specialized double
-        // builder
-        int maxEvaluations = 2000;
-        int numberOfCores = 8;
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+    // specialized double
+    // builder
+    int maxEvaluations = 2000;
+    int numberOfCores = 8;
 
-        AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii = new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
-                .setNumberOfCores(numberOfCores)
-                .setPopulationSize(50)
-                .setMaxEvaluations(maxEvaluations)
-                .build();
+    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
+        new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
+            .setNumberOfCores(numberOfCores)
+            .setPopulationSize(50)
+            .setMaxEvaluations(maxEvaluations)
+            .build();
 
-        // Step 4: Create observers for the meta-optimizer
-        var outputResults = new ConsolidatedOutputResults(
-                "AsyncNSGA-II", metaOptimizationProblem, "WFG", indicators, "RESULTS/NSGAII/" + "WFG");
+    // Step 4: Create observers for the meta-optimizer
+    var outputResults =
+        new ConsolidatedOutputResults(
+            "AsyncNSGA-II", metaOptimizationProblem, "WFG", indicators, "results/nsgaii/" + "WFG");
 
-        var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(100, outputResults);
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(100, outputResults);
 
-        var evaluationObserver = new EvaluationObserver(500);
-        var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "NSGA-II, " + "WFG",
-                indicators.get(0).name(),
-                indicators.get(1).name(),
-                trainingSet.get(0).name(),
-                100);
+    var evaluationObserver = new EvaluationObserver(500);
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>(
+            "NSGA-II, " + "WFG",
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            trainingSet.get(0).name(),
+            100);
 
-        nsgaii.observable().register(evaluationObserver);
-        nsgaii.observable().register(frontChartObserver);
-        nsgaii.observable().register(writeExecutionDataToFilesObserver);
+    nsgaii.observable().register(evaluationObserver);
+    nsgaii.observable().register(frontChartObserver);
+    nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
-        // Step 5: Run the meta-optimizer
-        nsgaii.run();
+    // Step 5: Run the meta-optimizer
+    nsgaii.run();
 
-        // Step 6: Write results
-        outputResults.updateEvaluations(maxEvaluations);
-        outputResults.writeResultsToFiles(nsgaii.result());
+    // Step 6: Write results
+    outputResults.updateEvaluations(maxEvaluations);
+    outputResults.writeResultsToFiles(nsgaii.result());
 
-        System.exit(0);
-    }
+    System.exit(0);
+  }
 }

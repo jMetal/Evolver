@@ -64,7 +64,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
         // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
         // specialized double builder
         int maxEvaluations = 100;
-        int numberOfCores = 1;
+        int numberOfCores = 8;
 
         EvolutionaryAlgorithm<DoubleSolution> nsgaii = new MetaNSGAIIBuilder(metaOptimizationProblem,
                 new NSGAIIDoubleParameterSpace())

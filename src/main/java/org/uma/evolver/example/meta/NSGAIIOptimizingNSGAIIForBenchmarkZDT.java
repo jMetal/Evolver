@@ -9,7 +9,8 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.Evaluati
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.OutputResults;
+import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
 import org.uma.evolver.util.problemfamilyinfo.ZDTProblemFamilyInfo;
@@ -59,7 +60,8 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+    // specialized double
     // builder
     int maxEvaluations = 2000;
     int numberOfCores = 8;
@@ -72,14 +74,27 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II";
-    String problemName = "ZDT";
+    String problemName = problemFamilyInfo.name();
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(maxEvaluations)
+            .metaPopulationSize(100)
+            .numberOfCores(numberOfCores)
+            .baseLevelAlgorithmName("NSGA-II")
+            .baseLevelPopulationSize(100)
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
+
     var outputResults =
-        new OutputResults(
-            algorithmName,
+        new ConsolidatedOutputResults(
             metaOptimizationProblem,
             problemName,
             indicators,
-            "RESULTS/NSGAII/" + problemName);
+            "results/nsgaii/" + problemName,
+            config);
 
     int writeFrequency = 1;
     var writeExecutionDataToFilesObserver =

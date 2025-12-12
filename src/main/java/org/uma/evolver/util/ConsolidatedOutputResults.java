@@ -13,6 +13,8 @@ import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
@@ -156,9 +158,13 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             headersWritten = true;
         }
 
-        writeIndicators(solutions);
-        writeConfigurations(solutions);
-        writeVarConf(solutions);
+        Archive<DoubleSolution> archive = new NonDominatedSolutionListArchive<>();
+        solutions.forEach(archive::add);
+        List<DoubleSolution> nonDominatedSolutions = archive.solutions();
+
+        writeIndicators(nonDominatedSolutions);
+        writeConfigurations(nonDominatedSolutions);
+        writeVarConf(nonDominatedSolutions);
     }
 
     private void writeHeaders() throws IOException {
