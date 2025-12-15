@@ -35,8 +35,7 @@ public class AblationResult {
         List<ParameterContribution> ranked = new ArrayList<>(contributions);
         ranked.sort((a, b) -> Double.compare(
                 Arrays.stream(b.contribution()).map(Math::abs).sum(),
-                Arrays.stream(a.contribution()).map(Math::abs).sum()
-        ));
+                Arrays.stream(a.contribution()).map(Math::abs).sum()));
         return ranked;
     }
 
@@ -55,7 +54,8 @@ public class AblationResult {
     }
 
     /**
-     * Calculates the percentage contribution of each parameter to total improvement.
+     * Calculates the percentage contribution of each parameter to total
+     * improvement.
      */
     public Map<String, double[]> getPercentageContributions() {
         double[] total = getTotalImprovement();
@@ -84,7 +84,8 @@ public class AblationResult {
         sb.append("║ Indicators: ");
         for (int i = 0; i < indicators.size(); i++) {
             sb.append(indicators.get(i).name());
-            if (i < indicators.size() - 1) sb.append(", ");
+            if (i < indicators.size() - 1)
+                sb.append(", ");
         }
         sb.append("\n");
 
@@ -149,12 +150,52 @@ public class AblationResult {
         return sb.toString();
     }
 
+    /**
+     * Exports ablation path to CSV format.
+     */
+    public String pathToCSV() {
+        StringBuilder sb = new StringBuilder();
+
+        // Header
+        sb.append("Step,Parameter,FromValue,ToValue");
+        for (QualityIndicator ind : indicators) {
+            sb.append(",Performance_").append(ind.name());
+        }
+        sb.append("\n");
+
+        // Initial state (Step 0)
+        if (defaultPerformance != null) {
+            sb.append("0,Observed_Baseline,-,-");
+            for (double val : defaultPerformance) {
+                sb.append(",").append(val);
+            }
+            sb.append("\n");
+        }
+
+        // Steps
+        int stepNum = 1;
+        for (AblationStep step : ablationPath) {
+            sb.append(stepNum++).append(",");
+            sb.append(step.parameterChanged()).append(",");
+            sb.append(step.fromValue()).append(",");
+            sb.append(step.toValue());
+            for (double val : step.performanceAfter()) {
+                sb.append(",").append(val);
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
     private String formatArray(double[] arr) {
-        if (arr == null) return "null";
+        if (arr == null)
+            return "null";
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < arr.length; i++) {
             sb.append(String.format("%.6f", arr[i]));
-            if (i < arr.length - 1) sb.append(", ");
+            if (i < arr.length - 1)
+                sb.append(", ");
         }
         sb.append("]");
         return sb.toString();

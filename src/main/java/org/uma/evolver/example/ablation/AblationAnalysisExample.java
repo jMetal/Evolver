@@ -20,19 +20,25 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.VectorUtils;
 
 /**
- * Example demonstrating ablation analysis on NSGA-II configurations for the RE21 (Four-bar truss
+ * Example demonstrating ablation analysis on NSGA-II configurations for the
+ * RE21 (Four-bar truss
  * design) problem.
  *
- * <p>This example shows how to use the AblationAnalyzer (configured for a single problem) to
- * understand the contribution of individual parameter changes from a default configuration to an
+ * <p>
+ * This example shows how to use the AblationAnalyzer (configured for a single
+ * problem) to
+ * understand the contribution of individual parameter changes from a default
+ * configuration to an
  * optimized one.
  *
- * <p>The ablation analysis helps answer questions like:
+ * <p>
+ * The ablation analysis helps answer questions like:
  *
  * <ul>
- *   <li>Which parameters contribute most to the performance improvement?
- *   <li>Are there parameters that can be reverted to default without significant loss?
- *   <li>What is the order of importance of parameter changes?
+ * <li>Which parameters contribute most to the performance improvement?
+ * <li>Are there parameters that can be reverted to default without significant
+ * loss?
+ * <li>What is the order of importance of parameter changes?
  * </ul>
  *
  * @author Antonio J. Nebro
@@ -56,32 +62,28 @@ public class AblationAnalysisExample {
     List<QualityIndicator> indicators = List.of(new Epsilon(), new NormalizedHypervolume());
 
     // Default NSGA-II configuration
-    String defaultConfigString =
-        "--algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation --offspringPopulationSize 100 --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds --sbxDistributionIndex 20.0 --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0 --selection tournament --selectionTournamentSize 2";
+    String defaultConfigString = "--algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation --offspringPopulationSize 100 --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds --sbxDistributionIndex 20.0 --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0 --selection tournament --selectionTournamentSize 2";
     Map<String, String> defaultConfig = parseConfiguration(defaultConfigString);
 
     // Optimized configuration
-    String optimizedConfigString =
-        "--algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions scatterSearch --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.97 --crossoverRepairStrategy random --sbxDistributionIndex 133.8 --mutation uniform --mutationProbabilityFactor 0.51 --mutationRepairStrategy random --uniformMutationPerturbation 0.23 --selection tournament --selectionTournamentSize 5";
+    String optimizedConfigString = "--algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions scatterSearch --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.97 --crossoverRepairStrategy random --sbxDistributionIndex 133.8 --mutation uniform --mutationProbabilityFactor 0.51 --mutationRepairStrategy random --uniformMutationPerturbation 0.23 --selection tournament --selectionTournamentSize 5";
     Map<String, String> optimizedConfig = parseConfiguration(optimizedConfigString);
 
     // Create the base algorithm template
-    YAMLParameterSpace parameterSpace =
-        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    YAMLParameterSpace parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
 
     // Prepare problem wrapper for AblationAnalyzer
     var problemWithRefFront = new ProblemWithReferenceFront<>(problem, referenceFront, "RE21");
 
     // Create analyzer
-    var analyzer =
-        new AblationAnalyzer<DoubleSolution>(
-            baseAlgorithm,
-            List.of(problemWithRefFront),
-            indicators,
-            maxEvaluations,
-            numberOfRuns,
-            parameterSpace);
+    var analyzer = new AblationAnalyzer<DoubleSolution>(
+        baseAlgorithm,
+        List.of(problemWithRefFront),
+        indicators,
+        maxEvaluations,
+        numberOfRuns,
+        parameterSpace);
 
     System.out.println("╔══════════════════════════════════════════════════════════════╗");
     System.out.println("║           ABLATION ANALYSIS FOR NSGA-II ON RE21              ║");
@@ -109,8 +111,14 @@ public class AblationAnalysisExample {
     System.out.println("Starting Forward Path Ablation Analysis...\n");
 
     // Perform forward path analysis
+    // Perform forward path analysis
     AblationResult pathResult = analyzer.forwardPathAnalysis(defaultConfig, optimizedConfig);
     System.out.println(pathResult);
+
+    // Export Path to CSV
+    String pathCsvOutput = pathResult.pathToCSV();
+    Files.writeString(Paths.get("ablation_path_RE21.csv"), pathCsvOutput);
+    System.out.println("Path results exported to ablation_path_RE21.csv\n");
   }
 
   private static Map<String, String> parseConfiguration(String configurationLine) {

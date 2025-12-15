@@ -70,7 +70,7 @@ public class MultiProblemAblationAnalysisExample {
     // Define optimized configuration (example: from meta-optimization on ZDT
     // training set)
     String optimizedConfigString =
-        "--algorithmResult externalArchive --populationSizeWithArchive 50 --archiveType crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 50 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.95 --crossoverRepairStrategy bounds --sbxDistributionIndex 15.0 --mutation uniform --mutationProbabilityFactor 0.8 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.3 --selection tournament --selectionTournamentSize 4";
+        "--algorithmResult externalArchive --populationSizeWithArchive 20 --archiveType crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 1 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.6729893472234677 --crossoverRepairStrategy random --sbxDistributionIndex 16.497600223910695 --mutation linkedPolynomial --mutationProbabilityFactor 0.9913896382476491 --mutationRepairStrategy bounds --linkedPolynomialMutationDistributionIndex 9.247660639092558 --selection tournament --selectionTournamentSize 3 ";
     Map<String, String> optimizedConfig = parseConfiguration(optimizedConfigString);
 
     System.out.println("=== Multi-Problem Ablation Analysis for NSGA-II ===");

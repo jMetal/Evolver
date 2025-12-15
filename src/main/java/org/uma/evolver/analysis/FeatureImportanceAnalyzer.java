@@ -22,17 +22,23 @@ import smile.regression.RandomForest;
 /**
  * Analyzes feature importance of algorithm parameters using Random Forest.
  *
- * <p>This analyzer reads the output files from a meta-optimization experiment (CONFIGURATIONS.csv
- * and INDICATORS.csv) and trains a Random Forest model to determine which parameters most strongly
+ * <p>
+ * This analyzer reads the output files from a meta-optimization experiment
+ * (CONFIGURATIONS.csv
+ * and INDICATORS.csv) and trains a Random Forest model to determine which
+ * parameters most strongly
  * influence the quality indicators.
  *
- * <p>Two importance measures are provided:
+ * <p>
+ * Two importance measures are provided:
  *
  * <ul>
- *   <li><b>Gini Importance</b>: Built-in Random Forest importance based on the decrease in impurity
- *       when a variable is used for splitting.
- *   <li><b>Permutation Importance</b>: More robust measure that calculates the decrease in model
- *       performance when a feature's values are permuted.
+ * <li><b>Gini Importance</b>: Built-in Random Forest importance based on the
+ * decrease in impurity
+ * when a variable is used for splitting.
+ * <li><b>Permutation Importance</b>: More robust measure that calculates the
+ * decrease in model
+ * performance when a feature's values are permuted.
  * </ul>
  *
  * @author Antonio J. Nebro
@@ -54,7 +60,8 @@ public class FeatureImportanceAnalyzer {
   /**
    * Creates a new FeatureImportanceAnalyzer.
    *
-   * @param resultsDirectory path to the directory containing CONFIGURATIONS.csv and INDICATORS.csv
+   * @param resultsDirectory path to the directory containing CONFIGURATIONS.csv
+   *                         and INDICATORS.csv
    */
   public FeatureImportanceAnalyzer(Path resultsDirectory) {
     this.resultsDirectory = resultsDirectory;
@@ -181,10 +188,9 @@ public class FeatureImportanceAnalyzer {
       } else {
         validValues.sort(Double::compareTo);
         int mid = validValues.size() / 2;
-        medians[col] =
-            validValues.size() % 2 == 0
-                ? (validValues.get(mid - 1) + validValues.get(mid)) / 2.0
-                : validValues.get(mid);
+        medians[col] = validValues.size() % 2 == 0
+            ? (validValues.get(mid - 1) + validValues.get(mid)) / 2.0
+            : validValues.get(mid);
       }
     }
 
@@ -231,17 +237,16 @@ public class FeatureImportanceAnalyzer {
 
     Formula formula = Formula.lhs(targetIndicator);
 
-    model =
-        RandomForest.fit(
-            formula,
-            data,
-            numberOfTrees, // ntrees
-            featureNames.length / 3 + 1, // mtry (sqrt for classification, /3 for regression)
-            maxDepth, // maxDepth
-            512, // maxNodes
-            minNodeSize, // nodeSize
-            1.0 // subsample ratio
-            );
+    model = RandomForest.fit(
+        formula,
+        data,
+        numberOfTrees, // ntrees
+        featureNames.length / 3 + 1, // mtry (sqrt for classification, /3 for regression)
+        maxDepth, // maxDepth
+        512, // maxNodes
+        minNodeSize, // nodeSize
+        1.0 // subsample ratio
+    );
 
     System.out.println("Trained Random Forest with " + numberOfTrees + " trees");
     System.out.println("Model R²: " + String.format("%.4f", calculateR2()));
@@ -295,8 +300,11 @@ public class FeatureImportanceAnalyzer {
   /**
    * Calculates Permutation Feature Importance.
    *
-   * <p>For each feature, randomly permutes its values and measures the decrease in model
-   * performance. Features that cause larger performance drops when permuted are more important.
+   * <p>
+   * For each feature, randomly permutes its values and measures the decrease in
+   * model
+   * performance. Features that cause larger performance drops when permuted are
+   * more important.
    *
    * @param numPermutations number of permutations per feature
    * @return map of feature names to importance scores, sorted by importance
@@ -504,5 +512,9 @@ public class FeatureImportanceAnalyzer {
 
   public RandomForest getModel() {
     return model;
+  }
+
+  public DataFrame getData() {
+    return data;
   }
 }
