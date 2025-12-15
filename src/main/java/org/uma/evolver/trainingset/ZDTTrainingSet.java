@@ -7,6 +7,12 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
+/**
+ * Training set for the ZDT family (bi-objective problems).
+ *
+ * <p>ZDT problems are bi-objective by definition, so a dimensional suffix (e.g. "2D") is redundant
+ * and intentionally omitted from the class name. The class groups ZDT1, ZDT2, ZDT3, ZDT4 and ZDT6.
+ */
 public class ZDTTrainingSet implements TrainingSet<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 10000 ;
 

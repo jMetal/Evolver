@@ -9,7 +9,9 @@ import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Class implementing the interface TrainingSet for the RE  problems having three objective functions.
+ * Class implementing the interface {@code TrainingSet} for the RE problems having three objective functions.
+ *
+ * <p>The {@code 3D} suffix indicates this training set targets three-objective variants of the RE family.
  */
 public class RE3DTrainingSet implements TrainingSet<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 8000;

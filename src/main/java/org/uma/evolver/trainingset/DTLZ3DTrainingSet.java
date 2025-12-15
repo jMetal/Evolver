@@ -8,6 +8,12 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
+/**
+ * Training set for the DTLZ family configured for three-objective (3D) problems.
+ *
+ * <p>DTLZ problems can be defined for multiple objective dimensionalities; therefore the class name
+ * includes the dimensional suffix {@code 3D} to indicate the specific configuration provided here.
+ */
 public class DTLZ3DTrainingSet implements TrainingSet<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 16000;
 

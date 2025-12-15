@@ -7,6 +7,13 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
+/**
+ * Training set for the WFG family configured for two-objective (2D) problems.
+ *
+ * <p>The {@code 2D} suffix is included here to make explicit that this set targets bi-objective
+ * variants of the WFG family. If other dimensionalities are added in the future, follow the
+ * same naming convention (e.g. {@code WFG3DTrainingSet}).
+ */
 public class WFG2DTrainingSet implements TrainingSet<DoubleSolution> {
   private static final List<Problem<DoubleSolution>> problemList =
       List.of(
