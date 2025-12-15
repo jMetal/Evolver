@@ -31,3 +31,8 @@ env/
 .idea/
 .vscode/
 *.swp
+
+# Generated data and images
+FUN*
+VAR*
+*.png
