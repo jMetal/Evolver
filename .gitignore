@@ -36,3 +36,7 @@ env/
 FUN*
 VAR*
 *.png
+
+# Keep documentation images under docs/
+!docs/*.png
+!docs/**.png
