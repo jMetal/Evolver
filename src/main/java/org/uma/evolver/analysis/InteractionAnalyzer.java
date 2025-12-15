@@ -30,19 +30,13 @@ public class InteractionAnalyzer {
     }
     this.model = featureAnalyzer.getModel();
 
-    // We need to access the data. Since it's private in FeatureImportanceAnalyzer,
-    // we assume for this implementation we can get it or we should refactor
-    // FeatureImportanceAnalyzer
-    // to expose it. For now, let's assume valid data is passed or we'd add a
-    // getter.
-    // In a real refactor, I would add getDataFrame() to FeatureImportanceAnalyzer.
-    // For this code generation, I will assume getDataFrame() exists or I will
-    // modify FeatureImportanceAnalyzer.
-    // Let's modify FeatureImportanceAnalyzer to add getDataFrame() first.
-    // But since I can't do that in this very step, I'll assume it exists.
-    // WAIT: I should fix FeatureImportanceAnalyzer first.
-    // To avoid breaking the flow, I will just accept the data frame in constructor.
-    throw new UnsupportedOperationException("Please pass DataFrame explicitely or add getter");
+    // Try to obtain the DataFrame from the FeatureImportanceAnalyzer. FeatureImportanceAnalyzer
+    // exposes `getData()` which returns the loaded Smile DataFrame. If it's not
+    // available, fail with a clear message.
+    this.data = featureAnalyzer.getData();
+    if (this.data == null) {
+      throw new IllegalStateException("FeatureImportanceAnalyzer data must be loaded before interaction analysis.");
+    }
   }
 
   public InteractionAnalyzer(RandomForest model, DataFrame data) {
