@@ -70,7 +70,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II" ;
-    String problemName = "WFG" ;
+    String problemName = problemFamilyInfo.name();
     var outputResults =
         new OutputResults(
             algorithmName,
@@ -86,10 +86,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
+            "NSGA-II, " + problemFamilyInfo.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             1);
 
     nsgaii.observable().register(evaluationObserver);

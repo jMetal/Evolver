@@ -73,7 +73,7 @@ NSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II";
-    String problemName = "RE3D";
+    String problemName = problemFamilyInfo.name();
     var outputResults =
         new OutputResults(
             algorithmName,
@@ -90,10 +90,10 @@ NSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "RE3D",
+            "NSGA-II, " + problemName,
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemName,
             plotUpdateFrequency);
 
     nsgaii.observable().register(evaluationObserver);

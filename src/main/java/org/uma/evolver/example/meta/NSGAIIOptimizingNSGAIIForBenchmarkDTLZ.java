@@ -74,9 +74,9 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
         new OutputResults(
             "NSGA-II",
             metaOptimizationProblem,
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             indicators,
-            "RESULTS/NSGAII/" + "DTLZ");
+            "RESULTS/NSGAII/" + problemFamilyInfo.name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(1, outputResults);
@@ -84,10 +84,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "DTLZ",
+            "NSGA-II, " + problemFamilyInfo.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             1);
 
     nsgaii.observable().register(evaluationObserver);

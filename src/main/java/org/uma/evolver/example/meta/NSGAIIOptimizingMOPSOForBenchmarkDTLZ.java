@@ -86,19 +86,19 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
         var outputResults = new ConsolidatedOutputResults(
                 metaOptimizationProblem,
-                "DTLZ",
+                problemFamilyInfo.name(),
                 indicators,
-                "RESULTS/MOPSO/DTLZ",
+                "RESULTS/MOPSO/" + problemFamilyInfo.name(),
                 config);
 
         var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(10, outputResults);
 
         var evaluationObserver = new EvaluationObserver(50);
         var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "MOPSO, DTLZ",
+                "MOPSO, " + problemFamilyInfo.name(),
                 indicators.get(0).name(),
                 indicators.get(1).name(),
-                trainingSet.get(0).name(),
+                problemFamilyInfo.name(),
                 10);
 
         nsgaii.observable().register(evaluationObserver);

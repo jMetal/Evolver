@@ -76,19 +76,19 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
         new OutputResults(
             "MOEAD",
             metaOptimizationProblem,
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             indicators,
-            "RESULTS/MOEAD/" + trainingSet.get(0).name());
+            "RESULTS/MOEAD/" + problemFamilyInfo.name());
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "MOEAD, " + "DTLZ",
+            "MOEAD, " + problemFamilyInfo.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             1);
 
     nsgaii.observable().register(evaluationObserver);

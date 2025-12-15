@@ -1,0 +1,22 @@
+=== Meta-Optimization Experiment ===
+Date: 2025-12-12T12:06:12.110908
+
+--- Meta-Optimizer ---
+Algorithm: NSGA-II
+Max Evaluations: 2000
+Population Size: 100
+Cores: 8
+
+--- Base-Level Algorithm ---
+Algorithm: NSGA-II
+Population/Swarm Size: 100
+Evaluation Strategy: org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy@29b5cd00
+Parameter Space: NSGAIIDouble.yaml
+Optimizable Parameters: 20
+
+--- Training Set ---
+Problem Family: ZDT
+Problems: ZDT1, ZDT2, ZDT3, ZDT4, ZDT6
+
+--- Quality Indicators ---
+Indicators: EP, NHV

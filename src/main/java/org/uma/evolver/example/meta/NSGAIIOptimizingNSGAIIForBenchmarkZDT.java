@@ -104,10 +104,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
     int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "ZDT",
+            "NSGA-II, " + problemFamilyInfo.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             plotUpdateFrequency);
 
     nsgaii.observable().register(evaluationObserver);

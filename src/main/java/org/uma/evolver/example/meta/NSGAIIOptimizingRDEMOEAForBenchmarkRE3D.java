@@ -72,12 +72,12 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    String problemName = "RE3D";
+        String problemName = problemFamilyInfo.name();
     var outputResults =
         new OutputResults(
             "RDEMOEA",
             metaOptimizationProblem,
-            trainingSet.get(0).name(),
+            problemName,
             indicators,
             "RESULTS/RDEMOEA/" + problemName);
 
@@ -87,10 +87,10 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "RDEMOEA, " + problemName,
+                "RDEMOEA, " + problemName,
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+                problemName,
             1);
 
     nsgaii.observable().register(evaluationObserver);
