@@ -34,10 +34,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    var problemFamilyInfo = new DTLZ3DTrainingSet();
+    var trainingSetDescriptor = new DTLZ3DTrainingSet();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList() ;
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts() ;
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -45,7 +45,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     int populationSize = 100;
     var baseAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize() ;
+    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize() ;
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
@@ -73,10 +73,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var outputResults =
         new OutputResults(
             "NSGA-II",
-            metaOptimizationProblem,
-            problemFamilyInfo.name(),
-            indicators,
-            "RESULTS/NSGAII/" + problemFamilyInfo.name());
+                metaOptimizationProblem,
+                trainingSetDescriptor.name(),
+                indicators,
+                "RESULTS/NSGAII/" + trainingSetDescriptor.name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(1, outputResults);
@@ -84,10 +84,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + problemFamilyInfo.name(),
+            "NSGA-II, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            problemFamilyInfo.name(),
+            trainingSetDescriptor.name(),
             1);
 
     nsgaii.observable().register(evaluationObserver);

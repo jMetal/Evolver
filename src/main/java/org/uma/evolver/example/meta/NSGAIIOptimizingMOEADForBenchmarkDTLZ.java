@@ -36,9 +36,9 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     String weightVectorFilesDirectory = "resources/weightVectors";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> problemFamilyInfo = new DTLZ3DTrainingSet();
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new DTLZ3DTrainingSet();
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -49,7 +49,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
-        new FixedEvaluationsStrategy(problemFamilyInfo.evaluationsToOptimize());
+        new FixedEvaluationsStrategy(trainingSetDescriptor.evaluationsToOptimize());
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -75,20 +75,20 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
     var outputResults =
         new OutputResults(
             "MOEAD",
-            metaOptimizationProblem,
-            problemFamilyInfo.name(),
-            indicators,
-            "RESULTS/MOEAD/" + problemFamilyInfo.name());
+                metaOptimizationProblem,
+                trainingSetDescriptor.name(),
+                indicators,
+                "RESULTS/MOEAD/" + trainingSetDescriptor.name());
 
     var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
 
     var evaluationObserver = new EvaluationObserver(50);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "MOEAD, " + problemFamilyInfo.name(),
+            "MOEAD, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            problemFamilyInfo.name(),
+            trainingSetDescriptor.name(),
             1);
 
     nsgaii.observable().register(evaluationObserver);

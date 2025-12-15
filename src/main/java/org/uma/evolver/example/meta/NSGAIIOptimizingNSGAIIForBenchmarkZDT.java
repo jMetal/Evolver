@@ -35,17 +35,17 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> problemFamilyInfo = new ZDTTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new ZDTTrainingSet();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
+    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
@@ -74,7 +74,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II";
-    String problemName = problemFamilyInfo.name();
+    String problemName = trainingSetDescriptor.name();
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
@@ -104,10 +104,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
     int plotUpdateFrequency = 1;
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + problemFamilyInfo.name(),
+            "NSGA-II, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            problemFamilyInfo.name(),
+            trainingSetDescriptor.name(),
             plotUpdateFrequency);
 
     nsgaii.observable().register(evaluationObserver);

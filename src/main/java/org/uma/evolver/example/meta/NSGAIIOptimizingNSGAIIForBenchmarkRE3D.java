@@ -35,17 +35,17 @@ NSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> problemFamilyInfo = new RE3DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
+    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
@@ -73,7 +73,7 @@ NSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "NSGA-II";
-    String problemName = problemFamilyInfo.name();
+    String problemName = trainingSetDescriptor.name();
     var outputResults =
         new OutputResults(
             algorithmName,

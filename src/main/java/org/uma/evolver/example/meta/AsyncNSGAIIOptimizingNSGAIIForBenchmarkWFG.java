@@ -33,17 +33,17 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> problemFamilyInfo = new WFG2DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new WFG2DTrainingSet();
 
-    List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-    List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-    var maximumNumberOfEvaluations = problemFamilyInfo.evaluationsToOptimize();
+    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = 1;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
@@ -74,8 +74,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
         new ConsolidatedOutputResults(
-            "AsyncNSGA-II", metaOptimizationProblem, problemFamilyInfo.name(), indicators,
-            "results/nsgaii/" + problemFamilyInfo.name());
+            "AsyncNSGA-II", metaOptimizationProblem, trainingSetDescriptor.name(), indicators,
+            "results/nsgaii/" + trainingSetDescriptor.name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(100, outputResults);
@@ -83,10 +83,10 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     var evaluationObserver = new EvaluationObserver(500);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + problemFamilyInfo.name(),
+            "NSGA-II, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            problemFamilyInfo.name(),
+            trainingSetDescriptor.name(),
             100);
 
     nsgaii.observable().register(evaluationObserver);

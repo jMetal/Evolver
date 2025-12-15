@@ -37,10 +37,10 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
         String yamlParameterSpaceFile = "MOPSO.yaml";
 
         // Step 1: Select the target problem
-        TrainingSet<DoubleSolution> problemFamilyInfo = new DTLZ3DTrainingSet();
+        TrainingSet<DoubleSolution> trainingSetDescriptor = new DTLZ3DTrainingSet();
 
-        List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
-        List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();
+        List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
+        List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
         // Step 2: Set the parameters for the algorithm to be configured
         var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -48,7 +48,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
         var baseAlgorithm = new BaseMOPSO(100, parameterSpace);
         // Use small values for quick test
-        var maximumNumberOfEvaluations = java.util.Collections.nCopies(problemFamilyInfo.problemList().size(), 250);
+        var maximumNumberOfEvaluations = java.util.Collections.nCopies(trainingSetDescriptor.problemList().size(), 250);
         int numberOfIndependentRuns = 1;
 
         EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
@@ -86,19 +86,19 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
 
         var outputResults = new ConsolidatedOutputResults(
                 metaOptimizationProblem,
-                problemFamilyInfo.name(),
+                trainingSetDescriptor.name(),
                 indicators,
-                "RESULTS/MOPSO/" + problemFamilyInfo.name(),
+                "RESULTS/MOPSO/" + trainingSetDescriptor.name(),
                 config);
 
         var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(10, outputResults);
 
         var evaluationObserver = new EvaluationObserver(50);
         var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "MOPSO, " + problemFamilyInfo.name(),
+                "MOPSO, " + trainingSetDescriptor.name(),
                 indicators.get(0).name(),
                 indicators.get(1).name(),
-                problemFamilyInfo.name(),
+                trainingSetDescriptor.name(),
                 10);
 
         nsgaii.observable().register(evaluationObserver);
