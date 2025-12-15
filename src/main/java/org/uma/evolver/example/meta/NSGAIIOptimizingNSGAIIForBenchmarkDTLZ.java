@@ -11,7 +11,7 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
+import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -34,7 +34,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    var problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+    var problemFamilyInfo = new DTLZ3DTrainingSet();
 
     List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList() ;
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts() ;

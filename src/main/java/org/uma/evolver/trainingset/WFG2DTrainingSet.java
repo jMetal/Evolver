@@ -1,4 +1,4 @@
-package org.uma.evolver.util.problemfamilyinfo;
+package org.uma.evolver.trainingset;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-public class WFG2DProblemFamilyInfo implements ProblemFamilyInfo<DoubleSolution> {
+public class WFG2DTrainingSet implements TrainingSet<DoubleSolution> {
   private static final List<Problem<DoubleSolution>> problemList =
       List.of(
           new WFG1(),

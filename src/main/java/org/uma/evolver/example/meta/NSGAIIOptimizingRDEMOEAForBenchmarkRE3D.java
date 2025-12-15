@@ -11,10 +11,10 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.Evaluati
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
-import org.uma.evolver.util.problemfamilyinfo.RE3DProblemFamilyInfo;
+import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -37,7 +37,7 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
     String yamlParameterSpaceFile = "RDEMOEADouble.yaml" ;
 
     // Step 1: Select the target problem
-    ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new RE3DProblemFamilyInfo();
+    TrainingSet<DoubleSolution> problemFamilyInfo = new RE3DTrainingSet();
 
     List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
     List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();

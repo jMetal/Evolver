@@ -1,4 +1,4 @@
-package org.uma.evolver.util.problemfamilyinfo;
+package org.uma.evolver.trainingset;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,9 +9,9 @@ import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Class implementing the interface ProblemFamilyInfo for the RE  problems having three objective functions.
+ * Class implementing the interface TrainingSet for the RE  problems having three objective functions.
  */
-public class RE3DProblemFamilyInfo implements ProblemFamilyInfo<DoubleSolution> {
+public class RE3DTrainingSet implements TrainingSet<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 8000;
 
   private static final List<Problem<DoubleSolution>> problemList =

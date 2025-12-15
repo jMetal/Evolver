@@ -13,8 +13,8 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.evolver.util.problemfamilyinfo.DTLZ3DProblemFamilyInfo;
-import org.uma.evolver.util.problemfamilyinfo.ProblemFamilyInfo;
+import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
+import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -37,7 +37,7 @@ public class NSGAIIOptimizingMOPSOForBenchmarkDTLZ {
         String yamlParameterSpaceFile = "MOPSO.yaml";
 
         // Step 1: Select the target problem
-        ProblemFamilyInfo<DoubleSolution> problemFamilyInfo = new DTLZ3DProblemFamilyInfo();
+        TrainingSet<DoubleSolution> problemFamilyInfo = new DTLZ3DTrainingSet();
 
         List<Problem<DoubleSolution>> trainingSet = problemFamilyInfo.problemList();
         List<String> referenceFrontFileNames = problemFamilyInfo.referenceFronts();

@@ -1,4 +1,4 @@
-package org.uma.evolver.util.problemfamilyinfo;
+package org.uma.evolver.trainingset;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-public class ZDTProblemFamilyInfo implements ProblemFamilyInfo<DoubleSolution> {
+public class ZDTTrainingSet implements TrainingSet<DoubleSolution> {
   private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 10000 ;
 
   private static final List<Problem<DoubleSolution>> problemList =
