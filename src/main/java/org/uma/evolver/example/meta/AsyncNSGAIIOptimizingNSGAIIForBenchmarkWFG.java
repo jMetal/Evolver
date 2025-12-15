@@ -74,7 +74,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     // Step 4: Create observers for the meta-optimizer
     var outputResults =
         new ConsolidatedOutputResults(
-            "AsyncNSGA-II", metaOptimizationProblem, "WFG", indicators, "results/nsgaii/" + "WFG");
+            "AsyncNSGA-II", metaOptimizationProblem, problemFamilyInfo.name(), indicators,
+            "results/nsgaii/" + problemFamilyInfo.name());
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(100, outputResults);
@@ -82,10 +83,10 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     var evaluationObserver = new EvaluationObserver(500);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + "WFG",
+            "NSGA-II, " + problemFamilyInfo.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSet.get(0).name(),
+            problemFamilyInfo.name(),
             100);
 
     nsgaii.observable().register(evaluationObserver);
