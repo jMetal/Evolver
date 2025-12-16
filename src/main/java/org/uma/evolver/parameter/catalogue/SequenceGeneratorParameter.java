@@ -68,15 +68,11 @@ public class SequenceGeneratorParameter extends CategoricalParameter {
    * @throws IllegalStateException if sequenceLength has not been set or is not positive
    */
   public SequenceGenerator<Integer> getSequenceGenerator() {
-    SequenceGenerator<Integer> sequenceGenerator;
-    switch (value()) {
-      case "randomPermutationCycle" -> sequenceGenerator = new RandomPermutationCycle(sequenceLength);
-      case "cyclicIntegerSequence" ->
-          sequenceGenerator = new CyclicIntegerSequence(sequenceLength);
+    return switch (value()) {
+      case "randomPermutationCycle" -> new RandomPermutationCycle(sequenceLength);
+      case "cyclicIntegerSequence" -> new CyclicIntegerSequence(sequenceLength);
       default -> throw new JMetalException("Sequence generator does not exist: " + name());
-    }
-
-    return sequenceGenerator;
+    };
   }
   
   /**

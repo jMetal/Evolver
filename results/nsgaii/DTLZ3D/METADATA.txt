@@ -1,0 +1,22 @@
+=== Meta-Optimization Experiment ===
+Date: 2025-12-16T16:10:44.882946
+
+--- Meta-Optimizer ---
+Algorithm: Unknown
+Max Evaluations: 0
+Population Size: 0
+Cores: 1
+
+--- Base-Level Algorithm ---
+Algorithm: AsyncNSGA-II
+Population/Swarm Size: 0
+Evaluation Strategy: Unknown
+Parameter Space: Unknown
+Optimizable Parameters: 20
+
+--- Training Set ---
+Problem Family: DTLZ3D
+Problems: DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7
+
+--- Quality Indicators ---
+Indicators: EP, IGD+

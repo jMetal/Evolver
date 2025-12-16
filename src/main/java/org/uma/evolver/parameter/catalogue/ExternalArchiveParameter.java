@@ -67,17 +67,13 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
    * @throws IllegalStateException if the archive size has not been set
    */
   public Archive<S> getExternalArchive() {
-    Archive<S> archive;
-
-    switch (value()) {
-      case "crowdingDistanceArchive" -> archive = new CrowdingDistanceArchive<>(size);
-      case "hypervolumeArchive" -> archive = new HypervolumeArchive<>(size, new WFGHypervolume<>());
-      case "spatialSpreadDeviationArchive" -> archive = new SpatialSpreadDeviationArchive<>(size);
-      case "unboundedArchive" ->
-          archive = new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), size);
+    return switch (value()) {
+      case "crowdingDistanceArchive" -> new CrowdingDistanceArchive<>(size);
+      case "hypervolumeArchive" -> new HypervolumeArchive<>(size, new WFGHypervolume<>());
+      case "spatialSpreadDeviationArchive" -> new SpatialSpreadDeviationArchive<>(size);
+      case "unboundedArchive" -> new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), size);
       default -> throw new JMetalException("Archive type does not exist: " + name());
-    }
-    return archive;
+    };
   }
 
   /**

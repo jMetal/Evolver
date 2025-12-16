@@ -76,20 +76,18 @@ public class VelocityUpdateParameter extends CategoricalParameter {
     c2Min = (double) findGlobalSubParameter("c2Min").value();
     c2Max = (double) findGlobalSubParameter("c2Max").value();
 
-    switch (value()) {
-      case "defaultVelocityUpdate" -> {
-        return new DefaultVelocityUpdate(c1Min, c1Max, c2Min, c2Max);
-      }
+    return switch (value()) {
+      case "defaultVelocityUpdate" -> new DefaultVelocityUpdate(c1Min, c1Max, c2Min, c2Max);
       case "constrainedVelocityUpdate" -> {
         problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
-        return new ConstrainedVelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
+        yield new ConstrainedVelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }
       case "SPSO2011VelocityUpdate" -> {
         problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
-        return new SPS2011VelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
+        yield new SPS2011VelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }
       default -> throw new JMetalException(value() + " is not a valid velocity update strategy");
-    }
+    };
   }
 
   /**

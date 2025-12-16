@@ -83,17 +83,16 @@ public class AggregationFunctionParameter extends CategoricalParameter {
         ((CategoricalParameter) findGlobalSubParameter("normalizeObjectives"));
     boolean normalizeObjectives = (normalizeObjectivesParameter.value()).equalsIgnoreCase("true");
 
-    switch (value()) {
-      case "tschebyscheff" -> aggregationFunction = new Tschebyscheff(normalizedObjectives);
-      case "modifiedTschebyscheff" ->
-          aggregationFunction = new ModifiedTschebyscheff(normalizedObjectives);
-      case "weightedSum" -> aggregationFunction = new WeightedSum(normalizedObjectives);
+    aggregationFunction = switch (value()) {
+      case "tschebyscheff" -> new Tschebyscheff(normalizedObjectives);
+      case "modifiedTschebyscheff" -> new ModifiedTschebyscheff(normalizedObjectives);
+      case "weightedSum" -> new WeightedSum(normalizedObjectives);
       case "penaltyBoundaryIntersection" -> {
         double theta = (double) findConditionalParameter("pbiTheta").value();
-        aggregationFunction = new PenaltyBoundaryIntersection(theta, normalizedObjectives);
+        yield new PenaltyBoundaryIntersection(theta, normalizedObjectives);
       }
       default -> throw new JMetalException("Aggregation function does not exist: " + name());
-    }
+    };
 
     if (normalizeObjectives) {
       double epsilon = (double) normalizeObjectivesParameter.findConditionalParameter("epsilonParameterForNormalization").value();

@@ -71,13 +71,11 @@ public class BinaryCrossoverParameter extends CrossoverParameter<BinarySolution>
   public CrossoverOperator<BinarySolution> getCrossover() {
     Double crossoverProbability = (Double) findGlobalSubParameter("crossoverProbability").value();
 
-    CrossoverOperator<BinarySolution> result;
-    switch (value()) {
-      case "HUX" -> result = new HUXCrossover<>(crossoverProbability);
-      case "uniform" -> result = new UniformCrossover<>(crossoverProbability);
-      case "singlePoint" -> result = new SinglePointCrossover<>(crossoverProbability);
+    return switch (value()) {
+      case "HUX" -> new HUXCrossover<>(crossoverProbability);
+      case "uniform" -> new UniformCrossover<>(crossoverProbability);
+      case "singlePoint" -> new SinglePointCrossover<>(crossoverProbability);
       default -> throw new JMetalException("Crossover operator does not exist: " + name());
-    }
-    return result;
+    };
   }
 }

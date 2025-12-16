@@ -71,23 +71,19 @@ public class BinaryParameterFactory implements ParameterFactory<BinarySolution> 
       throw new IllegalArgumentException("The list of values cannot be null or empty");
     }
 
-    CategoricalParameter parameter;
-    switch (parameterName) {
-      case "archiveType" -> parameter = new ExternalArchiveParameter<BinarySolution>("archiveType", values);
-      case "aggregationFunction" -> parameter = new AggregationFunctionParameter(values);
-      case "createInitialSolutions" -> parameter = new CreateInitialSolutionsBinaryParameter(values);
-      case "crossover" -> parameter = new BinaryCrossoverParameter(values);
-      case "densityEstimator" -> parameter = new DensityEstimatorParameter<BinarySolution>(values);
-      case "mutation" -> parameter = new BinaryMutationParameter(values);
-      case "sequenceGenerator", "subProblemIdGenerator" -> parameter = new SequenceGeneratorParameter(parameterName, values);
-      case "ranking" -> parameter = new RankingParameter<BinarySolution>("ranking", values);
-      case "replacement" -> parameter = new ReplacementParameter<BinarySolution>(values);
-      case "selection" -> parameter = new SelectionParameter<BinarySolution>(values);
-      case "variation" -> parameter = new BinaryVariationParameter(values) ;
-      default -> {
-        parameter = new CategoricalParameter(parameterName, values);
-      }
-    }
-    return parameter;
+    return switch (parameterName) {
+      case "archiveType" -> new ExternalArchiveParameter<BinarySolution>("archiveType", values);
+      case "aggregationFunction" -> new AggregationFunctionParameter(values);
+      case "createInitialSolutions" -> new CreateInitialSolutionsBinaryParameter(values);
+      case "crossover" -> new BinaryCrossoverParameter(values);
+      case "densityEstimator" -> new DensityEstimatorParameter<BinarySolution>(values);
+      case "mutation" -> new BinaryMutationParameter(values);
+      case "sequenceGenerator", "subProblemIdGenerator" -> new SequenceGeneratorParameter(parameterName, values);
+      case "ranking" -> new RankingParameter<BinarySolution>("ranking", values);
+      case "replacement" -> new ReplacementParameter<BinarySolution>(values);
+      case "selection" -> new SelectionParameter<BinarySolution>(values);
+      case "variation" -> new BinaryVariationParameter(values);
+      default -> new CategoricalParameter(parameterName, values);
+    };
   }
 }

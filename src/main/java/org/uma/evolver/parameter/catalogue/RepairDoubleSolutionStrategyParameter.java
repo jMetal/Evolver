@@ -60,15 +60,12 @@ public class RepairDoubleSolutionStrategyParameter extends CategoricalParameter 
    * @throws JMetalException if the current value does not match any known repair strategy
    */
   public RepairDoubleSolution getRepairDoubleSolutionStrategy() {
-    RepairDoubleSolution result;
-    switch (value()) {
-      case "random" -> result = new RepairDoubleSolutionWithRandomValue();
-      case "bounds" -> result = new RepairDoubleSolutionWithBoundValue();
-      case "round" -> result = new RepairDoubleSolutionWithOppositeBoundValue();
+    return switch (value()) {
+      case "random" -> new RepairDoubleSolutionWithRandomValue();
+      case "bounds" -> new RepairDoubleSolutionWithBoundValue();
+      case "round" -> new RepairDoubleSolutionWithOppositeBoundValue();
       default -> throw new JMetalException("Repair strategy unknown: " + name());
-    }
-
-    return result;
+    };
   }
   
   /**

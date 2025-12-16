@@ -69,27 +69,23 @@ public class MOPSOParameterFactory implements ParameterFactory<DoubleSolution> {
       throw new IllegalArgumentException("The list of values cannot be null or empty");
     }
 
-    CategoricalParameter parameter;
-    switch (parameterName) {
-      case "leaderArchive" -> parameter = new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
-      case "externalArchiveType" -> parameter = new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
-      case "swarmInitialization" -> parameter = new CreateInitialSolutionsDoubleParameter(parameterName, values);
-      case "velocityInitialization" -> parameter = new VelocityInitializationParameter(values);
-      case "perturbation" -> parameter = new PerturbationParameter(values);
-      case "mutation" -> parameter = new DoubleMutationParameter(values);
-      case "mutationRepairStrategy" -> parameter = new RepairDoubleSolutionStrategyParameter("mutationRepairStrategy", values);
-      case "inertiaWeightComputingStrategy" -> parameter = new InertiaWeightComputingParameter(values);
-      case "velocityUpdate" -> parameter = new VelocityUpdateParameter(values);
-      case "localBestInitialization" -> parameter = new LocalBestInitializationParameter(values);
-      case "localBestUpdate" -> parameter = new LocalBestUpdateParameter(values);
-      case "globalBestInitialization" -> parameter = new GlobalBestInitializationParameter(values); 
-      case "globalBestSelection" -> parameter = new GlobalBestSelectionParameter(values);
-      case "globalBestUpdate" -> parameter = new GlobalBestUpdateParameter(values);
-      case "positionUpdate" -> parameter = new PositionUpdateParameter(values);
-      default -> {
-        parameter = new CategoricalParameter(parameterName, values);
-      }
-    }
-    return parameter;
+    return switch (parameterName) {
+      case "leaderArchive" -> new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
+      case "externalArchiveType" -> new ExternalArchiveParameter<DoubleSolution>(parameterName, values);
+      case "swarmInitialization" -> new CreateInitialSolutionsDoubleParameter(parameterName, values);
+      case "velocityInitialization" -> new VelocityInitializationParameter(values);
+      case "perturbation" -> new PerturbationParameter(values);
+      case "mutation" -> new DoubleMutationParameter(values);
+      case "mutationRepairStrategy" -> new RepairDoubleSolutionStrategyParameter("mutationRepairStrategy", values);
+      case "inertiaWeightComputingStrategy" -> new InertiaWeightComputingParameter(values);
+      case "velocityUpdate" -> new VelocityUpdateParameter(values);
+      case "localBestInitialization" -> new LocalBestInitializationParameter(values);
+      case "localBestUpdate" -> new LocalBestUpdateParameter(values);
+      case "globalBestInitialization" -> new GlobalBestInitializationParameter(values); 
+      case "globalBestSelection" -> new GlobalBestSelectionParameter(values);
+      case "globalBestUpdate" -> new GlobalBestUpdateParameter(values);
+      case "positionUpdate" -> new PositionUpdateParameter(values);
+      default -> new CategoricalParameter(parameterName, values);
+    };
   }
 }

@@ -47,22 +47,12 @@ private static final String DEFAULT_NAME = "velocityInitialization";
    * @throws JMetalException if the current value does not match any known velocity initialization strategy
    */
   public VelocityInitialization getVelocityInitialization() {
-    VelocityInitialization result;
-
-    switch (value()) {
-      case "defaultVelocityInitialization" -> {
-        result = new DefaultVelocityInitialization();
-      }
-      case "SPSO2007VelocityInitialization" -> {
-        result = new SPSO2007VelocityInitialization();
-      }
-      case "SPSO2011VelocityInitialization" -> {
-        result = new SPSO2011VelocityInitialization();
-      }
+    return switch (value()) {
+      case "defaultVelocityInitialization" -> new DefaultVelocityInitialization();
+      case "SPSO2007VelocityInitialization" -> new SPSO2007VelocityInitialization();
+      case "SPSO2011VelocityInitialization" -> new SPSO2011VelocityInitialization();
       default -> throw new JMetalException("Velocity initialization component unknown: " + value());
-    }
-
-    return result;
+    };
   }
 
   /**

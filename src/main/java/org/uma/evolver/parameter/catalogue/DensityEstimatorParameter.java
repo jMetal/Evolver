@@ -71,22 +71,17 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
    * @throws IllegalStateException if required sub-parameters are missing or have invalid values
    */
   public DensityEstimator<S> getDensityEstimator() {
-    DensityEstimator<S> result;
-    switch (value()) {
-      case "crowdingDistance":
-        result = new CrowdingDistanceDensityEstimator<>();
-        break;
-      case "knn":
+    return switch (value()) {
+      case "crowdingDistance" -> new CrowdingDistanceDensityEstimator<>();
+      case "knn" -> {
         String value = (String) findConditionalParameter("knnNormalizeObjectives").value();
         boolean normalizeObjectives = value.toLowerCase().equals("true");
         int knnNeighborhoodSize =
             (Integer) findConditionalParameter("knnNeighborhoodSize").value();
-        result = new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);
-        break;
-      default:
-        throw new JMetalException("Density estimator does not exist: " + name());
-    }
-    return result;
+        yield new KnnDensityEstimator<>(knnNeighborhoodSize, normalizeObjectives);
+      }
+      default -> throw new JMetalException("Density estimator does not exist: " + name());
+    };
   }
   
   /**

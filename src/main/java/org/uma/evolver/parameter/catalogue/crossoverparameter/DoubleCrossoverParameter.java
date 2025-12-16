@@ -82,57 +82,45 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
     RepairDoubleSolutionStrategyParameter repairDoubleSolution =
         (RepairDoubleSolutionStrategyParameter) findGlobalSubParameter("crossoverRepairStrategy");
 
-    CrossoverOperator<DoubleSolution> result;
-    switch (value()) {
+    return switch (value()) {
       case "SBX" -> {
         Double distributionIndex =
             (Double) findConditionalParameter("sbxDistributionIndex").value();
-        result =
-            new SBXCrossover(
+        yield new SBXCrossover(
                 crossoverProbability,
                 distributionIndex,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "blxAlpha" -> {
         Double alpha = (Double) findConditionalParameter("blxAlphaCrossoverAlpha").value();
-        result =
-            new BLXAlphaCrossover(
+        yield new BLXAlphaCrossover(
                 crossoverProbability,
                 alpha,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
-      
       case "blxAlphaBeta" -> {
         Double alpha = (Double) findConditionalParameter("blxAlphaBetaCrossoverAlpha").value();
         Double beta = (Double) findConditionalParameter("blxAlphaBetaCrossoverBeta").value();
-        result =
-            new BLXAlphaBetaCrossover(
+        yield new BLXAlphaBetaCrossover(
                 crossoverProbability,
                 alpha,
                 beta);
       } 
-      case "wholeArithmetic" ->
-          result =
-              new WholeArithmeticCrossover(
+      case "wholeArithmetic" -> new WholeArithmeticCrossover(
                   crossoverProbability, repairDoubleSolution.getRepairDoubleSolutionStrategy());
-      case "arithmetic" -> {
-        result =
-            new ArithmeticCrossover(
+      case "arithmetic" -> new ArithmeticCrossover(
                 crossoverProbability,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
-      }
       case "fuzzyRecombination" -> {
         Double alpha = (Double) findConditionalParameter("fuzzyRecombinationCrossoverAlpha").value();
-        result =
-            new FuzzyRecombinationCrossover(
+        yield new FuzzyRecombinationCrossover(
                 crossoverProbability,
                 alpha,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       case "laplace" -> {
         Double scale = (Double) findConditionalParameter("laplaceCrossoverScale").value();
-        result =
-            new LaplaceCrossover(
+        yield new LaplaceCrossover(
                 crossoverProbability,
                 scale,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
@@ -140,9 +128,7 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
       case "PCX" -> {
         Double zeta = (Double) findConditionalParameter("pcxCrossoverZeta").value();
         Double eta = (Double) findConditionalParameter("pcxCrossoverEta").value();
-
-        result =
-            new ParentCentricCrossover(
+        yield new ParentCentricCrossover(
                 crossoverProbability,
                 zeta,
                 eta,
@@ -151,15 +137,13 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
       case "UNDC" -> {
         Double zeta = (Double) findConditionalParameter("undcCrossoverZeta").value();
         Double eta = (Double) findConditionalParameter("undcCrossoverEta").value();
-        result =
-            new UnimodalNormalDistributionCrossover(
+        yield new UnimodalNormalDistributionCrossover(
                 crossoverProbability,
                 zeta,
                 eta,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       default -> throw new JMetalException("Crossover operator does not exist: " + value());
-    }
-    return result;
+    };
   }
 }

@@ -71,23 +71,19 @@ public class PermutationParameterFactory implements ParameterFactory<Permutation
       throw new IllegalArgumentException("The list of values cannot be null or empty");
     }
 
-    CategoricalParameter parameter;
-    switch (parameterName) {
-      case "archiveType" -> parameter = new ExternalArchiveParameter<PermutationSolution<Integer>>("archiveType", values);
-      case "aggregationFunction" -> parameter = new AggregationFunctionParameter(values);
-      case "createInitialSolutions" -> parameter = new CreateInitialSolutionsPermutationParameter(values);
-      case "crossover" -> parameter = new PermutationCrossoverParameter(values);
-      case "densityEstimator" -> parameter = new DensityEstimatorParameter<PermutationSolution<Integer>>(values);
-      case "mutation" -> parameter = new PermutationMutationParameter(values);
-      case "sequenceGenerator", "subProblemIdGenerator" -> parameter = new SequenceGeneratorParameter(parameterName, values);
-      case "ranking" -> parameter = new RankingParameter<PermutationSolution<Integer>>("ranking", values);
-      case "replacement" -> parameter = new ReplacementParameter<PermutationSolution<Integer>>(values);
-      case "selection" -> parameter = new SelectionParameter<PermutationSolution<Integer>>(values);
-      case "variation" -> parameter = new PermutationVariationParameter(values) ;
-      default -> {
-        parameter = new CategoricalParameter(parameterName, values);
-      }
-    }
-    return parameter;
+    return switch (parameterName) {
+      case "archiveType" -> new ExternalArchiveParameter<PermutationSolution<Integer>>("archiveType", values);
+      case "aggregationFunction" -> new AggregationFunctionParameter(values);
+      case "createInitialSolutions" -> new CreateInitialSolutionsPermutationParameter(values);
+      case "crossover" -> new PermutationCrossoverParameter(values);
+      case "densityEstimator" -> new DensityEstimatorParameter<PermutationSolution<Integer>>(values);
+      case "mutation" -> new PermutationMutationParameter(values);
+      case "sequenceGenerator", "subProblemIdGenerator" -> new SequenceGeneratorParameter(parameterName, values);
+      case "ranking" -> new RankingParameter<PermutationSolution<Integer>>("ranking", values);
+      case "replacement" -> new ReplacementParameter<PermutationSolution<Integer>>(values);
+      case "selection" -> new SelectionParameter<PermutationSolution<Integer>>(values);
+      case "variation" -> new PermutationVariationParameter(values);
+      default -> new CategoricalParameter(parameterName, values);
+    };
   }
 }
