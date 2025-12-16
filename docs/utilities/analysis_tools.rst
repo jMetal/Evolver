@@ -458,4 +458,243 @@ Robust error handling for production use:
        e.printStackTrace();
    }
 
+Robustness Analysis Tools
+-------------------------
+
+RobustnessAnalyzer API
+~~~~~~~~~~~~~~~~~~~~~~
+
+The ``RobustnessAnalyzer`` evaluates configuration stability through perturbation analysis:
+
+.. code-block:: java
+
+   RobustnessAnalyzer<DoubleSolution> analyzer = new RobustnessAnalyzer<>(
+       baseAlgorithm,        // Algorithm factory
+       problem,              // Problem instance  
+       parameterSpace,       // Parameter space definition
+       indicators,           // Quality indicators list
+       referenceFront,       // Reference front for normalization
+       maxEvaluations,       // Evaluations per run
+       runsPerSample);       // Runs per configuration sample
+
+**Constructor Parameters:**
+
+.. list-table:: RobustnessAnalyzer Constructor
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Parameter
+     - Description
+   * - ``baseAlgorithm``
+     - BaseLevelAlgorithm instance used as factory for creating algorithm instances
+   * - ``problem``
+     - Problem instance to solve during robustness evaluation
+   * - ``parameterSpace``
+     - ParameterSpace defining which parameters can be perturbed
+   * - ``indicators``
+     - List of QualityIndicator instances for performance measurement
+   * - ``referenceFront``
+     - Reference front matrix for indicator normalization
+   * - ``maxEvaluations``
+     - Maximum evaluations per algorithm run
+   * - ``runsPerSample``
+     - Number of independent runs per configuration sample
+
+Perturbation Analysis
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: java
+
+   // Define center configuration (typically optimized)
+   Map<String, String> centerConfig = parseConfiguration(optimizedConfigString);
+   
+   // Configure perturbation analysis
+   int nSamples = 20;              // Number of perturbed samples
+   double perturbationSigma = 0.05; // 5% standard deviation
+   
+   // Run analysis
+   List<Map<String, Object>> results = analyzer.analyze(
+       centerConfig, nSamples, perturbationSigma);
+
+**Analysis Parameters:**
+
+.. list-table:: Perturbation Analysis Parameters
+   :header-rows: 1
+   :widths: 20 15 65
+
+   * - Parameter
+     - Typical Range
+     - Description
+   * - ``centerConfig``
+     - N/A
+     - Base configuration to perturb (usually optimized)
+   * - ``nSamples``
+     - 10-50
+     - Number of perturbed configurations to evaluate
+   * - ``perturbationSigma``
+     - 0.01-0.10
+     - Standard deviation of Gaussian perturbation (as fraction)
+
+**Perturbation Method:**
+
+The analyzer applies multiplicative Gaussian noise to numerical parameters:
+
+.. code-block:: none
+
+   perturbed_value = original_value × (1 + N(0, σ²))
+
+Where N(0, σ²) is Gaussian noise with mean 0 and standard deviation σ.
+
+Results Export and Analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: java
+
+   // Export results to CSV for statistical analysis
+   analyzer.exportToCSV(results, Path.of("robustness_results.csv"));
+   
+   // Results structure
+   for (Map<String, Object> result : results) {
+       int sampleId = (Integer) result.get("SampleId");
+       String type = (String) result.get("Type");  // "Baseline" or "Perturbed"
+       
+       // Quality indicator values
+       double epsilon = (Double) result.get("Epsilon");
+       double hypervolume = (Double) result.get("NormalizedHypervolume");
+   }
+
+**CSV Output Format:**
+
+.. code-block:: csv
+
+   SampleId,Type,Epsilon,NormalizedHypervolume
+   0,Baseline,0.0234,0.8923
+   1,Perturbed,0.0241,0.8901
+   2,Perturbed,0.0238,0.8915
+   3,Perturbed,0.0245,0.8887
+   ...
+
+Statistical Analysis
+~~~~~~~~~~~~~~~~~~~~
+
+The exported data enables various statistical analyses:
+
+**Stability Metrics**
+  - Coefficient of variation (CV) = std_dev / mean
+  - Performance degradation = (baseline - mean_perturbed) / baseline
+  - Confidence intervals for performance under perturbation
+
+**Robustness Classification**
+  - **Robust Configuration**: Low CV (<5%), small performance degradation
+  - **Moderately Robust**: Medium CV (5-15%), acceptable degradation  
+  - **Fragile Configuration**: High CV (>15%), significant degradation
+
+**Example Statistical Analysis:**
+
+.. code-block:: java
+
+   // Calculate robustness metrics from results
+   public class RobustnessMetrics {
+       public static void analyzeResults(List<Map<String, Object>> results) {
+           // Separate baseline and perturbed results
+           double baseline = getBaselinePerformance(results);
+           List<Double> perturbedValues = getPerturbedPerformances(results);
+           
+           // Calculate statistics
+           double mean = perturbedValues.stream().mapToDouble(d -> d).average().orElse(0);
+           double stdDev = calculateStandardDeviation(perturbedValues, mean);
+           double cv = stdDev / mean;
+           double degradation = (baseline - mean) / baseline;
+           
+           // Classify robustness
+           String robustnessClass = classifyRobustness(cv, degradation);
+           
+           System.out.printf("Baseline: %.4f%n", baseline);
+           System.out.printf("Perturbed Mean: %.4f ± %.4f%n", mean, stdDev);
+           System.out.printf("Coefficient of Variation: %.2f%%%n", cv * 100);
+           System.out.printf("Performance Degradation: %.2f%%%n", degradation * 100);
+           System.out.printf("Robustness Class: %s%n", robustnessClass);
+       }
+   }
+
+Integration with Other Analysis Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robustness analysis complements ablation and feature importance analysis:
+
+**After Feature Importance Analysis:**
+
+.. code-block:: java
+
+   // 1. Identify important parameters
+   FeatureImportanceAnalyzer featureAnalyzer = new FeatureImportanceAnalyzer(resultsDir);
+   featureAnalyzer.loadData("NHV");
+   featureAnalyzer.trainModel();
+   
+   List<String> topParams = featureAnalyzer.getGiniImportance().keySet()
+       .stream().limit(5).collect(Collectors.toList());
+   
+   // 2. Get optimized configuration focusing on important parameters
+   String optimizedConfig = getOptimizedConfiguration(topParams);
+   
+   // 3. Evaluate robustness of optimized configuration
+   RobustnessAnalyzer<DoubleSolution> robustnessAnalyzer = new RobustnessAnalyzer<>(...);
+   List<Map<String, Object>> robustnessResults = robustnessAnalyzer.analyze(
+       parseConfiguration(optimizedConfig), 20, 0.05);
+
+**After Ablation Analysis:**
+
+.. code-block:: java
+
+   // 1. Run ablation analysis to get best configuration
+   AblationConfiguration config = AblationConfiguration.forZDTProblems();
+   AblationRunner runner = new AblationRunner(config);
+   runner.run();
+   
+   // 2. Extract best configuration from ablation results
+   String bestConfig = extractBestConfigurationFromAblation();
+   
+   // 3. Validate robustness of ablation-derived configuration
+   RobustnessAnalyzer<DoubleSolution> analyzer = new RobustnessAnalyzer<>(...);
+   List<Map<String, Object>> results = analyzer.analyze(
+       parseConfiguration(bestConfig), 30, 0.03); // Smaller perturbation for validation
+
+Best Practices for Robustness Analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Perturbation Size Selection:**
+
+.. list-table:: Perturbation Guidelines
+   :header-rows: 1
+   :widths: 20 20 60
+
+   * - Sigma Value
+     - Perturbation Level
+     - Use Case
+   * - 0.01-0.03
+     - Very Small (1-3%)
+     - Fine-grained sensitivity analysis
+   * - 0.03-0.07
+     - Small (3-7%)
+     - Standard robustness evaluation
+   * - 0.07-0.15
+     - Medium (7-15%)
+     - Stress testing configuration stability
+   * - >0.15
+     - Large (>15%)
+     - Extreme robustness evaluation
+
+**Sample Size Guidelines:**
+
+- **Quick Assessment**: 10-15 samples for initial robustness check
+- **Standard Analysis**: 20-30 samples for reliable statistics
+- **Detailed Study**: 50+ samples for publication-quality analysis
+- **Statistical Power**: Use power analysis to determine required sample size
+
+**Multiple Runs per Sample:**
+
+- **Fast Problems**: 5-10 runs per sample for noise reduction
+- **Expensive Problems**: 3-5 runs per sample (balance cost vs. reliability)
+- **Stochastic Algorithms**: 10+ runs per sample to account for algorithmic variance
+
 This comprehensive API reference provides all the technical details needed to effectively use Evolver's analysis tools in research and production environments.

@@ -6,12 +6,13 @@ Evolver provides comprehensive analysis tools for understanding algorithm parame
 Overview
 --------
 
-The analysis framework consists of two complementary approaches:
+The analysis framework consists of three complementary approaches:
 
 1. **Ablation Analysis** - Controlled experiments to establish causal relationships between parameters and performance
-2. **Feature Importance Analysis** - Machine learning-based analysis to identify statistical patterns in parameter behavior
+2. **Feature Importance Analysis** - Machine learning-based analysis to identify statistical patterns in parameter behavior  
+3. **Robustness Analysis** - Sensitivity analysis to evaluate configuration stability under parameter perturbations
 
-Both methods serve different purposes and are most effective when used together in an integrated workflow.
+These methods serve different purposes and are most effective when used together in an integrated workflow.
 
 Ablation Analysis
 -----------------
@@ -127,40 +128,140 @@ The analyzer expects two CSV files from meta-optimization experiments:
 **INDICATORS.csv**: Quality indicator values  
   Contains columns for Evaluation, SolutionId, and quality indicators (EP, NHV, IGD+, etc.)
 
+Robustness Analysis
+-------------------
+
+Robustness analysis evaluates the local sensitivity and stability of algorithm configurations by measuring performance variation under small parameter perturbations. This helps distinguish between robust "plateaus" and fragile "peaks" in the parameter space.
+
+Methodology
+~~~~~~~~~~~
+
+The analyzer uses **Gaussian perturbation analysis** around a center configuration:
+
+**Perturbation Process**
+  Applies small Gaussian noise (typically 1-10% standard deviation) to numerical parameters while keeping the center configuration as baseline.
+
+**Performance Evaluation**
+  Runs multiple independent evaluations for each perturbed configuration to measure performance variation and statistical significance.
+
+**Stability Assessment**
+  Compares performance distributions between baseline and perturbed configurations to quantify robustness.
+
+Key Features
+~~~~~~~~~~~~
+
+- **Local Sensitivity Analysis**: Measures how sensitive performance is to small parameter changes
+- **Configuration Stability**: Distinguishes robust configurations from fragile ones
+- **Statistical Validation**: Multiple runs per perturbation for reliable statistics
+- **Flexible Perturbation**: Configurable noise levels and sample sizes
+- **Multi-Indicator Support**: Analyzes robustness across multiple quality indicators
+
+Usage Example
+~~~~~~~~~~~~~
+
+.. code-block:: java
+
+   // Create robustness analyzer
+   RobustnessAnalyzer<DoubleSolution> analyzer = new RobustnessAnalyzer<>(
+       baseAlgorithm, problem, parameterSpace, indicators, 
+       referenceFront, maxEvaluations, runsPerSample);
+   
+   // Define center configuration (e.g., from optimization)
+   Map<String, String> optimizedConfig = parseConfiguration(configString);
+   
+   // Analyze robustness with 5% perturbation, 20 samples
+   int nSamples = 20;
+   double perturbationSigma = 0.05; // 5% standard deviation
+   
+   List<Map<String, Object>> results = analyzer.analyze(
+       optimizedConfig, nSamples, perturbationSigma);
+   
+   // Export results for statistical analysis
+   analyzer.exportToCSV(results, Path.of("robustness_results.csv"));
+
+Analysis Output
+~~~~~~~~~~~~~~~
+
+The robustness analysis produces detailed performance data:
+
+**Baseline Performance**
+  Performance of the original (unperturbed) configuration across multiple runs.
+
+**Perturbation Results**  
+  Performance measurements for each perturbed configuration, enabling statistical comparison.
+
+**CSV Export Format**
+  Structured data suitable for statistical analysis and visualization:
+
+.. code-block:: csv
+
+   SampleId,Type,Epsilon,NormalizedHypervolume
+   0,Baseline,0.0234,0.8923
+   1,Perturbed,0.0241,0.8901
+   2,Perturbed,0.0238,0.8915
+   ...
+
+Applications
+~~~~~~~~~~~~
+
+**Configuration Validation**
+  Verify that optimized configurations are robust rather than overfitted to specific conditions.
+
+**Parameter Space Understanding**
+  Identify which regions of parameter space provide stable performance vs. fragile peaks.
+
+**Practical Deployment**
+  Ensure that configurations will perform reliably under real-world parameter variations.
+
+**Research Insights**
+  Understand the sensitivity landscape around optimal configurations for algorithm design.
+
 Complementary Approaches
 ------------------------
 
 Comparison
 ~~~~~~~~~~
 
-.. list-table:: Ablation vs Feature Importance Analysis
+.. list-table:: Comparison of Analysis Methods
    :header-rows: 1
-   :widths: 20 40 40
+   :widths: 20 25 25 30
 
    * - Aspect
      - Ablation Analysis
      - Feature Importance Analysis
+     - Robustness Analysis
    * - Purpose
      - Proves causal relationships
      - Discovers statistical patterns
+     - Evaluates configuration stability
    * - Method
      - Controlled experiments
      - Machine learning analysis
+     - Perturbation analysis
    * - Data Source
      - Requires new algorithm runs
      - Uses existing meta-optimization results
+     - Requires optimized configuration
    * - Speed
      - Slow (hours/days)
      - Fast (seconds/minutes)
+     - Moderate (minutes/hours)
    * - Cost
      - High computational cost
      - Low computational cost
-   * - Causality
-     - Direct causal evidence
-     - Correlational evidence
-   * - Interactions
-     - Limited to pairwise
-     - Captures complex non-linear interactions
+     - Moderate computational cost
+   * - Focus
+     - Parameter importance
+     - Parameter prediction power
+     - Parameter sensitivity
+   * - Output
+     - Causal contribution ranking
+     - Statistical importance ranking
+     - Stability/robustness metrics
+   * - Use Case
+     - Algorithm design validation
+     - Quick parameter screening
+     - Configuration reliability assessment
 
 Integrated Workflow
 ~~~~~~~~~~~~~~~~~~~
@@ -169,8 +270,8 @@ The most effective approach combines both methods:
 
 .. code-block:: none
 
-   Meta-Optimization → Feature Importance → Targeted Ablation → Validation
-      (Generate data)    (Quick screening)   (Causal analysis)   (Confirm findings)
+   Meta-Optimization → Feature Importance → Targeted Ablation → Robustness Analysis → Validation
+      (Generate data)    (Quick screening)   (Causal analysis)    (Stability check)    (Final validation)
 
 **Phase 1: Exploratory Analysis**
   Use feature importance to quickly identify promising parameters from existing meta-optimization results.
@@ -178,8 +279,11 @@ The most effective approach combines both methods:
 **Phase 2: Confirmatory Analysis**  
   Focus expensive ablation studies on the most important parameters identified in Phase 1.
 
-**Phase 3: Validation**
-  Cross-validate findings on independent test problems to ensure generalizability.
+**Phase 3: Stability Assessment**
+  Use robustness analysis to evaluate whether optimized configurations are stable or fragile.
+
+**Phase 4: Final Validation**
+  Cross-validate findings on independent test problems to ensure generalizability and robustness.
 
 When to Use Each Method
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,6 +303,14 @@ When to Use Each Method
 - You want precise quantification of contributions  
 - You have computational budget for extensive experiments
 - You need to validate feature importance findings
+
+**Use Robustness Analysis when:**
+
+- You have an optimized configuration to validate
+- You need to assess configuration reliability for deployment
+- You want to distinguish robust solutions from fragile peaks
+- You're evaluating parameter sensitivity around optimal points
+- You need to understand the stability landscape of your algorithm
 
 Implementation Details
 ----------------------
@@ -222,6 +334,7 @@ Example Classes
 - ``SimpleZDTAblationExample`` - Minimal ZDT ablation (3 lines of code)
 - ``SimpleDTLZAblationExample`` - Minimal DTLZ ablation (3 lines of code)  
 - ``FeatureImportanceExample`` - Complete feature importance analysis workflow
+- ``RobustnessAnalysisExample`` - Configuration robustness evaluation
 
 **Full Examples (Legacy, Refactored)**
 
@@ -242,6 +355,12 @@ Performance Considerations
   - Typical runtime: Seconds to minutes
   - Memory usage: Low to moderate depending on dataset size
   - Parallelization: Built into Random Forest training
+
+**Robustness Analysis**
+  - Scales with: perturbation samples × runs per sample × evaluations
+  - Typical runtime: Minutes to hours depending on sample size
+  - Memory usage: Low (single configuration analysis)
+  - Parallelization: Can parallelize across perturbation samples
 
 Best Practices
 --------------

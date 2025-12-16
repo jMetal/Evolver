@@ -58,6 +58,27 @@ Interaction Analysis
 
 .. [Apley2020] Apley, D. W., & Zhu, J. (2020). Visualizing the effects of predictor variables in black box supervised learning models. *Journal of the Royal Statistical Society: Series B (Statistical Methodology)*, 82(4), 1059-1086.
 
+Robustness Analysis
+-------------------
+
+Sensitivity and Robustness Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. [Saltelli2008] Saltelli, A., Ratto, M., Andres, T., Campolongo, F., Cariboni, J., Gatelli, D., ... & Tarantola, S. (2008). *Global sensitivity analysis: the primer*. John Wiley & Sons.
+
+.. [Sobol2001] Sobol, I. M. (2001). Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates. *Mathematics and Computers in Simulation*, 55(1-3), 271-280.
+
+.. [Morris1991] Morris, M. D. (1991). Factorial sampling plans for preliminary computational experiments. *Technometrics*, 33(2), 161-174.
+
+Algorithm Configuration Robustness
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. [Bartz2020] Bartz-Beielstein, T., Chiarandini, M., Paquete, L., & Preuss, M. (Eds.). (2010). *Experimental methods for the analysis of optimization algorithms*. Springer.
+
+.. [Birattari2004] Birattari, M., Stützle, T., Paquete, L., & Varrentrapp, K. (2002). A racing algorithm for configuring metaheuristics. In *Proceedings of the 4th Annual Conference on Genetic and Evolutionary Computation* (pp. 11-18).
+
+.. [Adenso2013] Adenso-Díaz, B., & Laguna, M. (2006). Fine-tuning of algorithms using fractional experimental designs and local search. *Operations Research*, 54(1), 99-114.
+
 Multi-Objective Optimization
 ----------------------------
 
@@ -171,6 +192,47 @@ Algorithm Configuration
      pages={19--31},
      year={2011},
      publisher={Elsevier}
+   }
+
+Robustness Analysis
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bibtex
+
+   @book{saltelli2008global,
+     title={Global sensitivity analysis: the primer},
+     author={Saltelli, Andrea and Ratto, Marco and Andres, Terry and Campolongo, Francesca and Cariboni, Jessica and Gatelli, Debora and Saisana, Michaela and Tarantola, Stefano},
+     year={2008},
+     publisher={John Wiley \& Sons}
+   }
+
+   @article{sobol2001global,
+     title={Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates},
+     author={Sobol, Ilya M},
+     journal={Mathematics and Computers in Simulation},
+     volume={55},
+     number={1-3},
+     pages={271--280},
+     year={2001},
+     publisher={Elsevier}
+   }
+
+   @article{morris1991factorial,
+     title={Factorial sampling plans for preliminary computational experiments},
+     author={Morris, Max D},
+     journal={Technometrics},
+     volume={33},
+     number={2},
+     pages={161--174},
+     year={1991},
+     publisher={Taylor \& Francis}
+   }
+
+   @book{bartz2010experimental,
+     title={Experimental methods for the analysis of optimization algorithms},
+     author={Bartz-Beielstein, Thomas and Chiarandini, Marco and Paquete, Lu{\'\i}s and Preuss, Mike},
+     year={2010},
+     publisher={Springer}
    }
 
 Multi-Objective Benchmarks
