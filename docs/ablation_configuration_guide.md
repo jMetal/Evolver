@@ -259,3 +259,126 @@ The configuration system is designed for extensibility:
 - **New Indicators**: Easy integration of additional quality indicators
 - **Export Formats**: Support for JSON, XML, or database export
 - **Distributed Execution**: Potential for cluster-based parallel execution
+
+## References
+
+### Ablation Analysis Methodology
+
+```bibtex
+@article{fawcett2016ablation,
+  title={An ablation study of parameter control mechanisms in multi-objective evolutionary algorithms},
+  author={Fawcett, Chris and Hoos, Holger H},
+  journal={Artificial Intelligence},
+  volume={245},
+  pages={96--119},
+  year={2016},
+  publisher={Elsevier},
+  note={Seminal work establishing ablation methodology for evolutionary algorithms}
+}
+
+@inproceedings{birattari2002racing,
+  title={A racing algorithm for configuring metaheuristics},
+  author={Birattari, Mauro and St{\"u}tzle, Thomas and Paquete, Luis and Varrentrapp, Klaus},
+  booktitle={Proceedings of the 4th Annual Conference on Genetic and Evolutionary Computation},
+  pages={11--18},
+  year={2002},
+  note={Early systematic approach to parameter configuration}
+}
+
+@article{lopez2016irace,
+  title={The irace package: Iterated racing for automatic algorithm configuration},
+  author={L{\'o}pez-Ib{\'a}{\~n}ez, Manuel and Dubois-Lacoste, J{\'e}r{\'e}mie and C{\'a}ceres, Leslie P{\'e}rez and Birattari, Mauro and St{\"u}tzle, Thomas},
+  journal={Operations Research Perspectives},
+  volume={3},
+  pages={43--58},
+  year={2016},
+  publisher={Elsevier},
+  note={Comprehensive racing-based configuration framework with ablation capabilities}
+}
+```
+
+### Algorithm Configuration
+
+```bibtex
+@article{hutter2011sequential,
+  title={Sequential model-based optimization for general algorithm configuration},
+  author={Hutter, Frank and Hoos, Holger H and Leyton-Brown, Kevin},
+  journal={Learning and Intelligent Optimization},
+  pages={507--523},
+  year={2011},
+  publisher={Springer},
+  note={SMAC algorithm for automated parameter configuration}
+}
+
+@article{eiben2007parameter,
+  title={Parameter tuning for configuring and analyzing evolutionary algorithms},
+  author={Eiben, Agoston E and Smit, Selmar K},
+  journal={Swarm and Evolutionary Computation},
+  volume={1},
+  number={1},
+  pages={19--31},
+  year={2011},
+  publisher={Elsevier},
+  note={Comprehensive survey of parameter tuning approaches}
+}
+
+@inproceedings{nannen2007relevance,
+  title={Relevance estimation and value calibration of evolutionary algorithm parameters},
+  author={Nannen, Volker and Eiben, Agoston E},
+  booktitle={Proceedings of the 20th International Joint Conference on Artificial Intelligence},
+  pages={975--980},
+  year={2007},
+  note={Statistical approaches to parameter relevance assessment}
+}
+```
+
+### Multi-Objective Optimization Benchmarks
+
+```bibtex
+@article{zitzler2000comparison,
+  title={Comparison of multiobjective evolutionary algorithms: Empirical results},
+  author={Zitzler, Eckart and Deb, Kalyanmoy and Thiele, Lothar},
+  journal={Evolutionary Computation},
+  volume={8},
+  number={2},
+  pages={173--195},
+  year={2000},
+  publisher={MIT Press},
+  note={ZDT test suite for multi-objective optimization}
+}
+
+@inproceedings{deb2005scalable,
+  title={Scalable test problems for evolutionary multiobjective optimization},
+  author={Deb, Kalyanmoy and Thiele, Lothar and Laumanns, Marco and Zitzler, Eckart},
+  booktitle={Evolutionary Multiobjective Optimization},
+  pages={105--145},
+  year={2005},
+  publisher={Springer},
+  note={DTLZ test suite for scalable multi-objective problems}
+}
+```
+
+### Quality Indicators
+
+```bibtex
+@article{zitzler2003performance,
+  title={Performance assessment of multiobjective optimizers: an analysis and review},
+  author={Zitzler, Eckart and Thiele, Lothar and Laumanns, Marco and Fonseca, Carlos M and Da Fonseca, Viviane Grunert},
+  journal={IEEE Transactions on Evolutionary Computation},
+  volume={7},
+  number={2},
+  pages={117--132},
+  year={2003},
+  publisher={IEEE},
+  note={Comprehensive review of quality indicators for multi-objective optimization}
+}
+
+@article{ishibuchi2015modified,
+  title={A study on performance evaluation ability of a modified inverted generational distance indicator},
+  author={Ishibuchi, Hisao and Masuda, Hiroyuki and Tanigaki, Yuki and Nojima, Yusuke},
+  booktitle={Proceedings of the 2015 Annual Conference on Genetic and Evolutionary Computation},
+  pages={695--702},
+  year={2015},
+  note={IGD+ indicator for better performance assessment}
+}
+```

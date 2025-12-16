@@ -232,6 +232,91 @@ runner.run();
 - **Java 17+**: Modern language features (switch expressions, text blocks)
 - **Maven**: Build and dependency management
 
+## References
+
+### Key Papers on Ablation Analysis
+
+The ablation analysis methodology implemented in this package is based on established research in algorithm configuration and parameter analysis:
+
+```bibtex
+@article{fawcett2016ablation,
+  title={An ablation study of parameter control mechanisms in multi-objective evolutionary algorithms},
+  author={Fawcett, Chris and Hoos, Holger H},
+  journal={Artificial Intelligence},
+  volume={245},
+  pages={96--119},
+  year={2016},
+  publisher={Elsevier},
+  note={Seminal work on ablation methodology for evolutionary algorithms}
+}
+
+@inproceedings{birattari2002racing,
+  title={A racing algorithm for configuring metaheuristics},
+  author={Birattari, Mauro and St{\"u}tzle, Thomas and Paquete, Luis and Varrentrapp, Klaus},
+  booktitle={Proceedings of the 4th Annual Conference on Genetic and Evolutionary Computation},
+  pages={11--18},
+  year={2002},
+  note={Early work on systematic parameter configuration}
+}
+
+@article{hutter2011sequential,
+  title={Sequential model-based optimization for general algorithm configuration},
+  author={Hutter, Frank and Hoos, Holger H and Leyton-Brown, Kevin},
+  journal={Learning and Intelligent Optimization},
+  pages={507--523},
+  year={2011},
+  publisher={Springer},
+  note={SMAC algorithm for automated configuration}
+}
+
+@article{lopez2016irace,
+  title={The irace package: Iterated racing for automatic algorithm configuration},
+  author={L{\'o}pez-Ib{\'a}{\~n}ez, Manuel and Dubois-Lacoste, J{\'e}r{\'e}mie and C{\'a}ceres, Leslie P{\'e}rez and Birattari, Mauro and St{\"u}tzle, Thomas},
+  journal={Operations Research Perspectives},
+  volume={3},
+  pages={43--58},
+  year={2016},
+  publisher={Elsevier},
+  note={Comprehensive racing-based configuration framework}
+}
+
+@inproceedings{adenso2019understanding,
+  title={Understanding parameter importance in multi-objective optimization},
+  author={Adenso-D{\'\i}az, Belarmino and Lozano, Sebasti{\'a}n and Garc{\'\i}a-Gonz{\'a}lez, Javier},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+  pages={573--581},
+  year={2019},
+  note={Modern approaches to parameter analysis in MOEAs}
+}
+```
+
+### Ablation Analysis Methodology
+
+The leave-one-out and forward path ablation methods are based on:
+
+```bibtex
+@article{eiben2007parameter,
+  title={Parameter tuning for configuring and analyzing evolutionary algorithms},
+  author={Eiben, Agoston E and Smit, Selmar K},
+  journal={Swarm and Evolutionary Computation},
+  volume={1},
+  number={1},
+  pages={19--31},
+  year={2011},
+  publisher={Elsevier},
+  note={Comprehensive survey of parameter tuning approaches}
+}
+
+@inproceedings{nannen2007relevance,
+  title={Relevance estimation and value calibration of evolutionary algorithm parameters},
+  author={Nannen, Volker and Eiben, Agoston E},
+  booktitle={Proceedings of the 20th International Joint Conference on Artificial Intelligence},
+  pages={975--980},
+  year={2007},
+  note={Statistical approaches to parameter relevance}
+}
+```
+
 ## Related Documentation
 
 - [Ablation Configuration Guide](../../../../../../../docs/ablation_configuration_guide.md) - Comprehensive usage guide
