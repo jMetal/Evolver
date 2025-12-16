@@ -199,11 +199,6 @@ The following code snippet includes the main steps:
    // 6. Run the meta-optimizer  
    nsgaii.run();
 
-   // Optional: run the FeatureImportanceExample from the project root using Maven
-   // (useful to reproduce feature importance and interaction analysis examples):
-   //
-   // mvn -q -Dexec.mainClass=org.uma.evolver.example.analysis.FeatureImportanceExample exec:java
-
 After running the meta-optimizer, a configuration is located in the ``VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt`` file in the RESULTS directory:
 
 .. code-block:: bash
@@ -266,18 +261,6 @@ The obtained front and the one obtained with NSGA-II with default settings are s
 
 Documentation
 -------------
-Caveats / Breaking changes
---------------------------
-
-* Breaking change: the package ``org.uma.evolver.ablation`` was moved to
-   ``org.uma.evolver.analysis.ablation``. Compatibility adapters were removed; update your
-   imports accordingly. Example replacement:
-
-   - Antes: ``import org.uma.evolver.ablation.AblationAnalyzer;``
-   - Ahora:  ``import org.uma.evolver.analysis.ablation.AblationAnalyzer;``
-
-* Note: some examples and documentation were updated to use the identifier
-   ``trainingSetDescriptor`` and the `TrainingSet.name()` accessor for clarity.
 Detailed documentation is available in the `docs` directory, including:
 - User Guide
 - Developer Documentation
@@ -304,7 +287,6 @@ Changelog
 
 v2.1-SNAPSHOT
 ^^^^^^^^^^^^^
-* Refactor: moved `ablation` package to `org.uma.evolver.analysis.ablation` and updated tests.
 * Documentation: README and examples updated to reflect API changes and migration notes.
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
