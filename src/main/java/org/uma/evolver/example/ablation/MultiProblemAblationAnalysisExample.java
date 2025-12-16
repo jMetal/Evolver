@@ -2,6 +2,7 @@ package org.uma.evolver.example.ablation;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,7 +99,7 @@ public class MultiProblemAblationAnalysisExample {
 
     // Export to CSV
     String csvFilename = "ablation_results_multi_problem_ZDT.csv";
-    try (FileWriter writer = new FileWriter(csvFilename)) {
+    try (FileWriter writer = new FileWriter(csvFilename, StandardCharsets.UTF_8)) {
       writer.write(looResult.toCSV());
     }
     System.out.println("\nResults exported to: " + csvFilename);

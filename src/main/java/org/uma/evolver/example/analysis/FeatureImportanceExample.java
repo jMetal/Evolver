@@ -1,6 +1,7 @@
 package org.uma.evolver.example.analysis;
 
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import org.uma.evolver.analysis.FeatureImportanceAnalyzer;
 
@@ -40,7 +41,7 @@ public class FeatureImportanceExample {
     // Export to CSV
     String csvOutput = analyzer.toCSV();
     String csvFile = resultsDir.resolve("feature_importance.csv").toString();
-    try (FileWriter writer = new FileWriter(csvFile)) {
+    try (FileWriter writer = new FileWriter(csvFile, StandardCharsets.UTF_8)) {
       writer.write(csvOutput);
     }
     System.out.println("Results exported to: " + csvFile);

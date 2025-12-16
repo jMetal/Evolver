@@ -3,6 +3,7 @@ package org.uma.evolver.parameter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -136,7 +137,7 @@ public class ParameterManagement {
   public static void writeDecodedSolutionsFoFile(List<Parameter<?>> parameters,
       List<DoubleSolution> solutions, String fileName)
       throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName);
+    FileWriter fileWriter = new FileWriter(fileName, StandardCharsets.UTF_8);
     PrintWriter printWriter = new PrintWriter(fileWriter);
     for (DoubleSolution solution : solutions) {
       StringBuilder parameterString = decodeParametersToString(parameters, solution.variables());
@@ -149,7 +150,7 @@ public class ParameterManagement {
   public static void writeDecodedSolutionsToDoubleValuesFile(List<Parameter<?>> parameters,
       List<DoubleSolution> solutions, String fileName)
       throws IOException {
-    FileWriter fileWriter = new FileWriter(fileName);
+    FileWriter fileWriter = new FileWriter(fileName, StandardCharsets.UTF_8);
     PrintWriter printWriter = new PrintWriter(fileWriter);
 
     StringBuilder csvHeader = new StringBuilder();

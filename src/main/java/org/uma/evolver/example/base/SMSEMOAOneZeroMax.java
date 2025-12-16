@@ -14,9 +14,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 public class SMSEMOAOneZeroMax {
   public static void main(String[] args) {
-    String yamlParameterSpaceFile = "SMSEMOABinary.yaml" ;
-
-    var p = new YAMLParameterSpace(yamlParameterSpaceFile, new BinaryParameterFactory());
+    String yamlParameterSpaceFile = "SMSEMOABinary.yaml";
 
     String[] parameters =
         ("--algorithmResult population "

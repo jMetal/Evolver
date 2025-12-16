@@ -3,6 +3,7 @@ package org.uma.evolver.analysis;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -199,7 +200,7 @@ public class RobustnessAnalyzer<S extends Solution<?>> {
   public void exportToCSV(List<Map<String, Object>> results, Path path) throws IOException {
     if (results.isEmpty()) return;
 
-    try (PrintWriter writer = new PrintWriter(new FileWriter(path.toFile()))) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
       Map<String, Object> first = results.get(0);
       List<String> keys = new ArrayList<>(first.keySet());
       writer.println(String.join(",", keys));

@@ -3,6 +3,7 @@ package org.uma.evolver.analysis;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -420,8 +421,9 @@ public class FeatureImportanceAnalyzer {
     sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
 
     int rank = 1;
-    for (String param : giniImp.keySet()) {
-      double gini = giniImp.get(param);
+    for (Map.Entry<String, Double> entry : giniImp.entrySet()) {
+      String param = entry.getKey();
+      double gini = entry.getValue();
       double perm = permImp.getOrDefault(param, 0.0);
       sb.append(
           String.format(
@@ -454,8 +456,9 @@ public class FeatureImportanceAnalyzer {
     sb.append("Rank,Parameter,GiniImportance,PermutationImportance\n");
 
     int rank = 1;
-    for (String param : giniImp.keySet()) {
-      double gini = giniImp.get(param);
+    for (Map.Entry<String, Double> entry : giniImp.entrySet()) {
+      String param = entry.getKey();
+      double gini = entry.getValue();
       double perm = permImp.getOrDefault(param, 0.0);
       sb.append(String.format("%d,%s,%.6f,%.6f%n", rank++, param, gini, perm));
     }
@@ -467,7 +470,7 @@ public class FeatureImportanceAnalyzer {
 
   private List<String[]> readCSV(Path path) throws IOException {
     List<String[]> rows = new ArrayList<>();
-    try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+    try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile(), StandardCharsets.UTF_8))) {
       String line;
       while ((line = reader.readLine()) != null) {
         rows.add(line.split(","));

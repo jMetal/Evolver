@@ -3,6 +3,7 @@ package org.uma.evolver.analysis;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import smile.data.DataFrame;
@@ -79,7 +80,7 @@ public class InteractionAnalyzer {
     double[] grid1 = linspace(min1, max1, gridResolution);
     double[] grid2 = linspace(min2, max2, gridResolution);
 
-    try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath.toFile()))) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath.toFile(), StandardCharsets.UTF_8))) {
       writer.println(feature1 + "," + feature2 + ",PredictedValue");
 
       StructType schema = data.schema();
