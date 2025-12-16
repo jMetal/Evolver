@@ -146,7 +146,7 @@ public class ParameterManagement {
     printWriter.close();
   }
 
-  public static void writeDecodedSolutionsToDoubleValuesFoFile(List<Parameter<?>> parameters,
+  public static void writeDecodedSolutionsToDoubleValuesFile(List<Parameter<?>> parameters,
       List<DoubleSolution> solutions, String fileName)
       throws IOException {
     FileWriter fileWriter = new FileWriter(fileName);

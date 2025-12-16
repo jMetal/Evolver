@@ -74,7 +74,7 @@ public class OutputResults implements EvaluationOutputWriter {
     var varWithDecodedDoubleValuesSolutionsFileName = outputDirectoryName + "/VAR." + problemDescription
         + ".Conf.DoubleValues" + "." + evaluations + ".csv";
 
-    ParameterManagement.writeDecodedSolutionsToDoubleValuesFoFile(
+    ParameterManagement.writeDecodedSolutionsToDoubleValuesFile(
         configurableAlgorithmProblem.parameters(),
         nonDominatedSolutionsArchive.solutions(),
         varWithDecodedDoubleValuesSolutionsFileName);
