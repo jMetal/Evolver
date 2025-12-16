@@ -86,10 +86,16 @@ Key Features
 - **Multi-objective Optimization at the meta level**: Optimizes multiple performance criteria (quality indicators) simultaneously
 - **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
 - **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics can be defined in a YAML file
+- **Analysis Tools**: Comprehensive parameter analysis including ablation studies, feature importance analysis, and robustness evaluation
 
 Other Features
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 - **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
+- **Parameter Analysis Framework**: 
+  
+  - **Ablation Analysis**: Systematic parameter contribution evaluation through leave-one-out and forward path methods
+  - **Feature Importance Analysis**: Machine learning-based parameter importance ranking using Random Forest
+  - **Robustness Analysis**: Configuration stability assessment through perturbation analysis
 
 Available algorithms
 --------------------
@@ -291,6 +297,10 @@ v2.1-SNAPSHOT
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
 * Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
+* Add comprehensive parameter analysis framework with ablation, feature importance, and robustness analysis tools
+* Add configuration-based ablation analysis system with parallel execution and progress reporting
+* Add machine learning-based feature importance analysis using Random Forest with permutation importance
+* Add robustness analysis for evaluating configuration stability under parameter perturbations
 
 v2.0 (2025-09-09)
 ^^^^^^^^^^^^^^^^^
