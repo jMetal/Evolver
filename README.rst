@@ -114,8 +114,14 @@ Evolver currently supports the following base-level and meta-optimization algori
 Installation
 ------------
 1. **Prerequisites**:
-   - Java JDK 17 or higher
+   - Java JDK 17 or higher (Java 21 recommended for development and examples)
    - Maven 3.6 or higher
+
+   .. note::
+
+      You may encounter runtime warnings related to Mockito dynamic agent loading and the absence
+      of an SLF4J implementation (NOP logger). These are non-fatal; see the project documentation
+      or the console output for guidance.
 
 2. **Build from source**:
    .. code-block:: bash
@@ -132,7 +138,7 @@ We first load the parameter space from the `NSGAIIDouble.yaml <https://github.co
 Next, we configure the training set with DTLZ1 and its reference front. 
 We then set up the epsilon and normalized hypervolume quality indicators (i.e., the objectives to minimize) and initialize the base NSGA-II with a population size of 100 and
 a stopping criterion of 15,000 evaluations. 
-The meta-optimization is configured with execute a sigle independent run per configuration.
+   The meta-optimization is configured to execute a single independent run per configuration.
 Next, we configure the NSGA-II acting as meta-optimizer with a stopping criterion of 2,000 evaluations and 8 cores for parallel processing. 
 Finally, we run the meta-optimizer, which stores results in the RESULTS directory as CSV files.
 
@@ -176,7 +182,7 @@ The following code snippet includes the main steps:
            .build();
 
    // 5. Define an observer to write the execution data to files    
-   String outputFolder = "RESULTS/NSGAII/DTLZ1"
+   String outputFolder = "RESULTS/NSGAII/DTLZ1";
    var outputResults =
         new OutputResults(
             "NSGA-II",
@@ -192,6 +198,11 @@ The following code snippet includes the main steps:
      
    // 6. Run the meta-optimizer  
    nsgaii.run();
+
+   // Optional: run the FeatureImportanceExample from the project root using Maven
+   // (useful to reproduce feature importance and interaction analysis examples):
+   //
+   // mvn -q -Dexec.mainClass=org.uma.evolver.example.analysis.FeatureImportanceExample exec:java
 
 After running the meta-optimizer, a configuration is located in the ``VAR.NSGA-II.DTLZ1.EP.NHV.Conf.2000.txt`` file in the RESULTS directory:
 
@@ -255,6 +266,18 @@ The obtained front and the one obtained with NSGA-II with default settings are s
 
 Documentation
 -------------
+Caveats / Breaking changes
+--------------------------
+
+* Breaking change: the package ``org.uma.evolver.ablation`` was moved to
+   ``org.uma.evolver.analysis.ablation``. Compatibility adapters were removed; update your
+   imports accordingly. Example replacement:
+
+   - Antes: ``import org.uma.evolver.ablation.AblationAnalyzer;``
+   - Ahora:  ``import org.uma.evolver.analysis.ablation.AblationAnalyzer;``
+
+* Note: some examples and documentation were updated to use the identifier
+   ``trainingSetDescriptor`` and the `TrainingSet.name()` accessor for clarity.
 Detailed documentation is available in the `docs` directory, including:
 - User Guide
 - Developer Documentation
@@ -281,6 +304,8 @@ Changelog
 
 v2.1-SNAPSHOT
 ^^^^^^^^^^^^^
+* Refactor: moved `ablation` package to `org.uma.evolver.analysis.ablation` and updated tests.
+* Documentation: README and examples updated to reflect API changes and migration notes.
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
 * Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
