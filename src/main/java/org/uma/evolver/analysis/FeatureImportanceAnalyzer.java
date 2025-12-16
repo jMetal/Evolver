@@ -409,16 +409,20 @@ public class FeatureImportanceAnalyzer {
     Map<String, Double> permImp = getPermutationImportance(10);
 
     StringBuilder sb = new StringBuilder();
-    sb.append("╔══════════════════════════════════════════════════════════════════════════╗\n");
-    sb.append("║           FEATURE IMPORTANCE ANALYSIS REPORT                            ║\n");
-    sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
+    sb.append("""
+        ╔══════════════════════════════════════════════════════════════════════════╗
+        ║           FEATURE IMPORTANCE ANALYSIS REPORT                            ║
+        ╠══════════════════════════════════════════════════════════════════════════╣
+        """);
     sb.append(String.format("║ Target Indicator: %-55s ║%n", targetIndicator));
     sb.append(String.format("║ Samples: %-64d ║%n", data.nrow()));
     sb.append(String.format("║ Features: %-63d ║%n", featureNames.length));
     sb.append(String.format("║ Model R²: %-63.4f ║%n", calculateR2()));
-    sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
-    sb.append("║ Rank │ Parameter                        │ Gini Imp. │ Perm. Imp. ║\n");
-    sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
+    sb.append("""
+        ╠══════════════════════════════════════════════════════════════════════════╣
+        ║ Rank │ Parameter                        │ Gini Imp. │ Perm. Imp. ║
+        ╠══════════════════════════════════════════════════════════════════════════╣
+        """);
 
     int rank = 1;
     for (Map.Entry<String, Double> entry : giniImp.entrySet()) {

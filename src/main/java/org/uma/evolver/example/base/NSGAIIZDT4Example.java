@@ -52,9 +52,28 @@ public class NSGAIIZDT4Example {
     String[] parameters ;
     if (args.length > 0) parameters = args;
     else
-      parameters =
-          ("--algorithmResult externalArchive --populationSizeWithArchive 89 --archiveType unboundedArchive --createInitialSolutions scatterSearch --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.6885278888703463 --crossoverRepairStrategy bounds --sbxDistributionIndex 32.07999211591175 --blxAlphaCrossoverAlpha 0.640303817347435 --mutation linkedPolynomial --mutationProbabilityFactor 0.6952851214888922 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.14262698171788724 --polynomialMutationDistributionIndex 18.40410700737766 --linkedPolynomialMutationDistributionIndex 17.696253388022207 --nonUniformMutationPerturbation 0.9843662953835077 --selection tournament --selectionTournamentSize 8 \n")
-              .split("\\s+");
+      parameters = """
+          --algorithmResult externalArchive
+          --populationSizeWithArchive 89
+          --archiveType unboundedArchive
+          --createInitialSolutions scatterSearch
+          --offspringPopulationSize 20
+          --variation crossoverAndMutationVariation
+          --crossover SBX
+          --crossoverProbability 0.6885278888703463
+          --crossoverRepairStrategy bounds
+          --sbxDistributionIndex 32.07999211591175
+          --blxAlphaCrossoverAlpha 0.640303817347435
+          --mutation linkedPolynomial
+          --mutationProbabilityFactor 0.6952851214888922
+          --mutationRepairStrategy bounds
+          --uniformMutationPerturbation 0.14262698171788724
+          --polynomialMutationDistributionIndex 18.40410700737766
+          --linkedPolynomialMutationDistributionIndex 17.696253388022207
+          --nonUniformMutationPerturbation 0.9843662953835077
+          --selection tournament
+          --selectionTournamentSize 8
+          """.split("\\s+");
 
     // 2. Initialize algorithm parameters
     int populationSize = 100;

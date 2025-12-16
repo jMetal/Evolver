@@ -66,9 +66,11 @@ public class AblationResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("╔══════════════════════════════════════════════════════════════╗\n");
-        sb.append("║              ABLATION ANALYSIS RESULTS                       ║\n");
-        sb.append("╠══════════════════════════════════════════════════════════════╣\n");
+        sb.append("""
+            ╔══════════════════════════════════════════════════════════════╗
+            ║              ABLATION ANALYSIS RESULTS                       ║
+            ╠══════════════════════════════════════════════════════════════╣
+            """);
 
         sb.append("║ Indicators: ");
         for (int i = 0; i < indicators.size(); i++) {
@@ -83,9 +85,11 @@ public class AblationResult {
         sb.append(String.format("║ Optimized Performance: %s%n", formatArray(optimizedPerformance)));
         sb.append(String.format("║ Total Improvement:     %s%n", formatArray(getTotalImprovement())));
 
-        sb.append("╠══════════════════════════════════════════════════════════════╣\n");
-        sb.append("║ PARAMETER CONTRIBUTIONS (ranked by importance)              ║\n");
-        sb.append("╠══════════════════════════════════════════════════════════════╣\n");
+        sb.append("""
+            ╠══════════════════════════════════════════════════════════════╣
+            ║ PARAMETER CONTRIBUTIONS (ranked by importance)              ║
+            ╠══════════════════════════════════════════════════════════════╣
+            """);
 
         int rank = 1;
         for (ParameterContribution pc : getRankedContributions()) {
@@ -96,9 +100,11 @@ public class AblationResult {
         }
 
         if (!ablationPath.isEmpty()) {
-            sb.append("╠══════════════════════════════════════════════════════════════╣\n");
-            sb.append("║ ABLATION PATH (forward selection order)                     ║\n");
-            sb.append("╠══════════════════════════════════════════════════════════════╣\n");
+            sb.append("""
+                ╠══════════════════════════════════════════════════════════════╣
+                ║ ABLATION PATH (forward selection order)                     ║
+                ╠══════════════════════════════════════════════════════════════╣
+                """);
 
             int step = 1;
             for (AblationStep as : ablationPath) {
