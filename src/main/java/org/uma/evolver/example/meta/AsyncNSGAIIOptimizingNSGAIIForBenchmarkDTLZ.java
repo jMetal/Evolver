@@ -13,12 +13,14 @@ import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.trainingset.WFG2DTrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
@@ -84,10 +86,28 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "AsyncNSGA-II";
+    String problemName = trainingSetDescriptor.name();
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(META_MAX_EVALUATIONS)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(NUMBER_OF_CORES)
+            .baseLevelAlgorithmName("NSGA-II")
+            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
+
     var outputResults =
         new ConsolidatedOutputResults(
-            "AsyncNSGA-II", metaOptimizationProblem, trainingSetDescriptor.name(), indicators,
-            "results/nsgaii/" + trainingSetDescriptor.name());
+            metaOptimizationProblem,
+            problemName,
+            indicators,
+            "results/nsgaii/" + problemName,
+            config);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);

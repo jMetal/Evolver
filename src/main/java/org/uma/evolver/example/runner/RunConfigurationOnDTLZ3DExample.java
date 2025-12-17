@@ -26,7 +26,7 @@ public class RunConfigurationOnDTLZ3DExample {
     // 1. Define the optimized configuration (from meta-optimization on DTLZ)
     String[] configuration =
         """
-        --algorithmResult externalArchive --populationSizeWithArchive 68 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.954734302713461 --crossoverRepairStrategy random --sbxDistributionIndex 108.03261497125926 --mutation uniform --mutationProbabilityFactor 1.1248170788140066 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.46304358234940657 --selection tournament --selectionTournamentSize 7
+        --algorithmResult externalArchive --populationSizeWithArchive 58 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 100 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.915690039341087 --crossoverRepairStrategy round --sbxDistributionIndex 86.5733443611202 --mutation uniform --mutationProbabilityFactor 0.6201602806258746 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.2523551997667263 --selection tournament --selectionTournamentSize 2
         """
             .split("\\s+");
 

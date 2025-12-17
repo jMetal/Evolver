@@ -9,7 +9,8 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.Evaluati
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.OutputResults;
+import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -32,6 +33,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int META_POPULATION_SIZE = 50;
   private static final int NUMBER_OF_CORES = 8;
 
   // Base-level algorithm configuration
@@ -79,13 +81,28 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "NSGA-II";
+    String problemName = trainingSetDescriptor.name();
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(META_MAX_EVALUATIONS)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(NUMBER_OF_CORES)
+            .baseLevelAlgorithmName("NSGA-II")
+            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
+
     var outputResults =
-        new OutputResults(
-            "NSGA-II",
-                metaOptimizationProblem,
-                trainingSetDescriptor.name(),
-                indicators,
-                "RESULTS/NSGAII/" + trainingSetDescriptor.name());
+        new ConsolidatedOutputResults(
+            metaOptimizationProblem,
+            problemName,
+            indicators,
+            "results/nsgaii/" + problemName,
+            config);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);

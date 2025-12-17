@@ -60,8 +60,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         '--output',
         type=str,
-        default='optimization_progress.png',
-        help='Output filename (supports .png, .jpg, .pdf, .svg)'
+        default='analysis_results/optimization_progress.png',
+        help='Output filename (supports .png, .jpg, .pdf, .svg) - default: analysis_results/optimization_progress.png'
     )
     parser.add_argument(
         '--indicator1',
@@ -354,18 +354,80 @@ def plot_dual_axis_time_series(evaluations: np.ndarray, indicator1_values: np.nd
     
     return line1, line2
 
+def plot_separate_subplots(evaluations: np.ndarray, indicator1_values: np.ndarray, 
+                          indicator2_values: np.ndarray, indicator1_name: str, 
+                          indicator2_name: str, range_data: Optional[Dict] = None,
+                          range_type: str = 'quartiles', metadata: Dict = None):
+    """Plot time series with separate subplots for each indicator (like convergence_analysis.png)."""
+    
+    # Determine if we need separate plots or if both indicators are the same
+    if indicator1_name == indicator2_name:
+        # Single indicator plot
+        fig, ax = plt.subplots(1, 1, figsize=(12, 6))
+        axes = [ax]
+        indicators = [indicator1_name]
+        values = [indicator1_values]
+        range_keys = [('indicator1_lower', 'indicator1_upper')]
+    else:
+        # Two separate subplots
+        fig, axes = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+        indicators = [indicator1_name, indicator2_name]
+        values = [indicator1_values, indicator2_values]
+        range_keys = [('indicator1_lower', 'indicator1_upper'), 
+                     ('indicator2_lower', 'indicator2_upper')]
+    
+    colors = ['tab:blue', 'tab:red']
+    
+    for i, (ax, indicator, vals, range_key, color) in enumerate(zip(axes, indicators, values, range_keys, colors)):
+        # Plot the main line
+        ax.plot(evaluations, vals, color=color, marker='o', 
+               linewidth=2, markersize=4, label='Median')
+        
+        # Add confidence intervals if available
+        if range_data is not None and range_key[0] in range_data:
+            ax.fill_between(evaluations, 
+                           range_data[range_key[0]], 
+                           range_data[range_key[1]],
+                           color=color, alpha=0.3, 
+                           label=f'{range_type.title()} Range')
+        
+        ax.set_ylabel(f'{indicator} Value')
+        ax.set_title(f'{indicator} Convergence')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        
+        # Only set xlabel on bottom plot
+        if i == len(axes) - 1:
+            ax.set_xlabel('Evaluation Number')
+    
+    # Add overall title
+    algorithm = metadata.get('Algorithm', 'Unknown') if metadata else 'Unknown'
+    training_set = metadata.get('Training Set', 'Unknown') if metadata else 'Unknown'
+    
+    if len(indicators) == 1:
+        plt.suptitle(f'{indicators[0]} Convergence Analysis\n'
+                    f'Algorithm: {algorithm} | Training Set: {training_set}', 
+                    fontsize=14, y=0.95)
+    else:
+        plt.suptitle(f'Convergence Analysis\n'
+                    f'Algorithm: {algorithm} | Training Set: {training_set}', 
+                    fontsize=14, y=0.95)
+    
+    plt.tight_layout()
+    return fig
+
 def plot_optimization_progress(data_dir: str, frequency: int, output_file: str, 
                              indicator1: str, indicator2: str, aggregation: str = 'median',
                              show_range: bool = False, range_type: str = 'quartiles'):
     """
-    Create a time series plot of the optimization progress with dual Y-axes.
+    Create a time series plot of the optimization progress with separate subplots.
     
     Args:
         data_dir: Directory containing structured data files
         frequency: Plot every N evaluations
         output_file: Output file name for the plot
-        indicator1: Quality indicator for left Y-axis
-        indicator2: Quality indicator for right Y-axis
+        indicator1: Quality indicator for first subplot
+        indicator2: Quality indicator for second subplot (if different from indicator1)
         aggregation: Central tendency method for multiple values per evaluation
         show_range: Whether to show confidence intervals
         range_type: Type of confidence intervals to show
@@ -389,43 +451,32 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
             print("No valid data points to plot.")
             return
         
-        # Set up the figure
-        plt.figure(figsize=(12, 8))
-        ax1 = plt.gca()
-        
-        # Plot dual-axis time series
-        line1, line2 = plot_dual_axis_time_series(
+        # Create separate subplots (like convergence_analysis.png)
+        fig = plot_separate_subplots(
             evaluations, indicator1_values, indicator2_values, 
-            indicator1, indicator2, ax1, range_data, range_type)
-        
-        # Set title
-        algorithm = metadata.get('Algorithm', 'Unknown')
-        training_set = metadata.get('Problem Family', 'Unknown')
-        title_suffix = f" with {range_type} intervals" if show_range else ""
-        ax1.set_title(f'Optimization Progress Over Time ({aggregation.upper()} aggregation{title_suffix})\nAlgorithm: {algorithm} | Training Set: {training_set}', 
-                     fontsize=14, pad=20)
-        
-        # Add legend
-        if line1 and line2:
-            lines = line1 + line2
-            labels = [l.get_label() for l in lines]
-            ax1.legend(lines, labels, loc='upper right', frameon=True, framealpha=0.9)
-        
-        # Improve layout
-        plt.tight_layout()
+            indicator1, indicator2, range_data, range_type, metadata)
         
         # Save the figure
         try:
+            # Ensure output directory exists
+            output_path = Path(output_file)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             print(f"Plot saved to {output_file}")
-            print(f"Plot shows progression of {indicator1} (blue, left axis) and {indicator2} (red, right axis) over {len(evaluations)} evaluation points")
-            print(f"Central tendency: {aggregation} (used when multiple solutions exist per evaluation)")
+            
+            if indicator1 == indicator2:
+                print(f"Plot shows convergence of {indicator1} over {len(evaluations)} evaluation points")
+            else:
+                print(f"Plot shows convergence of {indicator1} and {indicator2} in separate subplots over {len(evaluations)} evaluation points")
+            
             if show_range:
+                print(f"Central tendency: {aggregation} (used when multiple solutions exist per evaluation)")
                 print(f"Confidence intervals: {range_type} (shaded areas show variability)")
         except Exception as e:
             print(f"Error saving plot: {e}")
-        
-        plt.close()
+        finally:
+            plt.close()
         
     except Exception as e:
         print(f"Error creating plot: {e}")

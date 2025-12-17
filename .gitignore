@@ -10,8 +10,10 @@ jMetal*.log
 .DS_Store
 _build
 
-# Output directory - generated analysis results
+# Output directories - generated analysis results
 output/
+analysis_results/
+results/
 
 # Python cache
 __pycache__/
@@ -36,7 +38,29 @@ env/
 FUN*
 VAR*
 *.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+
+# Generated CSV files (experiment results)
+*.csv
+
+# Generated HTML files
+*.html
+
+# Generated analysis reports
+analysis_summary.md
 
 # Keep documentation images under docs/
 !docs/*.png
-!docs/**.png
+!docs/**/*.png
+!docs/*.jpg
+!docs/**/*.jpg
+!docs/*.svg
+!docs/**/*.svg
+
+# Keep sample data files
+!analysis/sample_data/*.csv
+!analysis/sample_data/*.png

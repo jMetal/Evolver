@@ -10,6 +10,7 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEva
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.trainingset.WFG2DTrainingSet;
@@ -17,6 +18,7 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -44,7 +46,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor = new WFG2DTrainingSet();
@@ -53,7 +55,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
@@ -83,10 +85,28 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
+    String algorithmName = "AsyncNSGA-II";
+    String problemName = trainingSetDescriptor.name();
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(META_MAX_EVALUATIONS)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(NUMBER_OF_CORES)
+            .baseLevelAlgorithmName("NSGA-II")
+            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
+
     var outputResults =
         new ConsolidatedOutputResults(
-            "AsyncNSGA-II", metaOptimizationProblem, trainingSetDescriptor.name(), indicators,
-            "results/nsgaii/" + trainingSetDescriptor.name());
+            metaOptimizationProblem,
+            problemName,
+            indicators,
+            "results/nsgaii/" + problemName,
+            config);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
