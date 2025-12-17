@@ -27,8 +27,8 @@ python plot_optimization_progress.py results/nsgaii/ZDT 100 --list-indicators
 #### Custom Indicators and Output
 ```bash
 python plot_optimization_progress.py results/nsgaii/DTLZ3D 300 \
-    --x-indicator EP \
-    --y-indicator "IGD+" \
+    --indicator1 EP \
+    --indicator2 "IGD+" \
     --output dtlz3d_progress.png
 ```
 
@@ -37,8 +37,8 @@ python plot_optimization_progress.py results/nsgaii/DTLZ3D 300 \
 - `data_dir`: Directory containing INDICATORS.csv, CONFIGURATIONS.csv, and METADATA.txt files
 - `frequency`: Plot every N evaluations (e.g., 200 will plot every 200th evaluation)
 - `--output`: Output filename (default: optimization_progress.png)
-- `--x-indicator`: Quality indicator for X-axis (default: EP)
-- `--y-indicator`: Quality indicator for Y-axis (default: NHV)
+- `--indicator1`: Quality indicator for left Y-axis (default: EP)
+- `--indicator2`: Quality indicator for right Y-axis (default: NHV)
 - `--list-indicators`: List available indicators and exit
 
 ### Data Format
@@ -53,31 +53,50 @@ The script expects the new structured data format:
 ### Output
 
 Generates a high-quality PNG image showing:
-- Quality indicator values plotted as scatter points
-- Different colors for different evaluation points
-- Legend showing evaluation numbers
+- Time series plot with evaluation numbers on X-axis
+- Two quality indicators on dual Y-axes (left and right)
+- Clear trend lines showing optimization progress over time
 - Algorithm and training set information in the title
+- Legend identifying each indicator and axis
 
 ### Examples
 
-#### ZDT Training Set (EP vs NHV)
+#### ZDT Training Set (EP and NHV over time)
 ```bash
 python plot_optimization_progress.py results/nsgaii/ZDT 200
 ```
 
-#### DTLZ3D Training Set (EP vs IGD+)
+#### DTLZ3D Training Set (EP and IGD+ over time)
 ```bash
 python plot_optimization_progress.py results/nsgaii/DTLZ3D 300 \
-    --x-indicator EP --y-indicator "IGD+"
+    --indicator1 EP --indicator2 "IGD+"
 ```
+
+### Key Features
+
+#### Time Series Visualization
+- **X-axis**: Evaluation numbers showing optimization progress over time
+- **Dual Y-axes**: Two quality indicators plotted simultaneously
+- **Scalable**: Handles thousands of evaluations without cluttered legends
+- **Clear trends**: Shows convergence patterns and optimization dynamics
+
+#### Smart Data Processing
+- **Best value tracking**: Shows minimum (best) indicator values at each evaluation
+- **Frequency filtering**: Plot every N evaluations to reduce noise
+- **Automatic discovery**: Lists available indicators in datasets
 
 ### Migration from Old Format
 
-The script has been completely refactored to work with the new structured data format instead of the old `FUN.*.csv` files. The new format provides:
+The script has been completely refactored twice:
 
-- Better organization of data
-- Support for multiple quality indicators
-- Metadata about experiments
-- Algorithm configuration tracking
+1. **First refactor**: Support new structured data format (INDICATORS.csv) instead of old `FUN.*.csv` files
+2. **Second refactor**: Time series visualization with dual Y-axes instead of scatter plots
+
+**Benefits of new approach**:
+- Scalable to thousands of evaluations
+- Clear trend visualization over time
+- No cluttered legends with hundreds of points
+- Better understanding of optimization dynamics
+- Dual indicators show trade-offs and convergence patterns
 
 If you have old `FUN.*.csv` files, you'll need to convert them to the new format or use an older version of this script.

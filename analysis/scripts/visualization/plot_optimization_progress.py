@@ -15,14 +15,14 @@ New Data Format:
 
 Output:
     Generates a high-quality PNG image showing the progression of quality indicators
-    with different colors representing different evaluation points.
+    over time with evaluation numbers on X-axis and dual Y-axes for two indicators.
 
 Example Usage:
     # Basic usage with default output name
     python plot_optimization_progress.py results/nsgaii/ZDT 200
     
     # Specify custom output file and indicators
-    python plot_optimization_progress.py results/nsgaii/ZDT 200 --output optimization_progress.png --x-indicator EP --y-indicator NHV
+    python plot_optimization_progress.py results/nsgaii/ZDT 200 --output optimization_progress.png --indicator1 EP --indicator2 NHV
 
 Dependencies:
     - Python 3.6+
@@ -64,16 +64,16 @@ def parse_args() -> argparse.Namespace:
         help='Output filename (supports .png, .jpg, .pdf, .svg)'
     )
     parser.add_argument(
-        '--x-indicator',
+        '--indicator1',
         type=str,
         default='EP',
-        help='Quality indicator to use for X-axis (default: EP)'
+        help='Quality indicator for left Y-axis (default: EP)'
     )
     parser.add_argument(
-        '--y-indicator',
+        '--indicator2',
         type=str,
         default='NHV',
-        help='Quality indicator to use for Y-axis (default: NHV)'
+        help='Quality indicator for right Y-axis (default: NHV)'
     )
     parser.add_argument(
         '--list-indicators',
@@ -177,75 +177,84 @@ def filter_data_by_frequency(indicators_df: pd.DataFrame, frequency: int) -> pd.
     
     return filtered_df
 
-def prepare_plot_data(indicators_df: pd.DataFrame, x_indicator: str, y_indicator: str) -> List[Tuple[int, np.ndarray]]:
+def prepare_time_series_data(indicators_df: pd.DataFrame, indicator1: str, indicator2: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Prepare data for plotting by grouping by evaluation and extracting indicator values.
+    Prepare data for time series plotting with evaluation numbers on X-axis.
     
     Args:
         indicators_df: DataFrame with indicators data
-        x_indicator: Name of indicator for X-axis
-        y_indicator: Name of indicator for Y-axis
+        indicator1: Name of first indicator (left Y-axis)
+        indicator2: Name of second indicator (right Y-axis)
         
     Returns:
-        List of tuples (evaluation_number, indicator_values_array)
+        Tuple of (evaluations, indicator1_values, indicator2_values)
     """
     # Check if indicators exist
     available_indicators = list(indicators_df.columns[2:])  # Skip Evaluation and SolutionId
-    if x_indicator not in available_indicators:
-        raise ValueError(f"X-indicator '{x_indicator}' not found. Available: {available_indicators}")
-    if y_indicator not in available_indicators:
-        raise ValueError(f"Y-indicator '{y_indicator}' not found. Available: {available_indicators}")
+    if indicator1 not in available_indicators:
+        raise ValueError(f"Indicator '{indicator1}' not found. Available: {available_indicators}")
+    if indicator2 not in available_indicators:
+        raise ValueError(f"Indicator '{indicator2}' not found. Available: {available_indicators}")
     
-    plot_data = []
+    # Group by evaluation and calculate statistics (mean, best, etc.)
+    evaluations = []
+    indicator1_values = []
+    indicator2_values = []
     
-    # Group by evaluation and extract indicator values
     for evaluation in sorted(indicators_df['Evaluation'].unique()):
         eval_data = indicators_df[indicators_df['Evaluation'] == evaluation]
         
-        # Extract x and y values for this evaluation
-        x_values = eval_data[x_indicator].values
-        y_values = eval_data[y_indicator].values
+        # Calculate best (minimum) values for each indicator at this evaluation
+        # For most quality indicators, lower is better
+        ind1_best = eval_data[indicator1].min()
+        ind2_best = eval_data[indicator2].min()
         
-        # Combine into 2D array (n_solutions, 2)
-        if len(x_values) > 0 and len(y_values) > 0:
-            indicator_values = np.column_stack((x_values, y_values))
-            plot_data.append((evaluation, indicator_values))
-            print(f"Evaluation {evaluation}: {len(indicator_values)} solutions")
+        evaluations.append(evaluation)
+        indicator1_values.append(ind1_best)
+        indicator2_values.append(ind2_best)
+        
+        print(f"Evaluation {evaluation}: {indicator1}={ind1_best:.6f}, {indicator2}={ind2_best:.6f} (from {len(eval_data)} solutions)")
     
-    return plot_data
+    return np.array(evaluations), np.array(indicator1_values), np.array(indicator2_values)
 
-def plot_fronts(fronts_data: List[Tuple[int, np.ndarray]], ax, x_label: str, y_label: str):
-    """Plot all fronts with different colors and consistent point style."""
-    if not fronts_data:
+def plot_dual_axis_time_series(evaluations: np.ndarray, indicator1_values: np.ndarray, 
+                              indicator2_values: np.ndarray, indicator1_name: str, 
+                              indicator2_name: str, ax1):
+    """Plot time series with dual Y-axes."""
+    if len(evaluations) == 0:
         print("No data to plot")
-        return
-        
-    # Use a colormap for smooth color transitions
-    colors = cm.rainbow(np.linspace(0, 1, len(fronts_data)))
+        return None, None
     
-    # Plot each front with a different color but same marker
-    for i, (eval_num, indicators) in enumerate(fronts_data):
-        if len(indicators) > 0:
-            ax.scatter(indicators[:, 0], indicators[:, 1], 
-                      color=colors[i], 
-                      alpha=0.7,
-                      s=40,
-                      marker='o',  # Consistent circle marker
-                      edgecolors='w',
-                      linewidth=0.5,
-                      label=f'Eval {eval_num}')
+    # Plot first indicator on left Y-axis
+    color1 = 'tab:blue'
+    ax1.set_xlabel('Evaluation Number')
+    ax1.set_ylabel(indicator1_name, color=color1)
+    line1 = ax1.plot(evaluations, indicator1_values, color=color1, marker='o', 
+                     linewidth=2, markersize=4, label=indicator1_name)
+    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.grid(True, alpha=0.3)
+    
+    # Create second Y-axis for second indicator
+    ax2 = ax1.twinx()
+    color2 = 'tab:red'
+    ax2.set_ylabel(indicator2_name, color=color2)
+    line2 = ax2.plot(evaluations, indicator2_values, color=color2, marker='s', 
+                     linewidth=2, markersize=4, label=indicator2_name)
+    ax2.tick_params(axis='y', labelcolor=color2)
+    
+    return line1, line2
 
 def plot_optimization_progress(data_dir: str, frequency: int, output_file: str, 
-                             x_indicator: str, y_indicator: str):
+                             indicator1: str, indicator2: str):
     """
-    Create a static plot of the optimization progress.
+    Create a time series plot of the optimization progress with dual Y-axes.
     
     Args:
         data_dir: Directory containing structured data files
         frequency: Plot every N evaluations
         output_file: Output file name for the plot
-        x_indicator: Quality indicator for X-axis
-        y_indicator: Quality indicator for Y-axis
+        indicator1: Quality indicator for left Y-axis
+        indicator2: Quality indicator for right Y-axis
     """
     try:
         # Load experiment data
@@ -258,54 +267,43 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
             print("No data available after filtering.")
             return
         
-        # Prepare plot data
-        plot_data = prepare_plot_data(filtered_df, x_indicator, y_indicator)
+        # Prepare time series data
+        evaluations, indicator1_values, indicator2_values = prepare_time_series_data(
+            filtered_df, indicator1, indicator2)
         
-        if not plot_data:
+        if len(evaluations) == 0:
             print("No valid data points to plot.")
             return
         
-        # Set up the figure with adjusted size and margins
-        plt.figure(figsize=(14, 10))
-        ax = plt.gca()
+        # Set up the figure
+        plt.figure(figsize=(12, 8))
+        ax1 = plt.gca()
         
-        # Adjust layout to make room for legend
-        plt.subplots_adjust(right=0.75, left=0.1, top=0.95, bottom=0.1)
+        # Plot dual-axis time series
+        line1, line2 = plot_dual_axis_time_series(
+            evaluations, indicator1_values, indicator2_values, 
+            indicator1, indicator2, ax1)
         
-        # Plot the data
-        plot_fronts(plot_data, ax, x_indicator, y_indicator)
-        
-        # Set axis labels and title
-        ax.set_xlabel(x_indicator)
-        ax.set_ylabel(y_indicator)
-        
+        # Set title
         algorithm = metadata.get('Algorithm', 'Unknown')
         training_set = metadata.get('Problem Family', 'Unknown')
-        ax.set_title(f'Optimization Progress\nAlgorithm: {algorithm} | Training Set: {training_set}')
-        ax.grid(True, alpha=0.3)
+        ax1.set_title(f'Optimization Progress Over Time\nAlgorithm: {algorithm} | Training Set: {training_set}', 
+                     fontsize=14, pad=20)
         
-        # Get handles and labels from the plot
-        handles, labels = ax.get_legend_handles_labels()
+        # Add legend
+        if line1 and line2:
+            lines = line1 + line2
+            labels = [l.get_label() for l in lines]
+            ax1.legend(lines, labels, loc='upper right', frameon=True, framealpha=0.9)
         
-        # Only create legend if we have valid points
-        if handles and labels:
-            ax.legend(handles, labels, 
-                     title='Evaluation Points',
-                     loc='center left',
-                     bbox_to_anchor=(1.05, 0.5),
-                     frameon=True,
-                     framealpha=0.9,
-                     fancybox=True)
-        else:
-            print("No valid data points to show in legend.")
-        
-        # Adjust layout to make room for the legend
-        plt.tight_layout(rect=[0, 0, 0.85, 1])  # Adjust the right margin
+        # Improve layout
+        plt.tight_layout()
         
         # Save the figure
         try:
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             print(f"Plot saved to {output_file}")
+            print(f"Plot shows progression of {indicator1} (blue, left axis) and {indicator2} (red, right axis) over {len(evaluations)} evaluation points")
         except Exception as e:
             print(f"Error saving plot: {e}")
         
@@ -331,7 +329,7 @@ def main():
             for indicator in available_indicators:
                 print(f"  - {indicator}")
             print(f"\nExample usage:")
-            print(f"  python {os.path.basename(__file__)} {args.data_dir} 200 --x-indicator {available_indicators[0]} --y-indicator {available_indicators[-1]}")
+            print(f"  python {os.path.basename(__file__)} {args.data_dir} 200 --indicator1 {available_indicators[0]} --indicator2 {available_indicators[-1]}")
         except Exception as e:
             print(f"Error reading data: {e}")
         return
@@ -342,14 +340,14 @@ def main():
     
     print(f"Plotting optimization progress from {args.data_dir}")
     print(f"Plotting every {args.frequency} evaluations")
-    print(f"X-axis: {args.x_indicator}, Y-axis: {args.y_indicator}")
+    print(f"Left Y-axis: {args.indicator1}, Right Y-axis: {args.indicator2}")
     
     # Ensure output file has a valid extension
     if not args.output.endswith(('.png', '.jpg', '.jpeg', '.pdf', '.svg')):
         args.output = f"{os.path.splitext(args.output)[0]}.png"
     
     plot_optimization_progress(args.data_dir, args.frequency, args.output, 
-                             args.x_indicator, args.y_indicator)
+                             args.indicator1, args.indicator2)
 
 if __name__ == "__main__":
     main()
