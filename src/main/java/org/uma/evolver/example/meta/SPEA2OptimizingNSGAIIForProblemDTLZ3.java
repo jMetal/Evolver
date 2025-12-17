@@ -31,6 +31,21 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  */
 public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
 
+  // Meta-optimizer configuration
+  private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int META_POPULATION_SIZE = 100;
+  private static final int NUMBER_OF_CORES = 8;
+
+  // Base-level algorithm configuration
+  private static final int BASE_POPULATION_SIZE = 100;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+  private static final int BASE_MAX_EVALUATIONS = 15000;
+
+  // Observer configuration
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
+
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
@@ -42,10 +57,9 @@ public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
 
-    var maximumNumberOfEvaluations = List.of(15000);
-    int numberOfIndependentRuns = 1;
+    var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
         new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
@@ -57,18 +71,14 @@ public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            numberOfIndependentRuns);
+            NUMBER_OF_INDEPENDENT_RUNS);
 
     // Step 3: Set up and configure the meta-optimizer (SPEA2)
-    // builder
-    int maxEvaluations = 2000;
-    int numberOfCores = 8;
-
     EvolutionaryAlgorithm<DoubleSolution> spea2 =
         new MetaSPEA2Builder(metaOptimizationProblem)
-            .setMaxEvaluations(maxEvaluations)
-            .setNumberOfCores(numberOfCores)
-            .setPopulationSize(100)
+            .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setNumberOfCores(NUMBER_OF_CORES)
+            .setPopulationSize(META_POPULATION_SIZE)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -78,18 +88,18 @@ public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/SPEA2/NSGAII/" + "DTLZ3");
+            "results/spea2/nsgaii/" + "DTLZ3");
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
+    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    var evaluationObserver = new EvaluationObserver(100);
+    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
             "NSGA-II, " + "DTLZ3",
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),
-            1);
+            PLOT_UPDATE_FREQUENCY);
 
     spea2.observable().register(evaluationObserver);
     spea2.observable().register(frontChartObserver);
@@ -101,7 +111,7 @@ public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
     // Step 6: Write results
     JMetalLogger.logger.info(() -> "Total computing time: " + spea2.totalComputingTime());
 
-    outputResults.updateEvaluations(maxEvaluations);
+    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(spea2.result());
 
     System.exit(0);

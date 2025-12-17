@@ -33,6 +33,19 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  */
 public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
 
+  // Meta-optimizer configuration
+  private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int NUMBER_OF_CORES = 8;
+
+  // Base-level algorithm configuration
+  private static final int BASE_POPULATION_SIZE = 100;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+
+  // Observer configuration
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
+
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "RDEMOEADouble.yaml" ;
 
@@ -45,12 +58,11 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleRDEMOEA(100, parameterSpace);
+    var configurableAlgorithm = new DoubleRDEMOEA(BASE_POPULATION_SIZE, parameterSpace);
 
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
-    int numberOfIndependentRuns = 1;
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -59,39 +71,36 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            numberOfIndependentRuns);
+            NUMBER_OF_INDEPENDENT_RUNS);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
-    int maxEvaluations = 2000;
-    int numberOfCores = 8 ;
-
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
-            .setMaxEvaluations(maxEvaluations)
-            .setNumberOfCores(numberOfCores)
+            .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setNumberOfCores(NUMBER_OF_CORES)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-        String problemName = trainingSetDescriptor.name();
+    String problemName = trainingSetDescriptor.name();
     var outputResults =
         new OutputResults(
             "RDEMOEA",
             metaOptimizationProblem,
             problemName,
             indicators,
-            "RESULTS/RDEMOEA/" + problemName);
+            "results/rdemoea/" + problemName);
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, outputResults);
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-                "RDEMOEA, " + problemName,
+            "RDEMOEA, " + problemName,
             indicators.get(0).name(),
             indicators.get(1).name(),
-                problemName,
-            1);
+            problemName,
+            PLOT_UPDATE_FREQUENCY);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
@@ -103,7 +112,7 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
     // Step 6: Write results
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    outputResults.updateEvaluations(maxEvaluations);
+    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(nsgaii.result());
 
     System.exit(0);

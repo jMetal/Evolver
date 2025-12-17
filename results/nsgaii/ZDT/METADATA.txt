@@ -1,16 +1,16 @@
 === Meta-Optimization Experiment ===
-Date: 2025-12-12T12:06:12.110908
+Date: 2025-12-17T10:31:55.170683
 
 --- Meta-Optimizer ---
 Algorithm: NSGA-II
 Max Evaluations: 2000
-Population Size: 100
+Population Size: 50
 Cores: 8
 
 --- Base-Level Algorithm ---
 Algorithm: NSGA-II
 Population/Swarm Size: 100
-Evaluation Strategy: org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy@29b5cd00
+Evaluation Strategy: org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy@60285225
 Parameter Space: NSGAIIDouble.yaml
 Optimizable Parameters: 20
 

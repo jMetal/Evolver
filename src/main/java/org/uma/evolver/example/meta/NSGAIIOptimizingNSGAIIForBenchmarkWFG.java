@@ -31,6 +31,19 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  */
 public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
 
+  // Meta-optimizer configuration
+  private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int NUMBER_OF_CORES = 8;
+
+  // Base-level algorithm configuration
+  private static final int BASE_POPULATION_SIZE = 100;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+
+  // Observer configuration
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
+
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
@@ -43,9 +56,9 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize() ;
-    int numberOfIndependentRuns = 1;
+    int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
 
@@ -59,13 +72,10 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
             numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
-    int maxEvaluations = 2000;
-    int numberOfCores = 8;
-
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
         new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
-            .setMaxEvaluations(maxEvaluations)
-            .setNumberOfCores(numberOfCores)
+            .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setNumberOfCores(NUMBER_OF_CORES)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -79,18 +89,17 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
             indicators,
             "RESULTS/NSGAII/" + problemName);
 
-    int writeFrequency = 1 ;
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
             "NSGA-II, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSetDescriptor.name(),
-            1);
+            PLOT_UPDATE_FREQUENCY);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
@@ -102,7 +111,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkWFG {
     // Step 6: Write results
     JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
 
-    outputResults.updateEvaluations(maxEvaluations);
+    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(nsgaii.result());
 
     System.exit(0);

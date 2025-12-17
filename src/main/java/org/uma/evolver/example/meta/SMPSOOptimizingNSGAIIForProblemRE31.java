@@ -29,6 +29,20 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  */
 public class SMPSOOptimizingNSGAIIForProblemRE31 {
 
+  // Meta-optimizer configuration
+  private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int NUMBER_OF_CORES = 8;
+
+  // Base-level algorithm configuration
+  private static final int BASE_POPULATION_SIZE = 100;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+  private static final int BASE_MAX_EVALUATIONS = 10000;
+
+  // Observer configuration
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
+
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
@@ -39,13 +53,11 @@ public class SMPSOOptimizingNSGAIIForProblemRE31 {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    int populationSize = 100;
-    var configurableAlgorithm = new DoubleNSGAII(populationSize, parameterSpace);
+    var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
 
-    var maximumNumberOfEvaluations = List.of(10000);
-    int numberOfIndependentRuns = 1;
+    var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -54,16 +66,13 @@ public class SMPSOOptimizingNSGAIIForProblemRE31 {
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            numberOfIndependentRuns);
+            NUMBER_OF_INDEPENDENT_RUNS);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
-    int maxEvaluations = 2000;
-    int numberOfCores = 8 ;
-
-    ParticleSwarmOptimizationAlgorithm smpso = 
+    // Step 3: Set up and configure the meta-optimizer (SMPSO) using the specialized builder
+    ParticleSwarmOptimizationAlgorithm smpso =
         new MetaSMPSOBuilder(metaOptimizationProblem)
-            .setMaxEvaluations(maxEvaluations)
-            .setNumberOfCores(numberOfCores)
+            .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setNumberOfCores(NUMBER_OF_CORES)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
@@ -73,19 +82,19 @@ public class SMPSOOptimizingNSGAIIForProblemRE31 {
             metaOptimizationProblem,
             trainingSet.get(0).name(),
             indicators,
-            "RESULTS/NSGAII/" + trainingSet.get(0).name());
+            "results/smpso/nsgaii/" + trainingSet.get(0).name());
 
     var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(1, outputResults);
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    var evaluationObserver = new EvaluationObserver(50);
+    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
             "NSGA-II, " + trainingSet.get(0).name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSet.get(0).name(),
-            1);
+            PLOT_UPDATE_FREQUENCY);
 
     smpso.observable().register(evaluationObserver);
     smpso.observable().register(frontChartObserver);
@@ -97,7 +106,7 @@ public class SMPSOOptimizingNSGAIIForProblemRE31 {
     // Step 6: Write results
     JMetalLogger.logger.info(() -> "Total computing time: " + smpso.totalComputingTime());
 
-    outputResults.updateEvaluations(maxEvaluations);
+    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(smpso.result());
 
     System.exit(0);
