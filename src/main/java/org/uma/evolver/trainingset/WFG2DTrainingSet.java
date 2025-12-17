@@ -1,6 +1,5 @@
 package org.uma.evolver.trainingset;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.uma.jmetal.problem.Problem;
@@ -11,11 +10,15 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * Training set for the WFG family configured for two-objective (2D) problems.
  *
  * <p>The {@code 2D} suffix is included here to make explicit that this set targets bi-objective
- * variants of the WFG family. If other dimensionalities are added in the future, follow the
- * same naming convention (e.g. {@code WFG3DTrainingSet}).
+ * variants of the WFG family. If other dimensionalities are added in the future, follow the same
+ * naming convention (e.g. {@code WFG3DTrainingSet}).
  */
-public class WFG2DTrainingSet implements TrainingSet<DoubleSolution> {
-  private static final List<Problem<DoubleSolution>> problemList =
+public class WFG2DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
+
+  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 25000;
+  private static final String NAME = "WFG2D";
+
+  private static final List<Problem<DoubleSolution>> PROBLEMS =
       List.of(
           new WFG1(),
           new WFG2(),
@@ -27,7 +30,7 @@ public class WFG2DTrainingSet implements TrainingSet<DoubleSolution> {
           new WFG8(),
           new WFG9());
 
-  private static final List<String> referenceFrontFileName =
+  private static final List<String> REFERENCE_FRONTS =
       List.of(
           "resources/referenceFronts/WFG1.2D.csv",
           "resources/referenceFronts/WFG2.2D.csv",
@@ -39,26 +42,10 @@ public class WFG2DTrainingSet implements TrainingSet<DoubleSolution> {
           "resources/referenceFronts/WFG8.2D.csv",
           "resources/referenceFronts/WFG9.2D.csv");
 
-  private static final List<Integer> evaluationsToOptimize =
-      new ArrayList<>(Collections.nCopies(problemList.size(), 25000));
+  private static final List<Integer> EVALUATIONS =
+      Collections.nCopies(PROBLEMS.size(), DEFAULT_NUMBER_OF_EVALUATIONS);
 
-  @Override
-  public List<Problem<DoubleSolution>> problemList() {
-    return problemList;
-  }
-
-  @Override
-  public List<String> referenceFronts() {
-    return referenceFrontFileName;
-  }
-
-  @Override
-  public List<Integer> evaluationsToOptimize() {
-    return evaluationsToOptimize;
-  }
-
-  @Override
-  public String name() {
-    return "WFG2D";
+  public WFG2DTrainingSet() {
+    super(PROBLEMS, REFERENCE_FRONTS, EVALUATIONS, NAME);
   }
 }

@@ -1,6 +1,5 @@
 package org.uma.evolver.trainingset;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -14,38 +13,24 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * <p>DTLZ problems can be defined for multiple objective dimensionalities; therefore the class name
  * includes the dimensional suffix {@code 3D} to indicate the specific configuration provided here.
  */
-public class DTLZ3DTrainingSet implements TrainingSet<DoubleSolution> {
-  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 16000;
+public class DTLZ3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
 
-  private static final List<Problem<DoubleSolution>> problemList =
+  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 16000;
+  private static final String NAME = "DTLZ3D";
+
+  private static final List<Problem<DoubleSolution>> PROBLEMS =
       List.of(
           new DTLZ1(), new DTLZ2(), new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7());
 
-  private static final List<String> referenceFrontFileName =
-      IntStream.range(1, problemList.size() + 1)
+  private static final List<String> REFERENCE_FRONTS =
+      IntStream.range(1, PROBLEMS.size() + 1)
           .mapToObj(id -> "resources/referenceFronts/DTLZ" + id + ".3D.csv")
           .toList();
 
-  private static final List<Integer> evaluationsToOptimize =
-      new ArrayList<>(Collections.nCopies(problemList.size(), DEFAULT_NUMBER_OF_EVALUATIONS));
+  private static final List<Integer> EVALUATIONS =
+      Collections.nCopies(PROBLEMS.size(), DEFAULT_NUMBER_OF_EVALUATIONS);
 
-  @Override
-  public List<Problem<DoubleSolution>> problemList() {
-    return problemList;
-  }
-
-  @Override
-  public List<String> referenceFronts() {
-    return referenceFrontFileName;
-  }
-
-  @Override
-  public List<Integer> evaluationsToOptimize() {
-    return evaluationsToOptimize;
-  }
-
-  @Override
-  public String name() {
-    return "DTLZ3D";
+  public DTLZ3DTrainingSet() {
+    super(PROBLEMS, REFERENCE_FRONTS, EVALUATIONS, NAME);
   }
 }

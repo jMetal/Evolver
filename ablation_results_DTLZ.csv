@@ -1,0 +1,7 @@
+Parameter,DefaultValue,OptimizedValue,Contribution_EP,Contribution_NHV
+crossoverProbability,0.9,0.7508401473188827,-0.08569707282891513,-0.07006162147497265
+offspringPopulationSize,100,10,-0.08556123916974605,-0.06971651813108781
+createInitialSolutions,default,latinHypercubeSampling,-0.06577724662676573,-0.06308337394002447
+crossoverRepairStrategy,bounds,random,-0.041312802229832274,-0.03280597385345842
+algorithmResult,population,externalArchive,0.027586429960071074,0.02511867293524772
+mutationProbabilityFactor,1.0,0.8987004036508917,-0.021202563638537508,-0.019765304137357886

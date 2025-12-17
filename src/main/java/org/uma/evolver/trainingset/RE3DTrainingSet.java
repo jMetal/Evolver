@@ -1,6 +1,5 @@
 package org.uma.evolver.trainingset;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -9,41 +8,28 @@ import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Class implementing the interface {@code TrainingSet} for the RE problems having three objective functions.
+ * Training set for the RE problems having three objective functions.
  *
- * <p>The {@code 3D} suffix indicates this training set targets three-objective variants of the RE family.
+ * <p>The {@code 3D} suffix indicates this training set targets three-objective variants of the RE
+ * family.
  */
-public class RE3DTrainingSet implements TrainingSet<DoubleSolution> {
-  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 8000;
+public class RE3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
 
-  private static final List<Problem<DoubleSolution>> problemList =
+  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 8000;
+  private static final String NAME = "RE3D";
+
+  private static final List<Problem<DoubleSolution>> PROBLEMS =
       List.of(new RE31(), new RE32(), new RE33(), new RE34(), new RE35(), new RE36(), new RE37());
 
-  private static final List<String> referenceFrontFileName =
-      IntStream.range(1, problemList.size() + 1)
+  private static final List<String> REFERENCE_FRONTS =
+      IntStream.range(1, PROBLEMS.size() + 1)
           .mapToObj(id -> "resources/referenceFronts/RE3" + id + ".csv")
           .toList();
 
-  private static final List<Integer> evaluationsToOptimize =
-      new ArrayList<>(Collections.nCopies(problemList.size(), DEFAULT_NUMBER_OF_EVALUATIONS));
+  private static final List<Integer> EVALUATIONS =
+      Collections.nCopies(PROBLEMS.size(), DEFAULT_NUMBER_OF_EVALUATIONS);
 
-  @Override
-  public List<Problem<DoubleSolution>> problemList() {
-    return problemList;
-  }
-
-  @Override
-  public List<String> referenceFronts() {
-    return referenceFrontFileName;
-  }
-
-  @Override
-  public List<Integer> evaluationsToOptimize() {
-    return evaluationsToOptimize;
-  }
-
-  @Override
-  public String name() {
-    return "RE3D";
+  public RE3DTrainingSet() {
+    super(PROBLEMS, REFERENCE_FRONTS, EVALUATIONS, NAME);
   }
 }
