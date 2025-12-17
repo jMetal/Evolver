@@ -315,7 +315,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   protected Selection<S> createSelection(Variation<S> variation) {
     var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
-        variation.getMatingPoolSize(), rankingAndCrowdingComparator);
+        variation.matingPoolSize(), rankingAndCrowdingComparator);
   }
 
   /**
@@ -352,6 +352,6 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     RankingAndDensityEstimatorPreference<S> preferenceForReplacement =
         new RankingAndDensityEstimatorPreference<>(ranking, densityEstimator);
     return new RankingAndDensityEstimatorReplacement<>(
-        preferenceForReplacement, Replacement.RemovalPolicy.ONE_SHOT);
+        preferenceForReplacement, RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT);
   }
 }

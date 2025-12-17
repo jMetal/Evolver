@@ -278,7 +278,7 @@ public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgor
   private PopulationAndNeighborhoodSelection<S> createSelection(Variation<S> variation) {
     return (PopulationAndNeighborhoodSelection<S>)
         ((SelectionParameter<S>) parameterSpace.get("selection"))
-            .getSelection(variation.getMatingPoolSize(), null);
+            .getSelection(variation.matingPoolSize(), null);
   }
 
   /**

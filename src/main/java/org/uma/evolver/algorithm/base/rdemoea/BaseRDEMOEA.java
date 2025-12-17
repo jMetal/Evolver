@@ -256,7 +256,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
   protected Selection<S> createSelection(Variation<S> variation) {
     var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
-        variation.getMatingPoolSize(), rankingAndCrowdingComparator);
+        variation.matingPoolSize(), rankingAndCrowdingComparator);
   }
 
   /**

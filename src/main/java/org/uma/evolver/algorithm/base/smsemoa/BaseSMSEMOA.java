@@ -22,7 +22,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.errorchecking.Check;
-import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
+import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
@@ -229,7 +229,7 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
   protected Selection<S> createSelection(Variation<S> variation) {
     var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
     return selectionParameter.getSelection(
-        variation.getMatingPoolSize(), null);
+        variation.matingPoolSize(), null);
   }
 
   /**
@@ -263,7 +263,7 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
    * @return the replacement operator
    */
   protected Replacement<S> createReplacement() {
-    return new SMSEMOAReplacement<>(ranking, new PISAHypervolume<>());
+    return new SMSEMOAReplacement<S>(ranking, new PISAHypervolume());
   }
 }
 

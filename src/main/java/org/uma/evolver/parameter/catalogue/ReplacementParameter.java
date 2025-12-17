@@ -81,11 +81,11 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
         if (removalPolicy.equals("oneShot")) {
           result =
               new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, Replacement.RemovalPolicy.ONE_SHOT);
+                  ranking, densityEstimator, RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT);
         } else if (removalPolicy.equals("sequential")){
           result =
               new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, Replacement.RemovalPolicy.SEQUENTIAL);
+                  ranking, densityEstimator, RankingAndDensityEstimatorReplacement.RemovalPolicy.SEQUENTIAL);
         } else {
           throw new JMetalException("Removal policy unknown: " + removalPolicy) ;
         }
