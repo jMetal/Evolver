@@ -80,6 +80,25 @@ def parse_args() -> argparse.Namespace:
         action='store_true',
         help='List available indicators in the data directory and exit'
     )
+    parser.add_argument(
+        '--aggregation',
+        type=str,
+        choices=['min', 'max', 'mean', 'median', 'std'],
+        default='median',
+        help='Central tendency method for multiple values per evaluation (default: median)'
+    )
+    parser.add_argument(
+        '--show-range',
+        action='store_true',
+        help='Show confidence intervals/error bars representing the range of values'
+    )
+    parser.add_argument(
+        '--range-type',
+        type=str,
+        choices=['minmax', 'quartiles', 'std'],
+        default='quartiles',
+        help='Type of range to show: minmax (full range), quartiles (25th-75th percentile), std (±1 standard deviation)'
+    )
     return parser.parse_args()
 
 def load_experiment_data(data_dir: str) -> Tuple[pd.DataFrame, Dict[str, str]]:
@@ -177,7 +196,9 @@ def filter_data_by_frequency(indicators_df: pd.DataFrame, frequency: int) -> pd.
     
     return filtered_df
 
-def prepare_time_series_data(indicators_df: pd.DataFrame, indicator1: str, indicator2: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def prepare_time_series_data(indicators_df: pd.DataFrame, indicator1: str, indicator2: str, 
+                           aggregation: str = 'median', show_range: bool = False, 
+                           range_type: str = 'quartiles') -> Tuple[np.ndarray, np.ndarray, np.ndarray, Optional[Dict]]:
     """
     Prepare data for time series plotting with evaluation numbers on X-axis.
     
@@ -185,9 +206,13 @@ def prepare_time_series_data(indicators_df: pd.DataFrame, indicator1: str, indic
         indicators_df: DataFrame with indicators data
         indicator1: Name of first indicator (left Y-axis)
         indicator2: Name of second indicator (right Y-axis)
+        aggregation: Central tendency method ('min', 'max', 'mean', 'median', 'std')
+        show_range: Whether to calculate confidence intervals/ranges
+        range_type: Type of range ('minmax', 'quartiles', 'std')
         
     Returns:
-        Tuple of (evaluations, indicator1_values, indicator2_values)
+        Tuple of (evaluations, indicator1_values, indicator2_values, range_data)
+        range_data is None if show_range=False, otherwise dict with confidence intervals
     """
     # Check if indicators exist
     available_indicators = list(indicators_df.columns[2:])  # Skip Evaluation and SolutionId
@@ -196,31 +221,100 @@ def prepare_time_series_data(indicators_df: pd.DataFrame, indicator1: str, indic
     if indicator2 not in available_indicators:
         raise ValueError(f"Indicator '{indicator2}' not found. Available: {available_indicators}")
     
-    # Group by evaluation and calculate statistics (mean, best, etc.)
+    # Define aggregation functions
+    agg_functions = {
+        'min': lambda x: x.min(),
+        'max': lambda x: x.max(),
+        'mean': lambda x: x.mean(),
+        'median': lambda x: x.median(),
+        'std': lambda x: x.std()
+    }
+    
+    if aggregation not in agg_functions:
+        raise ValueError(f"Unknown aggregation method '{aggregation}'. Available: {list(agg_functions.keys())}")
+    
+    agg_func = agg_functions[aggregation]
+    
+    # Group by evaluation and calculate statistics
     evaluations = []
     indicator1_values = []
     indicator2_values = []
     
+    # Range data for confidence intervals
+    range_data = None
+    if show_range:
+        range_data = {
+            'indicator1_lower': [],
+            'indicator1_upper': [],
+            'indicator2_lower': [],
+            'indicator2_upper': []
+        }
+    
+    print(f"\nUsing {aggregation} aggregation for multiple solutions per evaluation:")
+    if show_range:
+        print(f"Showing {range_type} confidence intervals")
+    
     for evaluation in sorted(indicators_df['Evaluation'].unique()):
         eval_data = indicators_df[indicators_df['Evaluation'] == evaluation]
         
-        # Calculate best (minimum) values for each indicator at this evaluation
-        # For most quality indicators, lower is better
-        ind1_best = eval_data[indicator1].min()
-        ind2_best = eval_data[indicator2].min()
+        # Apply aggregation function to each indicator
+        ind1_agg = agg_func(eval_data[indicator1])
+        ind2_agg = agg_func(eval_data[indicator2])
         
         evaluations.append(evaluation)
-        indicator1_values.append(ind1_best)
-        indicator2_values.append(ind2_best)
+        indicator1_values.append(ind1_agg)
+        indicator2_values.append(ind2_agg)
         
-        print(f"Evaluation {evaluation}: {indicator1}={ind1_best:.6f}, {indicator2}={ind2_best:.6f} (from {len(eval_data)} solutions)")
+        # Calculate ranges if requested
+        if show_range and len(eval_data) > 1:
+            ind1_series = eval_data[indicator1]
+            ind2_series = eval_data[indicator2]
+            
+            if range_type == 'minmax':
+                ind1_lower, ind1_upper = ind1_series.min(), ind1_series.max()
+                ind2_lower, ind2_upper = ind2_series.min(), ind2_series.max()
+            elif range_type == 'quartiles':
+                ind1_lower, ind1_upper = ind1_series.quantile(0.25), ind1_series.quantile(0.75)
+                ind2_lower, ind2_upper = ind2_series.quantile(0.25), ind2_series.quantile(0.75)
+            elif range_type == 'std':
+                ind1_mean, ind1_std = ind1_series.mean(), ind1_series.std()
+                ind2_mean, ind2_std = ind2_series.mean(), ind2_series.std()
+                ind1_lower, ind1_upper = ind1_mean - ind1_std, ind1_mean + ind1_std
+                ind2_lower, ind2_upper = ind2_mean - ind2_std, ind2_mean + ind2_std
+            
+            range_data['indicator1_lower'].append(ind1_lower)
+            range_data['indicator1_upper'].append(ind1_upper)
+            range_data['indicator2_lower'].append(ind2_lower)
+            range_data['indicator2_upper'].append(ind2_upper)
+        elif show_range:
+            # Single solution - no range
+            range_data['indicator1_lower'].append(ind1_agg)
+            range_data['indicator1_upper'].append(ind1_agg)
+            range_data['indicator2_lower'].append(ind2_agg)
+            range_data['indicator2_upper'].append(ind2_agg)
+        
+        # Show individual values if there are multiple solutions
+        if len(eval_data) > 1:
+            ind1_values_arr = eval_data[indicator1].values
+            ind2_values_arr = eval_data[indicator2].values
+            print(f"Evaluation {evaluation}: {len(eval_data)} solutions")
+            print(f"  {indicator1}: min={ind1_values_arr.min():.4f}, median={np.median(ind1_values_arr):.4f}, max={ind1_values_arr.max():.4f}")
+            print(f"  {indicator2}: min={ind2_values_arr.min():.4f}, median={np.median(ind2_values_arr):.4f}, max={ind2_values_arr.max():.4f}")
+        else:
+            print(f"Evaluation {evaluation}: {indicator1}={ind1_agg:.6f}, {indicator2}={ind2_agg:.6f} (1 solution)")
     
-    return np.array(evaluations), np.array(indicator1_values), np.array(indicator2_values)
+    # Convert range data to numpy arrays
+    if show_range:
+        for key in range_data:
+            range_data[key] = np.array(range_data[key])
+    
+    return np.array(evaluations), np.array(indicator1_values), np.array(indicator2_values), range_data
 
 def plot_dual_axis_time_series(evaluations: np.ndarray, indicator1_values: np.ndarray, 
                               indicator2_values: np.ndarray, indicator1_name: str, 
-                              indicator2_name: str, ax1):
-    """Plot time series with dual Y-axes."""
+                              indicator2_name: str, ax1, range_data: Optional[Dict] = None,
+                              range_type: str = 'quartiles'):
+    """Plot time series with dual Y-axes and optional confidence intervals."""
     if len(evaluations) == 0:
         print("No data to plot")
         return None, None
@@ -234,6 +328,14 @@ def plot_dual_axis_time_series(evaluations: np.ndarray, indicator1_values: np.nd
     ax1.tick_params(axis='y', labelcolor=color1)
     ax1.grid(True, alpha=0.3)
     
+    # Add confidence intervals for first indicator
+    if range_data is not None:
+        ax1.fill_between(evaluations, 
+                        range_data['indicator1_lower'], 
+                        range_data['indicator1_upper'],
+                        color=color1, alpha=0.2, 
+                        label=f'{indicator1_name} {range_type}')
+    
     # Create second Y-axis for second indicator
     ax2 = ax1.twinx()
     color2 = 'tab:red'
@@ -242,10 +344,19 @@ def plot_dual_axis_time_series(evaluations: np.ndarray, indicator1_values: np.nd
                      linewidth=2, markersize=4, label=indicator2_name)
     ax2.tick_params(axis='y', labelcolor=color2)
     
+    # Add confidence intervals for second indicator
+    if range_data is not None:
+        ax2.fill_between(evaluations, 
+                        range_data['indicator2_lower'], 
+                        range_data['indicator2_upper'],
+                        color=color2, alpha=0.2,
+                        label=f'{indicator2_name} {range_type}')
+    
     return line1, line2
 
 def plot_optimization_progress(data_dir: str, frequency: int, output_file: str, 
-                             indicator1: str, indicator2: str):
+                             indicator1: str, indicator2: str, aggregation: str = 'median',
+                             show_range: bool = False, range_type: str = 'quartiles'):
     """
     Create a time series plot of the optimization progress with dual Y-axes.
     
@@ -255,6 +366,9 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
         output_file: Output file name for the plot
         indicator1: Quality indicator for left Y-axis
         indicator2: Quality indicator for right Y-axis
+        aggregation: Central tendency method for multiple values per evaluation
+        show_range: Whether to show confidence intervals
+        range_type: Type of confidence intervals to show
     """
     try:
         # Load experiment data
@@ -268,8 +382,8 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
             return
         
         # Prepare time series data
-        evaluations, indicator1_values, indicator2_values = prepare_time_series_data(
-            filtered_df, indicator1, indicator2)
+        evaluations, indicator1_values, indicator2_values, range_data = prepare_time_series_data(
+            filtered_df, indicator1, indicator2, aggregation, show_range, range_type)
         
         if len(evaluations) == 0:
             print("No valid data points to plot.")
@@ -282,12 +396,13 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
         # Plot dual-axis time series
         line1, line2 = plot_dual_axis_time_series(
             evaluations, indicator1_values, indicator2_values, 
-            indicator1, indicator2, ax1)
+            indicator1, indicator2, ax1, range_data, range_type)
         
         # Set title
         algorithm = metadata.get('Algorithm', 'Unknown')
         training_set = metadata.get('Problem Family', 'Unknown')
-        ax1.set_title(f'Optimization Progress Over Time\nAlgorithm: {algorithm} | Training Set: {training_set}', 
+        title_suffix = f" with {range_type} intervals" if show_range else ""
+        ax1.set_title(f'Optimization Progress Over Time ({aggregation.upper()} aggregation{title_suffix})\nAlgorithm: {algorithm} | Training Set: {training_set}', 
                      fontsize=14, pad=20)
         
         # Add legend
@@ -304,6 +419,9 @@ def plot_optimization_progress(data_dir: str, frequency: int, output_file: str,
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             print(f"Plot saved to {output_file}")
             print(f"Plot shows progression of {indicator1} (blue, left axis) and {indicator2} (red, right axis) over {len(evaluations)} evaluation points")
+            print(f"Central tendency: {aggregation} (used when multiple solutions exist per evaluation)")
+            if show_range:
+                print(f"Confidence intervals: {range_type} (shaded areas show variability)")
         except Exception as e:
             print(f"Error saving plot: {e}")
         
@@ -341,13 +459,17 @@ def main():
     print(f"Plotting optimization progress from {args.data_dir}")
     print(f"Plotting every {args.frequency} evaluations")
     print(f"Left Y-axis: {args.indicator1}, Right Y-axis: {args.indicator2}")
+    print(f"Central tendency: {args.aggregation}")
+    if args.show_range:
+        print(f"Confidence intervals: {args.range_type}")
     
     # Ensure output file has a valid extension
     if not args.output.endswith(('.png', '.jpg', '.jpeg', '.pdf', '.svg')):
         args.output = f"{os.path.splitext(args.output)[0]}.png"
     
     plot_optimization_progress(args.data_dir, args.frequency, args.output, 
-                             args.indicator1, args.indicator2)
+                             args.indicator1, args.indicator2, args.aggregation,
+                             args.show_range, args.range_type)
 
 if __name__ == "__main__":
     main()
