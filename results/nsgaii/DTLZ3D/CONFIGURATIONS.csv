@@ -1,1 +1,6 @@
 Evaluation,SolutionId,algorithmResult,populationSizeWithArchive,archiveType,createInitialSolutions,offspringPopulationSize,variation,crossover,crossoverProbability,crossoverRepairStrategy,sbxDistributionIndex,blxAlphaCrossoverAlpha,mutation,mutationProbabilityFactor,mutationRepairStrategy,uniformMutationPerturbation,polynomialMutationDistributionIndex,linkedPolynomialMutationDistributionIndex,nonUniformMutationPerturbation,selection,selectionTournamentSize
+100,0,0.0,NaN,NaN,2.0,6.0,0.0,0.0,0.24968123120955876,1.0,100.4745550762008,NaN,0.0,0.6215568713848871,2.0,0.47547718387415505,NaN,NaN,NaN,0.0,2.0
+100,1,0.0,NaN,NaN,0.0,4.0,0.0,0.0,0.9708203938982597,1.0,97.330248926138,NaN,3.0,0.7592800996838878,0.0,NaN,NaN,NaN,0.6799661449741559,1.0,NaN
+200,0,0.0,NaN,NaN,2.0,6.0,0.0,0.0,0.2511589021077617,1.0,138.0682010532362,NaN,0.0,0.6215568713848871,2.0,0.4812086117170461,NaN,NaN,NaN,0.0,2.0
+300,0,0.0,NaN,NaN,2.0,6.0,0.0,0.0,0.2511589021077617,1.0,138.0682010532362,NaN,0.0,0.6215568713848871,2.0,0.4812086117170461,NaN,NaN,NaN,0.0,2.0
+300,1,0.0,NaN,NaN,2.0,6.0,0.0,0.0,0.2511589021077617,1.0,146.96252799845024,NaN,0.0,0.6215568713848871,2.0,0.4812086117170461,NaN,NaN,NaN,0.0,9.0
