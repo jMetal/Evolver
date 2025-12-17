@@ -29,13 +29,13 @@ public class RunConfigurationOnZDTExample {
   public static void main(String[] args) {
     // 1. Define the optimized configuration (from meta-optimization)
     String[] configuration =
-        """
-        --algorithmResult externalArchive --populationSizeWithArchive 19 --archiveType crowdingDistanceArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.6840261607155629 --crossoverRepairStrategy bounds --sbxDistributionIndex 15.680767123623234 --mutation linkedPolynomial --mutationProbabilityFactor 0.9213697790615174 --mutationRepairStrategy bounds --linkedPolynomialMutationDistributionIndex 6.433262888180897 --selection tournament --selectionTournamentSize 3\s
-        """
+"""
+--algorithmResult externalArchive --populationSizeWithArchive 52 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.7640482933084405 --crossoverRepairStrategy bounds --sbxDistributionIndex 47.60605716327214 --mutation nonUniform --mutationProbabilityFactor 0.8320218822813638 --mutationRepairStrategy bounds --nonUniformMutationPerturbation 0.1374538115184407 --selection tournament --selectionTournamentSize 7        """
             .split("\\s+");
 
     // 2. Create the training set
     var trainingSet = new ZDTTrainingSet();
+    trainingSet.setEvaluationsToOptimize(20000) ;
 
     // 3. Create the algorithm template
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";

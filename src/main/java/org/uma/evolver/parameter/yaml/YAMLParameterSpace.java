@@ -1,13 +1,19 @@
 package org.uma.evolver.parameter.yaml;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.ParameterFactory;
-import org.uma.evolver.parameter.yaml.processors.*;
+import org.uma.evolver.parameter.yaml.processors.CategoricalParameterProcessor;
+import org.uma.evolver.parameter.yaml.processors.DoubleParameterProcessor;
+import org.uma.evolver.parameter.yaml.processors.IntegerParameterProcessor;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -155,8 +161,8 @@ public class YAMLParameterSpace extends ParameterSpace {
   /** Map of parameter type names to their respective processors */
   private final Map<String, ParameterProcessor> parameterProcessors = new HashMap<>();
 
-  private final ParameterFactory<?> parameterFactory ;
-  private final String yamlFilePath ;
+  private final ParameterFactory<?> parameterFactory;
+  private final String yamlFilePath;
 
   /**
    * Constructs a new YAMLParameterSpace by loading parameters from the specified YAML file.
@@ -178,17 +184,17 @@ public class YAMLParameterSpace extends ParameterSpace {
    */
   public YAMLParameterSpace(String yamlFilePath, ParameterFactory<?> parameterFactory) {
     super();
-    this.parameterFactory = parameterFactory ;
-    this.yamlFilePath = yamlFilePath ;
+    this.parameterFactory = parameterFactory;
+    this.yamlFilePath = yamlFilePath;
     initializeParameterProcessors();
-    var parameterDefinitions = loadParametersFromYAML(yamlFilePath);
+    var parameterDefinitions = loadParametersFromYaml(yamlFilePath);
     processParameterDefinitions(parameterDefinitions);
   }
 
   @Override
   public YAMLParameterSpace createInstance() {
     return new YAMLParameterSpace(yamlFilePath, parameterFactory);
-  } 
+  }
 
   /**
    * Initializes the map of parameter processors for different parameter types.
@@ -248,7 +254,7 @@ public class YAMLParameterSpace extends ParameterSpace {
    *
    * @throws RuntimeException if the file cannot be loaded or parsed
    */
-  private Map<String, Map<String, Object>> loadParametersFromYAML(String yamlFilePath) {
+  private Map<String, Map<String, Object>> loadParametersFromYaml(String yamlFilePath) {
     var parameterDefinitions = loadParameterDefinitions(yamlFilePath);
     return parameterDefinitions;
   }
@@ -282,7 +288,8 @@ public class YAMLParameterSpace extends ParameterSpace {
 
       return parameterDefinitions;
     } catch (Exception exception) {
-      throw new RuntimeException("Failed to load parameter definitions from YAML file: " + yamlFilePath, exception);
+      throw new RuntimeException(
+          "Failed to load parameter definitions from YAML file: " + yamlFilePath, exception);
     }
   }
 
@@ -402,12 +409,18 @@ public class YAMLParameterSpace extends ParameterSpace {
 
     // For numeric types (integer, double), we allow either 'values' or 'range'
     // For categorical types, we require either 'values' or 'globalSubParameters'
-    if (parameterType.equals(INTEGER_TYPE) || parameterType.equals(DOUBLE_TYPE) || parameterType.equals(REAL_TYPE)) {
+    boolean isNumericType = parameterType.equals(INTEGER_TYPE)
+        || parameterType.equals(DOUBLE_TYPE)
+        || parameterType.equals(REAL_TYPE);
+    if (isNumericType) {
       if (!parameterConfig.containsKey(VALUES_KEY) && !parameterConfig.containsKey(RANGE_KEY)) {
-        throw new JMetalException("Skipping parameter " + parameterName + " - missing 'values' or 'range' for " + parameterType + " type");
+        throw new JMetalException("Skipping parameter " + parameterName
+            + " - missing 'values' or 'range' for " + parameterType + " type");
       }
-    } else if (!parameterConfig.containsKey(VALUES_KEY) && !parameterConfig.containsKey(GLOBAL_SUB_PARAMETERS_KEY)) {
-      throw new JMetalException("Skipping parameter " + parameterName + " - missing 'values' or 'globalSubParameters' for " + parameterType + " type");
+    } else if (!parameterConfig.containsKey(VALUES_KEY)
+        && !parameterConfig.containsKey(GLOBAL_SUB_PARAMETERS_KEY)) {
+      throw new JMetalException("Skipping parameter " + parameterName
+          + " - missing 'values' or 'globalSubParameters' for " + parameterType + " type");
     }
 
     ParameterProcessor processor = parameterProcessors.get(parameterType);
