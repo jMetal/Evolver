@@ -80,7 +80,7 @@ public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(algorithmName)
             .metaMaxEvaluations(maxEvaluations)
-            .metaPopulationSize(100)
+            .metaPopulationSize(500)
             .numberOfCores(numberOfCores)
             .baseLevelAlgorithmName("NSGA-II")
             .baseLevelPopulationSize(100)

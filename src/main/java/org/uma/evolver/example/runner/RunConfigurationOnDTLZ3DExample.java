@@ -24,24 +24,11 @@ public class RunConfigurationOnDTLZ3DExample {
 
   public static void main(String[] args) {
     // 1. Define the optimized configuration (from meta-optimization on DTLZ)
-    String[] configuration = """
-        --algorithmResult externalArchive
-        --populationSizeWithArchive 100
-        --archiveType unboundedArchive
-        --createInitialSolutions scatterSearch
-        --offspringPopulationSize 10
-        --variation crossoverAndMutationVariation
-        --crossover SBX
-        --crossoverProbability 0.9
-        --crossoverRepairStrategy bounds
-        --sbxDistributionIndex 20.0
-        --mutation polynomial
-        --mutationProbabilityFactor 1.0
-        --mutationRepairStrategy bounds
-        --polynomialMutationDistributionIndex 20.0
-        --selection tournament
-        --selectionTournamentSize 2
-        """.split("\\s+");
+    String[] configuration =
+        """
+        --algorithmResult externalArchive --populationSizeWithArchive 68 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.954734302713461 --crossoverRepairStrategy random --sbxDistributionIndex 108.03261497125926 --mutation uniform --mutationProbabilityFactor 1.1248170788140066 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.46304358234940657 --selection tournament --selectionTournamentSize 7
+        """
+            .split("\\s+");
 
     // 2. Create the training set (can customize evaluations if needed)
     var trainingSet = new DTLZ3DTrainingSet();

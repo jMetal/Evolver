@@ -28,25 +28,11 @@ public class RunConfigurationOnZDTExample {
 
   public static void main(String[] args) {
     // 1. Define the optimized configuration (from meta-optimization)
-    String[] configuration = """
-        --algorithmResult externalArchive
-        --populationSizeWithArchive 89
-        --archiveType unboundedArchive
-        --createInitialSolutions scatterSearch
-        --offspringPopulationSize 20
-        --variation crossoverAndMutationVariation
-        --crossover SBX
-        --crossoverProbability 0.6885278888703463
-        --crossoverRepairStrategy bounds
-        --sbxDistributionIndex 32.07999211591175
-        --mutation linkedPolynomial
-        --mutationProbabilityFactor 0.6952851214888922
-        --mutationRepairStrategy bounds
-        --polynomialMutationDistributionIndex 18.40410700737766
-        --linkedPolynomialMutationDistributionIndex 17.696253388022207
-        --selection tournament
-        --selectionTournamentSize 8
-        """.split("\\s+");
+    String[] configuration =
+        """
+        --algorithmResult externalArchive --populationSizeWithArchive 19 --archiveType crowdingDistanceArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.6840261607155629 --crossoverRepairStrategy bounds --sbxDistributionIndex 15.680767123623234 --mutation linkedPolynomial --mutationProbabilityFactor 0.9213697790615174 --mutationRepairStrategy bounds --linkedPolynomialMutationDistributionIndex 6.433262888180897 --selection tournament --selectionTournamentSize 3\s
+        """
+            .split("\\s+");
 
     // 2. Create the training set
     var trainingSet = new ZDTTrainingSet();

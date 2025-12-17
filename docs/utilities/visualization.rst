@@ -12,7 +12,7 @@ A Python script for visualizing the progression of multi-objective optimization 
 
 **Location**::
 
-    resources/scripts/plot_optimization_progress.py
+    analysis/scripts/visualization/plot_optimization_progress.py
 
 **Description**:
 This script generates a static plot showing the progression of optimization runs by reading a series of FUN.*.csv files that contain objective values from different evaluation points.
@@ -32,7 +32,7 @@ For example: ``FUN.NSGA-II.DTLZ3.EP.NHV.150.csv``
 
 **Usage**::
 
-    python resources/scripts/plot_optimization_progress.py <data_directory> <plot_frequency> [--output FILENAME]
+    python analysis/scripts/visualization/plot_optimization_progress.py <data_directory> <plot_frequency> [--output FILENAME]
 
 **Arguments**:
 
@@ -43,10 +43,10 @@ For example: ``FUN.NSGA-II.DTLZ3.EP.NHV.150.csv``
 **Examples**::
 
     # Basic usage with default output name
-    python resources/scripts/plot_optimization_progress.py RESULTS/SPEA2/NSGAII/DTLZ3 200
+    python analysis/scripts/visualization/plot_optimization_progress.py RESULTS/SPEA2/NSGAII/DTLZ3 200
     
     # Specify custom output file
-    python resources/scripts/plot_optimization_progress.py RESULTS/SPEA2/NSGAII/DTLZ3 200 --output my_plot.png
+    python analysis/scripts/visualization/plot_optimization_progress.py RESULTS/SPEA2/NSGAII/DTLZ3 200 --output my_plot.png
 
 **Dependencies**:
 - Python 3.6+
