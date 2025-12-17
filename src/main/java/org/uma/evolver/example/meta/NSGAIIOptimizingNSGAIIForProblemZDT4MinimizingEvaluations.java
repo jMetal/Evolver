@@ -88,9 +88,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4MinimizingEvaluations {
             indicators,
             "results/nsgaii/" + trainingSet.get(0).name());
 
-    var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
-
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
@@ -99,8 +96,10 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4MinimizingEvaluations {
             indicators.get(1).name(),
             trainingSet.get(0).name(),
             PLOT_UPDATE_FREQUENCY);
-
     frontChartObserver.filterDominatedSolutions(true);
+
+    final var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);

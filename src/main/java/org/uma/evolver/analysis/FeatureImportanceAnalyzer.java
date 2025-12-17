@@ -85,18 +85,16 @@ public class FeatureImportanceAnalyzer {
     if (configRows.isEmpty()) {
       throw new IOException("CONFIGURATIONS.csv is empty");
     }
-
-    String[] configHeader = configRows.get(0);
-    List<String[]> configData = configRows.subList(1, configRows.size());
+    final String[] configHeader = configRows.get(0);
+    final List<String[]> configData = configRows.subList(1, configRows.size());
 
     // Load indicators
     List<String[]> indicatorRows = readCSV(indicatorsPath);
     if (indicatorRows.isEmpty()) {
       throw new IOException("INDICATORS.csv is empty");
     }
-
     String[] indicatorHeader = indicatorRows.get(0);
-    List<String[]> indicatorData = indicatorRows.subList(1, indicatorRows.size());
+    final List<String[]> indicatorData = indicatorRows.subList(1, indicatorRows.size());
 
     // Find target indicator column
     int targetCol = -1;
@@ -405,9 +403,6 @@ public class FeatureImportanceAnalyzer {
    * @return formatted string report
    */
   public String generateReport() {
-    Map<String, Double> giniImp = getGiniImportance();
-    Map<String, Double> permImp = getPermutationImportance(10);
-
     StringBuilder sb = new StringBuilder();
     sb.append("""
         ╔══════════════════════════════════════════════════════════════════════════╗
@@ -423,6 +418,9 @@ public class FeatureImportanceAnalyzer {
         ║ Rank │ Parameter                        │ Gini Imp. │ Perm. Imp. ║
         ╠══════════════════════════════════════════════════════════════════════════╣
         """);
+
+    final Map<String, Double> giniImp = getGiniImportance();
+    final Map<String, Double> permImp = getPermutationImportance(10);
 
     int rank = 1;
     for (Map.Entry<String, Double> entry : giniImp.entrySet()) {

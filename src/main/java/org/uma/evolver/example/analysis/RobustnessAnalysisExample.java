@@ -57,8 +57,8 @@ public class RobustnessAnalysisExample {
 
     try {
       // Setup problem and parameters
-      String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
-      String referenceFrontFileName = "resources/referenceFronts/RE21.csv";
+      final String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+      final String referenceFrontFileName = "resources/referenceFronts/RE21.csv";
 
       // Validate reference front file exists
       Path referenceFrontPath = Paths.get(referenceFrontFileName);
@@ -68,27 +68,34 @@ public class RobustnessAnalysisExample {
         return;
       }
 
-      // Setup Problem
-      var problem = new RE21();
-      int populationSize = 100;
-      int maxEvaluations = config.maxEvaluations;
-
-      // Load reference front for indicators
-      double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
-      List<QualityIndicator> indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-
       // Optimized configuration (from meta-optimization experiment)
       String optimizedConfigString =
           "--algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions scatterSearch --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.97 --crossoverRepairStrategy random --sbxDistributionIndex 133.8 --mutation uniform --mutationProbabilityFactor 0.51 --mutationRepairStrategy random --uniformMutationPerturbation 0.23 --selection tournament --selectionTournamentSize 5";
       Map<String, String> optimizedConfig = parseConfiguration(optimizedConfigString);
 
+      System.out.println("Starting robustness analysis...");
+      System.out.println("Configuration under test:");
+      optimizedConfig.forEach((key, value) -> 
+          System.out.printf("  %s: %s%n", key, value));
+      System.out.println();
+
+      // Setup Problem
+      final var problem = new RE21();
+      final int populationSize = 100;
+      final int maxEvaluations = config.maxEvaluations;
+
+      // Load reference front for indicators
+      final double[][] referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
+      final List<QualityIndicator> indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+
       // Create Algorithm and Parameter Space
       YAMLParameterSpace parameterSpace =
           new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-      var baseAlgorithm = new DoubleNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
+      final var baseAlgorithm =
+          new DoubleNSGAII(problem, populationSize, maxEvaluations, parameterSpace);
 
       // Create Robustness Analyzer
-      var analyzer =
+      final var analyzer =
           new RobustnessAnalyzer<DoubleSolution>(
               baseAlgorithm,
               problem,
@@ -98,16 +105,10 @@ public class RobustnessAnalysisExample {
               maxEvaluations,
               config.runsPerSample);
 
-      System.out.println("Starting robustness analysis...");
-      System.out.println("Configuration under test:");
-      optimizedConfig.forEach((key, value) -> 
-          System.out.printf("  %s: %s%n", key, value));
-      System.out.println();
-
       // Run robustness analysis
-      long startTime = System.currentTimeMillis();
+      final long startTime = System.currentTimeMillis();
       var results = analyzer.analyze(optimizedConfig, config.nSamples, config.sigma);
-      long analysisTime = System.currentTimeMillis() - startTime;
+      final long analysisTime = System.currentTimeMillis() - startTime;
 
       // Export results
       String outputFile = config.outputFile;

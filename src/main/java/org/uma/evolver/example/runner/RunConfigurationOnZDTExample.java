@@ -30,7 +30,8 @@ public class RunConfigurationOnZDTExample {
     // 1. Define the optimized configuration (from meta-optimization)
     String[] configuration =
 """
---algorithmResult externalArchive --populationSizeWithArchive 52 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.7640482933084405 --crossoverRepairStrategy bounds --sbxDistributionIndex 47.60605716327214 --mutation nonUniform --mutationProbabilityFactor 0.8320218822813638 --mutationRepairStrategy bounds --nonUniformMutationPerturbation 0.1374538115184407 --selection tournament --selectionTournamentSize 7        """
+--algorithmResult externalArchive --populationSizeWithArchive 52 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 1 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8344405454288435 --crossoverRepairStrategy bounds --sbxDistributionIndex 46.40624621381956 --mutation nonUniform --mutationProbabilityFactor 0.3873069125490838 --mutationRepairStrategy bounds --nonUniformMutationPerturbation 0.20422968168417088 --selection tournament --selectionTournamentSize 7
+ """
             .split("\\s+");
 
     // 2. Create the training set

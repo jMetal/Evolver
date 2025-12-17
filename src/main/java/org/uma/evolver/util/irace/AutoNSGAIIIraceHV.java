@@ -34,12 +34,12 @@ public class AutoNSGAIIIraceHV {
     // Parse problem name parameter and load the problem
     StringParameter problemNameParameter = new StringParameter("problemName");
     problemNameParameter.parse(args);
-    Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value());
+    final Problem<DoubleSolution> problem = ProblemFactory.loadProblem(problemNameParameter.value());
 
     // Parse reference front filename parameter
     StringParameter referenceFrontFilenameParameter = new StringParameter("referenceFrontFileName");
     referenceFrontFilenameParameter.parse(args);
-    String referenceFrontFilename = referenceFrontFilenameParameter.value();
+    final String referenceFrontFilename = referenceFrontFilenameParameter.value();
 
     // Parse population size parameter
     StringParameter populationSizeParameter = new StringParameter("populationSize");

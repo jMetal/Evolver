@@ -65,25 +65,19 @@ public class VelocityUpdateParameter extends CategoricalParameter {
    * @throws NullPointerException if any required sub-parameter is not found
    */
   public VelocityUpdate getVelocityUpdate() {
-    double c1Min;
-    double c1Max;
-    double c2Min;
-    double c2Max;
-    DoubleProblem problem;
-
-    c1Min = (double) findGlobalSubParameter("c1Min").value();
-    c1Max = (double) findGlobalSubParameter("c1Max").value();
-    c2Min = (double) findGlobalSubParameter("c2Min").value();
-    c2Max = (double) findGlobalSubParameter("c2Max").value();
+    final double c1Min = (double) findGlobalSubParameter("c1Min").value();
+    final double c1Max = (double) findGlobalSubParameter("c1Max").value();
+    final double c2Min = (double) findGlobalSubParameter("c2Min").value();
+    final double c2Max = (double) findGlobalSubParameter("c2Max").value();
 
     return switch (value()) {
       case "defaultVelocityUpdate" -> new DefaultVelocityUpdate(c1Min, c1Max, c2Min, c2Max);
       case "constrainedVelocityUpdate" -> {
-        problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
+        DoubleProblem problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
         yield new ConstrainedVelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }
       case "SPSO2011VelocityUpdate" -> {
-        problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
+        DoubleProblem problem = (DoubleProblem) nonConfigurableSubParameters().get("problem");
         yield new SPS2011VelocityUpdate(c1Min, c1Max, c2Min, c2Max, problem) {};
       }
       default -> throw new JMetalException(value() + " is not a valid velocity update strategy");
