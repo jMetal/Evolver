@@ -4,9 +4,13 @@ import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.BoltzmannSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.PopulationAndNeighborhoodSelection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.RandomSelection;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.RankingSelection;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.StochasticUniversalSampling;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.TruncationSelection;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -17,13 +21,17 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  * A categorical parameter representing different selection strategies for evolutionary algorithms.
  * This parameter allows selecting and configuring how parent solutions are chosen for reproduction.
  *
- * <p>The available selection strategies are:
+ * <p>The available selection strategies (compatible with jMetal 6.10):
  *
  * <ul>
  *   <li>tournament: Selects solutions based on tournament selection
  *   <li>random: Selects solutions uniformly at random
  *   <li>populationAndNeighborhoodMatingPoolSelection: Selects solutions based on both
  *       population-wide and neighborhood-based criteria
+ *   <li>boltzmann: Temperature-controlled selection inspired by simulated annealing
+ *   <li>ranking: Linear ranking selection with softer selection pressure
+ *   <li>stochasticUniversalSampling: Uniform sampling with reduced selection variance
+ *   <li>truncation: Deterministic selection of the best solutions (elitist)
  * </ul>
  *
  * <p>Required sub-parameters depend on the selection strategy:
@@ -33,6 +41,10 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  *       <ul>
  *         <li>selectionTournamentSize: The size of the tournament (Integer)
  *       </ul>
+ *   <li>For "boltzmann":
+ *       <ul>
+ *         <li>boltzmannTemperature: Temperature parameter controlling selection pressure (Double, range: 0.1-100.0)
+ *       </ul>
  *   <li>For "populationAndNeighborhoodMatingPoolSelection":
  *       <ul>
  *         <li>neighborhoodSelectionProbability: Probability of selecting from neighborhood (Double)
@@ -40,6 +52,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  *         <li>subProblemIdGenerator: A SequenceGenerator for subproblem IDs (provided via
  *             non-configurable parameters)
  *       </ul>
+ *   <li>For "random", "ranking", "stochasticUniversalSampling", "truncation": No additional parameters required
  * </ul>
  *
  * @param <S> The type of solutions being evolved
@@ -51,8 +64,9 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
   /**
    * Creates a new SelectionParameter with the specified selection strategies.
    *
-   * @param selectionStrategies A list of valid selection strategy names. Supported values: -
-   *     "tournament" - "random" - "populationAndNeighborhoodMatingPoolSelection"
+   * @param selectionStrategies A list of valid selection strategy names. Supported values:
+   *     "tournament", "random", "populationAndNeighborhoodMatingPoolSelection", "boltzmann",
+   *     "ranking", "stochasticUniversalSampling", "truncation"
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public SelectionParameter(List<String> selectionStrategies) {
@@ -63,8 +77,9 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
    * Creates a new SelectionParameter with the specified name and selection strategies.
    *
    * @param name The name of the parameter
-   * @param selectionStrategies A list of valid selection strategy names. Supported values: -
-   *     "tournament" - "random" - "populationAndNeighborhoodMatingPoolSelection"
+   * @param selectionStrategies A list of valid selection strategy names. Supported values:
+   *     "tournament", "random", "populationAndNeighborhoodMatingPoolSelection", "boltzmann",
+   *     "ranking", "stochasticUniversalSampling", "truncation"
    * @throws IllegalArgumentException if selectionStrategies is null or empty
    */
   public SelectionParameter(String name, List<String> selectionStrategies) {
@@ -83,14 +98,23 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
    * @throws IllegalArgumentException if matingPoolSize is not positive or comparator is null
    */
   public Selection<S> getSelection(int matingPoolSize, Comparator<S> comparator) {
+    Check.that(matingPoolSize > 0, "Mating pool size must be positive, but was: " + matingPoolSize);
+    Check.notNull(comparator);
+    
     Selection<S> result;
     switch (value()) {
       case "tournament" -> {
         int tournamentSize = (Integer) findConditionalParameter("selectionTournamentSize").value();
-
         result = new NaryTournamentSelection<>(tournamentSize, matingPoolSize, comparator);
       }
       case "random" -> result = new RandomSelection<>(matingPoolSize);
+      case "boltzmann" -> {
+        double temperature = (Double) findConditionalParameter("boltzmannTemperature").value();
+        result = new BoltzmannSelection<>(matingPoolSize, comparator, temperature);
+      }
+      case "ranking" -> result = new RankingSelection<>(matingPoolSize, comparator);
+      case "stochasticUniversalSampling" -> result = new StochasticUniversalSampling<>(matingPoolSize, comparator);
+      case "truncation" -> result = new TruncationSelection<>(matingPoolSize, comparator);
       case "populationAndNeighborhoodMatingPoolSelection" -> {
         double neighborhoodSelectionProbability =
             (double) findConditionalParameter("neighborhoodSelectionProbability").value();
@@ -110,7 +134,8 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
                 neighborhoodSelectionProbability,
                 false); // selectCurrentSolution is false to match the original behavior
       }
-      default -> throw new JMetalException("Selection component unknown: " + value());
+      default -> throw new JMetalException("Selection component unknown: '" + value() + 
+          "'. Valid strategies are: " + String.join(", ", validValues()));
     }
 
     return result;

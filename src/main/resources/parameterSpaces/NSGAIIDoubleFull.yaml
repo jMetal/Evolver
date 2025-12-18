@@ -145,3 +145,11 @@ selection:
           type: integer
           range: [2, 10]
     random: {}
+    boltzmann:
+      conditionalParameters:
+        boltzmannTemperature:
+          type: double
+          range: [0.1, 100.0]
+    ranking: {}
+    stochasticUniversalSampling: {}
+    truncation: {}
