@@ -117,15 +117,15 @@ class RE3DTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting evaluations then default is 8000")
-    void givenNewInstance_whenGettingEvaluations_thenDefaultIs8000() {
+    @DisplayName("given new instance when getting evaluations then default is 6000")
+    void givenNewInstance_whenGettingEvaluations_thenDefaultIs6000() {
       // Arrange - done in setUp
 
       // Act
       List<Integer> evaluations = trainingSet.evaluationsToOptimize();
 
       // Assert
-      assertTrue(evaluations.stream().allMatch(e -> e == 8000));
+      assertTrue(evaluations.stream().allMatch(e -> e == 6000));
     }
   }
 
