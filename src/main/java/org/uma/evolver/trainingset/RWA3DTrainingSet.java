@@ -2,7 +2,6 @@ package org.uma.evolver.trainingset;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.problem.multiobjective.rwa.*;

@@ -1,7 +1,6 @@
 package org.uma.evolver.analysis.ablation;
 
 import java.util.List;
-import java.util.Map;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;

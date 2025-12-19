@@ -10,10 +10,10 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEva
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.TrainingSet;
+import org.uma.evolver.trainingset.ZDTTrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.evolver.trainingset.ZDTTrainingSet;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;

@@ -1,10 +1,9 @@
 package org.uma.evolver.parameter;
 
+import java.util.*;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
-
-import java.util.*;
 
 /**
  * Abstract class that defines a configurable parameter space for metaheuristics.

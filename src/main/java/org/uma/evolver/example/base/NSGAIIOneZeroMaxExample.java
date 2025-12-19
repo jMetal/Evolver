@@ -1,7 +1,6 @@
 package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.nsgaii.BinaryNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
 import org.uma.evolver.parameter.factory.BinaryParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;

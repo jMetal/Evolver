@@ -1,14 +1,10 @@
 package org.uma.evolver.example.base;
 
-import org.uma.evolver.algorithm.base.smsemoa.DoubleSMSEMOA;
+import java.io.IOException;
 import org.uma.evolver.algorithm.base.smsemoa.PermutationSMSEMOA;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.jmetal.algorithm.multiobjective.smsemoa.SMSEMOA;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.MultiObjectiveTSP;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
@@ -17,8 +13,6 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
-
-import java.io.IOException;
 
 public class SMSEMOABiobjectiveTSP {
   public static void main(String[] args) throws IOException {

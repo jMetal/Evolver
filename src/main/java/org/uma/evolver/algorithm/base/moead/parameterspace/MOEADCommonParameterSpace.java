@@ -6,7 +6,6 @@ import org.uma.evolver.parameter.catalogue.*;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.Solution;
-import smile.timeseries.AR;
 
 /**
  * Base parameter space for the MOEA/D algorithm.
