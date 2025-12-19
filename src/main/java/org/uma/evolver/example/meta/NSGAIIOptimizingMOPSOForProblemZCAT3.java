@@ -10,7 +10,8 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.Evaluati
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.OutputResults;
+import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
@@ -20,103 +21,113 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
+
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO} using
+ * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO}
+ * using
  * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class NSGAIIOptimizingMOPSOForProblemZCAT3 {
 
-  // Meta-optimizer configuration
-  private static final int META_MAX_EVALUATIONS = 2000;
-  private static final int NUMBER_OF_CORES = 1;
+    // Meta-optimizer configuration
+    private static final int META_MAX_EVALUATIONS = 2000;
+    private static final int NUMBER_OF_CORES = 1;
 
-  // Base-level algorithm configuration
-  private static final int BASE_POPULATION_SIZE = 100;
-  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-  private static final int BASE_MAX_EVALUATIONS = 20000;
+    // Base-level algorithm configuration
+    private static final int BASE_POPULATION_SIZE = 100;
+    private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+    private static final int BASE_MAX_EVALUATIONS = 20000;
 
-  // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
-  private static final int WRITE_FREQUENCY = 1;
-  private static final int PLOT_UPDATE_FREQUENCY = 1;
+    // Observer configuration
+    private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+    private static final int WRITE_FREQUENCY = 1;
+    private static final int PLOT_UPDATE_FREQUENCY = 1;
 
-  public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "MOPSO.yaml" ;
+    public static void main(String[] args) throws IOException {
+        String yamlParameterSpaceFile = "MOPSO.yaml";
 
-    // Step 1: Select the target problem
-    DefaultZCATSettings.numberOfObjectives = 3 ;
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT3());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZCAT3.3D.csv");
+        // Step 1: Select the target problem
+        DefaultZCATSettings.numberOfObjectives = 3;
+        List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT3());
+        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZCAT3.3D.csv");
+        String problemName = "ZCAT3";
 
-    // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-    var parameterSpace =
-        new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
-    System.out.println(parameterSpace);
-    // var configurableAlgorithm = new MOEADDouble(100);
-    var baseAlgorithm = new BaseMOPSO(BASE_POPULATION_SIZE, parameterSpace);
+        // Step 2: Set the parameters for the algorithm to be configured
+        var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
 
-    var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
-    int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
+        // var configurableAlgorithm = new MOEADDouble(100);
+        var baseAlgorithm = new BaseMOPSO(BASE_POPULATION_SIZE, parameterSpace);
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
+        var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
+        int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-        new MetaOptimizationProblem<>(
-            baseAlgorithm,
-            trainingSet,
-            referenceFrontFileNames,
-            indicators,
-            evaluationBudgetStrategy,
-            numberOfIndependentRuns);
+        EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
-            .setMaxEvaluations(META_MAX_EVALUATIONS)
-            .setNumberOfCores(NUMBER_OF_CORES)
-            .build();
+        MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
+                baseAlgorithm,
+                trainingSet,
+                referenceFrontFileNames,
+                indicators,
+                evaluationBudgetStrategy,
+                numberOfIndependentRuns);
 
-    // Step 4: Create observers for the meta-optimizer
-    var outputResults =
-        new OutputResults(
-            "MOPSO",
-            metaOptimizationProblem,
-            trainingSet.get(0).name(),
-            indicators,
-            "RESULTS/MOPSO/" + trainingSet.get(0).name());
+        // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+        // specialized double
+        // builder
+        EvolutionaryAlgorithm<DoubleSolution> nsgaii = new MetaNSGAIIBuilder(metaOptimizationProblem,
+                new NSGAIIDoubleParameterSpace())
+                .setMaxEvaluations(META_MAX_EVALUATIONS)
+                .setNumberOfCores(NUMBER_OF_CORES)
+                .build();
 
-    var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
+        // Step 4: Create observers for the meta-optimizer
+        String algorithmName = "NSGA-II";
 
-    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(
-            "MOPSO, " + trainingSet.get(0).name(),
-            indicators.get(0).name(),
-            indicators.get(1).name(),
-            trainingSet.get(0).name(),
-            PLOT_UPDATE_FREQUENCY);
+        MetaOptimizerConfig config = MetaOptimizerConfig.builder()
+                .metaOptimizerName(algorithmName)
+                .metaMaxEvaluations(META_MAX_EVALUATIONS)
+                .metaPopulationSize(100)
+                .numberOfCores(NUMBER_OF_CORES)
+                .baseLevelAlgorithmName("MOPSO")
+                .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+                .yamlParameterSpaceFile(yamlParameterSpaceFile)
+                .build();
 
-    nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(frontChartObserver);
-    nsgaii.observable().register(writeExecutionDataToFilesObserver);
+        var outputResults = new ConsolidatedOutputResults(
+                metaOptimizationProblem,
+                problemName,
+                indicators,
+                "results/nsgaii/" + problemName,
+                config);
 
-    // Step 5: Run the meta-optimizer
-    nsgaii.run();
+        var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    // Step 6: Write results
-    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
+        var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
+        var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
+                "MOPSO, " + trainingSet.get(0).name(),
+                indicators.get(0).name(),
+                indicators.get(1).name(),
+                trainingSet.get(0).name(),
+                PLOT_UPDATE_FREQUENCY);
 
-    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-    outputResults.writeResultsToFiles(nsgaii.result());
+        nsgaii.observable().register(evaluationObserver);
+        nsgaii.observable().register(frontChartObserver);
+        nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
-    System.exit(0);
-  }
+        // Step 5: Run the meta-optimizer
+        nsgaii.run();
+
+        // Step 6: Write results
+        outputResults.updateEvaluations(META_MAX_EVALUATIONS);
+        outputResults.writeResultsToFiles(nsgaii.result());
+
+        System.exit(0);
+    }
 }

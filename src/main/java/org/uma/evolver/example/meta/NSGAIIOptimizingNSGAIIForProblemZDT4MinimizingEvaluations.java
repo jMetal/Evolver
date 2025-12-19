@@ -11,109 +11,119 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.RandomRa
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.EvaluationsQualityIndicator;
-import org.uma.evolver.util.OutputResults;
+import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
+
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using problem
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII}
+ * using problem
  * {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class NSGAIIOptimizingNSGAIIForProblemZDT4MinimizingEvaluations {
 
-  // Meta-optimizer configuration
-  private static final int META_MAX_EVALUATIONS = 2000;
-  private static final int NUMBER_OF_CORES = 8;
+    // Meta-optimizer configuration
+    private static final int META_MAX_EVALUATIONS = 2000;
+    private static final int NUMBER_OF_CORES = 8;
 
-  // Base-level algorithm configuration
-  private static final int BASE_POPULATION_SIZE = 100;
-  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-  private static final int BASE_MIN_EVALUATIONS = 8000;
-  private static final int BASE_MAX_EVALUATIONS = 25000;
+    // Base-level algorithm configuration
+    private static final int BASE_POPULATION_SIZE = 100;
+    private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
+    private static final int BASE_MIN_EVALUATIONS = 8000;
+    private static final int BASE_MAX_EVALUATIONS = 25000;
 
-  // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
-  private static final int WRITE_FREQUENCY = 1;
-  private static final int PLOT_UPDATE_FREQUENCY = 1;
+    // Observer configuration
+    private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+    private static final int WRITE_FREQUENCY = 1;
+    private static final int PLOT_UPDATE_FREQUENCY = 1;
 
-  public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    public static void main(String[] args) throws IOException {
+        String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
-    // Step 1: Select the target problem
-    List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
-    List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+        // Step 1: Select the target problem
+        List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
+        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+        String problemName = "ZDT4";
 
-    // Step 2: Set the parameters for the algorithm to be configured
-    var indicators =
-        List.of(new EvaluationsQualityIndicator(), new InvertedGenerationalDistancePlus());
-    var parameterSpace =
-        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
+        // Step 2: Set the parameters for the algorithm to be configured
+        var indicators = List.of(new EvaluationsQualityIndicator(), new InvertedGenerationalDistancePlus());
+        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+        var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy =
-        new RandomRangeEvaluationsStrategy(BASE_MIN_EVALUATIONS, BASE_MAX_EVALUATIONS);
+        EvaluationBudgetStrategy evaluationBudgetStrategy = new RandomRangeEvaluationsStrategy(BASE_MIN_EVALUATIONS,
+                BASE_MAX_EVALUATIONS);
 
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-        new MetaOptimizationProblem<>(
-            configurableAlgorithm,
-            trainingSet,
-            referenceFrontFileNames,
-            indicators,
-            evaluationBudgetStrategy,
-            NUMBER_OF_INDEPENDENT_RUNS);
+        MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
+                configurableAlgorithm,
+                trainingSet,
+                referenceFrontFileNames,
+                indicators,
+                evaluationBudgetStrategy,
+                NUMBER_OF_INDEPENDENT_RUNS);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
-    // builder
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
-            .setMaxEvaluations(META_MAX_EVALUATIONS)
-            .setNumberOfCores(NUMBER_OF_CORES)
-            .build();
+        // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+        // specialized double
+        // builder
+        EvolutionaryAlgorithm<DoubleSolution> nsgaii = new MetaNSGAIIBuilder(metaOptimizationProblem,
+                new NSGAIIDoubleParameterSpace())
+                .setMaxEvaluations(META_MAX_EVALUATIONS)
+                .setNumberOfCores(NUMBER_OF_CORES)
+                .build();
 
-    // Step 4: Create observers for the meta-optimizer
-    var outputResults =
-        new OutputResults(
-            "NSGA-II",
-            metaOptimizationProblem,
-            trainingSet.get(0).name(),
-            indicators,
-            "results/nsgaii/" + trainingSet.get(0).name());
+        // Step 4: Create observers for the meta-optimizer
+        String algorithmName = "NSGA-II";
 
-    var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSet.get(0).name(),
-            indicators.get(0).name(),
-            indicators.get(1).name(),
-            trainingSet.get(0).name(),
-            PLOT_UPDATE_FREQUENCY);
-    frontChartObserver.filterDominatedSolutions(true);
+        MetaOptimizerConfig config = MetaOptimizerConfig.builder()
+                .metaOptimizerName(algorithmName)
+                .metaMaxEvaluations(META_MAX_EVALUATIONS)
+                .metaPopulationSize(100)
+                .numberOfCores(NUMBER_OF_CORES)
+                .baseLevelAlgorithmName("NSGA-II")
+                .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+                .yamlParameterSpaceFile(yamlParameterSpaceFile)
+                .build();
 
-    final var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
+        var outputResults = new ConsolidatedOutputResults(
+                metaOptimizationProblem,
+                problemName,
+                indicators,
+                "results/nsgaii/" + problemName,
+                config);
 
-    nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(frontChartObserver);
-    nsgaii.observable().register(writeExecutionDataToFilesObserver);
+        var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
+        var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
+                "NSGA-II, " + trainingSet.get(0).name(),
+                indicators.get(0).name(),
+                indicators.get(1).name(),
+                trainingSet.get(0).name(),
+                PLOT_UPDATE_FREQUENCY);
+        frontChartObserver.filterDominatedSolutions(true);
 
-    // Step 5: Run the meta-optimizer
-    nsgaii.run();
+        final var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY,
+                outputResults);
 
-    // Step 6: Write results
-    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
+        nsgaii.observable().register(evaluationObserver);
+        nsgaii.observable().register(frontChartObserver);
+        nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
-    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-    outputResults.writeResultsToFiles(nsgaii.result());
+        // Step 5: Run the meta-optimizer
+        nsgaii.run();
 
-    System.exit(0);
-  }
+        // Step 6: Write results
+        outputResults.updateEvaluations(META_MAX_EVALUATIONS);
+        outputResults.writeResultsToFiles(nsgaii.result());
+
+        System.exit(0);
+    }
 }
