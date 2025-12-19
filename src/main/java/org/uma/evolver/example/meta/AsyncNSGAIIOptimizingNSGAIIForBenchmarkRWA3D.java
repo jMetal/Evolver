@@ -10,8 +10,8 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEva
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
+import org.uma.evolver.trainingset.RWA3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
-import org.uma.evolver.trainingset.WFG2DTrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -30,7 +30,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
+public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -50,13 +50,13 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new RWA3DTrainingSet();
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);

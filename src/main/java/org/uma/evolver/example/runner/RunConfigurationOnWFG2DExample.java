@@ -4,6 +4,7 @@ import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
+import org.uma.evolver.trainingset.WFG2DTrainingSet;
 import org.uma.evolver.util.TrainingSetRunner;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -16,14 +17,14 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * <p>After running, visualize with:
  * <pre>
  * cd analysis/scripts/visualization
- * python visualize_training_set_results.py ../../../results/DTLZ3D --grid
- * python visualize_training_set_results.py ../../../results/DTLZ3D --interactive
+ * python visualize_training_set_results.py ../../../results/WFG2D --grid
+ * python visualize_training_set_results.py ../../../results/WFG2D --interactive
  * </pre>
  */
-public class RunConfigurationOnDTLZ3DExample {
+public class RunConfigurationOnWFG2DExample {
 
   public static void main(String[] args) {
-    // 1. Define the optimized configuration (from meta-optimization on DTLZ)
+    // 1. Define the optimized configuration (from meta-optimization on WFG2D)
     String[] configuration =
         """
         --algorithmResult externalArchive --populationSizeWithArchive 73 --archiveType crowdingDistanceArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover blxAlphaBeta --crossoverProbability 0.6466458903885894 --crossoverRepairStrategy bounds --blxAlphaBetaCrossoverBeta 0.4213474801441299 --blxAlphaBetaCrossoverAlpha 0.8024887081802909 --mutation nonUniform --mutationProbabilityFactor 0.6740009648716038 --mutationRepairStrategy round --nonUniformMutationPerturbation 0.6355943954800332 --selection tournament --selectionTournamentSize 6
@@ -31,11 +32,11 @@ public class RunConfigurationOnDTLZ3DExample {
             .split("\\s+");
 
     // 2. Create the training set (can customize evaluations if needed)
-    var trainingSet = new DTLZ3DTrainingSet();
-    trainingSet.setEvaluationsToOptimize(40000);
+    var trainingSet = new WFG2DTrainingSet();
+    trainingSet.setEvaluationsToOptimize(25000);
 
     // 3. Create the algorithm template
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
     int populationSize = 100;
     
     var algorithmTemplate = new DoubleNSGAII(
@@ -46,15 +47,15 @@ public class RunConfigurationOnDTLZ3DExample {
     // 4. Build and run the TrainingSetRunner
     var runner = new TrainingSetRunner.Builder<DoubleSolution>(
             trainingSet, algorithmTemplate, configuration)
-        .outputDir("results/fronts/DTLZ3D")
+        .outputDir("results/fronts/WFG2D")
         .numberOfThreads(4)
         .build();
 
     runner.run();
 
-    System.out.println("\nVisualize 3D results with:");
+    System.out.println("\nVisualize results with:");
     System.out.println("  cd analysis/scripts/visualization");
-    System.out.println("  python visualize_training_set_results.py ../../../results/fronts/DTLZ3D --grid");
-    System.out.println("  python visualize_training_set_results.py ../../../results/fronts/DTLZ3D --interactive");
+    System.out.println("  python visualize_training_set_results.py ../../../results/fronts/WFG2D --grid");
+    System.out.println("  python visualize_training_set_results.py ../../../results/fronts/WFG2D --interactive");
   }
 }

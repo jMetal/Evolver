@@ -64,3 +64,6 @@ analysis_summary.md
 # Keep sample data files
 !analysis/sample_data/*.csv
 !analysis/sample_data/*.png
+
+# LaTeX build directory
+latex/

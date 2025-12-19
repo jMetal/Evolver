@@ -1,8 +1,10 @@
 package org.uma.evolver.example.runner;
 
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.ZDTTrainingSet;
 import org.uma.evolver.util.TrainingSetRunner;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -11,53 +13,54 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * Example demonstrating how to run a meta-optimized configuration on all problems in a TrainingSet.
  *
  * <p>This example:
+ *
  * <ol>
- *   <li>Loads an optimized NSGA-II configuration (from meta-optimization results)</li>
- *   <li>Runs the configured algorithm on all ZDT problems</li>
- *   <li>Saves results to CSV files for visualization</li>
- *   <li>Computes quality indicators (Epsilon, Normalized Hypervolume)</li>
+ *   <li>Loads an optimized NSGA-II configuration (from meta-optimization results)
+ *   <li>Runs the configured algorithm on all RE3D problems
+ *   <li>Saves results to CSV files for visualization
+ *   <li>Computes quality indicators (Epsilon, Normalized Hypervolume)
  * </ol>
  *
  * <p>After running, use the Python visualization script:
+ *
  * <pre>
  * cd analysis/scripts/visualization
- * python visualize_training_set_results.py ../../../results/ZDT --grid --save fronts.png
+ * python visualize_training_set_results.py ../../../results/RE3D --grid --save fronts.png
  * </pre>
  */
-public class RunConfigurationOnZDTExample {
+public class RunConfigurationOnRE3DExample {
 
   public static void main(String[] args) {
     // 1. Define the optimized configuration (from meta-optimization)
     String[] configuration =
 """
---algorithmResult externalArchive --populationSizeWithArchive 52 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 1 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.8344405454288435 --crossoverRepairStrategy bounds --sbxDistributionIndex 46.40624621381956 --mutation nonUniform --mutationProbabilityFactor 0.3873069125490838 --mutationRepairStrategy bounds --nonUniformMutationPerturbation 0.20422968168417088 --selection tournament --selectionTournamentSize 7
- """
+--algorithmResult externalArchive --populationSizeWithArchive 91 --archiveType unboundedArchive --createInitialSolutions latinHypercubeSampling --offspringPopulationSize 200 --densityEstimator knn --knnNeighborhoodSize 4 --knnNormalizeObjectives true --ranking dominanceRanking --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.753296984025 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.4922345402714735 --mutation nonUniform --mutationProbabilityFactor 0.7690908717002871 --mutationRepairStrategy round --nonUniformMutationPerturbation 0.8310956709322816 --selection ranking --replacement rankingAndDensityEstimator --removalPolicy oneShot\s"""
             .split("\\s+");
-
     // 2. Create the training set
-    var trainingSet = new ZDTTrainingSet();
-    trainingSet.setEvaluationsToOptimize(20000) ;
+    var trainingSet = new RE3DTrainingSet();
+    trainingSet.setEvaluationsToOptimize(10000);
 
     // 3. Create the algorithm template
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "RDEMOEADoubleFull.yaml";
     int populationSize = 100;
-    
-    var algorithmTemplate = new DoubleNSGAII(
-        populationSize,
-        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory())
-    );
+
+    var algorithmTemplate =
+        new DoubleRDEMOEA(
+            populationSize,
+            new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
 
     // 4. Build and run the TrainingSetRunner
-    var runner = new TrainingSetRunner.Builder<DoubleSolution>(
-            trainingSet, algorithmTemplate, configuration)
-        .outputDir("results/fronts/ZDT")
-        .numberOfThreads(4)  // Parallel execution
-        .build();
+    var runner =
+        new TrainingSetRunner.Builder<DoubleSolution>(trainingSet, algorithmTemplate, configuration)
+            .outputDir("results/fronts/RE3D")
+            .numberOfThreads(8) // Parallel execution
+            .build();
 
     runner.run();
 
     System.out.println("\nVisualize results with:");
     System.out.println("  cd analysis/scripts/visualization");
-    System.out.println("  python visualize_training_set_results.py ../../../results/fronts/ZDT --grid");
+    System.out.println(
+        "  python visualize_training_set_results.py ../../../results/fronts/RE3D --grid");
   }
 }

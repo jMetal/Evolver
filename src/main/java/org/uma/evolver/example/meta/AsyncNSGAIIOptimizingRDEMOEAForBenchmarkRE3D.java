@@ -3,6 +3,7 @@ package org.uma.evolver.example.meta;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -11,7 +12,6 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
-import org.uma.evolver.trainingset.WFG2DTrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -19,7 +19,6 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -30,7 +29,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
+public class AsyncNSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -47,7 +46,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
+    String yamlParameterSpaceFile = "RDEMOEADoubleFull.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();
@@ -59,7 +58,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
+    var baseAlgorithm = new DoubleRDEMOEA(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
@@ -106,7 +105,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/nsgaii/" + problemName,
+            "results/RDEMOEA/" + problemName,
             config);
 
     var writeExecutionDataToFilesObserver =
@@ -115,7 +114,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSetDescriptor.name(),
+            "RDEMOEA, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
             trainingSetDescriptor.name(),

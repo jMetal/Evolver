@@ -89,14 +89,4 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
     }
     this.size = size;
   }
-  
-  /**
-   * Returns the name of this parameter.
-   * 
-   * @return The name of this parameter as specified in the con structor
-   */
-  @Override
-  public String name() {
-    return super.name();
-  }
 }
