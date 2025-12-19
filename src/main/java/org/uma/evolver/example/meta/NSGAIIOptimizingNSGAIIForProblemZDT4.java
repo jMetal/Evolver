@@ -10,7 +10,8 @@ import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.Evaluati
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.OutputResults;
+import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
@@ -18,7 +19,7 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
+
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
@@ -52,6 +53,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
+    String problemName = "ZDT4";
 
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -74,7 +76,8 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+    // specialized double
     // builder
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
@@ -85,15 +88,30 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    var outputResults =
-        new OutputResults(
-            "NSGA-II",
-            metaOptimizationProblem,
-            trainingSet.get(0).name(),
-            indicators,
-            "RESULTS/NSGAII/" + "ZDT4");
+    String algorithmName = "NSGA-II";
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(META_MAX_EVALUATIONS)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(NUMBER_OF_CORES)
+            .baseLevelAlgorithmName("NSGA-II")
+            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
+
+    var outputResults =
+        new ConsolidatedOutputResults(
+            metaOptimizationProblem,
+            problemName,
+            indicators,
+            "results/nsgaii/" + problemName,
+            config);
+
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
@@ -112,8 +130,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
     nsgaii.run();
 
     // Step 6: Write results
-    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
-
     outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(nsgaii.result());
 
