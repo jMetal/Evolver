@@ -48,7 +48,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
   private static final int PLOT_UPDATE_FREQUENCY = 1;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
 
     // Step 1: Select the target problem
     List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());

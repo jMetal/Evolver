@@ -40,7 +40,7 @@ public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
     // Base-level algorithm configuration
     private static final int BASE_POPULATION_SIZE = 100;
     private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-    private static final int BASE_MAX_EVALUATIONS = 15000;
+    private static final int BASE_MAX_EVALUATIONS = 25000;
 
     // Observer configuration
     private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
@@ -48,7 +48,7 @@ public class NSGAIIOptimizingNSGAIIForProblemDTLZ3 {
     private static final int PLOT_UPDATE_FREQUENCY = 1;
 
     public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+        String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
 
         // Step 1: Select the target problem
         List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
