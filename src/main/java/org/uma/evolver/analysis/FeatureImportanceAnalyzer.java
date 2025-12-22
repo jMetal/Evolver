@@ -1,7 +1,5 @@
 package org.uma.evolver.analysis;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -81,7 +79,7 @@ public class FeatureImportanceAnalyzer {
     Path indicatorsPath = resultsDirectory.resolve("INDICATORS.csv");
 
     // Load configurations
-    List<String[]> configRows = readCSV(configPath);
+    var configRows = readCSV(configPath);
     if (configRows.isEmpty()) {
       throw new IOException("CONFIGURATIONS.csv is empty");
     }
@@ -89,7 +87,7 @@ public class FeatureImportanceAnalyzer {
     final List<String[]> configData = configRows.subList(1, configRows.size());
 
     // Load indicators
-    List<String[]> indicatorRows = readCSV(indicatorsPath);
+    var indicatorRows = readCSV(indicatorsPath);
     if (indicatorRows.isEmpty()) {
       throw new IOException("INDICATORS.csv is empty");
     }
@@ -131,18 +129,18 @@ public class FeatureImportanceAnalyzer {
     this.featureNames = featureNamesList.toArray(new String[0]);
 
     // Create index map for indicators (Evaluation_SolutionId -> row)
-    Map<String, Integer> indicatorIndex = new LinkedHashMap<>();
+    var indicatorIndex = new LinkedHashMap<String, Integer>();
     for (int i = 0; i < indicatorData.size(); i++) {
       String key = indicatorData.get(i)[evalColInd] + "_" + indicatorData.get(i)[solIdColInd];
       indicatorIndex.put(key, i);
     }
 
     // Build merged data arrays
-    List<double[]> mergedFeatures = new ArrayList<>();
-    List<Double> mergedTargets = new ArrayList<>();
+    var mergedFeatures = new ArrayList<double[]>();
+    var mergedTargets = new ArrayList<Double>();
     final int finalTargetCol = targetCol;
 
-    for (String[] configRow : configData) {
+    for (var configRow : configData) {
       String key = configRow[evalColConfig] + "_" + configRow[solIdColConfig];
       Integer indRowIdx = indicatorIndex.get(key);
 
@@ -151,16 +149,26 @@ public class FeatureImportanceAnalyzer {
         double[] features = new double[featureCols.size()];
         for (int j = 0; j < featureCols.size(); j++) {
           String val = configRow[featureCols.get(j)];
-          if (val.equalsIgnoreCase("NaN") || val.isEmpty()) {
+          try {
+            if (val == null || val.isBlank() || val.equalsIgnoreCase("NaN")) {
+              features[j] = Double.NaN;
+            } else {
+              features[j] = Double.parseDouble(val);
+            }
+          } catch (NumberFormatException e) {
+            // Log warning? For now just treat as missing
             features[j] = Double.NaN;
-          } else {
-            features[j] = Double.parseDouble(val);
           }
         }
 
         mergedFeatures.add(features);
-        String targetVal = indicatorData.get(indRowIdx)[finalTargetCol];
-        mergedTargets.add(Double.parseDouble(targetVal));
+        try {
+          String targetVal = indicatorData.get(indRowIdx)[finalTargetCol];
+          mergedTargets.add(Double.parseDouble(targetVal));
+        } catch (NumberFormatException e) {
+          // Skip row if target is invalid
+          mergedFeatures.remove(mergedFeatures.size() - 1);
+        }
       }
     }
 
@@ -284,10 +292,20 @@ public class FeatureImportanceAnalyzer {
 
     double[] importance = model.importance();
 
+    // Normalize by max importance for readability (0-1 scale)
+    double maxImp = Arrays.stream(importance).max().orElse(1.0);
+    if (maxImp > 0) {
+      for (int i = 0; i < importance.length; i++) {
+        importance[i] /= maxImp;
+      }
+    }
+
     // Create sorted map
-    Map<String, Double> result = new LinkedHashMap<>();
+    var result = new LinkedHashMap<String, Double>();
     Integer[] indices = IntStream.range(0, featureNames.length).boxed().toArray(Integer[]::new);
-    Arrays.sort(indices, (a, b) -> Double.compare(importance[b], importance[a]));
+    // Sort indices based on importance
+    final double[] finalImp = importance;
+    Arrays.sort(indices, (a, b) -> Double.compare(finalImp[b], finalImp[a]));
 
     for (int idx : indices) {
       result.put(featureNames[idx], importance[idx]);
@@ -343,7 +361,7 @@ public class FeatureImportanceAnalyzer {
     }
 
     // Create sorted map
-    Map<String, Double> result = new LinkedHashMap<>();
+    var result = new LinkedHashMap<String, Double>();
     Integer[] indices = IntStream.range(0, featureNames.length).boxed().toArray(Integer[]::new);
     final double[] finalImportances = importances;
     Arrays.sort(indices, (a, b) -> Double.compare(finalImportances[b], finalImportances[a]));
@@ -471,10 +489,11 @@ public class FeatureImportanceAnalyzer {
   // Helper methods
 
   private List<String[]> readCSV(Path path) throws IOException {
-    List<String[]> rows = new ArrayList<>();
-    try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile(), StandardCharsets.UTF_8))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
+    var rows = new ArrayList<String[]>();
+    var lines = java.nio.file.Files.readAllLines(path, StandardCharsets.UTF_8);
+    for (String line : lines) {
+      if (!line.trim().isEmpty()) {
+        // Simple splitting, assuming no quoted commas
         rows.add(line.split(","));
       }
     }
@@ -483,7 +502,7 @@ public class FeatureImportanceAnalyzer {
 
   private int indexOf(String[] array, String value) {
     for (int i = 0; i < array.length; i++) {
-      if (array[i].equals(value)) {
+      if (value.equals(array[i])) {
         return i;
       }
     }
