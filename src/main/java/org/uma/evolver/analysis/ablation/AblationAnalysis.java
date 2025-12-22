@@ -64,9 +64,9 @@ public class AblationAnalysis {
    * Iteratively chooses the parameter change that produces the best metric value.
    */
   public AblationResult performPathAblation(String startConfigStr, String endConfigStr) {
-    Map<String, String> startConfig = AblationConfigParser.parse(startConfigStr);
-    Map<String, String> endConfig = AblationConfigParser.parse(endConfigStr);
-    Map<String, String> currentConfig = new LinkedHashMap<>(startConfig);
+    var startConfig = AblationConfigParser.parse(startConfigStr);
+    var endConfig = AblationConfigParser.parse(endConfigStr);
+    var currentConfig = new LinkedHashMap<>(startConfig);
 
     AblationResult results = new AblationResult();
 
@@ -104,7 +104,7 @@ public class AblationAnalysis {
 
       for (String key : differingKeys) {
         // Construct candidate
-        Map<String, String> candidateConfig = new LinkedHashMap<>(currentConfig);
+        var candidateConfig = new LinkedHashMap<>(currentConfig);
         String endVal = endConfig.get(key);
         if (endVal != null) {
           candidateConfig.put(key, endVal);
@@ -163,8 +163,8 @@ public class AblationAnalysis {
    * Base is optimizedConfig. For each parameter, revert to baselineConfig value.
    */
   public AblationResult performLeaveOneOut(String optimizedConfigStr, String baselineConfigStr) {
-    Map<String, String> optimizedConfig = AblationConfigParser.parse(optimizedConfigStr);
-    Map<String, String> baselineConfig = AblationConfigParser.parse(baselineConfigStr);
+    var optimizedConfig = AblationConfigParser.parse(optimizedConfigStr);
+    var baselineConfig = AblationConfigParser.parse(baselineConfigStr);
 
     AblationResult results = new AblationResult();
 

@@ -10,6 +10,10 @@ import java.util.function.Function;
 
 public class AblationRunner {
 
+  private AblationRunner() {
+    // Utility class
+  }
+
   /**
    * Runs the algorithm with the given configuration.
    *

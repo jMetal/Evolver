@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
  */
 public class AblationConfigParser {
 
+  private AblationConfigParser() {
+    // Utility class
+  }
+
   /**
    * Parses a configuration string into a map.
    *
@@ -18,7 +22,7 @@ public class AblationConfigParser {
    * @return A map of parameter names to values.
    */
   public static Map<String, String> parse(String configString) {
-    Map<String, String> config = new LinkedHashMap<>();
+    var config = new LinkedHashMap<String, String>();
     if (configString == null || configString.trim().isEmpty()) {
       return config;
     }
