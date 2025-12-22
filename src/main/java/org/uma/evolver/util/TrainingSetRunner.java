@@ -24,13 +24,18 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
- * Utility class for running a configured algorithm on all problems in a TrainingSet.
+ * Utility class for running a configured algorithm on all problems in a
+ * TrainingSet.
  *
- * <p>This class executes the algorithm on each problem, saves results to CSV files, and optionally
- * computes quality indicators. Results are organized in a directory structure suitable for
+ * <p>
+ * This class executes the algorithm on each problem, saves results to CSV
+ * files, and optionally
+ * computes quality indicators. Results are organized in a directory structure
+ * suitable for
  * visualization with Python scripts.
  *
- * <p>Output structure:
+ * <p>
+ * Output structure:
  *
  * <pre>
  * outputDir/
@@ -56,6 +61,8 @@ public class TrainingSetRunner<S extends Solution<?>> {
   private final int numberOfThreads;
   private final List<QualityIndicator> indicators;
 
+  private final boolean silent;
+
   private TrainingSetRunner(Builder<S> builder) {
     this.trainingSet = builder.trainingSet;
     this.algorithmTemplate = builder.algorithmTemplate;
@@ -63,7 +70,11 @@ public class TrainingSetRunner<S extends Solution<?>> {
     this.outputDir = builder.outputDir;
     this.numberOfThreads = builder.numberOfThreads;
     this.indicators = builder.indicators;
+    this.silent = builder.silent;
+    this.outputDisabled = builder.outputDisabled;
   }
+
+  private final boolean outputDisabled;
 
   /**
    * Runs the configured algorithm on all problems in the training set.
@@ -83,10 +94,12 @@ public class TrainingSetRunner<S extends Solution<?>> {
       throw new RuntimeException("Failed to create output directory: " + outputDir, e);
     }
 
-    System.out.println("Running " + trainingSet.name() + " training set (" + problems.size() + " problems)");
-    System.out.println("Output directory: " + outputDir);
-    System.out.println("Configuration: " + String.join(" ", configuration));
-    System.out.println();
+    if (!silent) {
+      System.out.println("Running " + trainingSet.name() + " training set (" + problems.size() + " problems)");
+      System.out.println("Output directory: " + outputDir);
+      System.out.println("Configuration: " + String.join(" ", configuration));
+      System.out.println();
+    }
 
     if (numberOfThreads == 1) {
       // Sequential execution
@@ -112,7 +125,8 @@ public class TrainingSetRunner<S extends Solution<?>> {
         String referenceFront = referenceFronts.get(i);
 
         executor.submit(() -> {
-          List<S> result = runSingleProblem(problem, problemName, maxEvaluations, referenceFront, index + 1, problems.size());
+          List<S> result = runSingleProblem(problem, problemName, maxEvaluations, referenceFront, index + 1,
+              problems.size());
           synchronizedResults.put(problemName, result);
         });
       }
@@ -127,22 +141,28 @@ public class TrainingSetRunner<S extends Solution<?>> {
     }
 
     // Write manifest and indicators
-    writeManifest(results);
-    if (!indicators.isEmpty()) {
-      writeIndicators(results);
+    if (!outputDisabled) {
+      writeManifest(results);
+      if (!indicators.isEmpty()) {
+        writeIndicators(results);
+      }
     }
 
-    System.out.println("\nAll problems completed. Results saved to: " + outputDir);
+    if (!silent) {
+      System.out.println("\nAll problems completed. Results saved to: " + outputDir);
+    }
     return results;
   }
 
   @SuppressWarnings("unchecked")
-  private List<S> runSingleProblem(Problem<S> problem, String problemName, 
-                                    int maxEvaluations, String referenceFront,
-                                    int current, int total) {
-    System.out.printf("[%d/%d] Running %s (max evaluations: %d)...%n", 
-                      current, total, problemName, maxEvaluations);
-    
+  private List<S> runSingleProblem(Problem<S> problem, String problemName,
+      int maxEvaluations, String referenceFront,
+      int current, int total) {
+    if (!silent) {
+      System.out.printf("[%d/%d] Running %s (max evaluations: %d)...%n",
+          current, total, problemName, maxEvaluations);
+    }
+
     long startTime = System.currentTimeMillis();
 
     // Create algorithm instance for this problem
@@ -157,15 +177,19 @@ public class TrainingSetRunner<S extends Solution<?>> {
     long elapsed = System.currentTimeMillis() - startTime;
 
     // Save results
-    String problemDir = outputDir + "/" + problemName;
-    try {
-      Files.createDirectories(Path.of(problemDir));
-      new SolutionListOutput(result)
-          .setVarFileOutputContext(new DefaultFileOutputContext(problemDir + "/VAR.csv", ","))
-          .setFunFileOutputContext(new DefaultFileOutputContext(problemDir + "/FUN.csv", ","))
-          .print();
-    } catch (IOException e) {
-      System.err.println("Warning: Failed to save results for " + problemName + ": " + e.getMessage());
+    if (!outputDisabled) {
+      String problemDir = outputDir + "/" + problemName;
+      try {
+        Files.createDirectories(Path.of(problemDir));
+        new SolutionListOutput(result)
+            .setVarFileOutputContext(new DefaultFileOutputContext(problemDir + "/VAR.csv", ","))
+            .setFunFileOutputContext(new DefaultFileOutputContext(problemDir + "/FUN.csv", ","))
+            .print();
+      } catch (IOException e) {
+        if (!silent) {
+          System.err.println("Warning: Failed to save results for " + problemName + ": " + e.getMessage());
+        }
+      }
     }
 
     // Compute indicators if reference front exists
@@ -173,19 +197,25 @@ public class TrainingSetRunner<S extends Solution<?>> {
       try {
         double[][] reference = VectorUtils.readVectors(referenceFront, ",");
         double[][] front = SolutionListUtils.getMatrixWithObjectiveValues(result);
-        
+
         StringBuilder indicatorValues = new StringBuilder();
         for (QualityIndicator indicator : indicators) {
           indicator.referenceFront(reference);
           double value = indicator.compute(front);
           indicatorValues.append(String.format("  %s: %.6f", indicator.name(), value));
         }
-        System.out.printf("  Completed in %.2fs.%s%n", elapsed / 1000.0, indicatorValues);
+        if (!silent) {
+          System.out.printf("  Completed in %.2fs.%s%n", elapsed / 1000.0, indicatorValues);
+        }
       } catch (IOException e) {
-        System.out.printf("  Completed in %.2fs. (indicators unavailable)%n", elapsed / 1000.0);
+        if (!silent) {
+          System.out.printf("  Completed in %.2fs. (indicators unavailable)%n", elapsed / 1000.0);
+        }
       }
     } else {
-      System.out.printf("  Completed in %.2fs.%n", elapsed / 1000.0);
+      if (!silent) {
+        System.out.printf("  Completed in %.2fs.%n", elapsed / 1000.0);
+      }
     }
 
     return result;
@@ -195,10 +225,10 @@ public class TrainingSetRunner<S extends Solution<?>> {
     String manifestPath = outputDir + "/manifest.csv";
     try (FileWriter writer = new FileWriter(manifestPath, StandardCharsets.UTF_8)) {
       writer.write("problem,reference_front,solutions\n");
-      
+
       List<String> referenceFronts = trainingSet.referenceFronts();
       List<Problem<S>> problems = trainingSet.problemList();
-      
+
       for (int i = 0; i < problems.size(); i++) {
         String problemName = problems.get(i).getClass().getSimpleName();
         String refFront = referenceFronts.get(i);
@@ -227,15 +257,16 @@ public class TrainingSetRunner<S extends Solution<?>> {
       for (int i = 0; i < problems.size(); i++) {
         String problemName = problems.get(i).getClass().getSimpleName();
         List<S> result = results.get(problemName);
-        
-        if (result == null || result.isEmpty()) continue;
+
+        if (result == null || result.isEmpty())
+          continue;
 
         writer.write(problemName);
-        
+
         try {
           double[][] reference = VectorUtils.readVectors(referenceFronts.get(i), ",");
           double[][] front = SolutionListUtils.getMatrixWithObjectiveValues(result);
-          
+
           for (QualityIndicator indicator : indicators) {
             indicator.referenceFront(reference);
             double value = indicator.compute(front);
@@ -266,10 +297,18 @@ public class TrainingSetRunner<S extends Solution<?>> {
     private int numberOfThreads = 1;
     private List<QualityIndicator> indicators = List.of(new Epsilon(), new NormalizedHypervolume());
 
+    private boolean silent = false;
+    private boolean outputDisabled = false;
+
     public Builder(TrainingSet<S> trainingSet, BaseLevelAlgorithm<S> algorithmTemplate, String[] configuration) {
       this.trainingSet = trainingSet;
       this.algorithmTemplate = algorithmTemplate;
       this.configuration = configuration;
+    }
+
+    public Builder<S> noOutput() {
+      this.outputDisabled = true;
+      return this;
     }
 
     public Builder<S> outputDir(String outputDir) {
@@ -289,6 +328,15 @@ public class TrainingSetRunner<S extends Solution<?>> {
 
     public Builder<S> noIndicators() {
       this.indicators = List.of();
+      return this;
+    }
+
+    /**
+     * Suppresses standard output logging.
+     * Useful when running inside other analysis loops (e.g., Ablation).
+     */
+    public Builder<S> silent() {
+      this.silent = true;
       return this;
     }
 

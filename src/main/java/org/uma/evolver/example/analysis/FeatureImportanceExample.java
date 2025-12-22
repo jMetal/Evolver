@@ -20,7 +20,7 @@ public class FeatureImportanceExample {
 
   public static void main(String[] args) throws Exception {
     // Path to results directory (change as needed)
-    Path resultsDir = Path.of("results/nsgaii/ZDT");
+    Path resultsDir = Path.of("results/nsgaii/RE3D");
 
     // Create analyzer
     FeatureImportanceAnalyzer analyzer = new FeatureImportanceAnalyzer(resultsDir).setNumberOfTrees(100).setMaxDepth(10)
@@ -29,7 +29,7 @@ public class FeatureImportanceExample {
     // Load data using EP (Epsilon) as target indicator
     // You can also use "NHV" (Normalized Hypervolume) or any other indicator
     System.out.println("Loading data...");
-    analyzer.loadData("NHV");
+    analyzer.loadData("IGD+");
 
     // Train Random Forest model
     System.out.println("\nTraining Random Forest model...");
