@@ -38,7 +38,7 @@ def create_comprehensive_report(data_dir: str, output_dir: str = "analysis_resul
     """
     # Create output directory
     output_path = Path(output_dir)
-    output_path.mkdir(exist_ok=True)
+    output_path.mkdir(parents=True, exist_ok=True)
     
     print("="*80)
     print("COMPREHENSIVE EXPERIMENT ANALYSIS")

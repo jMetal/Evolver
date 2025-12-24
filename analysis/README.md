@@ -27,8 +27,12 @@ analysis/
 
 ## Getting Started
 
-1. Install dependencies:
+1. Set up the environment:
 ```bash
+# Activate the Conda environment
+conda activate evolver
+
+# Or install dependencies manually
 cd analysis
 pip install -r requirements.txt
 ```
