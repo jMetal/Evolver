@@ -12,12 +12,14 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -54,7 +56,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    var indicators = List.of(new Epsilon(), new HypervolumeMinus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
@@ -104,7 +106,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/nsgaii/" + problemName,
+            "results/nsgaii/" + problemName + "_estimated",
+            //"results/nsgaii/" + problemName,
             config);
 
     var writeExecutionDataToFilesObserver =

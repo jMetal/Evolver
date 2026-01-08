@@ -41,7 +41,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <ol>
  * <li><strong>Extract Extreme Points:</strong> For each objective, identify the
  * solution in the
- * reference front that has the best (minimum, for minimization problems) value
+ * reference front that has the worst (maximum, for minimization problems) value
  * for that
  * objective. This results in N extreme points for an N-objective problem.</li>
  * <li><strong>Compute Objective Ranges:</strong> Calculate the range (max -
@@ -106,9 +106,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *   obj3: [2.5, 8.0],   range = 5.5
  *
  * Extreme Points (before offset):
- *   Point A (best obj1): (0.01, 450, 7.5)
- *   Point B (best obj2): (0.04, 100, 6.0)
- *   Point C (best obj3): (0.03, 350, 2.5)
+ *   Point A (worst obj1): (0.05, 200, 5.0)
+ *   Point B (worst obj2): (0.02, 500, 6.5)
+ *   Point C (worst obj3): (0.03, 300, 8.0)
  *
  * Range-based offsets:
  *   offset_obj1 = 0.10 × 0.04 = 0.004
@@ -116,9 +116,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *   offset_obj3 = 0.10 × 5.5 = 0.55
  *
  * Estimated Extreme Points (after offset):
- *   Point A: (0.014, 490, 8.05)
- *   Point B: (0.044, 140, 6.55)
- *   Point C: (0.034, 390, 3.05)
+ *   Point A: (0.054, 240, 5.55)
+ *   Point B: (0.024, 540, 7.05)
+ *   Point C: (0.034, 340, 8.55)
  * </pre>
  *
  * @author Antonio J. Nebro
@@ -208,7 +208,7 @@ public class EstimatedReferenceFrontGenerator {
   }
 
   /**
-   * Finds the solution with the minimum value for the specified objective.
+   * Finds the solution with the maximum value for the specified objective.
    *
    * @param front    the reference front
    * @param objIndex the objective index
@@ -219,7 +219,7 @@ public class EstimatedReferenceFrontGenerator {
     double bestValue = front[0][objIndex];
 
     for (int i = 1; i < front.length; i++) {
-      if (front[i][objIndex] < bestValue) {
+      if (front[i][objIndex] > bestValue) {
         bestValue = front[i][objIndex];
         bestSolution = front[i];
       }
@@ -340,61 +340,37 @@ public class EstimatedReferenceFrontGenerator {
     System.out.println("Output directory: " + outputDirectory);
     System.out.println();
 
-    // RE problems (2D)
-    List<String> re2dProblems = List.of("RE21", "RE22", "RE23", "RE24", "RE25");
-
-    // RE problems (3D)
-    List<String> re3dProblems = List.of("RE31", "RE32", "RE33", "RE34", "RE35", "RE36", "RE37");
-
-    // RE problems (4D and higher)
-    List<String> reHighDProblems = List.of("RE41", "RE42", "RE61", "RE91");
-
-    // RWA problems (3D)
-    List<String> rwa3dProblems = List.of("RWA1", "RWA2", "RWA3", "RWA4", "RWA5",
-        "RWA6", "RWA7", "RWA8", "RWA9", "RWA10");
-
-    // Generate for all problem families
-    System.out.println("=== RE 2D Problems ===");
-    for (String problem : re2dProblems) {
-      String inputPath = inputDirectory + "/" + problem + ".csv";
-      String outputFileName = problem + ".csv";
-      try {
-        generator.generateEstimatedReferenceFront(inputPath, outputFileName);
-      } catch (JMetalException e) {
-        System.err.println("Error processing " + problem + ": " + e.getMessage());
-      }
+    // Dynamically find all RE and RWA problems
+    File inputDirFile = new File(inputDirectory);
+    if (!inputDirFile.exists() || !inputDirFile.isDirectory()) {
+      System.err.println("Input directory does not exist: " + inputDirectory);
+      return;
     }
 
-    System.out.println("\n=== RE 3D Problems ===");
-    for (String problem : re3dProblems) {
-      String inputPath = inputDirectory + "/" + problem + ".csv";
-      String outputFileName = problem + ".csv";
-      try {
-        generator.generateEstimatedReferenceFront(inputPath, outputFileName);
-      } catch (JMetalException e) {
-        System.err.println("Error processing " + problem + ": " + e.getMessage());
-      }
+    File[] files = inputDirFile
+        .listFiles((dir, name) -> name.endsWith(".csv") && (name.startsWith("RE") || name.startsWith("RWA")));
+
+    if (files == null || files.length == 0) {
+      System.out.println("No matching Reference Front files found in " + inputDirectory);
+      return;
     }
 
-    System.out.println("\n=== RE High-D Problems ===");
-    for (String problem : reHighDProblems) {
-      String inputPath = inputDirectory + "/" + problem + ".csv";
-      String outputFileName = problem + ".csv";
-      try {
-        generator.generateEstimatedReferenceFront(inputPath, outputFileName);
-      } catch (JMetalException e) {
-        System.err.println("Error processing " + problem + ": " + e.getMessage());
-      }
-    }
+    // Sort for consistent output
+    Arrays.sort(files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
 
-    System.out.println("\n=== RWA 3D Problems ===");
-    for (String problem : rwa3dProblems) {
-      String inputPath = inputDirectory + "/" + problem + ".csv";
-      String outputFileName = problem + ".csv";
+    System.out.println("Found " + files.length + " RE/RWA reference fronts. Generating estimates...");
+
+    for (File file : files) {
+      String problemName = file.getName().replace(".csv", "");
+      String outputFileName = file.getName();
+
+      System.out.print("Processing " + problemName + " ... ");
       try {
-        generator.generateEstimatedReferenceFront(inputPath, outputFileName);
+        generator.generateEstimatedReferenceFront(file.getAbsolutePath(), outputFileName);
+        // Success message is printed by save method, but we can add check here if
+        // needed.
       } catch (JMetalException e) {
-        System.err.println("Error processing " + problem + ": " + e.getMessage());
+        System.err.println("Failed: " + e.getMessage());
       }
     }
 

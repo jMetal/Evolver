@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+% Define compact domain notation commands
+\newcommand{\Realdomain}[1]{\ensuremath{[#1]\subset\mathbb{R}}}
+\newcommand{\Intdomain}[1]{\ensuremath{[#1]\subset\mathbb{N}}}
+\newcommand{\Catdomain}[1]{\ensuremath{\{\;}#1\ensuremath{\;\}}}
+
+\title{Parameter Space for SMSEMOAPermutation Algorithm}
+\author{jMetal Evolver Framework}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Parameter Space}
+
+\begin{table}[!tb]
+\caption{Parameter space of SMSEMOAPermutation.}
+\label{tab:params_smsemoapermutation}
+\centering
+\resizebox{\textwidth}{!}{%
+\small
+\begin{tabular}{r@{\hskip 1em}p{25em}}
+\toprule
+\bf Parameter & \bf Domain \\
+\midrule
+algorithmResult & \Catdomain{population, externalArchive} \\
+archiveType & \Catdomain{crowdingDistanceArchive, unboundedArchive} \hspace{6em}\textbf{if} algorithmResult$=$externalArchive \\
+createInitialSolutions & \Catdomain{default} \\
+variation & \Catdomain{crossoverAndMutationVariation} \\
+crossover & \Catdomain{PMX, OXD, CX} \hspace{6em}\textbf{if} variation$=$crossoverAndMutationVariation \\
+crossoverProbability & \Realdomain{0.0, 1.0} \hspace{6em}\textbf{if} variation$=$crossoverAndMutationVariation \\
+mutation & \Catdomain{swap, insert, scramble, inversion, simpleInversion, displacement} \hspace{6em}\textbf{if} variation$=$crossoverAndMutationVariation \\
+mutationProbability & \Realdomain{0.0, 1.0} \hspace{6em}\textbf{if} variation$=$crossoverAndMutationVariation \\
+selection & \Catdomain{random} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{Summary}
+
+This parameter space contains 9 parameters total, of which 5 are conditional parameters that are only active under specific conditions.
+
+\subsection{Domain Notation}
+
+\begin{itemize}
+\item \texttt{\textbackslash Realdomain{a, b}}: Real-valued parameters in range [a, b] $\subset \mathbb{R}$
+\item \texttt{\textbackslash Intdomain{a, b}}: Integer-valued parameters in range [a, b] $\subset \mathbb{N}$
+\item \texttt{\textbackslash Catdomain{opt1, opt2, ...}}: Categorical parameters with discrete options
+\end{itemize}
+
+\end{document}
