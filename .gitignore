@@ -12,8 +12,6 @@ _build
 
 # Output directories - generated analysis results
 output/
-analysis_results/
-results/
 
 # Python cache
 __pycache__/

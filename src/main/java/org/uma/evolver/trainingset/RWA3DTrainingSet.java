@@ -3,7 +3,6 @@ package org.uma.evolver.trainingset;
 import java.util.Collections;
 import java.util.List;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.re.*;
 import org.uma.jmetal.problem.multiobjective.rwa.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
@@ -15,19 +14,19 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 public class RWA3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
 
-  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 10000;
+  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 7000;
   private static final String NAME = "RWA3D";
 
   private static final List<Problem<DoubleSolution>> PROBLEMS =
-      List.of(new RWA1(), new RWA2(), new RWA3(), new RWA6(), new RWA7(), new RWA8());
+      List.of(new RWA2(), new RWA3(), new RWA4(), new RWA5(), new RWA6(), new RWA7());
 
   private static final List<String> REFERENCE_FRONTS =
-      List.of("resources/referenceFronts/RWA1.csv",
-              "resources/referenceFronts/RWA2.csv",
-              "resources/referenceFronts/RWA3.csv",
-              "resources/referenceFronts/RWA6.csv",
-              "resources/referenceFronts/RWA7.csv",
-              "resources/referenceFronts/RWA8.csv");
+      List.of("resources/estimatedReferenceFronts/RWA2.csv",
+              "resources/estimatedReferenceFronts/RWA3.csv",
+              "resources/estimatedReferenceFronts/RWA4.csv",
+              "resources/estimatedReferenceFronts/RWA5.csv",
+              "resources/estimatedReferenceFronts/RWA6.csv",
+              "resources/estimatedReferenceFronts/RWA7.csv");
   private static final List<Integer> EVALUATIONS =
       Collections.nCopies(PROBLEMS.size(), DEFAULT_NUMBER_OF_EVALUATIONS);
 

@@ -324,7 +324,7 @@ public class EstimatedReferenceFrontGenerator {
       try {
         offsetPercentage = Double.parseDouble(args[0]);
       } catch (NumberFormatException e) {
-        System.err.println("Invalid offset percentage: " + args[0] + ". Using default: 0.10");
+        System.err.println("Invalid offset percentage: " + args[0] + ". Using default: 0.20");
       }
     }
 
