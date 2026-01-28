@@ -106,8 +106,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/nsgaii/" + problemName + "_estimated",
-            //"results/nsgaii/" + problemName,
+            "results/swevo/nsgaii/" + problemName + "_estimated",
+            //"results/swevo/nsgaii/" + problemName,
             config);
 
     var writeExecutionDataToFilesObserver =

@@ -23,7 +23,8 @@ public class RE3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
 
   private static final List<String> REFERENCE_FRONTS =
       IntStream.range(1, PROBLEMS.size() + 1)
-          .mapToObj(id -> "resources/estimatedReferenceFronts/RE3" + id + ".csv")
+              .mapToObj(id -> "resources/estimatedReferenceFronts/RE3" + id + ".csv")
+              //.mapToObj(id -> "resources/referenceFronts/RE3" + id + ".csv")
           .toList();
 
   private static final List<Integer> EVALUATIONS =

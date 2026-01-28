@@ -14,7 +14,7 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmetal.version>6.10</jmetal.version>
+    <jmetal.version>6.11-SNAPSHOT</jmetal.version>
     <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
@@ -47,6 +47,16 @@
     <url>https://github.com/jMetal/Evolver.git</url>
     <tag>Evolver2.0</tag>
   </scm>
+
+  <repositories>
+    <repository>
+      <id>sonatype-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <resources>
@@ -240,7 +250,6 @@
         <version>${checkstyle.plugin.version}</version>
         <configuration>
           <configLocation>google_checks.xml</configLocation>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>false</failsOnError>
           <linkXRef>false</linkXRef>

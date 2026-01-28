@@ -18,7 +18,6 @@ import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
@@ -105,8 +104,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            //"results/nsgaii/" + problemName,
-            "results/nsgaii/" + problemName + "_estimated",
+            //"results/swevo/nsgaii/" + problemName,
+            "results/swevo/nsgaii/" + problemName + "_estimated",
             config);
 
     var writeExecutionDataToFilesObserver =
