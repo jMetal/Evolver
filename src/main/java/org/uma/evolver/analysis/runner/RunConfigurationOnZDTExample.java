@@ -1,4 +1,4 @@
-package org.uma.evolver.example.runner;
+package org.uma.evolver.analysis.runner;
 
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;

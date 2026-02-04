@@ -104,8 +104,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            //"results/swevo/nsgaii/" + problemName,
-            "results/swevo/nsgaii/" + problemName + "_estimated",
+            "results/swevo/nsgaii/" + problemName,
+            //"results/swevo/nsgaii/" + problemName + "_estimated",
             config);
 
     var writeExecutionDataToFilesObserver =

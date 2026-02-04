@@ -1,4 +1,4 @@
-package org.uma.evolver.example.analysis.ablation;
+package org.uma.evolver.analysis.ablation;
 
 import org.uma.evolver.analysis.ablation.AblationAnalysis;
 import org.uma.evolver.analysis.ablation.AblationResult;

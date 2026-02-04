@@ -21,12 +21,12 @@ public class RWA3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
       List.of(new RWA2(), new RWA3(), new RWA4(), new RWA5(), new RWA6(), new RWA7());
 
   private static final List<String> REFERENCE_FRONTS =
-      List.of("resources/estimatedReferenceFronts/RWA2.csv",
-              "resources/estimatedReferenceFronts/RWA3.csv",
-              "resources/estimatedReferenceFronts/RWA4.csv",
-              "resources/estimatedReferenceFronts/RWA5.csv",
-              "resources/estimatedReferenceFronts/RWA6.csv",
-              "resources/estimatedReferenceFronts/RWA7.csv");
+      List.of("resources/referenceFronts/RWA2.csv",
+              "resources/referenceFronts/RWA3.csv",
+              "resources/referenceFronts/RWA4.csv",
+              "resources/referenceFronts/RWA5.csv",
+              "resources/referenceFronts/RWA6.csv",
+              "resources/referenceFronts/RWA7.csv");
   private static final List<Integer> EVALUATIONS =
       Collections.nCopies(PROBLEMS.size(), DEFAULT_NUMBER_OF_EVALUATIONS);
 
