@@ -1,226 +1,189 @@
 package org.uma.evolver.analysis.ablation;
 
-import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.jmetal.qualityindicator.QualityIndicator;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * Orchestrates the ablation analysis.
+ * Executes greedy path and leave-one-out ablation analyses.
  */
 public class AblationAnalysis {
 
-  private final Function<Map<String, String>, Double> evaluationFunction;
-  private final boolean isMaximization;
+  private final AblationEvaluator evaluator;
+  private final boolean maximize;
+  private final ProgressReporter reporter;
 
   /**
-   * Generic constructor for any evaluation logic (e.g., Training Sets).
+   * Creates a new ablation analysis.
    *
-   * @param evaluationFunction A function that takes a configuration map and
-   *                           returns a metric value (score).
-   * @param isMaximization     True if the metric should be maximized (e.g.,
-   *                           Hypervolume), false for minimization.
+   * @param evaluator evaluation function
+   * @param maximize true if larger metric values are better
+   * @param reporter progress reporter (use {@link NoOpProgressReporter} to disable)
    */
-  public AblationAnalysis(Function<Map<String, String>, Double> evaluationFunction, boolean isMaximization) {
-    this.evaluationFunction = evaluationFunction;
-    this.isMaximization = isMaximization;
+  public AblationAnalysis(AblationEvaluator evaluator, boolean maximize, ProgressReporter reporter) {
+    if (evaluator == null) {
+      throw new IllegalArgumentException("Evaluator cannot be null");
+    }
+    this.evaluator = evaluator;
+    this.maximize = maximize;
+    this.reporter = reporter == null ? new NoOpProgressReporter() : reporter;
   }
 
   /**
-   * Backward-compatible constructor for single-problem analysis.
-   */
-  public AblationAnalysis(
-      ParameterSpace baseParameterSpace,
-      Function<ParameterSpace, List<DoubleSolution>> algorithmRunner,
-      QualityIndicator qualityIndicator,
-      int numberOfRuns) {
-
-    this.isMaximization = qualityIndicator.name().contains("Hypervolume");
-    this.evaluationFunction = config -> {
-      List<Double> runResults = new ArrayList<>();
-
-      for (int i = 0; i < numberOfRuns; i++) {
-        List<DoubleSolution> population = AblationRunner.run(baseParameterSpace, config, algorithmRunner);
-        double[][] front = population.stream()
-            .map(DoubleSolution::objectives)
-            .toArray(double[][]::new);
-        double value = qualityIndicator.compute(front);
-        runResults.add(value);
-      }
-
-      runResults.sort(Double::compareTo);
-      double median = runResults.get(runResults.size() / 2);
-      if (runResults.size() % 2 == 0) {
-        median = (runResults.get(runResults.size() / 2 - 1) + runResults.get(runResults.size() / 2)) / 2.0;
-      }
-      return median;
-    };
-  }
-
-  /**
-   * Performs a greedy path ablation from startConfig to endConfig.
-   * Iteratively chooses the parameter change that produces the best metric value.
+   * Performs a greedy path ablation from a baseline to an optimized configuration.
+   *
+   * @param startConfigStr baseline configuration string
+   * @param endConfigStr optimized configuration string
+   * @return ablation results
    */
   public AblationResult performPathAblation(String startConfigStr, String endConfigStr) {
-    var startConfig = AblationConfigParser.parse(startConfigStr);
-    var endConfig = AblationConfigParser.parse(endConfigStr);
+    var startConfig = ConfigurationParser.parse(startConfigStr);
+    var endConfig = ConfigurationParser.parse(endConfigStr);
     var currentConfig = new LinkedHashMap<>(startConfig);
 
     AblationResult results = new AblationResult();
 
-    // 1. Evaluate Start Configuration
-    System.out.println("Evaluating base configuration...");
-    double startScore = evaluationFunction.apply(currentConfig);
+    double startScore = evaluator.evaluate(currentConfig);
     results.addResult("Base", "N/A", startScore);
-    System.out.printf("Base Score: %.6f%n", startScore);
 
-    // 2. Identify all differences
-    Set<String> differingKeys = new HashSet<>();
-    Set<String> allKeys = new HashSet<>(startConfig.keySet());
-    allKeys.addAll(endConfig.keySet());
+    Set<String> differingKeys = computeDifferingKeys(startConfig, endConfig);
+    int totalSteps = differingKeys.size();
+    int stepIndex = 0;
 
-    for (String key : allKeys) {
-      String startVal = startConfig.get(key);
-      String endVal = endConfig.get(key);
-      if (!Objects.equals(startVal, endVal)) {
-        differingKeys.add(key);
-      }
-    }
-
-    int initialDiffCount = differingKeys.size();
-    System.out.println("Found " + initialDiffCount + " parameter differences.");
-
-    // 3. Greedy Loop
     while (!differingKeys.isEmpty()) {
-      int currentStep = initialDiffCount - differingKeys.size() + 1;
-      System.out.printf("Step %d/%d: Evaluating %d candidates ", currentStep, initialDiffCount, differingKeys.size());
-
+      stepIndex++;
       String bestKey = null;
-      double bestScore = isMaximization ? -Double.MAX_VALUE : Double.MAX_VALUE;
-
-      boolean foundValidStep = false;
+      double bestScore = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
+      boolean foundValidCandidate = false;
+      int candidateIndex = 0;
+      int candidateTotal = differingKeys.size();
 
       for (String key : differingKeys) {
-        // Construct candidate
-        var candidateConfig = new LinkedHashMap<>(currentConfig);
-        String endVal = endConfig.get(key);
-        if (endVal != null) {
-          candidateConfig.put(key, endVal);
-        } else {
-          candidateConfig.remove(key);
-        }
+        candidateIndex++;
+        Map<String, String> candidateConfig = new LinkedHashMap<>(currentConfig);
+        applyChange(candidateConfig, key, endConfig.get(key));
+
+        reporter.reportProgress(
+            "Path",
+            candidateIndex,
+            candidateTotal,
+            "Step " + stepIndex + "/" + totalSteps);
 
         try {
-          System.out.print(".");
-          double score = evaluationFunction.apply(candidateConfig);
-
-          if (isMaximization) {
-            if (score > bestScore) {
-              bestScore = score;
-              bestKey = key;
-            }
-          } else {
-            if (score < bestScore) {
-              bestScore = score;
-              bestKey = key;
-            }
+          double score = evaluator.evaluate(candidateConfig);
+          foundValidCandidate = true;
+          if (isBetter(score, bestScore)) {
+            bestScore = score;
+            bestKey = key;
           }
-          foundValidStep = true;
-        } catch (Exception e) {
-          // Invalid config (dependency missing), skip this candidate
-          System.out.print("x");
+        } catch (RuntimeException e) {
+          // Skip invalid configuration
         }
       }
-      System.out.println(); // Newline after progress dots
 
-      if (!foundValidStep || bestKey == null) {
-        System.err.println(
-            "Warning: No valid next step found among " + differingKeys.size() + " candidates. Stopping ablation.");
+      if (!foundValidCandidate || bestKey == null) {
         break;
       }
 
-      // Commit the best step
-      String val = endConfig.get(bestKey);
-      if (val != null) {
-        currentConfig.put(bestKey, val);
-      } else {
-        currentConfig.remove(bestKey);
-      }
-      String stepLabel = bestKey + "=" + formatValue(val);
-      results.addResult(stepLabel, stepLabel, bestScore);
+      applyChange(currentConfig, bestKey, endConfig.get(bestKey));
       differingKeys.remove(bestKey);
-
-      System.out.printf("  Selected: %s (Metric: %.6f)%n", stepLabel, bestScore);
+      String label = formatChange(bestKey, endConfig.get(bestKey));
+      results.addResult("Step " + stepIndex, label, bestScore);
     }
 
     return results;
   }
 
   /**
-   * Performs a Leave-One-Out ablation analysis.
-   * Base is optimizedConfig. For each parameter, revert to baselineConfig value.
+   * Performs a leave-one-out ablation from an optimized configuration.
+   *
+   * @param optimizedConfigStr optimized configuration string
+   * @param baselineConfigStr baseline configuration string
+   * @return ablation results
    */
   public AblationResult performLeaveOneOut(String optimizedConfigStr, String baselineConfigStr) {
-    var optimizedConfig = AblationConfigParser.parse(optimizedConfigStr);
-    var baselineConfig = AblationConfigParser.parse(baselineConfigStr);
+    var optimizedConfig = ConfigurationParser.parse(optimizedConfigStr);
+    var baselineConfig = ConfigurationParser.parse(baselineConfigStr);
 
     AblationResult results = new AblationResult();
-
-    // 1. Evaluate Optimized Configuration (Reference)
-    System.out.println("Evaluating optimized configuration (baseline for LOO)...");
-    double optimizedScore = evaluationFunction.apply(optimizedConfig);
+    double optimizedScore = evaluator.evaluate(optimizedConfig);
     results.addResult("Optimized", "N/A", optimizedScore);
-    System.out.printf("Optimized Score: %.6f%n", optimizedScore);
 
-    // 2. Identify keys to test
     List<String> keysToTest = new ArrayList<>();
     for (String key : optimizedConfig.keySet()) {
-      String optVal = optimizedConfig.get(key);
-      String baseVal = baselineConfig.get(key);
-      if (!Objects.equals(optVal, baseVal)) {
+      String optimizedValue = optimizedConfig.get(key);
+      String baselineValue = baselineConfig.get(key);
+      if (!Objects.equals(optimizedValue, baselineValue)) {
         keysToTest.add(key);
       }
     }
 
-    System.out.printf("Performing LOO analysis on %d parameters...%n", keysToTest.size());
-
+    int total = keysToTest.size();
+    int index = 0;
     for (String key : keysToTest) {
-      Map<String, String> looConfig = new LinkedHashMap<>(optimizedConfig);
-      String baseVal = baselineConfig.get(key);
-      if (baseVal != null) {
-        looConfig.put(key, baseVal);
-      } else {
-        looConfig.remove(key);
-      }
+      index++;
+      Map<String, String> candidate = new LinkedHashMap<>(optimizedConfig);
+      applyChange(candidate, key, baselineConfig.get(key));
+      reporter.reportProgress("LOO", index, total, "Evaluating");
 
       double score;
       try {
-        System.out.print(".");
-        score = evaluationFunction.apply(looConfig);
-      } catch (Exception e) {
-        System.out.print("x");
+        score = evaluator.evaluate(candidate);
+      } catch (RuntimeException e) {
         score = Double.NaN;
       }
-      String diffLabel = key + "=" + formatValue(baseVal);
-      results.addResult(diffLabel, diffLabel, score);
+      String label = formatChange(key, baselineConfig.get(key));
+      results.addResult("LOO " + index, label, score);
     }
-    System.out.println(); // Newline
-    System.out.println("LOO Analysis Complete.");
 
     return results;
   }
 
-  private String formatValue(String value) {
+  private Set<String> computeDifferingKeys(
+      Map<String, String> startConfig, Map<String, String> endConfig) {
+    Set<String> result = new LinkedHashSet<>();
+    Set<String> allKeys = new LinkedHashSet<>(startConfig.keySet());
+    allKeys.addAll(endConfig.keySet());
+
+    for (String key : allKeys) {
+      String startValue = startConfig.get(key);
+      String endValue = endConfig.get(key);
+      if (!Objects.equals(startValue, endValue)) {
+        result.add(key);
+      }
+    }
+    return result;
+  }
+
+  private void applyChange(Map<String, String> config, String key, String value) {
     if (value == null) {
-      return "REMOVED";
+      config.remove(key);
+    } else {
+      config.put(key, value);
     }
-    try {
-      double d = Double.parseDouble(value);
-      return String.format(java.util.Locale.US, "%.4f", d);
-    } catch (NumberFormatException e) {
-      return value;
+  }
+
+  private boolean isBetter(double candidateScore, double bestScore) {
+    boolean result;
+    if (maximize) {
+      result = candidateScore > bestScore;
+    } else {
+      result = candidateScore < bestScore;
     }
+    return result;
+  }
+
+  private String formatChange(String key, String value) {
+    String result;
+    if (value == null) {
+      result = key + "=REMOVED";
+    } else {
+      result = key + "=" + value;
+    }
+    return result;
   }
 }

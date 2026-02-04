@@ -13,7 +13,7 @@ The ``AblationConfiguration`` class provides a fluent API for configuring ablati
 
 .. code-block:: java
 
-   AblationConfiguration config = new AblationConfiguration()
+   AblationConfiguration config = AblationConfiguration.forZDTProblems()
        .analysisName("Custom Analysis")
        .problemSuite("ZDT")
        .numberOfRuns(25)
