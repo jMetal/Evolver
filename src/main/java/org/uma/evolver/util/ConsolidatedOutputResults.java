@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
+import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.jmetal.problem.Problem;
