@@ -1,0 +1,13 @@
+Step,ModifiedParameter,Metric
+Base,N/A,0.3523969109120715
+Step 1,mutationProbabilityFactor=0.3873069125490838,0.41659661685938054
+Step 2,nonUniformMutationPerturbation=0.20422968168417088,0.4534388507850224
+Step 3,crossoverProbability=0.8344405454288435,0.4195269625026284
+Step 4,populationSizeWithArchive=52,0.4431136517770661
+Step 5,archiveType=unboundedArchive,0.47020290091792444
+Step 6,sbxDistributionIndex=46.40624621381956,0.44778947142595327
+Step 7,mutation=nonUniform,0.38565664440640074
+Step 8,polynomialMutationDistributionIndex=REMOVED,0.39252328810157
+Step 9,algorithmResult=externalArchive,0.2642096375300279
+Step 10,selectionTournamentSize=7,0.23446729831636168
+Step 11,offspringPopulationSize=1,0.17192965444343739
