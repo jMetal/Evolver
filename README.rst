@@ -85,17 +85,11 @@ Key Features
 - **Flexible Architecture**: Supports various metaheuristics at both meta and base levels and several encodings (double, binary, permutation, etc.)
 - **Multi-objective Optimization at the meta level**: Optimizes multiple performance criteria (quality indicators) simultaneously
 - **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
-- **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics can be defined in a YAML file
-- **Analysis Tools**: Comprehensive parameter analysis including ablation studies, feature importance analysis, and robustness evaluation
+- **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics is defined in YAML files, loaded via ``YAMLParameterSpace``
 
 Other Features
 ^^^^^^^^^^^^^^
 - **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
-- **Parameter Analysis Framework**: 
-  
-  - **Ablation Analysis**: Systematic parameter contribution evaluation through leave-one-out and forward path methods
-  - **Feature Importance Analysis**: Machine learning-based parameter importance ranking using Random Forest
-  - **Robustness Analysis**: Configuration stability assessment through perturbation analysis
 
 Available algorithms
 --------------------
@@ -182,7 +176,7 @@ The following code snippet includes the main steps:
    int numberOfCores = 8;
 
    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
-       new MetaNSGAIIBuilder(metaOptimizationProblem)
+       new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
            .setMaxEvaluations(maxEvaluations)
            .setNumberOfCores(numberOfCores)
            .build();
@@ -211,7 +205,7 @@ After running the meta-optimizer, a configuration is located in the ``VAR.NSGA-I
 
    --algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9719337329527943 --crossoverRepairStrategy random --sbxDistributionIndex 133.8313543413145 --mutation uniform --mutationProbabilityFactor 0.5124086272844153 --mutationRepairStrategy random --uniformMutationPerturbation 0.22680609334711863 --selection tournament --selectionTournamentSize 5 
 
-With this configuration, we can run the base-level NSGA-II (see ``NSGAIIDTLZ3Example`` in ``org.uma.evolver.validation.configuration``):
+With this configuration, we can run the base-level NSGA-II (see ``NSGAIIDTLZ3Example`` in ``org.uma.evolver.example.configuration``):
 
 .. code-block:: java
 
@@ -236,7 +230,8 @@ With this configuration, we can run the base-level NSGA-II (see ``NSGAIIDTLZ3Exa
             --selectionTournamentSize 9
             """.split("\\s+");
 
-      var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, new NSGAIIDoubleParameterSpace());
+      var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000,
+            new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
       baseNSGAII.parse(parameters);
 
       baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);
@@ -286,10 +281,8 @@ v2.1-SNAPSHOT
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
 * Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
-* Add comprehensive parameter analysis framework with ablation, feature importance, and robustness analysis tools
-* Add configuration-based ablation analysis system with parallel execution and progress reporting
-* Add machine learning-based feature importance analysis using Random Forest with permutation importance
-* Add robustness analysis for evaluating configuration stability under parameter perturbations
+* Remove hard-coded parameter space classes; all parameter spaces now use ``YAMLParameterSpace``
+* Restructure package layout: ``algorithm``, ``meta``, ``trainingset``, ``irace``, ``example``
 
 v2.0 (2025-09-09)
 ^^^^^^^^^^^^^^^^^

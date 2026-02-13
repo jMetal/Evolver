@@ -3,15 +3,15 @@
 This file provides guidance to WARP (warp.dev) when working with code in this repository.
 
 ## What this repo is
-Evolver is a Java framework for automatically configuring multi-objective metaheuristics using a two-level (meta/base) optimization approach. It builds on jMetal and exposes example mains plus analysis tooling. See `README.rst` for a fuller narrative.
+Evolver is a Java framework for automatically configuring multi-objective metaheuristics using a two-level (meta/base) optimization approach. It builds on jMetal and exposes example mains. See `README.rst` for a fuller narrative.
 
 ## Quick facts
 - Language/Tooling: Java 21, Maven
-- Key deps: jMetal `${jmetal.version}` (currently 6.11-SNAPSHOT), SnakeYAML, Smile (for analysis)
-- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/training/**`, base-level configuration examples under `org/uma/evolver/validation/configuration/**`, and validation studies under `org/uma/evolver/validation/study/**`.
+- Key deps: jMetal `${jmetal.version}` (currently 6.11-SNAPSHOT), SnakeYAML
+- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/example/training/**`, base-level configuration examples under `org/uma/evolver/example/configuration/**`, and experimental studies under `org/uma/evolver/example/study/**`.
 - Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance). Prefer those over generic style rules.
 
-## Commands you’ll use most
+## Commands you'll use most
 Build and test
 ```bash
 # Clean and compile (unit tests not executed)
@@ -55,10 +55,9 @@ Notes
 ## Big-picture architecture (where to look)
 Two-level optimization
 - Meta level: defines a meta-optimization problem over base-level configurations, then solves it with a MO algorithm (e.g., NSGA-II, SMPSO, SPEA2).
-  - Key packages: `org.uma.evolver.meta.*` (builders such as `MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, `MetaSPEA2Builder`)
-  - Problem: `org.uma.evolver.metaoptimizationproblem.*` with evaluation budget strategies (e.g., `FixedEvaluationsStrategy`)
+  - Key packages: `org.uma.evolver.meta.builder` (builders such as `MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, `MetaSPEA2Builder`), `org.uma.evolver.meta.problem` (`MetaOptimizationProblem`), `org.uma.evolver.meta.strategy` (evaluation budget strategies)
 - Base level: configurable MO algorithms (NSGA-II, MOEA/D, SMSEMOA, MOPSO, RDEMOEA) assembled from jMetal components.
-  - Key packages: `org.uma.evolver.algorithm.base.*` and subpackages per algorithm (`nsgaii`, `moead`, `smsemoa`, `mopso`, `rdemoea`)
+  - Key packages: `org.uma.evolver.algorithm.*` and subpackages per algorithm (`nsgaii`, `moead`, `smsemoa`, `mopso`, `rdemoea`)
   - Example: `BaseNSGAII` builds a jMetal `EvolutionaryAlgorithm` using a `ParameterSpace` and optional external archives.
 
 Parameter modeling and YAML loading
@@ -68,20 +67,19 @@ Parameter modeling and YAML loading
   - Types/factories: `parameter.type.*`, `parameter.factory.*`
 - YAML files: `src/main/resources/parameterSpaces/*.yaml` (e.g., `NSGAIIDouble.yaml`, `MOEADDouble.yaml`, etc.)
 
-Training sets and runners
-- Training sets: `org.uma.evolver.util.trainingset.*` (e.g., `DTLZ3DTrainingSet`, `RE3DTrainingSet`, `WFG2DTrainingSet`)
-- Meta-optimization training examples: `org.uma.evolver.training.*` (e.g., `NSGAIIOptimizingNSGAIIForBenchmarkDTLZ`)
+Training sets
+- Training sets: `org.uma.evolver.trainingset.*` (e.g., `DTLZ3DTrainingSet`, `RE3DTrainingSet`, `WFG2DTrainingSet`)
 
-Validation
-- Base-level configuration examples: `org.uma.evolver.validation.configuration.*` (e.g., `MOEAD_DTLZ2`, `NSGAIIZDT4Example`)
-- Validation studies: `org.uma.evolver.validation.study.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`)
+Examples (runnable mains)
+- Meta-optimization training examples: `org.uma.evolver.example.training.*` (e.g., `NSGAIIOptimizingNSGAIIForBenchmarkDTLZ`)
+- Base-level configuration examples: `org.uma.evolver.example.configuration.*` (e.g., `MOEAD_DTLZ2`, `NSGAIIZDT4Example`)
+- Experimental studies: `org.uma.evolver.example.study.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`)
+
+Irace integration
+- `org.uma.evolver.irace.*`: irace parameter description generators and runner
 
 Utilities and outputs
-- `org.uma.evolver.util.*`: config I/O (`ConfigurationFileReader`), result writers (`WriteExecutionDataToFilesObserver`, `OutputResults`), reference-front estimation, irace integration
-
-Analysis
-- `org.uma.evolver.analysis.ablation.*`: ablation analysis tooling
-- `org.uma.evolver.analysis.runner.*`: configuration runners
+- `org.uma.evolver.util.*`: config I/O (`ConfigurationFileReader`), result writers (`WriteExecutionDataToFilesObserver`, `OutputResults`), reference-front estimation
 
 ## Tests
 - Framework: JUnit 5 (`junit-jupiter`), Mockito for mocking
@@ -89,4 +87,5 @@ Analysis
 
 ## Pointers for future agents
 - Prefer editing/consulting `JAVA_CODING_GUIDELINES.md` for style decisions in this repo.
-- When adding configurable parameters or new algorithms, mirror existing patterns in `parameter.*` and `algorithm.base.*` to ensure they’re compatible with `ParameterSpace` and YAML loaders.
+- When adding configurable parameters or new algorithms, mirror existing patterns in `parameter.*` and `algorithm.*` to ensure they are compatible with `ParameterSpace` and YAML loaders.
+- All parameter spaces are defined via YAML files in `src/main/resources/parameterSpaces/` and loaded with `YAMLParameterSpace`.
