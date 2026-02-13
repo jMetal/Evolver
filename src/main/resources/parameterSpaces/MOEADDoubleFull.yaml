@@ -52,6 +52,9 @@ createInitialSolutions:
     default:
     latinHypercubeSampling:
     scatterSearch:
+    chaosBased:
+    gridBased:
+    oppositionBased:
 #
 variation:
   type: categorical
@@ -130,7 +133,8 @@ variation:
                 blxAlphaCrossoverAlpha:
                   type: double
                   range: [0.0, 1.0]
-            wholeArithmetic:
+            wholeArithmetic: {}
+            blxAlphaBeta:
               conditionalParameters:
                 blxAlphaBetaCrossoverBeta:
                   type: double
@@ -143,7 +147,7 @@ variation:
               conditionalParameters:
                 laplaceCrossoverScale:
                   type: double
-                  range: [0.1, 1.5]
+                  range: [0.1, 0.5]
             fuzzyRecombination:
               conditionalParameters:
                 fuzzyRecombinationCrossoverAlpha:
@@ -157,6 +161,14 @@ variation:
                 pcxCrossoverEta:
                   type: double
                   range: [0.0, 1.0]
+            UNDC:
+              conditionalParameters:
+                undcCrossoverZeta:
+                  type: double
+                  range: [0.1, 1.0]
+                undcCrossoverEta:
+                  type: double
+                  range: [0.1, 0.5]
                   
     differentialEvolutionVariation:
       conditionalParameters:

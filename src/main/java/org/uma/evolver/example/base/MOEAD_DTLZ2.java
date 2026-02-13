@@ -2,6 +2,8 @@ package org.uma.evolver.example.base;
 
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
@@ -43,9 +45,12 @@ public class MOEAD_DTLZ2 {
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
+
+    var parameterSpace = new YAMLParameterSpace("MOEADDoubleFull.yaml", new DoubleParameterFactory());
+
     var baseMOEAD =
         new DoubleMOEAD(
-            problem, 100, 40000, "resources/weightVectors", new MOEADDoubleParameterSpace());
+            problem, 100, 40000, "resources/weightVectors", parameterSpace);
     baseMOEAD.parse(parameters);
 
     baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);

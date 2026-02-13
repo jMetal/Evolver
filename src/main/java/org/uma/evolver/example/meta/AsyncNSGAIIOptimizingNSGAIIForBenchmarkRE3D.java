@@ -19,6 +19,7 @@ import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThre
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -106,7 +107,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/swevo/nsgaii/" + problemName + "_estimated",
+            "results/pruebas/nsgaii/" + problemName + "_estimated",
             //"results/swevo/nsgaii/" + problemName,
             config);
 

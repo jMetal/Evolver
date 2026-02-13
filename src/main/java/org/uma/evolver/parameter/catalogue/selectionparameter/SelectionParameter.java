@@ -97,7 +97,7 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
    */
   public Selection<S> getSelection(int matingPoolSize, Comparator<S> comparator) {
     Check.that(matingPoolSize > 0, "Mating pool size must be positive, but was: " + matingPoolSize);
-    Check.notNull(comparator);
+    //Check.notNull(comparator);
     
     Selection<S> result;
     switch (value()) {
