@@ -1,4 +1,4 @@
-package org.uma.evolver.algorithm.base.mopso;
+package org.uma.evolver.algorithm.base.mopso.parameterspace;
 
 import java.util.List;
 import org.uma.evolver.parameter.ParameterSpace;
