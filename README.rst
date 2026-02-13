@@ -120,7 +120,7 @@ Evolver currently supports the following base-level and meta-optimization algori
 Installation
 ------------
 1. **Prerequisites**:
-   - Java JDK 17 or higher (Java 21 recommended for development and examples)
+   - Java JDK 21 or higher
    - Maven 3.6 or higher
 
    .. note::
@@ -211,30 +211,30 @@ After running the meta-optimizer, a configuration is located in the ``VAR.NSGA-I
 
    --algorithmResult externalArchive --populationSizeWithArchive 133 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 2 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.9719337329527943 --crossoverRepairStrategy random --sbxDistributionIndex 133.8313543413145 --mutation uniform --mutationProbabilityFactor 0.5124086272844153 --mutationRepairStrategy random --uniformMutationPerturbation 0.22680609334711863 --selection tournament --selectionTournamentSize 5 
 
-With this configuration, we can run the base-level NSGA-II as follows:
+With this configuration, we can run the base-level NSGA-II (see ``NSGAIIDTLZ3Example`` in ``org.uma.evolver.validation.configuration``):
 
 .. code-block:: java
 
    public class NSGAIIDTLZ3Example {
       public static void main(String[] args) {
-         String[] parameters =
-            ("--algorithmResult externalArchive " +
-                "--populationSizeWithArchive 133 " +
-                "--archiveType unboundedArchive " +
-                "--createInitialSolutions default " +
-                "--offspringPopulationSize 2 " +
-                "--variation crossoverAndMutationVariation " +
-                "--crossover SBX " +
-                "--crossoverProbability 0.9719337329527943 " +
-                "--crossoverRepairStrategy random " +
-                "--sbxDistributionIndex 133.8313543413145 " +
-                "--mutation uniform " +
-                "--mutationProbabilityFactor 0.5124086272844153 " +
-                "--mutationRepairStrategy random " +
-                "--uniformMutationPerturbation 0.22680609334711863 " +
-                "--selection tournament " +
-                "--selectionTournamentSize 5 \n")
-            .split("\\s+");
+         String[] parameters = """
+            --algorithmResult externalArchive
+            --populationSizeWithArchive 164
+            --archiveType unboundedArchive
+            --createInitialSolutions scatterSearch
+            --offspringPopulationSize 10
+            --variation crossoverAndMutationVariation
+            --crossover SBX
+            --crossoverProbability 0.9236653899572068
+            --crossoverRepairStrategy bounds
+            --sbxDistributionIndex 54.59618759155867
+            --mutation uniform
+            --mutationProbabilityFactor 0.9117111786450144
+            --mutationRepairStrategy bounds
+            --uniformMutationPerturbation 0.26380775649649596
+            --selection tournament
+            --selectionTournamentSize 9
+            """.split("\\s+");
 
       var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, new NSGAIIDoubleParameterSpace());
       baseNSGAII.parse(parameters);
@@ -250,28 +250,17 @@ With this configuration, we can run the base-level NSGA-II as follows:
          .print();
       }
    }
-   
-
-The obtained front and the one obtained with NSGA-II with default settings are shown in the following figures:
-
-.. list-table::
-   :align: center
-   :widths: auto
-
-   * - .. image:: analysis/sample_data/DTLZ3.Evolver.png
-          :alt: DTLZ1-Evolver
-          :width: 400
-     - .. image:: analysis/sample_data/DTLZ3.NSGAII.png
-          :alt: DTLZ1-OriginalNSGAII
-          :width: 400
 
 Documentation
 -------------
-Detailed documentation is available in the `docs` directory, including:
-- User Guide
-- Developer Documentation
-- API Reference
-- Tutorials and Examples
+Detailed documentation is available at https://evolver.readthedocs.io and in the ``docs/`` directory, including:
+
+- Installation guide
+- Quick start and examples
+- Concepts (parameter spaces, evaluation strategies, base-level and meta-level metaheuristics)
+- API reference
+- irace integration
+- FAQ and glossary
 
 Citing Evolver
 --------------
