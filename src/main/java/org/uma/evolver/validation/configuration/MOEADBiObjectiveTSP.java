@@ -2,7 +2,8 @@ package org.uma.evolver.validation.configuration;
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.moead.PermutationMOEAD;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
@@ -50,7 +51,7 @@ public class MOEADBiObjectiveTSP {
             100,
             1000000,
             "resources/weightVectors",
-            new MOEADPermutationParameterSpace());
+            new YAMLParameterSpace("MOEADPermutation.yaml", new PermutationParameterFactory()));
 
     baseMOEAD.parse(parameters);
 

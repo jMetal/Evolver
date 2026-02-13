@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
@@ -30,7 +29,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * <h2>Usage Example</h2>
  * <pre>{@code
  * // Create and configure the algorithm
- * ParameterSpace parameterSpace = new MOEADDoubleParameterSpace();
+ * ParameterSpace parameterSpace = new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory());
  * DoubleMOEAD algorithm = new DoubleMOEAD(100, "weightVectors/", parameterSpace);
  * 
  * // Parse command line arguments to override default parameters
@@ -58,7 +57,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * on the problem and algorithm configuration.
  *
  * @see BaseMOEAD
- * @see MOEADDoubleParameterSpace
+ * @see YAMLParameterSpace
  * @see MutationParameter
  * @see org.uma.jmetal.solution.doublesolution.DoubleSolution
  */

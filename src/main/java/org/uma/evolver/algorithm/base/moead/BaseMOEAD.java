@@ -56,7 +56,7 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  * int populationSize = 100;
  * int maxEvaluations = 25000;
  * String weightVectorsDir = "src/main/resources/weightVectors";
- * ParameterSpace parameterSpace = new MOEADCommonParameterSpace<>();
+ * ParameterSpace parameterSpace = new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory());
  *
  * // Create and run the algorithm
  * BaseMOEAD<DoubleSolution> moead = new MOEADDouble(problem, populationSize, maxEvaluations,

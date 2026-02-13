@@ -3,11 +3,11 @@ package org.uma.evolver.training;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -78,7 +78,7 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
         // specialized double
         // builder
         EvolutionaryAlgorithm<DoubleSolution> nsgaii = new MetaNSGAIIBuilder(metaOptimizationProblem,
-                new NSGAIIDoubleParameterSpace())
+                new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()))
                 .setMaxEvaluations(META_MAX_EVALUATIONS)
                 .setNumberOfCores(NUMBER_OF_CORES)
                 .build();

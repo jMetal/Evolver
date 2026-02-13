@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.*;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
@@ -40,7 +41,7 @@ class NSGAIIDoubleIT {
 
     var nsgaII =
         new DoubleNSGAII(
-            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
+            problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     var parameters =
         ("--algorithmResult population "
@@ -95,7 +96,7 @@ class NSGAIIDoubleIT {
 
     var nsgaII =
         new DoubleNSGAII(
-            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
+            problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     var parameters =
         ("--algorithmResult externalArchive "
@@ -152,7 +153,7 @@ class NSGAIIDoubleIT {
 
     var nsgaII =
         new DoubleNSGAII(
-            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
+            problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     var parameters =
         ("--algorithmResult population "
@@ -210,7 +211,7 @@ class NSGAIIDoubleIT {
 
     var nsgaII =
         new DoubleNSGAII(
-            problem, populationSize, maximumNumberOfEvaluations, new NSGAIIDoubleParameterSpace());
+            problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     var parameters =
         ("--algorithmResult externalArchive "

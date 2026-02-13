@@ -3,13 +3,14 @@ package org.uma.evolver.training;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -60,7 +61,7 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
     // Step 2: Set the parameters for the algorithm to be configured
     List<QualityIndicator> indicators = List.of(new HypervolumeMinus(), new Epsilon());
     var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS, BASE_MAX_EVALUATIONS);
-    ParameterSpace parameterSpace = new NSGAIIPermutationParameterSpace();
+    ParameterSpace parameterSpace = new YAMLParameterSpace("NSGAIIPermutation.yaml", new PermutationParameterFactory());
     var configurableAlgorithm = new PermutationNSGAII(BASE_POPULATION_SIZE, parameterSpace);
 
     EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
@@ -76,7 +77,7 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()))
             .setMaxEvaluations(META_MAX_EVALUATIONS)
             .setNumberOfCores(NUMBER_OF_CORES)
             .build();

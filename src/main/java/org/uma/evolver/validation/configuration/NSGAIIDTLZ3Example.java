@@ -1,7 +1,8 @@
 package org.uma.evolver.validation.configuration;
 
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -33,7 +34,7 @@ public class NSGAIIDTLZ3Example {
         --selectionTournamentSize 9
         """.split("\\s+");
 
-    var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, new NSGAIIDoubleParameterSpace());
+    var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
     baseNSGAII.parse(parameters);
 
     baseNSGAII.parameterSpace().topLevelParameters().forEach(System.out::println);

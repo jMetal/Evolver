@@ -9,8 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.jmetal.problem.Problem;
@@ -32,7 +33,7 @@ class MetaOptimizationProblemTest {
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT1.csv");
 
     BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
-        new DoubleNSGAII(100, new NSGAIIDoubleParameterSpace());
+        new DoubleNSGAII(100, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
@@ -67,7 +68,7 @@ class MetaOptimizationProblemTest {
             "resources/referenceFronts/ZDT6.csv");
 
     BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
-        new DoubleNSGAII(100, new NSGAIIDoubleParameterSpace());
+        new DoubleNSGAII(100, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
 
@@ -97,7 +98,7 @@ class MetaOptimizationProblemTest {
     List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZDT4.csv");
 
     BaseLevelAlgorithm<DoubleSolution> configurableAlgorithm =
-        new DoubleNSGAII(100, new NSGAIIDoubleParameterSpace());
+        new DoubleNSGAII(100, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     List<QualityIndicator> indicators = List.of(new NormalizedHypervolume(), new Epsilon());
 
@@ -127,7 +128,7 @@ class MetaOptimizationProblemTest {
             "resources/referenceFrontsTSP/KroAB100TSP.csv",
             "resources/referenceFrontsTSP/KroAC100TSP.csv");
 
-    var configurableAlgorithm = new PermutationNSGAII(100, new NSGAIIPermutationParameterSpace());
+    var configurableAlgorithm = new PermutationNSGAII(100, new YAMLParameterSpace("NSGAIIPermutation.yaml", new PermutationParameterFactory()));
 
     List<QualityIndicator> indicators = List.of(new PISAHypervolume());
 

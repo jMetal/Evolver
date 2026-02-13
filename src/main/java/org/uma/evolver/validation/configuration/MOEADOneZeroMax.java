@@ -2,7 +2,8 @@ package org.uma.evolver.validation.configuration;
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.moead.BinaryMOEAD;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADBinaryParameterSpace;
+import org.uma.evolver.parameter.factory.BinaryParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
@@ -45,7 +46,7 @@ public class MOEADOneZeroMax {
             100,
             10000,
             "resources/weightVectors",
-            new MOEADBinaryParameterSpace());
+            new YAMLParameterSpace("MOEADBinary.yaml", new BinaryParameterFactory()));
 
     baseAlgorithm.parse(parameters);
 

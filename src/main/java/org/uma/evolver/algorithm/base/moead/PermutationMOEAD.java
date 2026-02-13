@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.moead;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
@@ -30,7 +29,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * <h2>Usage Example</h2>
  * <pre>{@code
  * // Create and configure the algorithm
- * ParameterSpace parameterSpace = new MOEADPermutationParameterSpace();
+ * ParameterSpace parameterSpace = new YAMLParameterSpace("MOEADPermutation.yaml", new PermutationParameterFactory());
  * PermutationMOEAD algorithm = new PermutationMOEAD(100, "weightVectors/", parameterSpace);
  * 
  * // Parse command line arguments to override default parameters
@@ -58,7 +57,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * on the problem and algorithm configuration.
  *
  * @see BaseMOEAD
- * @see MOEADPermutationParameterSpace
+ * @see YAMLParameterSpace
  * @see org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter
  * @see org.uma.jmetal.solution.permutationsolution.PermutationSolution
  */
@@ -73,10 +72,10 @@ public class PermutationMOEAD extends BaseMOEAD<PermutationSolution<Integer>> {
    * @param populationSize the size of the population to be used in the algorithm. Must be positive.
    * @param weightVectorFilesDirectory the directory containing weight vector files. Must not be null.
    * @param parameterSpace the parameter space containing configuration parameters for the algorithm.
-   *                      Must be an instance of MOEADPermutationParameterSpace.
+   *                      Must not be null.
    * @throws IllegalArgumentException if populationSize is not positive or any parameter is null
    */
-  public PermutationMOEAD(int populationSize, String weightVectorFilesDirectory, MOEADPermutationParameterSpace parameterSpace) {
+  public PermutationMOEAD(int populationSize, String weightVectorFilesDirectory, ParameterSpace parameterSpace) {
     super(populationSize, weightVectorFilesDirectory, parameterSpace);
   }
 

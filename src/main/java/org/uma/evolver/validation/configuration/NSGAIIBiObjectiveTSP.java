@@ -2,7 +2,8 @@ package org.uma.evolver.validation.configuration;
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.nsgaii.PermutationNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
@@ -55,7 +56,7 @@ public class NSGAIIBiObjectiveTSP {
             .split("\\s+");
 
     var baseNSGAII = new PermutationNSGAII(
-            new KroAB100TSP(), 100, 1000000, new NSGAIIPermutationParameterSpace());
+            new KroAB100TSP(), 100, 1000000, new YAMLParameterSpace("NSGAIIPermutation.yaml", new PermutationParameterFactory()));
 
     baseNSGAII.parse(parameters);
 

@@ -1,7 +1,6 @@
 package org.uma.evolver.algorithm.base.nsgaii;
 
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.problem.Problem;
@@ -32,7 +31,7 @@ import org.uma.jmetal.util.errorchecking.Check;
  * // Configure the algorithm
  * int populationSize = 100;
  * int maxEvaluations = 25000;
- * ParameterSpace parameterSpace = new NSGAIIDoubleParameterSpace();
+ * ParameterSpace parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
  * // Configure parameter space with desired operators and parameters
  * 
  * // Create and run the algorithm
@@ -49,7 +48,7 @@ import org.uma.jmetal.util.errorchecking.Check;
  *
  * @see BaseNSGAII
  * @see DoubleSolution
- * @see NSGAIIDoubleParameterSpace
+ * @see YAMLParameterSpace
  * @see MutationParameter
  * @since version
  */

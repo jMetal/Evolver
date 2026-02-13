@@ -4,7 +4,8 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 
 import java.io.IOException;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.StringParameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
@@ -56,7 +57,7 @@ public class AutoNSGAIIIraceHV {
         problem,
         populationSize,
         maximumNumberOfEvaluations,
-        new NSGAIIDoubleParameterSpace());
+        new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
 
     // Parse any additional NSGA-II specific parameters
     baseNSGAII.parse(args);

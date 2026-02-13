@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -78,7 +77,7 @@ public class NSGAIIOptimizingmMOEADForBenchmarkRE3D {
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
     // builder
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()))
             .setMaxEvaluations(META_MAX_EVALUATIONS)
             .setNumberOfCores(NUMBER_OF_CORES)
             .build();

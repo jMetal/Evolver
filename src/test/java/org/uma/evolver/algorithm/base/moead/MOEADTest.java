@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.moead.PermutationMOEAD;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -36,13 +37,13 @@ class MOEADTest {
               populationSize,
               maximumNumberOfEvaluations,
               weightVectorFilesDirectory,
-              new MOEADDoubleParameterSpace());
+              new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory()));
     }
 
     @Test
     @DisplayName("The total number of parameters is correct")
     void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-      int numberOfFlattenedParameters = 35;
+      int numberOfFlattenedParameters = 30;
       assertEquals(
           numberOfFlattenedParameters, moeadDouble.parameterSpace().parameters().size());
     }
@@ -97,7 +98,7 @@ class MOEADTest {
               populationSize,
               maximumNumberOfEvaluations,
               weightVectorFilesDirectory,
-              new MOEADDoubleParameterSpace());
+              new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory()));
 
       moeadDouble.parse(parameters);
       var parameterSpace = moeadDouble.parameterSpace();
@@ -157,7 +158,7 @@ class MOEADTest {
                   100,
                   1000000,
                   "resources/weightVectors",
-                  new MOEADPermutationParameterSpace())
+                  new YAMLParameterSpace("MOEADPermutation.yaml", new PermutationParameterFactory()))
               .parse(parameters);
       var parameterSpace = moead.parameterSpace();
 
@@ -219,7 +220,7 @@ class MOEADTest {
               populationSize,
               maximumNumberOfEvaluations,
               weightVectorFilesDirectory,
-              new MOEADDoubleParameterSpace());
+              new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory()));
 
       moeadde.parse(parameters);
       var parameterSpace = moeadde.parameterSpace();
