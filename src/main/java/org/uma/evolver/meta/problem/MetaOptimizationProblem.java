@@ -1,10 +1,9 @@
 package org.uma.evolver.meta.problem;
 
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
-import static smile.math.MathEx.median;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
@@ -410,5 +409,22 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     }
 
     return medianIndicatorValues;
+  }
+
+  /**
+   * Computes the median of a double array.
+   *
+   * @param values the array of values (must not be null or empty)
+   * @return the median value
+   */
+  private static double median(double[] values) {
+    double[] sorted = values.clone();
+    Arrays.sort(sorted);
+    int n = sorted.length;
+    if (n % 2 == 0) {
+      return (sorted[n / 2 - 1] + sorted[n / 2]) / 2.0;
+    } else {
+      return sorted[n / 2];
+    }
   }
 }
