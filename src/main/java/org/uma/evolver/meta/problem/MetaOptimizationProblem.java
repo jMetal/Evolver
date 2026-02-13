@@ -4,6 +4,7 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
@@ -86,10 +87,10 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
   private final List<Parameter<?>> parameters;
 
   /** Normalized reference fronts for each problem. */
-  private List<double[][]> normalizedReferenceFronts;
+  private final List<double[][]> normalizedReferenceFronts;
 
   /** Original reference fronts for each problem. */
-  private List<double[][]> referenceFronts;
+  private final List<double[][]> referenceFronts;
 
   /** Number of independent runs to perform for each evaluation. */
   private final int numberOfIndependentRuns;
@@ -154,33 +155,34 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
     // problems
     evaluationBudgetStrategy.validate(problems.size());
 
-    List<Double> lowerLimit = java.util.Collections.nCopies(parameters.size(), 0.0);
-    List<Double> upperLimit = java.util.Collections.nCopies(parameters.size(), 1.0);
+    List<Double> lowerLimit = Collections.nCopies(parameters.size(), 0.0);
+    List<Double> upperLimit = Collections.nCopies(parameters.size(), 1.0);
 
     variableBounds(lowerLimit, upperLimit);
 
-    computeNormalizedReferenceFronts(referenceFrontFileNames);
+    this.referenceFronts = loadReferenceFronts(referenceFrontFileNames);
+    this.normalizedReferenceFronts = this.referenceFronts.stream()
+        .map(NormalizeUtils::normalize)
+        .toList();
   }
 
   /**
-   * Loads and normalizes the reference fronts from the specified files.
+   * Loads reference fronts from the specified files.
    *
    * @param referenceFrontFileNames list of file paths containing reference fronts
+   * @return the loaded reference fronts
    * @throws JMetalException if a reference front file cannot be read
    */
-  private void computeNormalizedReferenceFronts(List<String> referenceFrontFileNames) {
-    referenceFronts = new ArrayList<>();
-    normalizedReferenceFronts = new ArrayList<>();
-    for (String referenceFrontFileName : referenceFrontFileNames) {
-      double[][] referenceFront;
+  private static List<double[][]> loadReferenceFronts(List<String> referenceFrontFileNames) {
+    List<double[][]> fronts = new ArrayList<>();
+    for (String fileName : referenceFrontFileNames) {
       try {
-        referenceFront = VectorUtils.readVectors(referenceFrontFileName, ",");
-        referenceFronts.add(referenceFront);
-        normalizedReferenceFronts.add(NormalizeUtils.normalize(referenceFront));
+        fronts.add(VectorUtils.readVectors(fileName, ","));
       } catch (IOException e) {
-        throw new JMetalException("The file does not exist", e);
+        throw new JMetalException("The file does not exist: " + fileName, e);
       }
     }
+    return fronts;
   }
 
   /**
@@ -239,7 +241,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
    * @return an unmodifiable list of parameters
    */
   public List<Parameter<?>> parameters() {
-    return parameters;
+    return Collections.unmodifiableList(parameters);
   }
 
   /**
@@ -247,7 +249,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
    *
    * @return an unmodifiable list of problems
    */
-  public List<Problem<S>> getProblems() {
+  public List<Problem<S>> problems() {
     return problems;
   }
 
@@ -351,8 +353,7 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
 
   /**
    * Performs multiple independent runs of the base algorithm with the given
-   * parameters
-   * and computes median indicator values.
+   * parameters and computes median indicator values.
    *
    * @param parameterArray the parameter settings to evaluate
    * @param problemId      the index of the problem to evaluate against
@@ -362,53 +363,104 @@ public class MetaOptimizationProblem<S extends Solution<?>> extends AbstractDoub
    * @throws IndexOutOfBoundsException if problemId is out of bounds
    */
   private double[] computeIndependentRuns(String[] parameterArray, int problemId) {
-    double[] medianIndicatorValues = new double[indicators.size()];
-    double[][] indicatorValues = new double[indicators.size()][];
-    IntStream.range(0, indicators.size())
-        .forEach(i -> indicatorValues[i] = new double[numberOfIndependentRuns]);
+    double[][] indicatorValues = new double[indicators.size()][numberOfIndependentRuns];
 
     for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
       int evaluations = evaluationBudgetStrategy.getEvaluations(problemId);
-      var algorithm = baseAlgorithm
-          .createInstance(problems.get(problemId), evaluations)
-          .parse(parameterArray)
-          .build();
+      List<S> results = runAlgorithm(parameterArray, problemId, evaluations);
+      double[][] front = extractNonDominatedFront(results);
+      double[][] normalizedFront = normalizeFront(front, problemId);
+      double[] runIndicators = computeIndicatorValuesForRun(normalizedFront, problemId, evaluations);
 
-      algorithm.run();
-
-      NonDominatedSolutionListArchive<S> nonDominatedSolutions = new NonDominatedSolutionListArchive<>();
-      nonDominatedSolutions.addAll(algorithm.result());
-
-      double[][] front = getMatrixWithObjectiveValues(nonDominatedSolutions.solutions());
-      if (front[0].length != referenceFronts.get(problemId)[0].length) {
-        throw new JMetalException(
-            "The front dimension: "
-                + front[0].length
-                + " is not equals to the reference front dimension: "
-                + referenceFronts.get(problemId)[0].length);
-      }
-      double[][] normalizedFront = NormalizeUtils.normalize(
-          front,
-          NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)),
-          NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFronts.get(problemId)));
-
-      for (int indicatorId = 0; indicatorId < indicators.size(); indicatorId++) {
-        QualityIndicator indicator = indicators.get(indicatorId).newInstance();
-        if (indicator.name().equals("Evaluations")) {
-          ((EvaluationsQualityIndicator) indicator).setNumberOfEvaluations(evaluations);
-          indicatorValues[indicatorId][runId] = evaluations;
-        } else {
-          indicator.referenceFront(normalizedReferenceFronts.get(problemId));
-          indicatorValues[indicatorId][runId] = indicator.compute(normalizedFront);
-        }
+      for (int i = 0; i < indicators.size(); i++) {
+        indicatorValues[i][runId] = runIndicators[i];
       }
     }
 
+    double[] medianIndicatorValues = new double[indicators.size()];
     for (int i = 0; i < indicators.size(); i++) {
       medianIndicatorValues[i] = median(indicatorValues[i]);
     }
-
     return medianIndicatorValues;
+  }
+
+  /**
+   * Builds and runs the base algorithm with the given parameters on the specified problem.
+   *
+   * @param parameterArray the parameter settings
+   * @param problemId      the index of the problem
+   * @param evaluations    the evaluation budget for this run
+   * @return the list of solutions produced by the algorithm
+   */
+  private List<S> runAlgorithm(String[] parameterArray, int problemId, int evaluations) {
+    var algorithm = baseAlgorithm
+        .createInstance(problems.get(problemId), evaluations)
+        .parse(parameterArray)
+        .build();
+
+    algorithm.run();
+    return algorithm.result();
+  }
+
+  /**
+   * Extracts the non-dominated front from a list of solutions.
+   *
+   * @param solutions the solutions produced by an algorithm run
+   * @return the objective value matrix of the non-dominated solutions
+   */
+  private double[][] extractNonDominatedFront(List<S> solutions) {
+    NonDominatedSolutionListArchive<S> archive = new NonDominatedSolutionListArchive<>();
+    archive.addAll(solutions);
+    return getMatrixWithObjectiveValues(archive.solutions());
+  }
+
+  /**
+   * Validates the front dimensions and normalizes it using the reference front
+   * bounds for the given problem.
+   *
+   * @param front     the objective value matrix to normalize
+   * @param problemId the index of the problem whose reference front provides bounds
+   * @return the normalized front
+   * @throws JMetalException if front dimensions don't match the reference front
+   */
+  private double[][] normalizeFront(double[][] front, int problemId) {
+    double[][] referenceFront = referenceFronts.get(problemId);
+    if (front[0].length != referenceFront[0].length) {
+      throw new JMetalException(
+          "The front dimension: "
+              + front[0].length
+              + " does not match the reference front dimension: "
+              + referenceFront[0].length);
+    }
+    return NormalizeUtils.normalize(
+        front,
+        NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
+        NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+  }
+
+  /**
+   * Computes indicator values for a single run using the normalized front.
+   *
+   * @param normalizedFront the normalized objective value matrix
+   * @param problemId       the index of the problem being evaluated
+   * @param evaluations     the evaluation budget used for this run
+   * @return array of indicator values, one per quality indicator
+   */
+  private double[] computeIndicatorValuesForRun(
+      double[][] normalizedFront, int problemId, int evaluations) {
+    double[] values = new double[indicators.size()];
+
+    for (int i = 0; i < indicators.size(); i++) {
+      QualityIndicator indicator = indicators.get(i).newInstance();
+      if (indicator instanceof EvaluationsQualityIndicator evalIndicator) {
+        evalIndicator.setNumberOfEvaluations(evaluations);
+        values[i] = evaluations;
+      } else {
+        indicator.referenceFront(normalizedReferenceFronts.get(problemId));
+        values[i] = indicator.compute(normalizedFront);
+      }
+    }
+    return values;
   }
 
   /**

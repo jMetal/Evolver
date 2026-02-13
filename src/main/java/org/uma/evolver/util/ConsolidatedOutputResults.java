@@ -129,7 +129,7 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.write("Problem Family: " + problemName);
             writer.newLine();
             writer.write("Problems: "
-                    + configurableAlgorithmProblem.getProblems().stream()
+                    + configurableAlgorithmProblem.problems().stream()
                             .map(Problem::name)
                             .collect(Collectors.joining(", ")));
             writer.newLine();
