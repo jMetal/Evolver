@@ -1,38 +1,39 @@
-package org.uma.evolver.traininig;
+package org.uma.evolver.training;
 
 import java.io.IOException;
 import java.util.List;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.meta.MetaAsyncNSGAIIBuilder;
+import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.trainingset.DTLZ3DTrainingSet;
+import org.uma.evolver.util.trainingset.RE3DTrainingSet;
 import org.uma.evolver.util.trainingset.TrainingSet;
-import org.uma.evolver.util.ConsolidatedOutputResults;
-import org.uma.evolver.util.MetaOptimizerConfig;
+import org.uma.evolver.util.OutputResults;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
+import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the WFG
- * problems as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
+ * the RE problems with three objectives as the training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
+public class NSGAIIOptimizingmMOEADForBenchmarkRE3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
-  private static final int META_POPULATION_SIZE = 50;
   private static final int NUMBER_OF_CORES = 8;
 
   // Base-level algorithm configuration
@@ -40,15 +41,16 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
   private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
   // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 500;
-  private static final int WRITE_FREQUENCY = 100;
-  private static final int PLOT_UPDATE_FREQUENCY = 100;
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "MOEADDouble.yaml";
+    String weightVectorFilesDirectory = "resources/weightVectors" ;
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> trainingSetDescriptor = new DTLZ3DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
@@ -57,7 +59,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
+    var baseAlgorithm = new DoubleMOEAD(BASE_POPULATION_SIZE, weightVectorFilesDirectory, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
@@ -73,39 +75,24 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
-    // specialized double
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double
     // builder
-    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
-        new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
-            .setNumberOfCores(NUMBER_OF_CORES)
-            .setPopulationSize(META_POPULATION_SIZE)
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
             .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setNumberOfCores(NUMBER_OF_CORES)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    String algorithmName = "AsyncNSGA-II";
+    String algorithmName = "MOEAD";
     String problemName = trainingSetDescriptor.name();
-
-    MetaOptimizerConfig config =
-        MetaOptimizerConfig.builder()
-            .metaOptimizerName(algorithmName)
-            .metaMaxEvaluations(META_MAX_EVALUATIONS)
-            .metaPopulationSize(META_POPULATION_SIZE)
-            .numberOfCores(NUMBER_OF_CORES)
-            .baseLevelAlgorithmName("NSGA-II")
-            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
-            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
-            .yamlParameterSpaceFile(yamlParameterSpaceFile)
-            .build();
-
     var outputResults =
-        new ConsolidatedOutputResults(
+        new OutputResults(
+            algorithmName,
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/nsgaii/" + problemName,
-            config);
+            "RESULTS/MOEAD/" + problemName);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
@@ -113,10 +100,10 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "NSGA-II, " + trainingSetDescriptor.name(),
+            "MOEAD, " + problemName,
             indicators.get(0).name(),
             indicators.get(1).name(),
-            trainingSetDescriptor.name(),
+            problemName,
             PLOT_UPDATE_FREQUENCY);
 
     nsgaii.observable().register(evaluationObserver);
@@ -127,6 +114,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
     nsgaii.run();
 
     // Step 6: Write results
+    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
+
     outputResults.updateEvaluations(META_MAX_EVALUATIONS);
     outputResults.writeResultsToFiles(nsgaii.result());
 

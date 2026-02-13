@@ -8,7 +8,7 @@ Evolver is a Java framework for automatically configuring multi-objective metahe
 ## Quick facts
 - Language/Tooling: Java 21, Maven
 - Key deps: jMetal `${jmetal.version}` (currently 6.11-SNAPSHOT), SnakeYAML, Smile (for analysis)
-- Packaging: jar (library). Examples with `public static void main` live under `src/main/java/org/uma/evolver/example/**` and runners under `org/uma/evolver/analysis/experiments/**`.
+- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/training/**`, base-level configuration examples under `org/uma/evolver/validation/configuration/**`, and validation studies under `org/uma/evolver/validation/study/**`.
 - Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance). Prefer those over generic style rules.
 
 ## Commands you’ll use most
@@ -69,15 +69,19 @@ Parameter modeling and YAML loading
 - YAML files: `src/main/resources/parameterSpaces/*.yaml` (e.g., `NSGAIIDouble.yaml`, `MOEADDouble.yaml`, etc.)
 
 Training sets and runners
-- Training sets: `org.uma.evolver.trainingset.*` (e.g., `DTLZ3DTrainingSet`, `RE3DTrainingSet`, `WFG2DTrainingSet`)
-- Example mains: `org.uma.evolver.example.*` (base and meta examples) and `org.uma.evolver.example.runner.*` helpers
+- Training sets: `org.uma.evolver.util.trainingset.*` (e.g., `DTLZ3DTrainingSet`, `RE3DTrainingSet`, `WFG2DTrainingSet`)
+- Meta-optimization training examples: `org.uma.evolver.training.*` (e.g., `NSGAIIOptimizingNSGAIIForBenchmarkDTLZ`)
+
+Validation
+- Base-level configuration examples: `org.uma.evolver.validation.configuration.*` (e.g., `MOEAD_DTLZ2`, `NSGAIIZDT4Example`)
+- Validation studies: `org.uma.evolver.validation.study.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`)
 
 Utilities and outputs
 - `org.uma.evolver.util.*`: config I/O (`ConfigurationFileReader`), result writers (`WriteExecutionDataToFilesObserver`, `OutputResults`), reference-front estimation, irace integration
 
-Analysis and experiments (Python + docs)
-- `analysis/` contains Python tooling and notebooks for experiment analysis (see `analysis/README.md`)
-- `results/experiment/REStudy` and `.../RWAStudy` include analysis scripts/README for reproducing those studies
+Analysis
+- `org.uma.evolver.analysis.ablation.*`: ablation analysis tooling
+- `org.uma.evolver.analysis.runner.*`: configuration runners
 
 ## Tests
 - Framework: JUnit 5 (`junit-jupiter`), Mockito for mocking

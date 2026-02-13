@@ -1,14 +1,14 @@
-package org.uma.evolver.traininig;
+package org.uma.evolver.training;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.base.mopso.BaseMOPSO;
+import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
-import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
@@ -24,13 +24,13 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO}
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD}
  * using
  * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingMOPSOForProblemZDT4 {
+public class NSGAIIOptimizingMOEADForProblemZDT4 {
 
     // Meta-optimizer configuration
     private static final int META_MAX_EVALUATIONS = 2000;
@@ -47,7 +47,8 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
     private static final int PLOT_UPDATE_FREQUENCY = 1;
 
     public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "MOPSO.yaml";
+        String yamlParameterSpaceFile = "MOEADDouble.yaml";
+        String weightVectorFilesDirectory = "resources/weightVectors";
 
         // Step 1: Select the target problem
         List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
@@ -56,17 +57,16 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
         // Step 2: Set the parameters for the algorithm to be configured
         var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
 
-        var baseAlgorithm = new BaseMOPSO(BASE_POPULATION_SIZE, parameterSpace);
-
+        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+        var configurableAlgorithm = new DoubleMOEAD(BASE_POPULATION_SIZE, weightVectorFilesDirectory, parameterSpace);
         var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
         int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
         EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
         MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
-                baseAlgorithm,
+                configurableAlgorithm,
                 trainingSet,
                 referenceFrontFileNames,
                 indicators,
@@ -90,7 +90,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
                 .metaMaxEvaluations(META_MAX_EVALUATIONS)
                 .metaPopulationSize(100)
                 .numberOfCores(NUMBER_OF_CORES)
-                .baseLevelAlgorithmName("MOPSO")
+                .baseLevelAlgorithmName("MOEAD")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
@@ -107,7 +107,7 @@ public class NSGAIIOptimizingMOPSOForProblemZDT4 {
 
         var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
         var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "MOPSO, " + trainingSet.get(0).name(),
+                "NSGA-II, " + trainingSet.get(0).name(),
                 indicators.get(0).name(),
                 indicators.get(1).name(),
                 trainingSet.get(0).name(),

@@ -1,38 +1,35 @@
-package org.uma.evolver.traininig;
+package org.uma.evolver.training;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
-import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.trainingset.RE3DTrainingSet;
 import org.uma.evolver.util.trainingset.TrainingSet;
+import org.uma.evolver.util.trainingset.ZDTTrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using
- * problem {@link ZDT4} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the ZDT
+ * problems as the training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
+public class NSGAIIOptimizingNSGAIIForBenchmarkZDT {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -49,35 +46,39 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
   private static final int PLOT_UPDATE_FREQUENCY = 1;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "RDEMOEADouble.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor = new ZDTTrainingSet();
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
-    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var configurableAlgorithm = new DoubleRDEMOEA(BASE_POPULATION_SIZE, parameterSpace);
-
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
+    int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+    EvaluationBudgetStrategy evaluationBudgetStrategy =
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
-            configurableAlgorithm,
+            baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            NUMBER_OF_INDEPENDENT_RUNS);
+            numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
+    // specialized double
+    // builder
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
-        new MetaNSGAIIBuilder(metaOptimizationProblem, new NSGAIIDoubleParameterSpace())
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(META_MAX_EVALUATIONS)
             .setNumberOfCores(NUMBER_OF_CORES)
             .build();
@@ -92,10 +93,10 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
             .metaMaxEvaluations(META_MAX_EVALUATIONS)
             .metaPopulationSize(META_POPULATION_SIZE)
             .numberOfCores(NUMBER_OF_CORES)
-            .baseLevelAlgorithmName("RDEMOEA")
+            .baseLevelAlgorithmName("NSGA-II")
             .baseLevelPopulationSize(BASE_POPULATION_SIZE)
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
-            .yamlParameterSpaceFile("RDEMOEADouble.yaml")
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
             .build();
 
     var outputResults =
@@ -103,7 +104,7 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/rdemoea/" + problemName,
+            "results/nsgaii/" + problemName,
             config);
 
     var writeExecutionDataToFilesObserver =
@@ -112,10 +113,10 @@ public class NSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
-            "RDEMOEA, " + problemName,
+            "NSGA-II, " + trainingSetDescriptor.name(),
             indicators.get(0).name(),
             indicators.get(1).name(),
-            problemName,
+            trainingSetDescriptor.name(),
             PLOT_UPDATE_FREQUENCY);
 
     nsgaii.observable().register(evaluationObserver);

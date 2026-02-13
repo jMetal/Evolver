@@ -1,9 +1,10 @@
-package org.uma.evolver.traininig;
+package org.uma.evolver.training;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.base.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIDoubleParameterSpace;
+import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.algorithm.meta.MetaNSGAIIBuilder;
 import org.uma.evolver.metaoptimizationproblem.MetaOptimizationProblem;
 import org.uma.evolver.metaoptimizationproblem.evaluationbudgetstrategy.EvaluationBudgetStrategy;
@@ -24,17 +25,17 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD}
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII}
  * using
  * problem {@link ZDT4} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingMOEADForProblemZDT4 {
+public class NSGAIIOptimizingRDEMOEAForProblemZDT4 {
 
     // Meta-optimizer configuration
     private static final int META_MAX_EVALUATIONS = 2000;
-    private static final int NUMBER_OF_CORES = 8;
+    private static final int NUMBER_OF_CORES = 1;
 
     // Base-level algorithm configuration
     private static final int BASE_POPULATION_SIZE = 100;
@@ -47,8 +48,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
     private static final int PLOT_UPDATE_FREQUENCY = 1;
 
     public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "MOEADDouble.yaml";
-        String weightVectorFilesDirectory = "resources/weightVectors";
+        String yamlParameterSpaceFile = "RDEMOEADouble.yaml";
 
         // Step 1: Select the target problem
         List<Problem<DoubleSolution>> trainingSet = List.of(new ZDT4());
@@ -57,11 +57,10 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
 
         // Step 2: Set the parameters for the algorithm to be configured
         var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-
         var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-        var configurableAlgorithm = new DoubleMOEAD(BASE_POPULATION_SIZE, weightVectorFilesDirectory, parameterSpace);
+        var configurableAlgorithm = new DoubleRDEMOEA(BASE_POPULATION_SIZE, parameterSpace);
+
         var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
-        int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
         EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
@@ -71,7 +70,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
                 referenceFrontFileNames,
                 indicators,
                 evaluationBudgetStrategy,
-                numberOfIndependentRuns);
+                NUMBER_OF_INDEPENDENT_RUNS);
 
         // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
         // specialized double
@@ -90,7 +89,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
                 .metaMaxEvaluations(META_MAX_EVALUATIONS)
                 .metaPopulationSize(100)
                 .numberOfCores(NUMBER_OF_CORES)
-                .baseLevelAlgorithmName("MOEAD")
+                .baseLevelAlgorithmName("RDEMOEA")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
@@ -100,14 +99,14 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
                 metaOptimizationProblem,
                 problemName,
                 indicators,
-                "results/nsgaii/" + problemName,
+                "results/rdemoea/" + problemName,
                 config);
 
         var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
         var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
         var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "NSGA-II, " + trainingSet.get(0).name(),
+                "RDEMOEA, " + trainingSet.get(0).name(),
                 indicators.get(0).name(),
                 indicators.get(1).name(),
                 trainingSet.get(0).name(),

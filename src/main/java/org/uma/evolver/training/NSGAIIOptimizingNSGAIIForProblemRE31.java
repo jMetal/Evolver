@@ -1,4 +1,4 @@
-package org.uma.evolver.traininig;
+package org.uma.evolver.training;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,8 +14,7 @@ import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.re.RE31;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -26,11 +25,11 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 /**
  * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII}
  * using
- * problem {@link ZDT4} as training set.
+ * problem {@link RE31} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
+public class NSGAIIOptimizingNSGAIIForProblemRE31 {
 
     // Meta-optimizer configuration
     private static final int META_MAX_EVALUATIONS = 2000;
@@ -39,7 +38,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
     // Base-level algorithm configuration
     private static final int BASE_POPULATION_SIZE = 100;
     private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-    private static final int BASE_MAX_EVALUATIONS = 10000;
+    private static final int BASE_MAX_EVALUATIONS = 15000;
 
     // Observer configuration
     private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
@@ -50,9 +49,9 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
         String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
         // Step 1: Select the target problem
-        List<Problem<DoubleSolution>> trainingSet = List.of(new ZCAT1());
-        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/ZCAT1.2D.csv");
-        String problemName = "ZCAT1";
+        List<Problem<DoubleSolution>> trainingSet = List.of(new RE31());
+        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/RE31.csv");
+        String problemName = "RE31";
 
         // Step 2: Set the parameters for the algorithm to be configured
         var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
@@ -60,7 +59,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
         var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
 
         var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
-        int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
         EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
@@ -70,7 +68,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZCAT1 {
                 referenceFrontFileNames,
                 indicators,
                 evaluationBudgetStrategy,
-                numberOfIndependentRuns);
+                NUMBER_OF_INDEPENDENT_RUNS);
 
         // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
         // specialized double
