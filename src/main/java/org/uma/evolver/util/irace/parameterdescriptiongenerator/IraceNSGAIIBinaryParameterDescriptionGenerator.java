@@ -1,7 +1,8 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.nsgaii.BinaryNSGAII;
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParameterSpace;
+import org.uma.evolver.parameter.factory.BinaryParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.jmetal.solution.binarysolution.BinarySolution;
 
 /**
  * Program to generate the irace configuration file for the NSGA-II algorithm with binary solutions.
@@ -24,12 +25,10 @@ import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIBinaryParamete
  * }</pre>
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
- * @see NSGAIIBinaryParameterSpace
- * @see BinaryNSGAII
  * @author Antonio J. Nebro
  */
 public class IraceNSGAIIBinaryParameterDescriptionGenerator {
-  
+
   /**
    * Main method that generates and prints the irace configuration for NSGA-II with binary solutions.
    * The output is printed to standard output and can be redirected to a file.
@@ -37,7 +36,9 @@ public class IraceNSGAIIBinaryParameterDescriptionGenerator {
    * @param args Command line arguments (not used)
    */
   public static void main(String[] args) {
-    var parameterFileGenerator = new IraceParameterDescriptionGenerator<>();
-    parameterFileGenerator.generateConfigurationFile(new NSGAIIBinaryParameterSpace());
+    var parameterFileGenerator = new IraceParameterDescriptionGenerator<BinarySolution>();
+    String yamlParameterSpaceFile = "NSGAIIBinary.yaml";
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new BinaryParameterFactory());
+    parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

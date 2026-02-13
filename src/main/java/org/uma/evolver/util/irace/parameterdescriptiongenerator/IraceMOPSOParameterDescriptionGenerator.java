@@ -1,6 +1,7 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.mopso.parameterspace.MOPSOParameterSpace;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
@@ -18,7 +19,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
- * @see MOPSOParameterSpace
  * @author Antonio J. Nebro
  */
 public class IraceMOPSOParameterDescriptionGenerator {
@@ -29,8 +29,9 @@ public class IraceMOPSOParameterDescriptionGenerator {
    * @param args Command line arguments (not used)
    */
   public static void main(String[] args) {
-    var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>() ;
-    var parameterSpace = new MOPSOParameterSpace();
+    var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>();
+    String yamlParameterSpaceFile = "MOPSO.yaml";
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

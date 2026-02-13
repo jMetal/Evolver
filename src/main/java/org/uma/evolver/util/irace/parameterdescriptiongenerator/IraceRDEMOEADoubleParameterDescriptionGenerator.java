@@ -1,7 +1,7 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
-import org.uma.evolver.algorithm.base.rdemoea.parameterspace.RDEMOEADoubleParameterSpace;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
@@ -18,8 +18,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * }</pre>
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
- * @see RDEMOEADoubleParameterSpace
- * @see DoubleRDEMOEA
  * @author Antonio J. Nebro
  */
 public class IraceRDEMOEADoubleParameterDescriptionGenerator {
@@ -30,8 +28,9 @@ public class IraceRDEMOEADoubleParameterDescriptionGenerator {
    * @param args Command line arguments (not used)
    */
   public static void main(String[] args) {
-    var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>() ;
-    var parameterSpace = new RDEMOEADoubleParameterSpace();
+    var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>();
+    String yamlParameterSpaceFile = "RDEMOEADouble.yaml";
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

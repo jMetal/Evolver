@@ -1,6 +1,7 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.moead.parameterspace.MOEADPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
@@ -17,7 +18,6 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  * }</pre>
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
- * @see MOEADPermutationParameterSpace
  * @author Antonio J. Nebro
  */
 public class IraceMOEADPermutationParameterDescriptionGenerator {
@@ -28,8 +28,9 @@ public class IraceMOEADPermutationParameterDescriptionGenerator {
    * @param args Command line arguments (not used)
    */
   public static void main(String[] args) {
-    var parameterFileGenerator = new IraceParameterDescriptionGenerator<PermutationSolution<?>>() ;
-    var parameterSpace = new MOEADPermutationParameterSpace();
+    var parameterFileGenerator = new IraceParameterDescriptionGenerator<PermutationSolution<?>>();
+    String yamlParameterSpaceFile = "MOEADPermutation.yaml";
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

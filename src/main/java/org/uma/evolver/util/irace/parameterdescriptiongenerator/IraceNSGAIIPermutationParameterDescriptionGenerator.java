@@ -1,6 +1,8 @@
 package org.uma.evolver.util.irace.parameterdescriptiongenerator;
 
-import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationParameterSpace;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
  * Program to generate the irace configuration file for the NSGA-II algorithm with permutation solutions.
@@ -16,7 +18,6 @@ import org.uma.evolver.algorithm.base.nsgaii.parameterspace.NSGAIIPermutationPar
  * }</pre>
  *
  * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
- * @see NSGAIIPermutationParameterSpace
  * @author Antonio J. Nebro
  */
 public class IraceNSGAIIPermutationParameterDescriptionGenerator {
@@ -27,7 +28,9 @@ public class IraceNSGAIIPermutationParameterDescriptionGenerator {
    * @param args Command line arguments (not used)
    */
   public static void main(String[] args) {
-    var parameterFileGenerator = new IraceParameterDescriptionGenerator<>() ;
-    parameterFileGenerator.generateConfigurationFile(new NSGAIIPermutationParameterSpace()) ;
+    var parameterFileGenerator = new IraceParameterDescriptionGenerator<PermutationSolution<?>>();
+    String yamlParameterSpaceFile = "NSGAIIPermutation.yaml";
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory());
+    parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }
 }

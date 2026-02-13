@@ -1,0 +1,86 @@
+neighborhoodSize:
+  type: integer
+  range: [5, 50]
+#
+maximumNumberOfReplacedSolutions:
+  type: integer
+  range: [1, 5]
+#
+aggregationFunction:
+  type: categorical
+  globalSubParameters:
+    normalizeObjectives:
+      type: categorical
+      values:
+        "true":
+          conditionalParameters:
+            epsilonParameterForNormalization:
+              type: double
+              range: [1.0E-8, 25.0]
+        "false":
+  values:
+    tschebyscheff:
+    weightedSum:
+    penaltyBoundaryIntersection:
+      conditionalParameters:
+        pbiTheta:
+          type: double
+          range: [1.0, 200.0]
+    modifiedTschebyscheff:
+#
+algorithmResult:
+  type: categorical
+  values:
+    externalArchive:
+      conditionalParameters:
+        archiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive:
+            unboundedArchive:
+    population:
+#
+subProblemIdGenerator:
+  type: categorical
+  values:
+    randomPermutationCycle:
+    cyclicIntegerSequence:
+#
+createInitialSolutions:
+  type: categorical
+  values:
+    default:
+#
+variation:
+  type: categorical
+  globalSubParameters:
+    mutation:
+      type: categorical
+      globalSubParameters:
+        mutationProbabilityFactor:
+          type: double
+          range: [0.0, 1.0]
+      values:
+        bitFlip:
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.6, 0.9]
+          values:
+            HUX:
+            uniform:
+            singlePoint:
+#
+selection:
+  type: categorical
+  values:
+    populationAndNeighborhoodMatingPoolSelection:
+      conditionalParameters:
+        neighborhoodSelectionProbability:
+          type: double
+          range: [0.0, 1.0]
