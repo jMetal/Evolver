@@ -1,13 +1,11 @@
 package org.uma.evolver.analysis.ablation;
 
-import org.uma.evolver.analysis.ablation.AblationAnalysis;
-import org.uma.evolver.analysis.ablation.AblationResult;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
-import org.uma.evolver.trainingset.RWA3DTrainingSet;
-import org.uma.evolver.trainingset.TrainingSet;
+import org.uma.evolver.util.trainingset.RWA3DTrainingSet;
+import org.uma.evolver.util.trainingset.TrainingSet;
 import org.uma.evolver.util.TrainingSetRunner;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 

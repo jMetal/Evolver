@@ -3,7 +3,7 @@ package org.uma.evolver.analysis.runner;
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.trainingset.WFG2DTrainingSet;
+import org.uma.evolver.util.trainingset.WFG2DTrainingSet;
 import org.uma.evolver.util.TrainingSetRunner;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 

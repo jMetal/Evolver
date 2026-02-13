@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.uma.evolver.algorithm.base.BaseLevelAlgorithm;
-import org.uma.evolver.trainingset.TrainingSet;
+import org.uma.evolver.util.trainingset.TrainingSet;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;

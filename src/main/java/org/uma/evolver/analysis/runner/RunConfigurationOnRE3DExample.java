@@ -1,11 +1,9 @@
 package org.uma.evolver.analysis.runner;
 
 import org.uma.evolver.algorithm.base.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.base.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.trainingset.RE3DTrainingSet;
-import org.uma.evolver.trainingset.RWA3DTrainingSet;
+import org.uma.evolver.util.trainingset.RWA3DTrainingSet;
 import org.uma.evolver.util.TrainingSetRunner;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
