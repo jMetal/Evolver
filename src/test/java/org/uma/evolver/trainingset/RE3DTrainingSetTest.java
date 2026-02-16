@@ -47,8 +47,7 @@ class RE3DTrainingSetTest {
       List<Problem<DoubleSolution>> problems = trainingSet.problemList();
 
       // Assert
-      List<String> problemNames =
-          problems.stream().map(p -> p.getClass().getSimpleName()).toList();
+      List<String> problemNames = problems.stream().map(p -> p.getClass().getSimpleName()).toList();
       assertTrue(problemNames.contains("RE31"));
       assertTrue(problemNames.contains("RE32"));
       assertTrue(problemNames.contains("RE33"));
@@ -76,8 +75,7 @@ class RE3DTrainingSetTest {
   class ReferenceFrontsTests {
 
     @Test
-    @DisplayName(
-        "given new instance when getting reference fronts then returns same count as problems")
+    @DisplayName("given new instance when getting reference fronts then returns same count as problems")
     void givenNewInstance_whenGettingReferenceFronts_thenReturnsSameCountAsProblems() {
       // Arrange - done in setUp
 
@@ -106,8 +104,7 @@ class RE3DTrainingSetTest {
   class EvaluationsTests {
 
     @Test
-    @DisplayName(
-        "given new instance when getting evaluations then returns same count as problems")
+    @DisplayName("given new instance when getting evaluations then returns same count as problems")
     void givenNewInstance_whenGettingEvaluations_thenReturnsSameCountAsProblems() {
       // Arrange - done in setUp
 
@@ -119,15 +116,15 @@ class RE3DTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting evaluations then default is 7000")
-    void givenNewInstance_whenGettingEvaluations_thenDefaultIs7000() {
+    @DisplayName("given new instance when getting evaluations then default is 10000")
+    void givenNewInstance_whenGettingEvaluations_thenDefaultIs10000() {
       // Arrange - done in setUp
 
       // Act
       List<Integer> evaluations = trainingSet.evaluationsToOptimize();
 
       // Assert
-      assertTrue(evaluations.stream().allMatch(e -> e == 7000));
+      assertTrue(evaluations.stream().allMatch(e -> e == 10000));
     }
   }
 

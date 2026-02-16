@@ -19,10 +19,10 @@ class AbstractTrainingSetTest {
   private static class TestTrainingSet extends AbstractTrainingSet<DoubleSolution> {
     public TestTrainingSet(
         List<Problem<DoubleSolution>> problemList,
-        List<String> referenceFronts,
+        List<String> referenceFrontFileNames,
         List<Integer> evaluationsToOptimize,
         String name) {
-      super(problemList, referenceFronts, evaluationsToOptimize, name);
+      super(problemList, referenceFrontFileNames, evaluationsToOptimize, name);
     }
   }
 
@@ -63,8 +63,7 @@ class AbstractTrainingSetTest {
     }
 
     @Test
-    @DisplayName(
-        "given mismatched reference fronts size when constructing then throws IllegalArgumentException")
+    @DisplayName("given mismatched reference fronts size when constructing then throws IllegalArgumentException")
     void givenMismatchedReferenceFrontsSize_whenConstructing_thenThrowsIllegalArgumentException() {
       // Arrange
       List<Problem<DoubleSolution>> problems = List.of(createMockProblem(), createMockProblem());
@@ -78,8 +77,7 @@ class AbstractTrainingSetTest {
     }
 
     @Test
-    @DisplayName(
-        "given mismatched evaluations size when constructing then throws IllegalArgumentException")
+    @DisplayName("given mismatched evaluations size when constructing then throws IllegalArgumentException")
     void givenMismatchedEvaluationsSize_whenConstructing_thenThrowsIllegalArgumentException() {
       // Arrange
       List<Problem<DoubleSolution>> problems = List.of(createMockProblem(), createMockProblem());
@@ -129,8 +127,7 @@ class AbstractTrainingSetTest {
       List<Integer> evaluations = List.of(1000, 2000);
 
       // Act
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(problems, referenceFronts, evaluations, "TestSet");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(problems, referenceFronts, evaluations, "TestSet");
 
       // Assert
       assertNotNull(trainingSet);
@@ -149,9 +146,8 @@ class AbstractTrainingSetTest {
       Problem<DoubleSolution> problem1 = createMockProblem();
       Problem<DoubleSolution> problem2 = createMockProblem();
       List<Problem<DoubleSolution>> problems = List.of(problem1, problem2);
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              problems, List.of("front1.csv", "front2.csv"), List.of(1000, 2000), "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          problems, List.of("front1.csv", "front2.csv"), List.of(1000, 2000), "Test");
 
       // Act
       List<Problem<DoubleSolution>> result = trainingSet.problemList();
@@ -163,37 +159,36 @@ class AbstractTrainingSetTest {
     }
 
     @Test
-    @DisplayName(
-        "given valid training set when getting reference fronts then returns correct list")
-    void givenValidTrainingSet_whenGettingReferenceFronts_thenReturnsCorrectList() {
+    @DisplayName("given valid training set when getting reference fronts then returns paths with default directory")
+    void givenValidTrainingSet_whenGettingReferenceFronts_thenReturnsPathsWithDefaultDirectory() {
       // Arrange
-      List<String> expectedFronts = List.of("front1.csv", "front2.csv");
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              expectedFronts,
-              List.of(1000, 2000),
-              "Test");
+      List<String> fileNames = List.of("front1.csv", "front2.csv");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          fileNames,
+          List.of(1000, 2000),
+          "Test");
 
       // Act
       List<String> result = trainingSet.referenceFronts();
 
       // Assert
-      assertEquals(expectedFronts, result);
+      List<String> expected = List.of(
+          "resources/referenceFronts/front1.csv",
+          "resources/referenceFronts/front2.csv");
+      assertEquals(expected, result);
     }
 
     @Test
-    @DisplayName(
-        "given valid training set when getting evaluations to optimize then returns correct list")
+    @DisplayName("given valid training set when getting evaluations to optimize then returns correct list")
     void givenValidTrainingSet_whenGettingEvaluationsToOptimize_thenReturnsCorrectList() {
       // Arrange
       List<Integer> expectedEvaluations = List.of(1000, 2000);
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv"),
-              expectedEvaluations,
-              "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          expectedEvaluations,
+          "Test");
 
       // Act
       List<Integer> result = trainingSet.evaluationsToOptimize();
@@ -206,12 +201,11 @@ class AbstractTrainingSetTest {
     @DisplayName("given valid training set when getting name then returns correct name")
     void givenValidTrainingSet_whenGettingName_thenReturnsCorrectName() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()),
-              List.of("front1.csv"),
-              List.of(1000),
-              "MyTrainingSet");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()),
+          List.of("front1.csv"),
+          List.of(1000),
+          "MyTrainingSet");
 
       // Act
       String result = trainingSet.name();
@@ -226,16 +220,14 @@ class AbstractTrainingSetTest {
   class SetEvaluationsSingleValueTests {
 
     @Test
-    @DisplayName(
-        "given valid evaluation value when setting evaluations then all problems have same value")
+    @DisplayName("given valid evaluation value when setting evaluations then all problems have same value")
     void givenValidEvaluationValue_whenSettingEvaluations_thenAllProblemsHaveSameValue() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv", "front3.csv"),
-              List.of(1000, 2000, 3000),
-              "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv", "front3.csv"),
+          List.of(1000, 2000, 3000),
+          "Test");
 
       // Act
       trainingSet.setEvaluationsToOptimize(5000);
@@ -250,9 +242,8 @@ class AbstractTrainingSetTest {
     @DisplayName("given zero evaluation value when setting evaluations then throws exception")
     void givenZeroEvaluationValue_whenSettingEvaluations_thenThrowsException() {
       // Arrange
-      AbstractTrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+      AbstractTrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
 
       // Act & Assert
       assertThrows(IllegalArgumentException.class, () -> trainingSet.setEvaluationsToOptimize(0));
@@ -262,9 +253,8 @@ class AbstractTrainingSetTest {
     @DisplayName("given negative evaluation value when setting evaluations then throws exception")
     void givenNegativeEvaluationValue_whenSettingEvaluations_thenThrowsException() {
       // Arrange
-      AbstractTrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+      AbstractTrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
 
       // Act & Assert
       assertThrows(
@@ -275,9 +265,8 @@ class AbstractTrainingSetTest {
     @DisplayName("given valid value when setting evaluations then returns same instance")
     void givenValidValue_whenSettingEvaluations_thenReturnsSameInstance() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
 
       // Act
       TrainingSet<DoubleSolution> result = trainingSet.setEvaluationsToOptimize(5000);
@@ -292,16 +281,14 @@ class AbstractTrainingSetTest {
   class SetEvaluationsListTests {
 
     @Test
-    @DisplayName(
-        "given valid evaluation list when setting evaluations then problems have corresponding values")
+    @DisplayName("given valid evaluation list when setting evaluations then problems have corresponding values")
     void givenValidEvaluationList_whenSettingEvaluations_thenProblemsHaveCorrespondingValues() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv", "front3.csv"),
-              List.of(1000, 1000, 1000),
-              "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv", "front3.csv"),
+          List.of(1000, 1000, 1000),
+          "Test");
       List<Integer> newEvaluations = List.of(5000, 10000, 15000);
 
       // Act
@@ -315,9 +302,8 @@ class AbstractTrainingSetTest {
     @DisplayName("given null list when setting evaluations then throws exception")
     void givenNullList_whenSettingEvaluations_thenThrowsException() {
       // Arrange
-      AbstractTrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+      AbstractTrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
 
       // Act & Assert
       assertThrows(
@@ -329,12 +315,11 @@ class AbstractTrainingSetTest {
     @DisplayName("given mismatched list size when setting evaluations then throws exception")
     void givenMismatchedListSize_whenSettingEvaluations_thenThrowsException() {
       // Arrange
-      AbstractTrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv"),
-              List.of(1000, 2000),
-              "Test");
+      AbstractTrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
 
       // Act & Assert
       assertThrows(
@@ -343,16 +328,14 @@ class AbstractTrainingSetTest {
     }
 
     @Test
-    @DisplayName(
-        "given list with non-positive value when setting evaluations then throws exception")
+    @DisplayName("given list with non-positive value when setting evaluations then throws exception")
     void givenListWithNonPositiveValue_whenSettingEvaluations_thenThrowsException() {
       // Arrange
-      AbstractTrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv"),
-              List.of(1000, 2000),
-              "Test");
+      AbstractTrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
 
       // Act & Assert
       assertThrows(
@@ -364,16 +347,79 @@ class AbstractTrainingSetTest {
     @DisplayName("given valid list when setting evaluations then returns same instance")
     void givenValidList_whenSettingEvaluations_thenReturnsSameInstance() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv"),
-              List.of(1000, 2000),
-              "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
 
       // Act
-      TrainingSet<DoubleSolution> result =
-          trainingSet.setEvaluationsToOptimize(List.of(5000, 10000));
+      TrainingSet<DoubleSolution> result = trainingSet.setEvaluationsToOptimize(List.of(5000, 10000));
+
+      // Assert
+      assertSame(trainingSet, result);
+    }
+  }
+
+  @Nested
+  @DisplayName("setReferenceFrontDirectory tests")
+  class SetReferenceFrontDirectoryTests {
+
+    @Test
+    @DisplayName("given valid directory when setting reference front directory then paths are updated")
+    void givenValidDirectory_whenSettingReferenceFrontDirectory_thenPathsAreUpdated() {
+      // Arrange
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
+
+      // Act
+      trainingSet.setReferenceFrontDirectory("resources/estimatedReferenceFronts");
+
+      // Assert
+      List<String> expected = List.of(
+          "resources/estimatedReferenceFronts/front1.csv",
+          "resources/estimatedReferenceFronts/front2.csv");
+      assertEquals(expected, trainingSet.referenceFronts());
+    }
+
+    @Test
+    @DisplayName("given null directory when setting reference front directory then throws exception")
+    void givenNullDirectory_whenSettingReferenceFrontDirectory_thenThrowsException() {
+      // Arrange
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+
+      // Act & Assert
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> trainingSet.setReferenceFrontDirectory(null));
+    }
+
+    @Test
+    @DisplayName("given blank directory when setting reference front directory then throws exception")
+    void givenBlankDirectory_whenSettingReferenceFrontDirectory_thenThrowsException() {
+      // Arrange
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+
+      // Act & Assert
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> trainingSet.setReferenceFrontDirectory("   "));
+    }
+
+    @Test
+    @DisplayName("given valid directory when setting reference front directory then returns same instance")
+    void givenValidDirectory_whenSettingReferenceFrontDirectory_thenReturnsSameInstance() {
+      // Arrange
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+
+      // Act
+      TrainingSet<DoubleSolution> result = trainingSet.setReferenceFrontDirectory("other/directory");
 
       // Assert
       assertSame(trainingSet, result);
@@ -394,9 +440,8 @@ class AbstractTrainingSetTest {
       mutableProblems.add(problem1);
       mutableProblems.add(problem2);
 
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              mutableProblems, List.of("front1.csv", "front2.csv"), List.of(1000, 2000), "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          mutableProblems, List.of("front1.csv", "front2.csv"), List.of(1000, 2000), "Test");
 
       // Act
       mutableProblems.clear();
@@ -409,9 +454,8 @@ class AbstractTrainingSetTest {
     @DisplayName("given training set when trying to modify returned list then throws exception")
     void givenTrainingSet_whenTryingToModifyReturnedList_thenThrowsException() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem()), List.of("front1.csv"), List.of(1000), "Test");
 
       // Act & Assert
       assertThrows(
@@ -427,20 +471,42 @@ class AbstractTrainingSetTest {
     @DisplayName("given training set when chaining setEvaluations calls then works correctly")
     void givenTrainingSet_whenChainingSetEvaluationsCalls_thenWorksCorrectly() {
       // Arrange
-      TrainingSet<DoubleSolution> trainingSet =
-          new TestTrainingSet(
-              List.of(createMockProblem(), createMockProblem()),
-              List.of("front1.csv", "front2.csv"),
-              List.of(1000, 2000),
-              "Test");
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
 
       // Act
-      TrainingSet<DoubleSolution> result =
-          trainingSet.setEvaluationsToOptimize(5000).setEvaluationsToOptimize(List.of(8000, 9000));
+      TrainingSet<DoubleSolution> result = trainingSet.setEvaluationsToOptimize(5000)
+          .setEvaluationsToOptimize(List.of(8000, 9000));
 
       // Assert
       assertSame(trainingSet, result);
       assertEquals(List.of(8000, 9000), trainingSet.evaluationsToOptimize());
+    }
+
+    @Test
+    @DisplayName("given training set when chaining setReferenceFrontDirectory and setEvaluations then works correctly")
+    void givenTrainingSet_whenChainingSetDirectoryAndSetEvaluations_thenWorksCorrectly() {
+      // Arrange
+      TrainingSet<DoubleSolution> trainingSet = new TestTrainingSet(
+          List.of(createMockProblem(), createMockProblem()),
+          List.of("front1.csv", "front2.csv"),
+          List.of(1000, 2000),
+          "Test");
+
+      // Act
+      TrainingSet<DoubleSolution> result = trainingSet
+          .setReferenceFrontDirectory("custom/directory")
+          .setEvaluationsToOptimize(5000);
+
+      // Assert
+      assertSame(trainingSet, result);
+      assertEquals(
+          List.of("custom/directory/front1.csv", "custom/directory/front2.csv"),
+          trainingSet.referenceFronts());
+      assertTrue(trainingSet.evaluationsToOptimize().stream().allMatch(e -> e == 5000));
     }
   }
 }

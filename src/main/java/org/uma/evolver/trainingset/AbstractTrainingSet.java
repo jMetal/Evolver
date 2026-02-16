@@ -2,59 +2,77 @@ package org.uma.evolver.trainingset;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
 /**
- * Abstract base class for {@link TrainingSet} implementations that eliminates boilerplate code.
+ * Abstract base class for {@link TrainingSet} implementations that eliminates
+ * boilerplate code.
  *
- * <p>Subclasses only need to provide the configuration data through constructor parameters,
+ * <p>
+ * Subclasses only need to provide the configuration data through constructor
+ * parameters,
  * while this class handles the common method implementations.
+ *
+ * <p>
+ * Reference front paths are composed from a base directory and a list of file
+ * names. The default
+ * directory is {@value #DEFAULT_REFERENCE_FRONT_DIRECTORY} and can be changed
+ * at any time via
+ * {@link #setReferenceFrontDirectory(String)}.
  *
  * @param <S> the solution type
  */
 public abstract class AbstractTrainingSet<S extends Solution<?>> implements TrainingSet<S> {
 
+  static final String DEFAULT_REFERENCE_FRONT_DIRECTORY = "resources/referenceFronts";
+
   private final List<Problem<S>> problemList;
-  private final List<String> referenceFronts;
+  private final List<String> referenceFrontFileNames;
+  private String referenceFrontDirectory;
   private List<Integer> evaluationsToOptimize;
   private final String name;
 
   /**
-   * Constructs a training set with the specified configuration.
+   * Constructs a training set with the specified configuration. The reference
+   * front directory
+   * defaults to {@value #DEFAULT_REFERENCE_FRONT_DIRECTORY}.
    *
-   * @param problemList the list of problems in this training set
-   * @param referenceFronts the list of reference front file paths
-   * @param evaluationsToOptimize the list of evaluation budgets per problem
-   * @param name the name identifier for this training set
+   * @param problemList             the list of problems in this training set
+   * @param referenceFrontFileNames the list of reference front file names
+   *                                (without directory)
+   * @param evaluationsToOptimize   the list of evaluation budgets per problem
+   * @param name                    the name identifier for this training set
    * @throws IllegalArgumentException if lists have different sizes or are empty
    */
   protected AbstractTrainingSet(
       List<Problem<S>> problemList,
-      List<String> referenceFronts,
+      List<String> referenceFrontFileNames,
       List<Integer> evaluationsToOptimize,
       String name) {
-    
-    validateInputs(problemList, referenceFronts, evaluationsToOptimize, name);
-    
+
+    validateInputs(problemList, referenceFrontFileNames, evaluationsToOptimize, name);
+
     this.problemList = List.copyOf(problemList);
-    this.referenceFronts = List.copyOf(referenceFronts);
+    this.referenceFrontFileNames = List.copyOf(referenceFrontFileNames);
+    this.referenceFrontDirectory = DEFAULT_REFERENCE_FRONT_DIRECTORY;
     this.evaluationsToOptimize = List.copyOf(evaluationsToOptimize);
     this.name = name;
   }
 
   private void validateInputs(
       List<Problem<S>> problemList,
-      List<String> referenceFronts,
+      List<String> referenceFrontFileNames,
       List<Integer> evaluationsToOptimize,
       String name) {
-    
+
     if (problemList == null || problemList.isEmpty()) {
       throw new IllegalArgumentException("Problem list cannot be null or empty");
     }
-    if (referenceFronts == null || referenceFronts.size() != problemList.size()) {
+    if (referenceFrontFileNames == null || referenceFrontFileNames.size() != problemList.size()) {
       throw new IllegalArgumentException(
-          "Reference fronts list must have same size as problem list");
+          "Reference front file names list must have same size as problem list");
     }
     if (evaluationsToOptimize == null || evaluationsToOptimize.size() != problemList.size()) {
       throw new IllegalArgumentException(
@@ -72,7 +90,9 @@ public abstract class AbstractTrainingSet<S extends Solution<?>> implements Trai
 
   @Override
   public List<String> referenceFronts() {
-    return referenceFronts;
+    return referenceFrontFileNames.stream()
+        .map(fileName -> referenceFrontDirectory + "/" + fileName)
+        .collect(Collectors.toUnmodifiableList());
   }
 
   @Override
@@ -107,6 +127,15 @@ public abstract class AbstractTrainingSet<S extends Solution<?>> implements Trai
       }
     }
     this.evaluationsToOptimize = List.copyOf(evaluations);
+    return this;
+  }
+
+  @Override
+  public TrainingSet<S> setReferenceFrontDirectory(String directory) {
+    if (directory == null || directory.isBlank()) {
+      throw new IllegalArgumentException("Reference front directory cannot be null or blank");
+    }
+    this.referenceFrontDirectory = directory;
     return this;
   }
 }

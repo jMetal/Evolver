@@ -5,19 +5,26 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
 /**
- * Interface defining methods for returning information about problem families, including a list
- * with their implementations, a list with the names of the reference fronts, and a list containing
+ * Interface defining methods for returning information about problem families,
+ * including a list
+ * with their implementations, a list with the names of the reference fronts,
+ * and a list containing
  * the typical number of evaluations used to optimize them by metaheuristics.
  *
- * <p>Naming convention used by classes in this package:
+ * <p>
+ * Naming convention used by classes in this package:
  *
  * <ul>
- *   <li>Classes are named after the problem family (e.g. {@code ZDT}, {@code DTLZ}, {@code WFG},
- *       {@code RE}).
- *   <li>If a problem family supports multiple objective dimensionalities, a suffix with the
- *       dimensionality may be appended (for example {@code DTLZ3DTrainingSet}). For families that
- *       are fixed to a single dimensionality (e.g. ZDT are bi-objective), the dimensional suffix is
- *       omitted (for example {@code ZDTTrainingSet}).
+ * <li>Classes are named after the problem family (e.g. {@code ZDT},
+ * {@code DTLZ}, {@code WFG},
+ * {@code RE}).
+ * <li>If a problem family supports multiple objective dimensionalities, a
+ * suffix with the
+ * dimensionality may be appended (for example {@code DTLZ3DTrainingSet}). For
+ * families that
+ * are fixed to a single dimensionality (e.g. ZDT are bi-objective), the
+ * dimensional suffix is
+ * omitted (for example {@code ZDTTrainingSet}).
  * </ul>
  *
  * @param <S> the solution type
@@ -47,4 +54,15 @@ public interface TrainingSet<S extends Solution<?>> {
    * @return this training set instance for method chaining
    */
   TrainingSet<S> setEvaluationsToOptimize(List<Integer> evaluations);
+
+  /**
+   * Sets the directory from which the reference front files are loaded. The full
+   * paths returned by
+   * {@link #referenceFronts()} are rebuilt by combining this directory with each
+   * file name.
+   *
+   * @param directory the directory containing the reference front files
+   * @return this training set instance for method chaining
+   */
+  TrainingSet<S> setReferenceFrontDirectory(String directory);
 }
