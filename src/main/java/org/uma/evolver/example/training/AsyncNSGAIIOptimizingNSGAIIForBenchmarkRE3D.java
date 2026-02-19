@@ -119,6 +119,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
+    /*
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
@@ -130,6 +131,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
+     */
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
