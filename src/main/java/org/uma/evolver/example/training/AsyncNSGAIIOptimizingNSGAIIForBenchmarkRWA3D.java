@@ -52,7 +52,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
     }
 
     String referenceFrontDirectory = args[0];
-    int maximumNumberOfEvaluationsArg = Integer.parseInt(args[1]);
+    int baseMaxEvaluations = Integer.parseInt(args[1]);
     int numberOfCores = Integer.parseInt(args[2]);
     String resultsDirectory = args[3];
 
@@ -62,7 +62,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
     TrainingSet<DoubleSolution> trainingSetDescriptor =
         new RWA3DTrainingSet()
             .setReferenceFrontDirectory(referenceFrontDirectory)
-            .setEvaluationsToOptimize(maximumNumberOfEvaluationsArg);
+            .setEvaluationsToOptimize(baseMaxEvaluations);
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();

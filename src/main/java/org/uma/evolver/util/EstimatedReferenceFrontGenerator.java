@@ -319,7 +319,7 @@ public class EstimatedReferenceFrontGenerator {
    * @param args command line arguments (optional: offsetPercentage)
    */
   public static void main(String[] args) {
-    double offsetPercentage = 0.10; // Default 10%
+    double offsetPercentage = 0.30; // Default 30%
     if (args.length > 0) {
       try {
         offsetPercentage = Double.parseDouble(args[0]);
