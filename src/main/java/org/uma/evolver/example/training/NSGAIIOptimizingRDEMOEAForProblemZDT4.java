@@ -90,6 +90,7 @@ public class NSGAIIOptimizingRDEMOEAForProblemZDT4 {
                 .numberOfCores(NUMBER_OF_CORES)
                 .baseLevelAlgorithmName("RDEMOEA")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
                 .build();

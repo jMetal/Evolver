@@ -13,12 +13,13 @@ public record MetaOptimizerConfig(
         int numberOfCores,
 
         // Base-level algorithm information
-        String baseLevelAlgorithmName,
-        int baseLevelPopulationSize,
-        String evaluationBudgetStrategy,
+    String baseLevelAlgorithmName,
+    int baseLevelPopulationSize,
+    int baseLevelMaxEvaluations,
+    String evaluationBudgetStrategy,
 
-        // Parameter space
-        String yamlParameterSpaceFile) {
+    // Parameter space
+    String yamlParameterSpaceFile) {
     /**
      * Creates a builder for MetaOptimizerConfig.
      * 
@@ -35,6 +36,7 @@ public record MetaOptimizerConfig(
         private int numberOfCores = 1;
         private String baseLevelAlgorithmName = "Unknown";
         private int baseLevelPopulationSize = 0;
+        private int baseLevelMaxEvaluations = 0;
         private String evaluationBudgetStrategy = "Unknown";
         private String yamlParameterSpaceFile = "Unknown";
 
@@ -68,6 +70,11 @@ public record MetaOptimizerConfig(
             return this;
         }
 
+        public Builder baseLevelMaxEvaluations(int maxEvaluations) {
+            this.baseLevelMaxEvaluations = maxEvaluations;
+            return this;
+        }
+
         public Builder evaluationBudgetStrategy(String strategy) {
             this.evaluationBudgetStrategy = strategy;
             return this;
@@ -80,14 +87,15 @@ public record MetaOptimizerConfig(
 
         public MetaOptimizerConfig build() {
             return new MetaOptimizerConfig(
-                    metaOptimizerName,
-                    metaMaxEvaluations,
-                    metaPopulationSize,
-                    numberOfCores,
-                    baseLevelAlgorithmName,
-                    baseLevelPopulationSize,
-                    evaluationBudgetStrategy,
-                    yamlParameterSpaceFile);
+                metaOptimizerName,
+                metaMaxEvaluations,
+                metaPopulationSize,
+                numberOfCores,
+                baseLevelAlgorithmName,
+                baseLevelPopulationSize,
+                baseLevelMaxEvaluations,
+                evaluationBudgetStrategy,
+                yamlParameterSpaceFile);
         }
     }
 }

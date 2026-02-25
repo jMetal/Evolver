@@ -92,6 +92,7 @@ public class NSGAIIOptimizingMOEADForProblemZCAT1 {
                 .numberOfCores(NUMBER_OF_CORES)
                 .baseLevelAlgorithmName("MOEAD")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .baseLevelMaxEvaluations(BASE_MAX_EVALUATIONS)
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
                 .build();

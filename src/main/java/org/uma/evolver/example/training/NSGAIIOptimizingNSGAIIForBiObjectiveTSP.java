@@ -93,6 +93,7 @@ public class NSGAIIOptimizingNSGAIIForBiObjectiveTSP {
                 .numberOfCores(NUMBER_OF_CORES)
                 .baseLevelAlgorithmName("NSGA-II")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
                 .build();

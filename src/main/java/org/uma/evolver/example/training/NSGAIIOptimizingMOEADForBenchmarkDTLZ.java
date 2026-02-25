@@ -94,6 +94,7 @@ public class NSGAIIOptimizingMOEADForBenchmarkDTLZ {
             .numberOfCores(NUMBER_OF_CORES)
             .baseLevelAlgorithmName("MOEAD")
             .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .baseLevelMaxEvaluations(trainingSetDescriptor.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile("MOEADDouble.yaml")
             .build();

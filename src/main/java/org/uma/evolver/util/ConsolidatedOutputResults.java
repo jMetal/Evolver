@@ -115,6 +115,8 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.newLine();
             writer.write("Population/Swarm Size: " + config.baseLevelPopulationSize());
             writer.newLine();
+            writer.write("Max Evaluations: " + config.baseLevelMaxEvaluations());
+            writer.newLine();
             writer.write("Evaluation Strategy: " + config.evaluationBudgetStrategy());
             writer.newLine();
             writer.write("Parameter Space: " + config.yamlParameterSpaceFile());

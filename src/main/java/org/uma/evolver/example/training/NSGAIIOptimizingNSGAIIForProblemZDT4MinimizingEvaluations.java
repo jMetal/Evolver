@@ -89,6 +89,7 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4MinimizingEvaluations {
                 .numberOfCores(NUMBER_OF_CORES)
                 .baseLevelAlgorithmName("NSGA-II")
                 .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+                .baseLevelMaxEvaluations(BASE_MAX_EVALUATIONS)
                 .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
                 .yamlParameterSpaceFile(yamlParameterSpaceFile)
                 .build();
