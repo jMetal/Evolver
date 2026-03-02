@@ -17,7 +17,7 @@ algorithmResult:
         swarmSizeWithArchive:
           type: integer
           range: [10, 200]
-        archiveType:
+        externalArchiveType:
           type: categorical
           values:
             crowdingDistanceArchive: {}
@@ -37,7 +37,7 @@ perturbation:
       conditionalParameters:
         frequencyOfApplicationOfMutationOperator:
           type: integer
-          range: [1, 10]
+          range: [ 1, 10 ]
         mutation:
           type: categorical
           globalSubParameters:
@@ -71,19 +71,7 @@ perturbation:
                 linkedPolynomialMutationDistributionIndex:
                   type: real
                   range: [5.0, 400.0]
-            levyFlight:
-              conditionalParameters:
-                levyFlightMutationBeta:
-                  type: double
-                  range: [1.0, 2.0]
-                levyFlightMutationStepSize:
-                  type: double
-                  range: [0.01, 1.0]
-            powerLaw:
-              conditionalParameters:
-                powerLawMutationDelta:
-                  type: double
-                  range: [0.0, 10.0]
+
 #
 inertiaWeightComputingStrategy:
   type: categorical

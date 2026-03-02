@@ -52,9 +52,6 @@ createInitialSolutions:
     default:
     latinHypercubeSampling:
     scatterSearch:
-    sobol:
-    cauchy:
-    oppositionBased:
 #
 variation:
   type: categorical
@@ -92,20 +89,6 @@ variation:
             nonUniformMutationPerturbation:
               type: double
               range: [0.0, 1.0]
-        levyFlight:
-          conditionalParameters:
-            levyFlightMutationBeta:
-              type: double
-              range: [1.0, 2.0]
-            levyFlightMutationStepSize:
-              type: double
-              range: [0.01, 1.0]
-        powerLaw:
-          conditionalParameters:
-            powerLawMutationDelta:
-              type: double
-              range: [0.1, 10.0]
-
         
   values:
     crossoverAndMutationVariation:
@@ -133,8 +116,7 @@ variation:
                 blxAlphaCrossoverAlpha:
                   type: double
                   range: [0.0, 1.0]
-            wholeArithmetic: {}
-            blxAlphaBeta:
+            wholeArithmetic:
               conditionalParameters:
                 blxAlphaBetaCrossoverBeta:
                   type: double
@@ -142,33 +124,6 @@ variation:
                 blxAlphaBetaCrossoverAlpha:
                   type: double
                   range: [0.0, 1.0]
-            arithmetic: {}
-            laplace:
-              conditionalParameters:
-                laplaceCrossoverScale:
-                  type: double
-                  range: [0.1, 0.5]
-            fuzzyRecombination:
-              conditionalParameters:
-                fuzzyRecombinationCrossoverAlpha:
-                  type: double
-                  range: [0.0, 1.0]
-            PCX:
-              conditionalParameters:
-                pcxCrossoverZeta:
-                  type: double
-                  range: [0.0, 1.0]
-                pcxCrossoverEta:
-                  type: double
-                  range: [0.0, 1.0]
-            UNDC:
-              conditionalParameters:
-                undcCrossoverZeta:
-                  type: double
-                  range: [0.1, 1.0]
-                undcCrossoverEta:
-                  type: double
-                  range: [0.1, 0.5]
                   
     differentialEvolutionVariation:
       conditionalParameters:
