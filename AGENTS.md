@@ -7,7 +7,7 @@ Evolver is a Java framework for automatically configuring multi-objective metahe
 
 ## Quick facts
 - Language/Tooling: Java 21, Maven
-- Key deps: jMetal `${jmetal.version}` (currently 6.11-SNAPSHOT), SnakeYAML
+- Key deps: jMetal `${jmetal.version}` (currently 7.0), SnakeYAML
 - Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/example/training/**`, base-level configuration examples under `org/uma/evolver/example/configuration/**`, and experimental studies under `org/uma/evolver/example/study/**`.
 - Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance). Prefer those over generic style rules.
 

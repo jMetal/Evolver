@@ -19,8 +19,8 @@ createInitialSolutions:
     default: {}
     latinHypercubeSampling: {}
     scatterSearch: {}
-    chaosBased: {}
-    gridBased: {}
+    sobol: {}
+    cauchy: {}
     oppositionBased: {}
 
 offspringPopulationSize:

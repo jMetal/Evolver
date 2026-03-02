@@ -2,12 +2,12 @@ package org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter;
 
 import java.util.List;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
-import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.ChaosBasedSolutionsCreation;
-import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.GridSolutionsCreation;
+import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.CauchySolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.LatinHypercubeSamplingSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.OppositionBasedSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.ScatterSearchSolutionsCreation;
+import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.SobolSolutionsCreation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -18,13 +18,13 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * A parameter for creating initial double solutions in evolutionary algorithms.
  * This parameter defines the strategy used to generate the initial population of double solutions.
  *
- * <p>Supported strategies (compatible with jMetal 6.10):
+ * <p>Supported strategies (compatible with jMetal 7.0):
  * <ul>
  *   <li>DEFAULT_STRATEGY: Creates random double solutions using RandomSolutionsCreation</li>
  *   <li>SCATTER_SEARCH: Creates solutions using ScatterSearchSolutionsCreation with configurable reference set size</li>
  *   <li>LATIN_HYPERCUBE_SAMPLING: Creates solutions using Latin Hypercube Sampling for better space coverage</li>
- *   <li>CHAOS_BASED: Creates solutions using chaotic sequences (logistic map) for better coverage than random</li>
- *   <li>GRID_BASED: Creates solutions on a regular grid for systematic and deterministic coverage</li>
+ *   <li>SOBOL: Creates solutions using Sobol quasi-random sequences for low-discrepancy uniform coverage</li>
+ *   <li>CAUCHY: Creates solutions using Cauchy distribution with heavy tails for intensive local exploitation and distant jumps</li>
  *   <li>OPPOSITION_BASED: Creates pairs of solutions (original + opposite) for enhanced exploration</li>
  * </ul>
  *
@@ -33,8 +33,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *   <li><strong>Random</strong>: Fast generation with uniform random distribution</li>
  *   <li><strong>Scatter Search</strong>: Enhanced diversity through reference set-based generation</li>
  *   <li><strong>Latin Hypercube</strong>: Optimal space coverage, particularly effective for high-dimensional problems</li>
- *   <li><strong>Chaos-Based</strong>: Deterministic but chaotic sequences providing better coverage than random</li>
- *   <li><strong>Grid-Based</strong>: Systematic grid coverage, ideal for low-dimensional problems</li>
+ *   <li><strong>Sobol</strong>: Quasi-random low-discrepancy sequences providing superior uniform coverage</li>
+ *   <li><strong>Cauchy</strong>: Heavy-tailed distribution for problems with massive local optima, balancing local exploitation and distant exploration</li>
  *   <li><strong>Opposition-Based</strong>: Explores opposite regions of search space for better exploration</li>
  * </ul>
  *
@@ -42,19 +42,19 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <pre>
  * {@code
  * CreateInitialSolutionsDoubleParameter param = new CreateInitialSolutionsDoubleParameter(
- *     List.of("default", "scatterSearch", "latinHypercubeSampling", "chaosBased", "gridBased", "oppositionBased"));
- * param.setValue("chaosBased");
+ *     List.of("default", "scatterSearch", "latinHypercubeSampling", "sobol", "cauchy", "oppositionBased"));
+ * param.setValue("sobol");
  * SolutionsCreation<DoubleSolution> strategy = param.getCreateInitialSolutionsStrategy(problem, 100);
  * List<DoubleSolution> initialPopulation = strategy.create();
  * }
  * </pre>
  *
- * @since jMetal 6.10
+ * @since jMetal 7.0
  * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation
  * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.ScatterSearchSolutionsCreation
  * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.LatinHypercubeSamplingSolutionsCreation
- * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.ChaosBasedSolutionsCreation
- * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.GridSolutionsCreation
+ * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.SobolSolutionsCreation
+ * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.CauchySolutionsCreation
  * @see org.uma.jmetal.component.catalogue.common.solutionscreation.impl.OppositionBasedSolutionsCreation
  */
 public class CreateInitialSolutionsDoubleParameter
@@ -78,18 +78,21 @@ public class CreateInitialSolutionsDoubleParameter
   public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
 
   /** 
-   * Strategy that uses chaos-based sequences (logistic map) for solution creation.
-   * Provides better coverage than random initialization while maintaining unpredictability.
-   * Useful when reproducibility with a fixed seed is needed.
+   * Strategy that uses Sobol quasi-random sequences for solution creation.
+   * Provides low-discrepancy sequences that fill the search space more evenly than
+   * pseudo-random numbers. Uses Cranley-Patterson rotation for randomization while
+   * preserving low-discrepancy properties. Excellent for uniform coverage.
    */
-  public static final String CHAOS_BASED = "chaosBased";
+  public static final String SOBOL = "sobol";
 
   /** 
-   * Strategy that creates solutions on a regular grid across the search space.
-   * Ensures systematic and deterministic coverage. Best for low-dimensional problems
-   * as grid size grows exponentially with dimensions.
+   * Strategy that uses Cauchy distribution for solution creation.
+   * The heavy-tailed distribution concentrates solutions near the center of the search
+   * space but occasionally generates solutions far away. Particularly useful for
+   * landscapes with massive local optima, where both intensive local exploitation
+   * and distant jumps are needed.
    */
-  public static final String GRID_BASED = "gridBased";
+  public static final String CAUCHY = "cauchy";
 
   /** 
    * Strategy that creates pairs of solutions (original + opposite) by mirroring
@@ -106,7 +109,7 @@ public class CreateInitialSolutionsDoubleParameter
    *
    * @param validValues A list of valid strategy names for creating initial double solutions.
    *                   Should typically include at least DEFAULT_STRATEGY, and optionally
-   *                   SCATTER_SEARCH, LATIN_HYPERCUBE_SAMPLING, CHAOS_BASED, GRID_BASED, 
+   *                   SCATTER_SEARCH, LATIN_HYPERCUBE_SAMPLING, SOBOL, CAUCHY, 
    *                   and/or OPPOSITION_BASED.
    * @throws IllegalArgumentException if validValues is null or empty
    */
@@ -128,7 +131,7 @@ public class CreateInitialSolutionsDoubleParameter
   /**
    * Creates and returns a SolutionsCreation strategy for double solutions based on the current parameter value.
    * 
-   * <p>This method uses improved error checking with jMetal 6.10's Check utility and provides
+   * <p>This method uses improved error checking with jMetal 7.0's Check utility and provides
    * better error messages for debugging.
    *
    * @param problem The double problem for which to create initial solutions
@@ -142,7 +145,7 @@ public class CreateInitialSolutionsDoubleParameter
   public SolutionsCreation<DoubleSolution> getCreateInitialSolutionsStrategy(
       Problem<DoubleSolution> problem, int populationSize) {
     
-    // Use jMetal 6.10's improved error checking
+    // Use jMetal 7.0's improved error checking
     Check.notNull(problem);
     Check.that(populationSize > 0, "Population size must be positive, but was: " + populationSize);
     
@@ -163,17 +166,17 @@ public class CreateInitialSolutionsDoubleParameter
             "LATIN_HYPERCUBE_SAMPLING strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
         yield new LatinHypercubeSamplingSolutionsCreation((DoubleProblem) problem, populationSize);
       }
-      case CHAOS_BASED -> {
-        // Chaos-based solutions creation requires DoubleProblem for bounds information
+      case SOBOL -> {
+        // Sobol quasi-random sequences require DoubleProblem for bounds information
         Check.that(problem instanceof DoubleProblem, 
-            "CHAOS_BASED strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
-        yield new ChaosBasedSolutionsCreation((DoubleProblem) problem, populationSize);
+            "SOBOL strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
+        yield new SobolSolutionsCreation((DoubleProblem) problem, populationSize);
       }
-      case GRID_BASED -> {
-        // Grid-based solutions creation requires DoubleProblem for bounds information
+      case CAUCHY -> {
+        // Cauchy distribution-based solutions creation requires DoubleProblem for bounds information
         Check.that(problem instanceof DoubleProblem, 
-            "GRID_BASED strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
-        yield new GridSolutionsCreation((DoubleProblem) problem, populationSize);
+            "CAUCHY strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
+        yield new CauchySolutionsCreation((DoubleProblem) problem, populationSize);
       }
       case OPPOSITION_BASED -> {
         // Opposition-based solutions creation requires DoubleProblem for bounds information
@@ -216,15 +219,15 @@ public class CreateInitialSolutionsDoubleParameter
             "LATIN_HYPERCUBE_SAMPLING strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
         yield new LatinHypercubeSamplingSolutionsCreation((DoubleProblem) problem, populationSize);
       }
-      case CHAOS_BASED -> {
+      case SOBOL -> {
         Check.that(problem instanceof DoubleProblem, 
-            "CHAOS_BASED strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
-        yield new ChaosBasedSolutionsCreation((DoubleProblem) problem, populationSize);
+            "SOBOL strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
+        yield new SobolSolutionsCreation((DoubleProblem) problem, populationSize);
       }
-      case GRID_BASED -> {
+      case CAUCHY -> {
         Check.that(problem instanceof DoubleProblem, 
-            "GRID_BASED strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
-        yield new GridSolutionsCreation((DoubleProblem) problem, populationSize);
+            "CAUCHY strategy requires a DoubleProblem, but got: " + problem.getClass().getSimpleName());
+        yield new CauchySolutionsCreation((DoubleProblem) problem, populationSize);
       }
       case OPPOSITION_BASED -> {
         Check.that(problem instanceof DoubleProblem, 
