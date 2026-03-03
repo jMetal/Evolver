@@ -1,4 +1,4 @@
-package org.uma.evolver.example.study;
+package org.uma.evolver.example.validation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,14 +13,8 @@ import org.uma.jmetal.lab.experiment.ExperimentBuilder;
 import org.uma.jmetal.lab.experiment.component.impl.*;
 import org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.lab.experiment.util.ExperimentProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
-import org.uma.jmetal.problem.multiobjective.wfg.*;
+import org.uma.jmetal.problem.multiobjective.re.*;
+import org.uma.jmetal.problem.multiobjective.rwa.*;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
@@ -29,53 +23,62 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
  * Runner to execute NSGA-II configuration validation experiments. Compares three NSGA-II variants
- * (Standard, RE3D, RE3D-Est) across ZDT, DTLZ, and WFG 2-objective benchmark problems. Generates
- * quality indicators (Epsilon, Hypervolume, IGD, IGD+) and statistical analysis.
+ * (Standard, RE3D, RE3D-Est) across RE and RWA benchmark problems. Generates FUN (Pareto Fronts)
+ * and VAR (Decision Variables) files for analysis.
  *
  * <p>Configuration: PopSize 100, 10000 evaluations, 25 independent runs per configuration.
- *
- * <p>Output: Quality indicators, LaTeX tables, Wilcoxon and Friedman statistical tests.
  */
-public class DTLZWFG3DStudy {
+public class REStudy {
 
   private static final int INDEPENDENT_RUNS = 25;
-  private static final int MAX_EVALUATIONS = 40000;
+  private static final int MAX_EVALUATIONS = 10000;
   private static final int POPULATION_SIZE = 100;
-  private static final String NSGAII_YAML_FILE = "NSGAIIDoubleFull.yaml";
-  private static final String MOEAD_YAML_FILE = "MOEADDoubleFull.yaml";
+  private static final String YAML_FILE = "NSGAIIDoubleFull.yaml";
 
   public static void main(String[] args) throws IOException {
-    String experimentBaseDirectory =
-        "/Users/ajnebro/Softw/jMetal/EvolverSwevoData/results/swevo/validation"; // Dedicated folder
+    String experimentBaseDirectory = "results/swevo/experiments"; // Dedicated folder
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
 
-    // DTLZ 3-objective problems (7 problems)
-    problemList.add(new ExperimentProblem<>(new DTLZ1()).setReferenceFront("DTLZ1.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ2()).setReferenceFront("DTLZ2.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ3()).setReferenceFront("DTLZ3.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ4()).setReferenceFront("DTLZ4.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ5()).setReferenceFront("DTLZ5.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ6()).setReferenceFront("DTLZ6.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new DTLZ7()).setReferenceFront("DTLZ7.3D.csv"));
+    // RE 2D
+    problemList.add(new ExperimentProblem<>(new RE21()).setReferenceFront("RE21.csv"));
+    problemList.add(new ExperimentProblem<>(new RE22()).setReferenceFront("RE22.csv"));
+    problemList.add(new ExperimentProblem<>(new RE23()).setReferenceFront("RE23.csv"));
+    problemList.add(new ExperimentProblem<>(new RE24()).setReferenceFront("RE24.csv"));
+    problemList.add(new ExperimentProblem<>(new RE25()).setReferenceFront("RE25.csv"));
 
-    // WFG 3-objective problems (9 problems)
-    DefaultWFGSettings.numberOfObjectives = 3;
-    problemList.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG4()).setReferenceFront("WFG4.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG5()).setReferenceFront("WFG5.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG6()).setReferenceFront("WFG6.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.3D.csv"));
-    problemList.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.3D.csv"));
+    // RE 3D
+    problemList.add(new ExperimentProblem<>(new RE31()).setReferenceFront("RE31.csv"));
+    problemList.add(new ExperimentProblem<>(new RE32()).setReferenceFront("RE32.csv"));
+    problemList.add(new ExperimentProblem<>(new RE33()).setReferenceFront("RE33.csv"));
+    problemList.add(new ExperimentProblem<>(new RE34()).setReferenceFront("RE34.csv"));
+    problemList.add(new ExperimentProblem<>(new RE35()).setReferenceFront("RE35.csv"));
+    problemList.add(new ExperimentProblem<>(new RE36()).setReferenceFront("RE36.csv"));
+    problemList.add(new ExperimentProblem<>(new RE37()).setReferenceFront("RE37.csv"));
+
+    // RE High-D
+    problemList.add(new ExperimentProblem<>(new RE41()).setReferenceFront("RE41.csv"));
+    problemList.add(new ExperimentProblem<>(new RE42()).setReferenceFront("RE42.csv"));
+    problemList.add(new ExperimentProblem<>(new RE61()).setReferenceFront("RE61.csv"));
+    problemList.add(new ExperimentProblem<>(new RE91()).setReferenceFront("RE91.csv"));
+
+    // RWA Problems
+    problemList.add(new ExperimentProblem<>(new RWA1()).setReferenceFront("RWA1.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA2()).setReferenceFront("RWA2.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA3()).setReferenceFront("RWA3.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA4()).setReferenceFront("RWA4.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA5()).setReferenceFront("RWA5.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA6()).setReferenceFront("RWA6.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA7()).setReferenceFront("RWA7.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA8()).setReferenceFront("RWA8.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA9()).setReferenceFront("RWA9.csv"));
+    problemList.add(new ExperimentProblem<>(new RWA10()).setReferenceFront("RWA10.csv"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
         configureAlgorithmList(problemList);
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("DTLZWFG3D")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("REStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setReferenceFrontDirectory("resources/referenceFronts")
@@ -92,14 +95,12 @@ public class DTLZWFG3DStudy {
             .setNumberOfCores(8)
             .build();
 
-    new ExecuteAlgorithms<>(experiment).run();
+    // new ExecuteAlgorithms<>(experiment).run();
     new ComputeQualityIndicators<>(experiment).run();
     new GenerateLatexTablesWithStatistics(experiment).run();
     new GenerateWilcoxonTestTablesWithR<>(experiment).run();
     new GenerateFriedmanTestTables<>(experiment).run();
-    System.out.println(
-        "Quality indicators and statistical analysis complete. Data stored in: "
-            + experimentBaseDirectory);
+    System.out.println("Visualization runs complete. Data stored in: " + experimentBaseDirectory);
   }
 
   static List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> configureAlgorithmList(
@@ -153,7 +154,7 @@ public class DTLZWFG3DStudy {
             "--boltzmannTemperature 60.81347202071671");
 
     // Estimated best configuration for RE 3-objective problems (Evaluation 2000, best HV)
-    // - BLX-alpha crossover, Lévy flight mutation, random selection
+    // - BLX-alpha crossover, Lévy flight mutation, stochastic universal sampling
     // Source: results/swevo/nsgaii/RE3D_estimated/VAR_CONF.txt
     String estimatedBestRE3DConfig =
         String.join(
@@ -175,74 +176,39 @@ public class DTLZWFG3DStudy {
             "--levyFlightMutationStepSize 0.9862471851423424",
             "--selection stochasticUniversalSampling");
 
-    String moeadConfig =
-        String.join(
-            " ",
-            "--neighborhoodSize 20",
-            "--maximumNumberOfReplacedSolutions 2",
-            "--aggregationFunction penaltyBoundaryIntersection",
-            "--normalizeObjectives false",
-            "--pbiTheta 5.0",
-            "--algorithmResult population",
-            "--createInitialSolutions default",
-            "--subProblemIdGenerator randomPermutationCycle",
-            "--variation crossoverAndMutationVariation",
-            "--crossoverProbability 0.9",
-            "--crossoverRepairStrategy bounds",
-            "--mutation polynomial",
-            "--mutationProbabilityFactor 1.0",
-            "--mutationRepairStrategy bounds",
-            "--polynomialMutationDistributionIndex 20.0",
-            "--crossover SBX",
-            "--sbxDistributionIndex 20.0",
-            "--selection populationAndNeighborhoodMatingPoolSelection",
-            " --neighborhoodSelectionProbability 0.9");
-
-    YAMLParameterSpace nsgaIIParameterSpace =
-        new YAMLParameterSpace(NSGAII_YAML_FILE, new DoubleParameterFactory());
-
-    YAMLParameterSpace moeadParameterSpace =
-        new YAMLParameterSpace(MOEAD_YAML_FILE, new DoubleParameterFactory());
+    YAMLParameterSpace parameterSpace =
+        new YAMLParameterSpace(YAML_FILE, new DoubleParameterFactory());
 
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (ExperimentProblem<DoubleSolution> expProblem : problemList) {
 
         algorithms.add(
-            createNSGAII(
+            createAlgo(
                 expProblem,
                 run,
                 "NSGAII-Standard",
                 standardNSGAIIConfig,
                 POPULATION_SIZE,
-                nsgaIIParameterSpace));
+                parameterSpace));
 
         algorithms.add(
-            createMOEAD(
-                expProblem, run, "MOEAD", moeadConfig, POPULATION_SIZE, moeadParameterSpace));
+            createAlgo(
+                expProblem, run, "NSGAII-RE3D", bestRE3DConfig, POPULATION_SIZE, parameterSpace));
 
         algorithms.add(
-            createNSGAII(
-                expProblem,
-                run,
-                "NSGAII-RE3D",
-                bestRE3DConfig,
-                POPULATION_SIZE,
-                nsgaIIParameterSpace));
-
-        algorithms.add(
-            createNSGAII(
+            createAlgo(
                 expProblem,
                 run,
                 "NSGAII-RE3D-Est",
                 estimatedBestRE3DConfig,
                 POPULATION_SIZE,
-                nsgaIIParameterSpace));
+                parameterSpace));
       }
     }
     return algorithms;
   }
 
-  private static ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>> createNSGAII(
+  private static ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>> createAlgo(
       ExperimentProblem<DoubleSolution> expProblem,
       int run,
       String tag,
@@ -252,25 +218,6 @@ public class DTLZWFG3DStudy {
 
     DoubleNSGAII factory =
         new DoubleNSGAII(expProblem.getProblem(), popSize, MAX_EVALUATIONS, parameterSpace);
-    factory.parse(params.split("\\s+"));
-    EvolutionaryAlgorithm<DoubleSolution> algorithm = factory.build();
-    return new ExperimentAlgorithm<>(algorithm, tag, expProblem, run);
-  }
-
-  private static ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>> createMOEAD(
-      ExperimentProblem<DoubleSolution> expProblem,
-      int run,
-      String tag,
-      String params,
-      int popSize,
-      YAMLParameterSpace parameterSpace) {
-    org.uma.evolver.algorithm.moead.DoubleMOEAD factory =
-        new org.uma.evolver.algorithm.moead.DoubleMOEAD(
-            expProblem.getProblem(),
-            popSize,
-            MAX_EVALUATIONS,
-            "resources/weightVectors",
-            parameterSpace);
     factory.parse(params.split("\\s+"));
     EvolutionaryAlgorithm<DoubleSolution> algorithm = factory.build();
     return new ExperimentAlgorithm<>(algorithm, tag, expProblem, run);

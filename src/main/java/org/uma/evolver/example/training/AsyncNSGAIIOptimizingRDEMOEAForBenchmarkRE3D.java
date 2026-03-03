@@ -46,7 +46,7 @@ public class AsyncNSGAIIOptimizingRDEMOEAForBenchmarkRE3D {
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "RDEMOEADoubleFull.yaml";
+    String yamlParameterSpaceFile = "RDEMOEADouble.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor = new RE3DTrainingSet();

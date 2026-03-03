@@ -8,7 +8,7 @@ Evolver is a Java framework for automatically configuring multi-objective metahe
 ## Quick facts
 - Language/Tooling: Java 21, Maven
 - Key deps: jMetal `${jmetal.version}` (currently 7.0), SnakeYAML
-- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/example/training/**`, base-level configuration examples under `org/uma/evolver/example/configuration/**`, and experimental studies under `org/uma/evolver/example/study/**`.
+- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/example/training/**`, base-level configuration examples under `org/uma/evolver/example/configuration/**`, and validation/experimental studies under `org/uma/evolver/example/validation/**`.
 - Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance). Prefer those over generic style rules.
 
 ## Commands you'll use most
@@ -73,7 +73,7 @@ Training sets
 Examples (runnable mains)
 - Meta-optimization training examples: `org.uma.evolver.example.training.*` (e.g., `NSGAIIOptimizingNSGAIIForBenchmarkDTLZ`)
 - Base-level configuration examples: `org.uma.evolver.example.configuration.*` (e.g., `MOEAD_DTLZ2`, `NSGAIIZDT4Example`)
-- Experimental studies: `org.uma.evolver.example.study.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`)
+- Validation & experimental studies: `org.uma.evolver.example.validation.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`, `RDEMOEAValidation`, `RDEMOEAValidationDTLZ`)
 
 Irace integration
 - `org.uma.evolver.irace.*`: irace parameter description generators and runner

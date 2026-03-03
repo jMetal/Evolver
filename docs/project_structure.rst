@@ -18,8 +18,7 @@ The Evolver project is structured as follows:
     │   ├── referenceFronts/ # Reference Pareto fronts for benchmark problems
     │   ├── referenceFrontsTSP/ # Reference Pareto fronts for multi-objective TSP problems
     │   ├── weightVectors/   # Weight vectors for benchmark problems
-    │   ├── tspInstances/    # TSP instances for benchmark problems
-    │   └── scripts/         # Utility scripts for analysis and visualization
+    │   └── tspInstances/    # TSP instances for benchmark problems
     ├── src/                 # Source code
     │   ├── main/            # Main source code
     │   │   ├── java/        # Java source files
@@ -38,12 +37,15 @@ The main source code is organized into the following packages:
 
 - ``org.uma.evolver``: Core framework components and interfaces
 - ``org.uma.evolver.algorithm``: Implementation of base- and meta-optimization algorithms
-- ``org.uma.evolver.algorithm.example`` 
+- ``org.uma.evolver.example``: Runnable example programs
 
-    - ``org.uma.evolver.algorithm.example.base``: Examples of base-level metaheuristics
-    - ``org.uma.evolver.algorithm.example.meta``: Examples of meta-optimization algorithms
+    - ``org.uma.evolver.example.training``: Meta-optimization training examples
+    - ``org.uma.evolver.example.configuration``: Base-level algorithm configuration examples
+    - ``org.uma.evolver.example.validation``: Validation programs and experimental studies
 - ``org.uma.evolver.parameter``: Parameter handling and parameter space management
-- ``org.uma.evolver.metaoptimizationproblem``: Meta-optimization problem definitions
+- ``org.uma.evolver.meta``: Meta-optimization problem and builder classes
+- ``org.uma.evolver.trainingset``: Training set definitions for benchmark problems
+- ``org.uma.evolver.irace``: irace integration
 - ``org.uma.evolver.util``: Utility classes and helper functions
 
 Resource Files

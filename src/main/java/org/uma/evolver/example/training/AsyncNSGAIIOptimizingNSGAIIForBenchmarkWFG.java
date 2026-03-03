@@ -45,7 +45,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkWFG {
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor = new WFG2DTrainingSet();

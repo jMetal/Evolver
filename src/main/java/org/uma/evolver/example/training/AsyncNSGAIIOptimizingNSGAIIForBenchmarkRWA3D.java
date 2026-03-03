@@ -56,7 +56,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
     int numberOfCores = Integer.parseInt(args[2]);
     String resultsDirectory = args[3];
 
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor =

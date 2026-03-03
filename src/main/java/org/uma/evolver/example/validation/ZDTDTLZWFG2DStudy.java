@@ -1,4 +1,4 @@
-package org.uma.evolver.example.study;
+package org.uma.evolver.example.validation;
 
 import java.io.IOException;
 import java.util.ArrayList;
