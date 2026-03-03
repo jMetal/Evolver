@@ -27,14 +27,14 @@ class NSGAIIDoubleTest {
   @DisplayName("When the class constructor is called: ")
   class ConstructorTestCases {
 
-    @Test
-    @DisplayName("The total number of parameters is correct")
-    void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-      int numberOfFlattenedParameters = 20;
-      assertEquals(
-          numberOfFlattenedParameters,
-          nsgaIIDouble.parameterSpace().parameters().size());
-    }
+        @Test
+        @DisplayName("The total number of parameters is correct")
+        void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
+            int numberOfFlattenedParameters = 32;
+            assertEquals(
+                    numberOfFlattenedParameters,
+                    nsgaIIDouble.parameterSpace().parameters().size());
+        }
 
     @Test
     @DisplayName("The number of top-level parameters is correct")
