@@ -1,0 +1,7 @@
+Frente,Decision,Componentes
+Real,Priorizar,"powerLawMutationDelta, populationSizeWithArchive, crossoverProbability, mutationProbabilityFactor"
+Real,Mantener abiertos,"laplaceCrossoverScale, blxAlphaBetaCrossoverBeta, blxAlphaBetaCrossoverAlpha, crossover"
+Real,Candidatos a fijar/podar,"mutation, mutationRepairStrategy, uniformMutationPerturbation, linkedPolynomialMutationDistributionIndex"
+Estimado,Priorizar,"mutationProbabilityFactor, uniformMutationPerturbation, archiveType, crossoverProbability"
+Estimado,Mantener abiertos,"mutation, levyFlightMutationBeta, populationSizeWithArchive, blxAlphaBetaCrossoverAlpha"
+Estimado,Candidatos a fijar/podar,"nonUniformMutationPerturbation, crossoverRepairStrategy, laplaceCrossoverScale, algorithmResult"

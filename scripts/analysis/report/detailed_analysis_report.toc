@@ -1,0 +1,12 @@
+\contentsline {section}{Resumen ejecutivo}{i}{section*.1}%
+\contentsline {section}{\numberline {1}Objetivo y preguntas de trabajo}{1}{section.1}%
+\contentsline {section}{\numberline {2}Contexto experimental y metodologia}{1}{section.2}%
+\contentsline {section}{\numberline {3}Convergencia del meta-optimizador y del algoritmo base}{1}{section.3}%
+\contentsline {section}{\numberline {4}Importancia de componentes}{5}{section.4}%
+\contentsline {section}{\numberline {5}Repeticion de configuraciones finales}{9}{section.5}%
+\contentsline {section}{\numberline {6}Distancia entre configuraciones y arquetipos finales}{9}{section.6}%
+\contentsline {section}{\numberline {7}Implicaciones practicas para experimentos futuros}{9}{section.7}%
+\contentsline {section}{\numberline {8}Conclusiones y recomendaciones}{12}{section.8}%
+\contentsline {section}{\numberline {9}Limitaciones}{12}{section.9}%
+\contentsline {section}{\numberline {A}Tablas suplementarias compactas}{14}{appendix.A}%
+\contentsline {section}{\numberline {B}Archivos clave generados}{17}{appendix.B}%

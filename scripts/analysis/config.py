@@ -43,6 +43,101 @@ INDICATOR_SPECS = [
     ("HVMinus", "HV$^-$ (lower is better)"),
 ]
 
+CATEGORICAL_DECODINGS = {
+    "algorithmResult": {
+        0.0: "population",
+        1.0: "externalArchive",
+    },
+    "archiveType": {
+        0.0: "crowdingDistanceArchive",
+        1.0: "unboundedArchive",
+    },
+    "createInitialSolutions": {
+        0.0: "default",
+        1.0: "latinHypercubeSampling",
+        2.0: "scatterSearch",
+        3.0: "sobol",
+        4.0: "cauchy",
+        5.0: "oppositionBased",
+    },
+    "offspringPopulationSize": {
+        0.0: "1",
+        1.0: "5",
+        2.0: "10",
+        3.0: "20",
+        4.0: "50",
+        5.0: "100",
+        6.0: "200",
+        7.0: "400",
+    },
+    "variation": {
+        0.0: "crossoverAndMutationVariation",
+    },
+    "crossover": {
+        0.0: "SBX",
+        1.0: "BLX-alpha",
+        2.0: "wholeArithmetic",
+        3.0: "BLX-alpha-beta",
+        4.0: "arithmetic",
+        5.0: "laplace",
+        6.0: "fuzzyRecombination",
+        7.0: "PCX",
+        8.0: "UNDC",
+    },
+    "crossoverRepairStrategy": {
+        0.0: "random",
+        1.0: "round",
+        2.0: "bounds",
+    },
+    "mutation": {
+        0.0: "uniform",
+        1.0: "polynomial",
+        2.0: "linkedPolynomial",
+        3.0: "nonUniform",
+        4.0: "levyFlight",
+        5.0: "powerLaw",
+    },
+    "mutationRepairStrategy": {
+        0.0: "random",
+        1.0: "round",
+        2.0: "bounds",
+    },
+    "selection": {
+        0.0: "tournament",
+        1.0: "random",
+        2.0: "boltzmann",
+        3.0: "ranking",
+        4.0: "stochasticUniversalSampling",
+    },
+}
+
+CATEGORICAL_COLUMNS = list(CATEGORICAL_DECODINGS.keys())
+
+NUMERICAL_COLUMNS = [
+    "populationSizeWithArchive",
+    "crossoverProbability",
+    "sbxDistributionIndex",
+    "blxAlphaCrossoverAlpha",
+    "blxAlphaBetaCrossoverBeta",
+    "blxAlphaBetaCrossoverAlpha",
+    "laplaceCrossoverScale",
+    "fuzzyRecombinationCrossoverAlpha",
+    "pcxCrossoverZeta",
+    "pcxCrossoverEta",
+    "undcCrossoverZeta",
+    "undcCrossoverEta",
+    "mutationProbabilityFactor",
+    "uniformMutationPerturbation",
+    "polynomialMutationDistributionIndex",
+    "linkedPolynomialMutationDistributionIndex",
+    "nonUniformMutationPerturbation",
+    "levyFlightMutationBeta",
+    "levyFlightMutationStepSize",
+    "powerLawMutationDelta",
+    "selectionTournamentSize",
+    "boltzmannTemperature",
+]
+
 
 def setup_style() -> None:
     """Apply a compact, publication-friendly Matplotlib style."""
@@ -71,6 +166,7 @@ def setup_style() -> None:
 def save_figure(fig: plt.Figure, filename: str) -> Path:
     """Save a figure under the local figures directory."""
     output_path = FIGURES_DIR / filename
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path)
     plt.close(fig)
     return output_path

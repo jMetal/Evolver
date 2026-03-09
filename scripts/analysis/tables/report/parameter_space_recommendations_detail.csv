@@ -1,0 +1,61 @@
+front_type,Componente,Importancia media,Apariciones top3,Apariciones top1,Frente,Decision
+estimatedReferenceFronts,mutationProbabilityFactor,0.11189377596180552,4,2,Estimado,Priorizar
+estimatedReferenceFronts,uniformMutationPerturbation,0.07683089468493634,4,1,Estimado,Priorizar
+estimatedReferenceFronts,archiveType,0.11285507288243024,3,2,Estimado,Priorizar
+estimatedReferenceFronts,crossoverProbability,0.08484568477042048,3,1,Estimado,Priorizar
+estimatedReferenceFronts,mutation,0.06853628920987796,2,1,Estimado,Mantener abiertos
+estimatedReferenceFronts,levyFlightMutationBeta,0.06430449113693663,2,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,populationSizeWithArchive,0.0605242141577571,1,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,blxAlphaBetaCrossoverAlpha,0.05132273210336762,1,1,Estimado,Mantener abiertos
+estimatedReferenceFronts,blxAlphaBetaCrossoverBeta,0.04563210235858231,1,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,sbxDistributionIndex,0.04075754468907772,1,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,mutationRepairStrategy,0.03329025468132828,1,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,crossover,0.030310878562567412,1,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,polynomialMutationDistributionIndex,0.03705675793699055,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,linkedPolynomialMutationDistributionIndex,0.031627964064189946,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,powerLawMutationDelta,0.0237316063009585,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,levyFlightMutationStepSize,0.020356215980267038,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,offspringPopulationSize,0.015361700490094674,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,pcxCrossoverZeta,0.014947798718380874,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,pcxCrossoverEta,0.0144420522541566,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,selection,0.013301461748053125,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,selectionTournamentSize,0.012277259082363613,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,createInitialSolutions,0.011667637591842625,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,boltzmannTemperature,0.010404264793077288,0,0,Estimado,Mantener abiertos
+estimatedReferenceFronts,nonUniformMutationPerturbation,0.008125341818570274,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,crossoverRepairStrategy,0.0071825483008829,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,laplaceCrossoverScale,0.005058184840793777,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,algorithmResult,0.00481017280973475,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,undcCrossoverEta,0.003790319958994791,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,blxAlphaCrossoverAlpha,0.0029051253694497756,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,undcCrossoverZeta,0.0016759106817561065,0,0,Estimado,Candidatos a fijar/podar
+estimatedReferenceFronts,fuzzyRecombinationCrossoverAlpha,0.0005525144048926537,0,0,Estimado,Candidatos a fijar/podar
+referenceFronts,powerLawMutationDelta,0.16951078508860876,8,2,Real,Priorizar
+referenceFronts,populationSizeWithArchive,0.2398428552390264,6,4,Real,Priorizar
+referenceFronts,crossoverProbability,0.08873540006891285,4,0,Real,Priorizar
+referenceFronts,mutationProbabilityFactor,0.12515250841918138,3,2,Real,Priorizar
+referenceFronts,laplaceCrossoverScale,0.03878959144255816,1,0,Real,Mantener abiertos
+referenceFronts,blxAlphaBetaCrossoverBeta,0.0265916185777232,1,0,Real,Mantener abiertos
+referenceFronts,blxAlphaBetaCrossoverAlpha,0.025629060626130136,1,0,Real,Mantener abiertos
+referenceFronts,crossover,0.028241062134769786,0,0,Real,Mantener abiertos
+referenceFronts,selection,0.028191642957467223,0,0,Real,Mantener abiertos
+referenceFronts,blxAlphaCrossoverAlpha,0.024590374231657174,0,0,Real,Mantener abiertos
+referenceFronts,offspringPopulationSize,0.024374337583211638,0,0,Real,Mantener abiertos
+referenceFronts,createInitialSolutions,0.022100801423864738,0,0,Real,Mantener abiertos
+referenceFronts,pcxCrossoverEta,0.0218748087853593,0,0,Real,Mantener abiertos
+referenceFronts,pcxCrossoverZeta,0.02184635374863365,0,0,Real,Mantener abiertos
+referenceFronts,levyFlightMutationStepSize,0.02163234742115465,0,0,Real,Mantener abiertos
+referenceFronts,levyFlightMutationBeta,0.020413799630905026,0,0,Real,Mantener abiertos
+referenceFronts,boltzmannTemperature,0.014223909340037514,0,0,Real,Mantener abiertos
+referenceFronts,selectionTournamentSize,0.013298999787117726,0,0,Real,Mantener abiertos
+referenceFronts,crossoverRepairStrategy,0.012427116235949125,0,0,Real,Mantener abiertos
+referenceFronts,nonUniformMutationPerturbation,0.010603596264698152,0,0,Real,Mantener abiertos
+referenceFronts,mutation,0.0098464999154949,0,0,Real,Candidatos a fijar/podar
+referenceFronts,mutationRepairStrategy,0.009775926392866962,0,0,Real,Candidatos a fijar/podar
+referenceFronts,uniformMutationPerturbation,0.00533675044460297,0,0,Real,Candidatos a fijar/podar
+referenceFronts,linkedPolynomialMutationDistributionIndex,0.0023382025464760477,0,0,Real,Candidatos a fijar/podar
+referenceFronts,fuzzyRecombinationCrossoverAlpha,0.0010196648874398757,0,0,Real,Candidatos a fijar/podar
+referenceFronts,sbxDistributionIndex,0.00082374005328815,0,0,Real,Candidatos a fijar/podar
+referenceFronts,polynomialMutationDistributionIndex,0.000462115299625031,0,0,Real,Candidatos a fijar/podar
+referenceFronts,undcCrossoverZeta,8.491570347883574e-05,0,0,Real,Candidatos a fijar/podar
+referenceFronts,undcCrossoverEta,4.5723904337643564e-05,0,0,Real,Candidatos a fijar/podar

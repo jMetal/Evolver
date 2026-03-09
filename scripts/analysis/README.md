@@ -50,6 +50,59 @@ Those figures use budget on the x-axis (`0..7000`) and mark the first budget
 that reaches 95% of the total improvement observed between budget `1000` and
 the best final budget result.
 
+Running `03_base_hv_convergence.py` generates eight convergence figures using
+the base-level hypervolume recovered as `HV = -HVMinus`:
+
+- `base_hv_convergence_RE3D_budget_1000.png`
+- `base_hv_convergence_RE3D_budget_3000.png`
+- `base_hv_convergence_RE3D_budget_5000.png`
+- `base_hv_convergence_RE3D_budget_7000.png`
+- `base_hv_convergence_RWA3D_budget_1000.png`
+- `base_hv_convergence_RWA3D_budget_3000.png`
+- `base_hv_convergence_RWA3D_budget_5000.png`
+- `base_hv_convergence_RWA3D_budget_7000.png`
+
+These use meta-evaluations on the x-axis and compare `referenceFronts` vs
+`estimatedReferenceFronts` on the y-axis with positive `HV`.
+
+Running `04_base_hv_normalized_convergence.py` generates an additional set of
+eight figures with normalized improvement, without replacing the raw-HV ones:
+
+- `base_hv_normalized_convergence_RE3D_budget_1000.png`
+- `base_hv_normalized_convergence_RE3D_budget_3000.png`
+- `base_hv_normalized_convergence_RE3D_budget_5000.png`
+- `base_hv_normalized_convergence_RE3D_budget_7000.png`
+- `base_hv_normalized_convergence_RWA3D_budget_1000.png`
+- `base_hv_normalized_convergence_RWA3D_budget_3000.png`
+- `base_hv_normalized_convergence_RWA3D_budget_5000.png`
+- `base_hv_normalized_convergence_RWA3D_budget_7000.png`
+
+They show relative gain from the first checkpoint to the final checkpoint on a
+0-to-1 scale, which makes very small absolute changes visible.
+
+Running `05_pooled_base_hv_convergence.py` generates pooled raw and normalized
+HV figures, treating `RE3D` and `RWA3D` as one benchmark:
+
+- `base_hv_convergence_pooled_budget_1000.png`
+- `base_hv_convergence_pooled_budget_3000.png`
+- `base_hv_convergence_pooled_budget_5000.png`
+- `base_hv_convergence_pooled_budget_7000.png`
+- `base_hv_normalized_convergence_pooled_budget_1000.png`
+- `base_hv_normalized_convergence_pooled_budget_3000.png`
+- `base_hv_normalized_convergence_pooled_budget_5000.png`
+- `base_hv_normalized_convergence_pooled_budget_7000.png`
+
+Running `06_pooled_base_hv_delta_convergence.py` generates a pooled `delta HV`
+view for each budget:
+
+- `base_hv_delta_convergence_pooled_budget_1000.png`
+- `base_hv_delta_convergence_pooled_budget_3000.png`
+- `base_hv_delta_convergence_pooled_budget_5000.png`
+- `base_hv_delta_convergence_pooled_budget_7000.png`
+
+These figures show `HV(t) - HV(start)` so tiny raw changes become visible while
+keeping the pooled benchmark view.
+
 ## Run
 
 ```bash
