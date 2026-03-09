@@ -1,0 +1,5 @@
+family,front_type,budget_T95_EP,budget_T95_HVMinus,final_best_budget_EP,final_best_budget_HVMinus
+RE3D,referenceFronts,5000.0,7000.0,7000.0,7000.0
+RE3D,estimatedReferenceFronts,7000.0,3000.0,7000.0,3000.0
+RWA3D,referenceFronts,7000.0,7000.0,7000.0,7000.0
+RWA3D,estimatedReferenceFronts,3000.0,7000.0,5000.0,7000.0
