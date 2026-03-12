@@ -1,0 +1,7 @@
+proposal_name,proposal_scope,front_type,completed_slices,passed_slices,mean_hv_delta_pct,mean_ep_delta_pct
+RE3D_extremePointsFronts,family_front_type,extremePointsFronts,0,0,,
+RE3D_referenceFronts,family_front_type,referenceFronts,0,0,,
+RWA3D_extremePointsFronts,family_front_type,extremePointsFronts,0,0,,
+RWA3D_referenceFronts,family_front_type,referenceFronts,0,0,,
+global_extremePointsFronts,global_front_type,extremePointsFronts,0,0,,
+global_referenceFronts,global_front_type,referenceFronts,0,0,,

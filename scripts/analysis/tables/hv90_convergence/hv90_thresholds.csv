@@ -1,0 +1,13 @@
+family,front_type,target_share_pct,evaluation_threshold
+RE3D,extremePointsFronts,50.0,900
+RE3D,extremePointsFronts,90.0,1500
+RE3D,extremePointsFronts,99.0,2100
+RE3D,referenceFronts,50.0,900
+RE3D,referenceFronts,90.0,1400
+RE3D,referenceFronts,99.0,2200
+RWA3D,extremePointsFronts,50.0,1000
+RWA3D,extremePointsFronts,90.0,1500
+RWA3D,extremePointsFronts,99.0,1900
+RWA3D,referenceFronts,50.0,900
+RWA3D,referenceFronts,90.0,1400
+RWA3D,referenceFronts,99.0,2000

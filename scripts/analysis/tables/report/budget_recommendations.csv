@@ -3,7 +3,7 @@ Meta-optimizador,Default recomendado,2000-2500 meta-evaluaciones,27/32 hitos T95
 Frente real,Budget final comun,7000,Es el unico budget que alcanza T95 en EP y HV para RE3D y RWA3D.
 Frente real,Descartar para conclusiones finales,1000 y 3000,No alcanzan el nivel final requerido en ninguna lectura conjunta real.
 Frente real,Mantener solo como intermedio,5000,"Puede servir para sensibilidad o RE3D/EP, pero no como protocolo comun."
-Frente estimado,Budget final conservador,7000,Tambien es el unico budget globalmente suficiente cuando se exigen ambos benchmarks y ambas metricas.
-Frente estimado,Budget exploratorio util,3000,Ya capta parte de la calidad final y reduce coste; es razonable para barridos iniciales.
-Frente estimado,Descartar para conclusiones finales,1000,Es demasiado restrictivo para extraer conclusiones estables de calidad final.
-Frente estimado,No usar como unico default,5000,Aporta de forma asimetrica segun benchmark; no mejora lo suficiente como presupuesto estandar unico.
+Frente de puntos extremos,Budget final conservador,7000,Tambien es el unico budget globalmente suficiente cuando se exigen ambos benchmarks y ambas metricas.
+Frente de puntos extremos,Budget exploratorio util,3000,Ya capta parte de la calidad final y reduce coste; es razonable para barridos iniciales.
+Frente de puntos extremos,Descartar para conclusiones finales,1000,Es demasiado restrictivo para extraer conclusiones estables de calidad final.
+Frente de puntos extremos,No usar como unico default,5000,Aporta de forma asimetrica segun benchmark; no mejora lo suficiente como presupuesto estandar unico.

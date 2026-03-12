@@ -1,0 +1,17 @@
+scope,front_type,budget,parameter,stabilization_eval,total_evals,pct_budget_at_stabilization
+RE3D,referenceFronts,1000,populationSizeWithArchive,100,3000,3.3
+RE3D,referenceFronts,1000,powerLawMutationDelta,100,3000,3.3
+RE3D,referenceFronts,1000,mutationProbabilityFactor,100,3000,3.3
+RE3D,referenceFronts,1000,crossoverProbability,100,3000,3.3
+RWA3D,referenceFronts,1000,populationSizeWithArchive,100,3000,3.3
+RWA3D,referenceFronts,1000,powerLawMutationDelta,100,3000,3.3
+RWA3D,referenceFronts,1000,mutationProbabilityFactor,100,3000,3.3
+RWA3D,referenceFronts,1000,crossoverProbability,100,3000,3.3
+RE3D,extremePointsFronts,1000,populationSizeWithArchive,100,3000,3.3
+RE3D,extremePointsFronts,1000,powerLawMutationDelta,100,3000,3.3
+RE3D,extremePointsFronts,1000,mutationProbabilityFactor,100,3000,3.3
+RE3D,extremePointsFronts,1000,crossoverProbability,100,3000,3.3
+RWA3D,extremePointsFronts,1000,populationSizeWithArchive,100,3000,3.3
+RWA3D,extremePointsFronts,1000,powerLawMutationDelta,100,3000,3.3
+RWA3D,extremePointsFronts,1000,mutationProbabilityFactor,100,3000,3.3
+RWA3D,extremePointsFronts,1000,crossoverProbability,100,3000,3.3

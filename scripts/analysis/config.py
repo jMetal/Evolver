@@ -10,9 +10,19 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-RESULTS_ROOT = Path(
-    os.environ.get("EVOLVER_RESULTS_ROOT", "C:/Users/nicor/Desktop/Results_Evolver")
+REFERENCE_RESULTS_ROOT = Path(
+    os.environ.get(
+        "EVOLVER_REFERENCE_RESULTS_ROOT",
+        "C:/Users/nicor/Desktop/Results_Evolver",
+    )
 )
+EXTREME_POINTS_RESULTS_ROOT = Path(
+    os.environ.get(
+        "EVOLVER_EXTREME_POINTS_RESULTS_ROOT",
+        "C:/Users/nicor/Desktop/2026.03.11.results",
+    )
+)
+RESULTS_ROOT: Path | None = None
 ANALYSIS_DIR = Path(__file__).resolve().parent
 FIGURES_DIR = ANALYSIS_DIR / "figures"
 TABLES_DIR = ANALYSIS_DIR / "tables"
@@ -20,22 +30,27 @@ FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 TABLES_DIR.mkdir(parents=True, exist_ok=True)
 
 FAMILIES = ["RE3D", "RWA3D"]
-FRONT_TYPES = ["referenceFronts", "estimatedReferenceFronts"]
+FRONT_TYPES = ["referenceFronts", "extremePointsFronts"]
 BUDGETS = [1000, 3000, 5000, 7000]
+
+FRONT_TYPE_RESULTS_ROOTS = {
+    "referenceFronts": REFERENCE_RESULTS_ROOT,
+    "extremePointsFronts": EXTREME_POINTS_RESULTS_ROOT,
+}
 
 FRONT_TYPE_LABELS = {
     "referenceFronts": "Reference fronts",
-    "estimatedReferenceFronts": "Estimated fronts",
+    "extremePointsFronts": "Extreme-point fronts",
 }
 
 FRONT_TYPE_COLORS = {
     "referenceFronts": "#1b9e77",
-    "estimatedReferenceFronts": "#d95f02",
+    "extremePointsFronts": "#d95f02",
 }
 
 FRONT_TYPE_LINESTYLES = {
     "referenceFronts": "-",
-    "estimatedReferenceFronts": "--",
+    "extremePointsFronts": "--",
 }
 
 INDICATOR_SPECS = [
@@ -113,6 +128,13 @@ CATEGORICAL_DECODINGS = {
 
 CATEGORICAL_COLUMNS = list(CATEGORICAL_DECODINGS.keys())
 
+TOP_PARAMETERS = [
+    "populationSizeWithArchive",
+    "powerLawMutationDelta",
+    "mutationProbabilityFactor",
+    "crossoverProbability",
+]
+
 NUMERICAL_COLUMNS = [
     "populationSizeWithArchive",
     "crossoverProbability",
@@ -170,3 +192,10 @@ def save_figure(fig: plt.Figure, filename: str) -> Path:
     fig.savefig(output_path)
     plt.close(fig)
     return output_path
+
+
+def resolve_results_root(front_type: str, results_root: Path | None = None) -> Path:
+    """Resolve the results root for a front type, honoring an optional override."""
+    if results_root is not None:
+        return Path(results_root)
+    return FRONT_TYPE_RESULTS_ROOTS[front_type]

@@ -42,15 +42,15 @@
 
 {\Huge\bfseries Informe analitico detallado\\[0.35cm]}
 
-{\Large Convergencia, importancia de componentes y repeticion de configuraciones\\[1.6cm]}
+{\Large Convergencia, configuraciones, tipos de frente y coste-calidad\\[1.6cm]}
 
-{\large RE3D y RWA3D con frentes reales y estimados\\[2.2cm]}
+{\large RE3D y RWA3D con frentes reales y de puntos extremos\\[2.2cm]}
 
 \begin{tabular}{ll}
 
 Benchmarks analizados & RE3D, RWA3D\\
 
-Tipos de frente & real, estimado\\
+Tipos de frente & real, puntos extremos\\
 
 Budgets del algoritmo base & 1000, 3000, 5000, 7000\\
 
@@ -58,7 +58,7 @@ Meta-optimizador & 3000 meta-evaluaciones fijas\\
 
 Fuentes de datos & \texttt{INDICATORS.csv}, \texttt{CONFIGURATIONS.csv}\\
 
-Nivel del informe & vistas agregadas, desagregadas y consensus\\
+Nivel del informe & vistas agregadas, desagregadas, consensus y coste\\
 
 \end{tabular}
 
@@ -66,7 +66,7 @@ Nivel del informe & vistas agregadas, desagregadas y consensus\\
 
 {\large Generado automaticamente a partir de \texttt{scripts/analysis}\\}
 
-{\large 9 de marzo de 2026\\}
+{\large 12 de marzo de 2026\\}
 
 \end{titlepage}
 
@@ -84,15 +84,23 @@ Nivel del informe & vistas agregadas, desagregadas y consensus\\
 
 \item El estudio cubre 16 slices analiticos (2 benchmarks $\times$ 2 frentes $\times$ 4 budgets), todos con 3000 meta-evaluaciones; sobre EP y HV se obtienen 32 hitos \(T95\) comparables.
 
-\item El meta-optimizador converge pronto: 27 de 32 hitos \(T95\) aparecen a 2000 meta-evaluaciones o antes, con mediana 1600 y maximo 2500.
+\item El meta-optimizador converge pronto: 30 de 32 hitos \(T95\) aparecen a 2000 meta-evaluaciones o antes, con mediana 1500 y maximo 2600.
 
-\item En frente real, los budgets altos del algoritmo base siguen aportando mejora util: RE3D necesita budget 5000 para EP y 7000 para HV, mientras que RWA3D necesita 7000 para ambos indicadores. En frente estimado la respuesta es mas heterogenea y dependiente del benchmark.
+\item En frente real, los budgets altos del algoritmo base siguen aportando mejora util: RE3D necesita budget 5000 para EP y 7000 para HV, mientras que RWA3D necesita 7000 para ambos indicadores. En el frente de puntos extremos la respuesta es mas heterogenea y dependiente del benchmark.
 
-\item El analisis de componentes recomienda usar \emph{consensus} para conclusiones conjuntas. A budget 7000 y frente real domina \texttt{populationSizeWithArchive} tanto en EP como en HV; en frente estimado dominan \texttt{uniformMutationPerturbation} para EP y \texttt{archiveType} para HV, con mayor asimetria entre benchmarks.
+\item El analisis de componentes recomienda usar \emph{consensus} para conclusiones conjuntas. A budget 7000 y frente real domina \texttt{populationSizeWithArchive} tanto en EP como en HV; en el frente de puntos extremos dominan \texttt{powerLawMutationDelta} para EP y \texttt{crossoverProbability} para HV, con mayor asimetria entre benchmarks.
 
-\item Las configuraciones finales de RE3D y RWA3D permanecen separadas incluso cuando se comparan con una metrica mixta. La separacion media between-minus-within es 0.060 con Gower no ponderada y 0.115 con Gower ponderada por consensus, por lo que las diferencias mas relevantes para rendimiento son todavia mayores.
+\item Las configuraciones finales de RE3D y RWA3D permanecen separadas incluso cuando se comparan con una metrica mixta. La separacion media between-minus-within es 0.078 con Gower no ponderada y 0.154 con Gower ponderada por consensus, por lo que las diferencias mas relevantes para rendimiento son todavia mayores.
 
-\item Las configuraciones exactas repetidas no son una buena heuristica de calidad: la top repetida coincide 0 de 16 veces con la mejor por EP y 0 de 16 con la mejor por HV; ademas no aparece ninguna configuracion exacta compartida entre RE3D y RWA3D.
+\item El subespacio elite es consistente en todos los slices (si para las inclusiones top-5/top-10/top-20). Las propuestas globales por tipo de frente solo recortan 5.7\% de complejidad efectiva, mientras que las especificas por benchmark recortan entre 36.0\% y 47.5\%.
+
+\item La comparacion estadistica explicita entre frente real y de puntos extremos solo detecta diferencias significativas en 3 de 8 combinaciones benchmark-budget; cuando aparecen, el mayor contraste se observa en RWA3D con budget 5000 (A = 0.289, efecto large).
+
+\item El modelado predictivo por random forest es mucho mas estable en RWA3D (Reference fronts, $R^2$ CV medio 0.639) que en RE3D (Extreme-point fronts, $R^2$ CV medio 0.098), lo que sugiere una estructura configuracional mas aprendible en el primer caso.
+
+\item El 90\% del HV final se alcanza pronto: la mediana global es 900 meta-evaluaciones y el percentil 90 agregado no supera 1500. Llegar al 99\% del HV de referencia requiere costes moderados, pero subir al 99.9\% mueve el coste a 1.4--1.5 millones de evaluaciones base.
+
+\item Las configuraciones exactas repetidas no son una buena heuristica de calidad: la top repetida coincide 1 de 16 veces con la mejor por EP y 0 de 16 con la mejor por HV; ademas no aparece ninguna configuracion exacta compartida entre RE3D y RWA3D.
 
 \end{itemize}
 
@@ -108,7 +116,7 @@ Nivel del informe & vistas agregadas, desagregadas y consensus\\
 
 Este informe sintetiza todo el trabajo analitico realizado hasta ahora sobre los benchmarks RE3D y RWA3D en Evolver. El objetivo no es solo catalogar figuras o tablas, sino responder con detalle a tres preguntas: (i) como converge el meta-optimizador a lo largo de sus 3000 meta-evaluaciones y como cambia el rendimiento cuando varia el budget del algoritmo base; (ii) que componentes o familias de parametros son mas influyentes en cada benchmark, frente y budget; y (iii) hasta que punto se repiten configuraciones finales exactas, tanto por benchmark como en una lectura conjunta.
 
-El informe combina vistas desagregadas por benchmark (RE3D frente a RWA3D), por tipo de frente (real frente a estimado) y por budget del algoritmo base (1000, 3000, 5000 y 7000 evaluaciones). Cuando la agregacion es interpretable se usan vistas conjuntas; cuando no lo es, se explicita el motivo y se sustituye por una alternativa metodologicamente mas limpia.
+El informe combina vistas desagregadas por benchmark (RE3D frente a RWA3D), por tipo de frente (real frente a puntos extremos) y por budget del algoritmo base (1000, 3000, 5000 y 7000 evaluaciones). Cuando la agregacion es interpretable se usan vistas conjuntas; cuando no lo es, se explicita el motivo y se sustituye por una alternativa metodologicamente mas limpia.
 
 \section{Contexto experimental y metodologia}
 
@@ -120,33 +128,33 @@ Las importancias de componentes se obtienen con \texttt{RandomForestRegressor} t
 
 \section{Convergencia del meta-optimizador y del algoritmo base}
 
-El primer hallazgo es que el limite de 3000 meta-evaluaciones es conservador. Considerando conjuntamente EP y HV, 27 de 32 hitos \(T95\) aparecen a 2000 meta-evaluaciones o antes; el maximo observado es 2500 meta-evaluaciones y la mediana es 1600. En otras palabras, el meta-optimizador suele haber capturado ya la mayor parte de la mejora bastante antes de agotarse el presupuesto completo.
+El primer hallazgo es que el limite de 3000 meta-evaluaciones es conservador. Considerando conjuntamente EP y HV, 30 de 32 hitos \(T95\) aparecen a 2000 meta-evaluaciones o antes; el maximo observado es 2600 meta-evaluaciones y la mediana es 1500. En otras palabras, el meta-optimizador suele haber capturado ya la mayor parte de la mejora bastante antes de agotarse el presupuesto completo.
 
-El segundo hallazgo es que el impacto del budget del algoritmo base depende mucho mas del tipo de frente que del propio limite de meta-evaluaciones. En frente real, los budgets altos siguen aportando mejora util: RE3D necesita budget 5000 para llegar al 95\% de EP y 7000 para HV, mientras que RWA3D necesita 7000 para ambos indicadores. En frente estimado, la situacion es mas heterogenea: RE3D alcanza \(T95\) de HV ya con 3000, mientras que RWA3D alcanza \(T95\) de EP a 3000 pero sigue necesitando 7000 para HV.
+El segundo hallazgo es que el impacto del budget del algoritmo base depende mucho mas del tipo de frente que del propio limite de meta-evaluaciones. En frente real, los budgets altos siguen aportando mejora util: RE3D necesita budget 5000 para llegar al 95\% de EP y 7000 para HV, mientras que RWA3D necesita 7000 para ambos indicadores. En el frente de puntos extremos, la situacion es mas heterogenea y dependiente del benchmark.
 
 \begin{figure}[p]
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_1000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_pooled_budget_1000.png}
 \caption{Budget 1000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_3000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_pooled_budget_3000.png}
 \caption{Budget 3000}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_5000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_pooled_budget_5000.png}
 \caption{Budget 5000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_7000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_pooled_budget_7000.png}
 \caption{Budget 7000}
 \end{subfigure}
 \vspace{0.6em}
@@ -158,29 +166,29 @@ El segundo hallazgo es que el impacto del budget del algoritmo base depende much
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_budget_1000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RE3D_budget_1000.png}
 \caption{Budget 1000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_budget_3000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RE3D_budget_3000.png}
 \caption{Budget 3000}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_budget_5000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RE3D_budget_5000.png}
 \caption{Budget 5000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_budget_7000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RE3D_budget_7000.png}
 \caption{Budget 7000}
 \end{subfigure}
 \vspace{0.6em}
-\caption{Convergencia normalizada del HV del algoritmo base para RE3D, separando frente real y estimado en cada figura.}
+\caption{Convergencia normalizada del HV del algoritmo base para RE3D, separando frente real y de puntos extremos en cada figura.}
 \label{fig:re3d_hv}
 \end{figure}
 
@@ -188,29 +196,29 @@ El segundo hallazgo es que el impacto del budget del algoritmo base depende much
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_budget_1000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RWA3D_budget_1000.png}
 \caption{Budget 1000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_budget_3000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RWA3D_budget_3000.png}
 \caption{Budget 3000}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_budget_5000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RWA3D_budget_5000.png}
 \caption{Budget 5000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_budget_7000.png}
+\includegraphics[width=\linewidth]{../figures/base_hv_normalized_convergence_RWA3D_budget_7000.png}
 \caption{Budget 7000}
 \end{subfigure}
 \vspace{0.6em}
-\caption{Convergencia normalizada del HV del algoritmo base para RWA3D, separando frente real y estimado en cada figura.}
+\caption{Convergencia normalizada del HV del algoritmo base para RWA3D, separando frente real y de puntos extremos en cada figura.}
 \label{fig:rwa_hv}
 \end{figure}
 
@@ -240,18 +248,18 @@ RE3D & Real & 1000 & 1000 & 1400 & 900 & 1400 & 40.912 & 0.910 \\
 RE3D & Real & 3000 & 1100 & 1800 & 1000 & 1400 & 25.981 & 0.255 \\
 RE3D & Real & 5000 & 1100 & 1600 & 900 & 1500 & 22.190 & 0.178 \\
 RE3D & Real & 7000 & 1400 & 1900 & 1000 & 1300 & 13.209 & 0.121 \\
-RE3D & Estimado & 1000 & 1000 & 1200 & 700 & 800 & 0.748 & 0.058 \\
-RE3D & Estimado & 3000 & 400 & 400 & 1600 & 1900 & 0.081 & 0.006 \\
-RE3D & Estimado & 5000 & 1400 & 1600 & 1700 & 1900 & 0.029 & 0.004 \\
-RE3D & Estimado & 7000 & 2300 & 2500 & 1200 & 2400 & 0.031 & 0.003 \\
+RE3D & Puntos extremos & 1000 & 1000 & 1600 & 900 & 1400 & 3.607 & 0.992 \\
+RE3D & Puntos extremos & 3000 & 1500 & 1700 & 800 & 1300 & 1.247 & 0.331 \\
+RE3D & Puntos extremos & 5000 & 1400 & 1800 & 1100 & 1700 & 1.089 & 0.131 \\
+RE3D & Puntos extremos & 7000 & 1500 & 2600 & 900 & 1200 & 0.961 & 0.138 \\
 RWA3D & Real & 1000 & 900 & 1100 & 800 & 1200 & 5.106 & 0.685 \\
 RWA3D & Real & 3000 & 1100 & 1700 & 1000 & 1400 & 1.506 & 0.288 \\
 RWA3D & Real & 5000 & 1300 & 1900 & 900 & 1400 & 1.294 & 0.301 \\
 RWA3D & Real & 7000 & 1300 & 2500 & 1100 & 1700 & 1.178 & 0.273 \\
-RWA3D & Estimado & 1000 & 1100 & 1700 & 1200 & 1600 & 0.704 & 0.073 \\
-RWA3D & Estimado & 3000 & 1600 & 2100 & 1100 & 1300 & 0.298 & 0.033 \\
-RWA3D & Estimado & 5000 & 1400 & 1600 & 1200 & 1500 & 0.281 & 0.030 \\
-RWA3D & Estimado & 7000 & 1400 & 1900 & 1400 & 2100 & 0.253 & 0.024 \\
+RWA3D & Puntos extremos & 1000 & 1200 & 2000 & 900 & 1200 & 0.666 & 0.670 \\
+RWA3D & Puntos extremos & 3000 & 1200 & 1300 & 1200 & 1500 & 0.482 & 0.320 \\
+RWA3D & Puntos extremos & 5000 & 1300 & 1400 & 1000 & 1400 & 0.468 & 0.279 \\
+RWA3D & Puntos extremos & 7000 & 1300 & 1600 & 1000 & 1600 & 0.436 & 0.256 \\
 \end{longtable}
 
 }
@@ -268,24 +276,24 @@ RWA3D & Estimado & 7000 & 1400 & 1900 & 1400 & 2100 & 0.253 & 0.024 \\
 Benchmark & Frente & Budget T95 EP & Budget T95 HV & Budget final EP & Budget final HV \\
 \midrule
 RE3D & Real & 5000.000 & 7000.000 & 7000.000 & 7000.000 \\
-RE3D & Estimado & 7000.000 & 3000.000 & 7000.000 & 3000.000 \\
+RE3D & Puntos extremos & 7000.000 & 7000.000 & 7000.000 & 7000.000 \\
 RWA3D & Real & 7000.000 & 7000.000 & 7000.000 & 7000.000 \\
-RWA3D & Estimado & 3000.000 & 7000.000 & 5000.000 & 7000.000 \\
+RWA3D & Puntos extremos & 7000.000 & 7000.000 & 7000.000 & 7000.000 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 }
 
-Las ganancias relativas refuerzan esa lectura. RE3D con frente real y budget 1000 es el slice con mayor mejora relativa en EP (40.9\%), seguido de RWA3D con frente real y budget 1000 (5.1\%). En contraste, cuando el frente es estimado las mejoras absolutas y relativas son mucho menores porque el proceso arranca ya muy cerca de su valor final; por ejemplo, RE3D estimado pasa de una mejora relativa en EP del 0.75\% a budget 1000 a apenas 0.03\% a budget 7000.
+Las ganancias relativas refuerzan esa lectura. RE3D con frente real y budget 1000 es el slice con mayor mejora relativa en EP (40.9\%), seguido de RWA3D con frente real y budget 1000 (5.1\%). En contraste, el frente de puntos extremos presenta un patron distinto y mas dependiente del benchmark, por lo que conviene leer las tablas de resumen junto con las figuras.
 
 \section{Importancia de componentes}
 
-Las curvas de importancia muestran dos regimenes distintos. En frente real, la estructura es bastante estable y el componente dominante termina concentrandose en el tamano de poblacion con archivo. En frente estimado, en cambio, la jerarquia de componentes cambia con el budget y ademas difiere entre RE3D y RWA3D, por lo que cualquier lectura conjunta debe hacerse con cuidado.
+Las curvas de importancia muestran dos regimenes distintos. En frente real, la estructura es bastante estable y el componente dominante termina concentrandose en el tamano de poblacion con archivo. En el frente de puntos extremos, en cambio, la jerarquia de componentes cambia con el budget y ademas difiere entre RE3D y RWA3D, por lo que cualquier lectura conjunta debe hacerse con cuidado.
 
 La figura consensus en frente real es especialmente estable. A budget 1000 el top-1 consensus para EP y HV es \texttt{mutationProbabilityFactor}. A budget 3000 se abre paso \texttt{populationSizeWithArchive} en EP y \texttt{powerLawMutationDelta} en HV. A budgets 5000 y 7000 el tamano de poblacion domina claramente EP, y en 7000 tambien HV. Esta trayectoria coincide con el analisis desagregado: en budget 7000 tanto RE3D como RWA3D tienen \texttt{populationSizeWithArchive} como principal predictor en frente real para EP y HV.
 
-En frente estimado la historia cambia. El top-1 consensus para EP pasa de \texttt{mutation} (1000) a \texttt{mutationProbabilityFactor} (3000), despues a \texttt{blxAlphaBetaCrossoverAlpha} (5000) y finalmente a \texttt{uniformMutationPerturbation} (7000). Para HV, el top-1 pasa de \texttt{mutationProbabilityFactor} (1000) a \texttt{crossoverProbability} (3000) y luego a \texttt{archiveType} (5000 y 7000). Sin embargo, estos consensus no siempre representan un componente compartido de verdad: a budget 7000, por ejemplo, \texttt{archiveType} es top-1 en HV sobre todo por RE3D, mientras que en RWA3D domina \texttt{levyFlightMutationBeta}. Esta asimetria es justamente la razon por la que se abandono el pooled crudo de importancia.
+En el frente de puntos extremos la historia cambia. Los leaders consensus a budget 7000 son \texttt{powerLawMutationDelta} para EP y \texttt{crossoverProbability} para HV. La lectura operativa sigue siendo la misma: los consensus deben leerse como promedio de relevancias, no como prueba de una configuracion universal compartida por RE3D y RWA3D.
 
 \begin{figure}[p]
 \centering
@@ -321,29 +329,29 @@ En frente estimado la historia cambia. El top-1 consensus para EP pasa de \textt
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_1000/component_importance_consensus_estimated_1000.png}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_1000/component_importance_consensus_extreme_points_1000.png}
 \caption{Budget 1000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_3000/component_importance_consensus_estimated_3000.png}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_3000/component_importance_consensus_extreme_points_3000.png}
 \caption{Budget 3000}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_5000/component_importance_consensus_estimated_5000.png}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_5000/component_importance_consensus_extreme_points_5000.png}
 \caption{Budget 5000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_consensus_estimated_7000.png}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_consensus_extreme_points_7000.png}
 \caption{Budget 7000}
 \end{subfigure}
 \vspace{0.6em}
-\caption{Importancia consensus de componentes en frente estimado para los cuatro budgets. La variabilidad entre budgets es notablemente mayor que en frente real.}
+\caption{Importancia consensus de componentes en el frente de puntos extremos para los cuatro budgets. Cada subfigura contiene dos paneles: EP y HV.}
 \label{fig:consensus_estimated}
 \end{figure}
 
@@ -357,8 +365,8 @@ En frente estimado la historia cambia. El top-1 consensus para EP pasa de \textt
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_RE3D_estimatedReferenceFronts_7000.png}
-\caption{RE3D, frente estimado}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_RE3D_extremePointsFronts_7000.png}
+\caption{RE3D, frente de puntos extremos}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
@@ -369,11 +377,11 @@ En frente estimado la historia cambia. El top-1 consensus para EP pasa de \textt
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_RWA3D_estimatedReferenceFronts_7000.png}
-\caption{RWA3D, frente estimado}
+\includegraphics[width=\linewidth]{../figures/component_importance/budget_7000/component_importance_RWA3D_extremePointsFronts_7000.png}
+\caption{RWA3D, frente de puntos extremos}
 \end{subfigure}
 \vspace{0.6em}
-\caption{Importancia de componentes a budget 7000 en los analisis desagregados. Esta figura es la referencia principal para comparar la asimetria entre benchmarks cuando el frente es estimado.}
+\caption{Importancia de componentes a budget 7000 en los analisis desagregados. Esta figura es la referencia principal para comparar la asimetria entre benchmarks cuando se usan puntos extremos.}
 \label{fig:individual_7000_components}
 \end{figure}
 
@@ -399,20 +407,20 @@ Frente & Budget & Indicador & Top 3 consensus \\
 \endfoot
 \bottomrule
 \endlastfoot
-Estimado & 1000 & EP & 1) mutation; 2) uniformMutationPerturbation; 3) mutationProbabilityFactor \\
-Estimado & 1000 & HV & 1) mutationProbabilityFactor; 2) archiveType; 3) crossoverProbability \\
+Puntos extremos & 1000 & EP & 1) populationSizeWithArchive; 2) crossoverProbability; 3) mutationProbabilityFactor \\
+Puntos extremos & 1000 & HV & 1) populationSizeWithArchive; 2) crossoverProbability; 3) selectionTournamentSize \\
 Real & 1000 & EP & 1) mutationProbabilityFactor; 2) powerLawMutationDelta; 3) blxAlphaBetaCrossoverBeta \\
 Real & 1000 & HV & 1) mutationProbabilityFactor; 2) powerLawMutationDelta; 3) blxAlphaBetaCrossoverAlpha \\
-Estimado & 3000 & EP & 1) mutationProbabilityFactor; 2) uniformMutationPerturbation; 3) blxAlphaBetaCrossoverBeta \\
-Estimado & 3000 & HV & 1) crossoverProbability; 2) populationSizeWithArchive; 3) levyFlightMutationBeta \\
+Puntos extremos & 3000 & EP & 1) mutationProbabilityFactor; 2) crossoverProbability; 3) populationSizeWithArchive \\
+Puntos extremos & 3000 & HV & 1) crossoverProbability; 2) mutationProbabilityFactor; 3) populationSizeWithArchive \\
 Real & 3000 & EP & 1) populationSizeWithArchive; 2) powerLawMutationDelta; 3) crossoverProbability \\
 Real & 3000 & HV & 1) powerLawMutationDelta; 2) mutationProbabilityFactor; 3) populationSizeWithArchive \\
-Estimado & 5000 & EP & 1) blxAlphaBetaCrossoverAlpha; 2) mutation; 3) uniformMutationPerturbation \\
-Estimado & 5000 & HV & 1) archiveType; 2) sbxDistributionIndex; 3) crossover \\
+Puntos extremos & 5000 & EP & 1) blxAlphaBetaCrossoverBeta; 2) populationSizeWithArchive; 3) mutationProbabilityFactor \\
+Puntos extremos & 5000 & HV & 1) powerLawMutationDelta; 2) crossoverProbability; 3) crossover \\
 Real & 5000 & EP & 1) populationSizeWithArchive; 2) crossoverProbability; 3) powerLawMutationDelta \\
 Real & 5000 & HV & 1) powerLawMutationDelta; 2) populationSizeWithArchive; 3) crossoverProbability \\
-Estimado & 7000 & EP & 1) uniformMutationPerturbation; 2) mutationProbabilityFactor; 3) mutationRepairStrategy \\
-Estimado & 7000 & HV & 1) archiveType; 2) levyFlightMutationBeta; 3) crossoverProbability \\
+Puntos extremos & 7000 & EP & 1) powerLawMutationDelta; 2) mutationProbabilityFactor; 3) populationSizeWithArchive \\
+Puntos extremos & 7000 & HV & 1) crossoverProbability; 2) linkedPolynomialMutationDistributionIndex; 3) mutation \\
 Real & 7000 & EP & 1) populationSizeWithArchive; 2) crossoverProbability; 3) powerLawMutationDelta \\
 Real & 7000 & HV & 1) populationSizeWithArchive; 2) laplaceCrossoverScale; 3) powerLawMutationDelta \\
 \end{longtable}
@@ -423,9 +431,9 @@ Real & 7000 & HV & 1) populationSizeWithArchive; 2) laplaceCrossoverScale; 3) po
 
 \section{Repeticion de configuraciones finales}
 
-El analisis de firmas exactas de configuracion es muy claro: las configuraciones finales exactas apenas se repiten. La repeticion maxima habitual es 2, y el caso mas extremo es RE3D con frente estimado y budget 7000, donde la configuracion mas repetida aparece 5 veces. Incluso en ese caso, esas repeticiones siguen estando concentradas en un unico run: la cuota de runs de la configuracion top es siempre 3.33\%, es decir, un solo run de 30.
+El analisis de firmas exactas de configuracion es muy claro: las configuraciones finales exactas apenas se repiten. Incluso en los casos con mayor repeticion, esas coincidencias siguen estando concentradas en muy pocos runs.
 
-La conclusion mas fuerte es que la configuracion exacta mas repetida no coincide con la mejor configuracion ni por EP ni por HV. En 0 de 16 casos coincide con la mejor por EP, y en 0 de 16 coincide con la mejor por HV. Por tanto, repetir una configuracion exacta no es una senal de optimo global, sino simplemente de duplicacion local dentro de la nube final de soluciones.
+La conclusion mas fuerte es que la configuracion exacta mas repetida no coincide con la mejor configuracion ni por EP ni por HV. En 1 de 16 casos coincide con la mejor por EP, y en 0 de 16 coincide con la mejor por HV. Por tanto, repetir una configuracion exacta no es una senal de optimo global, sino simplemente de duplicacion local dentro de la nube final de soluciones.
 
 Tampoco aparece ninguna configuracion exacta compartida entre RE3D y RWA3D: el numero total de coincidencias exactas shared es 0. Este resultado se mantiene para los cuatro budgets y para ambos tipos de frente. La lectura operativa es importante: si se busca transferencia entre benchmarks, no conviene transferir configuraciones exactas; conviene transferir familias de parametros y patrones de componentes.
 
@@ -438,21 +446,21 @@ Tampoco aparece ninguna configuracion exacta compartida entre RE3D y RWA3D: el n
 \toprule
 Benchmark & Frente & Budget & Max. repeticiones & Configs. con repeticiones & Top es mejor EP & Top es mejor HV \\
 \midrule
-RE3D & Estimado & 1000 & 3 & 16 & no & no \\
+RE3D & Puntos extremos & 1000 & 2 & 2 & no & no \\
 RE3D & Real & 1000 & 2 & 2 & no & no \\
-RWA3D & Estimado & 1000 & 2 & 4 & no & no \\
+RWA3D & Puntos extremos & 1000 & 2 & 1 & no & no \\
 RWA3D & Real & 1000 & 2 & 1 & no & no \\
-RE3D & Estimado & 3000 & 3 & 16 & no & no \\
+RE3D & Puntos extremos & 3000 & 2 & 4 & si & no \\
 RE3D & Real & 3000 & 2 & 1 & no & no \\
-RWA3D & Estimado & 3000 & 2 & 4 & no & no \\
+RWA3D & Puntos extremos & 3000 & 2 & 3 & no & no \\
 RWA3D & Real & 3000 & 2 & 1 & no & no \\
-RE3D & Estimado & 5000 & 2 & 4 & no & no \\
+RE3D & Puntos extremos & 5000 & 2 & 2 & no & no \\
 RE3D & Real & 5000 & 2 & 4 & no & no \\
-RWA3D & Estimado & 5000 & 2 & 4 & no & no \\
+RWA3D & Puntos extremos & 5000 & 2 & 5 & no & no \\
 RWA3D & Real & 5000 & 2 & 4 & no & no \\
-RE3D & Estimado & 7000 & 5 & 12 & no & no \\
+RE3D & Puntos extremos & 7000 & 2 & 4 & no & no \\
 RE3D & Real & 7000 & 2 & 4 & no & no \\
-RWA3D & Estimado & 7000 & 2 & 7 & no & no \\
+RWA3D & Puntos extremos & 7000 & 2 & 3 & no & no \\
 RWA3D & Real & 7000 & 2 & 4 & no & no \\
 \bottomrule
 \end{tabular}
@@ -469,13 +477,13 @@ RWA3D & Real & 7000 & 2 & 4 & no & no \\
 \toprule
 Frente & Budget & Configuraciones exactas compartidas \\
 \midrule
-Estimado & 1000 & 0 \\
+Puntos extremos & 1000 & 0 \\
 Real & 1000 & 0 \\
-Estimado & 3000 & 0 \\
+Puntos extremos & 3000 & 0 \\
 Real & 3000 & 0 \\
-Estimado & 5000 & 0 \\
+Puntos extremos & 5000 & 0 \\
 Real & 5000 & 0 \\
-Estimado & 7000 & 0 \\
+Puntos extremos & 7000 & 0 \\
 Real & 7000 & 0 \\
 \bottomrule
 \end{tabular}
@@ -492,7 +500,7 @@ Real & 7000 & 0 \\
 \toprule
 Casos analizados & Top repetida coincide con mejor EP & Top repetida coincide con mejor HV \\
 \midrule
-16 & 0 & 0 \\
+16 & 1 & 0 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -501,7 +509,7 @@ Casos analizados & Top repetida coincide con mejor EP & Top repetida coincide co
 
 \section{Distancia entre configuraciones y arquetipos finales}
 
-La igualdad exacta resulta demasiado estricta para responder si dos configuraciones son parecidas. Por eso se ha anadido una distancia Gower mixta sobre las configuraciones finales, con dos variantes: una no ponderada y otra ponderada por las importancias consensus de componentes. En los 16 casos analizados, la distancia media between supera a la distancia media within, lo que indica que RE3D y RWA3D no acaban ocupando la misma region del espacio de configuraciones. Ademas, la separacion media between-minus-within sube de 0.060 a 0.115 cuando se pondera por consensus.
+La igualdad exacta resulta demasiado estricta para responder si dos configuraciones son parecidas. Por eso se ha anadido una distancia Gower mixta sobre las configuraciones finales, con dos variantes: una no ponderada y otra ponderada por las importancias consensus de componentes. En los 16 casos analizados, la distancia media between supera a la distancia media within, lo que indica que RE3D y RWA3D no acaban ocupando la misma region del espacio de configuraciones. Ademas, la separacion media between-minus-within sube de 0.078 a 0.154 cuando se pondera por consensus.
 
 La lectura cualitativa es clara. La version no ponderada ya detecta diferencias estructurales entre benchmarks, pero la version ponderada las amplifica porque da mas peso a los componentes que realmente explican rendimiento. Eso significa que RE3D y RWA3D no solo difieren en parametros secundarios: difieren sobre todo en los parametros que mas importan para la calidad final. En paralelo, el analisis de medoids muestra que cada benchmark conserva un arquetipo dominante que suele capturar alrededor del 50--65\% de las soluciones finales, con variaciones segun frente y budget.
 
@@ -539,29 +547,29 @@ La lectura cualitativa es clara. La version no ponderada ya detecta diferencias 
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_1000/configuration_distance_distribution_estimatedReferenceFronts_1000.png}
+\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_1000/configuration_distance_distribution_extremePointsFronts_1000.png}
 \caption{Budget 1000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_3000/configuration_distance_distribution_estimatedReferenceFronts_3000.png}
+\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_3000/configuration_distance_distribution_extremePointsFronts_3000.png}
 \caption{Budget 3000}
 \end{subfigure}
 \vspace{0.6em}
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_5000/configuration_distance_distribution_estimatedReferenceFronts_5000.png}
+\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_5000/configuration_distance_distribution_extremePointsFronts_5000.png}
 \caption{Budget 5000}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_7000/configuration_distance_distribution_estimatedReferenceFronts_7000.png}
+\includegraphics[width=\linewidth]{../figures/configuration_distance/budget_7000/configuration_distance_distribution_extremePointsFronts_7000.png}
 \caption{Budget 7000}
 \end{subfigure}
 \vspace{0.6em}
-\caption{Distribuciones de distancia entre configuraciones finales para frente estimado. La ponderacion consensus amplifica la separacion cuando los benchmarks difieren en componentes relevantes.}
+\caption{Distribuciones de distancia entre configuraciones finales para el frente de puntos extremos. La ponderacion consensus amplifica la separacion cuando los benchmarks difieren en componentes relevantes.}
 \label{fig:distance_estimated}
 \end{figure}
 
@@ -574,13 +582,13 @@ La lectura cualitativa es clara. La version no ponderada ya detecta diferencias 
 \toprule
 Frente & Budget & Within mean unweighted & Between mean unweighted & Separation unweighted & Within mean weighted & Between mean weighted & Separation weighted \\
 \midrule
-Estimado & 1000 & 0.302 & 0.359 & 0.056 & 0.344 & 0.432 & 0.088 \\
+Puntos extremos & 1000 & 0.249 & 0.299 & 0.050 & 0.338 & 0.436 & 0.099 \\
 Real & 1000 & 0.268 & 0.301 & 0.033 & 0.375 & 0.524 & 0.149 \\
-Estimado & 3000 & 0.335 & 0.388 & 0.053 & 0.369 & 0.443 & 0.074 \\
+Puntos extremos & 3000 & 0.257 & 0.318 & 0.062 & 0.317 & 0.457 & 0.140 \\
 Real & 3000 & 0.264 & 0.333 & 0.069 & 0.335 & 0.495 & 0.161 \\
-Estimado & 5000 & 0.353 & 0.403 & 0.050 & 0.399 & 0.498 & 0.099 \\
+Puntos extremos & 5000 & 0.258 & 0.357 & 0.099 & 0.363 & 0.548 & 0.185 \\
 Real & 5000 & 0.246 & 0.343 & 0.097 & 0.343 & 0.494 & 0.152 \\
-Estimado & 7000 & 0.370 & 0.415 & 0.045 & 0.345 & 0.450 & 0.105 \\
+Puntos extremos & 7000 & 0.220 & 0.357 & 0.137 & 0.286 & 0.535 & 0.249 \\
 Real & 7000 & 0.252 & 0.328 & 0.077 & 0.396 & 0.491 & 0.095 \\
 \bottomrule
 \end{tabular}
@@ -597,13 +605,13 @@ Real & 7000 & 0.252 & 0.328 & 0.077 & 0.396 & 0.491 & 0.095 \\
 \toprule
 Frente & Budget & Best EP unweighted & Best HV unweighted & Best EP weighted & Best HV weighted \\
 \midrule
-Estimado & 1000 & 0.280 & 0.219 & 0.227 & 0.291 \\
+Puntos extremos & 1000 & 0.322 & 0.158 & 0.453 & 0.224 \\
 Real & 1000 & 0.170 & 0.252 & 0.306 & 0.486 \\
-Estimado & 3000 & 0.265 & 0.299 & 0.290 & 0.401 \\
+Puntos extremos & 3000 & 0.444 & 0.136 & 0.482 & 0.240 \\
 Real & 3000 & 0.365 & 0.171 & 0.551 & 0.270 \\
-Estimado & 5000 & 0.386 & 0.437 & 0.461 & 0.545 \\
+Puntos extremos & 5000 & 0.397 & 0.461 & 0.645 & 0.749 \\
 Real & 5000 & 0.217 & 0.358 & 0.388 & 0.565 \\
-Estimado & 7000 & 0.394 & 0.242 & 0.268 & 0.294 \\
+Puntos extremos & 7000 & 0.370 & 0.248 & 0.580 & 0.369 \\
 Real & 7000 & 0.149 & 0.369 & 0.198 & 0.683 \\
 \bottomrule
 \end{tabular}
@@ -620,13 +628,13 @@ Real & 7000 & 0.149 & 0.369 & 0.198 & 0.683 \\
 \toprule
 Frente & Budget & Archetype RE3D (\%) & Archetype RWA3D (\%) & Dist medoid RE3D & Dist medoid RWA3D \\
 \midrule
-Estimado & 1000 & 0.155 & 0.192 & 68.310 & 60.917 \\
+Puntos extremos & 1000 & 0.198 & 0.186 & 51.418 & 50.980 \\
 Real & 1000 & 0.247 & 0.184 & 64.348 & 58.650 \\
-Estimado & 3000 & 0.229 & 0.205 & 67.484 & 55.405 \\
+Puntos extremos & 3000 & 0.214 & 0.157 & 53.497 & 54.086 \\
 Real & 3000 & 0.202 & 0.206 & 66.832 & 88.808 \\
-Estimado & 5000 & 0.253 & 0.162 & 58.520 & 47.672 \\
+Puntos extremos & 5000 & 0.191 & 0.151 & 60.424 & 46.953 \\
 Real & 5000 & 0.226 & 0.157 & 59.664 & 58.980 \\
-Estimado & 7000 & 0.198 & 0.148 & 56.972 & 42.018 \\
+Puntos extremos & 7000 & 0.142 & 0.211 & 66.270 & 95.385 \\
 Real & 7000 & 0.198 & 0.196 & 53.030 & 55.528 \\
 \bottomrule
 \end{tabular}
@@ -634,13 +642,659 @@ Real & 7000 & 0.198 & 0.196 & 53.030 & 55.528 \\
 
 }
 
+\section{Estructura de configuraciones y espacios reducidos}
+
+El analisis del subespacio elite deja una conclusion clara: las regiones casi optimas son mucho mas informativas que la mejor configuracion puntual. Ademas, las inclusiones nested top-5 dentro de top-10 y top-10 dentro de top-20 se cumplen en todos los slices (si), lo que indica que la definicion de elite usada para estas tablas es estable y no una fluctuacion arbitraria.
+
+A budget 7000, las propuestas especificas por benchmark fijan entre 5 y 6 categoricos y acotan tres numericos, con reducciones de complejidad efectiva entre 36.0\% y 47.5\%. En cambio, las propuestas globales por tipo de frente apenas reducen 5.7\%, por lo que la evidencia favorece una poda especifica por benchmark antes que una poda unica para RE3D y RWA3D.
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/elite_subspace/budget_7000/elite_profile_RE3D_referenceFronts_7000.png}
+\caption{RE3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/elite_subspace/budget_7000/elite_profile_RE3D_extremePointsFronts_7000.png}
+\caption{RE3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/elite_subspace/budget_7000/elite_profile_RWA3D_referenceFronts_7000.png}
+\caption{RWA3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/elite_subspace/budget_7000/elite_profile_RWA3D_extremePointsFronts_7000.png}
+\caption{RWA3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Comparacion entre la distribucion total y el elite conjunto del 10\textbackslash\{\}\% a budget 7000. Estas figuras ayudan a ver que parametros se concentran de verdad en la region casi optima.}
+\label{fig:elite_7000}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Parametros candidatos a fijar o acotar en el subespacio elite conjunto (budget 7000).}
+\label{tab:elite_actions}
+\begin{tabular}{llrrrll}
+\toprule
+Benchmark & Frente & Budget & Fijos & Acotados & Parametros fijados & Parametros acotados \\
+\midrule
+RE3D & Puntos extremos & 7000 & 6 & 3 & algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation & boltzmannTemperature, crossoverProbability, populationSizeWithArchive \\
+RWA3D & Puntos extremos & 7000 & 5 & 3 & algorithmResult, archiveType, mutation, mutationRepairStrategy, variation & blxAlphaCrossoverAlpha, laplaceCrossoverScale, populationSizeWithArchive \\
+RE3D & Real & 7000 & 6 & 3 & algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation & laplaceCrossoverScale, levyFlightMutationStepSize, powerLawMutationDelta \\
+RWA3D & Real & 7000 & 5 & 3 & algorithmResult, archiveType, mutation, mutationRepairStrategy, variation & boltzmannTemperature, mutationProbabilityFactor, populationSizeWithArchive \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+Las reglas interpretables son mucho mas escasas que las concentraciones marginales: con los umbrales exigidos de soporte y precision solo sobreviven 1 reglas. En los datos actuales la principal es \texttt{crossover = laplace AND crossoverProbability > 0.878}, lo que sugiere que la estructura buena existe pero no se deja resumir por muchas reglas simples y globales.
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{llrlll}
+\caption{Reglas interpretables que superan los umbrales de soporte y precision fijados.} \label{tab:conditional_rules} \\
+\toprule
+Benchmark & Frente & Budget & Regla & Soporte (\%) & Precision (\%) \\
+\midrule
+\endfirsthead
+\caption[]{Reglas interpretables que superan los umbrales de soporte y precision fijados.} \\
+\toprule
+Benchmark & Frente & Budget & Regla & Soporte (\%) & Precision (\%) \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & Real & 3000 & crossover = laplace AND crossoverProbability > 0.878 & 10.396 & 76.190 \\
+\end{longtable}
+
+}
+
+Las trayectorias del incumbente muestran dos comportamientos. Por un lado, varios categoricos se estabilizan muy pronto; por otro, la entrada en la region elite final puede retrasarse mucho en algunos slices de RE3D, mientras RWA3D suele entrar antes. Esa combinacion refuerza la idea de que existe convergencia estructural, pero no una configuracion universal exacta compartida entre benchmarks.
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_trajectory/budget_7000/trajectory_RE3D_referenceFronts_7000.png}
+\caption{RE3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_trajectory/budget_7000/trajectory_RE3D_extremePointsFronts_7000.png}
+\caption{RE3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_referenceFronts_7000.png}
+\caption{RWA3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_extremePointsFronts_7000.png}
+\caption{RWA3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Trayectorias estructurales del incumbente a budget 7000. La parte superior muestra la distancia al medoid elite final y la inferior la fraccion de runs que ya estabilizaron cada parametro.}
+\label{fig:trajectory_7000}
+\end{figure}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{llrllll}
+\caption{Entrada mediana al medoid elite final y parametros que se estabilizan antes.} \label{tab:configuration_trajectory} \\
+\toprule
+Benchmark & Frente & Budget & Entrada mediana al medoid & Entrada mediana (\%) & Distancia final mediana & Top 3 tempranos \\
+\midrule
+\endfirsthead
+\caption[]{Entrada mediana al medoid elite final y parametros que se estabilizan antes.} \\
+\toprule
+Benchmark & Frente & Budget & Entrada mediana al medoid & Entrada mediana (\%) & Distancia final mediana & Top 3 tempranos \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & Puntos extremos & 1000 & 800.000 & 26.700 & 0.327 & blxAlphaCrossoverAlpha (10.0\%); powerLawMutationDelta (10.0\%); crossoverRepairStrategy (10.0\%) \\
+RWA3D & Puntos extremos & 1000 & 800.000 & 26.700 & 0.211 & levyFlightMutationBeta (10.0\%); levyFlightMutationStepSize (10.0\%); selectionTournamentSize (10.0\%) \\
+RE3D & Real & 1000 & 800.000 & 26.700 & 0.266 & blxAlphaCrossoverAlpha (10.0\%); powerLawMutationDelta (10.0\%); nonUniformMutationPerturbation (10.0\%) \\
+RWA3D & Real & 1000 & 800.000 & 26.700 & 0.219 & blxAlphaCrossoverAlpha (10.0\%); mutation (10.0\%); algorithmResult (10.0\%) \\
+RE3D & Puntos extremos & 3000 & 3000.000 & 100.000 & 0.261 & laplaceCrossoverScale (10.0\%); blxAlphaCrossoverAlpha (10.0\%); selectionTournamentSize (10.0\%) \\
+RWA3D & Puntos extremos & 3000 & 800.000 & 26.700 & 0.178 & selectionTournamentSize (10.0\%); boltzmannTemperature (10.0\%); laplaceCrossoverScale (10.0\%) \\
+RE3D & Real & 3000 & 3000.000 & 100.000 & 0.284 & selectionTournamentSize (10.0\%); boltzmannTemperature (10.0\%); pcxCrossoverEta (10.0\%) \\
+RWA3D & Real & 3000 & 800.000 & 26.700 & 0.202 & boltzmannTemperature (10.0\%); mutationRepairStrategy (10.0\%); selectionTournamentSize (10.0\%) \\
+RE3D & Puntos extremos & 5000 & 2650.000 & 88.350 & 0.165 & pcxCrossoverZeta (10.0\%); selectionTournamentSize (10.0\%); pcxCrossoverEta (10.0\%) \\
+RWA3D & Puntos extremos & 5000 & 800.000 & 26.700 & 0.221 & blxAlphaCrossoverAlpha (10.0\%); laplaceCrossoverScale (10.0\%); boltzmannTemperature (10.0\%) \\
+RE3D & Real & 5000 & 2300.000 & 76.700 & 0.201 & powerLawMutationDelta (10.0\%); blxAlphaCrossoverAlpha (10.0\%); laplaceCrossoverScale (10.0\%) \\
+RWA3D & Real & 5000 & 800.000 & 26.700 & 0.150 & blxAlphaCrossoverAlpha (10.0\%); boltzmannTemperature (10.0\%); laplaceCrossoverScale (10.0\%) \\
+RE3D & Puntos extremos & 7000 & 1150.000 & 38.350 & 0.152 & selectionTournamentSize (10.0\%); mutation (10.0\%); crossover (10.0\%) \\
+RWA3D & Puntos extremos & 7000 & 800.000 & 26.700 & 0.232 & blxAlphaCrossoverAlpha (10.0\%); boltzmannTemperature (10.0\%); laplaceCrossoverScale (10.0\%) \\
+RE3D & Real & 7000 & 800.000 & 26.700 & 0.212 & boltzmannTemperature (10.0\%); blxAlphaBetaCrossoverAlpha (10.0\%); blxAlphaBetaCrossoverBeta (10.0\%) \\
+RWA3D & Real & 7000 & 1500.000 & 50.000 & 0.175 & blxAlphaBetaCrossoverAlpha (10.0\%); blxAlphaCrossoverAlpha (10.0\%); laplaceCrossoverScale (10.0\%) \\
+\end{longtable}
+
+}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Resumen de propuestas de espacio reducido a partir del budget 7000.}
+\label{tab:reduced_space_summary}
+\begin{tabular}{lrrlll}
+\toprule
+Propuesta & Categoricos fijados & Numericos acotados & Reduccion dimensiones (\%) & Reduccion complejidad (\%) & Reduccion media ancho numerico (\%) \\
+\midrule
+Global / frente real & 3 & 0 & 6.452 & 4.898 & 0.000 \\
+Global / puntos extremos & 3 & 1 & 6.452 & 6.522 & 3.014 \\
+RE3D / frente real & 6 & 3 & 45.161 & 47.475 & 15.731 \\
+RE3D / puntos extremos & 6 & 3 & 45.161 & 47.548 & 15.960 \\
+RWA3D / frente real & 5 & 3 & 32.258 & 35.973 & 15.739 \\
+RWA3D / puntos extremos & 5 & 3 & 32.258 & 36.824 & 17.913 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+Los reruns completos de validacion todavia no se han ejecutado, por lo que esta version del informe incluye la sintesis del espacio reducido, los YAML derivados y el runner Java compatible, pero no una comparacion cuantitativa final frente al baseline.
+
+\section{Contrastes estadisticos entre tipos de frente}
+
+La comparacion directa entre frente real y frente de puntos extremos sobre el HV final muestra un resultado mas matizado de lo que sugerian algunas lecturas visuales: solo 3 de 8 combinaciones benchmark-budget presentan diferencias estadisticamente significativas. Eso significa que el cambio de frente altera la jerarquia de componentes y endurece EP, pero no desplaza de forma sistematica y grande el HV final en todos los slices.
+
+Cuando la diferencia si aparece, el mayor contraste agregado se observa en RWA3D con budget 5000, donde la magnitud de Vargha-Delaney es 0.289 y el efecto cae en la categoria large. En paralelo, los deltas medianos de HV siguen siendo pequenos en valor absoluto, lo que refuerza la idea de que HV es bastante robusto al tipo de frente incluso cuando las pruebas detectan cambio estadistico.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{../figures/statistical_comparison/final_hv_front_type_comparison.png}
+\caption{Comparacion descriptiva del HV final entre frente real y frente de puntos extremos para todos los budgets.}
+\label{fig:front_type_stats}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Comparacion estadistica de HV final entre frente real y frente de puntos extremos por benchmark y budget.}
+\label{tab:front_type_stats}
+\begin{tabular}{lrlllllll}
+\toprule
+Benchmark & Budget & HV real mediana & HV extremos mediana & Delta HV mediana (\%) & p & A & Efecto & Significativo \\
+\midrule
+RE3D & 1000 & 0.850 & 0.850 & -0.000 & 0.728 & 0.527 & negligible & no \\
+RWA3D & 1000 & 0.585 & 0.585 & 0.002 & 0.652 & 0.466 & negligible & no \\
+RE3D & 3000 & 0.851 & 0.851 & 0.003 & 0.176 & 0.398 & small & no \\
+RWA3D & 3000 & 0.586 & 0.586 & 0.004 & 0.122 & 0.383 & small & no \\
+RE3D & 5000 & 0.852 & 0.852 & -0.001 & 0.631 & 0.537 & negligible & no \\
+RWA3D & 5000 & 0.586 & 0.586 & 0.008 & 0.005 & 0.289 & large & si \\
+RE3D & 7000 & 0.852 & 0.852 & 0.001 & 0.019 & 0.323 & medium & si \\
+RWA3D & 7000 & 0.586 & 0.586 & 0.007 & 0.016 & 0.319 & medium & si \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+\section{Frecuencias, distribuciones y asociaciones de parametros}
+
+Las frecuencias categoricas y las distribuciones numericas confirman que la estructura de las configuraciones buenas no se reduce a una sola receta. Incluso a budget 7000, muchas modas categoricas quedan lejos de una dominancia total y varios parametros numericos conservan dispersion apreciable entre frente real y puntos extremos. Por eso las podas globales agresivas son menos defendibles que las reducciones especificas por benchmark.
+
+Las asociaciones con el HV final concentran senal util en pocos parametros. La asociacion significativa mas fuerte observada en este bloque es crossover en RE3D bajo Extreme-point fronts, con estadistico 59.854. Ademas, el numero de contrastes no parametricos significativos distintos de Spearman asciende a 8, lo que indica que parte de la senal es monotona y parte responde a cambios de distribucion entre ramas parametrizadas.
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/categorical_frequencies/categorical_frequencies_RE3D.png}
+\caption{RE3D}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/categorical_frequencies/categorical_frequencies_RWA3D.png}
+\caption{RWA3D}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Frecuencias relativas de parametros categoricos por benchmark, frente y budget.}
+\label{fig:categorical_frequencies}
+\end{figure}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{llrlll}
+\caption{Modas categoricas y su frecuencia a budget 7000.} \label{tab:categorical_modes_7000} \\
+\toprule
+Benchmark & Frente & Budget & Parametro & Moda & Frecuencia modal (\%) \\
+\midrule
+\endfirsthead
+\caption[]{Modas categoricas y su frecuencia a budget 7000.} \\
+\toprule
+Benchmark & Frente & Budget & Parametro & Moda & Frecuencia modal (\%) \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & Extreme-point fronts & 7000 & createInitialSolutions & cauchy & 30.000 \\
+RE3D & Extreme-point fronts & 7000 & crossover & laplace & 93.333 \\
+RE3D & Extreme-point fronts & 7000 & mutation & levyFlight & 66.667 \\
+RE3D & Extreme-point fronts & 7000 & selection & boltzmann & 33.333 \\
+RE3D & Reference fronts & 7000 & createInitialSolutions & sobol & 30.000 \\
+RE3D & Reference fronts & 7000 & crossover & laplace & 63.333 \\
+RE3D & Reference fronts & 7000 & mutation & levyFlight & 53.333 \\
+RE3D & Reference fronts & 7000 & selection & random & 30.000 \\
+RWA3D & Extreme-point fronts & 7000 & createInitialSolutions & cauchy & 53.333 \\
+RWA3D & Extreme-point fronts & 7000 & crossover & BLX-alpha & 40.000 \\
+RWA3D & Extreme-point fronts & 7000 & mutation & powerLaw & 100.000 \\
+RWA3D & Extreme-point fronts & 7000 & selection & boltzmann & 36.667 \\
+RWA3D & Reference fronts & 7000 & createInitialSolutions & cauchy & 56.667 \\
+RWA3D & Reference fronts & 7000 & crossover & laplace & 36.667 \\
+RWA3D & Reference fronts & 7000 & mutation & powerLaw & 93.333 \\
+RWA3D & Reference fronts & 7000 & selection & ranking & 26.667 \\
+\end{longtable}
+
+}
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/numerical_distributions/numerical_distributions_RE3D.png}
+\caption{RE3D}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/numerical_distributions/numerical_distributions_RWA3D.png}
+\caption{RWA3D}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Distribuciones numericas resumidas por benchmark, frente y budget.}
+\label{fig:numerical_distributions}
+\end{figure}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{llrlrlll}
+\caption{Resumen numerico (mediana e IQR) para parametros clave a budget 7000.} \label{tab:numerical_focus_7000} \\
+\toprule
+Benchmark & Frente & Budget & Parametro & n & Median & Q25 & Q75 \\
+\midrule
+\endfirsthead
+\caption[]{Resumen numerico (mediana e IQR) para parametros clave a budget 7000.} \\
+\toprule
+Benchmark & Frente & Budget & Parametro & n & Median & Q25 & Q75 \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & Extreme-point fronts & 7000 & crossoverProbability & 30 & 0.849 & 0.724 & 0.945 \\
+RE3D & Reference fronts & 7000 & crossoverProbability & 30 & 0.842 & 0.730 & 0.911 \\
+RE3D & Extreme-point fronts & 7000 & mutationProbabilityFactor & 30 & 0.730 & 0.584 & 1.042 \\
+RE3D & Reference fronts & 7000 & mutationProbabilityFactor & 30 & 0.803 & 0.554 & 1.174 \\
+RE3D & Extreme-point fronts & 7000 & populationSizeWithArchive & 30 & 113.500 & 98.500 & 134.750 \\
+RE3D & Reference fronts & 7000 & populationSizeWithArchive & 30 & 95.000 & 31.500 & 152.500 \\
+RE3D & Extreme-point fronts & 7000 & powerLawMutationDelta & 10 & 5.304 & 4.989 & 8.317 \\
+RE3D & Reference fronts & 7000 & powerLawMutationDelta & 14 & 6.070 & 4.927 & 6.896 \\
+RWA3D & Extreme-point fronts & 7000 & crossoverProbability & 30 & 0.269 & 0.138 & 0.484 \\
+RWA3D & Reference fronts & 7000 & crossoverProbability & 30 & 0.264 & 0.169 & 0.375 \\
+RWA3D & Extreme-point fronts & 7000 & mutationProbabilityFactor & 30 & 1.856 & 1.625 & 1.958 \\
+RWA3D & Reference fronts & 7000 & mutationProbabilityFactor & 30 & 1.871 & 1.759 & 1.947 \\
+RWA3D & Extreme-point fronts & 7000 & populationSizeWithArchive & 30 & 16.500 & 11.250 & 19.750 \\
+RWA3D & Reference fronts & 7000 & populationSizeWithArchive & 30 & 18.000 & 11.000 & 64.000 \\
+RWA3D & Extreme-point fronts & 7000 & powerLawMutationDelta & 30 & 9.281 & 8.076 & 9.682 \\
+RWA3D & Reference fronts & 7000 & powerLawMutationDelta & 28 & 9.307 & 8.336 & 9.537 \\
+\end{longtable}
+
+}
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/parameter_association/parameter_association_RE3D.png}
+\caption{RE3D}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/parameter_association/parameter_association_RWA3D.png}
+\caption{RWA3D}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Correlaciones y contrastes de asociacion entre parametros y HV final.}
+\label{fig:parameter_association}
+\end{figure}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{lllllll}
+\caption{Asociaciones significativas entre parametros y HV final.} \label{tab:parameter_association} \\
+\toprule
+Benchmark & Frente & Prueba & Parametro & Estadistico & p & Significativo \\
+\midrule
+\endfirsthead
+\caption[]{Asociaciones significativas entre parametros y HV final.} \\
+\toprule
+Benchmark & Frente & Prueba & Parametro & Estadistico & p & Significativo \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & Extreme-point fronts & Kruskal & crossover & 59.854 & 0.000 & si \\
+RE3D & Reference fronts & Kruskal & crossover & 44.834 & 0.000 & si \\
+RWA3D & Reference fronts & Kruskal & mutation & 18.750 & 0.000 & si \\
+RE3D & Reference fronts & Kruskal & selection & 14.674 & 0.005 & si \\
+RE3D & Reference fronts & Kruskal & mutation & 13.890 & 0.003 & si \\
+RE3D & Extreme-point fronts & Kruskal & mutation & 13.784 & 0.017 & si \\
+RWA3D & Reference fronts & Kruskal & crossover & 11.780 & 0.008 & si \\
+RWA3D & Extreme-point fronts & Kruskal & mutation & 11.525 & 0.001 & si \\
+RWA3D & Extreme-point fronts & Spearman & crossoverProbability & -0.599 & 0.000 & si \\
+RE3D & Extreme-point fronts & Spearman & populationSizeWithArchive & 0.587 & 0.000 & si \\
+RE3D & Extreme-point fronts & Spearman & boltzmannTemperature & 0.563 & 0.000 & si \\
+RE3D & Extreme-point fronts & Spearman & blxAlphaBetaCrossoverBeta & 0.539 & 0.000 & si \\
+RE3D & Reference fronts & Spearman & crossoverProbability & -0.522 & 0.000 & si \\
+RE3D & Reference fronts & Spearman & populationSizeWithArchive & 0.484 & 0.000 & si \\
+\end{longtable}
+
+}
+
+\section{Modelado predictivo, clustering y configuraciones representativas}
+
+Los modelos predictivos reafirman que no todos los benchmarks tienen la misma estructura aprendible. El mejor caso es RWA3D con Reference fronts, donde el random forest alcanza un $R^2$ medio en validacion cruzada de 0.639; el peor es RE3D con Extreme-point fronts, que baja a 0.098. Esa diferencia encaja con la intuicion visual: RWA3D presenta una estructura algo mas compacta y regular, mientras que RE3D parece admitir varias familias competitivas y mas heterogeneas.
+
+El clustering por silhouette apunta en la misma direccion. RE3D con puntos extremos se resume bien con dos clusters, mientras que RE3D con frente real necesita siete; RWA3D queda en valores intermedios. El mensaje no es solo cuantitativo: el tipo de frente cambia la geometria del espacio final, y ese cambio es mas visible en RE3D que en RWA3D.
+
+La configuracion representativa estricta, construida por modas categoricas y medianas numericas condicionadas, es util como descripcion sintetica pero no como sustituto del subespacio elite. En RE3D solo cubre 0.83\% de las filas finales, mientras que en RWA3D sube a 11.67\%. Esa asimetria confirma que RE3D requiere una descripcion por familias o arquetipos, no por un unico punto representativo.
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/rf_predictive_importance/rf_predictive_importance_RE3D.png}
+\caption{RE3D}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/rf_predictive_importance/rf_predictive_importance_RWA3D.png}
+\caption{RWA3D}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Importancia predictiva segun random forest para cada benchmark.}
+\label{fig:rf_predictive}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Capacidad predictiva de random forest sobre HV final por benchmark y tipo de frente.}
+\label{tab:rf_predictive}
+\begin{tabular}{llrlll}
+\toprule
+Benchmark & Frente & Muestras & R2 test & R2 CV media & R2 CV desv \\
+\midrule
+RE3D & Extreme-point fronts & 120 & 0.478 & 0.098 & 0.892 \\
+RE3D & Reference fronts & 120 & 0.365 & 0.372 & 0.133 \\
+RWA3D & Extreme-point fronts & 120 & 0.721 & 0.608 & 0.237 \\
+RWA3D & Reference fronts & 120 & 0.750 & 0.639 & 0.282 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_clustering/configuration_clustering_RE3D_referenceFronts.png}
+\caption{RE3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_clustering/configuration_clustering_RE3D_extremePointsFronts.png}
+\caption{RE3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_clustering/configuration_clustering_RWA3D_referenceFronts.png}
+\caption{RWA3D, frente real}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/configuration_clustering/configuration_clustering_RWA3D_extremePointsFronts.png}
+\caption{RWA3D, puntos extremos}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Estructura de clusters en el espacio de configuraciones finales para cada benchmark y tipo de frente.}
+\label{fig:configuration_clustering}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Numero de clusters sugerido por silhouette en cada benchmark y tipo de frente.}
+\label{tab:configuration_clustering}
+\begin{tabular}{llrlr}
+\toprule
+Benchmark & Frente & k seleccionado & Silhouette & Clusters \\
+\midrule
+RE3D & Reference fronts & 7 & 0.185 & 7 \\
+RE3D & Extreme-point fronts & 2 & 0.222 & 2 \\
+RWA3D & Reference fronts & 5 & 0.178 & 5 \\
+RWA3D & Extreme-point fronts & 3 & 0.251 & 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Configuraciones representativas agregadas por benchmark, construidas a partir de modas categoricas y medianas numericas condicionadas.}
+\label{tab:representative_configs}
+\begin{tabular}{lrlllllll}
+\toprule
+Benchmark & Filas coincidentes & Cobertura (\%) & HV mediana & EP mediana & crossover & mutation & selection & createInitialSolutions \\
+\midrule
+RE3D & 2 & 0.833 & 0.852 & 0.083 & laplace & levyFlight & boltzmann & cauchy \\
+RWA3D & 28 & 11.667 & 0.586 & 0.181 & BLX-alpha-beta & powerLaw & ranking & cauchy \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+\section{Convergencia al 90\% de HV y estabilidad temprana}
+
+La convergencia temprana medida por HV90 es bastante rapida. La mediana global para alcanzar el 90\% del HV final es 900 meta-evaluaciones y el percentil 90 agregado no pasa de 1500. Eso respalda la idea de que buena parte de la estructura competitiva aparece pronto, incluso cuando el optimo final siga refinandose despues.
+
+Sin embargo, llegar pronto al 90\% del HV no implica que la configuracion ya sea la final. En total hay 11 parametros benchmark-especificos cuya version temprana difiere materialmente de la final segun el criterio fijado. En RE3D cambian piezas como \texttt{crossover}, \texttt{populationSizeWithArchive} o \texttt{powerLawMutationDelta}; en RWA3D tambien aparecen discrepancias en \texttt{selection}, \texttt{crossover} y \texttt{populationSizeWithArchive}. La lectura metodologica es clara: HV converge antes que la configuracion.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth]{../figures/hv90_convergence/hv90_cdf.png}
+\caption{Distribucion acumulada del momento en que se alcanza el 90\textbackslash\{\}\% del HV final.}
+\label{fig:hv90_convergence}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Percentiles del momento en que se alcanza el 90\% del HV final.}
+\label{tab:hv90_percentiles}
+\begin{tabular}{llllll}
+\toprule
+Benchmark & P10 & P25 & Median & P75 & P90 \\
+\midrule
+RE3D & 600.000 & 700.000 & 900.000 & 1200.000 & 1500.000 \\
+RWA3D & 600.000 & 700.000 & 900.000 & 1200.000 & 1400.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{lllllll}
+\caption{Parametros cuya configuracion temprana al 90\% de HV difiere materialmente de la configuracion final.} \label{tab:hv90_inconsistent} \\
+\toprule
+Benchmark & Parametro & Tipo & Valor temprano & Valor final & Dif. abs. (\%) & Consistente \\
+\midrule
+\endfirsthead
+\caption[]{Parametros cuya configuracion temprana al 90\% de HV difiere materialmente de la configuracion final.} \\
+\toprule
+Benchmark & Parametro & Tipo & Valor temprano & Valor final & Dif. abs. (\%) & Consistente \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & boltzmannTemperature & numerical & 43.05301171787866 & 74.4375785715074 & 42.162 & no \\
+RE3D & crossover & categorical & BLX-alpha-beta & laplace & nan & no \\
+RE3D & levyFlightMutationStepSize & numerical & 0.7223851763287786 & 0.8328313251154811 & 13.262 & no \\
+RE3D & offspringPopulationSize & numerical & 10.0 & 20.0 & 50.000 & no \\
+RE3D & populationSizeWithArchive & numerical & 53.0 & 103.0 & 48.544 & no \\
+RE3D & powerLawMutationDelta & numerical & 7.127075437867883 & 5.593893492537275 & 27.408 & no \\
+RWA3D & boltzmannTemperature & numerical & 24.37183850877363 & 4.905007969134028 & 396.877 & no \\
+RWA3D & crossover & categorical & BLX-alpha-beta & BLX-alpha & nan & no \\
+RWA3D & crossoverProbability & numerical & 0.41272589804224163 & 0.26901526376785256 & 53.421 & no \\
+RWA3D & populationSizeWithArchive & numerical & 37.0 & 17.0 & 117.647 & no \\
+RWA3D & selection & categorical & tournament & boltzmann & nan & no \\
+\end{longtable}
+
+}
+
+\section{Coste-calidad y escenarios operativos}
+
+El bloque de coste-calidad permite traducir la calidad relativa a decisiones operativas. Para alcanzar el 99\% del HV de referencia pooled, RE3D puede hacerlo con Extreme-point fronts a budget 1000 y meta-evaluacion 200, para un coste total de 200000. RWA3D es incluso mas barato en ese umbral: Reference fronts, budget 1000, meta-evaluacion 100 y coste 100000.
+
+El salto al 99.9\% cambia el panorama: RE3D necesita Reference fronts con budget 7000 y coste 1400000, mientras que RWA3D necesita Reference fronts con budget 3000 y coste 1500000. El coste marginal de rascar esa ultima decima porcentual es, por tanto, muy alto frente al objetivo del 99\%.
+
+La comparacion por escenarios de coste confirma que las configuraciones representativas dependen del presupuesto operativo. El escenario con mayor cobertura observada es A en RWA3D, con 10.00\% de las filas y 2 coincidencias categoriales respecto al escenario final C. En conjunto, estos resultados sugieren usar los escenarios baratos para cribado y reservar los caros para consolidacion final, no para exploracion amplia.
+
+\begin{figure}[p]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/cost_quality/cost_quality_RE3D.png}
+\caption{RE3D}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/cost_quality/cost_quality_RWA3D.png}
+\caption{RWA3D}
+\end{subfigure}
+\vspace{0.6em}
+\caption{Relaciones coste-calidad frente al HV de referencia pooled para ambos benchmarks.}
+\label{fig:cost_quality}
+\end{figure}
+
+{\scriptsize
+\begin{table}[p]
+\centering
+\caption{Menor coste observado para alcanzar distintos porcentajes del HV de referencia pooled.}
+\label{tab:cost_quality}
+\begin{tabular}{lllrrrl}
+\toprule
+Benchmark & Objetivo HV ref. (\%) & Frente & Budget & Meta-evaluacion & Coste total & HV alcanzado (\%) \\
+\midrule
+RE3D & 90.000 & Reference fronts & 1000 & 100 & 100000 & 98.889 \\
+RE3D & 95.000 & Reference fronts & 1000 & 100 & 100000 & 98.889 \\
+RE3D & 99.000 & Extreme-point fronts & 1000 & 200 & 200000 & 99.221 \\
+RE3D & 99.900 & Reference fronts & 7000 & 200 & 1400000 & 99.918 \\
+RWA3D & 90.000 & Reference fronts & 1000 & 100 & 100000 & 99.193 \\
+RWA3D & 95.000 & Reference fronts & 1000 & 100 & 100000 & 99.193 \\
+RWA3D & 99.000 & Reference fronts & 1000 & 100 & 100000 & 99.193 \\
+RWA3D & 99.900 & Reference fronts & 3000 & 500 & 1500000 & 99.917 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+}
+
+{\scriptsize
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{lllrrrlrllllll}
+\caption{Comparacion de configuraciones representativas bajo tres escenarios de coste.} \label{tab:cost_scenarios} \\
+\toprule
+Benchmark & Scenario & Label & Budget & Meta-eval max & Filas coincidentes & Cobertura (\%) & Coincidencias categ. vs C & HV mediana & EP mediana & crossover & mutation & selection & createInitialSolutions \\
+\midrule
+\endfirsthead
+\caption[]{Comparacion de configuraciones representativas bajo tres escenarios de coste.} \\
+\toprule
+Benchmark & Scenario & Label & Budget & Meta-eval max & Filas coincidentes & Cobertura (\%) & Coincidencias categ. vs C & HV mediana & EP mediana & crossover & mutation & selection & createInitialSolutions \\
+\midrule
+\endhead
+\midrule
+\multicolumn{14}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+RE3D & A & Budget 1000 / eval 1000 & 1000 & 1000 & 1 & 1.667 & 3 & 0.849 & 0.025 & BLX-alpha-beta & levyFlight & boltzmann & cauchy \\
+RE3D & B & Budget 3000 / eval 1000 & 3000 & 1000 & 0 & 0.000 & 2 & nan & nan & BLX-alpha-beta & levyFlight & ranking & cauchy \\
+RE3D & C & Budget 7000 / final & 7000 & 3000 & 0 & 0.000 & 4 & nan & nan & laplace & levyFlight & boltzmann & cauchy \\
+RWA3D & A & Budget 1000 / eval 1000 & 1000 & 1000 & 6 & 10.000 & 2 & 0.585 & 0.287 & BLX-alpha-beta & powerLaw & ranking & cauchy \\
+RWA3D & B & Budget 3000 / eval 1000 & 3000 & 1000 & 5 & 8.333 & 2 & 0.586 & 0.392 & BLX-alpha-beta & powerLaw & tournament & cauchy \\
+RWA3D & C & Budget 7000 / final & 7000 & 3000 & 3 & 5.000 & 4 & 0.586 & 0.393 & BLX-alpha & powerLaw & boltzmann & cauchy \\
+\end{longtable}
+
+}
+
 \section{Implicaciones practicas para experimentos futuros}
 
 Si el objetivo es transformar los hallazgos anteriores en un protocolo de trabajo mas barato y mas enfocado, la conclusion principal es que no conviene tratar todos los budgets ni todos los parametros como igualmente relevantes. Los resultados apoyan una estrategia agresiva de simplificacion: reducir el techo del meta-optimizador, eliminar budgets claramente insuficientes para conclusiones finales y podar parte del espacio de parametros en una primera version reducida.
 
-En budgets, la lectura es contundente: si hace falta un unico protocolo final comparable entre RE3D y RWA3D, el unico budget base que resulta globalmente suficiente en ambos frentes es 7000. En frente real, 1000 y 3000 pueden descartarse para conclusiones finales y 5000 deberia quedar como punto intermedio de sensibilidad, no como estandar comun. En frente estimado, 3000 sigue siendo util para exploracion rapida, pero 1000 es demasiado corto y 5000 no destaca como default unico frente a la combinacion 3000/7000.
+En budgets, la lectura es contundente: si hace falta un unico protocolo final comparable entre RE3D y RWA3D, el unico budget base que resulta globalmente suficiente en ambos frentes es 7000. En frente real, 1000 y 3000 pueden descartarse para conclusiones finales y 5000 deberia quedar como punto intermedio de sensibilidad, no como estandar comun. En el frente de puntos extremos, la utilidad relativa de 3000, 5000 y 7000 debe leerse a la luz de las tablas de T95 y las curvas por benchmark.
 
-En parametros, el mensaje depende del tipo de frente. En frente real, el espacio reducido deberia seguir dejando libertad a \texttt{populationSizeWithArchive}, \texttt{powerLawMutationDelta}, \texttt{crossoverProbability} y \texttt{mutationProbabilityFactor}. En frente estimado, esa lista cambia hacia \texttt{archiveType}, \texttt{mutationProbabilityFactor}, \texttt{uniformMutationPerturbation} y \texttt{crossoverProbability}. Los parametros de muy baja importancia no deben interpretarse como irrelevantes en sentido absoluto, pero si como buenos candidatos a fijar o podar en una primera ronda de experimentos mas estrecha.
+En parametros, el mensaje depende del tipo de frente. En frente real, el espacio reducido deberia seguir dejando libertad a \texttt{populationSizeWithArchive}, \texttt{powerLawMutationDelta}, \texttt{crossoverProbability} y \texttt{mutationProbabilityFactor}. En el frente de puntos extremos, esa lista cambia hacia los leaders consensus observados en los CSV y figuras del bloque de importancia. Los parametros de muy baja importancia no deben interpretarse como irrelevantes en sentido absoluto, pero si como buenos candidatos a fijar o podar en una primera ronda de experimentos mas estrecha.
 
 {\scriptsize
 \begin{table}[p]
@@ -655,10 +1309,10 @@ Meta-optimizador & Default recomendado & 2000-2500 meta-evaluaciones & 27/32 hit
 Frente real & Budget final comun & 7000 & Es el unico budget que alcanza T95 en EP y HV para RE3D y RWA3D. \\
 Frente real & Descartar para conclusiones finales & 1000 y 3000 & No alcanzan el nivel final requerido en ninguna lectura conjunta real. \\
 Frente real & Mantener solo como intermedio & 5000 & Puede servir para sensibilidad o RE3D/EP, pero no como protocolo comun. \\
-Frente estimado & Budget final conservador & 7000 & Tambien es el unico budget globalmente suficiente cuando se exigen ambos benchmarks y ambas metricas. \\
-Frente estimado & Budget exploratorio util & 3000 & Ya capta parte de la calidad final y reduce coste; es razonable para barridos iniciales. \\
-Frente estimado & Descartar para conclusiones finales & 1000 & Es demasiado restrictivo para extraer conclusiones estables de calidad final. \\
-Frente estimado & No usar como unico default & 5000 & Aporta de forma asimetrica segun benchmark; no mejora lo suficiente como presupuesto estandar unico. \\
+Frente de puntos extremos & Budget final conservador & 7000 & Tambien es el unico budget globalmente suficiente cuando se exigen ambos benchmarks y ambas metricas. \\
+Frente de puntos extremos & Budget exploratorio util & 3000 & Ya capta parte de la calidad final y reduce coste; es razonable para barridos iniciales. \\
+Frente de puntos extremos & Descartar para conclusiones finales & 1000 & Es demasiado restrictivo para extraer conclusiones estables de calidad final. \\
+Frente de puntos extremos & No usar como unico default & 5000 & Aporta de forma asimetrica segun benchmark; no mejora lo suficiente como presupuesto estandar unico. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -677,9 +1331,9 @@ Frente & Decision & Componentes \\
 Real & Priorizar & powerLawMutationDelta, populationSizeWithArchive, crossoverProbability, mutationProbabilityFactor \\
 Real & Mantener abiertos & laplaceCrossoverScale, blxAlphaBetaCrossoverBeta, blxAlphaBetaCrossoverAlpha, crossover \\
 Real & Candidatos a fijar/podar & mutation, mutationRepairStrategy, uniformMutationPerturbation, linkedPolynomialMutationDistributionIndex \\
-Estimado & Priorizar & mutationProbabilityFactor, uniformMutationPerturbation, archiveType, crossoverProbability \\
-Estimado & Mantener abiertos & mutation, levyFlightMutationBeta, populationSizeWithArchive, blxAlphaBetaCrossoverAlpha \\
-Estimado & Candidatos a fijar/podar & nonUniformMutationPerturbation, crossoverRepairStrategy, laplaceCrossoverScale, algorithmResult \\
+Puntos extremos & Priorizar & crossoverProbability, populationSizeWithArchive, mutationProbabilityFactor, powerLawMutationDelta \\
+Puntos extremos & Mantener abiertos & linkedPolynomialMutationDistributionIndex, blxAlphaBetaCrossoverBeta, crossover, selectionTournamentSize \\
+Puntos extremos & Candidatos a fijar/podar & pcxCrossoverEta, mutationRepairStrategy, pcxCrossoverZeta, sbxDistributionIndex \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -690,13 +1344,13 @@ Estimado & Candidatos a fijar/podar & nonUniformMutationPerturbation, crossoverR
 
 Tomados en conjunto, los resultados apuntan a una estrategia clara. Primero, el cuello de botella no parece estar en las 3000 meta-evaluaciones: la mayor parte de la mejora aparece antes. Segundo, en frente real el budget base sigue importando y, ademas, la estructura de componentes es bastante interpretable: al final del recorrido, \texttt{populationSizeWithArchive} se consolida como el componente comun mas importante tanto para EP como para HV a budget 7000.
 
-Tercero, en frente estimado la sensibilidad a los componentes es mas inestable y benchmark-especifica. A budget 7000 el consensus prioriza \texttt{uniformMutationPerturbation} para EP y \texttt{archiveType} para HV, pero la tabla compacta del cuerpo deja claro que el reparto entre RE3D y RWA3D no es simetrico; por eso el consensus debe leerse como promedio de relevancias, no como prueba de una unica configuracion universal.
+Tercero, en el frente de puntos extremos la sensibilidad a los componentes es mas inestable y benchmark-especifica. A budget 7000 el consensus prioriza \texttt{powerLawMutationDelta} para EP y \texttt{crossoverProbability} para HV, pero la tabla compacta del cuerpo deja claro que el reparto entre RE3D y RWA3D no es necesariamente simetrico; por eso el consensus debe leerse como promedio de relevancias, no como prueba de una unica configuracion universal.
 
 \begin{itemize}
 
 \item Si el objetivo es reducir coste de meta-optimizacion, la recomendacion operativa es ensayar limites cercanos a 2000--2500 meta-evaluaciones y verificar si la calidad final cambia materialmente respecto a 3000.
 
-\item Si el objetivo es fijar un unico protocolo final comparable entre benchmarks, el budget base de referencia debe ser 7000; 1000 y 3000 pueden descartarse para frente real y 1000 tambien para frente estimado.
+\item Si el objetivo es fijar un unico protocolo final comparable entre benchmarks, el budget base de referencia debe ser 7000; 1000 y 3000 pueden descartarse para frente real y la decision en puntos extremos debe apoyarse en los T95 observados por benchmark.
 
 \item Si el objetivo es definir prioridades de modelado en frente real, conviene dedicar mas resolucion a \texttt{populationSizeWithArchive}, \texttt{mutationProbabilityFactor}, \texttt{powerLawMutationDelta} y \texttt{crossoverProbability}.
 
@@ -704,7 +1358,7 @@ Tercero, en frente estimado la sensibilidad a los componentes es mas inestable y
 
 \item Si el objetivo es trasladar conocimiento entre benchmarks, no conviene transferir configuraciones exactas finales: no hay coincidencias literales shared, la configuracion mas repetida no es la mejor en ninguno de los 16 casos analizados y la distancia between supera sistematicamente a la within.
 
-\item Para frente estimado, las decisiones sobre archivo y mutacion deben mantenerse condicionadas por benchmark y budget; una regla unica para RE3D y RWA3D seria excesivamente fuerte con la evidencia actual.
+\item Para el frente de puntos extremos, las decisiones sobre archivo y mutacion deben mantenerse condicionadas por benchmark y budget; una regla unica para RE3D y RWA3D seria excesivamente fuerte con la evidencia actual.
 
 \end{itemize}
 
@@ -740,36 +1394,36 @@ Benchmark & Frente & Budget & Indicador & Componente & Importancia \\
 \endfoot
 \bottomrule
 \endlastfoot
-RE3D & Estimado & 1000 & EP & mutation & 0.216 \\
-RE3D & Estimado & 1000 & HV & archiveType & 0.233 \\
+RE3D & Puntos extremos & 1000 & EP & populationSizeWithArchive & 0.209 \\
+RE3D & Puntos extremos & 1000 & HV & populationSizeWithArchive & 0.465 \\
 RE3D & Real & 1000 & EP & mutationProbabilityFactor & 0.332 \\
 RE3D & Real & 1000 & HV & mutationProbabilityFactor & 0.580 \\
-RWA3D & Estimado & 1000 & EP & mutation & 0.270 \\
-RWA3D & Estimado & 1000 & HV & mutationProbabilityFactor & 0.242 \\
+RWA3D & Puntos extremos & 1000 & EP & powerLawMutationDelta & 0.170 \\
+RWA3D & Puntos extremos & 1000 & HV & crossoverProbability & 0.275 \\
 RWA3D & Real & 1000 & EP & powerLawMutationDelta & 0.447 \\
 RWA3D & Real & 1000 & HV & powerLawMutationDelta & 0.290 \\
-RE3D & Estimado & 3000 & EP & linkedPolynomialMutationDistributionIndex & 0.162 \\
-RE3D & Estimado & 3000 & HV & populationSizeWithArchive & 0.449 \\
+RE3D & Puntos extremos & 3000 & EP & crossoverProbability & 0.189 \\
+RE3D & Puntos extremos & 3000 & HV & crossoverProbability & 0.478 \\
 RE3D & Real & 3000 & EP & populationSizeWithArchive & 0.213 \\
 RE3D & Real & 3000 & HV & pcxCrossoverEta & 0.151 \\
-RWA3D & Estimado & 3000 & EP & mutationProbabilityFactor & 0.454 \\
-RWA3D & Estimado & 3000 & HV & crossoverProbability & 0.487 \\
+RWA3D & Puntos extremos & 3000 & EP & mutationProbabilityFactor & 0.219 \\
+RWA3D & Puntos extremos & 3000 & HV & mutationProbabilityFactor & 0.304 \\
 RWA3D & Real & 3000 & EP & powerLawMutationDelta & 0.332 \\
 RWA3D & Real & 3000 & HV & powerLawMutationDelta & 0.471 \\
-RE3D & Estimado & 5000 & EP & blxAlphaBetaCrossoverAlpha & 0.366 \\
-RE3D & Estimado & 5000 & HV & archiveType & 0.565 \\
+RE3D & Puntos extremos & 5000 & EP & blxAlphaBetaCrossoverBeta & 0.333 \\
+RE3D & Puntos extremos & 5000 & HV & crossoverProbability & 0.345 \\
 RE3D & Real & 5000 & EP & populationSizeWithArchive & 0.475 \\
 RE3D & Real & 5000 & HV & populationSizeWithArchive & 0.174 \\
-RWA3D & Estimado & 5000 & EP & mutation & 0.285 \\
-RWA3D & Estimado & 5000 & HV & sbxDistributionIndex & 0.322 \\
+RWA3D & Puntos extremos & 5000 & EP & mutationProbabilityFactor & 0.158 \\
+RWA3D & Puntos extremos & 5000 & HV & powerLawMutationDelta & 0.508 \\
 RWA3D & Real & 5000 & EP & populationSizeWithArchive & 0.441 \\
 RWA3D & Real & 5000 & HV & powerLawMutationDelta & 0.418 \\
-RE3D & Estimado & 7000 & EP & mutationProbabilityFactor & 0.321 \\
-RE3D & Estimado & 7000 & HV & archiveType & 0.624 \\
+RE3D & Puntos extremos & 7000 & EP & powerLawMutationDelta & 0.265 \\
+RE3D & Puntos extremos & 7000 & HV & crossoverProbability & 0.303 \\
 RE3D & Real & 7000 & EP & populationSizeWithArchive & 0.499 \\
 RE3D & Real & 7000 & HV & populationSizeWithArchive & 0.338 \\
-RWA3D & Estimado & 7000 & EP & uniformMutationPerturbation & 0.489 \\
-RWA3D & Estimado & 7000 & HV & levyFlightMutationBeta & 0.350 \\
+RWA3D & Puntos extremos & 7000 & EP & populationSizeWithArchive & 0.175 \\
+RWA3D & Puntos extremos & 7000 & HV & linkedPolynomialMutationDistributionIndex & 0.330 \\
 RWA3D & Real & 7000 & EP & populationSizeWithArchive & 0.605 \\
 RWA3D & Real & 7000 & HV & populationSizeWithArchive & 0.343 \\
 \end{longtable}
@@ -800,20 +1454,20 @@ Frente & Budget & Indicador & Componente & Importancia & Importancia RE3D & Impo
 \endfoot
 \bottomrule
 \endlastfoot
-Estimado & 1000 & EP & mutation & 0.243 & 0.216 & 0.270 \\
-Estimado & 1000 & HV & mutationProbabilityFactor & 0.174 & 0.105 & 0.242 \\
+Puntos extremos & 1000 & EP & populationSizeWithArchive & 0.167 & 0.209 & 0.124 \\
+Puntos extremos & 1000 & HV & populationSizeWithArchive & 0.282 & 0.465 & 0.100 \\
 Real & 1000 & EP & mutationProbabilityFactor & 0.240 & 0.332 & 0.148 \\
 Real & 1000 & HV & mutationProbabilityFactor & 0.343 & 0.580 & 0.105 \\
-Estimado & 3000 & EP & mutationProbabilityFactor & 0.273 & 0.092 & 0.454 \\
-Estimado & 3000 & HV & crossoverProbability & 0.255 & 0.024 & 0.487 \\
+Puntos extremos & 3000 & EP & mutationProbabilityFactor & 0.163 & 0.107 & 0.219 \\
+Puntos extremos & 3000 & HV & crossoverProbability & 0.296 & 0.478 & 0.114 \\
 Real & 3000 & EP & populationSizeWithArchive & 0.236 & 0.213 & 0.259 \\
 Real & 3000 & HV & powerLawMutationDelta & 0.258 & 0.045 & 0.471 \\
-Estimado & 5000 & EP & blxAlphaBetaCrossoverAlpha & 0.184 & 0.366 & 0.003 \\
-Estimado & 5000 & HV & archiveType & 0.282 & 0.565 & 0.000 \\
+Puntos extremos & 5000 & EP & blxAlphaBetaCrossoverBeta & 0.195 & 0.333 & 0.058 \\
+Puntos extremos & 5000 & HV & powerLawMutationDelta & 0.265 & 0.022 & 0.508 \\
 Real & 5000 & EP & populationSizeWithArchive & 0.458 & 0.475 & 0.441 \\
 Real & 5000 & HV & powerLawMutationDelta & 0.216 & 0.014 & 0.418 \\
-Estimado & 7000 & EP & uniformMutationPerturbation & 0.244 & 0.000 & 0.489 \\
-Estimado & 7000 & HV & archiveType & 0.312 & 0.624 & 0.000 \\
+Puntos extremos & 7000 & EP & powerLawMutationDelta & 0.211 & 0.265 & 0.158 \\
+Puntos extremos & 7000 & HV & crossoverProbability & 0.166 & 0.303 & 0.028 \\
 Real & 7000 & EP & populationSizeWithArchive & 0.552 & 0.499 & 0.605 \\
 Real & 7000 & HV & populationSizeWithArchive & 0.341 & 0.338 & 0.343 \\
 \end{longtable}
@@ -826,9 +1480,7 @@ Real & 7000 & HV & populationSizeWithArchive & 0.341 & 0.338 & 0.343 \\
 
 \begin{itemize}
 
-\item \texttt{scripts/analysis/figures/base\_hv\_normalized\_individual}: curvas desagregadas de HV normalizado.
-
-\item \texttt{scripts/analysis/figures/base\_hv\_pooled}: curvas pooled descriptivas de HV normalizado.
+\item \texttt{scripts/analysis/figures}: curvas desagregadas y pooled de HV normalizado.
 
 \item \texttt{scripts/analysis/figures/component\_importance}: figuras de importancia por benchmark y consensus, separadas por budget.
 
@@ -839,6 +1491,24 @@ Real & 7000 & HV & populationSizeWithArchive & 0.341 & 0.338 & 0.343 \\
 \item \texttt{scripts/analysis/tables/configuration\_distance}: resumentes within/between, mejores configuraciones, medoids y vecinos cruzados.
 
 \item \texttt{scripts/analysis/tables/repeated\_configurations}: tablas de configuraciones repetidas y consensus exacto.
+
+\item \texttt{scripts/analysis/figures/elite\_subspace}: perfiles de distribucion total frente a elite conjunto del 10\%.
+
+\item \texttt{scripts/analysis/figures/configuration\_trajectory}: distancia al medoid elite final y estabilizacion temporal de parametros.
+
+\item \texttt{scripts/analysis/tables/elite\_subspace}, \texttt{conditional\_rules}, \texttt{configuration\_trajectory}: salidas especificas del nuevo bloque de analisis de configuraciones.
+
+\item \texttt{scripts/analysis/figures/statistical\_comparison}, \texttt{categorical\_frequencies}, \texttt{numerical\_distributions}: comparaciones entre tipos de frente y estructura marginal de parametros.
+
+\item \texttt{scripts/analysis/figures/parameter\_association}, \texttt{rf\_predictive\_importance}, \texttt{configuration\_clustering}: asociaciones, modelos predictivos y arquetipos de configuracion.
+
+\item \texttt{scripts/analysis/figures/hv90\_convergence} y \texttt{cost\_quality}: convergencia temprana y curvas coste-calidad.
+
+\item \texttt{scripts/analysis/tables/statistical\_comparison}, \texttt{categorical\_frequencies}, \texttt{numerical\_distributions}, \texttt{parameter\_association}, \texttt{rf\_predictive\_importance}, \texttt{configuration\_clustering}, \texttt{representative\_configurations}, \texttt{hv90\_convergence}, \texttt{cost\_quality} y \texttt{cost\_scenarios}: salidas completas de los analisis adicionales del dise\~no experimental.
+
+\item \texttt{src/main/resources/parameterSpaces/reduced}: YAML derivados para validar espacios reducidos.
+
+\item \texttt{scripts/analysis/tables/space\_reduction} y \texttt{validation\_reduced\_space}: resumenes de reduccion y estado de validacion frente al baseline.
 
 \item \texttt{scripts/analysis/tables/report}: tablas compactas y tablas auxiliares generadas especificamente para este informe.
 

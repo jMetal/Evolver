@@ -1,0 +1,7 @@
+Benchmark,Scenario,Label,Budget,Meta-eval max,Filas coincidentes,Cobertura (%),Coincidencias categ. vs C,HV mediana,EP mediana,crossover,mutation,selection,createInitialSolutions
+RE3D,A,Budget 1000 / eval 1000,1000,1000,1,1.6666666666666667,3,0.8490479408415491,0.02464882340174,BLX-alpha-beta,levyFlight,boltzmann,cauchy
+RE3D,B,Budget 3000 / eval 1000,3000,1000,0,0.0,2,,,BLX-alpha-beta,levyFlight,ranking,cauchy
+RE3D,C,Budget 7000 / final,7000,3000,0,0.0,4,,,laplace,levyFlight,boltzmann,cauchy
+RWA3D,A,Budget 1000 / eval 1000,1000,1000,6,10.0,2,0.585014733834684,0.2865182230276136,BLX-alpha-beta,powerLaw,ranking,cauchy
+RWA3D,B,Budget 3000 / eval 1000,3000,1000,5,8.333333333333334,2,0.5855204888576037,0.3918186177047391,BLX-alpha-beta,powerLaw,tournament,cauchy
+RWA3D,C,Budget 7000 / final,7000,3000,3,5.0,4,0.5859300597557727,0.392903207184424,BLX-alpha,powerLaw,boltzmann,cauchy

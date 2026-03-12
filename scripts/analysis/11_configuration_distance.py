@@ -15,7 +15,6 @@ from config import (
     FRONT_TYPE_LABELS,
     FRONT_TYPES,
     NUMERICAL_COLUMNS,
-    RESULTS_ROOT,
     TABLES_DIR,
     save_figure,
     setup_style,
@@ -52,7 +51,7 @@ def load_final_slice(front_type: str, budget: int) -> SliceData:
     frames: list[pd.DataFrame] = []
     for family in FAMILIES:
         final_df = get_final_configs(
-            load_all_runs_with_config(family, front_type, budget, RESULTS_ROOT)
+            load_all_runs_with_config(family, front_type, budget)
         ).copy()
         final_df["family"] = family
         final_df["config_signature"] = build_config_signature(final_df)

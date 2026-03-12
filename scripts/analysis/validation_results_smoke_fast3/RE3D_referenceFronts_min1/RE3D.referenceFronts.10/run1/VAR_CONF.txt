@@ -1,0 +1,8 @@
+# Evaluation: 0
+
+# Evaluation: 1
+EP=0.011479690610991838 HVMinus=-0.988516332021047 | --algorithmResult externalArchive --populationSizeWithArchive 162 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.934744828753837 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.43804853102854563 --mutation uniform --mutationProbabilityFactor 1.0217369121814421 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.09619929405148187 --selection boltzmann --boltzmannTemperature 83.43372256549935 
+
+# Evaluation: 1
+EP=0.011479690610991838 HVMinus=-0.988516332021047 | --algorithmResult externalArchive --populationSizeWithArchive 162 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.934744828753837 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.43804853102854563 --mutation uniform --mutationProbabilityFactor 1.0217369121814421 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.09619929405148187 --selection boltzmann --boltzmannTemperature 83.43372256549935 
+

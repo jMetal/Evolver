@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         "--results-root",
         type=Path,
         default=RESULTS_ROOT,
-        help="Root directory containing the experiment folders.",
+        help="Optional root override containing all experiment folders.",
     )
     parser.add_argument(
         "--families",
@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def draw_hv_figure(family: str, budget: int, results_root: Path) -> Path:
+def draw_hv_figure(family: str, budget: int, results_root: Path | None) -> Path:
     """Create one HV convergence figure with separate panels per front type."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), sharex=True)
     run_counts: list[int] = []

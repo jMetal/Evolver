@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         "--results-root",
         type=Path,
         default=RESULTS_ROOT,
-        help="Root directory containing the experiment folders.",
+        help="Optional root override containing all experiment folders.",
     )
     parser.add_argument(
         "--budgets",
@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def pooled_run_count(front_type: str, budget: int, results_root: Path) -> int:
+def pooled_run_count(front_type: str, budget: int, results_root: Path | None) -> int:
     """Count pooled runs across all families for one front/budget slice."""
     return sum(len(available_runs(family, front_type, budget, results_root)) for family in FAMILIES)
 
@@ -55,7 +55,7 @@ def as_delta(values: np.ndarray) -> np.ndarray:
     return values - float(values[0])
 
 
-def draw_delta_hv_figure(budget: int, results_root: Path) -> Path:
+def draw_delta_hv_figure(budget: int, results_root: Path | None) -> Path:
     """Create one pooled delta-HV figure for one budget."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), sharex=True)
     run_counts: list[int] = []

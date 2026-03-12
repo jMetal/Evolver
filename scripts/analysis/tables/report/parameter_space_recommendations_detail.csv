@@ -1,35 +1,33 @@
 front_type,Componente,Importancia media,Apariciones top3,Apariciones top1,Frente,Decision
-estimatedReferenceFronts,mutationProbabilityFactor,0.11189377596180552,4,2,Estimado,Priorizar
-estimatedReferenceFronts,uniformMutationPerturbation,0.07683089468493634,4,1,Estimado,Priorizar
-estimatedReferenceFronts,archiveType,0.11285507288243024,3,2,Estimado,Priorizar
-estimatedReferenceFronts,crossoverProbability,0.08484568477042048,3,1,Estimado,Priorizar
-estimatedReferenceFronts,mutation,0.06853628920987796,2,1,Estimado,Mantener abiertos
-estimatedReferenceFronts,levyFlightMutationBeta,0.06430449113693663,2,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,populationSizeWithArchive,0.0605242141577571,1,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,blxAlphaBetaCrossoverAlpha,0.05132273210336762,1,1,Estimado,Mantener abiertos
-estimatedReferenceFronts,blxAlphaBetaCrossoverBeta,0.04563210235858231,1,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,sbxDistributionIndex,0.04075754468907772,1,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,mutationRepairStrategy,0.03329025468132828,1,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,crossover,0.030310878562567412,1,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,polynomialMutationDistributionIndex,0.03705675793699055,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,linkedPolynomialMutationDistributionIndex,0.031627964064189946,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,powerLawMutationDelta,0.0237316063009585,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,levyFlightMutationStepSize,0.020356215980267038,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,offspringPopulationSize,0.015361700490094674,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,pcxCrossoverZeta,0.014947798718380874,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,pcxCrossoverEta,0.0144420522541566,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,selection,0.013301461748053125,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,selectionTournamentSize,0.012277259082363613,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,createInitialSolutions,0.011667637591842625,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,boltzmannTemperature,0.010404264793077288,0,0,Estimado,Mantener abiertos
-estimatedReferenceFronts,nonUniformMutationPerturbation,0.008125341818570274,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,crossoverRepairStrategy,0.0071825483008829,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,laplaceCrossoverScale,0.005058184840793777,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,algorithmResult,0.00481017280973475,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,undcCrossoverEta,0.003790319958994791,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,blxAlphaCrossoverAlpha,0.0029051253694497756,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,undcCrossoverZeta,0.0016759106817561065,0,0,Estimado,Candidatos a fijar/podar
-estimatedReferenceFronts,fuzzyRecombinationCrossoverAlpha,0.0005525144048926537,0,0,Estimado,Candidatos a fijar/podar
+extremePointsFronts,crossoverProbability,0.17041870144151255,6,2,Puntos extremos,Priorizar
+extremePointsFronts,populationSizeWithArchive,0.1259916878093865,6,2,Puntos extremos,Priorizar
+extremePointsFronts,mutationProbabilityFactor,0.121065093436342,5,1,Puntos extremos,Priorizar
+extremePointsFronts,powerLawMutationDelta,0.10179407357168034,2,2,Puntos extremos,Priorizar
+extremePointsFronts,linkedPolynomialMutationDistributionIndex,0.0453855974781841,1,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,blxAlphaBetaCrossoverBeta,0.04512482912976504,1,1,Puntos extremos,Mantener abiertos
+extremePointsFronts,crossover,0.04088351886213873,1,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,selectionTournamentSize,0.026755345738584277,1,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,mutation,0.024110028461490827,1,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,laplaceCrossoverScale,0.04826035355971372,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,createInitialSolutions,0.03635833837824725,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,blxAlphaCrossoverAlpha,0.0324410770727735,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,offspringPopulationSize,0.030934074538292264,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,blxAlphaBetaCrossoverAlpha,0.03071111369456749,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,selection,0.026984036328403214,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,crossoverRepairStrategy,0.024294118497885188,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,levyFlightMutationBeta,0.022907585841659573,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,boltzmannTemperature,0.018382584411191637,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,levyFlightMutationStepSize,0.01646006562495745,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,fuzzyRecombinationCrossoverAlpha,0.0161735600323133,0,0,Puntos extremos,Mantener abiertos
+extremePointsFronts,pcxCrossoverEta,0.009465859368125794,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,mutationRepairStrategy,0.009077556258862775,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,pcxCrossoverZeta,0.00896196555599489,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,sbxDistributionIndex,0.00874768973505114,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,undcCrossoverEta,0.0027893556118331244,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,polynomialMutationDistributionIndex,0.002257140358627467,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,undcCrossoverZeta,0.0019114263284039238,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,uniformMutationPerturbation,0.0009863936856861254,0,0,Puntos extremos,Candidatos a fijar/podar
+extremePointsFronts,nonUniformMutationPerturbation,0.0005087797887178737,0,0,Puntos extremos,Candidatos a fijar/podar
 referenceFronts,powerLawMutationDelta,0.16951078508860876,8,2,Real,Priorizar
 referenceFronts,populationSizeWithArchive,0.2398428552390264,6,4,Real,Priorizar
 referenceFronts,crossoverProbability,0.08873540006891285,4,0,Real,Priorizar

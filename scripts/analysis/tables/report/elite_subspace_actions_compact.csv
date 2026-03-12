@@ -1,0 +1,17 @@
+Benchmark,Frente,Budget,Fijos,Acotados,Parametros fijados,Parametros acotados
+RE3D,Puntos extremos,1000,4,7,"algorithmResult, archiveType, crossoverRepairStrategy, variation","blxAlphaBetaCrossoverAlpha, blxAlphaBetaCrossoverBeta, blxAlphaCrossoverAlpha, crossoverProbability, levyFlightMutationStepSize, mutationProbabilityFactor"
+RWA3D,Puntos extremos,1000,6,1,"algorithmResult, archiveType, createInitialSolutions, mutation, mutationRepairStrategy, variation",blxAlphaCrossoverAlpha
+RE3D,Real,1000,4,5,"algorithmResult, archiveType, mutationRepairStrategy, variation","crossoverProbability, levyFlightMutationBeta, levyFlightMutationStepSize, mutationProbabilityFactor, populationSizeWithArchive"
+RWA3D,Real,1000,5,2,"algorithmResult, archiveType, crossover, mutationRepairStrategy, variation","blxAlphaBetaCrossoverAlpha, populationSizeWithArchive"
+RE3D,Puntos extremos,3000,5,4,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, variation","crossoverProbability, laplaceCrossoverScale, levyFlightMutationBeta, powerLawMutationDelta"
+RWA3D,Puntos extremos,3000,4,4,"algorithmResult, archiveType, mutation, variation","blxAlphaBetaCrossoverAlpha, blxAlphaBetaCrossoverBeta, mutationProbabilityFactor, populationSizeWithArchive"
+RE3D,Real,3000,6,2,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation","crossoverProbability, selectionTournamentSize"
+RWA3D,Real,3000,4,2,"algorithmResult, archiveType, mutation, variation","blxAlphaCrossoverAlpha, mutationProbabilityFactor"
+RE3D,Puntos extremos,5000,7,2,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutation, mutationRepairStrategy","laplaceCrossoverScale, mutationProbabilityFactor"
+RWA3D,Puntos extremos,5000,4,4,"algorithmResult, archiveType, mutation, variation","blxAlphaBetaCrossoverAlpha, blxAlphaCrossoverAlpha, mutationProbabilityFactor, powerLawMutationDelta"
+RE3D,Real,5000,6,2,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation","levyFlightMutationBeta, levyFlightMutationStepSize"
+RWA3D,Real,5000,5,3,"algorithmResult, archiveType, createInitialSolutions, mutation, variation","blxAlphaBetaCrossoverAlpha, mutationProbabilityFactor, populationSizeWithArchive"
+RE3D,Puntos extremos,7000,6,3,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation","boltzmannTemperature, crossoverProbability, populationSizeWithArchive"
+RWA3D,Puntos extremos,7000,5,3,"algorithmResult, archiveType, mutation, mutationRepairStrategy, variation","blxAlphaCrossoverAlpha, laplaceCrossoverScale, populationSizeWithArchive"
+RE3D,Real,7000,6,3,"algorithmResult, archiveType, crossover, crossoverRepairStrategy, mutationRepairStrategy, variation","laplaceCrossoverScale, levyFlightMutationStepSize, powerLawMutationDelta"
+RWA3D,Real,7000,5,3,"algorithmResult, archiveType, mutation, mutationRepairStrategy, variation","boltzmannTemperature, mutationProbabilityFactor, populationSizeWithArchive"

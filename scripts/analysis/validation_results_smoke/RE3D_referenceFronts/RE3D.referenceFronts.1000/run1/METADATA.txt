@@ -1,0 +1,23 @@
+=== Meta-Optimization Experiment ===
+Date: 2026-03-12T11:22:28.184486900
+
+--- Meta-Optimizer ---
+Algorithm: AsyncNSGA-II
+Max Evaluations: 100
+Population Size: 10
+Cores: 1
+
+--- Base-Level Algorithm ---
+Algorithm: NSGA-II
+Population/Swarm Size: 20
+Max Evaluations: 1000
+Evaluation Strategy: org.uma.evolver.meta.strategy.FixedEvaluationsStrategy@73846619
+Parameter Space: src/main/resources/parameterSpaces/reduced/NSGAIIDouble_RE3D_referenceFronts.yaml
+Optimizable Parameters: 23
+
+--- Training Set ---
+Problem Family: RE3D
+Problems: RE31, RE32, RE33, RE34, RE35, RE36, RE37
+
+--- Quality Indicators ---
+Indicators: EP, HVMinus

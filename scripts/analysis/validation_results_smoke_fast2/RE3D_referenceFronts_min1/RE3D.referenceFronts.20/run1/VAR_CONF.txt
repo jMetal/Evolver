@@ -1,0 +1,11 @@
+# Evaluation: 0
+
+# Evaluation: 1
+EP=0.1056023866403391 HVMinus=-0.8943950465239072 | --algorithmResult externalArchive --populationSizeWithArchive 102 --archiveType unboundedArchive --createInitialSolutions default --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.5752492239982878 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.4626582179367948 --mutation powerLaw --mutationProbabilityFactor 0.7424824621322075 --mutationRepairStrategy bounds --powerLawMutationDelta 4.340027319804767 --selection random 
+
+# Evaluation: 2
+EP=0.04454350502600192 HVMinus=-0.955455097477681 | --algorithmResult externalArchive --populationSizeWithArchive 89 --archiveType unboundedArchive --createInitialSolutions oppositionBased --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.21959553108283192 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.48667597205247465 --mutation uniform --mutationProbabilityFactor 1.3666094924799306 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.2799307027563782 --selection tournament --selectionTournamentSize 6 
+
+# Evaluation: 2
+EP=0.04454350502600192 HVMinus=-0.955455097477681 | --algorithmResult externalArchive --populationSizeWithArchive 89 --archiveType unboundedArchive --createInitialSolutions oppositionBased --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover laplace --crossoverProbability 0.21959553108283192 --crossoverRepairStrategy bounds --laplaceCrossoverScale 0.48667597205247465 --mutation uniform --mutationProbabilityFactor 1.3666094924799306 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.2799307027563782 --selection tournament --selectionTournamentSize 6 
+

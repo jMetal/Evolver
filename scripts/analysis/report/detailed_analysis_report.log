@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.28)  9 MAR 2026 21:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.28)  12 MAR 2026 19:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -426,243 +426,228 @@ Package hyperref Info: Option `pageanchor' set `true' on input line 75.
  [2
 
 ]
-<../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_1000.pn
-g, id=89, 929.874pt x 342.3189pt>
-File: ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_10
-00.png Graphic file (type png)
-<use ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_100
-0.png>
-Package pdftex.def Info: ../figures/base_hv_pooled/base_hv_normalized_convergen
-ce_pooled_budget_1000.png  used on input line 131.
+<../figures/base_hv_normalized_convergence_pooled_budget_1000.png, id=120, 929.
+874pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_pooled_budget_1000.png Graphic 
+file (type png)
+<use ../figures/base_hv_normalized_convergence_pooled_budget_1000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_pooled_budge
+t_1000.png  used on input line 139.
 (pdftex.def)             Requested size: 226.70963pt x 83.45882pt.
-<../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_3000.pn
-g, id=91, 929.874pt x 342.3189pt>
-File: ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_30
-00.png Graphic file (type png)
-<use ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_300
-0.png>
-Package pdftex.def Info: ../figures/base_hv_pooled/base_hv_normalized_convergen
-ce_pooled_budget_3000.png  used on input line 137.
+<../figures/base_hv_normalized_convergence_pooled_budget_3000.png, id=122, 929.
+874pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_pooled_budget_3000.png Graphic 
+file (type png)
+<use ../figures/base_hv_normalized_convergence_pooled_budget_3000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_pooled_budge
+t_3000.png  used on input line 145.
 (pdftex.def)             Requested size: 226.70963pt x 83.45882pt.
-<../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_5000.pn
-g, id=92, 929.874pt x 342.3189pt>
-File: ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_50
-00.png Graphic file (type png)
-<use ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_500
-0.png>
-Package pdftex.def Info: ../figures/base_hv_pooled/base_hv_normalized_convergen
-ce_pooled_budget_5000.png  used on input line 143.
+<../figures/base_hv_normalized_convergence_pooled_budget_5000.png, id=123, 929.
+874pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_pooled_budget_5000.png Graphic 
+file (type png)
+<use ../figures/base_hv_normalized_convergence_pooled_budget_5000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_pooled_budge
+t_5000.png  used on input line 151.
 (pdftex.def)             Requested size: 226.70963pt x 83.45882pt.
-<../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_7000.pn
-g, id=93, 929.874pt x 342.3189pt>
-File: ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_70
-00.png Graphic file (type png)
-<use ../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_700
-0.png>
-Package pdftex.def Info: ../figures/base_hv_pooled/base_hv_normalized_convergen
-ce_pooled_budget_7000.png  used on input line 149.
+<../figures/base_hv_normalized_convergence_pooled_budget_7000.png, id=124, 929.
+874pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_pooled_budget_7000.png Graphic 
+file (type png)
+<use ../figures/base_hv_normalized_convergence_pooled_budget_7000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_pooled_budge
+t_7000.png  used on input line 157.
 (pdftex.def)             Requested size: 226.70963pt x 83.45882pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_b
-udget_1000.png, id=94, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-E3D_budget_1000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE
-3D_budget_1000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RE3D_budget_1000.png  used on input line 161.
+<../figures/base_hv_normalized_convergence_RE3D_budget_1000.png, id=125, 930.11
+49pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RE3D_budget_1000.png Graphic fi
+le (type png)
+<use ../figures/base_hv_normalized_convergence_RE3D_budget_1000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RE3D_budget_
+1000.png  used on input line 169.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_b
-udget_3000.png, id=95, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-E3D_budget_3000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE
-3D_budget_3000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RE3D_budget_3000.png  used on input line 167.
+<../figures/base_hv_normalized_convergence_RE3D_budget_3000.png, id=126, 930.11
+49pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RE3D_budget_3000.png Graphic fi
+le (type png)
+<use ../figures/base_hv_normalized_convergence_RE3D_budget_3000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RE3D_budget_
+3000.png  used on input line 175.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_b
-udget_5000.png, id=96, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-E3D_budget_5000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE
-3D_budget_5000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RE3D_budget_5000.png  used on input line 173.
+<../figures/base_hv_normalized_convergence_RE3D_budget_5000.png, id=127, 930.11
+49pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RE3D_budget_5000.png Graphic fi
+le (type png)
+<use ../figures/base_hv_normalized_convergence_RE3D_budget_5000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RE3D_budget_
+5000.png  used on input line 181.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE3D_b
-udget_7000.png, id=97, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-E3D_budget_7000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RE
-3D_budget_7000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RE3D_budget_7000.png  used on input line 179.
+<../figures/base_hv_normalized_convergence_RE3D_budget_7000.png, id=128, 930.11
+49pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RE3D_budget_7000.png Graphic fi
+le (type png)
+<use ../figures/base_hv_normalized_convergence_RE3D_budget_7000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RE3D_budget_
+7000.png  used on input line 187.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_
-budget_1000.png, id=98, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-WA3D_budget_1000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RW
-A3D_budget_1000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RWA3D_budget_1000.png  used on input line 191.
+<../figures/base_hv_normalized_convergence_RWA3D_budget_1000.png, id=129, 930.1
+149pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RWA3D_budget_1000.png Graphic f
+ile (type png)
+<use ../figures/base_hv_normalized_convergence_RWA3D_budget_1000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RWA3D_budget
+_1000.png  used on input line 199.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_
-budget_3000.png, id=99, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-WA3D_budget_3000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RW
-A3D_budget_3000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RWA3D_budget_3000.png  used on input line 197.
+<../figures/base_hv_normalized_convergence_RWA3D_budget_3000.png, id=130, 930.1
+149pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RWA3D_budget_3000.png Graphic f
+ile (type png)
+<use ../figures/base_hv_normalized_convergence_RWA3D_budget_3000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RWA3D_budget
+_3000.png  used on input line 205.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_
-budget_5000.png, id=100, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-WA3D_budget_5000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RW
-A3D_budget_5000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RWA3D_budget_5000.png  used on input line 203.
+<../figures/base_hv_normalized_convergence_RWA3D_budget_5000.png, id=131, 930.1
+149pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RWA3D_budget_5000.png Graphic f
+ile (type png)
+<use ../figures/base_hv_normalized_convergence_RWA3D_budget_5000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RWA3D_budget
+_5000.png  used on input line 211.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
-<../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RWA3D_
-budget_7000.png, id=101, 930.1149pt x 342.3189pt>
-File: ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_R
-WA3D_budget_7000.png Graphic file (type png)
-<use ../figures/base_hv_normalized_individual/base_hv_normalized_convergence_RW
-A3D_budget_7000.png>
-Package pdftex.def Info: ../figures/base_hv_normalized_individual/base_hv_norma
-lized_convergence_RWA3D_budget_7000.png  used on input line 209.
+<../figures/base_hv_normalized_convergence_RWA3D_budget_7000.png, id=132, 930.1
+149pt x 342.3189pt>
+File: ../figures/base_hv_normalized_convergence_RWA3D_budget_7000.png Graphic f
+ile (type png)
+<use ../figures/base_hv_normalized_convergence_RWA3D_budget_7000.png>
+Package pdftex.def Info: ../figures/base_hv_normalized_convergence_RWA3D_budget
+_7000.png  used on input line 217.
 (pdftex.def)             Requested size: 226.70963pt x 83.43793pt.
  [1
 
-] [2 <../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget_10
-00.png> <../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_budget
-_3000.png> <../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_bud
-get_5000.png> <../figures/base_hv_pooled/base_hv_normalized_convergence_pooled_
-budget_7000.png> <../figures/base_hv_normalized_individual/base_hv_normalized_c
-onvergence_RE3D_budget_1000.png> <../figures/base_hv_normalized_individual/base
-_hv_normalized_convergence_RE3D_budget_3000.png> <../figures/base_hv_normalized
-_individual/base_hv_normalized_convergence_RE3D_budget_5000.png> <../figures/ba
-se_hv_normalized_individual/base_hv_normalized_convergence_RE3D_budget_7000.png
->] [3 <../figures/base_hv_normalized_individual/base_hv_normalized_convergence_
-RWA3D_budget_1000.png> <../figures/base_hv_normalized_individual/base_hv_normal
-ized_convergence_RWA3D_budget_3000.png> <../figures/base_hv_normalized_individu
-al/base_hv_normalized_convergence_RWA3D_budget_5000.png> <../figures/base_hv_no
-rmalized_individual/base_hv_normalized_convergence_RWA3D_budget_7000.png>] [4
+] [2 <../figures/base_hv_normalized_convergence_pooled_budget_1000.png> <../fig
+ures/base_hv_normalized_convergence_pooled_budget_3000.png> <../figures/base_hv
+_normalized_convergence_pooled_budget_5000.png> <../figures/base_hv_normalized_
+convergence_pooled_budget_7000.png> <../figures/base_hv_normalized_convergence_
+RE3D_budget_1000.png> <../figures/base_hv_normalized_convergence_RE3D_budget_30
+00.png> <../figures/base_hv_normalized_convergence_RE3D_budget_5000.png> <../fi
+gures/base_hv_normalized_convergence_RE3D_budget_7000.png>] [3 <../figures/base
+_hv_normalized_convergence_RWA3D_budget_1000.png> <../figures/base_hv_normalize
+d_convergence_RWA3D_budget_3000.png> <../figures/base_hv_normalized_convergence
+_RWA3D_budget_5000.png> <../figures/base_hv_normalized_convergence_RWA3D_budget
+_7000.png>] [4
 
 ]
-Overfull \hbox (5.58746pt too wide) in paragraph at lines 266--276
+Overfull \hbox (40.12868pt too wide) in paragraph at lines 274--284
  [][] 
  []
 
 <../figures/component_importance/budget_1000/component_importance_consensus_ref
-erence_1000.png, id=137, 936.6192pt x 422.0568pt>
+erence_1000.png, id=168, 936.6192pt x 422.0568pt>
 File: ../figures/component_importance/budget_1000/component_importance_consensu
 s_reference_1000.png Graphic file (type png)
 <use ../figures/component_importance/budget_1000/component_importance_consensus
 _reference_1000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_1000/component_
-importance_consensus_reference_1000.png  used on input line 294.
+importance_consensus_reference_1000.png  used on input line 302.
 (pdftex.def)             Requested size: 226.70963pt x 102.15866pt.
 <../figures/component_importance/budget_3000/component_importance_consensus_ref
-erence_3000.png, id=138, 936.1374pt x 422.0568pt>
+erence_3000.png, id=169, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_3000/component_importance_consensu
 s_reference_3000.png Graphic file (type png)
 <use ../figures/component_importance/budget_3000/component_importance_consensus
 _reference_3000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_3000/component_
-importance_consensus_reference_3000.png  used on input line 300.
+importance_consensus_reference_3000.png  used on input line 308.
 (pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
 <../figures/component_importance/budget_5000/component_importance_consensus_ref
-erence_5000.png, id=139, 936.1374pt x 422.0568pt>
+erence_5000.png, id=170, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_5000/component_importance_consensu
 s_reference_5000.png Graphic file (type png)
 <use ../figures/component_importance/budget_5000/component_importance_consensus
 _reference_5000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_5000/component_
-importance_consensus_reference_5000.png  used on input line 306.
+importance_consensus_reference_5000.png  used on input line 314.
 (pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
 <../figures/component_importance/budget_7000/component_importance_consensus_ref
-erence_7000.png, id=140, 930.3558pt x 422.0568pt>
+erence_7000.png, id=171, 930.3558pt x 422.0568pt>
 File: ../figures/component_importance/budget_7000/component_importance_consensu
 s_reference_7000.png Graphic file (type png)
 <use ../figures/component_importance/budget_7000/component_importance_consensus
 _reference_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_consensus_reference_7000.png  used on input line 312.
+importance_consensus_reference_7000.png  used on input line 320.
 (pdftex.def)             Requested size: 226.70963pt x 102.84775pt.
-<../figures/component_importance/budget_1000/component_importance_consensus_est
-imated_1000.png, id=141, 998.5305pt x 422.0568pt>
+<../figures/component_importance/budget_1000/component_importance_consensus_ext
+reme_points_1000.png, id=172, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_1000/component_importance_consensu
-s_estimated_1000.png Graphic file (type png)
+s_extreme_points_1000.png Graphic file (type png)
 <use ../figures/component_importance/budget_1000/component_importance_consensus
-_estimated_1000.png>
+_extreme_points_1000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_1000/component_
-importance_consensus_estimated_1000.png  used on input line 324.
-(pdftex.def)             Requested size: 226.70963pt x 95.82164pt.
-<../figures/component_importance/budget_3000/component_importance_consensus_est
-imated_3000.png, id=142, 998.5305pt x 422.0568pt>
+importance_consensus_extreme_points_1000.png  used on input line 332.
+(pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
+<../figures/component_importance/budget_3000/component_importance_consensus_ext
+reme_points_3000.png, id=173, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_3000/component_importance_consensu
-s_estimated_3000.png Graphic file (type png)
+s_extreme_points_3000.png Graphic file (type png)
 <use ../figures/component_importance/budget_3000/component_importance_consensus
-_estimated_3000.png>
+_extreme_points_3000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_3000/component_
-importance_consensus_estimated_3000.png  used on input line 330.
-(pdftex.def)             Requested size: 226.70963pt x 95.82164pt.
-<../figures/component_importance/budget_5000/component_importance_consensus_est
-imated_5000.png, id=143, 998.5305pt x 422.0568pt>
+importance_consensus_extreme_points_3000.png  used on input line 338.
+(pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
+<../figures/component_importance/budget_5000/component_importance_consensus_ext
+reme_points_5000.png, id=174, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_5000/component_importance_consensu
-s_estimated_5000.png Graphic file (type png)
+s_extreme_points_5000.png Graphic file (type png)
 <use ../figures/component_importance/budget_5000/component_importance_consensus
-_estimated_5000.png>
+_extreme_points_5000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_5000/component_
-importance_consensus_estimated_5000.png  used on input line 336.
-(pdftex.def)             Requested size: 226.70963pt x 95.82164pt.
-<../figures/component_importance/budget_7000/component_importance_consensus_est
-imated_7000.png, id=144, 998.5305pt x 422.0568pt>
+importance_consensus_extreme_points_5000.png  used on input line 344.
+(pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
+<../figures/component_importance/budget_7000/component_importance_consensus_ext
+reme_points_7000.png, id=175, 926.2605pt x 422.0568pt>
 File: ../figures/component_importance/budget_7000/component_importance_consensu
-s_estimated_7000.png Graphic file (type png)
+s_extreme_points_7000.png Graphic file (type png)
 <use ../figures/component_importance/budget_7000/component_importance_consensus
-_estimated_7000.png>
+_extreme_points_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_consensus_estimated_7000.png  used on input line 342.
-(pdftex.def)             Requested size: 226.70963pt x 95.82164pt.
+importance_consensus_extreme_points_7000.png  used on input line 350.
+(pdftex.def)             Requested size: 226.70963pt x 103.29855pt.
 <../figures/component_importance/budget_7000/component_importance_RE3D_referenc
-eFronts_7000.png, id=145, 933.0057pt x 422.0568pt>
+eFronts_7000.png, id=176, 933.0057pt x 422.0568pt>
 File: ../figures/component_importance/budget_7000/component_importance_RE3D_ref
 erenceFronts_7000.png Graphic file (type png)
 <use ../figures/component_importance/budget_7000/component_importance_RE3D_refe
 renceFronts_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_RE3D_referenceFronts_7000.png  used on input line 354.
+importance_RE3D_referenceFronts_7000.png  used on input line 362.
 (pdftex.def)             Requested size: 226.70963pt x 102.5515pt.
-<../figures/component_importance/budget_7000/component_importance_RE3D_estimate
-dReferenceFronts_7000.png, id=146, 998.5305pt x 422.0568pt>
-File: ../figures/component_importance/budget_7000/component_importance_RE3D_est
-imatedReferenceFronts_7000.png Graphic file (type png)
-<use ../figures/component_importance/budget_7000/component_importance_RE3D_esti
-matedReferenceFronts_7000.png>
+<../figures/component_importance/budget_7000/component_importance_RE3D_extremeP
+ointsFronts_7000.png, id=177, 928.4286pt x 422.0568pt>
+File: ../figures/component_importance/budget_7000/component_importance_RE3D_ext
+remePointsFronts_7000.png Graphic file (type png)
+<use ../figures/component_importance/budget_7000/component_importance_RE3D_extr
+emePointsFronts_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_RE3D_estimatedReferenceFronts_7000.png  used on input line 360.
-(pdftex.def)             Requested size: 226.70963pt x 95.82164pt.
+importance_RE3D_extremePointsFronts_7000.png  used on input line 368.
+(pdftex.def)             Requested size: 226.70963pt x 103.06027pt.
 <../figures/component_importance/budget_7000/component_importance_RWA3D_referen
-ceFronts_7000.png, id=147, 936.1374pt x 422.0568pt>
+ceFronts_7000.png, id=178, 936.1374pt x 422.0568pt>
 File: ../figures/component_importance/budget_7000/component_importance_RWA3D_re
 ferenceFronts_7000.png Graphic file (type png)
 <use ../figures/component_importance/budget_7000/component_importance_RWA3D_ref
 erenceFronts_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_RWA3D_referenceFronts_7000.png  used on input line 366.
+importance_RWA3D_referenceFronts_7000.png  used on input line 374.
 (pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
-<../figures/component_importance/budget_7000/component_importance_RWA3D_estimat
-edReferenceFronts_7000.png, id=148, 936.1374pt x 422.0568pt>
-File: ../figures/component_importance/budget_7000/component_importance_RWA3D_es
-timatedReferenceFronts_7000.png Graphic file (type png)
-<use ../figures/component_importance/budget_7000/component_importance_RWA3D_est
-imatedReferenceFronts_7000.png>
+<../figures/component_importance/budget_7000/component_importance_RWA3D_extreme
+PointsFronts_7000.png, id=179, 936.1374pt x 422.0568pt>
+File: ../figures/component_importance/budget_7000/component_importance_RWA3D_ex
+tremePointsFronts_7000.png Graphic file (type png)
+<use ../figures/component_importance/budget_7000/component_importance_RWA3D_ext
+remePointsFronts_7000.png>
 Package pdftex.def Info: ../figures/component_importance/budget_7000/component_
-importance_RWA3D_estimatedReferenceFronts_7000.png  used on input line 372.
+importance_RWA3D_extremePointsFronts_7000.png  used on input line 380.
 (pdftex.def)             Requested size: 226.70963pt x 102.21017pt.
 [5
 
@@ -671,127 +656,153 @@ s_reference_1000.png> <../figures/component_importance/budget_3000/component_im
 portance_consensus_reference_3000.png> <../figures/component_importance/budget_
 5000/component_importance_consensus_reference_5000.png> <../figures/component_i
 mportance/budget_7000/component_importance_consensus_reference_7000.png> <../fi
-gures/component_importance/budget_1000/component_importance_consensus_estimated
-_1000.png> <../figures/component_importance/budget_3000/component_importance_co
-nsensus_estimated_3000.png> <../figures/component_importance/budget_5000/compon
-ent_importance_consensus_estimated_5000.png> <../figures/component_importance/b
-udget_7000/component_importance_consensus_estimated_7000.png>] [7 <../figures/c
-omponent_importance/budget_7000/component_importance_RE3D_referenceFronts_7000.
-png> <../figures/component_importance/budget_7000/component_importance_RE3D_est
-imatedReferenceFronts_7000.png> <../figures/component_importance/budget_7000/co
-mponent_importance_RWA3D_referenceFronts_7000.png> <../figures/component_import
-ance/budget_7000/component_importance_RWA3D_estimatedReferenceFronts_7000.png>]
- [8
+gures/component_importance/budget_1000/component_importance_consensus_extreme_p
+oints_1000.png> <../figures/component_importance/budget_3000/component_importan
+ce_consensus_extreme_points_3000.png> <../figures/component_importance/budget_5
+000/component_importance_consensus_extreme_points_5000.png> <../figures/compone
+nt_importance/budget_7000/component_importance_consensus_extreme_points_7000.pn
+g>] [7 <../figures/component_importance/budget_7000/component_importance_RE3D_r
+eferenceFronts_7000.png> <../figures/component_importance/budget_7000/component
+_importance_RE3D_extremePointsFronts_7000.png> <../figures/component_importance
+/budget_7000/component_importance_RWA3D_referenceFronts_7000.png> <../figures/c
+omponent_importance/budget_7000/component_importance_RWA3D_extremePointsFronts_
+7000.png>] [8
 
 ]
-Overfull \hbox (110.61717pt too wide) in paragraph at lines 437--459
+Overfull \hbox (145.15839pt too wide) in paragraph at lines 445--467
  [][] 
  []
 
 <../figures/configuration_distance/budget_1000/configuration_distance_distribut
-ion_referenceFronts_1000.png, id=182, 714.0276pt x 334.1283pt>
+ion_referenceFronts_1000.png, id=213, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_1000/configuration_distance_dist
 ribution_referenceFronts_1000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_1000/configuration_distance_distr
 ibution_referenceFronts_1000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_1000/configur
-ation_distance_distribution_referenceFronts_1000.png  used on input line 512.
+ation_distance_distribution_referenceFronts_1000.png  used on input line 520.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_3000/configuration_distance_distribut
-ion_referenceFronts_3000.png, id=183, 714.0276pt x 334.1283pt>
+ion_referenceFronts_3000.png, id=214, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_3000/configuration_distance_dist
 ribution_referenceFronts_3000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_3000/configuration_distance_distr
 ibution_referenceFronts_3000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_3000/configur
-ation_distance_distribution_referenceFronts_3000.png  used on input line 518.
+ation_distance_distribution_referenceFronts_3000.png  used on input line 526.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_5000/configuration_distance_distribut
-ion_referenceFronts_5000.png, id=184, 714.0276pt x 334.1283pt>
+ion_referenceFronts_5000.png, id=215, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_5000/configuration_distance_dist
 ribution_referenceFronts_5000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_5000/configuration_distance_distr
 ibution_referenceFronts_5000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_5000/configur
-ation_distance_distribution_referenceFronts_5000.png  used on input line 524.
+ation_distance_distribution_referenceFronts_5000.png  used on input line 532.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_7000/configuration_distance_distribut
-ion_referenceFronts_7000.png, id=185, 714.0276pt x 334.1283pt>
+ion_referenceFronts_7000.png, id=216, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_7000/configuration_distance_dist
 ribution_referenceFronts_7000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_7000/configuration_distance_distr
 ibution_referenceFronts_7000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_7000/configur
-ation_distance_distribution_referenceFronts_7000.png  used on input line 530.
+ation_distance_distribution_referenceFronts_7000.png  used on input line 538.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_1000/configuration_distance_distribut
-ion_estimatedReferenceFronts_1000.png, id=186, 714.0276pt x 334.1283pt>
+ion_extremePointsFronts_1000.png, id=217, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_1000/configuration_distance_dist
-ribution_estimatedReferenceFronts_1000.png Graphic file (type png)
+ribution_extremePointsFronts_1000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_1000/configuration_distance_distr
-ibution_estimatedReferenceFronts_1000.png>
+ibution_extremePointsFronts_1000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_1000/configur
-ation_distance_distribution_estimatedReferenceFronts_1000.png  used on input li
-ne 542.
+ation_distance_distribution_extremePointsFronts_1000.png  used on input line 55
+0.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_3000/configuration_distance_distribut
-ion_estimatedReferenceFronts_3000.png, id=187, 714.0276pt x 334.1283pt>
+ion_extremePointsFronts_3000.png, id=218, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_3000/configuration_distance_dist
-ribution_estimatedReferenceFronts_3000.png Graphic file (type png)
+ribution_extremePointsFronts_3000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_3000/configuration_distance_distr
-ibution_estimatedReferenceFronts_3000.png>
+ibution_extremePointsFronts_3000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_3000/configur
-ation_distance_distribution_estimatedReferenceFronts_3000.png  used on input li
-ne 548.
+ation_distance_distribution_extremePointsFronts_3000.png  used on input line 55
+6.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_5000/configuration_distance_distribut
-ion_estimatedReferenceFronts_5000.png, id=188, 714.0276pt x 334.1283pt>
+ion_extremePointsFronts_5000.png, id=219, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_5000/configuration_distance_dist
-ribution_estimatedReferenceFronts_5000.png Graphic file (type png)
+ribution_extremePointsFronts_5000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_5000/configuration_distance_distr
-ibution_estimatedReferenceFronts_5000.png>
+ibution_extremePointsFronts_5000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_5000/configur
-ation_distance_distribution_estimatedReferenceFronts_5000.png  used on input li
-ne 554.
+ation_distance_distribution_extremePointsFronts_5000.png  used on input line 56
+2.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 <../figures/configuration_distance/budget_7000/configuration_distance_distribut
-ion_estimatedReferenceFronts_7000.png, id=189, 714.0276pt x 334.1283pt>
+ion_extremePointsFronts_7000.png, id=220, 714.0276pt x 334.1283pt>
 File: ../figures/configuration_distance/budget_7000/configuration_distance_dist
-ribution_estimatedReferenceFronts_7000.png Graphic file (type png)
+ribution_extremePointsFronts_7000.png Graphic file (type png)
 <use ../figures/configuration_distance/budget_7000/configuration_distance_distr
-ibution_estimatedReferenceFronts_7000.png>
+ibution_extremePointsFronts_7000.png>
 Package pdftex.def Info: ../figures/configuration_distance/budget_7000/configur
-ation_distance_distribution_estimatedReferenceFronts_7000.png  used on input li
-ne 560.
+ation_distance_distribution_extremePointsFronts_7000.png  used on input line 56
+8.
 (pdftex.def)             Requested size: 226.70963pt x 106.0871pt.
 
-Overfull \hbox (375.00322pt too wide) in paragraph at lines 573--587
+Overfull \hbox (409.54443pt too wide) in paragraph at lines 581--595
  [][] 
  []
 
 
-Overfull \hbox (45.15327pt too wide) in paragraph at lines 596--610
+Overfull \hbox (79.69449pt too wide) in paragraph at lines 604--618
  [][] 
  []
 
 
-Overfull \hbox (84.92247pt too wide) in paragraph at lines 619--633
+Overfull \hbox (119.46368pt too wide) in paragraph at lines 627--641
  [][] 
  []
 
+<../figures/elite_subspace/budget_7000/elite_profile_RE3D_referenceFronts_7000.
+png, id=221, 857.8449pt x 639.8304pt>
+File: ../figures/elite_subspace/budget_7000/elite_profile_RE3D_referenceFronts_
+7000.png Graphic file (type png)
+<use ../figures/elite_subspace/budget_7000/elite_profile_RE3D_referenceFronts_7
+000.png>
+Package pdftex.def Info: ../figures/elite_subspace/budget_7000/elite_profile_RE
+3D_referenceFronts_7000.png  used on input line 655.
+(pdftex.def)             Requested size: 226.70963pt x 169.09538pt.
+<../figures/elite_subspace/budget_7000/elite_profile_RE3D_extremePointsFronts_7
+000.png, id=222, 857.1222pt x 639.8304pt>
+File: ../figures/elite_subspace/budget_7000/elite_profile_RE3D_extremePointsFro
+nts_7000.png Graphic file (type png)
+<use ../figures/elite_subspace/budget_7000/elite_profile_RE3D_extremePointsFron
+ts_7000.png>
+Package pdftex.def Info: ../figures/elite_subspace/budget_7000/elite_profile_RE
+3D_extremePointsFronts_7000.png  used on input line 661.
+(pdftex.def)             Requested size: 226.70963pt x 169.23206pt.
+<../figures/elite_subspace/budget_7000/elite_profile_RWA3D_referenceFronts_7000
+.png, id=223, 857.8449pt x 639.8304pt>
+File: ../figures/elite_subspace/budget_7000/elite_profile_RWA3D_referenceFronts
+_7000.png Graphic file (type png)
+<use ../figures/elite_subspace/budget_7000/elite_profile_RWA3D_referenceFronts_
+7000.png>
+Package pdftex.def Info: ../figures/elite_subspace/budget_7000/elite_profile_RW
+A3D_referenceFronts_7000.png  used on input line 667.
+(pdftex.def)             Requested size: 226.70963pt x 169.09538pt.
+<../figures/elite_subspace/budget_7000/elite_profile_RWA3D_extremePointsFronts_
+7000.png, id=224, 857.8449pt x 639.8304pt>
+File: ../figures/elite_subspace/budget_7000/elite_profile_RWA3D_extremePointsFr
+onts_7000.png Graphic file (type png)
+<use ../figures/elite_subspace/budget_7000/elite_profile_RWA3D_extremePointsFro
+nts_7000.png>
+Package pdftex.def Info: ../figures/elite_subspace/budget_7000/elite_profile_RW
+A3D_extremePointsFronts_7000.png  used on input line 673.
+(pdftex.def)             Requested size: 226.70963pt x 169.09538pt.
 
-Overfull \hbox (29.93982pt too wide) in paragraph at lines 643--644
-\T1/cmr/m/n/10.95 seguir de-jando lib-er-tad a \T1/cmtt/m/n/10.95 populationSiz
-eWithArchive\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 powerLawMutationDelta\T1/cmr
-/m/n/10.95 , \T1/cmtt/m/n/10.95 crossoverProbability
- []
-
-
-Overfull \hbox (93.62038pt too wide) in paragraph at lines 643--644
-\T1/cmr/m/n/10.95 y \T1/cmtt/m/n/10.95 mutationProbabilityFactor\T1/cmr/m/n/10.
-95 . En frente es-ti-mado, esa lista cam-bia ha-cia \T1/cmtt/m/n/10.95 archiveT
-ype\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 mutationProbabilityFactor\T1/cmr/m/n/
-10.95 ,
+Overfull \hbox (709.06233pt too wide) in paragraph at lines 686--696
+ [][] 
  []
 
 [9
@@ -802,39 +813,361 @@ get_3000/configuration_distance_distribution_referenceFronts_3000.png> <../figu
 res/configuration_distance/budget_5000/configuration_distance_distribution_refe
 renceFronts_5000.png> <../figures/configuration_distance/budget_7000/configurat
 ion_distance_distribution_referenceFronts_7000.png> <../figures/configuration_d
-istance/budget_1000/configuration_distance_distribution_estimatedReferenceFront
-s_1000.png> <../figures/configuration_distance/budget_3000/configuration_distan
-ce_distribution_estimatedReferenceFronts_3000.png> <../figures/configuration_di
-stance/budget_5000/configuration_distance_distribution_estimatedReferenceFronts
-_5000.png> <../figures/configuration_distance/budget_7000/configuration_distanc
-e_distribution_estimatedReferenceFronts_7000.png>]
-Overfull \hbox (469.7203pt too wide) in paragraph at lines 650--664
+istance/budget_1000/configuration_distance_distribution_extremePointsFronts_100
+0.png> <../figures/configuration_distance/budget_3000/configuration_distance_di
+stribution_extremePointsFronts_3000.png> <../figures/configuration_distance/bud
+get_5000/configuration_distance_distribution_extremePointsFronts_5000.png> <../
+figures/configuration_distance/budget_7000/configuration_distance_distribution_
+extremePointsFronts_7000.png>] [12] [13 <../figures/elite_subspace/budget_7000/
+elite_profile_RE3D_referenceFronts_7000.png> <../figures/elite_subspace/budget_
+7000/elite_profile_RE3D_extremePointsFronts_7000.png> <../figures/elite_subspac
+e/budget_7000/elite_profile_RWA3D_referenceFronts_7000.png> <../figures/elite_s
+ubspace/budget_7000/elite_profile_RWA3D_extremePointsFronts_7000.png>]
+<../figures/configuration_trajectory/budget_7000/trajectory_RE3D_referenceFront
+s_7000.png, id=268, 930.5967pt x 639.8304pt>
+File: ../figures/configuration_trajectory/budget_7000/trajectory_RE3D_reference
+Fronts_7000.png Graphic file (type png)
+<use ../figures/configuration_trajectory/budget_7000/trajectory_RE3D_referenceF
+ronts_7000.png>
+Package pdftex.def Info: ../figures/configuration_trajectory/budget_7000/trajec
+tory_RE3D_referenceFronts_7000.png  used on input line 733.
+(pdftex.def)             Requested size: 226.70963pt x 155.8665pt.
+<../figures/configuration_trajectory/budget_7000/trajectory_RE3D_extremePointsF
+ronts_7000.png, id=269, 932.5239pt x 639.8304pt>
+File: ../figures/configuration_trajectory/budget_7000/trajectory_RE3D_extremePo
+intsFronts_7000.png Graphic file (type png)
+<use ../figures/configuration_trajectory/budget_7000/trajectory_RE3D_extremePoi
+ntsFronts_7000.png>
+Package pdftex.def Info: ../figures/configuration_trajectory/budget_7000/trajec
+tory_RE3D_extremePointsFronts_7000.png  used on input line 739.
+(pdftex.def)             Requested size: 226.70963pt x 155.54431pt.
+<../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_referenceFron
+ts_7000.png, id=270, 930.5967pt x 639.8304pt>
+File: ../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_referenc
+eFronts_7000.png Graphic file (type png)
+<use ../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_reference
+Fronts_7000.png>
+Package pdftex.def Info: ../figures/configuration_trajectory/budget_7000/trajec
+tory_RWA3D_referenceFronts_7000.png  used on input line 745.
+(pdftex.def)             Requested size: 226.70963pt x 155.8665pt.
+<../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_extremePoints
+Fronts_7000.png, id=271, 932.5239pt x 639.8304pt>
+File: ../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_extremeP
+ointsFronts_7000.png Graphic file (type png)
+<use ../figures/configuration_trajectory/budget_7000/trajectory_RWA3D_extremePo
+intsFronts_7000.png>
+Package pdftex.def Info: ../figures/configuration_trajectory/budget_7000/trajec
+tory_RWA3D_extremePointsFronts_7000.png  used on input line 751.
+(pdftex.def)             Requested size: 226.70963pt x 155.54431pt.
+
+Overfull \hbox (430.42589pt too wide) in alignment at lines 762--767
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (430.42589pt too wide) in alignment at lines 767--772
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (430.42589pt too wide) in alignment at lines 772--776
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (430.42589pt too wide) in alignment at lines 776--778
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (430.42589pt too wide) in alignment at lines 778--795
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (355.81921pt too wide) in paragraph at lines 804--816
+ [][] 
+ []
+
+<../figures/statistical_comparison/final_hv_front_type_comparison.png, id=272, 
+1146.684pt x 569.0058pt>
+File: ../figures/statistical_comparison/final_hv_front_type_comparison.png Grap
+hic file (type png)
+<use ../figures/statistical_comparison/final_hv_front_type_comparison.png>
+Package pdftex.def Info: ../figures/statistical_comparison/final_hv_front_type_
+comparison.png  used on input line 830.
+(pdftex.def)             Requested size: 453.42647pt x 225.00227pt.
+
+Overfull \hbox (173.92778pt too wide) in paragraph at lines 840--854
+ [][] 
+ []
+
+[14] [15 <../figures/configuration_trajectory/budget_7000/trajectory_RE3D_refer
+enceFronts_7000.png> <../figures/configuration_trajectory/budget_7000/trajector
+y_RE3D_extremePointsFronts_7000.png> <../figures/configuration_trajectory/budge
+t_7000/trajectory_RWA3D_referenceFronts_7000.png> <../figures/configuration_tra
+jectory/budget_7000/trajectory_RWA3D_extremePointsFronts_7000.png>]
+<../figures/categorical_frequencies/categorical_frequencies_RE3D.png, id=290, 1
+146.9249pt x 718.6047pt>
+File: ../figures/categorical_frequencies/categorical_frequencies_RE3D.png Graph
+ic file (type png)
+<use ../figures/categorical_frequencies/categorical_frequencies_RE3D.png>
+Package pdftex.def Info: ../figures/categorical_frequencies/categorical_frequen
+cies_RE3D.png  used on input line 868.
+(pdftex.def)             Requested size: 226.70963pt x 142.04074pt.
+<../figures/categorical_frequencies/categorical_frequencies_RWA3D.png, id=291, 
+1146.684pt x 718.6047pt>
+File: ../figures/categorical_frequencies/categorical_frequencies_RWA3D.png Grap
+hic file (type png)
+<use ../figures/categorical_frequencies/categorical_frequencies_RWA3D.png>
+Package pdftex.def Info: ../figures/categorical_frequencies/categorical_frequen
+cies_RWA3D.png  used on input line 874.
+(pdftex.def)             Requested size: 226.70963pt x 142.07364pt.
+<../figures/numerical_distributions/numerical_distributions_RE3D.png, id=292, 1
+290.0195pt x 1369.7574pt>
+File: ../figures/numerical_distributions/numerical_distributions_RE3D.png Graph
+ic file (type png)
+<use ../figures/numerical_distributions/numerical_distributions_RE3D.png>
+Package pdftex.def Info: ../figures/numerical_distributions/numerical_distribut
+ions_RE3D.png  used on input line 926.
+(pdftex.def)             Requested size: 226.70963pt x 240.71437pt.
+<../figures/numerical_distributions/numerical_distributions_RWA3D.png, id=293, 
+1290.0195pt x 1369.7574pt>
+File: ../figures/numerical_distributions/numerical_distributions_RWA3D.png Grap
+hic file (type png)
+<use ../figures/numerical_distributions/numerical_distributions_RWA3D.png>
+Package pdftex.def Info: ../figures/numerical_distributions/numerical_distribut
+ions_RWA3D.png  used on input line 932.
+(pdftex.def)             Requested size: 226.70963pt x 240.71437pt.
+<../figures/parameter_association/parameter_association_RE3D.png, id=294, 1146.
+9249pt x 498.1812pt>
+File: ../figures/parameter_association/parameter_association_RE3D.png Graphic f
+ile (type png)
+<use ../figures/parameter_association/parameter_association_RE3D.png>
+Package pdftex.def Info: ../figures/parameter_association/parameter_association
+_RE3D.png  used on input line 984.
+(pdftex.def)             Requested size: 226.70963pt x 98.47142pt.
+<../figures/parameter_association/parameter_association_RWA3D.png, id=295, 1146
+.9249pt x 498.1812pt>
+File: ../figures/parameter_association/parameter_association_RWA3D.png Graphic 
+file (type png)
+<use ../figures/parameter_association/parameter_association_RWA3D.png>
+Package pdftex.def Info: ../figures/parameter_association/parameter_association
+_RWA3D.png  used on input line 990.
+(pdftex.def)             Requested size: 226.70963pt x 98.47142pt.
+
+Overfull \hbox (3.80203pt too wide) in paragraph at lines 1038--1039
+\T1/cmr/m/n/10.95 Los mod-e-los pre-dic-tivos reafir-man que no to-dos los benc
+h-marks tienen la misma es-truc-tura aprendible.
+ []
+
+[16] [17 <../figures/statistical_comparison/final_hv_front_type_comparison.png>
+ <../figures/categorical_frequencies/categorical_frequencies_RE3D.png> <../figu
+res/categorical_frequencies/categorical_frequencies_RWA3D.png>] [18 <../figures
+/numerical_distributions/numerical_distributions_RE3D.png> <../figures/numerica
+l_distributions/numerical_distributions_RWA3D.png> <../figures/parameter_associ
+ation/parameter_association_RE3D.png> <../figures/parameter_association/paramet
+er_association_RWA3D.png>]
+<../figures/rf_predictive_importance/rf_predictive_importance_RE3D.png, id=323,
+ 1146.684pt x 852.3042pt>
+File: ../figures/rf_predictive_importance/rf_predictive_importance_RE3D.png Gra
+phic file (type png)
+<use ../figures/rf_predictive_importance/rf_predictive_importance_RE3D.png>
+Package pdftex.def Info: ../figures/rf_predictive_importance/rf_predictive_impo
+rtance_RE3D.png  used on input line 1048.
+(pdftex.def)             Requested size: 226.70963pt x 168.50705pt.
+<../figures/rf_predictive_importance/rf_predictive_importance_RWA3D.png, id=324
+, 1146.684pt x 852.3042pt>
+File: ../figures/rf_predictive_importance/rf_predictive_importance_RWA3D.png Gr
+aphic file (type png)
+<use ../figures/rf_predictive_importance/rf_predictive_importance_RWA3D.png>
+Package pdftex.def Info: ../figures/rf_predictive_importance/rf_predictive_impo
+rtance_RWA3D.png  used on input line 1054.
+(pdftex.def)             Requested size: 226.70963pt x 168.50705pt.
+<../figures/configuration_clustering/configuration_clustering_RE3D_referenceFro
+nts.png, id=325, 1145.9613pt x 852.3042pt>
+File: ../figures/configuration_clustering/configuration_clustering_RE3D_referen
+ceFronts.png Graphic file (type png)
+<use ../figures/configuration_clustering/configuration_clustering_RE3D_referenc
+eFronts.png>
+Package pdftex.def Info: ../figures/configuration_clustering/configuration_clus
+tering_RE3D_referenceFronts.png  used on input line 1085.
+(pdftex.def)             Requested size: 226.70963pt x 168.6111pt.
+<../figures/configuration_clustering/configuration_clustering_RE3D_extremePoint
+sFronts.png, id=326, 1145.9613pt x 852.3042pt>
+File: ../figures/configuration_clustering/configuration_clustering_RE3D_extreme
+PointsFronts.png Graphic file (type png)
+<use ../figures/configuration_clustering/configuration_clustering_RE3D_extremeP
+ointsFronts.png>
+Package pdftex.def Info: ../figures/configuration_clustering/configuration_clus
+tering_RE3D_extremePointsFronts.png  used on input line 1091.
+(pdftex.def)             Requested size: 226.70963pt x 168.6111pt.
+<../figures/configuration_clustering/configuration_clustering_RWA3D_referenceFr
+onts.png, id=327, 1146.2022pt x 852.3042pt>
+File: ../figures/configuration_clustering/configuration_clustering_RWA3D_refere
+nceFronts.png Graphic file (type png)
+<use ../figures/configuration_clustering/configuration_clustering_RWA3D_referen
+ceFronts.png>
+Package pdftex.def Info: ../figures/configuration_clustering/configuration_clus
+tering_RWA3D_referenceFronts.png  used on input line 1097.
+(pdftex.def)             Requested size: 226.70963pt x 168.57208pt.
+<../figures/configuration_clustering/configuration_clustering_RWA3D_extremePoin
+tsFronts.png, id=328, 1146.2022pt x 852.3042pt>
+File: ../figures/configuration_clustering/configuration_clustering_RWA3D_extrem
+ePointsFronts.png Graphic file (type png)
+<use ../figures/configuration_clustering/configuration_clustering_RWA3D_extreme
+PointsFronts.png>
+Package pdftex.def Info: ../figures/configuration_clustering/configuration_clus
+tering_RWA3D_extremePointsFronts.png  used on input line 1103.
+(pdftex.def)             Requested size: 226.70963pt x 168.57208pt.
+
+Overfull \hbox (237.26389pt too wide) in paragraph at lines 1135--1143
+ [][] 
+ []
+
+<../figures/hv90_convergence/hv90_cdf.png, id=329, 1002.3849pt x 356.532pt>
+File: ../figures/hv90_convergence/hv90_cdf.png Graphic file (type png)
+<use ../figures/hv90_convergence/hv90_cdf.png>
+Package pdftex.def Info: ../figures/hv90_convergence/hv90_cdf.png  used on inpu
+t line 1155.
+(pdftex.def)             Requested size: 415.64034pt x 147.83289pt.
+
+Overfull \hbox (46.74736pt too wide) in alignment at lines 1180--1185
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (46.74736pt too wide) in alignment at lines 1185--1190
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (46.74736pt too wide) in alignment at lines 1190--1194
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (46.74736pt too wide) in alignment at lines 1194--1196
+ [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (46.74736pt too wide) in alignment at lines 1196--1208
+ [] [] [] [] [] [] [] 
+ []
+
+[19] [20 <../figures/rf_predictive_importance/rf_predictive_importance_RE3D.png
+> <../figures/rf_predictive_importance/rf_predictive_importance_RWA3D.png>]
+[21 <../figures/configuration_clustering/configuration_clustering_RE3D_referenc
+eFronts.png> <../figures/configuration_clustering/configuration_clustering_RE3D
+_extremePointsFronts.png> <../figures/configuration_clustering/configuration_cl
+ustering_RWA3D_referenceFronts.png> <../figures/configuration_clustering/config
+uration_clustering_RWA3D_extremePointsFronts.png> <../figures/hv90_convergence/
+hv90_cdf.png>]
+<../figures/cost_quality/cost_quality_RE3D.png, id=357, 1141.6251pt x 356.532pt
+>
+File: ../figures/cost_quality/cost_quality_RE3D.png Graphic file (type png)
+<use ../figures/cost_quality/cost_quality_RE3D.png>
+Package pdftex.def Info: ../figures/cost_quality/cost_quality_RE3D.png  used on
+ input line 1224.
+(pdftex.def)             Requested size: 226.70963pt x 70.79918pt.
+<../figures/cost_quality/cost_quality_RWA3D.png, id=358, 1141.6251pt x 356.532p
+t>
+File: ../figures/cost_quality/cost_quality_RWA3D.png Graphic file (type png)
+<use ../figures/cost_quality/cost_quality_RWA3D.png>
+Package pdftex.def Info: ../figures/cost_quality/cost_quality_RWA3D.png  used o
+n input line 1230.
+(pdftex.def)             Requested size: 226.70963pt x 70.79918pt.
+
+Overfull \hbox (120.05125pt too wide) in paragraph at lines 1243--1257
  [][] 
  []
 
 
-Overfull \hbox (258.4362pt too wide) in paragraph at lines 673--685
+Overfull \hbox (468.37474pt too wide) in alignment at lines 1264--1269
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (468.37474pt too wide) in alignment at lines 1269--1274
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (468.37474pt too wide) in alignment at lines 1274--1278
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (468.37474pt too wide) in alignment at lines 1278--1280
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (468.37474pt too wide) in alignment at lines 1280--1287
+ [] [] [] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (29.93982pt too wide) in paragraph at lines 1297--1298
+\T1/cmr/m/n/10.95 seguir de-jando lib-er-tad a \T1/cmtt/m/n/10.95 populationSiz
+eWithArchive\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 powerLawMutationDelta\T1/cmr
+/m/n/10.95 , \T1/cmtt/m/n/10.95 crossoverProbability
+ []
+
+
+Overfull \hbox (511.1312pt too wide) in paragraph at lines 1304--1318
  [][] 
  []
 
 
-Overfull \hbox (0.33551pt too wide) in paragraph at lines 693--694
-[]\T1/cmr/m/n/10.95 Tercero, en frente es-ti-mado la sen-si-bil-i-dad a los com
--po-nentes es mas in-estable y benchmark-especifica.
+Overfull \hbox (292.97742pt too wide) in paragraph at lines 1327--1339
+ [][] 
  []
 
-[12] [13] [14] [15
+[22] [23 <../figures/cost_quality/cost_quality_RE3D.png> <../figures/cost_quali
+ty/cost_quality_RWA3D.png>] [24] [25
 
-] [16
+] [26
 
 
 ]
-Overfull \hbox (0.34264pt too wide) in paragraph at lines 831--832
-[]\T1/cmtt/m/n/10.95 scripts/analysis/figures/base_hv_pooled\T1/cmr/m/n/10.95 :
- cur-vas pooled de-scrip-ti-vas de HV nor-mal-izado. 
+Overfull \hbox (16.47551pt too wide) in paragraph at lines 1499--1500
+[]\T1/cmtt/m/n/10.95 scripts/analysis/tables/elite_subspace\T1/cmr/m/n/10.95 , 
+\T1/cmtt/m/n/10.95 conditional_rules\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 conf
+iguration_trajectory\T1/cmr/m/n/10.95 :
  []
 
-[17
+
+Overfull \hbox (95.6927pt too wide) in paragraph at lines 1501--1502
+[]\T1/cmtt/m/n/10.95 scripts/analysis/figures/statistical_comparison\T1/cmr/m/n
+/10.95 , \T1/cmtt/m/n/10.95 categorical_frequencies\T1/cmr/m/n/10.95 , \T1/cmtt
+/m/n/10.95 numerical_distributions\T1/cmr/m/n/10.95 :
+ []
+
+
+Overfull \hbox (101.35107pt too wide) in paragraph at lines 1503--1504
+[]\T1/cmtt/m/n/10.95 scripts/analysis/figures/parameter_association\T1/cmr/m/n/
+10.95 , \T1/cmtt/m/n/10.95 rf_predictive_importance\T1/cmr/m/n/10.95 , \T1/cmtt
+/m/n/10.95 configuration_clustering\T1/cmr/m/n/10.95 :
+ []
+
+
+Overfull \hbox (90.03433pt too wide) in paragraph at lines 1507--1508
+[]\T1/cmtt/m/n/10.95 scripts/analysis/tables/statistical_comparison\T1/cmr/m/n/
+10.95 , \T1/cmtt/m/n/10.95 categorical_frequencies\T1/cmr/m/n/10.95 , \T1/cmtt/
+m/n/10.95 numerical_distributions\T1/cmr/m/n/10.95 ,
+ []
+
+
+Overfull \hbox (129.67406pt too wide) in paragraph at lines 1507--1508
+\T1/cmtt/m/n/10.95 parameter_association\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 
+rf_predictive_importance\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 configuration_cl
+ustering\T1/cmr/m/n/10.95 , \T1/cmtt/m/n/10.95 representative_configurations\T1
+/cmr/m/n/10.95 ,
+ []
+
+[27
 
 ] (detailed_analysis_report.aux)
  ***********
@@ -843,16 +1176,16 @@ L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `detailed_analysis_report.out' has not change
 d.
-(rerunfilecheck)             Checksum: F82A1C36D490558DE9216630B71F32D3;2614.
+(rerunfilecheck)             Checksum: E2643DF305B4D47FC06B7F220EB6C161;4482.
  ) 
 Here is how much of TeX's memory you used:
- 11306 strings out of 467871
- 202279 string characters out of 5418376
- 619485 words of memory out of 5000000
- 40011 multiletter control sequences out of 15000+600000
+ 11553 strings out of 467871
+ 214915 string characters out of 5418376
+ 633348 words of memory out of 5000000
+ 40217 multiletter control sequences out of 15000+600000
  639049 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,9n,79p,798b,541s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,9n,79p,681b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\nicor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm
 0800.pk> <C:\Users\nicor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\ecrm1000.pk> <C:\Users\nicor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
@@ -869,10 +1202,11 @@ nicor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk><C:/U
 sers/nicor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.
 pfb><C:/Users/nicor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
 m/cmr10.pfb><C:/Users/nicor/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
-sfonts/cm/cmsy10.pfb>
-Output written on detailed_analysis_report.pdf (20 pages, 7007853 bytes).
+sfonts/cm/cmr8.pfb><C:/Users/nicor/AppData/Local/Programs/MiKTeX/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb>
+Output written on detailed_analysis_report.pdf (30 pages, 15931970 bytes).
 PDF statistics:
- 681 PDF objects out of 1000 (max. 8388607)
- 54 named destinations out of 1000 (max. 500000)
- 257 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 882 PDF objects out of 1000 (max. 8388607)
+ 95 named destinations out of 1000 (max. 500000)
+ 425 words of extra memory for PDF output out of 10000 (max. 10000000)
 

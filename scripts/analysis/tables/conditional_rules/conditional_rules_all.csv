@@ -1,0 +1,2 @@
+family,front_type,budget,rule_text,rule_signature,n_rows,support,precision,elite_rows,non_elite_rows,categorical_parameters,numerical_parameters,rule_rank
+RE3D,referenceFronts,3000,crossover = laplace AND crossoverProbability > 0.878,crossover = laplace AND crossoverProbability > 0.878,21,0.10396039603960396,0.7619047619047619,16,5,crossover|selection|offspringPopulationSize|createInitialSolutions|mutationRepairStrategy,powerLawMutationDelta|populationSizeWithArchive|mutationProbabilityFactor|crossoverProbability,1

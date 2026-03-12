@@ -1,5 +1,5 @@
 Benchmark,Frente,Budget T95 EP,Budget T95 HV,Budget final EP,Budget final HV
 RE3D,Real,5000.0,7000.0,7000.0,7000.0
-RE3D,Estimado,7000.0,3000.0,7000.0,3000.0
+RE3D,Puntos extremos,7000.0,7000.0,7000.0,7000.0
 RWA3D,Real,7000.0,7000.0,7000.0,7000.0
-RWA3D,Estimado,3000.0,7000.0,5000.0,7000.0
+RWA3D,Puntos extremos,7000.0,7000.0,7000.0,7000.0

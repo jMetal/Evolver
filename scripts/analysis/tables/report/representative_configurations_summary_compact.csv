@@ -1,0 +1,3 @@
+Benchmark,Filas coincidentes,Cobertura (%),HV mediana,EP mediana,crossover,mutation,selection,createInitialSolutions
+RE3D,2,0.8333333333333334,0.851574944565147,0.0833333609691807,laplace,levyFlight,boltzmann,cauchy
+RWA3D,28,11.666666666666666,0.5858137080475205,0.1805884469570268,BLX-alpha-beta,powerLaw,ranking,cauchy

@@ -1,0 +1,17 @@
+family,front_type,parameter,h_statistic,p_value,significant,n_groups
+RE3D,extremePointsFronts,createInitialSolutions,7.93911534172895,0.15962317580704005,False,6
+RE3D,extremePointsFronts,crossover,59.85394006659271,1.0066582438288556e-13,True,3
+RE3D,extremePointsFronts,mutation,13.784129913737559,0.01704038744561571,True,6
+RE3D,extremePointsFronts,selection,1.4455793504016015,0.8362356780741631,False,5
+RE3D,referenceFronts,createInitialSolutions,7.497057678792373,0.18621891907121407,False,6
+RE3D,referenceFronts,crossover,44.83431202170215,1.003413067396133e-09,True,4
+RE3D,referenceFronts,mutation,13.890310861933415,0.003058324881008822,True,4
+RE3D,referenceFronts,selection,14.674487272369504,0.005426228390821954,True,5
+RWA3D,extremePointsFronts,createInitialSolutions,8.075483658903067,0.1521243471249026,False,6
+RWA3D,extremePointsFronts,crossover,0.39817351949761814,0.8194787924744344,False,3
+RWA3D,extremePointsFronts,mutation,11.525217391304352,0.0006865842156060075,True,2
+RWA3D,extremePointsFronts,selection,3.21923867481496,0.5218291860467803,False,5
+RWA3D,referenceFronts,createInitialSolutions,6.350866400783275,0.27355915805784325,False,6
+RWA3D,referenceFronts,crossover,11.77959530771426,0.008177603248472783,True,4
+RWA3D,referenceFronts,mutation,18.75,1.4902335792427685e-05,True,2
+RWA3D,referenceFronts,selection,1.913528059184216,0.7516594429159126,False,5

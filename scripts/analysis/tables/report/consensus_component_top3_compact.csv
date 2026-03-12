@@ -1,17 +1,17 @@
 Frente,Budget,Indicador,Top 3 consensus
-Estimado,1000,EP,1) mutation; 2) uniformMutationPerturbation; 3) mutationProbabilityFactor
-Estimado,1000,HV,1) mutationProbabilityFactor; 2) archiveType; 3) crossoverProbability
+Puntos extremos,1000,EP,1) populationSizeWithArchive; 2) crossoverProbability; 3) mutationProbabilityFactor
+Puntos extremos,1000,HV,1) populationSizeWithArchive; 2) crossoverProbability; 3) selectionTournamentSize
 Real,1000,EP,1) mutationProbabilityFactor; 2) powerLawMutationDelta; 3) blxAlphaBetaCrossoverBeta
 Real,1000,HV,1) mutationProbabilityFactor; 2) powerLawMutationDelta; 3) blxAlphaBetaCrossoverAlpha
-Estimado,3000,EP,1) mutationProbabilityFactor; 2) uniformMutationPerturbation; 3) blxAlphaBetaCrossoverBeta
-Estimado,3000,HV,1) crossoverProbability; 2) populationSizeWithArchive; 3) levyFlightMutationBeta
+Puntos extremos,3000,EP,1) mutationProbabilityFactor; 2) crossoverProbability; 3) populationSizeWithArchive
+Puntos extremos,3000,HV,1) crossoverProbability; 2) mutationProbabilityFactor; 3) populationSizeWithArchive
 Real,3000,EP,1) populationSizeWithArchive; 2) powerLawMutationDelta; 3) crossoverProbability
 Real,3000,HV,1) powerLawMutationDelta; 2) mutationProbabilityFactor; 3) populationSizeWithArchive
-Estimado,5000,EP,1) blxAlphaBetaCrossoverAlpha; 2) mutation; 3) uniformMutationPerturbation
-Estimado,5000,HV,1) archiveType; 2) sbxDistributionIndex; 3) crossover
+Puntos extremos,5000,EP,1) blxAlphaBetaCrossoverBeta; 2) populationSizeWithArchive; 3) mutationProbabilityFactor
+Puntos extremos,5000,HV,1) powerLawMutationDelta; 2) crossoverProbability; 3) crossover
 Real,5000,EP,1) populationSizeWithArchive; 2) crossoverProbability; 3) powerLawMutationDelta
 Real,5000,HV,1) powerLawMutationDelta; 2) populationSizeWithArchive; 3) crossoverProbability
-Estimado,7000,EP,1) uniformMutationPerturbation; 2) mutationProbabilityFactor; 3) mutationRepairStrategy
-Estimado,7000,HV,1) archiveType; 2) levyFlightMutationBeta; 3) crossoverProbability
+Puntos extremos,7000,EP,1) powerLawMutationDelta; 2) mutationProbabilityFactor; 3) populationSizeWithArchive
+Puntos extremos,7000,HV,1) crossoverProbability; 2) linkedPolynomialMutationDistributionIndex; 3) mutation
 Real,7000,EP,1) populationSizeWithArchive; 2) crossoverProbability; 3) powerLawMutationDelta
 Real,7000,HV,1) populationSizeWithArchive; 2) laplaceCrossoverScale; 3) powerLawMutationDelta

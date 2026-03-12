@@ -1,0 +1,2 @@
+front_type,rule_signature,slices,mean_support,mean_precision,examples
+referenceFronts,crossover = laplace AND crossoverProbability > 0.878,1,0.10396039603960396,0.7619047619047619,crossover = laplace AND crossoverProbability > 0.878

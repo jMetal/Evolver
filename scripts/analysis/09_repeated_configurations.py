@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from config import BUDGETS, FRONT_TYPES, RESULTS_ROOT, TABLES_DIR
+from config import BUDGETS, FRONT_TYPES, TABLES_DIR
 from data_loader import (
     build_config_signature,
     get_configuration_columns,
@@ -24,7 +24,7 @@ def repeated_configs_for_family(
 ) -> pd.DataFrame:
     """Count repeated final configurations for one benchmark slice."""
     final_df = get_final_configs(
-        load_all_runs_with_config(family, front_type, budget, RESULTS_ROOT)
+        load_all_runs_with_config(family, front_type, budget)
     ).copy()
     config_columns = get_configuration_columns(final_df)
     final_df["config_signature"] = build_config_signature(final_df)

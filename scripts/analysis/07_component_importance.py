@@ -8,7 +8,15 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
-from config import BUDGETS, FIGURES_DIR, FRONT_TYPE_LABELS, RESULTS_ROOT, TABLES_DIR, setup_style, save_figure
+from config import (
+    BUDGETS,
+    FIGURES_DIR,
+    FRONT_TYPE_LABELS,
+    FRONT_TYPES,
+    TABLES_DIR,
+    save_figure,
+    setup_style,
+)
 from data_loader import (
     encode_config_vector,
     get_final_configs,
@@ -22,12 +30,7 @@ RF_KWARGS = {
     "random_state": 42,
     "n_jobs": -1,
 }
-SLICES = [
-    ("RE3D", "referenceFronts"),
-    ("RWA3D", "referenceFronts"),
-    ("RE3D", "estimatedReferenceFronts"),
-    ("RWA3D", "estimatedReferenceFronts"),
-]
+SLICES = [(family, front_type) for front_type in FRONT_TYPES for family in ["RE3D", "RWA3D"]]
 TARGETS = [
     ("EP", "#d73027", "EP"),
     ("HVMinus", "#4575b4", "HV$^-$"),
@@ -40,9 +43,7 @@ TABLE_OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 
 def load_slice(scope: str, front_type: str, budget: int) -> pd.DataFrame:
     """Load the final configurations for one analysis slice."""
-    return get_final_configs(
-        load_all_runs_with_config(scope, front_type, budget, RESULTS_ROOT)
-    )
+    return get_final_configs(load_all_runs_with_config(scope, front_type, budget))
 
 
 def aggregate_family_importance(feature_names: list[str], importances: np.ndarray) -> pd.DataFrame:

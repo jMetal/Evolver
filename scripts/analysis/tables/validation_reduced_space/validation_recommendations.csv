@@ -1,0 +1,17 @@
+family,front_type,budget,recommended_proposal,recommendation_status
+RE3D,extremePointsFronts,1000,not_run,not_run
+RE3D,extremePointsFronts,3000,not_run,not_run
+RE3D,extremePointsFronts,5000,not_run,not_run
+RE3D,extremePointsFronts,7000,not_run,not_run
+RWA3D,extremePointsFronts,1000,not_run,not_run
+RWA3D,extremePointsFronts,3000,not_run,not_run
+RWA3D,extremePointsFronts,5000,not_run,not_run
+RWA3D,extremePointsFronts,7000,not_run,not_run
+RE3D,referenceFronts,1000,not_run,not_run
+RE3D,referenceFronts,3000,not_run,not_run
+RE3D,referenceFronts,5000,not_run,not_run
+RE3D,referenceFronts,7000,not_run,not_run
+RWA3D,referenceFronts,1000,not_run,not_run
+RWA3D,referenceFronts,3000,not_run,not_run
+RWA3D,referenceFronts,5000,not_run,not_run
+RWA3D,referenceFronts,7000,not_run,not_run

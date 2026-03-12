@@ -1,0 +1,2 @@
+Benchmark,Frente,Budget,Regla,Soporte (%),Precision (%)
+RE3D,Real,3000,crossover = laplace AND crossoverProbability > 0.878,10.39603960396039,76.19047619047619

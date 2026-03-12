@@ -26,14 +26,14 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Generate convergence figures for RE3D and RWA3D budgets, "
-            "comparing referenceFronts vs estimatedReferenceFronts."
+            "comparing referenceFronts vs extremePointsFronts."
         )
     )
     parser.add_argument(
         "--results-root",
         type=Path,
         default=RESULTS_ROOT,
-        help="Root directory containing the experiment folders.",
+        help="Optional root override containing all experiment folders.",
     )
     parser.add_argument(
         "--families",
@@ -53,7 +53,9 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def draw_family_budget_figure(family: str, budget: int, results_root: Path) -> Path:
+def draw_family_budget_figure(
+    family: str, budget: int, results_root: Path | None
+) -> Path:
     """Create a figure with EP and HVMinus for one family and one budget."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), sharex=True)
 

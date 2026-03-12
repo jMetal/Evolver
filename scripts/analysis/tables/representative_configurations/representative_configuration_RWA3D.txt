@@ -1,0 +1,16 @@
+--algorithmResult externalArchive
+--populationSizeWithArchive 32
+--archiveType unboundedArchive
+--createInitialSolutions cauchy
+--offspringPopulationSize 10
+--variation crossoverAndMutationVariation
+--crossover BLX-alpha-beta
+--crossoverProbability 0.375763
+--crossoverRepairStrategy round
+--blxAlphaBetaCrossoverBeta 0.70233
+--blxAlphaBetaCrossoverAlpha 0.898346
+--mutation powerLaw
+--mutationProbabilityFactor 1.708592
+--mutationRepairStrategy bounds
+--powerLawMutationDelta 8.815986
+--selection ranking

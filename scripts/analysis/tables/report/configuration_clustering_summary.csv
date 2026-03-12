@@ -1,0 +1,5 @@
+Benchmark,FrontType,SelectedK,BestSilhouette,Clusters
+RE3D,Reference fronts,7,0.18539152282392984,7
+RE3D,Extreme-point fronts,2,0.22221834411375888,2
+RWA3D,Reference fronts,5,0.17812573920174987,5
+RWA3D,Extreme-point fronts,3,0.2509219822796974,3

@@ -1,0 +1,17 @@
+--algorithmResult externalArchive
+--populationSizeWithArchive 57
+--archiveType unboundedArchive
+--createInitialSolutions cauchy
+--offspringPopulationSize 5
+--variation crossoverAndMutationVariation
+--crossover laplace
+--crossoverProbability 0.744783
+--crossoverRepairStrategy bounds
+--laplaceCrossoverScale 0.479439
+--mutation levyFlight
+--mutationProbabilityFactor 1.019234
+--mutationRepairStrategy bounds
+--levyFlightMutationBeta 1.364641
+--levyFlightMutationStepSize 0.746854
+--selection boltzmann
+--boltzmannTemperature 74.613645

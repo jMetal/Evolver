@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         "--results-root",
         type=Path,
         default=RESULTS_ROOT,
-        help="Root directory containing the experiment folders.",
+        help="Optional root override containing all experiment folders.",
     )
     parser.add_argument(
         "--families",
@@ -62,7 +62,9 @@ def normalize_progress(values: np.ndarray) -> np.ndarray:
     return (values - start) / total_gain
 
 
-def draw_normalized_hv_figure(family: str, budget: int, results_root: Path) -> Path:
+def draw_normalized_hv_figure(
+    family: str, budget: int, results_root: Path | None
+) -> Path:
     """Create one normalized HV convergence figure for a family and budget."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), sharex=True, sharey=True)
     run_counts: list[int] = []

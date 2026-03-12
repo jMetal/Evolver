@@ -1,17 +1,17 @@
 Benchmark,Frente,Budget,Max. repeticiones,Configs. con repeticiones,Top es mejor EP,Top es mejor HV
-RE3D,Estimado,1000,3,16,False,False
+RE3D,Puntos extremos,1000,2,2,False,False
 RE3D,Real,1000,2,2,False,False
-RWA3D,Estimado,1000,2,4,False,False
+RWA3D,Puntos extremos,1000,2,1,False,False
 RWA3D,Real,1000,2,1,False,False
-RE3D,Estimado,3000,3,16,False,False
+RE3D,Puntos extremos,3000,2,4,True,False
 RE3D,Real,3000,2,1,False,False
-RWA3D,Estimado,3000,2,4,False,False
+RWA3D,Puntos extremos,3000,2,3,False,False
 RWA3D,Real,3000,2,1,False,False
-RE3D,Estimado,5000,2,4,False,False
+RE3D,Puntos extremos,5000,2,2,False,False
 RE3D,Real,5000,2,4,False,False
-RWA3D,Estimado,5000,2,4,False,False
+RWA3D,Puntos extremos,5000,2,5,False,False
 RWA3D,Real,5000,2,4,False,False
-RE3D,Estimado,7000,5,12,False,False
+RE3D,Puntos extremos,7000,2,4,False,False
 RE3D,Real,7000,2,4,False,False
-RWA3D,Estimado,7000,2,7,False,False
+RWA3D,Puntos extremos,7000,2,3,False,False
 RWA3D,Real,7000,2,4,False,False

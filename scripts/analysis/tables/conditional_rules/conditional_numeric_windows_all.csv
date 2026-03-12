@@ -1,0 +1,5 @@
+family,front_type,budget,rule_text,parameter,elite_n,recommended_min,recommended_median,recommended_max
+RE3D,referenceFronts,3000,crossover = laplace AND crossoverProbability > 0.878,crossoverProbability,16,0.9353058030755752,0.9496649907812211,0.9549792930233479
+RE3D,referenceFronts,3000,crossover = laplace AND crossoverProbability > 0.878,mutationProbabilityFactor,16,0.6251477340397691,0.6676457122912207,0.9361365891915397
+RE3D,referenceFronts,3000,crossover = laplace AND crossoverProbability > 0.878,populationSizeWithArchive,16,61.0,85.0,94.0
+RE3D,referenceFronts,3000,crossover = laplace AND crossoverProbability > 0.878,powerLawMutationDelta,6,4.451547506904957,4.451547506904957,4.452037938265252

@@ -37,12 +37,12 @@ def parse_args() -> argparse.Namespace:
         "--results-root",
         type=Path,
         default=RESULTS_ROOT,
-        help="Root directory containing the experiment folders.",
+        help="Optional root override containing all experiment folders.",
     )
     return parser.parse_args()
 
 
-def build_budget_summary(results_root: Path) -> pd.DataFrame:
+def build_budget_summary(results_root: Path | None) -> pd.DataFrame:
     """Collect final-best summaries for all family/front/budget slices."""
     rows: list[dict[str, float]] = []
     for family in FAMILIES:

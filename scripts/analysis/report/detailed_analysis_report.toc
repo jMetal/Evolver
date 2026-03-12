@@ -5,8 +5,14 @@
 \contentsline {section}{\numberline {4}Importancia de componentes}{5}{section.4}%
 \contentsline {section}{\numberline {5}Repeticion de configuraciones finales}{9}{section.5}%
 \contentsline {section}{\numberline {6}Distancia entre configuraciones y arquetipos finales}{9}{section.6}%
-\contentsline {section}{\numberline {7}Implicaciones practicas para experimentos futuros}{9}{section.7}%
-\contentsline {section}{\numberline {8}Conclusiones y recomendaciones}{12}{section.8}%
-\contentsline {section}{\numberline {9}Limitaciones}{12}{section.9}%
-\contentsline {section}{\numberline {A}Tablas suplementarias compactas}{14}{appendix.A}%
-\contentsline {section}{\numberline {B}Archivos clave generados}{17}{appendix.B}%
+\contentsline {section}{\numberline {7}Estructura de configuraciones y espacios reducidos}{9}{section.7}%
+\contentsline {section}{\numberline {8}Contrastes estadisticos entre tipos de frente}{14}{section.8}%
+\contentsline {section}{\numberline {9}Frecuencias, distribuciones y asociaciones de parametros}{14}{section.9}%
+\contentsline {section}{\numberline {10}Modelado predictivo, clustering y configuraciones representativas}{16}{section.10}%
+\contentsline {section}{\numberline {11}Convergencia al 90\% de HV y estabilidad temprana}{19}{section.11}%
+\contentsline {section}{\numberline {12}Coste-calidad y escenarios operativos}{19}{section.12}%
+\contentsline {section}{\numberline {13}Implicaciones practicas para experimentos futuros}{22}{section.13}%
+\contentsline {section}{\numberline {14}Conclusiones y recomendaciones}{22}{section.14}%
+\contentsline {section}{\numberline {15}Limitaciones}{24}{section.15}%
+\contentsline {section}{\numberline {A}Tablas suplementarias compactas}{24}{appendix.A}%
+\contentsline {section}{\numberline {B}Archivos clave generados}{27}{appendix.B}%

@@ -11,6 +11,7 @@ from config import (
     CATEGORICAL_DECODINGS,
     NUMERICAL_COLUMNS,
     RESULTS_ROOT,
+    resolve_results_root,
 )
 
 REQUIRED_COLUMNS = {"Evaluation", "SolutionId", "EP", "HVMinus"}
@@ -54,6 +55,18 @@ CONFIG_EXCLUDED_COLUMNS = {
     "hv_median_RWA3D",
     "is_best_EP",
     "is_best_HV",
+    "row_id",
+    "trace_row_id",
+    "ep_rank_pct",
+    "hv_rank_pct",
+    "joint_score",
+    "joint_rank",
+    "elite_view",
+    "elite_quantile",
+    "elite_rank",
+    "checkpoint_eval",
+    "checkpoint_fraction",
+    "incumbent_found_at",
 }
 
 
@@ -61,7 +74,7 @@ def experiment_path(
     family: str, front_type: str, budget: int, results_root: Path | None = None
 ) -> Path:
     """Return the directory for one family/front/budget combination."""
-    root = Path(results_root) if results_root is not None else RESULTS_ROOT
+    root = resolve_results_root(front_type, results_root if results_root is not None else RESULTS_ROOT)
     return root / f"{family}.{front_type}.{budget}"
 
 
@@ -210,6 +223,34 @@ def get_final_configs(indicators: pd.DataFrame, run_col: str = "run") -> pd.Data
     """Extract rows at the last evaluation of each run."""
     last_eval = indicators.groupby(run_col, as_index=False)["Evaluation"].max()
     return indicators.merge(last_eval, on=[run_col, "Evaluation"], how="inner")
+
+
+def best_config_per_evaluation(
+    indicators: pd.DataFrame, run_col: str = "run"
+) -> pd.DataFrame:
+    """Keep the best configuration row at each evaluation and run.
+
+    Best is defined by lower ``HVMinus`` (equivalently higher HV), using ``EP`` as
+    tie-breaker and ``SolutionId`` as a stable final fallback.
+    """
+    order_columns = [run_col, "Evaluation", "HVMinus", "EP"]
+    if "SolutionId" in indicators.columns:
+        order_columns.append("SolutionId")
+    ordered = indicators.sort_values(order_columns, ascending=True)
+    return (
+        ordered.groupby([run_col, "Evaluation"], as_index=False)
+        .head(1)
+        .reset_index(drop=True)
+    )
+
+
+def get_final_best_configs(
+    indicators: pd.DataFrame, run_col: str = "run"
+) -> pd.DataFrame:
+    """Extract one final best configuration row per run."""
+    best = best_config_per_evaluation(indicators, run_col=run_col)
+    last_eval = best.groupby(run_col, as_index=False)["Evaluation"].max()
+    return best.merge(last_eval, on=[run_col, "Evaluation"], how="inner")
 
 
 def encode_config_vector(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:

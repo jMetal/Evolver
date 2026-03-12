@@ -12,7 +12,7 @@ from config import (
     BUDGETS,
     FIGURES_DIR,
     FRONT_TYPE_LABELS,
-    RESULTS_ROOT,
+    FRONT_TYPES,
     TABLES_DIR,
     save_figure,
     setup_style,
@@ -21,7 +21,6 @@ from data_loader import encode_config_vector, get_final_configs, load_all_runs_w
 
 TOP_K = 10
 FAMILIES = ["RE3D", "RWA3D"]
-FRONT_TYPES = ["referenceFronts", "estimatedReferenceFronts"]
 TARGETS = [
     ("EP", "#d73027", "EP"),
     ("HVMinus", "#4575b4", "HV$^-$"),
@@ -66,7 +65,7 @@ def compute_family_importance(
 ) -> pd.DataFrame:
     """Fit one RF model for one benchmark and target."""
     final_df = get_final_configs(
-        load_all_runs_with_config(family, front_type, budget, RESULTS_ROOT)
+        load_all_runs_with_config(family, front_type, budget)
     )
     feature_df, feature_names = encode_config_vector(final_df)
     variable_mask = feature_df.std(axis=0) > 0
@@ -170,7 +169,7 @@ def plot_consensus(front_type: str, consensus_frames: list[pd.DataFrame], budget
         ax.set_xlabel("Mean normalized RF importance")
         ax.grid(axis="x", alpha=0.25, linestyle="--")
 
-    front_short = "reference" if front_type == "referenceFronts" else "estimated"
+    front_short = "reference" if front_type == "referenceFronts" else "extreme_points"
     filename = f"component_importance_consensus_{front_short}_{budget}.png"
     return save_figure(fig, str(Path("component_importance") / f"budget_{budget}" / filename))
 
