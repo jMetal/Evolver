@@ -31,3 +31,6 @@ env/
 .idea/
 .vscode/
 *.swp
+
+# Local paper workspace
+paper/
