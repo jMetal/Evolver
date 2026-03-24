@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.moead.DoubleMOEAD;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -21,22 +21,15 @@ import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-/**
- * Runner to execute NSGA-II configuration validation experiments. Compares three NSGA-II variants
- * (Standard, RE3D, RE3D-Est) across RE and RWA benchmark problems. Generates FUN (Pareto Fronts)
- * and VAR (Decision Variables) files for analysis.
- *
- * <p>Configuration: PopSize 100, 10000 evaluations, 25 independent runs per configuration.
- */
-public class REStudy {
+public class RERWAMOEADStudy {
 
-  private static final int INDEPENDENT_RUNS = 25;
+  private static final int INDEPENDENT_RUNS = 30;
   private static final int MAX_EVALUATIONS = 10000;
   private static final int POPULATION_SIZE = 100;
-  private static final String YAML_FILE = "NSGAIIDoubleFull";
+  private static final String YAML_FILE = "MOEADDouble.yaml";
 
   public static void main(String[] args) throws IOException {
-    String experimentBaseDirectory = "results/swevo/experiments"; // Dedicated folder
+    String experimentBaseDirectory = "experimentation/validation"; // Dedicated folder
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
 
@@ -78,7 +71,7 @@ public class REStudy {
         configureAlgorithmList(problemList);
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("REStudy")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("RERWAMOEADStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setReferenceFrontDirectory("resources/referenceFronts")
@@ -95,7 +88,7 @@ public class REStudy {
             .setNumberOfCores(8)
             .build();
 
-    // new ExecuteAlgorithms<>(experiment).run();
+    new ExecuteAlgorithms<>(experiment).run();
     new ComputeQualityIndicators<>(experiment).run();
     new GenerateLatexTablesWithStatistics(experiment).run();
     new GenerateWilcoxonTestTablesWithR<>(experiment).run();
@@ -107,108 +100,149 @@ public class REStudy {
       List<ExperimentProblem<DoubleSolution>> problemList) {
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms = new ArrayList<>();
 
-    // Standard NSGA-II configuration (Deb et al., 2002)
-    // - SBX crossover (pc=0.9, distribution index=20)
-    // - Polynomial mutation (pm=1/n, distribution index=20)
-    // - Binary tournament selection
-    String standardNSGAIIConfig =
+    // Standard MOEA/D configuration
+    String standardMOEADConfig =
         String.join(
             " ",
+            "--neighborhoodSize 20",
+            "--maximumNumberOfReplacedSolutions 2",
+            "--aggregationFunction penaltyBoundaryIntersection",
+            "--normalizeObjectives false",
+            "--pbiTheta 5.0",
             "--algorithmResult population",
             "--createInitialSolutions default",
+            "--subProblemIdGenerator randomPermutationCycle",
             "--variation crossoverAndMutationVariation",
-            "--offspringPopulationSize 100",
-            "--crossover SBX",
             "--crossoverProbability 0.9",
             "--crossoverRepairStrategy bounds",
-            "--sbxDistributionIndex 20.0",
             "--mutation polynomial",
             "--mutationProbabilityFactor 1.0",
             "--mutationRepairStrategy bounds",
             "--polynomialMutationDistributionIndex 20.0",
-            "--selection tournament",
-            "--selectionTournamentSize 2");
+            "--crossover SBX",
+            "--sbxDistributionIndex 20.0",
+            "--selection populationAndNeighborhoodMatingPoolSelection",
+            "--neighborhoodSelectionProbability 0.9");
 
-    // Best configuration found by Evolver on RE 3-objective problems (Evaluation 2000, best HV)
-    // - Laplace crossover, Lévy flight mutation, Boltzmann selection
-    // Source: results/swevo/nsgaii/RE3D/VAR_CONF.txt
-    String bestRE3DConfig =
+    // Standard MOEA/D configuration WITH external archive
+    String standardMOEADArchiveConfig =
         String.join(
             " ",
+            "--neighborhoodSize 20",
+            "--maximumNumberOfReplacedSolutions 2",
+            "--aggregationFunction penaltyBoundaryIntersection",
+            "--normalizeObjectives false",
+            "--pbiTheta 5.0",
             "--algorithmResult externalArchive",
-            "--populationSizeWithArchive 13",
+            "--populationSizeWithArchive 100",
             "--archiveType unboundedArchive",
             "--createInitialSolutions default",
-            "--offspringPopulationSize 20",
+            "--subProblemIdGenerator randomPermutationCycle",
+            "--variation crossoverAndMutationVariation",
+            "--crossoverProbability 0.9",
+            "--crossoverRepairStrategy bounds",
+            "--mutation polynomial",
+            "--mutationProbabilityFactor 1.0",
+            "--mutationRepairStrategy bounds",
+            "--polynomialMutationDistributionIndex 20.0",
+            "--crossover SBX",
+            "--sbxDistributionIndex 20.0",
+            "--selection populationAndNeighborhoodMatingPoolSelection",
+            "--neighborhoodSelectionProbability 0.9");
+
+    // MOEA/D configuration with NSGAII-RE3D operators
+    // Init: cauchy, Crossover: laplace, Mutation: levyFlight
+    String moeadRE3DConfig =
+        String.join(
+            " ",
+            "--neighborhoodSize 20",
+            "--maximumNumberOfReplacedSolutions 2",
+            "--aggregationFunction penaltyBoundaryIntersection",
+            "--normalizeObjectives false",
+            "--pbiTheta 5.0",
+            "--algorithmResult externalArchive",
+            "--populationSizeWithArchive 100",
+            "--archiveType unboundedArchive",
+            "--createInitialSolutions cauchy",
+            "--subProblemIdGenerator randomPermutationCycle",
             "--variation crossoverAndMutationVariation",
             "--crossover laplace",
-            "--crossoverProbability 0.8217834829790737",
+            "--crossoverProbability 0.7743480372",
             "--crossoverRepairStrategy bounds",
-            "--laplaceCrossoverScale 0.4959216532897993",
+            "--laplaceCrossoverScale 0.4995269531",
             "--mutation levyFlight",
-            "--mutationProbabilityFactor 0.6957867741586558",
+            "--mutationProbabilityFactor 1.0823942293",
             "--mutationRepairStrategy bounds",
-            "--levyFlightMutationBeta 1.3286787674272937",
-            "--levyFlightMutationStepSize 0.4842355700261636",
-            "--selection boltzmann",
-            "--boltzmannTemperature 60.81347202071671");
+            "--levyFlightMutationBeta 1.5821613074",
+            "--levyFlightMutationStepSize 0.8210163797",
+            "--selection populationAndNeighborhoodMatingPoolSelection",
+            "--neighborhoodSelectionProbability 0.9");
 
-    // Estimated best configuration for RE 3-objective problems (Evaluation 2000, best HV)
-    // - BLX-alpha crossover, Lévy flight mutation, stochastic universal sampling
-    // Source: results/swevo/nsgaii/RE3D_estimated/VAR_CONF.txt
-    String estimatedBestRE3DConfig =
+    // MOEA/D configuration with NSGAII-RWA3D operators
+    // Init: cauchy, Crossover: blxAlphaBeta, Mutation: powerLaw
+    String moeadRWA3DConfig =
         String.join(
             " ",
+            "--neighborhoodSize 20",
+            "--maximumNumberOfReplacedSolutions 2",
+            "--aggregationFunction penaltyBoundaryIntersection",
+            "--normalizeObjectives false",
+            "--pbiTheta 5.0",
             "--algorithmResult externalArchive",
-            "--populationSizeWithArchive 57",
+            "--populationSizeWithArchive 100",
             "--archiveType unboundedArchive",
-            "--createInitialSolutions default",
-            "--offspringPopulationSize 50",
+            "--createInitialSolutions cauchy",
+            "--subProblemIdGenerator randomPermutationCycle",
             "--variation crossoverAndMutationVariation",
-            "--crossover blxAlpha",
-            "--crossoverProbability 0.6649399143186957",
-            "--crossoverRepairStrategy bounds",
-            "--blxAlphaCrossoverAlpha 0.7431531584790442",
-            "--mutation levyFlight",
-            "--mutationProbabilityFactor 1.3932191601253432",
+            "--crossover blxAlphaBeta",
+            "--crossoverProbability 0.4324193706",
+            "--crossoverRepairStrategy round",
+            "--blxAlphaBetaCrossoverAlpha 0.8993357785",
+            "--blxAlphaBetaCrossoverBeta 0.7105298828",
+            "--mutation powerLaw",
+            "--mutationProbabilityFactor 1.7120696450",
             "--mutationRepairStrategy bounds",
-            "--levyFlightMutationBeta 1.1619688870059017",
-            "--levyFlightMutationStepSize 0.9862471851423424",
-            "--selection stochasticUniversalSampling");
+            "--powerLawMutationDelta 8.8732970103",
+            "--selection populationAndNeighborhoodMatingPoolSelection",
+            "--neighborhoodSelectionProbability 0.9");
 
-    YAMLParameterSpace parameterSpace =
+    YAMLParameterSpace moeadParameterSpace =
         new YAMLParameterSpace(YAML_FILE, new DoubleParameterFactory());
 
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (ExperimentProblem<DoubleSolution> expProblem : problemList) {
 
         algorithms.add(
-            createAlgo(
+            createMOEADAlgo(
                 expProblem,
                 run,
-                "NSGAII-Standard",
-                standardNSGAIIConfig,
+                "MOEAD-Std",
+                standardMOEADConfig,
                 POPULATION_SIZE,
-                parameterSpace));
+                moeadParameterSpace));
 
         algorithms.add(
-            createAlgo(
-                expProblem, run, "NSGAII-RE3D", bestRE3DConfig, POPULATION_SIZE, parameterSpace));
-
-        algorithms.add(
-            createAlgo(
+            createMOEADAlgo(
                 expProblem,
                 run,
-                "NSGAII-RE3D-Est",
-                estimatedBestRE3DConfig,
+                "MOEAD-StdArch",
+                standardMOEADArchiveConfig,
                 POPULATION_SIZE,
-                parameterSpace));
+                moeadParameterSpace));
+
+        algorithms.add(
+            createMOEADAlgo(
+                expProblem, run, "MOEAD-RE3D", moeadRE3DConfig, POPULATION_SIZE, moeadParameterSpace));
+
+        algorithms.add(
+            createMOEADAlgo(
+                expProblem, run, "MOEAD-RWA", moeadRWA3DConfig, POPULATION_SIZE, moeadParameterSpace));
       }
     }
     return algorithms;
   }
 
-  private static ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>> createAlgo(
+  private static ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>> createMOEADAlgo(
       ExperimentProblem<DoubleSolution> expProblem,
       int run,
       String tag,
@@ -216,8 +250,13 @@ public class REStudy {
       int popSize,
       YAMLParameterSpace parameterSpace) {
 
-    DoubleNSGAII factory =
-        new DoubleNSGAII(expProblem.getProblem(), popSize, MAX_EVALUATIONS, parameterSpace);
+    DoubleMOEAD factory =
+        new DoubleMOEAD(
+            expProblem.getProblem(),
+            popSize,
+            MAX_EVALUATIONS,
+            "resources/weightVectors",
+            parameterSpace);
     factory.parse(params.split("\\s+"));
     EvolutionaryAlgorithm<DoubleSolution> algorithm = factory.build();
     return new ExperimentAlgorithm<>(algorithm, tag, expProblem, run);

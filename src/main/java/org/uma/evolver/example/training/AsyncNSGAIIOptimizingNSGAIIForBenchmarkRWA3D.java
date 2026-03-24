@@ -31,15 +31,15 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
 
   // Meta-optimizer configuration
-  private static final int META_MAX_EVALUATIONS = 3000;
+  private static final int META_MAX_EVALUATIONS = 2000;
   private static final int META_POPULATION_SIZE = 50;
 
   // Base-level algorithm configuration
   private static final int BASE_POPULATION_SIZE = 100;
-  private static final int NUMBER_OF_INDEPENDENT_RUNS = 30;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
   // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 500;
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
   private static final int WRITE_FREQUENCY = 100;
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
@@ -120,7 +120,6 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    /*
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
         new FrontPlotObserver<DoubleSolution>(
@@ -132,7 +131,6 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
-     */
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer

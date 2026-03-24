@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to WARP (warp.dev) when working with code in this repository.
+This file provides guidance to AI agents when working on code in this repository.
 
 ## What this repo is
 Evolver is a Java framework for automatically configuring multi-objective metaheuristics using a two-level (meta/base) optimization approach. It builds on jMetal and exposes example mains. See `README.rst` for a fuller narrative.
@@ -8,13 +8,12 @@ Evolver is a Java framework for automatically configuring multi-objective metahe
 ## Quick facts
 - Language/Tooling: Java 21, Maven
 - Key deps: jMetal `${jmetal.version}` (currently 7.0), SnakeYAML
-- Packaging: jar (library). Training examples with `public static void main` live under `src/main/java/org/uma/evolver/example/training/**`, base-level configuration examples under `org/uma/evolver/example/configuration/**`, and validation/experimental studies under `org/uma/evolver/example/validation/**`.
-- Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance). Prefer those over generic style rules.
+- Packaging: jar (library)
+- Coding standards: see `JAVA_CODING_GUIDELINES.md` (project-specific guidance)
 
-## Commands you'll use most
-Build and test
+## Build/Lint/Test Commands
 ```bash
-# Clean and compile (unit tests not executed)
+# Clean and compile
 mvn clean compile
 
 # Unit tests only (Surefire)
@@ -25,67 +24,123 @@ mvn verify
 
 # Package the jar (skips tests)
 mvn -DskipTests package
-```
-Run a single test
-```bash
-# One unit test class
+
+# Run a single test class
 mvn -Dtest=NSGAIIDoubleTest test
-# One unit test method
+
+# Run a single test method
 mvn -Dtest=NSGAIIDoubleTest#methodName test
-# One IT class (runs during verify)
+
+# Run a single IT class
 mvn -Dit.test=NSGAIIDoubleIT verify
-# One IT method
+
+# Run a single IT method
 mvn -Dit.test=NSGAIIDoubleIT#methodName verify
+
+# Run multiple test classes
+mvn -Dtest="NSGAIIDoubleTest,MOEADDoubleTest" test
+
+# Skip tests and static analysis, just package
+mvn -DskipTests -Dcheckstyle.skip -Dpmd.skip -Dspotbugs.skip package
 ```
-Static analysis (configured in pom.xml)
+
+Static analysis (configured in pom.xml):
 ```bash
-mvn checkstyle:check    # google_checks.xml
-mvn pmd:check
-mvn spotbugs:check
-```
-Documentation
-```bash
-mvn javadoc:jar         # build API docs jar
+mvn checkstyle:check    # google_checks.xml (import order, naming, etc.)
+mvn pmd:check          # code style, best practices
+mvn spotbugs:check     # bug detection
+mvn javadoc:javadoc    # generate API docs
 ```
 
-Notes
-- No maven-exec plugin is configured. To run example mains, use your IDE or add `exec-maven-plugin` locally if needed.
-- Integration tests are identified by `*IT.java` and are executed by Failsafe during `verify`.
+## Code Style Guidelines
 
-## Big-picture architecture (where to look)
-Two-level optimization
-- Meta level: defines a meta-optimization problem over base-level configurations, then solves it with a MO algorithm (e.g., NSGA-II, SMPSO, SPEA2).
-  - Key packages: `org.uma.evolver.meta.builder` (builders such as `MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, `MetaSPEA2Builder`), `org.uma.evolver.meta.problem` (`MetaOptimizationProblem`), `org.uma.evolver.meta.strategy` (evaluation budget strategies)
-- Base level: configurable MO algorithms (NSGA-II, MOEA/D, SMSEMOA, MOPSO, RDEMOEA) assembled from jMetal components.
-  - Key packages: `org.uma.evolver.algorithm.*` and subpackages per algorithm (`nsgaii`, `moead`, `smsemoa`, `mopso`, `rdemoea`)
-  - Example: `BaseNSGAII` builds a jMetal `EvolutionaryAlgorithm` using a `ParameterSpace` and optional external archives.
+### Import Organization (Google Java Style)
+Order imports with blank lines between groups:
+1. `com.google.*`
+2. `org.apache.commons.*`, `org.apache.logging.*`
+3. `jakarta.*`, `javax.*`
+4. `org.uma.jmetal.*` (jMetal framework)
+5. `org.uma.evolver.*` (this project)
+6. `java.*`, `javafx.*`
 
-Parameter modeling and YAML loading
-- Package: `org.uma.evolver.parameter.*`
-  - Core abstractions: `Parameter`, `ConditionalParameter`, `ParameterSpace`
-  - YAML loader: `parameter.yaml.YAMLParameterSpace` (+ processors per type) to build `ParameterSpace` from YAML
-  - Types/factories: `parameter.type.*`, `parameter.factory.*`
-- YAML files: `src/main/resources/parameterSpaces/*.yaml` (e.g., `NSGAIIDouble.yaml`, `MOEADDouble.yaml`, etc.)
+### Java 21+ Features - USE THESE:
+- **Records** for DTOs and immutable value objects
+- **Sealed classes/interfaces** for controlled type hierarchies
+- **Pattern matching** with switch expressions
+- **Optional<T>** instead of null for absent values
+- **Streams API** for collection transformations
+- **Try-with-resources** for all AutoCloseable resources
+- **`var`** for local variables when type is obvious
 
-Training sets
-- Training sets: `org.uma.evolver.trainingset.*` (e.g., `DTLZ3DTrainingSet`, `RE3DTrainingSet`, `WFG2DTrainingSet`)
+### Naming Conventions
+- Classes/Records: `PascalCase` (e.g., `YAMLParameterSpace`, `MetaOptimizationProblem`)
+- Methods/Variables: `camelCase` (e.g., `buildAlgorithm()`, `parameterSpace`)
+- Constants: `SCREAMING_SNAKE_CASE` (e.g., `MAX_ITERATIONS`)
+- Test classes: `ClassNameTest` or `ClassNameIT` (e.g., `NSGAIIDoubleTest`, `NSGAIIDoubleIT`)
+- Test methods: `givenContext_whenAction_thenResult()` (e.g., `givenValidYaml_whenLoading_thenParametersCreated()`)
 
-Examples (runnable mains)
-- Meta-optimization training examples: `org.uma.evolver.example.training.*` (e.g., `NSGAIIOptimizingNSGAIIForBenchmarkDTLZ`)
-- Base-level configuration examples: `org.uma.evolver.example.configuration.*` (e.g., `MOEAD_DTLZ2`, `NSGAIIZDT4Example`)
-- Validation & experimental studies: `org.uma.evolver.example.validation.*` (e.g., `REStudy`, `RWAStudy`, `DTLZWFG3DStudy`, `RDEMOEAValidation`, `RDEMOEAValidationDTLZ`)
+### DO:
+- Use `@DisplayName` and `@Nested` for organized JUnit 5 tests
+- Follow Given-When-Then naming: `givenValidInput_whenAction_thenResult()`
+- Write complete Javadoc for all public APIs
+- Make fields `final` when possible
+- Use immutable collections: `List.of()`, `Set.of()`, `Map.of()`
+- Keep methods under 20 lines with single responsibility
+- Use specific custom exceptions over generic RuntimeException
+- Use builder pattern for complex object construction (see `MetaNSGAIIBuilder`)
 
-Irace integration
+### DON'T:
+- Create verbose classes when records suffice
+- Use null returns; return Optional instead
+- Close resources manually with finally blocks
+- Use if-else chains with instanceof checks
+- Write "god methods" doing multiple things
+- Leave public APIs undocumented
+
+### Error Handling
+- Throw specific exceptions: `IllegalArgumentException`, `IllegalStateException`, custom exceptions
+- Include descriptive messages with context
+- Use `@throws` in Javadoc for documented exceptions
+- Never swallow exceptions silently
+
+## Architecture (Package Structure)
+
+### Two-level optimization
+- **Meta level**: `org.uma.evolver.meta.*` (builders, problem, strategy)
+- **Base level**: `org.uma.evolver.algorithm.*` (nsgaii, moead, smsemoa, mopso, rdemoea)
+
+### Parameter modeling
+- Package: `org.uma.evolver.parameter.*` (Parameter, ConditionalParameter, ParameterSpace)
+- YAML loader: `parameter.yaml.YAMLParameterSpace`
+- YAML files: `src/main/resources/parameterSpaces/*.yaml`
+- Factories: `DoubleParameterFactory`, `BinaryParameterFactory`, `PermutationParameterFactory`
+
+### Training sets
+- `org.uma.evolver.trainingset.*`: Training problem sets and reference fronts
+
+### Example mains
+- Training: `org.uma.evolver.example.training.*`
+- Configuration: `org.uma.evolver.example.configuration.*`
+- Validation: `org.uma.evolver.example.validation.*`
+
+### Irace integration
 - `org.uma.evolver.irace.*`: irace parameter description generators and runner
 
-Utilities and outputs
-- `org.uma.evolver.util.*`: config I/O (`ConfigurationFileReader`), result writers (`WriteExecutionDataToFilesObserver`, `OutputResults`), reference-front estimation
+### Utilities
+- `org.uma.evolver.util.*`: config I/O, result writers, reference-front estimation
 
-## Tests
-- Framework: JUnit 5 (`junit-jupiter`), Mockito for mocking
-- Layout: unit tests under `src/test/java/**`, ITs suffixed with `IT` (executed by Failsafe during `verify`)
+## Testing:
+- Framework: JUnit 5 (junit-jupiter), Mockito for mocking
+- Unit tests: `src/test/java/**/*Test.java`
+- Integration tests: `src/test/java/**/*IT.java` (executed during `verify`)
+- Run example mains from your IDE (no maven-exec plugin configured)
+
+## Notes
+- When adding parameters or algorithms, mirror existing patterns for YAML compatibility
+- New algorithms should extend jMetal components and be configurable via ParameterSpace
+- Prefer editing `JAVA_CODING_GUIDELINES.md` for style decisions
 
 ## Pointers for future agents
-- Prefer editing/consulting `JAVA_CODING_GUIDELINES.md` for style decisions in this repo.
-- When adding configurable parameters or new algorithms, mirror existing patterns in `parameter.*` and `algorithm.*` to ensure they are compatible with `ParameterSpace` and YAML loaders.
-- All parameter spaces are defined via YAML files in `src/main/resources/parameterSpaces/` and loaded with `YAMLParameterSpace`.
+1. All parameter spaces are YAML files in `src/main/resources/parameterSpaces/`
+2. Use builders (e.g., `MetaNSGAIIBuilder`) for complex object construction
+3. jMetal quality indicators are used as optimization objectives (Epsilon, NormalizedHypervolume, etc.)
