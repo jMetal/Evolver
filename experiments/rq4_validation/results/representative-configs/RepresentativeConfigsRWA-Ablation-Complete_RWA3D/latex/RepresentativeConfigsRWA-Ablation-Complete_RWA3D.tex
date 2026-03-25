@@ -1,0 +1,103 @@
+\documentclass{article}
+\title{RepresentativeConfigsRWA-Ablation-Complete_RWA3D}
+\usepackage{colortbl}
+\usepackage[table*]{xcolor}
+\xdefinecolor{gray95}{gray}{0.65}
+\xdefinecolor{gray25}{gray}{0.8}
+\author{A.J. Nebro}
+\begin{document}
+\maketitle
+\section{Tables}
+
+\begin{table}
+\caption{EP. Mean and Standard Deviation}
+\label{table: EP}
+\centering
+\begin{scriptsize}
+\begin{tabular}{llllll}
+\hline & NSGAII-Standard & Complete-RWA3D & Complete-RWA3D-ArchiveReset & Complete-RWA3D-CrossoverReset &  Complete-RWA3D-MutationReset\\
+\hline 
+RWA1 & $  8.70e-03_{ 1.9e-03}$ & $  8.20e-03_{ 2.2e-03}$ & \cellcolor{gray95}$  7.44e-03_{ 2.3e-03}$ & \cellcolor{gray25}$  8.02e-03_{ 2.7e-03}$ & $  3.30e-02_{ 8.6e-03}$ \\
+RWA2 & $  5.48e-02_{ 7.8e-03}$ & \cellcolor{gray95}$  3.57e-02_{ 3.4e-03}$ & $  4.39e-02_{ 4.0e-03}$ & \cellcolor{gray25}$  3.84e-02_{ 3.2e-03}$ & $  4.27e-02_{ 6.0e-03}$ \\
+RWA3 & $  7.01e-02_{ 2.0e-02}$ & \cellcolor{gray25}$  2.93e-02_{ 5.1e-03}$ & $  3.78e-02_{ 1.1e-02}$ & \cellcolor{gray95}$  2.72e-02_{ 3.7e-03}$ & $  4.49e-02_{ 1.8e-02}$ \\
+RWA4 & $  1.17e-02_{ 3.7e-03}$ & \cellcolor{gray25}$  3.33e-03_{ 1.4e-03}$ & $  6.99e-03_{ 2.5e-03}$ & \cellcolor{gray95}$  3.29e-03_{ 1.3e-03}$ & $  5.25e-03_{ 1.4e-03}$ \\
+RWA5 & $  9.06e-01_{ 3.7e-05}$ & $  9.06e-01_{ 3.9e-05}$ & \cellcolor{gray95}$  9.06e-01_{ 0.0e+00}$ & \cellcolor{gray25}$  9.06e-01_{ 3.1e-05}$ & $  9.06e-01_{ 3.2e-05}$ \\
+RWA6 & $  6.37e-02_{ 9.8e-03}$ & \cellcolor{gray25}$  2.91e-02_{ 3.9e-03}$ & $  4.46e-02_{ 1.0e-02}$ & \cellcolor{gray95}$  2.90e-02_{ 2.6e-03}$ & $  7.60e-02_{ 2.8e-02}$ \\
+RWA7 & $  1.04e-01_{ 1.1e-02}$ & \cellcolor{gray95}$  5.51e-02_{ 3.4e-03}$ & $  9.29e-02_{ 9.4e-03}$ & \cellcolor{gray25}$  5.61e-02_{ 4.7e-03}$ & $  5.68e-02_{ 4.2e-03}$ \\
+RWA8 & $  1.23e-01_{ 2.2e-02}$ & \cellcolor{gray95}$  6.46e-02_{ 5.7e-03}$ & $  1.05e-01_{ 1.4e-02}$ & $  6.78e-02_{ 6.6e-03}$ & \cellcolor{gray25}$  6.77e-02_{ 6.4e-03}$ \\
+RWA9 & $  1.86e-01_{ 4.1e-02}$ & $  1.06e-01_{ 1.3e-02}$ & $  1.82e-01_{ 2.8e-02}$ & \cellcolor{gray95}$  9.77e-02_{ 1.3e-02}$ & \cellcolor{gray25}$  1.04e-01_{ 1.1e-02}$ \\
+RWA10 & $  2.05e-01_{ 2.1e-02}$ & \cellcolor{gray25}$  1.29e-01_{ 1.2e-02}$ & $  2.03e-01_{ 2.3e-02}$ & \cellcolor{gray95}$  1.28e-01_{ 1.4e-02}$ & $  1.95e-01_{ 2.9e-02}$ \\
+\hline
+\end{tabular}
+\end{scriptsize}
+\end{table}
+
+\begin{table}
+\caption{EP. Median and Interquartile Range}
+\label{table: EP}
+\centering
+\begin{scriptsize}
+\begin{tabular}{llllll}
+\hline & NSGAII-Standard & Complete-RWA3D & Complete-RWA3D-ArchiveReset & Complete-RWA3D-CrossoverReset &  Complete-RWA3D-MutationReset\\
+\hline 
+RWA1 & $  8.12e-03_{ 3.2e-03}$ & $  7.79e-03_{ 2.4e-03}$ & \cellcolor{gray95}$  7.12e-03_{ 2.4e-03}$ & \cellcolor{gray25}$  7.55e-03_{ 1.8e-03}$ & $  3.11e-02_{ 1.4e-02}$ \\
+RWA2 & $  5.74e-02_{ 8.9e-03}$ & \cellcolor{gray95}$  3.66e-02_{ 5.8e-03}$ & $  4.32e-02_{ 5.9e-03}$ & \cellcolor{gray25}$  3.80e-02_{ 3.1e-03}$ & $  4.29e-02_{ 9.3e-03}$ \\
+RWA3 & $  7.06e-02_{ 2.6e-02}$ & \cellcolor{gray25}$  2.88e-02_{ 7.1e-03}$ & $  3.41e-02_{ 1.9e-02}$ & \cellcolor{gray95}$  2.76e-02_{ 5.1e-03}$ & $  3.90e-02_{ 2.5e-02}$ \\
+RWA4 & $  1.10e-02_{ 3.5e-03}$ & \cellcolor{gray25}$  2.92e-03_{ 2.4e-03}$ & $  7.12e-03_{ 4.0e-03}$ & \cellcolor{gray95}$  2.64e-03_{ 2.2e-03}$ & $  5.22e-03_{ 2.3e-03}$ \\
+RWA5 & $  9.06e-01_{ 2.0e-05}$ & $  9.06e-01_{ 2.8e-06}$ & \cellcolor{gray95}$  9.06e-01_{ 0.0e+00}$ & \cellcolor{gray25}$  9.06e-01_{ 7.0e-07}$ & $  9.06e-01_{ 3.6e-06}$ \\
+RWA6 & $  6.16e-02_{ 1.5e-02}$ & \cellcolor{gray95}$  2.84e-02_{ 4.1e-03}$ & $  4.08e-02_{ 1.4e-02}$ & \cellcolor{gray25}$  2.86e-02_{ 3.6e-03}$ & $  8.33e-02_{ 4.6e-02}$ \\
+RWA7 & $  1.03e-01_{ 1.5e-02}$ & \cellcolor{gray25}$  5.49e-02_{ 5.3e-03}$ & $  9.34e-02_{ 1.3e-02}$ & \cellcolor{gray95}$  5.47e-02_{ 7.1e-03}$ & $  5.60e-02_{ 5.4e-03}$ \\
+RWA8 & $  1.24e-01_{ 3.0e-02}$ & \cellcolor{gray95}$  6.36e-02_{ 7.9e-03}$ & $  1.02e-01_{ 2.0e-02}$ & $  6.81e-02_{ 7.8e-03}$ & \cellcolor{gray25}$  6.67e-02_{ 9.7e-03}$ \\
+RWA9 & $  1.95e-01_{ 7.9e-02}$ & \cellcolor{gray25}$  1.05e-01_{ 1.9e-02}$ & $  1.87e-01_{ 3.1e-02}$ & \cellcolor{gray95}$  9.46e-02_{ 2.2e-02}$ & $  1.06e-01_{ 1.4e-02}$ \\
+RWA10 & $  2.05e-01_{ 2.4e-02}$ & \cellcolor{gray25}$  1.27e-01_{ 1.1e-02}$ & $  2.00e-01_{ 3.0e-02}$ & \cellcolor{gray95}$  1.26e-01_{ 1.8e-02}$ & $  1.93e-01_{ 3.0e-02}$ \\
+\hline
+\end{tabular}
+\end{scriptsize}
+\end{table}
+
+\begin{table}
+\caption{HV. Mean and Standard Deviation}
+\label{table: HV}
+\centering
+\begin{scriptsize}
+\begin{tabular}{llllll}
+\hline & NSGAII-Standard & Complete-RWA3D & Complete-RWA3D-ArchiveReset & Complete-RWA3D-CrossoverReset &  Complete-RWA3D-MutationReset\\
+\hline 
+RWA1 & $  8.48e-01_{ 1.7e-04}$ & \cellcolor{gray95}$  8.49e-01_{ 2.0e-04}$ & $  8.48e-01_{ 2.1e-04}$ & \cellcolor{gray25}$  8.49e-01_{ 2.0e-04}$ & $  8.42e-01_{ 2.1e-03}$ \\
+RWA2 & $  7.32e-01_{ 3.1e-03}$ & \cellcolor{gray95}$  7.43e-01_{ 1.9e-03}$ & $  7.42e-01_{ 1.7e-03}$ & \cellcolor{gray25}$  7.43e-01_{ 1.4e-03}$ & $  7.37e-01_{ 2.8e-03}$ \\
+RWA3 & $  8.17e-01_{ 7.2e-03}$ & \cellcolor{gray25}$  8.37e-01_{ 1.3e-03}$ & $  8.35e-01_{ 3.7e-03}$ & \cellcolor{gray95}$  8.37e-01_{ 1.1e-03}$ & $  8.34e-01_{ 3.2e-03}$ \\
+RWA4 & $  9.88e-01_{ 2.1e-03}$ & \cellcolor{gray95}$  9.92e-01_{ 6.2e-05}$ & $  9.92e-01_{ 1.3e-04}$ & \cellcolor{gray25}$  9.92e-01_{ 4.7e-05}$ & $  9.91e-01_{ 4.0e-04}$ \\
+RWA5 & $  5.82e-02_{ 1.7e-04}$ & \cellcolor{gray25}$  5.84e-02_{ 2.2e-04}$ & $  5.84e-02_{ 3.0e-04}$ & \cellcolor{gray95}$  5.86e-02_{ 1.3e-04}$ & $  5.46e-02_{ 7.9e-04}$ \\
+RWA6 & $  2.84e-01_{ 1.0e-03}$ & \cellcolor{gray25}$  2.87e-01_{ 6.3e-04}$ & \cellcolor{gray95}$  2.87e-01_{ 7.2e-04}$ & $  2.87e-01_{ 5.9e-04}$ & $  2.75e-01_{ 8.0e-03}$ \\
+RWA7 & $  5.74e-01_{ 3.3e-03}$ & \cellcolor{gray95}$  5.97e-01_{ 1.3e-03}$ & $  5.88e-01_{ 2.1e-03}$ & \cellcolor{gray25}$  5.97e-01_{ 9.0e-04}$ & $  5.95e-01_{ 1.2e-03}$ \\
+RWA8 & $  4.62e-01_{ 7.0e-03}$ & \cellcolor{gray95}$  4.93e-01_{ 1.7e-03}$ & $  4.80e-01_{ 5.1e-03}$ & \cellcolor{gray25}$  4.92e-01_{ 1.8e-03}$ & $  4.91e-01_{ 1.9e-03}$ \\
+RWA9 & $  6.33e-01_{ 1.4e-02}$ & \cellcolor{gray25}$  6.83e-01_{ 4.5e-03}$ & $  6.41e-01_{ 1.2e-02}$ & \cellcolor{gray95}$  6.85e-01_{ 4.9e-03}$ & $  6.78e-01_{ 4.6e-03}$ \\
+RWA10 & $  2.40e-01_{ 7.5e-03}$ & \cellcolor{gray95}$  2.79e-01_{ 2.9e-03}$ & $  2.49e-01_{ 8.5e-03}$ & \cellcolor{gray25}$  2.78e-01_{ 3.4e-03}$ & $  2.55e-01_{ 8.8e-03}$ \\
+\hline
+\end{tabular}
+\end{scriptsize}
+\end{table}
+
+\begin{table}
+\caption{HV. Median and Interquartile Range}
+\label{table: HV}
+\centering
+\begin{scriptsize}
+\begin{tabular}{llllll}
+\hline & NSGAII-Standard & Complete-RWA3D & Complete-RWA3D-ArchiveReset & Complete-RWA3D-CrossoverReset &  Complete-RWA3D-MutationReset\\
+\hline 
+RWA1 & $  8.48e-01_{ 2.5e-04}$ & \cellcolor{gray25}$  8.49e-01_{ 4.1e-04}$ & $  8.48e-01_{ 2.5e-04}$ & \cellcolor{gray95}$  8.49e-01_{ 2.3e-04}$ & $  8.42e-01_{ 3.1e-03}$ \\
+RWA2 & $  7.33e-01_{ 4.2e-03}$ & \cellcolor{gray95}$  7.44e-01_{ 3.0e-03}$ & $  7.42e-01_{ 2.3e-03}$ & \cellcolor{gray25}$  7.43e-01_{ 2.0e-03}$ & $  7.37e-01_{ 3.8e-03}$ \\
+RWA3 & $  8.18e-01_{ 1.1e-02}$ & \cellcolor{gray95}$  8.37e-01_{ 1.4e-03}$ & $  8.36e-01_{ 4.5e-03}$ & \cellcolor{gray25}$  8.37e-01_{ 1.5e-03}$ & $  8.35e-01_{ 4.6e-03}$ \\
+RWA4 & $  9.88e-01_{ 3.2e-03}$ & \cellcolor{gray95}$  9.92e-01_{ 8.6e-05}$ & $  9.92e-01_{ 1.9e-04}$ & \cellcolor{gray25}$  9.92e-01_{ 5.7e-05}$ & $  9.91e-01_{ 6.5e-04}$ \\
+RWA5 & $  5.82e-02_{ 3.3e-04}$ & \cellcolor{gray25}$  5.85e-02_{ 4.0e-04}$ & $  5.83e-02_{ 5.5e-04}$ & \cellcolor{gray95}$  5.86e-02_{ 2.1e-04}$ & $  5.47e-02_{ 1.1e-03}$ \\
+RWA6 & $  2.84e-01_{ 1.4e-03}$ & \cellcolor{gray25}$  2.87e-01_{ 8.4e-04}$ & \cellcolor{gray95}$  2.88e-01_{ 7.0e-04}$ & $  2.87e-01_{ 9.8e-04}$ & $  2.72e-01_{ 1.6e-02}$ \\
+RWA7 & $  5.74e-01_{ 3.9e-03}$ & \cellcolor{gray95}$  5.97e-01_{ 1.8e-03}$ & $  5.87e-01_{ 3.0e-03}$ & \cellcolor{gray25}$  5.97e-01_{ 1.4e-03}$ & $  5.95e-01_{ 2.0e-03}$ \\
+RWA8 & $  4.63e-01_{ 1.1e-02}$ & \cellcolor{gray95}$  4.93e-01_{ 2.1e-03}$ & $  4.80e-01_{ 7.2e-03}$ & \cellcolor{gray25}$  4.92e-01_{ 2.9e-03}$ & $  4.91e-01_{ 2.8e-03}$ \\
+RWA9 & $  6.32e-01_{ 1.9e-02}$ & \cellcolor{gray25}$  6.83e-01_{ 5.9e-03}$ & $  6.41e-01_{ 1.8e-02}$ & \cellcolor{gray95}$  6.85e-01_{ 7.9e-03}$ & $  6.77e-01_{ 8.3e-03}$ \\
+RWA10 & $  2.39e-01_{ 9.4e-03}$ & \cellcolor{gray95}$  2.79e-01_{ 4.0e-03}$ & $  2.48e-01_{ 1.4e-02}$ & \cellcolor{gray25}$  2.78e-01_{ 5.7e-03}$ & $  2.55e-01_{ 1.2e-02}$ \\
+\hline
+\end{tabular}
+\end{scriptsize}
+\end{table}
+\end{document}

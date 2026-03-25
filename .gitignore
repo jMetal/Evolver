@@ -34,3 +34,7 @@ env/
 
 # Local paper workspace
 paper/
+
+# RQ4 raw run outputs kept out of git history
+experiments/rq4_validation/results/representative-configs/**/*FUN*
+experiments/rq4_validation/results/representative-configs/**/*VAR*

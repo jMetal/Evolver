@@ -23,7 +23,6 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $RuntimeClasspathFile = Join-Path $RepoRoot "target/runtime-classpath.txt"
 $ValidationMain = "org.uma.evolver.example.validation.RepresentativeConfigurationValidationStudy"
-$PythonExe = "python"
 $JavaExe = "java"
 $ClasspathSeparator = [IO.Path]::PathSeparator
 
@@ -59,6 +58,17 @@ function Resolve-MavenCommand {
     }
 
     throw "No se ha encontrado Maven. Usa -CompileProject con mvn/mvnw disponible o compila el proyecto antes."
+}
+
+function Resolve-PythonCommand {
+    foreach ($name in @("python", "python3")) {
+        $command = Get-Command $name -ErrorAction SilentlyContinue
+        if ($null -ne $command) {
+            return $command.Source
+        }
+    }
+
+    throw "No se ha encontrado Python. Instala python3 o expone python/python3 en PATH."
 }
 
 function Invoke-LoggedCommand {
@@ -136,17 +146,19 @@ function Invoke-ValidationStudy {
 }
 
 function Invoke-Rq4Postprocess {
+    $python = Resolve-PythonCommand
+
     Write-Step "Regenerando resumen RQ4"
-    Invoke-LoggedCommand -FilePath $PythonExe -Arguments @("experiments/rq4_validation/generate_validation_summary.py")
+    Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_summary.py")
 
     if ($RunAblations) {
         Write-Step "Regenerando ablaciones RQ4"
-        Invoke-LoggedCommand -FilePath $PythonExe -Arguments @("experiments/rq4_validation/generate_validation_ablation.py")
+        Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_ablation.py")
     }
 
     if ($CompilePaper) {
         Write-Step "Compilando manuscrito"
-        Invoke-LoggedCommand -FilePath $PythonExe -Arguments @("paper/scripts/08_compile_manuscript_pdf.py", "--no-sync")
+        Invoke-LoggedCommand -FilePath $python -Arguments @("paper/scripts/08_compile_manuscript_pdf.py", "--no-sync")
     }
 }
 

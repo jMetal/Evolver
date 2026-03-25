@@ -1,11 +1,35 @@
 \begin{table}[htbp]
 \centering
-\caption{Compact RQ4 validation summary across the seen, unseen, and full splits.}
-\begin{tabular}{ll}
+\caption{Compact RQ4 validation summary across the seen, unseen, and full splits. HV reports the median of the per-problem median hypervolume values; W/T/L counts compare each tuned configuration against the default NSGA-II baseline on the same split.}
+\small
+\begin{tabular}{llllll}
 \toprule
-Artifact & Status \\
+Suite & Split & Config & Median HV & Median EP & W/T/L \\
 \midrule
-Validation bundle & pending local execution \\
+RE & seen & Complete-RE3D & 0.9760 & 0.0072 & 5/0/2 \\
+RE & seen & Extreme-RE3D & 0.9760 & 0.0076 & 5/0/2 \\
+RE & seen & Complete-RWA3D & 0.9763 & 0.0095 & 5/0/2 \\
+RE & seen & Extreme-RWA3D & 0.9761 & 0.0071 & 5/0/2 \\
+RE & unseen & Complete-RE3D & 0.6725 & 0.0093 & 8/0/1 \\
+RE & unseen & Extreme-RE3D & 0.6727 & 0.0090 & 8/0/1 \\
+RE & unseen & Complete-RWA3D & 0.6630 & 0.0316 & 5/0/4 \\
+RE & unseen & Extreme-RWA3D & 0.6641 & 0.0281 & 5/0/4 \\
+RE & full & Complete-RE3D & 0.7720 & 0.0086 & 13/0/3 \\
+RE & full & Extreme-RE3D & 0.7704 & 0.0083 & 13/0/3 \\
+RE & full & Complete-RWA3D & 0.7714 & 0.0284 & 10/0/6 \\
+RE & full & Extreme-RWA3D & 0.7695 & 0.0280 & 10/0/6 \\
+RWA & seen & Complete-RWA3D & 0.6705 & 0.0320 & 6/0/0 \\
+RWA & seen & Extreme-RWA3D & 0.6697 & 0.0298 & 6/0/0 \\
+RWA & seen & Complete-RE3D & 0.6696 & 0.0294 & 6/0/0 \\
+RWA & seen & Extreme-RE3D & 0.6697 & 0.0302 & 6/0/0 \\
+RWA & unseen & Complete-RWA3D & 0.5885 & 0.0820 & 4/0/0 \\
+RWA & unseen & Extreme-RWA3D & 0.5859 & 0.0849 & 4/0/0 \\
+RWA & unseen & Complete-RE3D & 0.5815 & 0.0920 & 4/0/0 \\
+RWA & unseen & Extreme-RE3D & 0.5800 & 0.0928 & 4/0/0 \\
+RWA & full & Complete-RWA3D & 0.6404 & 0.0449 & 10/0/0 \\
+RWA & full & Extreme-RWA3D & 0.6372 & 0.0435 & 10/0/0 \\
+RWA & full & Complete-RE3D & 0.6334 & 0.0430 & 10/0/0 \\
+RWA & full & Extreme-RE3D & 0.6317 & 0.0449 & 10/0/0 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -1,0 +1,2 @@
+suite,run_algorithms,ablation_mode,ablation_base_tag,independent_runs,max_evaluations,population_size,cores,yaml_file
+re,true,true,Complete-RE3D,30,10000,100,31,NSGAIIDouble.yaml
