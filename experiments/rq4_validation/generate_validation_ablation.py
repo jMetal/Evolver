@@ -4,7 +4,7 @@ Figure 6b — Compact real ablation summary for the RQ4 winners.
 For each suite, the script chooses the better of the two in-suite representative
 configurations using unseen-split HV as the primary criterion and unseen-split
 EP as the tie-breaker. It then reads the corresponding ablation study and
-plots the relative HV loss caused by resetting archive, crossover, or mutation
+plots the relative HV change caused by resetting archive, crossover, or mutation
 to the standard NSGA-II defaults.
 
 If either the validation bundle or the ablation bundle is not available, the
@@ -56,7 +56,7 @@ def main() -> None:
             "Run the validation study first, then rerun it in ablation mode for the winner of each suite.",
         )
         pd.DataFrame(
-            columns=["Suite", "Winner", "Variant", "HV", "RelativeLossPercent"]
+            columns=["Suite", "Winner", "Variant", "HV", "RelativeHVChangePercent"]
         ).to_csv(SUMMARY_CSV, index=False)
         return
 
@@ -90,14 +90,14 @@ def main() -> None:
             if hv.empty:
                 continue
             value = float(hv.iloc[0])
-            relative_loss = 100.0 * (base_hv - value) / base_hv if base_hv != 0 else 0.0
+            relative_change = 100.0 * (value - base_hv) / base_hv if base_hv != 0 else 0.0
             rows.append(
                 {
                     "Suite": suite,
                     "Winner": winner,
                     "Variant": variant,
                     "HV": value,
-                    "RelativeLossPercent": relative_loss,
+                    "RelativeHVChangePercent": relative_change,
                 }
             )
 
@@ -125,10 +125,11 @@ def main() -> None:
         suite_frame["Label"] = suite_frame["Variant"].str.replace(f"{winner}-", "", regex=False)
         ax.bar(
             suite_frame["Label"],
-            suite_frame["RelativeLossPercent"],
+            suite_frame["RelativeHVChangePercent"],
             color=[colors.get(label, "#999999") for label in suite_frame["Label"]],
             alpha=0.88,
         )
+        ax.axhline(0.0, color="#444444", linewidth=0.9)
         ax.set_title(f"{suite} winner: {winner}", fontsize=10.5)
         ax.set_xlabel("Reset block", fontsize=10)
         ax.tick_params(which="both", direction="in")
@@ -136,7 +137,7 @@ def main() -> None:
         ax.spines["right"].set_visible(False)
         ax.grid(axis="x", visible=False)
 
-    axes[0].set_ylabel("Relative HV loss on unseen split (%)", fontsize=10)
+    axes[0].set_ylabel("Relative HV change on unseen split (%)", fontsize=10)
     fig.suptitle(
         "Compact real ablation of the validation winners (RQ4 complement)",
         fontsize=11,

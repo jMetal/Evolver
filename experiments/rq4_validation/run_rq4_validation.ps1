@@ -146,10 +146,13 @@ function Invoke-ValidationStudy {
 }
 
 function Invoke-Rq4Postprocess {
-    $python = Resolve-PythonCommand
+    $python = if ($DryRun) { "python" } else { Resolve-PythonCommand }
 
     Write-Step "Regenerando resumen RQ4"
     Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_summary.py")
+
+    Write-Step "Regenerando figura de asimetria de transferencia RQ4"
+    Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_transfer_delta.py")
 
     if ($RunAblations) {
         Write-Step "Regenerando ablaciones RQ4"

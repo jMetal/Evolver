@@ -57,9 +57,11 @@ The Python post-processing scripts then generate:
 
 - `experiments/rq4_validation/generated/validation_summary_rq4.csv`
 - `experiments/rq4_validation/generated/validation_pairwise_rq4.csv`
+- `experiments/rq4_validation/generated/validation_transfer_delta_rq4.csv`
 - `experiments/rq4_validation/generated/validation_wtl_rq4.tex`
 - `experiments/rq4_validation/generated/validation_ablation_rq4.csv`
 - `experiments/rq4_validation/generated/validation_summary_rq4.png`
+- `experiments/rq4_validation/generated/validation_transfer_delta_rq4.png`
 - `experiments/rq4_validation/generated/validation_ablation_rq4.png`
 
 ## 2. Prerequisites
@@ -202,6 +204,7 @@ These two scripts only depend on the new validation bundles.
 
 ```bash
 python experiments/rq4_validation/generate_validation_summary.py
+python experiments/rq4_validation/generate_validation_transfer_delta.py
 python experiments/rq4_validation/generate_validation_ablation.py
 ```
 
@@ -270,6 +273,7 @@ ls experiments/rq4_validation/results/representative-configs/RepresentativeConfi
 ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA/metadata_problem_splits.csv
 ls experiments/rq4_validation/generated/validation_summary_rq4.csv
 ls experiments/rq4_validation/generated/validation_pairwise_rq4.csv
+ls experiments/rq4_validation/generated/validation_transfer_delta_rq4.csv
 ls experiments/rq4_validation/generated/validation_wtl_rq4.tex
 ls experiments/rq4_validation/generated/validation_ablation_rq4.csv
 ```
@@ -295,6 +299,7 @@ Then, on the local machine:
 
 ```bash
 python experiments/rq4_validation/generate_validation_summary.py
+python experiments/rq4_validation/generate_validation_transfer_delta.py
 python experiments/rq4_validation/generate_validation_ablation.py
 python paper/scripts/08_compile_manuscript_pdf.py --no-sync
 ```
@@ -308,6 +313,7 @@ python paper/scripts/08_compile_manuscript_pdf.py --no-sync
   - 30 runs per problem by default
 - The validation uses complete benchmark reference fronts from `resources/referenceFronts`.
 - All experiment-side files, raw bundles, and generated `RQ4` artifacts live under `experiments/rq4_validation/`, which is outside the gitignored `paper/` workspace.
+- The transfer-asymmetry figure is derived only from the aggregated `validation_summary_rq4.csv`; it does not require rerunning the Java experiments.
 - The representative configurations and ablation logic are implemented in:
   - `src/main/java/org/uma/evolver/example/validation/RepresentativeConfigurationCatalog.java`
   - `src/main/java/org/uma/evolver/example/validation/RepresentativeConfigurationValidationStudy.java`
