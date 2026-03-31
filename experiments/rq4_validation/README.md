@@ -59,8 +59,11 @@ The Python post-processing scripts then generate:
 - `experiments/rq4_validation/generated/validation_pairwise_rq4.csv`
 - `experiments/rq4_validation/generated/validation_transfer_delta_rq4.csv`
 - `experiments/rq4_validation/generated/validation_wtl_rq4.tex`
+- `experiments/rq4_validation/generated/validation_wtl_rq4.png`
+- `experiments/rq4_validation/generated/validation_cd_rq4.csv`
 - `experiments/rq4_validation/generated/validation_ablation_rq4.csv`
 - `experiments/rq4_validation/generated/validation_summary_rq4.png`
+- `experiments/rq4_validation/generated/validation_cd_rq4.png`
 - `experiments/rq4_validation/generated/validation_transfer_delta_rq4.png`
 - `experiments/rq4_validation/generated/validation_ablation_rq4.png`
 
@@ -200,10 +203,11 @@ java -cp "$CP" org.uma.evolver.example.validation.RepresentativeConfigurationVal
 
 ### 5.8 Regenerate the RQ4 Artifacts
 
-These two scripts only depend on the new validation bundles.
+These post-processing scripts only depend on the new validation bundles.
 
 ```bash
 python experiments/rq4_validation/generate_validation_summary.py
+python experiments/rq4_validation/generate_validation_cd_diagram.py
 python experiments/rq4_validation/generate_validation_transfer_delta.py
 python experiments/rq4_validation/generate_validation_ablation.py
 ```
@@ -275,7 +279,10 @@ ls experiments/rq4_validation/generated/validation_summary_rq4.csv
 ls experiments/rq4_validation/generated/validation_pairwise_rq4.csv
 ls experiments/rq4_validation/generated/validation_transfer_delta_rq4.csv
 ls experiments/rq4_validation/generated/validation_wtl_rq4.tex
+ls experiments/rq4_validation/generated/validation_wtl_rq4.png
+ls experiments/rq4_validation/generated/validation_cd_rq4.csv
 ls experiments/rq4_validation/generated/validation_ablation_rq4.csv
+ls experiments/rq4_validation/generated/validation_cd_rq4.png
 ```
 
 If ablations were executed, also check:
@@ -299,6 +306,7 @@ Then, on the local machine:
 
 ```bash
 python experiments/rq4_validation/generate_validation_summary.py
+python experiments/rq4_validation/generate_validation_cd_diagram.py
 python experiments/rq4_validation/generate_validation_transfer_delta.py
 python experiments/rq4_validation/generate_validation_ablation.py
 python paper/scripts/08_compile_manuscript_pdf.py --no-sync
