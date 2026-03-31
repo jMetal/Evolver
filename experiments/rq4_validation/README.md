@@ -216,6 +216,12 @@ python experiments/rq4_validation/generate_validation_ablation.py
 
 Only do this if the server already has the two canonical training bundles required by the `RQ1` to `RQ3` scripts.
 
+If you also want to refresh the local manuscript assets before compiling, run:
+
+```bash
+python paper/scripts/07_regenerate_manuscript_assets.py
+```
+
 ```bash
 python paper/scripts/08_compile_manuscript_pdf.py --no-sync
 ```
@@ -305,10 +311,7 @@ rsync -avz experiments/rq4_validation/results/representative-configs/ user@local
 Then, on the local machine:
 
 ```bash
-python experiments/rq4_validation/generate_validation_summary.py
-python experiments/rq4_validation/generate_validation_cd_diagram.py
-python experiments/rq4_validation/generate_validation_transfer_delta.py
-python experiments/rq4_validation/generate_validation_ablation.py
+python paper/scripts/07_regenerate_manuscript_assets.py
 python paper/scripts/08_compile_manuscript_pdf.py --no-sync
 ```
 
