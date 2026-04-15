@@ -6,9 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.example.validation.RepresentativeConfigurationCatalog.ConfigurationSpec;
+import org.uma.evolver.example.validation.RepresentativeConfigurationCatalog.ForwardStepCandidate;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -56,11 +59,12 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * <p>The study evaluates the standard NSGA-II baseline plus the four representative configurations
  * reported in the manuscript appendix on the full RE and RWA suites. The same runner can also
- * execute the compact real ablations by selecting one representative configuration and resetting
- * archive, crossover, or mutation blocks to their standard defaults.
+ * execute knockout ablations or a stepwise forward ablation that follows the irace-style
+ * source-to-target path.
  */
 public class RepresentativeConfigurationValidationStudy {
   private static final int DEFAULT_INDEPENDENT_RUNS = 30;
+  private static final int DEFAULT_ABLATION_NREP = 5;
   private static final int DEFAULT_MAX_EVALUATIONS = 10000;
   private static final int DEFAULT_POPULATION_SIZE = 100;
   private static final int DEFAULT_NUMBER_OF_CORES = -1;
@@ -89,6 +93,7 @@ public class RepresentativeConfigurationValidationStudy {
    * @param outputDirectory base output directory
    * @param runAlgorithms whether to execute missing FUN/VAR runs
    * @param ablationBaseTag optional representative configuration tag for real ablations
+   * @param ablationNrep number of stochastic repetitions used to rank forward-ablation candidates
    * @param numberOfCores number of parallel workers used by the experiment
    * @param independentRuns number of stochastic repetitions per problem
    */
@@ -97,8 +102,24 @@ public class RepresentativeConfigurationValidationStudy {
       String outputDirectory,
       boolean runAlgorithms,
       String ablationBaseTag,
+      String ablationMode,
+      int ablationNrep,
       int numberOfCores,
       int independentRuns) {}
+
+  private record CandidateMetrics(double seenHv, double seenEp) {}
+
+  private record ForwardSelection(ForwardStepCandidate candidate, CandidateMetrics metrics) {}
+
+  private record ForwardTrajectoryEntry(
+      int step,
+      String algorithmTag,
+      String label,
+      String changedParameters,
+      String parameterString,
+      double seenHv,
+      double seenEp,
+      boolean evaluated) {}
 
   /**
    * Entry point.
@@ -121,14 +142,19 @@ public class RepresentativeConfigurationValidationStudy {
     String outputDirectory;
     boolean runAlgorithms;
     String ablationBaseTag;
+    int ablationNrep;
     int numberOfCores;
     int independentRuns;
     int index;
+
+    String ablationMode;
 
     suiteId = "all";
     outputDirectory = DEFAULT_OUTPUT_DIRECTORY;
     runAlgorithms = false;
     ablationBaseTag = null;
+    ablationMode = "forward";
+    ablationNrep = DEFAULT_ABLATION_NREP;
     numberOfCores = DEFAULT_NUMBER_OF_CORES;
     independentRuns = DEFAULT_INDEPENDENT_RUNS;
 
@@ -148,6 +174,18 @@ public class RepresentativeConfigurationValidationStudy {
         }
         case "--ablation-base" -> {
           ablationBaseTag = valueOf(args, index, token);
+          index += 2;
+        }
+        case "--ablation-mode" -> {
+          ablationMode = valueOf(args, index, token).toLowerCase();
+          if (!ablationMode.equals("forward") && !ablationMode.equals("knockout")) {
+            throw new IllegalArgumentException(
+                "Unknown ablation mode: " + ablationMode + " (expected 'forward' or 'knockout')");
+          }
+          index += 2;
+        }
+        case "--ablation-nrep" -> {
+          ablationNrep = Integer.parseInt(valueOf(args, index, token));
           index += 2;
         }
         case "--cores" -> {
@@ -172,6 +210,8 @@ public class RepresentativeConfigurationValidationStudy {
 
     validateSuiteId(suiteId);
     numberOfCores = normalizeNumberOfCores(numberOfCores);
+    independentRuns = requirePositive("independent runs", independentRuns);
+    ablationNrep = requirePositive("forward ablation nrep", ablationNrep);
     if ((ablationBaseTag != null) && suiteId.equals("all")) {
       throw new IllegalArgumentException(
           "Ablation mode requires a concrete suite selection: use --suite re or --suite rwa");
@@ -183,6 +223,8 @@ public class RepresentativeConfigurationValidationStudy {
             outputDirectory,
             runAlgorithms,
             ablationBaseTag,
+            ablationMode,
+            ablationNrep,
             numberOfCores,
             independentRuns);
 
@@ -190,13 +232,18 @@ public class RepresentativeConfigurationValidationStudy {
   }
 
   private static void runStudy(Arguments arguments, SuiteSpec suite) throws IOException {
+    if ((arguments.ablationBaseTag() != null) && "forward".equals(arguments.ablationMode())) {
+      runForwardAblationStudy(arguments, suite);
+      return;
+    }
+
     YAMLParameterSpace parameterSpace;
     List<ConfigurationSpec> configurationSpecs;
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList;
     Experiment<DoubleSolution, List<DoubleSolution>> experiment;
 
     parameterSpace = new YAMLParameterSpace(YAML_FILE, new DoubleParameterFactory());
-    configurationSpecs = selectedConfigurations(arguments.ablationBaseTag());
+    configurationSpecs = selectedConfigurations(arguments.ablationBaseTag(), arguments.ablationMode());
     algorithmList =
         configureAlgorithmList(
             suite.problems(),
@@ -204,17 +251,13 @@ public class RepresentativeConfigurationValidationStudy {
             parameterSpace,
             arguments.independentRuns());
     experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>(experimentName(arguments, suite))
-            .setAlgorithmList(algorithmList)
-            .setProblemList(suite.problems())
-            .setReferenceFrontDirectory("resources/referenceFronts")
-            .setExperimentBaseDirectory(arguments.outputDirectory())
-            .setOutputParetoFrontFileName("FUN")
-            .setOutputParetoSetFileName("VAR")
-            .setIndicatorList(Arrays.asList(new Epsilon(), new PISAHypervolume()))
-            .setIndependentRuns(arguments.independentRuns())
-            .setNumberOfCores(arguments.numberOfCores())
-            .build();
+        buildExperiment(
+            experimentName(arguments, suite),
+            arguments.outputDirectory(),
+            suite,
+            algorithmList,
+            arguments,
+            arguments.independentRuns());
 
     writeMetadata(experiment.getExperimentBaseDirectory(), suite, configurationSpecs, arguments);
 
@@ -227,7 +270,154 @@ public class RepresentativeConfigurationValidationStudy {
     new GenerateFriedmanTestTables<>(experiment).run();
   }
 
-  private static List<ConfigurationSpec> selectedConfigurations(String ablationBaseTag) {
+  private static void runForwardAblationStudy(Arguments arguments, SuiteSpec suite)
+      throws IOException {
+    YAMLParameterSpace parameterSpace;
+    SuiteSpec selectionSuite;
+    ConfigurationSpec standard;
+    ConfigurationSpec target;
+    LinkedHashMap<String, ConfigurationSpec> selectedConfigurations;
+    Path experimentDirectory;
+    Path stagesDirectory;
+    List<ForwardTrajectoryEntry> trajectory;
+    Map<String, CandidateMetrics> initialMetrics;
+    ConfigurationSpec current;
+    CandidateMetrics currentMetrics;
+    CandidateMetrics targetMetrics;
+    int stepIndex;
+
+    parameterSpace = new YAMLParameterSpace(YAML_FILE, new DoubleParameterFactory());
+    selectionSuite = seenOnlySuite(suite);
+    standard = RepresentativeConfigurationCatalog.standard();
+    target = RepresentativeConfigurationCatalog.configurationByTag(arguments.ablationBaseTag());
+    experimentDirectory =
+        Path.of(arguments.outputDirectory(), experimentName(arguments, suite));
+    stagesDirectory = experimentDirectory.resolve("_forward_steps");
+    Files.createDirectories(stagesDirectory);
+
+    selectedConfigurations = new LinkedHashMap<>();
+    trajectory = new ArrayList<>();
+
+    initialMetrics =
+        evaluateForwardStage(
+            arguments,
+            selectionSuite,
+            parameterSpace,
+            List.of(standard, target),
+            stagesDirectory,
+            "step-00-source-target");
+    current = standard;
+    currentMetrics = requireMetrics(initialMetrics, standard.tag(), "initial source evaluation");
+    targetMetrics = requireMetrics(initialMetrics, target.tag(), "initial target evaluation");
+    selectedConfigurations.put(standard.tag(), standard);
+    trajectory.add(
+        new ForwardTrajectoryEntry(
+            0,
+            current.tag(),
+            "Default",
+            "",
+            current.parameterString(),
+            currentMetrics.seenHv(),
+            currentMetrics.seenEp(),
+            true));
+
+    stepIndex = 1;
+    while (!RepresentativeConfigurationCatalog.sameConfiguration(current, target)) {
+      List<String> remainingParameters;
+      List<ForwardStepCandidate> candidates;
+      ForwardSelection bestSelection;
+
+      remainingParameters =
+          RepresentativeConfigurationCatalog.forwardRemainingParameters(current, target);
+      if (remainingParameters.isEmpty()) {
+        break;
+      }
+      if (remainingParameters.size() == 1) {
+        selectedConfigurations.put(target.tag(), target);
+        trajectory.add(
+            new ForwardTrajectoryEntry(
+                stepIndex,
+                target.tag(),
+                "Target",
+                remainingParameters.get(0),
+                target.parameterString(),
+                targetMetrics.seenHv(),
+                targetMetrics.seenEp(),
+                false));
+        current = target;
+        break;
+      }
+
+      candidates =
+          RepresentativeConfigurationCatalog.forwardStepCandidates(current, target, stepIndex);
+      if (candidates.isEmpty()) {
+        break;
+      }
+
+      bestSelection =
+          selectBestForwardCandidate(
+              evaluateForwardStage(
+                  arguments,
+                  selectionSuite,
+                  parameterSpace,
+                  candidateConfigurations(candidates),
+                  stagesDirectory,
+                  "step-" + String.format("%02d", stepIndex)),
+              candidates);
+      current = bestSelection.candidate().configuration();
+      currentMetrics = bestSelection.metrics();
+      selectedConfigurations.put(current.tag(), current);
+      trajectory.add(
+          new ForwardTrajectoryEntry(
+              stepIndex,
+              current.tag(),
+              forwardStepLabel(bestSelection.candidate().changedParameters()),
+              String.join(";", bestSelection.candidate().changedParameters()),
+              current.parameterString(),
+              currentMetrics.seenHv(),
+              currentMetrics.seenEp(),
+              true));
+      stepIndex += 1;
+    }
+
+    if (!RepresentativeConfigurationCatalog.sameConfiguration(current, target)) {
+      selectedConfigurations.put(target.tag(), target);
+      trajectory.add(
+          new ForwardTrajectoryEntry(
+              stepIndex,
+              target.tag(),
+              "Target",
+              String.join(
+                  ";", RepresentativeConfigurationCatalog.forwardRemainingParameters(current, target)),
+              target.parameterString(),
+              targetMetrics.seenHv(),
+              targetMetrics.seenEp(),
+              false));
+    } else if (!trajectory.isEmpty()
+        && !trajectory.get(trajectory.size() - 1).algorithmTag().equals(target.tag())) {
+      selectedConfigurations.put(target.tag(), target);
+      trajectory.add(
+          new ForwardTrajectoryEntry(
+              stepIndex,
+              target.tag(),
+              "Target",
+              "",
+              target.parameterString(),
+              targetMetrics.seenHv(),
+              targetMetrics.seenEp(),
+              false));
+    }
+
+    runForwardTrajectoryValidation(
+        arguments,
+        suite,
+        parameterSpace,
+        new ArrayList<>(selectedConfigurations.values()),
+        trajectory);
+  }
+
+  private static List<ConfigurationSpec> selectedConfigurations(
+      String ablationBaseTag, String ablationMode) {
     List<ConfigurationSpec> result;
 
     if (ablationBaseTag == null) {
@@ -238,7 +428,9 @@ public class RepresentativeConfigurationValidationStudy {
       result = new ArrayList<>();
       result.add(RepresentativeConfigurationCatalog.standard());
       result.add(RepresentativeConfigurationCatalog.configurationByTag(ablationBaseTag));
-      result.addAll(RepresentativeConfigurationCatalog.ablationVariants(ablationBaseTag));
+      if ("knockout".equals(ablationMode)) {
+        result.addAll(RepresentativeConfigurationCatalog.ablationVariants(ablationBaseTag));
+      }
     }
 
     return result;
@@ -250,9 +442,14 @@ public class RepresentativeConfigurationValidationStudy {
     if (arguments.ablationBaseTag() == null) {
       result = suite.experimentName();
     } else {
+      String modePrefix;
+
+      modePrefix = "forward".equals(arguments.ablationMode()) ? "ForwardAblation" : "Ablation";
       result =
           suite.experimentName()
-              + "-Ablation-"
+              + "-"
+              + modePrefix
+              + "-"
               + arguments.ablationBaseTag().replace('-', '_');
     }
 
@@ -273,6 +470,320 @@ public class RepresentativeConfigurationValidationStudy {
           result.add(createAlgorithm(expProblem, run, configuration, parameterSpace));
         }
       }
+    }
+
+    return result;
+  }
+
+  private static Experiment<DoubleSolution, List<DoubleSolution>> buildExperiment(
+      String experimentName,
+      String experimentBaseDirectory,
+      SuiteSpec suite,
+      List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList,
+      Arguments arguments,
+      int runCount) {
+    Experiment<DoubleSolution, List<DoubleSolution>> result;
+
+    result =
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>(experimentName)
+            .setAlgorithmList(algorithmList)
+            .setProblemList(suite.problems())
+            .setReferenceFrontDirectory("resources/referenceFronts")
+            .setExperimentBaseDirectory(experimentBaseDirectory)
+            .setOutputParetoFrontFileName("FUN")
+            .setOutputParetoSetFileName("VAR")
+            .setIndicatorList(Arrays.asList(new Epsilon(), new PISAHypervolume()))
+            .setIndependentRuns(runCount)
+            .setNumberOfCores(arguments.numberOfCores())
+            .build();
+
+    return result;
+  }
+
+  private static Map<String, CandidateMetrics> evaluateForwardStage(
+      Arguments arguments,
+      SuiteSpec suite,
+      YAMLParameterSpace parameterSpace,
+      List<ConfigurationSpec> configurationSpecs,
+      Path stagesDirectory,
+      String stageName)
+      throws IOException {
+    List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList;
+    Experiment<DoubleSolution, List<DoubleSolution>> experiment;
+    Path summaryPath;
+    Map<String, CandidateMetrics> result;
+
+    algorithmList =
+        configureAlgorithmList(
+            suite.problems(),
+            configurationSpecs,
+            parameterSpace,
+            arguments.ablationNrep());
+    experiment =
+        buildExperiment(
+            stageName,
+            stagesDirectory.toString(),
+            suite,
+            algorithmList,
+            arguments,
+            arguments.ablationNrep());
+
+    if (arguments.runAlgorithms()) {
+      new ExecuteAlgorithms<>(experiment).run();
+    }
+    new ComputeQualityIndicators<>(experiment).run();
+
+    summaryPath = Path.of(experiment.getExperimentBaseDirectory(), "QualityIndicatorSummary.csv");
+    result = readSeenMetrics(summaryPath, suite, configurationSpecs);
+
+    return result;
+  }
+
+  private static void runForwardTrajectoryValidation(
+      Arguments arguments,
+      SuiteSpec suite,
+      YAMLParameterSpace parameterSpace,
+      List<ConfigurationSpec> selectedConfigurations,
+      List<ForwardTrajectoryEntry> trajectory)
+      throws IOException {
+    List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList;
+    Experiment<DoubleSolution, List<DoubleSolution>> experiment;
+
+    algorithmList =
+        configureAlgorithmList(
+            suite.problems(),
+            selectedConfigurations,
+            parameterSpace,
+            arguments.independentRuns());
+    experiment =
+        buildExperiment(
+            experimentName(arguments, suite),
+            arguments.outputDirectory(),
+            suite,
+            algorithmList,
+            arguments,
+            arguments.independentRuns());
+
+    writeMetadata(experiment.getExperimentBaseDirectory(), suite, selectedConfigurations, arguments);
+    writeForwardTrajectoryMetadata(experiment.getExperimentBaseDirectory(), trajectory);
+
+    if (arguments.runAlgorithms()) {
+      new ExecuteAlgorithms<>(experiment).run();
+    }
+    new ComputeQualityIndicators<>(experiment).run();
+  }
+
+  private static SuiteSpec seenOnlySuite(SuiteSpec suite) {
+    SuiteSpec result;
+    List<ExperimentProblem<DoubleSolution>> problems;
+    List<String[]> splitRows;
+    Map<String, String> splitByProblem;
+
+    problems = new ArrayList<>();
+    splitRows = new ArrayList<>();
+    splitByProblem = new LinkedHashMap<>();
+    for (String[] row : suite.splitRows()) {
+      splitByProblem.put(row[0], row[1]);
+      if ("seen".equals(row[1])) {
+        splitRows.add(new String[] {row[0], row[1]});
+      }
+    }
+
+    for (ExperimentProblem<DoubleSolution> problem : suite.problems()) {
+      if ("seen".equals(splitByProblem.get(problem.getTag()))) {
+        problems.add(problem);
+      }
+    }
+    if (problems.isEmpty()) {
+      throw new IllegalStateException("Suite " + suite.id() + " has no seen problems for forward ablation");
+    }
+
+    result = new SuiteSpec(suite.id(), suite.experimentName() + "-SeenSelection", problems, splitRows);
+
+    return result;
+  }
+
+  private static List<ConfigurationSpec> candidateConfigurations(
+      List<ForwardStepCandidate> candidates) {
+    List<ConfigurationSpec> result;
+
+    result = new ArrayList<>();
+    for (ForwardStepCandidate candidate : candidates) {
+      result.add(candidate.configuration());
+    }
+
+    return result;
+  }
+
+  private static ForwardSelection selectBestForwardCandidate(
+      Map<String, CandidateMetrics> metricsByTag, List<ForwardStepCandidate> candidates) {
+    ForwardSelection result;
+
+    result = null;
+    for (ForwardStepCandidate candidate : candidates) {
+      CandidateMetrics metrics;
+      ForwardSelection selection;
+
+      metrics = metricsByTag.get(candidate.configuration().tag());
+      if (metrics == null) {
+        continue;
+      }
+
+      selection = new ForwardSelection(candidate, metrics);
+      if ((result == null) || isBetterForwardSelection(selection, result)) {
+        result = selection;
+      }
+    }
+    if (result == null) {
+      throw new IllegalStateException("No forward-ablation candidate could be ranked");
+    }
+
+    return result;
+  }
+
+  private static boolean isBetterForwardSelection(
+      ForwardSelection candidate, ForwardSelection currentBest) {
+    if (candidate.metrics().seenHv() != currentBest.metrics().seenHv()) {
+      return candidate.metrics().seenHv() > currentBest.metrics().seenHv();
+    }
+    if (candidate.metrics().seenEp() != currentBest.metrics().seenEp()) {
+      return candidate.metrics().seenEp() < currentBest.metrics().seenEp();
+    }
+
+    return candidate.candidate().configuration().tag().compareTo(currentBest.candidate().configuration().tag())
+        < 0;
+  }
+
+  private static CandidateMetrics requireMetrics(
+      Map<String, CandidateMetrics> metricsByTag, String tag, String context) {
+    CandidateMetrics result;
+
+    result = metricsByTag.get(tag);
+    if (result == null) {
+      throw new IllegalStateException("Missing metrics for " + tag + " during " + context);
+    }
+
+    return result;
+  }
+
+  private static String forwardStepLabel(List<String> changedParameters) {
+    String result;
+
+    result = String.join("+", changedParameters);
+
+    return result;
+  }
+
+  private static Map<String, CandidateMetrics> readSeenMetrics(
+      Path summaryPath, SuiteSpec suite, List<ConfigurationSpec> configurationSpecs) throws IOException {
+    Map<String, String> splitByProblem;
+    Map<String, Map<String, Map<String, List<Double>>>> values;
+    Map<String, CandidateMetrics> result;
+    List<String> lines;
+
+    splitByProblem = new LinkedHashMap<>();
+    for (String[] splitRow : suite.splitRows()) {
+      splitByProblem.put(splitRow[0], splitRow[1]);
+    }
+
+    values = new LinkedHashMap<>();
+    for (ConfigurationSpec configurationSpec : configurationSpecs) {
+      values.put(configurationSpec.tag(), new LinkedHashMap<>());
+    }
+
+    lines = Files.readAllLines(summaryPath);
+    for (int index = 1; index < lines.size(); index++) {
+      String line;
+      String[] columns;
+      String algorithm;
+      String problem;
+      String indicatorName;
+      double indicatorValue;
+
+      line = lines.get(index);
+      if (line.isBlank()) {
+        continue;
+      }
+
+      columns = line.split(",", -1);
+      if (columns.length < 5) {
+        continue;
+      }
+
+      algorithm = columns[0];
+      problem = columns[1];
+      indicatorName = columns[2];
+      if (!values.containsKey(algorithm) || !splitByProblem.getOrDefault(problem, "").equals("seen")) {
+        continue;
+      }
+      if (!indicatorName.equals("HV") && !indicatorName.equals("EP")) {
+        continue;
+      }
+
+      indicatorValue = Double.parseDouble(columns[4]);
+      values
+          .computeIfAbsent(algorithm, ignored -> new LinkedHashMap<>())
+          .computeIfAbsent(indicatorName, ignored -> new LinkedHashMap<>())
+          .computeIfAbsent(problem, ignored -> new ArrayList<>())
+          .add(indicatorValue);
+    }
+
+    result = new LinkedHashMap<>();
+    for (ConfigurationSpec configurationSpec : configurationSpecs) {
+      Map<String, Map<String, List<Double>>> indicators;
+      double seenHv;
+      double seenEp;
+
+      indicators = values.get(configurationSpec.tag());
+      if (indicators == null) {
+        continue;
+      }
+
+      seenHv = suiteMedian(indicators.get("HV"));
+      seenEp = suiteMedian(indicators.get("EP"));
+      if (Double.isNaN(seenHv) || Double.isNaN(seenEp)) {
+        continue;
+      }
+      result.put(configurationSpec.tag(), new CandidateMetrics(seenHv, seenEp));
+    }
+
+    return result;
+  }
+
+  private static double suiteMedian(Map<String, List<Double>> valuesByProblem) {
+    List<Double> perProblemMedians;
+    double result;
+
+    if (valuesByProblem == null || valuesByProblem.isEmpty()) {
+      return Double.NaN;
+    }
+
+    perProblemMedians = new ArrayList<>();
+    for (List<Double> values : valuesByProblem.values()) {
+      perProblemMedians.add(median(values));
+    }
+
+    result = median(perProblemMedians);
+
+    return result;
+  }
+
+  private static double median(List<Double> values) {
+    List<Double> sorted;
+    int size;
+    double result;
+
+    sorted = new ArrayList<>(values);
+    sorted.sort(Double::compareTo);
+    size = sorted.size();
+    if (size == 0) {
+      return Double.NaN;
+    }
+
+    if ((size % 2) == 0) {
+      result = (sorted.get((size / 2) - 1) + sorted.get(size / 2)) / 2.0;
+    } else {
+      result = sorted.get(size / 2);
     }
 
     return result;
@@ -406,6 +917,35 @@ public class RepresentativeConfigurationValidationStudy {
     writeRunMetadata(experimentDirectory, suite, arguments);
   }
 
+  private static void writeForwardTrajectoryMetadata(
+      String experimentDirectory, List<ForwardTrajectoryEntry> trajectory) throws IOException {
+    String fileName;
+
+    fileName = experimentDirectory + "/metadata_forward_trajectory.csv";
+    try (FileWriter writer = new FileWriter(fileName, false)) {
+      writer.write(
+          "step,algorithm,label,changed_parameters,parameter_string,seen_hv,seen_ep,evaluated\n");
+      for (ForwardTrajectoryEntry entry : trajectory) {
+        writer.write(Integer.toString(entry.step()));
+        writer.write(",");
+        writer.write(csv(entry.algorithmTag()));
+        writer.write(",");
+        writer.write(csv(entry.label()));
+        writer.write(",");
+        writer.write(csv(entry.changedParameters()));
+        writer.write(",");
+        writer.write(csv(entry.parameterString()));
+        writer.write(",");
+        writer.write(Double.toString(entry.seenHv()));
+        writer.write(",");
+        writer.write(Double.toString(entry.seenEp()));
+        writer.write(",");
+        writer.write(Boolean.toString(entry.evaluated()));
+        writer.write("\n");
+      }
+    }
+  }
+
   private static void writeAlgorithmMetadata(
       String experimentDirectory, List<ConfigurationSpec> configurationSpecs) throws IOException {
     String fileName;
@@ -446,11 +986,16 @@ public class RepresentativeConfigurationValidationStudy {
       String experimentDirectory, SuiteSpec suite, Arguments arguments) throws IOException {
     String fileName;
     String ablationMode;
+    String ablationNrep;
 
     fileName = experimentDirectory + "/metadata_run_configuration.csv";
-    ablationMode = arguments.ablationBaseTag() == null ? "false" : "true";
+    ablationMode = arguments.ablationBaseTag() == null ? "" : arguments.ablationMode();
+    ablationNrep =
+        (arguments.ablationBaseTag() != null) && "forward".equals(arguments.ablationMode())
+            ? Integer.toString(arguments.ablationNrep())
+            : "";
     try (FileWriter writer = new FileWriter(fileName, false)) {
-      writer.write("suite,run_algorithms,ablation_mode,ablation_base_tag,independent_runs,max_evaluations,population_size,cores,yaml_file\n");
+      writer.write("suite,run_algorithms,ablation_mode,ablation_base_tag,ablation_nrep,independent_runs,max_evaluations,population_size,cores,yaml_file\n");
       writer.write(suite.id());
       writer.write(",");
       writer.write(Boolean.toString(arguments.runAlgorithms()));
@@ -458,6 +1003,8 @@ public class RepresentativeConfigurationValidationStudy {
       writer.write(ablationMode);
       writer.write(",");
       writer.write(arguments.ablationBaseTag() == null ? "" : arguments.ablationBaseTag());
+      writer.write(",");
+      writer.write(ablationNrep);
       writer.write(",");
       writer.write(Integer.toString(arguments.independentRuns()));
       writer.write(",");
@@ -493,6 +1040,14 @@ public class RepresentativeConfigurationValidationStudy {
     return result;
   }
 
+  private static int requirePositive(String label, int value) {
+    if (value < 1) {
+      throw new IllegalArgumentException("Invalid " + label + ": " + value + ". Use a positive integer.");
+    }
+
+    return value;
+  }
+
   private static String valueOf(String[] args, int index, String token) {
     String result;
 
@@ -510,6 +1065,8 @@ public class RepresentativeConfigurationValidationStudy {
     System.out.println("  --output-dir <path>           Base output directory");
     System.out.println("  --run-algorithms              Execute missing FUN/VAR runs");
     System.out.println("  --ablation-base <tag>         Run compact real ablations for one representative tag");
+    System.out.println("  --ablation-mode <forward|knockout>  Ablation strategy (default: forward)");
+    System.out.println("  --ablation-nrep <int>         Repetitions used to rank forward candidates on seen (default: 5)");
     System.out.println(
         "  --cores <int|-1>              Number of parallel workers (-1 = all available minus one; default: -1)");
     System.out.println("  --runs <int>                  Independent runs per problem (default: 30)");

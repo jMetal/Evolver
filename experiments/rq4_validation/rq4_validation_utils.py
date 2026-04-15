@@ -43,20 +43,30 @@ DISPLAY_NAMES = {
 }
 
 
-def experiment_dir(suite: str, ablation_base_tag: str | None = None) -> Path:
+def experiment_dir(
+    suite: str,
+    ablation_base_tag: str | None = None,
+    ablation_mode: str = "forward",
+) -> Path:
     directory = VALIDATION_BASE_DIR / SUITE_CONFIGS[suite]["experiment"]
     if ablation_base_tag is not None:
+        prefix = "ForwardAblation" if ablation_mode == "forward" else "Ablation"
         directory = VALIDATION_BASE_DIR / (
-            f"{SUITE_CONFIGS[suite]['experiment']}-Ablation-{ablation_base_tag.replace('-', '_')}"
+            f"{SUITE_CONFIGS[suite]['experiment']}-{prefix}-{ablation_base_tag.replace('-', '_')}"
         )
     return directory
 
 
-def load_validation_bundle(suite: str, ablation_base_tag: str | None = None) -> dict | None:
-    directory = experiment_dir(suite, ablation_base_tag)
+def load_validation_bundle(
+    suite: str,
+    ablation_base_tag: str | None = None,
+    ablation_mode: str = "forward",
+) -> dict | None:
+    directory = experiment_dir(suite, ablation_base_tag, ablation_mode)
     summary_path = directory / "QualityIndicatorSummary.csv"
     splits_path = directory / "metadata_problem_splits.csv"
     algorithms_path = directory / "metadata_algorithms.csv"
+    trajectory_path = directory / "metadata_forward_trajectory.csv"
 
     if not summary_path.is_file() or not splits_path.is_file() or not algorithms_path.is_file():
         return None
@@ -64,6 +74,7 @@ def load_validation_bundle(suite: str, ablation_base_tag: str | None = None) -> 
     summary = pd.read_csv(summary_path)
     splits = pd.read_csv(splits_path)
     algorithms = pd.read_csv(algorithms_path)
+    trajectory = pd.read_csv(trajectory_path) if trajectory_path.is_file() else None
 
     summary["IndicatorValue"] = pd.to_numeric(summary["IndicatorValue"])
     splits = splits.rename(columns={"problem": "Problem", "split": "Split"})
@@ -78,6 +89,7 @@ def load_validation_bundle(suite: str, ablation_base_tag: str | None = None) -> 
         "directory": directory,
         "summary": summary,
         "algorithms": algorithms,
+        "trajectory": trajectory,
     }
 
 

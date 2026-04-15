@@ -40,15 +40,16 @@ The run creates the validation bundles expected by the manuscript extension:
 
 - `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE`
 - `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA`
-- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-Ablation-Complete_RE3D`
-- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-Ablation-Extreme_RE3D`
-- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-Ablation-Complete_RWA3D`
-- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-Ablation-Extreme_RWA3D`
+- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-ForwardAblation-Complete_RE3D`
+- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-ForwardAblation-Extreme_RE3D`
+- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-ForwardAblation-Complete_RWA3D`
+- `experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-ForwardAblation-Extreme_RWA3D`
 
 Each bundle contains:
 
 - `QualityIndicatorSummary.csv`
 - `metadata_algorithms.csv`
+- `metadata_forward_trajectory.csv` for forward ablations
 - `metadata_problem_splits.csv`
 - `metadata_run_configuration.csv`
 - jMetal indicator files and BEST/MEDIAN FUN/VAR outputs under `data/`
@@ -98,7 +99,7 @@ Recommended order for a full `RQ4` campaign:
 6. Regenerate the `RQ4` summary/ablation figures and tables.
 7. Optionally compile the full manuscript.
 
-Running ablations for all four representative candidates is the safest option because the ablation figure later selects the in-suite winner automatically and then looks for the corresponding ablation bundle.
+Running ablations for all four representative candidates is the safest option because the ablation figure later selects the in-suite winner automatically and then looks for the corresponding forward-ablation bundle.
 
 ## 4. Recommended Server Workflow
 
@@ -166,7 +167,9 @@ java -cp "$CP" org.uma.evolver.example.validation.RepresentativeConfigurationVal
   --cores -1 \
   --runs 30 \
   --run-algorithms \
-  --ablation-base Complete-RE3D
+  --ablation-base Complete-RE3D \
+  --ablation-mode forward \
+  --ablation-nrep 5
 ```
 
 ```bash
@@ -176,7 +179,9 @@ java -cp "$CP" org.uma.evolver.example.validation.RepresentativeConfigurationVal
   --cores -1 \
   --runs 30 \
   --run-algorithms \
-  --ablation-base Extreme-RE3D
+  --ablation-base Extreme-RE3D \
+  --ablation-mode forward \
+  --ablation-nrep 5
 ```
 
 ### 5.7 Run RWA Ablations
@@ -188,7 +193,9 @@ java -cp "$CP" org.uma.evolver.example.validation.RepresentativeConfigurationVal
   --cores -1 \
   --runs 30 \
   --run-algorithms \
-  --ablation-base Complete-RWA3D
+  --ablation-base Complete-RWA3D \
+  --ablation-mode forward \
+  --ablation-nrep 5
 ```
 
 ```bash
@@ -198,7 +205,9 @@ java -cp "$CP" org.uma.evolver.example.validation.RepresentativeConfigurationVal
   --cores -1 \
   --runs 30 \
   --run-algorithms \
-  --ablation-base Extreme-RWA3D
+  --ablation-base Extreme-RWA3D \
+  --ablation-mode forward \
+  --ablation-nrep 5
 ```
 
 ### 5.8 Regenerate the RQ4 Artifacts
@@ -209,7 +218,7 @@ These post-processing scripts only depend on the new validation bundles.
 python experiments/rq4_validation/generate_validation_summary.py
 python experiments/rq4_validation/generate_validation_cd_diagram.py
 python experiments/rq4_validation/generate_validation_transfer_delta.py
-python experiments/rq4_validation/generate_validation_ablation.py
+python experiments/rq4_validation/generate_validation_ablation.py --mode forward
 ```
 
 ### 5.9 Optional: Compile the Full Manuscript
@@ -247,6 +256,8 @@ Use this first to print the exact commands without executing them.
 pwsh -File experiments/rq4_validation/run_rq4_validation.ps1 \
   -Suite all \
   -RunAblations \
+  -AblationMode forward \
+  -AblationNrep 5 \
   -CompilePaper \
   -DryRun
 ```
@@ -257,7 +268,9 @@ pwsh -File experiments/rq4_validation/run_rq4_validation.ps1 \
 pwsh -File experiments/rq4_validation/run_rq4_validation.ps1 \
   -Suite all \
   -CompileProject \
-  -RunAblations
+  -RunAblations \
+  -AblationMode forward \
+  -AblationNrep 5
 ```
 
 ### 6.3 Full Validation + Ablations + Manuscript
@@ -269,6 +282,8 @@ pwsh -File experiments/rq4_validation/run_rq4_validation.ps1 \
   -Suite all \
   -CompileProject \
   -RunAblations \
+  -AblationMode forward \
+  -AblationNrep 5 \
   -CompilePaper
 ```
 
@@ -294,10 +309,11 @@ ls experiments/rq4_validation/generated/validation_cd_rq4.png
 If ablations were executed, also check:
 
 ```bash
-ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-Ablation-Complete_RE3D/QualityIndicatorSummary.csv
-ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-Ablation-Extreme_RE3D/QualityIndicatorSummary.csv
-ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-Ablation-Complete_RWA3D/QualityIndicatorSummary.csv
-ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-Ablation-Extreme_RWA3D/QualityIndicatorSummary.csv
+ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-ForwardAblation-Complete_RE3D/QualityIndicatorSummary.csv
+ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-ForwardAblation-Extreme_RE3D/QualityIndicatorSummary.csv
+ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-ForwardAblation-Complete_RWA3D/QualityIndicatorSummary.csv
+ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRWA-ForwardAblation-Extreme_RWA3D/QualityIndicatorSummary.csv
+ls experiments/rq4_validation/results/representative-configs/RepresentativeConfigsRE-ForwardAblation-Complete_RE3D/metadata_forward_trajectory.csv
 ```
 
 ## 8. Suggested Copy-Back to the Local Machine
@@ -322,6 +338,7 @@ python paper/scripts/08_compile_manuscript_pdf.py --no-sync
   - 10,000 base-level evaluations
   - population size 100
   - 30 runs per problem by default
+- Forward ablation now follows a stepwise irace-style path: source and target are evaluated first, each step races the remaining one-parameter moves on the `seen` split, `--ablation-nrep` controls how many stochastic repetitions are used in that selection phase (default `5`), and `metadata_forward_trajectory.csv` records the selected path.
 - The validation uses complete benchmark reference fronts from `resources/referenceFronts`.
 - All experiment-side files, raw bundles, and generated `RQ4` artifacts live under `experiments/rq4_validation/`, which is outside the gitignored `paper/` workspace.
 - The transfer-asymmetry figure is derived only from the aggregated `validation_summary_rq4.csv`; it does not require rerunning the Java experiments.

@@ -5,13 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Catalog of the representative 7k NSGA-II configurations reported in the manuscript appendix.
  *
  * <p>The catalog exposes the default baseline, the four representative configurations, and helper
- * methods to derive compact real ablations by resetting archive, crossover, or mutation blocks to
- * the standard NSGA-II defaults.
+ * methods to derive knockout ablations and forward candidates that mimic the stepwise
+ * source-to-target ablation used by irace.
  */
 public final class RepresentativeConfigurationCatalog {
   /**
@@ -22,6 +23,18 @@ public final class RepresentativeConfigurationCatalog {
    * @param parameterString CLI-compatible parameter string for {@code DoubleNSGAII}
    */
   public record ConfigurationSpec(String tag, String description, String parameterString) {}
+
+  /**
+   * Candidate generated during one forward-ablation step.
+   *
+   * @param configuration generated configuration
+   * @param changedParameters parameters copied from the target at this step
+   */
+  public record ForwardStepCandidate(
+      ConfigurationSpec configuration, List<String> changedParameters) {}
+
+  private record ParameterDefinition(
+      String name, boolean dependent, Predicate<Map<String, String>> activeCondition) {}
 
   private static final String STANDARD_PARAMETER_STRING =
       String.join(
@@ -127,6 +140,128 @@ public final class RepresentativeConfigurationCatalog {
                   "--powerLawMutationDelta 6.893826848335108",
                   "--selection stochasticUniversalSampling")));
 
+  private static final List<ParameterDefinition> FORWARD_PARAMETER_DEFINITIONS =
+      List.of(
+          new ParameterDefinition("algorithmResult", false, params -> true),
+          new ParameterDefinition(
+              "populationSizeWithArchive",
+              true,
+              params -> "externalArchive".equals(params.get("algorithmResult"))),
+          new ParameterDefinition(
+              "archiveType",
+              true,
+              params -> "externalArchive".equals(params.get("algorithmResult"))),
+          new ParameterDefinition("createInitialSolutions", false, params -> true),
+          new ParameterDefinition("offspringPopulationSize", false, params -> true),
+          new ParameterDefinition("crossover", false, params -> true),
+          new ParameterDefinition("crossoverProbability", false, params -> true),
+          new ParameterDefinition("crossoverRepairStrategy", false, params -> true),
+          new ParameterDefinition(
+              "sbxDistributionIndex", true, params -> "SBX".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "blxAlphaCrossoverAlpha",
+              true,
+              params -> "blxAlpha".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "blxAlphaBetaCrossoverAlpha",
+              true,
+              params -> "blxAlphaBeta".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "blxAlphaBetaCrossoverBeta",
+              true,
+              params -> "blxAlphaBeta".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "laplaceCrossoverScale",
+              true,
+              params -> "laplace".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "fuzzyRecombinationCrossoverAlpha",
+              true,
+              params -> "fuzzyRecombination".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "pcxCrossoverZeta", true, params -> "PCX".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "pcxCrossoverEta", true, params -> "PCX".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "undcCrossoverZeta", true, params -> "UNDC".equals(params.get("crossover"))),
+          new ParameterDefinition(
+              "undcCrossoverEta", true, params -> "UNDC".equals(params.get("crossover"))),
+          new ParameterDefinition("mutation", false, params -> true),
+          new ParameterDefinition("mutationProbabilityFactor", false, params -> true),
+          new ParameterDefinition("mutationRepairStrategy", false, params -> true),
+          new ParameterDefinition(
+              "uniformMutationPerturbation",
+              true,
+              params -> "uniform".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "polynomialMutationDistributionIndex",
+              true,
+              params -> "polynomial".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "linkedPolynomialMutationDistributionIndex",
+              true,
+              params -> "linkedPolynomial".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "nonUniformMutationPerturbation",
+              true,
+              params -> "nonUniform".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "levyFlightMutationBeta",
+              true,
+              params -> "levyFlight".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "levyFlightMutationStepSize",
+              true,
+              params -> "levyFlight".equals(params.get("mutation"))),
+          new ParameterDefinition(
+              "powerLawMutationDelta",
+              true,
+              params -> "powerLaw".equals(params.get("mutation"))),
+          new ParameterDefinition("selection", false, params -> true),
+          new ParameterDefinition(
+              "selectionTournamentSize",
+              true,
+              params -> "tournament".equals(params.get("selection"))),
+          new ParameterDefinition(
+              "boltzmannTemperature",
+              true,
+              params -> "boltzmann".equals(params.get("selection"))));
+
+  private static final List<String> PARAMETER_STRING_ORDER =
+      List.of(
+          "algorithmResult",
+          "populationSizeWithArchive",
+          "archiveType",
+          "createInitialSolutions",
+          "variation",
+          "offspringPopulationSize",
+          "crossover",
+          "crossoverProbability",
+          "crossoverRepairStrategy",
+          "sbxDistributionIndex",
+          "blxAlphaCrossoverAlpha",
+          "blxAlphaBetaCrossoverAlpha",
+          "blxAlphaBetaCrossoverBeta",
+          "laplaceCrossoverScale",
+          "fuzzyRecombinationCrossoverAlpha",
+          "pcxCrossoverZeta",
+          "pcxCrossoverEta",
+          "undcCrossoverZeta",
+          "undcCrossoverEta",
+          "mutation",
+          "mutationProbabilityFactor",
+          "mutationRepairStrategy",
+          "uniformMutationPerturbation",
+          "polynomialMutationDistributionIndex",
+          "linkedPolynomialMutationDistributionIndex",
+          "nonUniformMutationPerturbation",
+          "levyFlightMutationBeta",
+          "levyFlightMutationStepSize",
+          "powerLawMutationDelta",
+          "selection",
+          "selectionTournamentSize",
+          "boltzmannTemperature");
+
   private RepresentativeConfigurationCatalog() {
     // Utility class
   }
@@ -186,7 +321,7 @@ public final class RepresentativeConfigurationCatalog {
   }
 
   /**
-   * Creates the three compact real ablations used in the manuscript extension.
+   * Creates the three compact knockout ablations (target with one block reset to default).
    *
    * @param baseTag representative configuration tag to ablate
    * @return archive, crossover, and mutation reset variants derived from the selected base
@@ -201,6 +336,119 @@ public final class RepresentativeConfigurationCatalog {
             resetArchive(base),
             resetCrossover(base),
             resetMutation(base));
+
+    return result;
+  }
+
+  /**
+   * Lists the remaining parameter changes that can still be applied from {@code current} toward
+   * {@code target}.
+   *
+   * <p>The result follows the irace ablation convention: only parameters active in the target
+   * configuration are considered explicit candidates, while deactivated conditional parameters are
+   * handled when their parent selector changes.
+   *
+   * @param current current forward-ablation state
+   * @param target target configuration
+   * @return parameter names that can be copied from the target at the next step
+   */
+  public static List<String> forwardRemainingParameters(
+      ConfigurationSpec current, ConfigurationSpec target) {
+    List<String> result;
+    LinkedHashMap<String, String> currentParams;
+    LinkedHashMap<String, String> targetParams;
+
+    result = new ArrayList<>();
+    currentParams = parseParameterString(current.parameterString());
+    targetParams = parseParameterString(target.parameterString());
+
+    for (ParameterDefinition definition : FORWARD_PARAMETER_DEFINITIONS) {
+      String currentValue;
+      String targetValue;
+
+      currentValue = currentParams.get(definition.name());
+      targetValue = targetParams.get(definition.name());
+      if ((targetValue == null) || targetValue.equals(currentValue)) {
+        continue;
+      }
+      if (definition.dependent() && !definition.activeCondition().test(currentParams)) {
+        continue;
+      }
+      result.add(definition.name());
+    }
+
+    return result;
+  }
+
+  /**
+   * Generates all valid one-step forward candidates from {@code current} toward {@code target}.
+   *
+   * <p>Each candidate copies one remaining target parameter. If that change activates or deactivates
+   * conditional parameters, the dependent values are repaired so that the generated configuration is
+   * valid and mirrors the target whenever the corresponding branch becomes active.
+   *
+   * @param current current forward-ablation state
+   * @param target target configuration
+   * @param stepIndex one-based ablation step index
+   * @return valid forward candidates for the current step
+   */
+  public static List<ForwardStepCandidate> forwardStepCandidates(
+      ConfigurationSpec current, ConfigurationSpec target, int stepIndex) {
+    List<ForwardStepCandidate> result;
+    LinkedHashMap<String, String> currentParams;
+    LinkedHashMap<String, String> targetParams;
+    LinkedHashSet<String> seenParameterStrings;
+
+    result = new ArrayList<>();
+    currentParams = parseParameterString(current.parameterString());
+    targetParams = parseParameterString(target.parameterString());
+    seenParameterStrings = new LinkedHashSet<>();
+
+    for (String parameterName : forwardRemainingParameters(current, target)) {
+      LinkedHashMap<String, String> candidateParams;
+      List<String> changedParameters;
+      String parameterString;
+      ConfigurationSpec candidateSpec;
+
+      candidateParams = new LinkedHashMap<>(currentParams);
+      candidateParams.put(parameterName, targetParams.get(parameterName));
+      changedParameters = repairConditionalParameters(candidateParams, targetParams, parameterName);
+      parameterString = toParameterString(candidateParams);
+      if (!seenParameterStrings.add(parameterString)) {
+        continue;
+      }
+
+      if (sameParameterStrings(parameterString, target.parameterString())) {
+        candidateSpec = target;
+      } else {
+        candidateSpec =
+            new ConfigurationSpec(
+                forwardCandidateTag(target.tag(), stepIndex, changedParameters),
+                "Forward ablation candidate from "
+                    + current.tag()
+                    + " toward "
+                    + target.tag()
+                    + " by changing "
+                    + String.join("+", changedParameters),
+                parameterString);
+      }
+      result.add(new ForwardStepCandidate(candidateSpec, List.copyOf(changedParameters)));
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether two configurations encode the same active parameter values.
+   *
+   * @param first first configuration
+   * @param second second configuration
+   * @return {@code true} when both parameter maps are equal
+   */
+  public static boolean sameConfiguration(ConfigurationSpec first, ConfigurationSpec second) {
+    boolean result;
+
+    result = sameParameterStrings(first.parameterString(), second.parameterString());
 
     return result;
   }
@@ -322,7 +570,8 @@ public final class RepresentativeConfigurationCatalog {
     LinkedHashSet<String> orderedKeys;
 
     builder = new StringBuilder();
-    orderedKeys = new LinkedHashSet<>(params.keySet());
+    orderedKeys = new LinkedHashSet<>(PARAMETER_STRING_ORDER);
+    orderedKeys.addAll(params.keySet());
     for (String key : orderedKeys) {
       if (params.containsKey(key)) {
         String value;
@@ -346,6 +595,68 @@ public final class RepresentativeConfigurationCatalog {
     for (String key : keys) {
       params.remove(key);
     }
+  }
+
+  private static List<String> repairConditionalParameters(
+      LinkedHashMap<String, String> candidateParams,
+      LinkedHashMap<String, String> targetParams,
+      String changedParameter) {
+    List<String> result;
+
+    result = new ArrayList<>();
+    result.add(changedParameter);
+
+    for (ParameterDefinition definition : FORWARD_PARAMETER_DEFINITIONS) {
+      boolean active;
+      boolean present;
+
+      if (!definition.dependent()) {
+        continue;
+      }
+
+      active = definition.activeCondition().test(candidateParams);
+      present = candidateParams.containsKey(definition.name());
+      if (active && !present && targetParams.containsKey(definition.name())) {
+        candidateParams.put(definition.name(), targetParams.get(definition.name()));
+        result.add(definition.name());
+      } else if (!active && present) {
+        candidateParams.remove(definition.name());
+        result.add(definition.name());
+      }
+    }
+
+    return result;
+  }
+
+  private static boolean sameParameterStrings(String first, String second) {
+    boolean result;
+
+    result = parseParameterString(first).equals(parseParameterString(second));
+
+    return result;
+  }
+
+  private static String forwardCandidateTag(
+      String targetTag, int stepIndex, List<String> changedParameters) {
+    String result;
+    String suffix;
+
+    suffix =
+        changedParameters.stream()
+            .map(RepresentativeConfigurationCatalog::sanitizeTagComponent)
+            .reduce((left, right) -> left + "+" + right)
+            .orElse("change");
+    result = targetTag + "-Forward-S" + String.format("%02d", stepIndex) + "-" + suffix;
+
+    return result;
+  }
+
+  private static String sanitizeTagComponent(String component) {
+    String result;
+
+    result = component.replaceAll("[^A-Za-z0-9]+", "_");
+
+    return result;
   }
 
   /**

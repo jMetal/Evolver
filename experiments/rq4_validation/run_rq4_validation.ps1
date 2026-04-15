@@ -12,6 +12,11 @@ param(
 
     [switch]$RunAblations,
 
+    [ValidateSet("forward", "knockout")]
+    [string]$AblationMode = "forward",
+
+    [int]$AblationNrep = 5,
+
     [switch]$CompilePaper,
 
     [switch]$DryRun
@@ -119,7 +124,8 @@ function Get-RuntimeClasspath {
 function Invoke-ValidationStudy {
     param(
         [string]$SuiteName,
-        [string]$AblationBaseTag = ""
+        [string]$AblationBaseTag = "",
+        [string]$AblationModeOverride = ""
     )
 
     $cp = Get-RuntimeClasspath
@@ -140,6 +146,11 @@ function Invoke-ValidationStudy {
 
     if ($AblationBaseTag -ne "") {
         $arguments += @("--ablation-base", $AblationBaseTag)
+        $modeToUse = if ($AblationModeOverride -ne "") { $AblationModeOverride } else { $AblationMode }
+        $arguments += @("--ablation-mode", $modeToUse)
+        if ($modeToUse -eq "forward") {
+            $arguments += @("--ablation-nrep", $AblationNrep.ToString())
+        }
     }
 
     Invoke-LoggedCommand -FilePath $JavaExe -Arguments $arguments
@@ -156,7 +167,7 @@ function Invoke-Rq4Postprocess {
 
     if ($RunAblations) {
         Write-Step "Regenerando ablaciones RQ4"
-        Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_ablation.py")
+        Invoke-LoggedCommand -FilePath $python -Arguments @("experiments/rq4_validation/generate_validation_ablation.py", "--mode", $AblationMode)
     }
 
     if ($CompilePaper) {
