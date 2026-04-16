@@ -49,6 +49,7 @@ matplotlib.rcParams.update(
 )
 
 FIGURE_BASENAME = OUTPUT_DIR / "validation_ablation_rq4"
+RECOMMENDATION_FIGURE_BASENAME = OUTPUT_DIR / "validation_ablation_recommendations_rq4"
 SUMMARY_CSV = GENERATED_DIR / "validation_ablation_rq4.csv"
 
 ABLATION_CONFIGS = [
@@ -56,6 +57,11 @@ ABLATION_CONFIGS = [
     ("RE", "Extreme-RE3D"),
     ("RWA", "Complete-RWA3D"),
     ("RWA", "Extreme-RWA3D"),
+]
+
+RECOMMENDED_ABLATION_CONFIGS = [
+    ("RE", "Extreme-RE3D"),
+    ("RWA", "Complete-RWA3D"),
 ]
 
 COLORS = {
@@ -94,6 +100,35 @@ def format_forward_label(label: str) -> str:
     if label in {"Default", "Target"} or len(label) <= 18:
         return label
     return label.replace("+", "+\n")
+
+
+def compact_forward_label(label: str) -> str:
+    lowered = label.lower()
+    if label == "Default":
+        return "Default"
+    if label == "Target":
+        return "Target"
+    if "algorithmresult" in lowered or "archive" in lowered:
+        return "+ Archive"
+    if label == "crossoverProbability":
+        return "+ Cross. prob."
+    if label == "crossoverRepairStrategy":
+        return "+ Cross. repair"
+    if "crossover" in lowered:
+        return "+ Crossover"
+    if label == "mutationProbabilityFactor":
+        return "+ Mut. rate"
+    if label == "mutationRepairStrategy":
+        return "+ Mut. repair"
+    if "mutation" in lowered:
+        return "+ Mutation"
+    if "selection" in lowered:
+        return "+ Selection"
+    if "offspring" in lowered:
+        return "+ Offspring"
+    if "createinitialsolutions" in lowered:
+        return "+ Init"
+    return "+ Parameter"
 
 
 def run_forward_mode() -> pd.DataFrame:
@@ -196,6 +231,87 @@ def draw_forward_figure(frame: pd.DataFrame) -> None:
     for ext in ("png", "pdf"):
         fig.savefig(FIGURE_BASENAME.with_suffix(f".{ext}"), dpi=300, bbox_inches="tight")
         print(f"Saved: {FIGURE_BASENAME.with_suffix(f'.{ext}')}")
+    plt.close(fig)
+
+
+def draw_recommendation_forward_figure(frame: pd.DataFrame) -> None:
+    """Draw the manuscript-focused forward paths for the final recommendations."""
+    fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.3))
+
+    for ax, (suite, config_tag) in zip(axes, RECOMMENDED_ABLATION_CONFIGS):
+        config_frame = frame[
+            (frame["Suite"] == suite) & (frame["Config"] == config_tag)
+        ].sort_values("Step")
+
+        if config_frame.empty:
+            ax.set_title(f"{suite}: {config_tag} (no data)", fontsize=10)
+            continue
+
+        labels = [compact_forward_label(label) for label in config_frame["Block"].tolist()]
+        hvs = config_frame["HV"].to_numpy(dtype=float)
+        baseline = hvs[0]
+        gains = hvs - baseline
+        colors = [forward_color(label) for label in config_frame["Block"].tolist()]
+        x = np.arange(len(labels))
+
+        ax.axhline(0.0, color="#555555", linewidth=0.8, linestyle="--", zorder=0)
+        ax.plot(x, gains, color="#222222", linewidth=1.2, zorder=1)
+        ax.scatter(x, gains, s=58, color=colors, edgecolor="white", linewidth=0.6, zorder=2)
+
+        largest_steps = (
+            config_frame.assign(abs_delta=config_frame["DeltaHV"].abs())
+            .iloc[1:]
+            .sort_values("abs_delta", ascending=False)
+            .head(2)
+        )
+        annotate_steps = set(largest_steps["Step"].astype(int).tolist())
+        annotate_steps.add(int(config_frame["Step"].iloc[-1]))
+
+        y_range = max(float(gains.max() - gains.min()), 1e-4)
+        for _, row in config_frame.iterrows():
+            step = int(row["Step"])
+            if step == 0 or step not in annotate_steps:
+                continue
+            value = float(row["HV"] - baseline)
+            offset = 0.045 * y_range if value >= 0 else -0.08 * y_range
+            label = f"{value:+.4f}"
+            ax.text(
+                step,
+                value + offset,
+                label,
+                ha="center",
+                va="bottom" if value >= 0 else "top",
+                fontsize=7.5,
+                color="#222222",
+            )
+
+        y_margin = max(0.14 * y_range, 3e-4)
+        ax.set_ylim(float(gains.min() - y_margin), float(gains.max() + y_margin))
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=8)
+        ax.set_title(f"{suite}: {config_tag}", fontsize=10.5)
+        ax.set_xlabel("Cumulative forward step", fontsize=9.5)
+        ax.tick_params(which="both", direction="in")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.grid(axis="x", visible=False)
+
+    axes[0].set_ylabel("HV gain over default on unseen split", fontsize=9.5)
+    axes[1].set_ylabel("HV gain over default on unseen split", fontsize=9.5)
+    fig.suptitle(
+        "Forward ablation of the final deployment recommendations",
+        fontsize=11,
+        y=1.02,
+    )
+    plt.tight_layout()
+
+    for ext in ("png", "pdf"):
+        fig.savefig(
+            RECOMMENDATION_FIGURE_BASENAME.with_suffix(f".{ext}"),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        print(f"Saved: {RECOMMENDATION_FIGURE_BASENAME.with_suffix(f'.{ext}')}")
     plt.close(fig)
 
 
@@ -314,6 +430,7 @@ def main() -> None:
             )
         else:
             draw_forward_figure(frame)
+            draw_recommendation_forward_figure(frame)
     else:
         print("Running knockout ablation analysis ...")
         frame = run_knockout_mode()
