@@ -41,3 +41,4 @@ experiments/rq4_validation/results/representative-configs/**/*VAR*
 experiments/rq4_validation/results/representative-configs/**/EP
 experiments/rq4_validation/results/representative-configs/**/HV
 experiments/rq4_validation/results/representative-configs/**/*.csv
+experiments/rq4_validation/results/representative-configs/RepresentativeConfigs*-ForwardAblation-*/
