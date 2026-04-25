@@ -14,7 +14,7 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmetal.version>7.0</jmetal.version>
+    <jmetal.version>7.1</jmetal.version>
     <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
@@ -329,7 +329,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.17.0</version>
+      <version>5.23.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

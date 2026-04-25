@@ -38,10 +38,10 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
 
   // Base-level algorithm configuration
   private static final int BASE_POPULATION_SIZE = 100;
-  private static final int NUMBER_OF_INDEPENDENT_RUNS = 30;
+  private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
   // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 500;
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
   private static final int WRITE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {

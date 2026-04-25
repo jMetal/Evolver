@@ -31,7 +31,7 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
   // Meta-optimizer configuration
-  private static final int META_MAX_EVALUATIONS = 2000;
+  private static final int META_MAX_EVALUATIONS = 3000;
   private static final int META_POPULATION_SIZE = 50;
 
   // Base-level algorithm configuration

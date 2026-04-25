@@ -5,11 +5,12 @@ import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues
 import java.io.IOException;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
-import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.parameter.type.StringParameter;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.ProblemFactory;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
@@ -23,7 +24,7 @@ import org.uma.jmetal.util.VectorUtils;
  *
  * @author Antonio J. Nebro
  */
-public class AutoNSGAIIIraceHV {
+public class AutoNSGAIIIraceHVEP {
   /**
    * Main method that runs NSGA-II with the provided configuration and returns the hypervolume value.
    * The result is printed to standard output for irace to capture.
@@ -79,7 +80,8 @@ public class AutoNSGAIIIraceHV {
         NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
 
     // Calculate and output the hypervolume (inverted for minimization)
-    var qualityIndicator = new PISAHypervolume(normalizedReferenceFront);
-    System.out.println(qualityIndicator.compute(normalizedFront) * -1.0);
+    var hypervolume = new PISAHypervolume(normalizedReferenceFront);
+    var epsilon = new Epsilon(normalizedReferenceFront) ;
+    System.out.println(hypervolume.compute(normalizedFront) * -1.0 + epsilon.compute(normalizedFront)); ;
   }
 }
