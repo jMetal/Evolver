@@ -32,7 +32,7 @@ public class IraceNSGAIIDoubleParameterDescriptionGenerator {
    */
   public static void main(String[] args) {
     var parameterFileGenerator = new IraceParameterDescriptionGenerator<DoubleSolution>() ;
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     parameterFileGenerator.generateConfigurationFile(parameterSpace);
   }

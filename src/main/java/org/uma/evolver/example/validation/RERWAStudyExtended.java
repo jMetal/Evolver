@@ -325,7 +325,6 @@ public class RERWAStudyExtended {
 
     int populationSize = weightVectors.length;
     int maxEvaluations = MAX_EVALUATIONS;
-    int h = 12;
     double alpha = 2.0;
     double fr = 0.1;
 
@@ -333,9 +332,8 @@ public class RERWAStudyExtended {
 
     EvolutionaryAlgorithm<DoubleSolution> rvea =
         new RVEABuilder<>(
-                problem, populationSize, maxEvaluations, crossover, mutation, alpha, fr, h)
+                problem, populationSize, maxEvaluations, crossover, mutation, alpha, fr, Arrays.asList(weightVectors))
             .setTermination(termination)
-            .setReferenceVectors(Arrays.asList(weightVectors))
             .build();
 
     return new ExperimentAlgorithm<>(rvea, tag, expProblem, run);
