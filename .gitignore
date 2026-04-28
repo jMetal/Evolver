@@ -31,3 +31,14 @@ env/
 .idea/
 .vscode/
 *.swp
+
+# Local paper workspace
+paper/
+
+# RQ4 raw run outputs kept out of git history
+experiments/rq4_validation/results/representative-configs/**/*FUN*
+experiments/rq4_validation/results/representative-configs/**/*VAR*
+experiments/rq4_validation/results/representative-configs/**/EP
+experiments/rq4_validation/results/representative-configs/**/HV
+experiments/rq4_validation/results/representative-configs/**/*.csv
+experiments/rq4_validation/results/representative-configs/RepresentativeConfigs*-ForwardAblation-*/
