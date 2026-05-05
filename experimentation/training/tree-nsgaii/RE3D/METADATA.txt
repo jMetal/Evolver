@@ -1,0 +1,23 @@
+=== Meta-Optimization Experiment (Tree Encoding) ===
+Date: 2026-05-05T13:10:57.444744
+
+--- Meta-Optimizer ---
+Algorithm: TreeNSGA-II
+Encoding: Derivation Tree (GGGP)
+Max Evaluations: 2000
+Population Size: 50
+Cores: 8
+
+--- Base-Level Algorithm ---
+Algorithm: NSGA-II
+Population/Swarm Size: 100
+Max Evaluations: 10000
+Evaluation Strategy: org.uma.evolver.meta.strategy.FixedEvaluationsStrategy@6950e31
+Parameter Space: NSGAIIDouble.yaml
+
+--- Training Set ---
+Problem Family: RE3D
+Problems: RE31, RE32, RE33, RE34, RE35, RE36, RE37
+
+--- Quality Indicators ---
+Indicators: EP, NHV

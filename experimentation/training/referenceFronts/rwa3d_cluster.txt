@@ -1,0 +1,37 @@
+=== Análisis de Clusters de Similitud - 30 mejores configs HVMinus ===
+
+--- Cluster 1 (2 configuraciones) ---
+HVMinus Mean: -0.585786 (Std: 0.000030)
+  > Crossover Modal: 0.0
+  > Crossover Repair Modal: 1.0
+  > Mutation Modal:  4.0
+  > Selection Modal: 0.0
+  > Crs. Distribución: {5.0: 1, 0.0: 1}
+  > Mut. Distribución: {4.0: 2}
+
+--- Cluster 2 (9 configuraciones) ---
+HVMinus Mean: -0.585885 (Std: 0.000063)
+  > Crossover Modal: 3.0
+  > Crossover Repair Modal: 0.0
+  > Mutation Modal:  5.0
+  > Selection Modal: 0.0
+  > Crs. Distribución: {3.0: 9}
+  > Mut. Distribución: {5.0: 9}
+
+--- Cluster 3 (9 configuraciones) ---
+HVMinus Mean: -0.585928 (Std: 0.000107)
+  > Crossover Modal: 1.0
+  > Crossover Repair Modal: 2.0
+  > Mutation Modal:  5.0
+  > Selection Modal: 0.0
+  > Crs. Distribución: {1.0: 9}
+  > Mut. Distribución: {5.0: 9}
+
+--- Cluster 4 (10 configuraciones) ---
+HVMinus Mean: -0.585890 (Std: 0.000113)
+  > Crossover Modal: 5.0
+  > Crossover Repair Modal: 1.0
+  > Mutation Modal:  5.0
+  > Selection Modal: 1.0
+  > Crs. Distribución: {5.0: 10}
+  > Mut. Distribución: {5.0: 10}
