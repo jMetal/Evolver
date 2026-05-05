@@ -1,7 +1,6 @@
 package org.uma.evolver.example.training;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.encoding.operator.SubtreeCrossover;
@@ -17,34 +16,24 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
-import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
-import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
-import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
-import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.comparator.MultiComparator;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
-import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
- * Timing comparison between the flat double encoding (async NSGA-II) and the derivation tree
- * encoding (sync multi-threaded NSGA-II) on the RE3D training set.
+ * Timing comparison between the flat double encoding and the derivation tree encoding, both using
+ * {@link AsynchronousMultiThreadedNSGAII} as meta-optimizer on the RE3D training set.
  *
- * <p>Both runs use the same budget ({@link #META_MAX_EVALUATIONS} meta-evaluations), the same
- * training set, and the same number of parallel cores. Wall-clock time and throughput are reported
- * after each run.
+ * <p>Both runs use identical infrastructure (same async NSGA-II, same cores, same budget), so any
+ * difference in wall-clock time is attributable solely to the encoding overhead — the extra work
+ * done by tree construction, typed subtree crossover, and subtree mutation compared to the
+ * plain SBX + polynomial mutation used on the flat encoding.
  *
- * <p><b>Note on parallelism:</b> {@code AsynchronousMultiThreadedNSGAII} is typed to
- * {@code DoubleSolution} and cannot be used with the tree encoding. The tree run therefore uses
- * {@code EvolutionaryAlgorithm} with {@code MultiThreadedEvaluation}, which evaluates offspring in
- * parallel but synchronises at each generation boundary.
+ * <p>{@code AsynchronousMultiThreadedNSGAII} is generic over {@code Solution<?>} in jMetal, so it
+ * can be instantiated directly with {@code DerivationTreeSolution} without any builder wrapper.
  *
  * <p>Usage:
  * <pre>
@@ -55,10 +44,8 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  */
 public class EncodingTimingComparison {
 
-  // Profiling budget — keep low to measure per-evaluation overhead, not convergence
   private static final int META_MAX_EVALUATIONS = 200;
   private static final int META_POPULATION_SIZE = 50;
-  private static final int META_OFFSPRING_SIZE = 50;
   private static final int BASE_POPULATION_SIZE = 100;
   private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
@@ -97,30 +84,25 @@ public class EncodingTimingComparison {
         "Meta-evaluations: %d | Population: %d | Cores: %d%n",
         META_MAX_EVALUATIONS, META_POPULATION_SIZE, numberOfCores);
     System.out.printf(
-        "Training set: %s | Base evals/problem: %d%n%n",
+        "Training set: %s | Base evals/problem: %d%n",
         trainingSet.name(), baseMaxEvaluations);
-    System.out.println(
-        "Note: flat encoding uses AsynchronousMultiThreadedNSGAII; tree encoding uses");
-    System.out.println(
-        "      EvolutionaryAlgorithm + MultiThreadedEvaluation (sync per generation).");
+    System.out.println("Meta-optimizer: AsynchronousMultiThreadedNSGAII (both runs)");
     System.out.println();
 
     // ------------------------------------------------------------------
-    // Run 1: flat double encoding with async NSGA-II
+    // Run 1: flat double encoding — async NSGA-II via MetaAsyncNSGAIIBuilder
     // ------------------------------------------------------------------
     var flatParamSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var flatBaseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, flatParamSpace);
-
     MetaOptimizationProblem<DoubleSolution> flatProblem =
         new MetaOptimizationProblem<>(
-            flatBaseAlgorithm,
+            new DoubleNSGAII(BASE_POPULATION_SIZE, flatParamSpace),
             problems,
             referenceFronts,
             indicators,
             budgetStrategy,
             NUMBER_OF_INDEPENDENT_RUNS);
 
-    AsynchronousMultiThreadedNSGAII<DoubleSolution> asyncNsgaii =
+    AsynchronousMultiThreadedNSGAII<DoubleSolution> flatNsgaii =
         new MetaAsyncNSGAIIBuilder(flatProblem)
             .setNumberOfCores(numberOfCores)
             .setPopulationSize(META_POPULATION_SIZE)
@@ -129,20 +111,18 @@ public class EncodingTimingComparison {
 
     System.out.print("[1/2] Flat encoding (async NSGA-II) ... ");
     long flatStart = System.currentTimeMillis();
-    asyncNsgaii.run();
+    flatNsgaii.run();
     long flatMs = System.currentTimeMillis() - flatStart;
     System.out.printf("done in %d ms%n", flatMs);
 
     // ------------------------------------------------------------------
-    // Run 2: derivation tree encoding with sync multi-threaded NSGA-II
+    // Run 2: derivation tree encoding — async NSGA-II instantiated directly
     // ------------------------------------------------------------------
     var treeParamSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var treeBaseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, treeParamSpace);
     var generator = new TreeSolutionGenerator(treeParamSpace);
-
     TreeMetaOptimizationProblem<DoubleSolution> treeProblem =
         new TreeMetaOptimizationProblem<>(
-            treeBaseAlgorithm,
+            new DoubleNSGAII(BASE_POPULATION_SIZE, treeParamSpace),
             problems,
             referenceFronts,
             indicators,
@@ -150,33 +130,16 @@ public class EncodingTimingComparison {
             NUMBER_OF_INDEPENDENT_RUNS,
             generator);
 
-    var initialSolutions = new RandomSolutionsCreation<>(treeProblem, META_POPULATION_SIZE);
-    var evaluation = new MultiThreadedEvaluation<DerivationTreeSolution>(numberOfCores, treeProblem);
-    var termination = new TerminationByEvaluations(META_MAX_EVALUATIONS);
-    var crossover = new SubtreeCrossover(CROSSOVER_PROBABILITY);
-    var mutation = new TreeMutation(MUTATION_PROBABILITY, MUTATION_DISTRIBUTION_INDEX, generator);
-    var variation = new CrossoverAndMutationVariation<>(META_OFFSPRING_SIZE, crossover, mutation);
-    var ranking = new FastNonDominatedSortRanking<DerivationTreeSolution>();
-    var densityEstimator = new CrowdingDistanceDensityEstimator<DerivationTreeSolution>();
-    var replacement = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator);
-    var comparator = new MultiComparator<>(
-        List.of(
-            Comparator.comparing(ranking::getRank),
-            Comparator.comparing(densityEstimator::value).reversed()));
-    var selection = new NaryTournamentSelection<DerivationTreeSolution>(
-        2, variation.matingPoolSize(), comparator);
+    AsynchronousMultiThreadedNSGAII<DerivationTreeSolution> treeNsgaii =
+        new AsynchronousMultiThreadedNSGAII<>(
+            numberOfCores,
+            treeProblem,
+            META_POPULATION_SIZE,
+            new SubtreeCrossover(CROSSOVER_PROBABILITY),
+            new TreeMutation(MUTATION_PROBABILITY, MUTATION_DISTRIBUTION_INDEX, generator),
+            new TerminationByEvaluations(META_MAX_EVALUATIONS));
 
-    EvolutionaryAlgorithm<DerivationTreeSolution> treeNsgaii =
-        new EvolutionaryAlgorithm<>(
-            "TreeNSGAII",
-            initialSolutions,
-            evaluation,
-            termination,
-            selection,
-            variation,
-            replacement);
-
-    System.out.print("[2/2] Tree encoding  (sync NSGA-II)  ... ");
+    System.out.print("[2/2] Tree encoding  (async NSGA-II) ... ");
     long treeStart = System.currentTimeMillis();
     treeNsgaii.run();
     long treeMs = System.currentTimeMillis() - treeStart;
@@ -193,9 +156,9 @@ public class EncodingTimingComparison {
     System.out.println("=== Summary ===");
     System.out.printf("  Flat encoding (async NSGA-II): %7d ms   %.2f meta-evals/s%n",
         flatMs, flatThroughput);
-    System.out.printf("  Tree encoding (sync  NSGA-II): %7d ms   %.2f meta-evals/s%n",
+    System.out.printf("  Tree encoding (async NSGA-II): %7d ms   %.2f meta-evals/s%n",
         treeMs, treeThroughput);
-    System.out.printf("  Overhead: %+.1f%%  (tree/flat ratio = %.2fx)%n",
+    System.out.printf("  Encoding overhead: %+.1f%%  (tree/flat = %.2fx)%n",
         overheadPct, (double) treeMs / flatMs);
     System.out.printf("%n  (JVM warmup favours run 2; re-run swapping order to cross-check)%n");
   }
