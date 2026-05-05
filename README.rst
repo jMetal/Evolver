@@ -86,6 +86,7 @@ Key Features
 - **Multi-objective Optimization at the meta level**: Optimizes multiple performance criteria (quality indicators) simultaneously
 - **Extensible Design**: Allows the integration of new algorithms, problems, and quality indicators
 - **YAML Parameter Space Definition**: The parameter space of base-level metaheuristics is defined in YAML files, loaded via ``YAMLParameterSpace``
+- **Derivation Tree Encoding**: An alternative solution representation that models algorithm configurations as derivation trees, eliminating the inactive-variable problem of flat encodings. Includes typed subtree crossover (STGP) and a tree mutation operator combining polynomial mutation with subtree regeneration.
 
 Other Features
 ^^^^^^^^^^^^^^
@@ -277,6 +278,7 @@ Changelog
 
 v2.1-SNAPSHOT
 ^^^^^^^^^^^^^
+* Add derivation tree encoding (``org.uma.evolver.encoding``): ``DerivationTreeSolution``, ``TreeNode``, ``SubtreeCrossover`` (STGP), ``TreeMutation``, ``TreeMetaOptimizationProblem``, ``TreeSolutionGenerator``, and ``GrammarConverter``. The tree encoding eliminates inactive variables and neutral mutations that affect flat double encodings.
 * Documentation: README and examples updated to reflect API changes and migration notes.
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
