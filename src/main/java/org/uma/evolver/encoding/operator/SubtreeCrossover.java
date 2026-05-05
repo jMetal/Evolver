@@ -72,6 +72,9 @@ public class SubtreeCrossover implements CrossoverOperator<DerivationTreeSolutio
    *
    * <p>Selects a random node in child1, finds a node with the same grammar symbol in child2,
    * and swaps their subtrees (value + all children).
+   *
+   * <p>Both node lists are obtained with a single {@code allNodes()} call each; the symbol filter
+   * is applied inline to avoid the redundant traversal that {@code nodesBySymbol()} would trigger.
    */
   private void performCrossover(
       DerivationTreeSolution child1, DerivationTreeSolution child2) {
@@ -79,7 +82,10 @@ public class SubtreeCrossover implements CrossoverOperator<DerivationTreeSolutio
     TreeNode selected1 = nodes1.get(random.nextInt(0, nodes1.size() - 1));
     String symbol = selected1.grammarSymbol();
 
-    List<TreeNode> candidates = child2.nodesBySymbol(symbol);
+    List<TreeNode> nodes2 = child2.allNodes();
+    List<TreeNode> candidates = nodes2.stream()
+        .filter(n -> n.grammarSymbol().equals(symbol))
+        .toList();
     if (candidates.isEmpty()) {
       return;
     }
