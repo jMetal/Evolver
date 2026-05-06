@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.uma.evolver.parameter.type.*;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -166,6 +168,56 @@ public class ParameterManagement {
       printWriter.println(parameterString);
     }
     printWriter.close();
+  }
+
+  /**
+   * Converts a decoded configuration array (e.g. from {@code DerivationTreeSolution.toParameterArray()})
+   * to a numeric vector in the same format produced by {@link #decodeParameterToDoubleValues}.
+   *
+   * <p>For each parameter in {@code flattenedParameters}:
+   * <ul>
+   *   <li>If the parameter is present in {@code parameterArray}: its decoded string value is
+   *       mapped to a double (index for categoricals, actual value for numerics).</li>
+   *   <li>If absent (inactive parameter): {@link Double#NaN} is written.</li>
+   * </ul>
+   *
+   * @param parameterArray     the {@code --name value} pairs from a decoded tree solution
+   * @param flattenedParameters the complete flattened parameter list from the parameter space
+   * @return a list of doubles of the same length as {@code flattenedParameters}
+   */
+  public static List<Double> decodeConfigArrayToDoubleValues(
+      String[] parameterArray, List<Parameter<?>> flattenedParameters) {
+
+    Map<String, String> paramMap = new HashMap<>();
+    for (int i = 0; i + 1 < parameterArray.length; i += 2) {
+      String key = parameterArray[i].startsWith("--")
+          ? parameterArray[i].substring(2)
+          : parameterArray[i];
+      paramMap.put(key, parameterArray[i + 1]);
+    }
+
+    List<Double> result = new ArrayList<>(flattenedParameters.size());
+    for (Parameter<?> parameter : flattenedParameters) {
+      String stringValue = paramMap.get(parameter.name());
+      result.add(stringValue == null ? Double.NaN : stringValueToDouble(parameter, stringValue));
+    }
+    return result;
+  }
+
+  private static double stringValueToDouble(Parameter<?> parameter, String stringValue) {
+    if (parameter instanceof CategoricalParameter categoricalParameter) {
+      return categoricalParameter.validValues().indexOf(stringValue);
+    } else if (parameter instanceof CategoricalIntegerParameter categoricalParameter) {
+      return categoricalParameter.validValues().indexOf(Integer.parseInt(stringValue));
+    } else if (parameter instanceof DoubleParameter) {
+      return Double.parseDouble(stringValue);
+    } else if (parameter instanceof IntegerParameter) {
+      return Integer.parseInt(stringValue);
+    } else if (parameter instanceof BooleanParameter) {
+      return "true".equals(stringValue) ? 1.0 : 0.0;
+    } else {
+      throw new JMetalException("Non-configurable parameter: " + parameter.name());
+    }
   }
 
   /**

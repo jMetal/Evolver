@@ -5,6 +5,8 @@ import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
+import org.uma.evolver.parameter.Parameter;
+import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
@@ -68,5 +70,14 @@ public class TreeMetaOptimizationProblem<S extends Solution<?>>
   @Override
   public String name() {
     return "TreeMetaOptimizationProblem";
+  }
+
+  /**
+   * Returns the flattened list of all parameters in the base algorithm's parameter space,
+   * in the same order used by {@link org.uma.evolver.meta.problem.MetaOptimizationProblem}.
+   */
+  public List<Parameter<?>> parameters() {
+    return ParameterManagement.parameterFlattening(
+        baseAlgorithm.parameterSpace().topLevelParameters());
   }
 }

@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
+import org.uma.evolver.parameter.Parameter;
+import org.uma.evolver.parameter.ParameterManagement;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -204,7 +206,10 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     File configurationsFile = new File(outputDirectoryName, "CONFIGURATIONS.csv");
     if (configurationsFile.length() == 0 || !configurationsFile.exists()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(configurationsFile, true))) {
-        writer.write("Evaluation,SolutionId,Configuration");
+        String parameterNames = problem.parameters().stream()
+            .map(Parameter::name)
+            .collect(Collectors.joining(","));
+        writer.write("Evaluation,SolutionId," + parameterNames);
         writer.newLine();
       }
     }
@@ -227,12 +232,19 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
   }
 
   private void writeConfigurations(List<DerivationTreeSolution> solutions) throws IOException {
+    List<Parameter<?>> parameters = problem.parameters();
     try (BufferedWriter writer = new BufferedWriter(
         new FileWriter(new File(outputDirectoryName, "CONFIGURATIONS.csv"), true))) {
       for (int i = 0; i < solutions.size(); i++) {
         DerivationTreeSolution solution = solutions.get(i);
-        String config = String.join(" ", solution.toParameterArray());
-        writer.write(evaluations + "," + i + "," + config);
+        List<Double> numericValues = ParameterManagement.decodeConfigArrayToDoubleValues(
+            solution.toParameterArray(), parameters);
+        StringBuilder line = new StringBuilder();
+        line.append(evaluations).append(",").append(i);
+        for (Double val : numericValues) {
+          line.append(",").append(Double.isNaN(val) ? "NaN" : val);
+        }
+        writer.write(line.toString());
         writer.newLine();
       }
     }
