@@ -1,10 +1,10 @@
-|Tests| |Integration Tests| |Build| |Docs| |ReadTheDocs|
+|Tests| |IntegrationTests| |Build| |Docs| |ReadTheDocs|
 
 .. |Tests| image:: https://github.com/jMetal/Evolver/actions/workflows/tests.yml/badge.svg
    :target: https://github.com/jMetal/Evolver/actions/workflows/tests.yml
    :alt: Tests
 
-.. |Integration Tests| image:: https://github.com/jMetal/Evolver/actions/workflows/integration-tests.yml/badge.svg
+.. |IntegrationTests| image:: https://github.com/jMetal/Evolver/actions/workflows/integration-tests.yml/badge.svg
    :target: https://github.com/jMetal/Evolver/actions/workflows/integration-tests.yml
    :alt: Integration Tests
 
