@@ -12,7 +12,11 @@ The **derivation tree encoding** eliminates both problems by representing an alg
 
 .. note::
 
-   The derivation tree encoding is implemented in the ``org.uma.evolver.encoding`` package. The standard flat encoding lives in ``org.uma.evolver.meta`` and is unaffected.
+   Operators, solution types, and utilities for the derivation tree encoding live in the
+   ``org.uma.evolver.encoding`` package. The meta-optimization problem classes for both
+   encodings—``MetaOptimizationProblem`` (flat) and ``TreeMetaOptimizationProblem`` (tree)—
+   share a common base class ``AbstractMetaOptimizationProblem`` and both reside in
+   ``org.uma.evolver.meta.problem``.
 
 
 From Grammar to Tree
@@ -213,7 +217,10 @@ It returns a list of error strings (empty when the solution is valid) and is use
 Meta-Optimization with the Tree Encoding
 -----------------------------------------
 
-``TreeMetaOptimizationProblem`` (``org.uma.evolver.encoding.problem.TreeMetaOptimizationProblem``) mirrors ``MetaOptimizationProblem`` but operates on ``DerivationTreeSolution``. The evaluation flow is:
+``TreeMetaOptimizationProblem`` (``org.uma.evolver.meta.problem.TreeMetaOptimizationProblem``)
+extends ``AbstractMetaOptimizationProblem`` and operates on ``DerivationTreeSolution``.
+It shares the full evaluation pipeline with ``MetaOptimizationProblem``; the only
+encoding-specific hooks are ``createSolution()`` and ``toParameterArray()``. The evaluation flow is:
 
 1. Call ``solution.toParameterArray()`` to obtain the active parameter string.
 2. Run the base-level algorithm with those parameters on each training problem.

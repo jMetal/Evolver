@@ -39,9 +39,11 @@ Requirements: Java 21+, Maven 3.6+.
 
 ```
 Meta-level Optimizer (e.g., MetaNSGAII)
-  └─> MetaOptimizationProblem  (evaluates a parameter configuration)
-       └─> Base-level Algorithm (runs with that configuration)
-            └─> Training Set of Problems (ZDT, WFG, DTLZ, RE, RWA...)
+  └─> AbstractMetaOptimizationProblem  (shared evaluation pipeline)
+       ├─> MetaOptimizationProblem      (flat double encoding)
+       └─> TreeMetaOptimizationProblem  (derivation tree encoding)
+            └─> Base-level Algorithm (runs with the decoded configuration)
+                 └─> Training Set of Problems (ZDT, WFG, DTLZ, RE, RWA...)
 ```
 
 The meta-optimizer treats algorithm parameter configurations as solutions, and their quality indicators on the training set as objectives to minimize.
@@ -52,7 +54,8 @@ The meta-optimizer treats algorithm parameter configurations as solutions, and t
 |---|---|
 | `org.uma.evolver.parameter` | Parameter space definition and YAML parsing. Supports integer, double, categorical, binary, and conditional (hierarchical) parameters. |
 | `org.uma.evolver.algorithm` | Configurable base-level algorithms: NSGA-II, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA. Each supports multiple encodings (Double, Binary, Permutation). |
-| `org.uma.evolver.meta` | Meta-optimizer builders (`MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, etc.) and `MetaOptimizationProblem` (core evaluation class). |
+| `org.uma.evolver.encoding` | Derivation tree encoding: `DerivationTreeSolution`, `SubtreeCrossover`, `TreeMutation`, `TreeSolutionGenerator`, `GrammarConverter`. |
+| `org.uma.evolver.meta` | Meta-optimizer builders (`MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, etc.) and problem classes: `AbstractMetaOptimizationProblem`, `MetaOptimizationProblem` (flat encoding), `TreeMetaOptimizationProblem` (tree encoding). |
 | `org.uma.evolver.trainingset` | Training set management wrapping jMetal benchmark problems. |
 | `org.uma.evolver.irace` | irace integration for alternative parameter tuning. |
 | `org.uma.evolver.util` | Utilities: `ConfigurationFileReader`, `OutputResults`, observers for writing evolution data. |
