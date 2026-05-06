@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.encoding.operator.SubtreeCrossover;
 import org.uma.evolver.encoding.operator.TreeMutation;
-import org.uma.evolver.encoding.problem.TreeMetaOptimizationProblem;
+import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
