@@ -3,7 +3,6 @@ package org.uma.evolver.meta.problem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,67 +11,65 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.algorithm.nsgaii.PermutationNSGAII;
+import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
+import org.uma.evolver.meta.strategy.RandomRangeEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
-import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
-import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAC100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Integration tests for {@link MetaOptimizationProblem}.
+ * Integration tests for {@link TreeMetaOptimizationProblem}.
  *
  * <p>These tests execute full meta-optimization evaluations with real algorithms and problems.
  * They are slow (each evaluation runs 25,000+ function evaluations) and are intended to be
  * executed during the Maven {@code verify} phase via Failsafe.
  */
-@DisplayName("MetaOptimizationProblem Integration Tests")
+@DisplayName("TreeMetaOptimizationProblem Integration Tests")
 @Tag("integration")
-class MetaOptimizationProblemIT {
+class TreeMetaOptimizationProblemIT {
+
+  private BaseLevelAlgorithm<DoubleSolution> baseAlgorithm;
+  private YAMLParameterSpace parameterSpace;
+  private TreeSolutionGenerator solutionGenerator;
+
+  @BeforeEach
+  void setUp() {
+    parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
+    baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
+    solutionGenerator = new TreeSolutionGenerator(parameterSpace);
+  }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Continuous problems with NSGA-II
+  // Single problem, single indicator
   // ──────────────────────────────────────────────────────────────────────────
 
   @Nested
-  @DisplayName("When evaluating continuous problems with NSGA-II")
-  class ContinuousProblemsWithNSGAII {
-
-    private BaseLevelAlgorithm<DoubleSolution> nsgaii;
-
-    @BeforeEach
-    void setUp() {
-      nsgaii = new DoubleNSGAII(
-          100, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
-    }
+  @DisplayName("When evaluating with a single problem and indicator")
+  class SingleProblemSingleIndicatorTests {
 
     @Test
-    @DisplayName("Given single ZDT1 problem and NormalizedHypervolume, when evaluating, then objective is in valid range")
-    void givenSingleProblemAndOneIndicator_whenEvaluating_thenObjectiveIsInValidRange() {
+    @DisplayName("Given ZDT1 and NormalizedHypervolume, when evaluating, then objective is in valid range")
+    void givenZDT1AndNormalizedHypervolume_whenEvaluating_thenObjectiveIsInValidRange() {
       // Arrange
       List<Problem<DoubleSolution>> problems = List.of(new ZDT1());
       List<String> fronts = List.of("resources/referenceFronts/ZDT1.csv");
       List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
       EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(25000));
 
-      var metaProblem = new MetaOptimizationProblem<>(
-          nsgaii, problems, fronts, indicators, strategy, 1);
-      DoubleSolution solution = metaProblem.createSolution();
+      var metaProblem = new TreeMetaOptimizationProblem<>(
+          baseAlgorithm, problems, fronts, indicators, strategy, 1, solutionGenerator);
+      DerivationTreeSolution solution = metaProblem.createSolution();
 
       // Act
       metaProblem.evaluate(solution);
@@ -84,26 +81,32 @@ class MetaOptimizationProblemIT {
       assertTrue(solution.objectives()[0] <= 1.0,
           "NormalizedHypervolume should be at most 1.0");
     }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Multiple problems
+  // ──────────────────────────────────────────────────────────────────────────
+
+  @Nested
+  @DisplayName("When evaluating with multiple problems")
+  class MultipleProblemsTests {
 
     @Test
-    @DisplayName("Given five ZDT problems, when evaluating, then objective aggregates across all problems")
+    @DisplayName("Given three ZDT problems, when evaluating, then objective aggregates across all problems")
     void givenMultipleProblems_whenEvaluating_thenObjectiveIsComputed() {
       // Arrange
-      List<Problem<DoubleSolution>> problems =
-          List.of(new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6());
+      List<Problem<DoubleSolution>> problems = List.of(new ZDT1(), new ZDT2(), new ZDT4());
       List<String> fronts = List.of(
           "resources/referenceFronts/ZDT1.csv",
           "resources/referenceFronts/ZDT2.csv",
-          "resources/referenceFronts/ZDT3.csv",
-          "resources/referenceFronts/ZDT4.csv",
-          "resources/referenceFronts/ZDT6.csv");
+          "resources/referenceFronts/ZDT4.csv");
       List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
       EvaluationBudgetStrategy strategy =
-          new FixedEvaluationsStrategy(List.of(25000, 25000, 25000, 25000, 25000));
+          new FixedEvaluationsStrategy(List.of(25000, 25000, 25000));
 
-      var metaProblem = new MetaOptimizationProblem<>(
-          nsgaii, problems, fronts, indicators, strategy, 1);
-      DoubleSolution solution = metaProblem.createSolution();
+      var metaProblem = new TreeMetaOptimizationProblem<>(
+          baseAlgorithm, problems, fronts, indicators, strategy, 1, solutionGenerator);
+      DerivationTreeSolution solution = metaProblem.createSolution();
 
       // Act
       metaProblem.evaluate(solution);
@@ -115,6 +118,15 @@ class MetaOptimizationProblemIT {
       assertTrue(solution.objectives()[0] <= 1.0,
           "Mean NormalizedHypervolume across problems should be at most 1.0");
     }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Multiple indicators
+  // ──────────────────────────────────────────────────────────────────────────
+
+  @Nested
+  @DisplayName("When evaluating with multiple indicators")
+  class MultipleIndicatorsTests {
 
     @Test
     @DisplayName("Given two indicators, when evaluating, then both objective values are computed")
@@ -126,9 +138,9 @@ class MetaOptimizationProblemIT {
       List<QualityIndicator> indicators = List.of(new NormalizedHypervolume(), new Epsilon());
       EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(25000));
 
-      var metaProblem = new MetaOptimizationProblem<>(
-          nsgaii, problems, fronts, indicators, strategy, 1);
-      DoubleSolution solution = metaProblem.createSolution();
+      var metaProblem = new TreeMetaOptimizationProblem<>(
+          baseAlgorithm, problems, fronts, indicators, strategy, 1, solutionGenerator);
+      DerivationTreeSolution solution = metaProblem.createSolution();
 
       // Act
       metaProblem.evaluate(solution);
@@ -137,29 +149,39 @@ class MetaOptimizationProblemIT {
       assertEquals(2, metaProblem.numberOfObjectives());
       assertTrue(solution.objectives()[0] >= 0.0,
           "NormalizedHypervolume should be non-negative");
+      assertTrue(solution.objectives()[0] <= 1.0,
+          "NormalizedHypervolume should be at most 1.0");
       assertTrue(solution.objectives()[1] >= 0.0,
           "Epsilon indicator should be non-negative");
     }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Multiple independent runs
+  // ──────────────────────────────────────────────────────────────────────────
+
+  @Nested
+  @DisplayName("When evaluating with multiple independent runs")
+  class MultipleRunsTests {
 
     @Test
-    @DisplayName("Given multiple independent runs, when evaluating, then result is median across runs")
-    void givenMultipleRuns_whenEvaluating_thenResultIsMedianAcrossRuns() {
-      // Arrange
+    @DisplayName("Given three independent runs, when evaluating, then result is a valid indicator value")
+    void givenThreeRuns_whenEvaluating_thenResultIsInValidRange() {
+      // Arrange — the result is the median over the 3 runs
       JMetalRandom.getInstance().setSeed(42);
       List<Problem<DoubleSolution>> problems = List.of(new ZDT1());
       List<String> fronts = List.of("resources/referenceFronts/ZDT1.csv");
       List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
       EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(25000));
-      int threeRuns = 3;
 
-      var metaProblem = new MetaOptimizationProblem<>(
-          nsgaii, problems, fronts, indicators, strategy, threeRuns);
-      DoubleSolution solution = metaProblem.createSolution();
+      var metaProblem = new TreeMetaOptimizationProblem<>(
+          baseAlgorithm, problems, fronts, indicators, strategy, 3, solutionGenerator);
+      DerivationTreeSolution solution = metaProblem.createSolution();
 
       // Act
       metaProblem.evaluate(solution);
 
-      // Assert: median of 3 runs should still produce a valid indicator value
+      // Assert
       assertEquals(1, metaProblem.numberOfObjectives());
       assertTrue(solution.objectives()[0] >= 0.0,
           "Median NormalizedHypervolume over 3 runs should be non-negative");
@@ -169,40 +191,36 @@ class MetaOptimizationProblemIT {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Permutation problems with NSGA-II
+  // RandomRangeEvaluationsStrategy
   // ──────────────────────────────────────────────────────────────────────────
 
   @Nested
-  @DisplayName("When evaluating permutation problems with NSGA-II")
-  class PermutationProblemsWithNSGAII {
+  @DisplayName("When using RandomRangeEvaluationsStrategy")
+  class RandomRangeStrategyTests {
 
     @Test
-    @DisplayName("Given two TSP problems and PISAHypervolume, when evaluating, then objective is computed")
-    void givenTSPProblems_whenEvaluating_thenObjectiveIsComputed() throws IOException {
+    @DisplayName("Given RandomRangeEvaluationsStrategy, when evaluating, then objective is computed")
+    void givenRandomRangeStrategy_whenEvaluating_thenObjectiveIsComputed() {
       // Arrange
-      var nsgaii = new PermutationNSGAII(
-          100, new YAMLParameterSpace("NSGAIIPermutation.yaml", new PermutationParameterFactory()));
+      JMetalRandom.getInstance().setSeed(7);
+      List<Problem<DoubleSolution>> problems = List.of(new ZDT1());
+      List<String> fronts = List.of("resources/referenceFronts/ZDT1.csv");
+      List<QualityIndicator> indicators = List.of(new NormalizedHypervolume());
+      EvaluationBudgetStrategy strategy = new RandomRangeEvaluationsStrategy(20000, 30000);
 
-      List<Problem<PermutationSolution<Integer>>> problems =
-          List.of(new KroAB100TSP(), new KroAC100TSP());
-      List<String> fronts = List.of(
-          "resources/referenceFrontsTSP/KroAB100TSP.csv",
-          "resources/referenceFrontsTSP/KroAC100TSP.csv");
-      List<QualityIndicator> indicators = List.of(new PISAHypervolume());
-      EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(25000, 25000));
-
-      var metaProblem = new MetaOptimizationProblem<>(
-          nsgaii, problems, fronts, indicators, strategy, 1);
-      DoubleSolution solution = metaProblem.createSolution();
+      var metaProblem = new TreeMetaOptimizationProblem<>(
+          baseAlgorithm, problems, fronts, indicators, strategy, 1, solutionGenerator);
+      DerivationTreeSolution solution = metaProblem.createSolution();
 
       // Act
       metaProblem.evaluate(solution);
 
       // Assert
       assertEquals(1, metaProblem.numberOfObjectives());
-      // PISAHypervolume is not normalized, so we only check it's been computed (non-NaN)
-      assertTrue(Double.isFinite(solution.objectives()[0]),
-          "Hypervolume should be a finite number");
+      assertTrue(solution.objectives()[0] >= 0.0,
+          "NormalizedHypervolume should be non-negative");
+      assertTrue(solution.objectives()[0] <= 1.0,
+          "NormalizedHypervolume should be at most 1.0");
     }
   }
 }

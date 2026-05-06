@@ -150,6 +150,42 @@ class TreeMetaOptimizationProblemTest {
     }
 
     @Test
+    @DisplayName("Given empty problems list, when constructing, then throw InvalidConditionException")
+    void givenEmptyProblems_whenConstructing_thenThrowException() {
+      assertThrows(InvalidConditionException.class, () ->
+          new TreeMetaOptimizationProblem<>(
+              baseAlgorithm, List.of(), List.of(),
+              singleIndicator, singleProblemStrategy, ONE_RUN, solutionGenerator));
+    }
+
+    @Test
+    @DisplayName("Given empty indicators list, when constructing, then throw InvalidConditionException")
+    void givenEmptyIndicators_whenConstructing_thenThrowException() {
+      assertThrows(InvalidConditionException.class, () ->
+          new TreeMetaOptimizationProblem<>(
+              baseAlgorithm, singleProblem, singleReferenceFront,
+              List.of(), singleProblemStrategy, ONE_RUN, solutionGenerator));
+    }
+
+    @Test
+    @DisplayName("Given zero independent runs, when constructing, then throw InvalidConditionException")
+    void givenZeroIndependentRuns_whenConstructing_thenThrowException() {
+      assertThrows(InvalidConditionException.class, () ->
+          new TreeMetaOptimizationProblem<>(
+              baseAlgorithm, singleProblem, singleReferenceFront,
+              singleIndicator, singleProblemStrategy, 0, solutionGenerator));
+    }
+
+    @Test
+    @DisplayName("Given negative independent runs, when constructing, then throw InvalidConditionException")
+    void givenNegativeIndependentRuns_whenConstructing_thenThrowException() {
+      assertThrows(InvalidConditionException.class, () ->
+          new TreeMetaOptimizationProblem<>(
+              baseAlgorithm, singleProblem, singleReferenceFront,
+              singleIndicator, singleProblemStrategy, -1, solutionGenerator));
+    }
+
+    @Test
     @DisplayName("Given valid arguments, when constructing, then instance is created successfully")
     void givenValidArguments_whenConstructing_thenInstanceIsCreated() {
       assertDoesNotThrow(TreeMetaOptimizationProblemTest.this::createValidInstance);
