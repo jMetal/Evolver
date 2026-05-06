@@ -1,6 +1,20 @@
-.. image:: https://readthedocs.org/projects/Evolver/badge/?version=latest
-   :alt: Documentation Status
+|Tests| |Build| |Docs| |ReadTheDocs|
+
+.. |Tests| image:: https://github.com/jMetal/Evolver/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/jMetal/Evolver/actions/workflows/tests.yml
+   :alt: Tests
+
+.. |Build| image:: https://github.com/jMetal/Evolver/actions/workflows/build.yml/badge.svg
+   :target: https://github.com/jMetal/Evolver/actions/workflows/build.yml
+   :alt: Build
+
+.. |Docs| image:: https://github.com/jMetal/Evolver/actions/workflows/docs.yml/badge.svg
+   :target: https://github.com/jMetal/Evolver/actions/workflows/docs.yml
+   :alt: Documentation
+
+.. |ReadTheDocs| image:: https://readthedocs.org/projects/Evolver/badge/?version=latest
    :target: https://Evolver.readthedocs.io/?badge=latest
+   :alt: Documentation Status
 
 
 Evolver: Automated Metaheuristic Configuration Framework
