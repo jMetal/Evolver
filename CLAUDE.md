@@ -80,3 +80,34 @@ Built on [jMetal 7.2](https://github.com/jMetal/jMetal) (`jmetal-core`, `jmetal-
 - Unit tests: `*Test.java` under `src/test/java`, run with `mvn test`
 - Integration tests: `*IT.java`, run with `mvn integration-test`
 - Test parameter space YAML fixtures are in `src/test/resources/parameterSpaces/`
+- Follow the conventions in `JAVA_CODING_GUIDELINES.md` §14: JUnit 5 (Jupiter), Given-When-Then method names, AAA internal structure (`// Arrange / Act / Assert`), `@DisplayName`, and `@Nested` for grouping.
+
+## Git and Commit Guidelines
+
+This project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
+### Message format
+
+```
+<type>: <short imperative description>
+```
+
+### Allowed types
+
+| Type       | When to use                                          |
+|------------|------------------------------------------------------|
+| `feat`     | A new feature or public method                       |
+| `fix`      | A bug fix                                            |
+| `test`     | Adding or correcting tests (no production code)      |
+| `refactor` | Code change that is neither a fix nor a new feature  |
+| `docs`     | Documentation only (`README.md`, `AGENTS.md`, etc.)  |
+| `chore`    | Build config, dependencies, `.gitignore`, etc.       |
+
+### Atomic commits
+
+Each commit must represent **one single logical change**:
+
+- If the commit message needs "and" to describe what it does, split it into two commits.
+- Ensure the project builds and all tests pass before committing (`mvn clean test`).
+- Never mix production code changes with test changes in the same commit.
+- Never mix code changes with documentation changes in the same commit.
