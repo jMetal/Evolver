@@ -342,16 +342,17 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 ## 14. Testing
 
 ### ✅ DO
-- Write tests using JUnit 6
-- Use Given-When-Then naming convention for test methods
-- Use `@DisplayName` for readable test descriptions
+- Write tests using JUnit 5 (Jupiter)
+- Use Given-When-Then naming convention for test methods and `@DisplayName`
 - Use `@Nested` classes to group related tests
-- Follow AAA pattern (Arrange, Act, Assert)
+- Follow AAA pattern (Arrange, Act, Assert) for internal test structure
+- Declare the class under test as an uninitialized field; create its instance in `@BeforeEach void setUp()`
+- Use field initializers only for immutable test constants (`private final List<X> VALUES = List.of(...)`)
 - Aim for high code coverage (>80%)
 - Test both happy paths and edge cases
 
 ```java
-@DisplayName("User Service Tests")
+@DisplayName("Unit tests for class UserService")
 class UserServiceTest {
     
     private UserService userService;
@@ -368,77 +369,75 @@ class UserServiceTest {
     class FindUserById {
         
         @Test
-        @DisplayName("Given valid ID, when user exists, then return user")
+        @DisplayName("given valid ID, when user exists, then return user")
         void givenValidId_whenUserExists_thenReturnUser() {
-            // Given
+            // Arrange
             String userId = "123";
             User expectedUser = new User(userId, "John Doe");
             when(userRepository.findById(userId)).thenReturn(Optional.of(expectedUser));
             
-            // When
+            // Act
             Optional<User> result = userService.findUserById(userId);
             
-            // Then
+            // Assert
             assertTrue(result.isPresent());
             assertEquals(expectedUser, result.get());
         }
         
         @Test
-        @DisplayName("Given valid ID, when user does not exist, then return empty")
+        @DisplayName("given valid ID, when user does not exist, then return empty")
         void givenValidId_whenUserDoesNotExist_thenReturnEmpty() {
-            // Given
+            // Arrange
             String userId = "999";
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
             
-            // When
+            // Act
             Optional<User> result = userService.findUserById(userId);
             
-            // Then
+            // Assert
             assertTrue(result.isEmpty());
         }
         
         @Test
-        @DisplayName("Given null ID, when finding user, then throw exception")
-        void givenNullId_whenFindingUser_thenThrowException() {
-            // Given
-            String userId = null;
+        @DisplayName("given null ID, when finding user, then throw IllegalArgumentException")
+        void givenNullId_whenFindingUser_thenIllegalArgumentExceptionIsThrown() {
+            // Arrange
+            Executable executable = () -> userService.findUserById(null);
             
-            // When & Then
-            assertThrows(IllegalArgumentException.class, 
-                () -> userService.findUserById(userId));
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, executable);
         }
     }
     
     @Nested
-    @DisplayName("When creating new user")
+    @DisplayName("When creating a new user")
     class CreateUser {
         
         @Test
-        @DisplayName("Given valid data, when creating user, then save and return user")
-        void givenValidData_whenCreatingUser_thenSaveAndReturnUser() {
-            // Given
+        @DisplayName("given valid data, when creating user, then save and return user")
+        void givenValidData_whenCreatingUser_thenUserIsSavedAndReturned() {
+            // Arrange
             UserDTO dto = new UserDTO("Jane Doe", "jane@example.com");
             User expectedUser = new User("456", "Jane Doe");
             when(userRepository.save(any(User.class))).thenReturn(expectedUser);
             
-            // When
+            // Act
             User result = userService.createUser(dto);
             
-            // Then
+            // Assert
             assertNotNull(result);
             assertEquals(expectedUser.name(), result.name());
             verify(userRepository, times(1)).save(any(User.class));
         }
         
         @Test
-        @DisplayName("Given invalid email, when creating user, then throw exception")
-        void givenInvalidEmail_whenCreatingUser_thenThrowException() {
-            // Given
-            UserDTO dto = new UserDTO("Jane Doe", "invalid-email");
+        @DisplayName("given invalid email, when creating user, then throw InvalidEmailException")
+        void givenInvalidEmail_whenCreatingUser_thenInvalidEmailExceptionIsThrown() {
+            // Arrange
+            Executable executable = () -> userService.createUser(new UserDTO("Jane Doe", "invalid-email"));
             
-            // When & Then
-            assertThrows(InvalidEmailException.class, 
-                () -> userService.createUser(dto));
+            // Act & Assert
+            assertThrows(InvalidEmailException.class, executable);
         }
     }
 }
@@ -446,23 +445,31 @@ class UserServiceTest {
 
 ### Test Naming Convention
 
-Follow the **Given-When-Then** pattern:
-- **Given**: Initial context/preconditions
-- **When**: The action being tested
-- **Then**: Expected outcome
+Use **Given-When-Then** for method names and `@DisplayName`:
+- **given**: Initial context/preconditions
+- **when**: The action being tested
+- **then**: Expected outcome
 
-Method naming format: `given[Context]_when[Action]_then[Outcome]`
+Method format: `given[Context]_when[Action]_then[Outcome]`  
+`@DisplayName` format: `given [context], when [action], then [outcome]` (lowercase, sentence style)
+
+### Internal structure: AAA
+
+Inside each test method use `// Arrange / Act / Assert` comments to delimit the three phases.  
+For tests where act and assert cannot be separated (e.g. `assertThrows`), use `// Act & Assert`.
 
 ### Using @Nested and @DisplayName
 
-- Use `@Nested` to group tests by functionality or scenario
-- Use `@DisplayName` at class level to describe the test suite
-- Use `@DisplayName` at method level for human-readable test descriptions
-- Nested classes improve test report readability and organization
+- Use `@Nested` to group tests by scenario or method under test
+- `@DisplayName` on the class: `"Unit tests for class ClassName"`
+- `@DisplayName` on `@Nested`: `"When <scenario>"` (sentence describing the context)
+- `@DisplayName` on `@Test`: `"given ..., when ..., then ..."` (lowercase GWT summary)
 
 ### ❌ DON'T
-- Write tests without clear Given-When-Then structure
-- Use vague test method names like `test1()`, `testUser()`
+- Use "JUnit 4" style (`@RunWith`, `Assert.*` static imports from `org.junit`)
+- Use vague test method names like `test1()`, `testUser()`, or `shouldDoSomething()`
+- Mix GWT comments (`// Given/When/Then`) with AAA method names, or vice versa
+- Initialize the class under test directly as a field initializer (`private X subject = new X(...)`) — always use `@BeforeEach` instead
 - Skip edge cases and error scenarios
 - Write tests that depend on execution order
 - Test multiple unrelated things in a single test method
@@ -485,6 +492,7 @@ Before submitting code, verify:
 - [ ] Fields are final where possible
 - [ ] Tests follow Given-When-Then naming
 - [ ] Tests use @DisplayName and @Nested appropriately
+- [ ] Class under test initialized in @BeforeEach, not as a field initializer
 - [ ] Test coverage is above 80%
 
 ---
