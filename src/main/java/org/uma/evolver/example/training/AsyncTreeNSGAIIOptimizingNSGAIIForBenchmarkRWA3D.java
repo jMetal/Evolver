@@ -138,6 +138,7 @@ public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
         metaProblem, problemName, indicators, resultsDirectory, config, WRITE_FREQUENCY);
 
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
+    /* 
     var frontChartObserver =
         new FrontPlotObserver<DerivationTreeSolution>(
             "AsyncTreeNSGA-II, " + trainingSetDescriptor.name(),
@@ -145,9 +146,9 @@ public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
             indicators.get(1).name(),
             trainingSetDescriptor.name(),
             PLOT_UPDATE_FREQUENCY);
-
+    */
     nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(frontChartObserver);
+    //nsgaii.observable().register(frontChartObserver);
     nsgaii.observable().register(outputResults);
 
     // Step 6: Run the meta-optimizer
