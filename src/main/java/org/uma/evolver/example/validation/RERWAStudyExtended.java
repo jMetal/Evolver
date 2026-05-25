@@ -11,6 +11,7 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.AGEMOEABuilder;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEABuilder;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.agemoea.AGEMOEAEnvironmentalSelection;
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -360,7 +361,7 @@ public class RERWAStudyExtended {
     Termination termination = new TerminationByEvaluations(MAX_EVALUATIONS);
 
     EvolutionaryAlgorithm<DoubleSolution> agemoea =
-        new AGEMOEABuilder<>(problem, populationSize, offspringPopulationSize, crossover, mutation, AGEMOEABuilder.Variant.AGEMOEA)
+        new AGEMOEABuilder<>(problem, populationSize, offspringPopulationSize, crossover, mutation, new AGEMOEAEnvironmentalSelection<DoubleSolution>(problem.numberOfObjectives()))
             .setTermination(termination)
             .build();
 
