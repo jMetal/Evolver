@@ -342,7 +342,7 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 ## 14. Testing
 
 ### ✅ DO
-- Write tests using JUnit 5 (Jupiter)
+- Write tests using JUnit 6 (Jupiter)
 - Use Given-When-Then naming convention for test methods and `@DisplayName`
 - Use `@Nested` classes to group related tests
 - Follow AAA pattern (Arrange, Act, Assert) for internal test structure
