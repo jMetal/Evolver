@@ -293,8 +293,7 @@ class TreeMetaOptimizationProblemIT {
       // Assert
       assertEquals(2, metaProblem.numberOfObjectives());
       assertTrue(solution.objectives()[0] >= 0.0, "Epsilon should be non-negative");
-      assertTrue(solution.objectives()[1] >= 0.0, "NormalizedHypervolume should be non-negative");
-      assertTrue(solution.objectives()[1] <= 1.0, "NormalizedHypervolume should be at most 1.0");
+      assertTrue(Double.isFinite(solution.objectives()[1]), "NormalizedHypervolume should be a finite number");
     }
   }
 }

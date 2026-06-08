@@ -300,11 +300,8 @@ v2.1-SNAPSHOT
 * Documentation: README and examples updated to reflect API changes and migration notes.
 * Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 * Add permutation and binary base-level SMSEMOA
-* Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
 * Remove hard-coded parameter space classes; all parameter spaces now use ``YAMLParameterSpace``
 * Restructure package layout: ``algorithm``, ``meta``, ``trainingset``, ``irace``, ``example``
-* Refactor examples: move experimental studies and validation programs into ``example.validation``; ``example.study`` removed
-* Remove ``scripts/`` and ``results/`` directories from the project
 
 v2.0 (2025-09-09)
 ^^^^^^^^^^^^^^^^^
