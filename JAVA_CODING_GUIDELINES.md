@@ -343,31 +343,32 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 
 ### ✅ DO
 - Write tests using JUnit 6 (Jupiter)
-- Use Given-When-Then naming convention for test methods and `@DisplayName`
-- Use `@Nested` classes to group related tests
-- Follow AAA pattern (Arrange, Act, Assert) for internal test structure
+- Follow the Given-When-Then naming convention (see subsection below)
+- Use `@Nested` and `@DisplayName` to structure tests (see subsection below)
+- Follow AAA pattern (Arrange, Act, Assert) inside each test (see subsection below)
 - Declare the class under test as an uninitialized field; create its instance in `@BeforeEach void setUp()`
 - Use field initializers only for immutable test constants (`private final List<X> VALUES = List.of(...)`)
-- Aim for high code coverage (>80%)
+- Use `@BeforeEach` / `@AfterEach` for setup and teardown shared across all tests in a class
 - Test both happy paths and edge cases
+- Aim for high code coverage (>80%)
 
 ```java
 @DisplayName("Unit tests for class UserService")
 class UserServiceTest {
-    
+
     private UserService userService;
     private UserRepository userRepository;
-    
+
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         userService = new UserService(userRepository);
     }
-    
+
     @Nested
     @DisplayName("When finding user by ID")
     class FindUserById {
-        
+
         @Test
         @DisplayName("given valid ID, when user exists, then return user")
         void givenValidId_whenUserExists_thenReturnUser() {
@@ -375,69 +376,23 @@ class UserServiceTest {
             String userId = "123";
             User expectedUser = new User(userId, "John Doe");
             when(userRepository.findById(userId)).thenReturn(Optional.of(expectedUser));
-            
+
             // Act
             Optional<User> result = userService.findUserById(userId);
-            
+
             // Assert
             assertTrue(result.isPresent());
             assertEquals(expectedUser, result.get());
         }
-        
-        @Test
-        @DisplayName("given valid ID, when user does not exist, then return empty")
-        void givenValidId_whenUserDoesNotExist_thenReturnEmpty() {
-            // Arrange
-            String userId = "999";
-            when(userRepository.findById(userId)).thenReturn(Optional.empty());
-            
-            // Act
-            Optional<User> result = userService.findUserById(userId);
-            
-            // Assert
-            assertTrue(result.isEmpty());
-        }
-        
+
         @Test
         @DisplayName("given null ID, when finding user, then throw IllegalArgumentException")
         void givenNullId_whenFindingUser_thenIllegalArgumentExceptionIsThrown() {
             // Arrange
             Executable executable = () -> userService.findUserById(null);
-            
+
             // Act & Assert
             assertThrows(IllegalArgumentException.class, executable);
-        }
-    }
-    
-    @Nested
-    @DisplayName("When creating a new user")
-    class CreateUser {
-        
-        @Test
-        @DisplayName("given valid data, when creating user, then save and return user")
-        void givenValidData_whenCreatingUser_thenUserIsSavedAndReturned() {
-            // Arrange
-            UserDTO dto = new UserDTO("Jane Doe", "jane@example.com");
-            User expectedUser = new User("456", "Jane Doe");
-            when(userRepository.save(any(User.class))).thenReturn(expectedUser);
-            
-            // Act
-            User result = userService.createUser(dto);
-            
-            // Assert
-            assertNotNull(result);
-            assertEquals(expectedUser.name(), result.name());
-            verify(userRepository, times(1)).save(any(User.class));
-        }
-        
-        @Test
-        @DisplayName("given invalid email, when creating user, then throw InvalidEmailException")
-        void givenInvalidEmail_whenCreatingUser_thenInvalidEmailExceptionIsThrown() {
-            // Arrange
-            Executable executable = () -> userService.createUser(new UserDTO("Jane Doe", "invalid-email"));
-            
-            // Act & Assert
-            assertThrows(InvalidEmailException.class, executable);
         }
     }
 }
@@ -446,30 +401,74 @@ class UserServiceTest {
 ### Test Naming Convention
 
 Use **Given-When-Then** for method names and `@DisplayName`:
-- **given**: Initial context/preconditions
-- **when**: The action being tested
-- **then**: Expected outcome
+- **given**: initial context / preconditions
+- **when**: the action being tested
+- **then**: expected outcome
 
 Method format: `given[Context]_when[Action]_then[Outcome]`  
 `@DisplayName` format: `given [context], when [action], then [outcome]` (lowercase, sentence style)
 
 ### Internal structure: AAA
 
-Inside each test method use `// Arrange / Act / Assert` comments to delimit the three phases.  
-For tests where act and assert cannot be separated (e.g. `assertThrows`), use `// Act & Assert`.
+Inside each test method, use `// Arrange / Act / Assert` comments to delimit the three phases.  
+When act and assert cannot be separated (e.g. `assertThrows`), use `// Act & Assert`.
 
 ### Using @Nested and @DisplayName
 
-- Use `@Nested` to group tests by scenario or method under test
+- Use `@Nested` to group tests by scenario or method under test.
 - `@DisplayName` on the class: `"Unit tests for class ClassName"`
 - `@DisplayName` on `@Nested`: `"When <scenario>"` (sentence describing the context)
 - `@DisplayName` on `@Test`: `"given ..., when ..., then ..."` (lowercase GWT summary)
 
+### Mocking with Mockito
+
+Use only `mock()`, `when()`, and `verify()`. Create mocks manually in `@BeforeEach`, never via annotations.
+
+- `mock(Type.class)` — create a mock dependency
+- `when(mock.method(...)).thenReturn(value)` — stub a return value
+- `verify(mock, times(n)).method(...)` — assert an interaction occurred
+
+```java
+UserRepository repo = mock(UserRepository.class);
+when(repo.findById("123")).thenReturn(Optional.of(user));
+
+// ... act ...
+
+verify(repo, times(1)).findById("123");
+```
+
+### Parameterized tests
+
+Use `@ParameterizedTest` to avoid duplicating test methods for multiple inputs:
+
+```java
+@ParameterizedTest
+@ValueSource(strings = {"", " ", "  "})
+@DisplayName("given blank ID, when finding user, then throw IllegalArgumentException")
+void givenBlankId_whenFindingUser_thenIllegalArgumentExceptionIsThrown(String blankId) {
+    assertThrows(IllegalArgumentException.class, () -> userService.findUserById(blankId));
+}
+
+@ParameterizedTest
+@CsvSource({"john@example.com, true", "not-an-email, false"})
+@DisplayName("given email, when validating, then return expected result")
+void givenEmail_whenValidating_thenReturnExpectedResult(String email, boolean expected) {
+    assertEquals(expected, userService.isValidEmail(email));
+}
+```
+
+### Integration tests
+
+- Name integration test classes with the `IT` suffix: `UserServiceIT`
+- Run with `mvn integration-test` (not included in `mvn test`)
+- Use for testing interactions with real infrastructure (database, file system, external APIs)
+- Do not mix unit and integration tests in the same class
+
 ### ❌ DON'T
 - Use "JUnit 4" style (`@RunWith`, `Assert.*` static imports from `org.junit`)
 - Use vague test method names like `test1()`, `testUser()`, or `shouldDoSomething()`
-- Mix GWT comments (`// Given/When/Then`) with AAA method names, or vice versa
 - Initialize the class under test directly as a field initializer (`private X subject = new X(...)`) — always use `@BeforeEach` instead
+- Use Mockito annotations (`@Mock`, `@InjectMocks`, `@Spy`, `@Captor`, `MockitoExtension`) — create mocks manually
 - Skip edge cases and error scenarios
 - Write tests that depend on execution order
 - Test multiple unrelated things in a single test method
@@ -490,9 +489,7 @@ Before submitting code, verify:
 - [ ] Complete Javadoc for public APIs
 - [ ] Specific custom exceptions used
 - [ ] Fields are final where possible
-- [ ] Tests follow Given-When-Then naming
-- [ ] Tests use @DisplayName and @Nested appropriately
-- [ ] Class under test initialized in @BeforeEach, not as a field initializer
+- [ ] Tests follow §14 conventions (GWT naming, @DisplayName, @Nested, AAA, @BeforeEach, mocks manual)
 - [ ] Test coverage is above 80%
 
 ---
@@ -504,8 +501,7 @@ When AI assistants work on this codebase:
 2. Reference AGENTS.md for project-specific context and conventions
 3. Prioritize code quality and readability over brevity
 4. Ask for clarification when guidelines conflict with specific requirements
-5. When writing tests, always use Given-When-Then naming and @DisplayName
-6. Organize related tests using @Nested classes
+5. Follow §14 for all testing conventions (naming, structure, mocking, parameterized tests, integration tests)
 
 ---
 
