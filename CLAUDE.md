@@ -82,6 +82,16 @@ Built on [jMetal 7.3](https://github.com/jMetal/jMetal) (`jmetal-core`, `jmetal-
 - Test parameter space YAML fixtures are in `src/test/resources/parameterSpaces/`
 - Follow the conventions in `JAVA_CODING_GUIDELINES.md` §14: JUnit 5 (Jupiter), Given-When-Then method names, AAA internal structure (`// Arrange / Act / Assert`), `@DisplayName`, and `@Nested` for grouping.
 
+## Temporary Directories
+
+The following directories are generated at runtime and should not be tracked or modified:
+
+- `experimentation/` — output from meta-optimization runs (configurations, indicators, logs)
+- `results/` — aggregated results and analysis artifacts
+- `scripts/` — auto-generated or ad-hoc scripts used during experiments
+
+Do not commit files from these directories. They are listed in `.gitignore`.
+
 ## Git and Commit Guidelines
 
 This project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification.
