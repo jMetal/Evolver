@@ -1,8 +1,5 @@
 package org.uma.evolver.meta.problem;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +29,8 @@ import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests for {@link TreeMetaOptimizationProblem}.

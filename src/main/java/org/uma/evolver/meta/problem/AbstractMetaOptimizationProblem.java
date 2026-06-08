@@ -184,7 +184,9 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
         values[i] = evaluations;
       } else {
         indicator.referenceFront(normalizedReferenceFronts.get(problemId));
-        values[i] = indicator.compute(normalizedFront);
+        double value = indicator.compute(normalizedFront);
+        values[i] = Double.isFinite(value) ? value
+            : (indicator.isTheLowerTheIndicatorValueTheBetter() ? Double.MAX_VALUE : 0.0);
       }
     }
     return values;
