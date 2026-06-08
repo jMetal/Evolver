@@ -64,3 +64,5 @@ The adopted encoding scheme introduces two potential drawbacks that must be cons
 While these potential effects can be mitigated by increasing the probability of the mutation operator used by the meta-optimizer, it is important to note that applying a variation operator (such as a mutation) to a solution may not alter the decoded value of the parameters, so the original configuration might not be changed and evaluating it is useless. 
 
 For more details on how these encodings are used in practice, see the :doc:`evaluation` documentation.
+
+An alternative encoding that eliminates inactive variables and neutral mutations is described in :doc:`tree_encoding`.

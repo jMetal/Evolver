@@ -1,151 +1,157 @@
 package org.uma.evolver.util;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@DisplayName("Unit tests for class ConfigurationFileReader")
 class ConfigurationFileReaderTest {
 
   private static final String TEST_CONFIG_FILE = "defaultConfigurations/NSGAIIDoubleDefault.txt";
-  private ConfigurationFileReader configReader;
 
-  @BeforeEach
-  void setUp() throws IOException {
-    // Get the absolute path to the test resource
-    Path resourcePath = Paths.get("src", "main", "resources", TEST_CONFIG_FILE);
-    String absolutePath = resourcePath.toAbsolutePath().toString();
-    configReader = new ConfigurationFileReader(absolutePath);
+  @Nested
+  @DisplayName("When constructing")
+  class WhenConstructing {
+
+    @Test
+    @DisplayName("given a null file path, when constructing, then an IllegalArgumentException is thrown")
+    void givenNullFilePath_whenConstructing_thenIllegalArgumentExceptionIsThrown() {
+      // Arrange
+      Executable executable = () -> new ConfigurationFileReader(null);
+
+      // Act & Assert
+      assertThrows(IllegalArgumentException.class, executable);
+    }
+
+    @Test
+    @DisplayName("given an empty file path, when constructing, then an IllegalArgumentException is thrown")
+    void givenEmptyFilePath_whenConstructing_thenIllegalArgumentExceptionIsThrown() {
+      // Arrange
+      Executable executable = () -> new ConfigurationFileReader("");
+
+      // Act & Assert
+      assertThrows(IllegalArgumentException.class, executable);
+    }
+
+    @Test
+    @DisplayName("given a relative path, when constructing, then the file is loaded from src/main/resources")
+    void givenRelativePath_whenConstructing_thenFileIsLoadedFromResources() throws IOException {
+      // Arrange & Act
+      ConfigurationFileReader reader = new ConfigurationFileReader(TEST_CONFIG_FILE);
+
+      // Assert
+      assertNotNull(reader.getConfiguration(1));
+    }
+
+    @Test
+    @DisplayName("given an absolute path outside resources, when constructing, then the file is loaded from that path")
+    void givenAbsolutePathOutsideResources_whenConstructing_thenFileIsLoadedFromOriginalPath()
+        throws IOException {
+      // Arrange
+      Path tempFile = Files.createTempFile("test-config-", ".txt");
+      Files.writeString(tempFile, "test configuration");
+
+      // Act
+      ConfigurationFileReader reader = new ConfigurationFileReader(tempFile.toString());
+
+      // Assert
+      assertEquals("test configuration", reader.getConfiguration(1).trim());
+      Files.deleteIfExists(tempFile);
+    }
+
+    @Test
+    @DisplayName("given a non-existent path, when constructing, then an IOException is thrown mentioning both locations")
+    void givenNonExistentPath_whenConstructing_thenIOExceptionIsThrown() {
+      // Arrange
+      String nonExistentPath = "nonexistent/file/path.txt";
+      Executable executable = () -> new ConfigurationFileReader(nonExistentPath);
+
+      // Act & Assert
+      IOException exception = assertThrows(IOException.class, executable);
+      assertTrue(exception.getMessage().contains("src/main/resources/" + nonExistentPath));
+      assertTrue(exception.getMessage().contains(nonExistentPath));
+    }
   }
 
-  @Test
-  void shouldLoadConfigurationFileSuccessfully() {
-    // Given: The setup method has created a ConfigurationFileReader
-    // When: We check the number of configurations
-    int count = configReader.getNumberOfConfigurations();
+  @Nested
+  @DisplayName("When reading configurations")
+  class WhenReadingConfigurations {
 
-    // Then: The file should have exactly 1 configuration
-    assertEquals(1, count, "Should have exactly one configuration");
-  }
+    private ConfigurationFileReader configReader;
 
-  @Test
-  void shouldReturnCorrectConfiguration() {
-    // Given: The configuration file has been loaded
-    // When: We get the first configuration
-    String config = configReader.getConfiguration(1);
+    @BeforeEach
+    void setUp() throws IOException {
+      Path resourcePath = Paths.get("src", "main", "resources", TEST_CONFIG_FILE);
+      configReader = new ConfigurationFileReader(resourcePath.toAbsolutePath().toString());
+    }
 
-    // Then: The configuration should match the expected format
-    assertNotNull(config, "Configuration should not be null");
-    assertFalse(config.isEmpty(), "Configuration should not be empty");
+    @Test
+    @DisplayName("given a loaded config file, when getting the count, then it returns 1")
+    void givenLoadedConfigFile_whenGettingCount_thenReturnsOne() {
+      // Act
+      int count = configReader.getNumberOfConfigurations();
 
-    // Verify some key parts of the configuration
-    assertTrue(
-        config.contains("--algorithmResult population"), "Should contain algorithm result setting");
-    assertTrue(
-        config.contains("--variation crossoverAndMutationVariation"),
-        "Should contain variation setting");
-    assertTrue(config.contains("--crossover SBX"), "Should contain crossover setting");
-    assertTrue(config.contains("--mutation polynomial"), "Should contain mutation setting");
-  }
+      // Assert
+      assertEquals(1, count);
+    }
 
-  @Test
-  void shouldReturnAllConfigurations() {
-    // Given: The configuration file has been loaded
-    // When: We get all configurations
-    List<String> allConfigs = configReader.getAllConfigurations();
+    @Test
+    @DisplayName("given a loaded config file, when getting configuration 1, then it contains the expected entries")
+    void givenLoadedConfigFile_whenGettingConfiguration1_thenContainsExpectedEntries() {
+      // Act
+      String config = configReader.getConfiguration(1);
 
-    // Then: We should get a list with exactly one configuration
-    assertEquals(1, allConfigs.size(), "Should return exactly one configuration");
+      // Assert
+      assertNotNull(config);
+      assertFalse(config.isEmpty());
+      assertTrue(config.contains("--algorithmResult population"));
+      assertTrue(config.contains("--variation crossoverAndMutationVariation"));
+      assertTrue(config.contains("--crossover SBX"));
+      assertTrue(config.contains("--mutation polynomial"));
+    }
 
-    // And: The configuration should match the one we get with getConfiguration(1)
-    assertEquals(
-        configReader.getConfiguration(1),
-        allConfigs.get(0),
-        "getAllConfigurations() should match getConfiguration(1)");
-  }
+    @Test
+    @DisplayName("given a loaded config file, when getting all configurations, then the list matches getConfiguration(1)")
+    void givenLoadedConfigFile_whenGettingAllConfigurations_thenListMatchesGetConfiguration1() {
+      // Act
+      List<String> allConfigs = configReader.getAllConfigurations();
 
-  @Test
-  void shouldThrowExceptionForInvalidLineNumber() {
-    // Given: The configuration file has been loaded
-    // When/Then: We try to access a non-existent line, it should throw IndexOutOfBoundsException
-    assertThrows(
-        IndexOutOfBoundsException.class,
-        () -> configReader.getConfiguration(0),
-        "Should throw for line number 0");
+      // Assert
+      assertEquals(1, allConfigs.size());
+      assertEquals(configReader.getConfiguration(1), allConfigs.get(0));
+    }
 
-    assertThrows(
-        IndexOutOfBoundsException.class,
-        () -> configReader.getConfiguration(2),
-        "Should throw for line number 2");
-  }
+    @Test
+    @DisplayName("given a loaded config file, when accessing line 0, then an IndexOutOfBoundsException is thrown")
+    void givenLoadedConfigFile_whenAccessingLine0_thenIndexOutOfBoundsExceptionIsThrown() {
+      // Arrange
+      Executable executable = () -> configReader.getConfiguration(0);
 
-  @Test
-  void shouldThrowExceptionForNullFilePath() {
-    // When/Then: Creating with null file path should throw IllegalArgumentException
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new ConfigurationFileReader(null),
-        "Should throw for null file path");
-  }
+      // Act & Assert
+      assertThrows(IndexOutOfBoundsException.class, executable);
+    }
 
-  @Test
-  void shouldThrowExceptionForEmptyFilePath() {
-    // When/Then: Creating with empty file path should throw IllegalArgumentException
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new ConfigurationFileReader(""),
-        "Should throw for empty file path");
-  }
+    @Test
+    @DisplayName("given a loaded config file, when accessing a line beyond the last, then an IndexOutOfBoundsException is thrown")
+    void givenLoadedConfigFile_whenAccessingLineBeyondLast_thenIndexOutOfBoundsExceptionIsThrown() {
+      // Arrange
+      Executable executable = () -> configReader.getConfiguration(2);
 
-  @Test
-  void shouldLoadFileFromResourcesWhenNoAbsolutePathProvided() throws IOException {
-    // Given: A configuration file that exists in src/main/resources
-    String relativePath = TEST_CONFIG_FILE;
-    
-    // When: Creating a ConfigurationFileReader with just the filename
-    ConfigurationFileReader reader = new ConfigurationFileReader(relativePath);
-    
-    // Then: The file should be loaded successfully from src/main/resources
-    assertNotNull(reader.getConfiguration(1), "Should load configuration from src/main/resources");
-  }
-  
-  @Test
-  void shouldFallBackToOriginalPathWhenNotInResources() throws IOException {
-    // Given: A temporary file that exists outside the resources directory
-    Path tempFile = Files.createTempFile("test-config-", ".txt");
-    Files.writeString(tempFile, "test configuration");
-    
-    // When: Creating a ConfigurationFileReader with the temp file path
-    ConfigurationFileReader reader = new ConfigurationFileReader(tempFile.toString());
-    
-    // Then: The file should be loaded successfully from the original path
-    assertEquals("test configuration", reader.getConfiguration(1).trim(), 
-        "Should load configuration from the original path when not in resources");
-    
-    // Cleanup
-    Files.deleteIfExists(tempFile);
-  }
-  
-  @Test
-  void shouldThrowExceptionForNonExistentFile() {
-    // When/Then: Creating with non-existent file should throw IOException
-    String nonExistentPath = "nonexistent/file/path.txt";
-    IOException exception = assertThrows(
-        IOException.class,
-        () -> new ConfigurationFileReader(nonExistentPath),
-        "Should throw for non-existent file");
-        
-    // Verify the error message contains both checked locations
-    assertTrue(exception.getMessage().contains("src/main/resources/" + nonExistentPath), 
-        "Error message should mention resources directory");
-    assertTrue(exception.getMessage().contains(nonExistentPath), 
-        "Error message should mention the original path");
+      // Act & Assert
+      assertThrows(IndexOutOfBoundsException.class, executable);
+    }
   }
 }

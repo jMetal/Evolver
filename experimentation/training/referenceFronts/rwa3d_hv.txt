@@ -1,0 +1,27 @@
+=== Resumen de 30 configuraciones con mejor HVMinus ===
+Estadísticas del valor HVMinus:
+Puntuación media HVMinus: -0.585893
+Desviación estándar: 0.000097
+Mínimo: -0.586152, Máximo: -0.585726
+
+--- Distribución de Parámetros Categóricos ---
+crossover: {5.0: 11, 1.0: 9, 3.0: 9, 0.0: 1}
+mutation: {5.0: 28, 4.0: 2}
+selection: {3.0: 8, 0.0: 8, 2.0: 5, 1.0: 5, 4.0: 4}
+crossoverRepairStrategy: {2.0: 14, 1.0: 11, 0.0: 5}
+mutationRepairStrategy: {1.0: 30}
+archiveType: {1.0: 30}
+createInitialSolutions: {4.0: 17, 2.0: 3, 3.0: 3, 1.0: 3, 5.0: 2, 0.0: 2}
+variation: {0.0: 30}
+
+--- Estadísticas de Parámetros Numéricos ---
+populationSizeWithArchive      -> Media: 45.2000, Std: 50.1813, Rango: [10.0000, 193.0000] (N=30)
+offspringPopulationSize        -> Media: 3.3333, Std: 1.8631, Rango: [1.0000, 7.0000] (N=30)
+crossoverProbability           -> Media: 0.3094, Std: 0.2046, Rango: [0.0290, 0.8733] (N=30)
+mutationProbabilityFactor      -> Media: 1.7914, Std: 0.2317, Rango: [1.0393, 1.9938] (N=30)
+laplaceCrossoverScale          -> Media: 0.4313, Std: 0.0646, Rango: [0.3206, 0.4968] (N=11)
+levyFlightMutationBeta         -> Media: 1.0580, Std: 0.0185, Rango: [1.0449, 1.0710] (N=2)
+levyFlightMutationStepSize     -> Media: 0.9274, Std: 0.0204, Rango: [0.9130, 0.9418] (N=2)
+powerLawMutationDelta          -> Media: 8.8030, Std: 1.0784, Rango: [6.0885, 9.9946] (N=28)
+blxAlphaBetaCrossoverAlpha     -> Media: 0.8070, Std: 0.2191, Rango: [0.2462, 0.9606] (N=9)
+blxAlphaBetaCrossoverBeta      -> Media: 0.6214, Std: 0.2827, Rango: [0.1705, 0.9195] (N=9)

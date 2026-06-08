@@ -122,6 +122,7 @@ Evolver currently supports the following base-level and meta-optimization algori
    concepts/meta_optimization_approach
    concepts/parameter_spaces
    concepts/solution_encoding
+   concepts/tree_encoding
    concepts/evaluation
    concepts/objective_functions
    concepts/base_level_metaheuristics

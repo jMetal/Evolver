@@ -14,7 +14,7 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmetal.version>7.2</jmetal.version>
+    <jmetal.version>7.3</jmetal.version>
     <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
@@ -282,6 +282,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.5.3</version>
+    <dependencies>
+        <dependency>
+            <groupId>me.fabriciorby</groupId>
+            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+    </dependencies>
+    <configuration>
+        <reportFormat>plain</reportFormat>
+        <consoleOutputReporter>
+            <disable>true</disable>
+        </consoleOutputReporter>
+        <statelessTestsetInfoReporter
+                implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+        </statelessTestsetInfoReporter>
+    </configuration>
+    </plugin>
     </plugins>
   </build>
 
@@ -323,7 +343,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>6.0.3</version>
+      <version>6.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

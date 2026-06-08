@@ -1,0 +1,12 @@
+# Specific requirements for Analysis A: HV Evolution
+# Inherits from parent requirements.txt
+
+# Core data manipulation
+pandas>=1.5.0
+numpy>=1.21.0
+
+# Visualization
+matplotlib>=3.5.0
+
+# Progress tracking
+tqdm>=4.64.0

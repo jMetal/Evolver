@@ -112,6 +112,8 @@ class MetaOptimizationProblemIT {
       assertEquals(1, metaProblem.numberOfObjectives());
       assertTrue(solution.objectives()[0] >= 0.0,
           "Mean NormalizedHypervolume across problems should be non-negative");
+      assertTrue(solution.objectives()[0] <= 1.0,
+          "Mean NormalizedHypervolume across problems should be at most 1.0");
     }
 
     @Test

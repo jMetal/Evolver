@@ -1,0 +1,19 @@
+=== EP Statistics (over 30 runs) ===
+Median: 0.17445522328796653
+Mean:   0.1745211714741491
+Std:    0.00021187278292924348
+Min:    0.1741532332425695
+Max:    0.1741532332425695 (wait, 0.1750694208354195)
+
+=== HVMinus Statistics (over 30 runs) ===
+Median: -0.5859075611100876
+Mean:   -0.585893202130611
+Std:    9.525437817511353e-05
+Min:    -0.58615186375884
+Max:    -0.5857260302466601
+
+=== Best Overall Config (by EP) ===
+{'Evaluation': 3000.0, 'SolutionId': 2.0, 'EP': 0.1741532332425695, 'HVMinus': -0.5853195428376522, 'algorithmResult': 1.0, 'populationSizeWithArchive': 178.0, 'archiveType': 1.0, 'createInitialSolutions': 4.0, 'offspringPopulationSize': 4.0, 'variation': 0.0, 'crossover': 5.0, 'crossoverProbability': 0.4595655295915966, 'crossoverRepairStrategy': 0.0, 'sbxDistributionIndex': nan, 'blxAlphaCrossoverAlpha': nan, 'blxAlphaBetaCrossoverBeta': nan, 'blxAlphaBetaCrossoverAlpha': nan, 'laplaceCrossoverScale': 0.4854862462946266, 'fuzzyRecombinationCrossoverAlpha': nan, 'pcxCrossoverZeta': nan, 'pcxCrossoverEta': nan, 'undcCrossoverZeta': nan, 'undcCrossoverEta': nan, 'mutation': 5.0, 'mutationProbabilityFactor': 1.9564241007950072, 'mutationRepairStrategy': 1.0, 'uniformMutationPerturbation': nan, 'polynomialMutationDistributionIndex': nan, 'linkedPolynomialMutationDistributionIndex': nan, 'nonUniformMutationPerturbation': nan, 'levyFlightMutationBeta': nan, 'levyFlightMutationStepSize': nan, 'powerLawMutationDelta': 9.84377051124825, 'selection': 1.0, 'selectionTournamentSize': nan, 'boltzmannTemperature': nan}
+
+=== Best Overall Config (by HVMinus) ===
+{'Evaluation': 3000.0, 'SolutionId': 4.0, 'EP': 0.1759432781078952, 'HVMinus': -0.58615186375884, 'algorithmResult': 1.0, 'populationSizeWithArchive': 10.0, 'archiveType': 1.0, 'createInitialSolutions': 1.0, 'offspringPopulationSize': 2.0, 'variation': 0.0, 'crossover': 5.0, 'crossoverProbability': 0.718608920496554, 'crossoverRepairStrategy': 1.0, 'sbxDistributionIndex': nan, 'blxAlphaCrossoverAlpha': nan, 'blxAlphaBetaCrossoverBeta': nan, 'blxAlphaBetaCrossoverAlpha': nan, 'laplaceCrossoverScale': 0.3741039932602056, 'fuzzyRecombinationCrossoverAlpha': nan, 'pcxCrossoverZeta': nan, 'pcxCrossoverEta': nan, 'undcCrossoverZeta': nan, 'undcCrossoverEta': nan, 'mutation': 5.0, 'mutationProbabilityFactor': 1.8730419254665496, 'mutationRepairStrategy': 1.0, 'uniformMutationPerturbation': nan, 'polynomialMutationDistributionIndex': nan, 'linkedPolynomialMutationDistributionIndex': nan, 'nonUniformMutationPerturbation': nan, 'levyFlightMutationBeta': nan, 'levyFlightMutationStepSize': nan, 'powerLawMutationDelta': 6.691352846910596, 'selection': 2.0, 'selectionTournamentSize': nan, 'boltzmannTemperature': 1.259821579456496}
