@@ -80,7 +80,7 @@ Built on [jMetal 7.3](https://github.com/jMetal/jMetal) (`jmetal-core`, `jmetal-
 - Unit tests: `*Test.java` under `src/test/java`, run with `mvn test`
 - Integration tests: `*IT.java`, run with `mvn integration-test`
 - Test parameter space YAML fixtures are in `src/test/resources/parameterSpaces/`
-- Follow the conventions in `JAVA_CODING_GUIDELINES.md` §14: JUnit 5 (Jupiter), Given-When-Then method names, AAA internal structure (`// Arrange / Act / Assert`), `@DisplayName`, and `@Nested` for grouping.
+- Follow the conventions in `JAVA_CODING_GUIDELINES.md` §13: JUnit 6 (Jupiter), Given-When-Then method names, AAA internal structure (`// Arrange / Act / Assert`), `@DisplayName`, and `@Nested` for grouping.
 
 ## Temporary Directories
 

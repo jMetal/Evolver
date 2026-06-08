@@ -5,6 +5,71 @@ This document defines Java coding standards for projects using Java 21+ and Mave
 
 ---
 
+## 0. Code Formatting: Google Java Style
+
+This project enforces the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) via `maven-checkstyle-plugin` with `google_checks.xml`. Formatting violations are reported during the `validate` phase (`mvn validate`).
+
+### Key rules
+
+| Rule | Value |
+|---|---|
+| Indentation | 2 spaces (no tabs) |
+| Continuation indent | 4 spaces |
+| Column limit | 100 characters |
+| Braces | Egyptian style — opening brace on same line, always present even for single-statement blocks |
+| Blank lines | 1 between members, 2 between top-level type declarations |
+| Imports | No wildcard imports; static imports before regular imports; grouped and separated by a blank line |
+
+### Naming conventions
+
+| Element | Style | Example |
+|---|---|---|
+| Package | lowercase, no underscores | `org.uma.evolver.meta` |
+| Class / Interface / Enum | UpperCamelCase | `MetaOptimizationProblem` |
+| Method / Variable | lowerCamelCase | `evaluateSolution` |
+| Constant (`static final`) | UPPER_SNAKE_CASE | `MAX_EVALUATIONS` |
+| Type parameter | Single uppercase letter or UpperCamelCase + T | `T`, `SolutionT` |
+
+### ✅ DO
+
+```java
+// 2-space indent, opening brace on same line, space after keyword
+if (solution == null) {
+  throw new IllegalArgumentException("Solution cannot be null");
+}
+
+// Continuation: 4-space indent
+String result = someObject
+    .methodA()
+    .methodB();
+
+// Constant naming
+private static final int MAX_POPULATION_SIZE = 100;
+
+// Grouped imports (static first, then regular, no wildcards)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+```
+
+### ❌ DON'T
+
+```java
+// Tabs or 4-space indent
+if (solution == null)
+{                          // Brace on new line — not allowed
+    throw new ...;
+}
+
+// Wildcard imports
+import org.uma.jmetal.solution.*;
+
+// Constant in lowerCamelCase
+private static final int maxPopulationSize = 100;
+```
+
+---
+
 ## 1. Records for DTOs and Value Objects
 
 ### ✅ DO
@@ -28,51 +93,41 @@ public record UserDTO(String name, String email) {
 
 ---
 
-## 2. Sealed Classes for Controlled Hierarchies
+## 2. Pattern Matching and Switch Expressions
 
 ### ✅ DO
-- Use `sealed interface/class` for known and limited type hierarchies
-- Combine with pattern matching in switch expressions
-- Explicitly permit all subtypes
+- Use pattern matching with `instanceof` to avoid manual casting
+- Use switch expressions that return values instead of switch statements
+- Use switch over enums for exhaustiveness
 
 ```java
-public sealed interface PaymentMethod permits CreditCard, PayPal, BankTransfer {}
-
-public record CreditCard(String number) implements PaymentMethod {}
-public record PayPal(String email) implements PaymentMethod {}
-public record BankTransfer(String iban) implements PaymentMethod {}
-```
-
-### ❌ DON'T
-- Use open hierarchies with cascading `instanceof` checks
-- Allow unlimited subclassing when types are known
-
----
-
-## 3. Pattern Matching and Switch Expressions
-
-### ✅ DO
-- Use pattern matching with `switch` and `instanceof`
-- Use switch expressions that return values
-- Leverage exhaustiveness checking with sealed types
-
-```java
-String processPayment(PaymentMethod method) {
-    return switch (method) {
-        case CreditCard(var number) -> "Processing credit card: " + number;
-        case PayPal(var email) -> "Processing PayPal: " + email;
-        case BankTransfer(var iban) -> "Processing transfer: " + iban;
-    };
+// Pattern matching instanceof — no explicit cast needed
+if (solution instanceof DoubleSolution ds) {
+    double value = ds.variables().get(0);
 }
+
+// Switch expression returning a value
+String label = switch (status) {
+    case PENDING  -> "Waiting";
+    case APPROVED -> "Done";
+    case REJECTED -> "Failed";
+};
 ```
 
 ### ❌ DON'T
 - Use if-else chains with `instanceof` and manual casting
-- Use traditional switch statements when expressions are cleaner
+- Use traditional switch statements when a switch expression is cleaner
+
+```java
+// Bad: manual cast after instanceof
+if (solution instanceof DoubleSolution) {
+    DoubleSolution ds = (DoubleSolution) solution; // unnecessary cast
+}
+```
 
 ---
 
-## 4. Optional Instead of null
+## 3. Optional Instead of null
 
 ### ✅ DO
 - Return `Optional<T>` when a value may be absent
@@ -97,7 +152,7 @@ String userName = findUserById("123")
 
 ---
 
-## 5. Streams API
+## 4. Streams API
 
 ### ✅ DO
 - Use streams for collection operations
@@ -119,7 +174,7 @@ List<String> activeUserNames = users.stream()
 
 ---
 
-## 6. Try-with-Resources
+## 5. Try-with-Resources
 
 ### ✅ DO
 - Use try-with-resources for ALL closeable resources
@@ -140,40 +195,42 @@ try (var connection = dataSource.getConnection();
 
 ---
 
-## 7. Single Return Point + Guard Clauses
+## 6. Single Return Point with Guard Clauses
 
 ### ✅ DO
-- Each method has ONE return statement (at the end)
-- Use flat if-else for validations (no nesting)
-- Declare result variable at the beginning
-- Use early validation with guard clauses when needed
+- Use guard clauses at the top of the method to validate preconditions and fail fast
+- After the guard clauses, the method body has a single return point at the end
+- Declare a result variable at the start of the main logic when it aids clarity
 
 ```java
 public String processOrder(Order order) {
-    String result;
-    
+    // Guard clauses: validate preconditions at the top
     if (order == null) {
-        result = "Invalid order";
-    } else if (!order.isValid()) {
-        result = "Order validation failed";
-    } else if (order.isEmpty()) {
+        throw new IllegalArgumentException("Order cannot be null");
+    }
+    if (!order.isValid()) {
+        return "Order validation failed";
+    }
+
+    // Main logic: single return point
+    String result;
+    if (order.isEmpty()) {
         result = "Empty order";
     } else {
         result = fulfillOrder(order);
     }
-    
     return result;
 }
 ```
 
 ### ❌ DON'T
-- Use multiple `return` statements scattered throughout the method
+- Return from the middle of the method body (after the guard clause section)
 - Create nested if-else pyramids (pyramid of doom)
 - Mix validation logic with business logic
 
 ---
 
-## 8. Single Responsibility Principle
+## 7. Single Responsibility Principle
 
 ### ✅ DO
 - Each method does ONE thing
@@ -198,38 +255,32 @@ public void registerUser(UserDTO dto) {
 
 ---
 
-## 9. Complete Javadoc
+## 8. Javadoc
 
 ### ✅ DO
-- Document all public classes, interfaces, and methods
-- Include description, parameters, return values, and exceptions
-- Use `@param`, `@return`, `@throws` tags appropriately
-- Write clear, concise descriptions
+- Write Javadoc for public classes and interfaces
+- Document public methods when the name and signature alone do not fully convey intent, preconditions, or non-obvious behaviour
+- Use `@param`, `@return`, `@throws` when they add information not already obvious from the signature
 
 ```java
 /**
- * Retrieves a user by their unique identifier.
+ * Evaluates a set of solutions on all training problems and returns the
+ * aggregated quality indicator values. Modifies the solutions in place.
  *
- * @param userId the unique identifier of the user
- * @return an Optional containing the user if found, empty otherwise
- * @throws IllegalArgumentException if userId is null or blank
+ * @param solutions non-empty list of solutions to evaluate
+ * @throws IllegalArgumentException if solutions is null or empty
  */
-public Optional<User> findUserById(String userId) {
-    if (userId == null || userId.isBlank()) {
-        throw new IllegalArgumentException("User ID cannot be null or blank");
-    }
-    return userRepository.findById(userId);
-}
+public void evaluate(List<S> solutions) { ... }
 ```
 
 ### ❌ DON'T
-- Leave public APIs undocumented
-- Write vague or redundant documentation
-- Forget to update Javadoc when changing method signatures
+- Write Javadoc that just restates the method name (`/** Returns the name. */`)
+- Add `@param` / `@return` tags whose content is already obvious from the type and name
+- Leave Javadoc stale when changing method signatures
 
 ---
 
-## 10. Specific Exceptions
+## 9. Specific Exceptions
 
 ### ✅ DO
 - Create custom exceptions for different error types
@@ -259,7 +310,7 @@ public class InvalidEmailException extends IllegalArgumentException {
 
 ---
 
-## 11. Immutability by Default
+## 10. Immutability by Default
 
 ### ✅ DO
 - Make fields `final` whenever possible
@@ -287,7 +338,7 @@ public class OrderService {
 
 ---
 
-## 12. Variable Naming with `var`
+## 11. Variable Naming with `var`
 
 ### ✅ DO
 - Use `var` when type is obvious from context
@@ -306,7 +357,7 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 
 ---
 
-## 13. Maven Project Structure
+## 12. Maven Project Structure
 
 ### ✅ DO
 - Follow standard Maven directory layout
@@ -317,8 +368,7 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 ```xml
 <properties>
     <java.version>21</java.version>
-    <junit.version>5.10.1</junit.version>
-    <spring.version>6.1.0</spring.version>
+    <junit.version>6.1.0</junit.version>
 </properties>
 
 <dependencies>
@@ -339,7 +389,7 @@ var result = new HashMap<String, List<UserDTO>>(); // Reduces verbosity
 
 ---
 
-## 14. Testing
+## 13. Testing
 
 ### ✅ DO
 - Write tests using JUnit 6 (Jupiter)
@@ -478,18 +528,18 @@ void givenEmail_whenValidating_thenReturnExpectedResult(String email, boolean ex
 ## Review Checklist
 
 Before submitting code, verify:
+- [ ] Code passes `mvn validate` (Google Java Style checkstyle)
 - [ ] Records used for DTOs and value objects
-- [ ] Sealed classes used for controlled hierarchies
 - [ ] Pattern matching used instead of instanceof chains
 - [ ] Optional returned instead of null
 - [ ] Streams used for collection operations
 - [ ] Try-with-resources used for all closeable resources
-- [ ] Single return point per method
+- [ ] Single return point per method (guard clauses at top are allowed)
 - [ ] Each method has single responsibility
-- [ ] Complete Javadoc for public APIs
+- [ ] Javadoc present where behaviour is non-obvious
 - [ ] Specific custom exceptions used
 - [ ] Fields are final where possible
-- [ ] Tests follow §14 conventions (GWT naming, @DisplayName, @Nested, AAA, @BeforeEach, mocks manual)
+- [ ] Tests follow §13 conventions (GWT naming, @DisplayName, @Nested, AAA, @BeforeEach, mocks manual)
 - [ ] Test coverage is above 80%
 
 ---
@@ -501,7 +551,7 @@ When AI assistants work on this codebase:
 2. Reference AGENTS.md for project-specific context and conventions
 3. Prioritize code quality and readability over brevity
 4. Ask for clarification when guidelines conflict with specific requirements
-5. Follow §14 for all testing conventions (naming, structure, mocking, parameterized tests, integration tests)
+5. Follow §13 for all testing conventions (naming, structure, mocking, parameterized tests, integration tests)
 
 ---
 
