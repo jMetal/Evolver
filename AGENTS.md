@@ -6,7 +6,7 @@ For Claude Code, the primary reference is `CLAUDE.md`. This file adds pointers f
 ## Project
 
 Evolver is a Java framework for automatically configuring multi-objective metaheuristics using a
-two-level (meta/base) optimization approach built on [jMetal 7.3](https://github.com/jMetal/jMetal).
+two-level (meta/base) optimization approach built on [jMetal 7.4](https://github.com/jMetal/jMetal).
 
 See `CLAUDE.md` for the full project overview, architecture, and build/test commands.
 
