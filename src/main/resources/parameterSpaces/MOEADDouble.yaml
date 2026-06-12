@@ -27,6 +27,12 @@ aggregationFunction:
           type: double
           range: [1.0, 200.0]
     modifiedTschebyscheff:
+    augmentedTschebyscheff:
+    invertedPenaltyBoundaryIntersection:
+      conditionalParameters:
+        ipbiTheta:
+          type: double
+          range: [0.01, 200.0]
 #
 algorithmResult:
   type: categorical

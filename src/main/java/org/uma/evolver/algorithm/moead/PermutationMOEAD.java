@@ -2,7 +2,6 @@ package org.uma.evolver.algorithm.moead;
 
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
@@ -158,11 +157,7 @@ public class PermutationMOEAD extends BaseMOEAD<PermutationSolution<Integer>> {
     maximumNumberOfReplacedSolutions =
             (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
-    aggregationFunction =
-            ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction")).getAggregationFunction();
-
-    normalizedObjectives =
-            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
+    configureAggregationFunction();
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
             (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");

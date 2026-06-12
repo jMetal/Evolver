@@ -251,6 +251,23 @@ public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgor
   }
 
   /**
+   * Configures the aggregation function and the objective normalization flag from the
+   * "aggregationFunction" parameter.
+   *
+   * <p>The normalization flag is taken from the aggregation function itself so that the
+   * replacement component and the function always agree. This matters for functions that enforce
+   * normalization regardless of the "normalizeObjectives" setting, such as the inverted PBI,
+   * which requires the nadir point estimation that is only maintained when normalization is
+   * enabled.
+   */
+  protected void configureAggregationFunction() {
+    aggregationFunction =
+        ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction"))
+            .getAggregationFunction();
+    normalizedObjectives = aggregationFunction.normalizeObjectives();
+  }
+
+  /**
    * Creates the replacement operator for the algorithm using ranking and density estimators.
    *
    * @return the replacement operator

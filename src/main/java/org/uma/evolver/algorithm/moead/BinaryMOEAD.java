@@ -2,7 +2,6 @@ package org.uma.evolver.algorithm.moead;
 
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.catalogue.AggregationFunctionParameter;
 import org.uma.evolver.parameter.catalogue.SequenceGeneratorParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
@@ -157,13 +156,8 @@ public class BinaryMOEAD extends BaseMOEAD<BinarySolution> {
     maximumNumberOfReplacedSolutions =
             (int) parameterSpace.get("maximumNumberOfReplacedSolutions").value();
 
-    // Set up the aggregation function for combining multiple objectives
-    aggregationFunction =
-            ((AggregationFunctionParameter) parameterSpace.get("aggregationFunction")).getAggregationFunction();
-
-    // Configure objective normalization settings
-    normalizedObjectives =
-            ((String)parameterSpace.get("normalizeObjectives").value()).equalsIgnoreCase("true");
+    // Set up the aggregation function and the objective normalization settings
+    configureAggregationFunction();
 
     SequenceGeneratorParameter subProblemIdGeneratorParameter =
             (SequenceGeneratorParameter) parameterSpace.get("subProblemIdGenerator");
