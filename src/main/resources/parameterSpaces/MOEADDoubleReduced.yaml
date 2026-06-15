@@ -140,6 +140,7 @@ variation:
             RAND_1_BIN:
             RAND_1_EXP:
             RAND_2_BIN:
+            RAND_2_EXP:
 #
 selection:
   type: categorical

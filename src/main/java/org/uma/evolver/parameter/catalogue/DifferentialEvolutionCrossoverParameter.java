@@ -96,17 +96,20 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
    * @throws JMetalException if the current value does not match any known DE variant
    */
   public DifferentialEvolutionCrossover getParameter() {
-    DifferentialEvolutionCrossover result;
     Double cr = (Double) findGlobalSubParameter("CR").value();
     Double f = (Double) findGlobalSubParameter("F").value();
 
-    String variant = value() ;
+    String variant = value();
 
-    result =
-        new DifferentialEvolutionCrossover(
-            cr, f, DifferentialEvolutionCrossover.getVariantFromString(variant));
+    // jMetal 7.4 has a bug where RAND_2_EXP is in the enum but not in getVariantFromString.
+    // We create it directly here by detecting the case.
+    if ("RAND_2_EXP".equals(variant)) {
+      return new DifferentialEvolutionCrossover(
+          cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_2_EXP);
+    }
 
-    return result;
+    return new DifferentialEvolutionCrossover(
+        cr, f, DifferentialEvolutionCrossover.getVariantFromString(variant));
   }
 
   /**

@@ -157,11 +157,12 @@ variation:
             F:
               type: double
               values: [0.0, 1.0]
-          values: 
+          values:
             rand_1_bin:
             rand_1_exp:
             rand_2_bin:
-            
+            rand_2_exp:
+
 selection:
   type: categorical
   values:

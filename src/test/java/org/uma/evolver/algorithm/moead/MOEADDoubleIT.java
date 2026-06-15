@@ -18,11 +18,15 @@ import org.uma.jmetal.util.SolutionListUtils;
 
 /**
  * Integration tests for {@link DoubleMOEAD} covering the aggregation functions added in jMetal
- * 7.4: augmentedTschebyscheff and invertedPenaltyBoundaryIntersection (IPBI).
+ * 7.4: augmentedTschebyscheff and invertedPenaltyBoundaryIntersection (IPBI), and differential
+ * evolution variants (RAND_1_BIN, RAND_1_EXP, RAND_2_BIN, RAND_2_EXP).
  *
  * <p>IPBI requires the nadir point estimation, which MOEADReplacement only maintains when
  * objective normalization is enabled. These tests verify that IPBI configurations run correctly
  * even when "normalizeObjectives" is false, because normalization is enforced for that function.
+ *
+ * <p>DE variant tests verify that all RAND-family DE crossover operators work correctly in the
+ * MOEA/D framework without producing invalid objectives.
  */
 @DisplayName("Integration tests for class DoubleMOEAD")
 class MOEADDoubleIT {
@@ -69,6 +73,42 @@ class MOEADDoubleIT {
     double[][] referenceFront = new double[][] {{0.0, 1.0}, {1.0, 0.0}};
     QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
     return hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+  }
+
+  private List<DoubleSolution> runMoeadWithDeVariantOnZdt1(String deVariant) {
+    var moead =
+        new DoubleMOEAD(
+            new ZDT1(),
+            POPULATION_SIZE,
+            MAX_EVALUATIONS,
+            WEIGHT_VECTOR_FILES_DIRECTORY,
+            new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory()));
+
+    var parameters =
+        ("--neighborhoodSize 20 "
+                + "--maximumNumberOfReplacedSolutions 2 "
+                + "--aggregationFunction tschebyscheff "
+                + "--normalizeObjectives false "
+                + "--algorithmResult population "
+                + "--createInitialSolutions default "
+                + "--subProblemIdGenerator randomPermutationCycle "
+                + "--variation differentialEvolutionVariation "
+                + "--differentialEvolutionCrossover "
+                + deVariant
+                + " "
+                + "--CR 0.5 "
+                + "--F 0.5 "
+                + "--mutation polynomial "
+                + "--mutationProbabilityFactor 1.0 "
+                + "--mutationRepairStrategy bounds "
+                + "--polynomialMutationDistributionIndex 20.0 "
+                + "--selection populationAndNeighborhoodMatingPoolSelection "
+                + "--neighborhoodSelectionProbability 0.9")
+            .split("\\s+");
+
+    var algorithm = moead.parse(parameters).build();
+    algorithm.run();
+    return algorithm.result();
   }
 
   @Nested
@@ -132,6 +172,79 @@ class MOEADDoubleIT {
 
       // Act
       List<DoubleSolution> population = runMoeadOnZdt1(aggregationSettings);
+
+      // Assert
+      assertEquals(POPULATION_SIZE, population.size());
+      assertTrue(
+          population.stream()
+              .allMatch(
+                  solution ->
+                      Double.isFinite(solution.objectives()[0])
+                          && Double.isFinite(solution.objectives()[1])));
+    }
+  }
+
+  @Nested
+  @DisplayName("When running MOEA/D with differential evolution RAND variants")
+  class DifferentialEvolutionRandVariantsCases {
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given RAND_1_BIN variant, when running on ZDT1, then objectives are valid")
+    void givenRand1Bin_whenRunningOnZdt1_thenObjectivesAreValid() {
+      // Act
+      List<DoubleSolution> population = runMoeadWithDeVariantOnZdt1("RAND_1_BIN");
+
+      // Assert
+      assertEquals(POPULATION_SIZE, population.size());
+      assertTrue(
+          population.stream()
+              .allMatch(
+                  solution ->
+                      Double.isFinite(solution.objectives()[0])
+                          && Double.isFinite(solution.objectives()[1])));
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given RAND_1_EXP variant, when running on ZDT1, then objectives are valid")
+    void givenRand1Exp_whenRunningOnZdt1_thenObjectivesAreValid() {
+      // Act
+      List<DoubleSolution> population = runMoeadWithDeVariantOnZdt1("RAND_1_EXP");
+
+      // Assert
+      assertEquals(POPULATION_SIZE, population.size());
+      assertTrue(
+          population.stream()
+              .allMatch(
+                  solution ->
+                      Double.isFinite(solution.objectives()[0])
+                          && Double.isFinite(solution.objectives()[1])));
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given RAND_2_BIN variant, when running on ZDT1, then objectives are valid")
+    void givenRand2Bin_whenRunningOnZdt1_thenObjectivesAreValid() {
+      // Act
+      List<DoubleSolution> population = runMoeadWithDeVariantOnZdt1("RAND_2_BIN");
+
+      // Assert
+      assertEquals(POPULATION_SIZE, population.size());
+      assertTrue(
+          population.stream()
+              .allMatch(
+                  solution ->
+                      Double.isFinite(solution.objectives()[0])
+                          && Double.isFinite(solution.objectives()[1])));
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given RAND_2_EXP variant, when running on ZDT1, then objectives are valid")
+    void givenRand2Exp_whenRunningOnZdt1_thenObjectivesAreValid() {
+      // Act
+      List<DoubleSolution> population = runMoeadWithDeVariantOnZdt1("RAND_2_EXP");
 
       // Assert
       assertEquals(POPULATION_SIZE, population.size());
