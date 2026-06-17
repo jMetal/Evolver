@@ -36,6 +36,16 @@ densityEstimator:
           values:
             "true":
             "false":
+    shifted:
+      conditionalParameters:
+        shiftedNeighborhoodSize:
+          type: integer
+          range: [1, 5]
+    angle:
+      conditionalParameters:
+        angleNeighborhoodSize:
+          type: integer
+          range: [1, 5]
 
 ranking:
   type: categorical
