@@ -5,6 +5,9 @@
 # Non-configurable (hardcoded in BasePAES / DoublePAES):
 #   populationSize = 1, offspringPopulationSize = 1
 #   crossover = none (MutationOnlyVariation)
+#   initial solution = a single random solution (RandomSolutionsCreation); other
+#     strategies (Latin hypercube, scatter search) are population-diversity oriented
+#     and meaningless for a single-solution (1+1) ES
 #   PAES archive size (numberOfSolutionsToFind) is fixed and passed via the constructor,
 #   analogous to populationSize in other algorithms (typical value: 100)
 
@@ -27,13 +30,6 @@ algorithmResult:
 archiveSelectionProbability:
   type: double
   range: [0.0, 1.0]
-
-createInitialSolutions:
-  type: categorical
-  values:
-    default: {}
-    latinHypercubeSampling: {}
-    scatterSearch: {}
 
 mutation:
   type: categorical

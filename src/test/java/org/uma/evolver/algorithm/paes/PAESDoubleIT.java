@@ -39,7 +39,6 @@ class PAESDoubleIT {
     String[] args = ("--paesArchiveType crowdingDistanceArchive "
         + "--algorithmResult paesArchive "
         + "--archiveSelectionProbability 0.0 "
-        + "--createInitialSolutions default "
         + "--mutation polynomial "
         + "--mutationProbabilityFactor 1.0 "
         + "--mutationRepairStrategy bounds "

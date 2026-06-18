@@ -5,13 +5,13 @@ import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.PAESArchiveParameter;
-import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluationWithArchive;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
+import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
@@ -108,8 +108,9 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
   }
 
   protected SolutionsCreation<S> createInitialSolutions() {
-    return ((CreateInitialSolutionsParameter<S>) parameterSpace.get("createInitialSolutions"))
-        .getCreateInitialSolutionsStrategy(problem, 1);
+    // A (1+1) ES starts from a single random solution. Population-diversity strategies
+    // (Latin hypercube, scatter search) are meaningless with a single solution.
+    return new RandomSolutionsCreation<>(problem, 1);
   }
 
   protected Variation<S> createVariation() {

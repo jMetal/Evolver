@@ -39,19 +39,19 @@ class PAESDoubleTest {
       int totalParameters = paes.parameterSpace().parameters().size();
 
       // Assert
-      assertEquals(14, totalParameters);
+      assertEquals(13, totalParameters);
     }
 
     @Test
-    @DisplayName("given new instance when getting parameter space then returns 5 top-level parameters")
-    void givenNewInstance_whenGettingParameterSpace_thenReturns5TopLevelParameters() {
+    @DisplayName("given new instance when getting parameter space then returns 4 top-level parameters")
+    void givenNewInstance_whenGettingParameterSpace_thenReturns4TopLevelParameters() {
       // Arrange — done in setUp
 
       // Act
       int topLevelCount = paes.parameterSpace().topLevelParameters().size();
 
       // Assert
-      assertEquals(5, topLevelCount);
+      assertEquals(4, topLevelCount);
     }
   }
 
@@ -66,7 +66,6 @@ class PAESDoubleTest {
       String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult paesArchive "
           + "--archiveSelectionProbability 0.0 "
-          + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
           + "--mutationRepairStrategy bounds "
@@ -89,7 +88,6 @@ class PAESDoubleTest {
       String[] args = ("--paesArchiveType hypervolumeArchive "
           + "--algorithmResult paesArchive "
           + "--archiveSelectionProbability 0.5 "
-          + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
           + "--mutationRepairStrategy bounds "
@@ -110,7 +108,6 @@ class PAESDoubleTest {
       String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult paesArchive "
           + "--archiveSelectionProbability 0.0 "
-          + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
           + "--mutationRepairStrategy bounds "
@@ -131,7 +128,6 @@ class PAESDoubleTest {
       String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult externalArchive "
           + "--archiveSelectionProbability 0.0 "
-          + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
           + "--mutationRepairStrategy bounds "

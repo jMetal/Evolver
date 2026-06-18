@@ -223,7 +223,9 @@ non-dominated tiebreaking and the main result container.
 
 The bounded archive size (``numberOfSolutionsToFind``) is fixed and provided through the
 constructor — analogous to the population size of other algorithms (typical value: 100) — rather
-than being part of the tunable parameter space.
+than being part of the tunable parameter space. The initial solution is a single random solution;
+population-diversity initialisation strategies (Latin hypercube, scatter search) are meaningless
+for a single-solution (1+1) ES and are therefore not configurable.
 
 Architecture
 ~~~~~~~~~~~~
@@ -284,7 +286,7 @@ archives that provide a density estimator for the non-dominated tiebreaking step
 Parameter space
 ~~~~~~~~~~~~~~~
 
-The parameter space is defined in ``PAESDouble.yaml`` (14 parameters, 5 top-level):
+The parameter space is defined in ``PAESDouble.yaml`` (13 parameters, 4 top-level):
 
 .. list-table::
    :header-rows: 1
@@ -300,8 +302,6 @@ The parameter space is defined in ``PAESDouble.yaml`` (14 parameters, 5 top-leve
        additional unbounded non-dominated archive)
    * - ``archiveSelectionProbability``
      - Probability of mutating a random archive member instead of the current solution
-   * - ``createInitialSolutions``
-     - Initialisation strategy (default, Latin hypercube, scatter search)
    * - ``mutation``
      - Mutation operator and its sub-parameters (uniform, polynomial, linked polynomial, etc.)
 
@@ -319,7 +319,6 @@ Usage example
   var args = ("--paesArchiveType crowdingDistanceArchive "
       + "--algorithmResult paesArchive "
       + "--archiveSelectionProbability 0.0 "
-      + "--createInitialSolutions default "
       + "--mutation polynomial --mutationProbabilityFactor 1.0 "
       + "--mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0")
       .split("\\s+");

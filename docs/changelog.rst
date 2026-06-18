@@ -22,7 +22,9 @@ Added
   ``spatialSpreadDeviationArchive``. A configurable ``archiveSelectionProbability`` chooses the
   mutation parent between the current solution and a random archive member (0.0 = classic PAES).
   Three new components: ``MutationOnlyVariation``, ``PAESSelection``, and ``PAESReplacement``.
-  Parameter space defined in ``PAESDouble.yaml`` (14 parameters, 5 top-level).
+  The initial solution is a single random solution (no configurable initialisation strategy,
+  as population-diversity strategies are meaningless for a 1+1 ES).
+  Parameter space defined in ``PAESDouble.yaml`` (13 parameters, 4 top-level).
 - Add configurable SSMOEA (Steady-State MOEA) for double-encoded problems (``DoubleSSMOEA``).
   Supports two variation branches (crossover+mutation or differential evolution) and two
   replacement strategies (``rankingAndDensityEstimator`` or ``singleSolutionReplacement``).
