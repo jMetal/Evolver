@@ -23,11 +23,14 @@ values on a training set as objectives to minimize.
 | Algorithm | Encodings |
 |---|---|
 | NSGA-II | Double, Binary, Permutation |
+| NSGA-III | Double |
 | MOEA/D | Double |
 | SMS-EMOA | Double |
 | MOPSO | Double |
 | RDEMOEA | Double, Permutation |
 | RVEA | Double |
+| AGE-MOEA | Double |
+| SSMOEA | Double |
 
 ## Requirements
 

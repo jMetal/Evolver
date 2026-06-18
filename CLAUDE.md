@@ -53,7 +53,7 @@ The meta-optimizer treats algorithm parameter configurations as solutions, and t
 | Package | Role |
 |---|---|
 | `org.uma.evolver.parameter` | Parameter space definition and YAML parsing. Supports integer, double, categorical, binary, and conditional (hierarchical) parameters. |
-| `org.uma.evolver.algorithm` | Configurable base-level algorithms: NSGA-II, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA. Each supports multiple encodings (Double, Binary, Permutation). |
+| `org.uma.evolver.algorithm` | Configurable base-level algorithms: NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA, AGE-MOEA, SSMOEA. Each supports multiple encodings (Double, Binary, Permutation); SSMOEA only Double. |
 | `org.uma.evolver.encoding` | Derivation tree encoding: `DerivationTreeSolution`, `SubtreeCrossover`, `TreeMutation`, `TreeSolutionGenerator`, `GrammarConverter`. |
 | `org.uma.evolver.meta` | Meta-optimizer builders (`MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, etc.) and problem classes: `AbstractMetaOptimizationProblem`, `MetaOptimizationProblem` (flat encoding), `TreeMetaOptimizationProblem` (tree encoding). |
 | `org.uma.evolver.trainingset` | Training set management wrapping jMetal benchmark problems. |

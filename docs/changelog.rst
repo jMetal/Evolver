@@ -13,11 +13,23 @@ Added
 - Add a class (``ConfigurationFileReader``) to read algorithm configurations stored in text files
 - Add a Python script for visualizing the progression of meta-level multi-objective optimization runs.
 - Add permutation and binary base-level SMSEMOA
+- Add configurable NSGA-III for double-encoded problems (``DoubleNSGAIII``)
+- Add configurable AGE-MOEA for double-encoded problems (``DoubleAGEMOEA``)
+- Add configurable SSMOEA (Steady-State MOEA) for double-encoded problems (``DoubleSSMOEA``).
+  Supports two variation branches (crossover+mutation or differential evolution) and two
+  replacement strategies (``rankingAndDensityEstimator`` or ``singleSolutionReplacement``).
+  The offspring population size is fixed at 1. Parameter space defined in ``SSMOEADouble.yaml``
+  (43 parameters, 6 top-level).
+- Add ``singleSolutionReplacement`` to ``ReplacementParameter``, enabling one-to-one DEMO-style
+  replacement based on dominance comparison
 
 Fixed
 ~~~~~
 
 - Fix a bug in class MOEADCommonParameterSpace
+- Fix ``ReplacementParameter.getReplacement()`` to handle a null ``removalPolicy`` sub-parameter,
+  defaulting to ``ONE_SHOT`` (required for steady-state configurations without a configurable
+  removal policy)
 
 
 2.0 (2025-09-09)
