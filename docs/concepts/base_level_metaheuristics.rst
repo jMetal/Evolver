@@ -46,6 +46,9 @@ The following algorithms are currently available as configurable base-level meta
    * - SSMOEA
      - Double
      - Steady-state MOEA (offspring population size fixed at 1); see :ref:`ssmoea` below
+   * - PAES
+     - Double
+     - Pareto Archived Evolution Strategy (1+1 ES with archive-based density tiebreaking); see :ref:`paes` below
 
 BaseLevelAlgorithm Interface
 ----------------------------
@@ -206,6 +209,106 @@ Usage example
   var algorithm = ssmoea.parse(args).build();
   algorithm.run();
   List<DoubleSolution> result = algorithm.result();
+
+
+.. _paes:
+
+PAES — Pareto Archived Evolution Strategy
+------------------------------------------
+
+``DoublePAES`` is a configurable PAES algorithm. It follows a 1+1 evolution strategy: the
+population contains exactly one solution (non-configurable), and one offspring is created each
+iteration by mutation only. A bounded archive serves as both the density estimator for
+non-dominated tiebreaking and the main result container.
+
+Architecture
+~~~~~~~~~~~~
+
+The algorithm is implemented in two classes:
+
+- ``BasePAES<S>`` — abstract base class handling component assembly.
+- ``DoublePAES`` — concrete subclass for double-encoded problems.
+
+Two new components are introduced:
+
+- ``MutationOnlyVariation<S>`` — implements ``Variation<S>``; copies and mutates the single
+  mating pool member without any crossover.
+- ``PAESReplacement<S>`` — implements ``Replacement<S>``; applies the three-way PAES rule.
+
+Replacement logic
+~~~~~~~~~~~~~~~~~
+
+On each iteration:
+
+1. **Offspring dominates current** → accept offspring, add to archive.
+2. **Current dominates offspring** → keep current (no change).
+3. **Neither dominates** → try adding offspring to archive; if accepted, use the archive's
+   density comparator to choose the solution in the less-crowded region.
+
+Archive types
+~~~~~~~~~~~~~
+
+The PAES archive type is set via the ``paesArchiveType`` parameter:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Value
+     - Description
+   * - ``crowdingDistanceArchive``
+     - Bounded archive pruned by crowding distance (2D/3D problems)
+   * - ``hypervolumeArchive``
+     - Bounded archive pruned by hypervolume contribution
+   * - ``spatialSpreadDeviationArchive``
+     - Bounded archive pruned by angular spread deviation
+   * - ``unboundedArchive``
+     - Uses a very large crowding-distance archive; recommended for 3+ objectives
+
+The ``paesArchiveSize`` sub-parameter (range [10, 200]) controls the maximum archive size for all
+bounded types; it is ignored when ``unboundedArchive`` is selected.
+
+Parameter space
+~~~~~~~~~~~~~~~
+
+The parameter space is defined in ``PAESDouble.yaml`` (16 parameters, 4 top-level):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Top-level parameter
+     - Description
+   * - ``paesArchiveType``
+     - Archive type and size (``crowdingDistanceArchive``, ``hypervolumeArchive``,
+       ``spatialSpreadDeviationArchive``, ``unboundedArchive``)
+   * - ``algorithmResult``
+     - ``paesArchive`` (returns archive contents) or ``externalArchive`` (additional archive)
+   * - ``createInitialSolutions``
+     - Initialisation strategy (default, Latin hypercube, scatter search)
+   * - ``mutation``
+     - Mutation operator and its sub-parameters (uniform, polynomial, linked polynomial, etc.)
+
+Usage example
+~~~~~~~~~~~~~
+
+.. code-block:: java
+
+  var problem = new ZDT1();
+  var paes = new DoublePAES(
+      problem, 25000,
+      new YAMLParameterSpace("PAESDouble.yaml", new DoubleParameterFactory()));
+
+  var args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+      + "--algorithmResult paesArchive "
+      + "--createInitialSolutions default "
+      + "--mutation polynomial --mutationProbabilityFactor 1.0 "
+      + "--mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0")
+      .split("\\s+");
+
+  var algorithm = paes.parse(args).build();
+  algorithm.run();
+  List<DoubleSolution> result = algorithm.result(); // archive contents
 
 
 

@@ -15,6 +15,12 @@ Added
 - Add permutation and binary base-level SMSEMOA
 - Add configurable NSGA-III for double-encoded problems (``DoubleNSGAIII``)
 - Add configurable AGE-MOEA for double-encoded problems (``DoubleAGEMOEA``)
+- Add configurable PAES (Pareto Archived Evolution Strategy) for double-encoded problems
+  (``DoublePAES``). Population size is fixed at 1. Variation is mutation-only (no crossover).
+  Archive types: ``crowdingDistanceArchive``, ``hypervolumeArchive``,
+  ``spatialSpreadDeviationArchive``, and ``unboundedArchive`` (for 3+ objectives).
+  Two new components: ``MutationOnlyVariation`` and ``PAESReplacement``.
+  Parameter space defined in ``PAESDouble.yaml`` (16 parameters, 4 top-level).
 - Add configurable SSMOEA (Steady-State MOEA) for double-encoded problems (``DoubleSSMOEA``).
   Supports two variation branches (crossover+mutation or differential evolution) and two
   replacement strategies (``rankingAndDensityEstimator`` or ``singleSolutionReplacement``).

@@ -31,6 +31,7 @@ values on a training set as objectives to minimize.
 | RVEA | Double |
 | AGE-MOEA | Double |
 | SSMOEA | Double |
+| PAES | Double |
 
 ## Requirements
 

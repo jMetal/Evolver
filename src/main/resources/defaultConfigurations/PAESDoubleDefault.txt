@@ -1,0 +1,1 @@
+--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 --algorithmResult paesArchive --createInitialSolutions default --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0

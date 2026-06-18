@@ -97,6 +97,7 @@ public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> 
   private void registerDefaultCreators() {
     // Archive types
     register("archiveType", values -> new ExternalArchiveParameter<>("archiveType", values));
+    register("paesArchiveType", values -> new PAESArchiveParameter<DoubleSolution>("paesArchiveType", values));
 
     // Aggregation functions
     register("aggregationFunction", AggregationFunctionParameter::new);
