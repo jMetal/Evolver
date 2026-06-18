@@ -4,8 +4,10 @@ import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.BoundedArchive;
+import org.uma.jmetal.util.archive.impl.AngleArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.HypervolumeArchive;
+import org.uma.jmetal.util.archive.impl.KNNDistanceArchive;
 import org.uma.jmetal.util.archive.impl.SpatialSpreadDeviationArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.WFGHypervolume;
@@ -34,6 +36,11 @@ public class PAESArchiveParameter<S extends Solution<?>> extends CategoricalPara
       case "crowdingDistanceArchive" -> new CrowdingDistanceArchive<>(size);
       case "hypervolumeArchive" -> new HypervolumeArchive<>(size, new WFGHypervolume<>());
       case "spatialSpreadDeviationArchive" -> new SpatialSpreadDeviationArchive<>(size);
+      case "knnDistanceArchive" -> {
+        int k = (Integer) findConditionalParameter("knnDistanceArchiveK").value();
+        yield new KNNDistanceArchive<>(size, k);
+      }
+      case "angleArchive" -> new AngleArchive<>(size, true);
       default -> throw new JMetalException("Unknown PAES archive type: " + value());
     };
   }

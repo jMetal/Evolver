@@ -16,7 +16,13 @@ paesArchiveType:
   values:
     crowdingDistanceArchive: {}
 #    hypervolumeArchive: {} — disabled: too slow on 3D problems
-#    spatialSpreadDeviationArchive: {} — disabled: throws error
+    spatialSpreadDeviationArchive: {}
+    knnDistanceArchive:
+      conditionalParameters:
+        knnDistanceArchiveK:
+          type: integer
+          range: [1, 10]
+    angleArchive: {}
 
 algorithmResult:
   type: categorical

@@ -39,7 +39,7 @@ class PAESDoubleTest {
       int totalParameters = paes.parameterSpace().parameters().size();
 
       // Assert
-      assertEquals(13, totalParameters);
+      assertEquals(14, totalParameters);
     }
 
     @Test
@@ -119,6 +119,47 @@ class PAESDoubleTest {
 
       // Assert
       assertNotNull(algorithm);
+    }
+
+    @Test
+    @DisplayName("given knnDistanceArchive config when parsing then archive type and k are set")
+    void givenKnnDistanceArchiveConfig_whenParsing_thenArchiveTypeAndKAreSet() {
+      // Arrange
+      String[] args = ("--paesArchiveType knnDistanceArchive "
+          + "--knnDistanceArchiveK 5 "
+          + "--algorithmResult paesArchive "
+          + "--archiveSelectionProbability 0.0 "
+          + "--mutation polynomial "
+          + "--mutationProbabilityFactor 1.0 "
+          + "--mutationRepairStrategy bounds "
+          + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+      // Act
+      paes.parse(args);
+
+      // Assert
+      assertEquals("knnDistanceArchive", paes.parameterSpace().get("paesArchiveType").value());
+      assertEquals(5, paes.parameterSpace().get("paesArchiveType")
+          .findConditionalParameter("knnDistanceArchiveK").value());
+    }
+
+    @Test
+    @DisplayName("given angleArchive config when parsing then archive type is angleArchive")
+    void givenAngleArchiveConfig_whenParsing_thenArchiveTypeIsAngleArchive() {
+      // Arrange
+      String[] args = ("--paesArchiveType angleArchive "
+          + "--algorithmResult paesArchive "
+          + "--archiveSelectionProbability 0.0 "
+          + "--mutation polynomial "
+          + "--mutationProbabilityFactor 1.0 "
+          + "--mutationRepairStrategy bounds "
+          + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+      // Act
+      paes.parse(args);
+
+      // Assert
+      assertEquals("angleArchive", paes.parameterSpace().get("paesArchiveType").value());
     }
 
     @Test
