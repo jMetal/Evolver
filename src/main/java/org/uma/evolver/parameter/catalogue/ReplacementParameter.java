@@ -1,13 +1,16 @@
 package org.uma.evolver.parameter.catalogue;
 
+import java.util.Comparator;
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.SingleSolutionReplacement;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.ranking.Ranking;
+import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
 
 /**
  * A categorical parameter representing different replacement strategies in evolutionary algorithms.
@@ -34,6 +37,8 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
   private static final String DEFAULT_NAME = "replacement";
   private Ranking<S> ranking;
   private DensityEstimator<S> densityEstimator;
+  private SequenceGenerator<Integer> sequenceGenerator;
+  private Comparator<S> comparator;
 
   /**
    * Creates a new ReplacementParameter with the specified replacement strategies.
@@ -76,19 +81,31 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
     Replacement<S> result;
     switch (value()) {
       case "rankingAndDensityEstimator" -> {
-        String removalPolicy = (String) findConditionalParameter("removalPolicy").value();
-
-        if (removalPolicy.equals("oneShot")) {
-          result =
-              new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT);
-        } else if (removalPolicy.equals("sequential")){
-          result =
-              new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, RankingAndDensityEstimatorReplacement.RemovalPolicy.SEQUENTIAL);
+        var removalPolicyParam = findConditionalParameter("removalPolicy");
+        RankingAndDensityEstimatorReplacement.RemovalPolicy policy;
+        if (removalPolicyParam == null) {
+          // steady-state (offspringPopulationSize=1): ONE_SHOT and SEQUENTIAL are equivalent
+          policy = RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT;
         } else {
-          throw new JMetalException("Removal policy unknown: " + removalPolicy) ;
+          String removalPolicy = (String) removalPolicyParam.value();
+          if (removalPolicy.equals("oneShot")) {
+            policy = RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT;
+          } else if (removalPolicy.equals("sequential")) {
+            policy = RankingAndDensityEstimatorReplacement.RemovalPolicy.SEQUENTIAL;
+          } else {
+            throw new JMetalException("Removal policy unknown: " + removalPolicy);
+          }
         }
+        result = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator, policy);
+      }
+      case "singleSolutionReplacement" -> {
+        if (sequenceGenerator == null) {
+          throw new JMetalException("sequenceGenerator must be set before calling getReplacement() with singleSolutionReplacement");
+        }
+        if (comparator == null) {
+          throw new JMetalException("comparator must be set before calling getReplacement() with singleSolutionReplacement");
+        }
+        result = new SingleSolutionReplacement<>(sequenceGenerator, comparator);
       }
       default -> throw new JMetalException("Replacement component unknown: " + value());
     }
@@ -124,6 +141,14 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
     this.densityEstimator = densityEstimator;
   }
   
+  public void setSequenceGenerator(SequenceGenerator<Integer> sequenceGenerator) {
+    this.sequenceGenerator = sequenceGenerator;
+  }
+
+  public void setComparator(Comparator<S> comparator) {
+    this.comparator = comparator;
+  }
+
   /**
    * Returns the name of this parameter.
    *
@@ -133,5 +158,5 @@ public class ReplacementParameter<S extends Solution<?>> extends CategoricalPara
   public String name() {
     return super.name();
   }
-  
+
 }

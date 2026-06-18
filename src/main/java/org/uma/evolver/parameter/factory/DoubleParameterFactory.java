@@ -135,6 +135,7 @@ public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> 
 
     // Selection mechanisms
     register("selection", values -> new SelectionParameter<DoubleSolution>(values));
+    register("gaSelection", values -> new SelectionParameter<DoubleSolution>("gaSelection", values));
 
     // Variation operators
     register("variation", DoubleVariationParameter::new);
