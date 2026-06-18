@@ -75,18 +75,18 @@ public class PAESvsMOEADValidation {
           "--selection populationAndNeighborhoodMatingPoolSelection",
           "--neighborhoodSelectionProbability 0.6324336885795143");
 
-  // Best PAES config: min HVMinus at eval 2000 in PAES_EXT experiment
+  // Best PAES config: min HVMinus at eval 2000 in PAES_EXT experiment (2026-06-18, re-run with BestSolutionsArchive fix)
   private static final String PAES_CONFIG =
       String.join(
           " ",
           "--paesArchiveType crowdingDistanceArchive",
           "--algorithmResult externalArchive",
-          "--archiveSelectionProbability 0.7755516775682643",
+          "--archiveSelectionProbability 0.9189795374643632",
           "--mutation levyFlight",
-          "--mutationProbabilityFactor 1.8555428744440179",
+          "--mutationProbabilityFactor 1.494881899307409",
           "--mutationRepairStrategy bounds",
-          "--levyFlightMutationBeta 1.4565236120279017",
-          "--levyFlightMutationStepSize 0.2534497830473351");
+          "--levyFlightMutationBeta 1.6558956256498565",
+          "--levyFlightMutationStepSize 0.323402020766443");
 
   private static final List<Problem<DoubleSolution>> PROBLEMS =
       List.of(

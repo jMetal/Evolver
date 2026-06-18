@@ -61,6 +61,70 @@ class PAESDoubleIT {
 
   @Test
   @Tag("integration")
+  @DisplayName("given spatialSpreadDeviationArchive config when running on ZDT1 then completes without error and result is non-empty")
+  void givenSpatialSpreadDeviationArchive_whenRunningOnZDT1_thenCompletesWithoutError() {
+    // Arrange
+    String[] args = ("--paesArchiveType spatialSpreadDeviationArchive "
+        + "--algorithmResult paesArchive "
+        + "--archiveSelectionProbability 0.0 "
+        + "--mutation polynomial "
+        + "--mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds "
+        + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+    // Act
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = buildAndRun(args, 10000);
+    List<DoubleSolution> result = algorithm.result();
+
+    // Assert
+    assertTrue(result.size() > 0, "Result must be non-empty when using spatialSpreadDeviationArchive");
+  }
+
+  @Test
+  @Tag("integration")
+  @DisplayName("given knnDistanceArchive config when running on ZDT1 then completes without error and result is non-empty")
+  void givenKnnDistanceArchive_whenRunningOnZDT1_thenCompletesWithoutError() {
+    // Arrange
+    String[] args = ("--paesArchiveType knnDistanceArchive "
+        + "--knnDistanceArchiveK 5 "
+        + "--algorithmResult paesArchive "
+        + "--archiveSelectionProbability 0.0 "
+        + "--mutation polynomial "
+        + "--mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds "
+        + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+    // Act
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = buildAndRun(args, 10000);
+    List<DoubleSolution> result = algorithm.result();
+
+    // Assert
+    assertTrue(result.size() > 0, "Result must be non-empty when using knnDistanceArchive");
+  }
+
+  @Test
+  @Tag("integration")
+  @DisplayName("given angleArchive config when running on ZDT1 then completes without error and result is non-empty")
+  void givenAngleArchive_whenRunningOnZDT1_thenCompletesWithoutError() {
+    // Arrange
+    String[] args = ("--paesArchiveType angleArchive "
+        + "--algorithmResult paesArchive "
+        + "--archiveSelectionProbability 0.0 "
+        + "--mutation polynomial "
+        + "--mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds "
+        + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+    // Act
+    EvolutionaryAlgorithm<DoubleSolution> algorithm = buildAndRun(args, 10000);
+    List<DoubleSolution> result = algorithm.result();
+
+    // Assert
+    assertTrue(result.size() > 0, "Result must be non-empty when using angleArchive");
+  }
+
+  @Test
+  @Tag("integration")
   @DisplayName("given externalArchive with unboundedArchive on DTLZ1 when running then result has exactly numberOfSolutionsToFind solutions")
   void givenExternalArchiveWithUnboundedArchive_whenRunningOnDTLZ1_thenResultHasExactlyNumberOfSolutionsToFindSolutions() {
     // Arrange

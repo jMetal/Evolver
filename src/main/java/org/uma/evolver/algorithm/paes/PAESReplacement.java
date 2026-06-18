@@ -47,6 +47,9 @@ public class PAESReplacement<S extends Solution<?>> implements Replacement<S> {
     } else if (flag == 0) {
       // neither dominates the other: use archive as tiebreaker
       if (paesArchive.add(offspring)) {
+        // BoundedArchive.prune() only computes density estimators when the archive is full;
+        // force computation here so density attributes are always set before the comparator reads them.
+        paesArchive.computeDensityEstimator();
         if (paesArchive.comparator().compare(current, offspring) > 0) {
           population.set(0, offspring);
         }
