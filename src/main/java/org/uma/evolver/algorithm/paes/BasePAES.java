@@ -4,7 +4,6 @@ import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.PAESArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
@@ -17,12 +16,12 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
-import org.uma.jmetal.component.catalogue.ea.selection.impl.RandomSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
 
 /**
@@ -34,11 +33,14 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  * solution, reject if dominated, or use the archive's density comparator as a tiebreaker when
  * neither solution dominates the other.
  *
+ * <p>The size of the PAES archive ({@code numberOfSolutionsToFind}) is fixed and provided through
+ * the constructor, analogous to the population size of other algorithms (typical value: 100).
+ *
  * <p>Two result modes are supported via {@code algorithmResult}:
  * <ul>
- *   <li>{@code paesArchive} — returns the PAES density archive directly.</li>
- *   <li>{@code externalArchive} — maintains a separate archive updated at every evaluation;
- *       the PAES archive is still used internally for tiebreaking.</li>
+ *   <li>{@code paesArchive} — returns the bounded PAES density archive directly.</li>
+ *   <li>{@code externalArchive} — maintains a separate unbounded archive updated at every
+ *       evaluation; the bounded PAES archive is still used internally for tiebreaking.</li>
  * </ul>
  *
  * @param <S> the solution type
@@ -47,15 +49,20 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
 public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   protected final ParameterSpace parameterSpace;
   protected Problem<S> problem;
+  protected int numberOfSolutionsToFind;
   protected int maximumNumberOfEvaluations;
 
-  protected BasePAES(ParameterSpace parameterSpace) {
+  protected BasePAES(int numberOfSolutionsToFind, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
+    this.numberOfSolutionsToFind = numberOfSolutionsToFind;
   }
 
   protected BasePAES(
-      Problem<S> problem, int maximumNumberOfEvaluations, ParameterSpace parameterSpace) {
-    this(parameterSpace);
+      Problem<S> problem,
+      int numberOfSolutionsToFind,
+      int maximumNumberOfEvaluations,
+      ParameterSpace parameterSpace) {
+    this(numberOfSolutionsToFind, parameterSpace);
     this.problem = problem;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
   }
@@ -73,7 +80,7 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
 
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
     Variation<S> variation = createVariation();
-    Selection<S> selection = createSelection(variation);
+    Selection<S> selection = createSelection(variation, paesArchive);
     Termination termination = createTermination();
     Replacement<S> replacement = new PAESReplacement<>(paesArchive, new DefaultDominanceComparator<>());
 
@@ -96,9 +103,7 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
   protected BoundedArchive<S> createPAESArchive() {
     PAESArchiveParameter<S> paesArchiveParam =
         (PAESArchiveParameter<S>) parameterSpace.get("paesArchiveType");
-    if (!paesArchiveParam.value().equals("unboundedArchive")) {
-      paesArchiveParam.setSize((int) parameterSpace.get("paesArchiveSize").value());
-    }
+    paesArchiveParam.setSize(numberOfSolutionsToFind);
     return paesArchiveParam.getBoundedArchive();
   }
 
@@ -113,8 +118,10 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
     return new MutationOnlyVariation<>(1, mutationParameter.getMutation());
   }
 
-  protected Selection<S> createSelection(Variation<S> variation) {
-    return new RandomSelection<>(variation.matingPoolSize());
+  protected Selection<S> createSelection(Variation<S> variation, BoundedArchive<S> paesArchive) {
+    double archiveSelectionProbability =
+        (double) parameterSpace.get("archiveSelectionProbability").value();
+    return new PAESSelection<>(variation.matingPoolSize(), archiveSelectionProbability, paesArchive);
   }
 
   protected Termination createTermination() {
@@ -122,10 +129,8 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
   }
 
   protected Archive<S> createExternalArchive() {
-    ExternalArchiveParameter<S> externalArchiveParameter =
-        (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
-    externalArchiveParameter.setSize((int) parameterSpace.get("externalArchiveSize").value());
-    return externalArchiveParameter.getExternalArchive();
+    // For now the external archive is always an unbounded non-dominated solution list.
+    return new NonDominatedSolutionListArchive<>();
   }
 
   private boolean usingExternalArchive() {

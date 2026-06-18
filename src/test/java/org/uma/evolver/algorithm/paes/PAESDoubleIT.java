@@ -22,6 +22,7 @@ class PAESDoubleIT {
     var paes =
         new DoublePAES(
             new ZDT1(),
+            100,
             maxEvals,
             new YAMLParameterSpace("PAESDouble.yaml", new DoubleParameterFactory()));
     paes.parse(args);
@@ -35,8 +36,9 @@ class PAESDoubleIT {
   @DisplayName("given default config with crowding distance archive when running on ZDT1 then HV exceeds threshold")
   void givenDefaultConfig_whenRunningOnZDT1_thenHVExceedsThreshold() {
     // Arrange
-    String[] args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+    String[] args = ("--paesArchiveType crowdingDistanceArchive "
         + "--algorithmResult paesArchive "
+        + "--archiveSelectionProbability 0.0 "
         + "--createInitialSolutions default "
         + "--mutation polynomial "
         + "--mutationProbabilityFactor 1.0 "

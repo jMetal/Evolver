@@ -3,17 +3,13 @@
 # Parameter space for PAES (Pareto Archived Evolution Strategy) with double encoding.
 #
 # Non-configurable (hardcoded in BasePAES / DoublePAES):
-#   populationSize = 1
-#   offspringPopulationSize = 1
-#   selection = RandomSelection (matingPoolSize = 1)
+#   populationSize = 1, offspringPopulationSize = 1
 #   crossover = none (MutationOnlyVariation)
+#   PAES archive size (numberOfSolutionsToFind) is fixed and passed via the constructor,
+#   analogous to populationSize in other algorithms (typical value: 100)
 
 paesArchiveType:
   type: categorical
-  globalSubParameters:
-    paesArchiveSize:
-      type: integer
-      range: [10, 200]
   values:
     crowdingDistanceArchive: {}
     hypervolumeArchive: {}
@@ -23,16 +19,14 @@ algorithmResult:
   type: categorical
   values:
     paesArchive: {}
-    externalArchive:
-      conditionalParameters:
-        externalArchiveSize:
-          type: integer
-          range: [10, 200]
-        archiveType:
-          type: categorical
-          values:
-            crowdingDistanceArchive: {}
-            unboundedArchive: {}
+    externalArchive: {}
+
+# Probability of mutating a randomly chosen archive member instead of the current
+# solution, analogous to MOEA/D's neighborhoodSelectionProbability. A value of 0.0
+# corresponds to classic PAES (always mutate the current solution).
+archiveSelectionProbability:
+  type: double
+  range: [0.0, 1.0]
 
 createInitialSolutions:
   type: categorical

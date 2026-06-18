@@ -17,10 +17,12 @@ Added
 - Add configurable AGE-MOEA for double-encoded problems (``DoubleAGEMOEA``)
 - Add configurable PAES (Pareto Archived Evolution Strategy) for double-encoded problems
   (``DoublePAES``). Population size is fixed at 1. Variation is mutation-only (no crossover).
-  Archive types: ``crowdingDistanceArchive``, ``hypervolumeArchive``,
-  ``spatialSpreadDeviationArchive``.
-  Two new components: ``MutationOnlyVariation`` and ``PAESReplacement``.
-  Parameter space defined in ``PAESDouble.yaml`` (16 parameters, 4 top-level).
+  The bounded archive size (``numberOfSolutionsToFind``) is fixed and passed via the constructor.
+  Density archive types: ``crowdingDistanceArchive``, ``hypervolumeArchive``,
+  ``spatialSpreadDeviationArchive``. A configurable ``archiveSelectionProbability`` chooses the
+  mutation parent between the current solution and a random archive member (0.0 = classic PAES).
+  Three new components: ``MutationOnlyVariation``, ``PAESSelection``, and ``PAESReplacement``.
+  Parameter space defined in ``PAESDouble.yaml`` (14 parameters, 5 top-level).
 - Add configurable SSMOEA (Steady-State MOEA) for double-encoded problems (``DoubleSSMOEA``).
   Supports two variation branches (crossover+mutation or differential evolution) and two
   replacement strategies (``rankingAndDensityEstimator`` or ``singleSolutionReplacement``).

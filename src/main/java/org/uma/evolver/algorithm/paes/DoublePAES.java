@@ -18,21 +18,24 @@ import org.uma.jmetal.util.errorchecking.Check;
  */
 public class DoublePAES extends BasePAES<DoubleSolution> {
 
-  public DoublePAES(ParameterSpace parameterSpace) {
-    super(parameterSpace);
+  public DoublePAES(int numberOfSolutionsToFind, ParameterSpace parameterSpace) {
+    super(numberOfSolutionsToFind, parameterSpace);
   }
 
   public DoublePAES(
       Problem<DoubleSolution> problem,
+      int numberOfSolutionsToFind,
       int maximumNumberOfEvaluations,
       ParameterSpace parameterSpace) {
-    super(problem, maximumNumberOfEvaluations, parameterSpace);
+    super(problem, numberOfSolutionsToFind, maximumNumberOfEvaluations, parameterSpace);
   }
 
   @Override
   public BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
-    return new DoublePAES(problem, maximumNumberOfEvaluations, parameterSpace.createInstance());
+    return new DoublePAES(
+        problem, numberOfSolutionsToFind, maximumNumberOfEvaluations,
+        parameterSpace.createInstance());
   }
 
   @Override

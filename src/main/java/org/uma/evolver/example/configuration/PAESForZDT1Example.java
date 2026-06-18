@@ -30,8 +30,8 @@ public class PAESForZDT1Example {
     String[] parameters =
         """
         --paesArchiveType crowdingDistanceArchive
-        --paesArchiveSize 100
         --algorithmResult paesArchive
+        --archiveSelectionProbability 0.0
         --createInitialSolutions default
         --mutation polynomial
         --mutationProbabilityFactor 1.0
@@ -40,11 +40,13 @@ public class PAESForZDT1Example {
         """
             .split("\\s+");
 
+    int numberOfSolutionsToFind = 100;
     int maximumNumberOfEvaluations = 25000;
 
     var paes =
         new DoublePAES(
             new ZDT1(),
+            numberOfSolutionsToFind,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
 

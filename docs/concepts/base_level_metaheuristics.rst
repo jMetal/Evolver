@@ -221,6 +221,10 @@ population contains exactly one solution (non-configurable), and one offspring i
 iteration by mutation only. A bounded archive serves as both the density estimator for
 non-dominated tiebreaking and the main result container.
 
+The bounded archive size (``numberOfSolutionsToFind``) is fixed and provided through the
+constructor — analogous to the population size of other algorithms (typical value: 100) — rather
+than being part of the tunable parameter space.
+
 Architecture
 ~~~~~~~~~~~~
 
@@ -229,10 +233,12 @@ The algorithm is implemented in two classes:
 - ``BasePAES<S>`` — abstract base class handling component assembly.
 - ``DoublePAES`` — concrete subclass for double-encoded problems.
 
-Two new components are introduced:
+Three new components are introduced:
 
 - ``MutationOnlyVariation<S>`` — implements ``Variation<S>``; copies and mutates the single
   mating pool member without any crossover.
+- ``PAESSelection<S>`` — implements ``Selection<S>``; chooses the mutation parent as either the
+  current solution or a random archive member (see *Parent selection* below).
 - ``PAESReplacement<S>`` — implements ``Replacement<S>``; applies the three-way PAES rule.
 
 Replacement logic
@@ -245,10 +251,22 @@ On each iteration:
 3. **Neither dominates** → try adding offspring to archive; if accepted, use the archive's
    density comparator to choose the solution in the less-crowded region.
 
+Parent selection
+~~~~~~~~~~~~~~~~
+
+The ``archiveSelectionProbability`` parameter (range [0.0, 1.0]) controls how the mutation parent
+is chosen each iteration, analogous to MOEA/D's ``neighborhoodSelectionProbability``:
+
+- with this probability, a randomly chosen member of the PAES archive is mutated;
+- otherwise the current solution is mutated.
+
+A value of ``0.0`` reproduces classic PAES (always mutate the current solution).
+
 Archive types
 ~~~~~~~~~~~~~
 
-The PAES archive type is set via the ``paesArchiveType`` parameter:
+The PAES archive type is set via the ``paesArchiveType`` parameter. All options are bounded
+archives that provide a density estimator for the non-dominated tiebreaking step:
 
 .. list-table::
    :header-rows: 1
@@ -263,12 +281,10 @@ The PAES archive type is set via the ``paesArchiveType`` parameter:
    * - ``spatialSpreadDeviationArchive``
      - Bounded archive pruned by angular spread deviation
 
-The ``paesArchiveSize`` sub-parameter (range [10, 200]) controls the maximum archive size.
-
 Parameter space
 ~~~~~~~~~~~~~~~
 
-The parameter space is defined in ``PAESDouble.yaml`` (16 parameters, 4 top-level):
+The parameter space is defined in ``PAESDouble.yaml`` (14 parameters, 5 top-level):
 
 .. list-table::
    :header-rows: 1
@@ -277,10 +293,13 @@ The parameter space is defined in ``PAESDouble.yaml`` (16 parameters, 4 top-leve
    * - Top-level parameter
      - Description
    * - ``paesArchiveType``
-     - Archive type and size (``crowdingDistanceArchive``, ``hypervolumeArchive``,
-       ``spatialSpreadDeviationArchive``, ``unboundedArchive``)
+     - Density archive type (``crowdingDistanceArchive``, ``hypervolumeArchive``,
+       ``spatialSpreadDeviationArchive``)
    * - ``algorithmResult``
-     - ``paesArchive`` (returns archive contents) or ``externalArchive`` (additional archive)
+     - ``paesArchive`` (returns the bounded archive contents) or ``externalArchive`` (returns an
+       additional unbounded non-dominated archive)
+   * - ``archiveSelectionProbability``
+     - Probability of mutating a random archive member instead of the current solution
    * - ``createInitialSolutions``
      - Initialisation strategy (default, Latin hypercube, scatter search)
    * - ``mutation``
@@ -292,12 +311,14 @@ Usage example
 .. code-block:: java
 
   var problem = new ZDT1();
+  int numberOfSolutionsToFind = 100;
   var paes = new DoublePAES(
-      problem, 25000,
+      problem, numberOfSolutionsToFind, 25000,
       new YAMLParameterSpace("PAESDouble.yaml", new DoubleParameterFactory()));
 
-  var args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+  var args = ("--paesArchiveType crowdingDistanceArchive "
       + "--algorithmResult paesArchive "
+      + "--archiveSelectionProbability 0.0 "
       + "--createInitialSolutions default "
       + "--mutation polynomial --mutationProbabilityFactor 1.0 "
       + "--mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0")

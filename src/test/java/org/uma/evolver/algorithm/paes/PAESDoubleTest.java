@@ -21,6 +21,7 @@ class PAESDoubleTest {
     paes =
         new DoublePAES(
             new ZDT1(),
+            100,
             20000,
             new YAMLParameterSpace("PAESDouble.yaml", new DoubleParameterFactory()));
   }
@@ -38,19 +39,19 @@ class PAESDoubleTest {
       int totalParameters = paes.parameterSpace().parameters().size();
 
       // Assert
-      assertEquals(16, totalParameters);
+      assertEquals(14, totalParameters);
     }
 
     @Test
-    @DisplayName("given new instance when getting parameter space then returns 4 top-level parameters")
-    void givenNewInstance_whenGettingParameterSpace_thenReturns4TopLevelParameters() {
+    @DisplayName("given new instance when getting parameter space then returns 5 top-level parameters")
+    void givenNewInstance_whenGettingParameterSpace_thenReturns5TopLevelParameters() {
       // Arrange — done in setUp
 
       // Act
       int topLevelCount = paes.parameterSpace().topLevelParameters().size();
 
       // Assert
-      assertEquals(4, topLevelCount);
+      assertEquals(5, topLevelCount);
     }
   }
 
@@ -62,8 +63,9 @@ class PAESDoubleTest {
     @DisplayName("given default config when parsing then paesArchiveType is crowdingDistanceArchive")
     void givenDefaultConfig_whenParsing_thenPaesArchiveTypeIsCrowdingDistance() {
       // Arrange
-      String[] args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+      String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult paesArchive "
+          + "--archiveSelectionProbability 0.0 "
           + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
@@ -75,17 +77,18 @@ class PAESDoubleTest {
 
       // Assert
       assertEquals("crowdingDistanceArchive", paes.parameterSpace().get("paesArchiveType").value());
-      assertEquals(100, paes.parameterSpace().get("paesArchiveSize").value());
       assertEquals("paesArchive", paes.parameterSpace().get("algorithmResult").value());
+      assertEquals(0.0, paes.parameterSpace().get("archiveSelectionProbability").value());
       assertEquals("polynomial", paes.parameterSpace().get("mutation").value());
     }
 
     @Test
-    @DisplayName("given hypervolumeArchive config when parsing then paesArchiveType and archive size are set")
-    void givenHypervolumeArchiveConfig_whenParsing_thenArchiveTypeAndSizeAreSet() {
+    @DisplayName("given hypervolumeArchive config with archive selection probability when parsing then values are set")
+    void givenHypervolumeArchiveConfig_whenParsing_thenValuesAreSet() {
       // Arrange
-      String[] args = ("--paesArchiveType hypervolumeArchive --paesArchiveSize 50 "
+      String[] args = ("--paesArchiveType hypervolumeArchive "
           + "--algorithmResult paesArchive "
+          + "--archiveSelectionProbability 0.5 "
           + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
@@ -97,15 +100,16 @@ class PAESDoubleTest {
 
       // Assert
       assertEquals("hypervolumeArchive", paes.parameterSpace().get("paesArchiveType").value());
-      assertEquals(50, paes.parameterSpace().get("paesArchiveSize").value());
+      assertEquals(0.5, paes.parameterSpace().get("archiveSelectionProbability").value());
     }
 
     @Test
     @DisplayName("given build is called with default config then algorithm is not null")
     void givenDefaultConfig_whenBuildIsCalled_thenAlgorithmIsNotNull() {
       // Arrange
-      String[] args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+      String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult paesArchive "
+          + "--archiveSelectionProbability 0.0 "
           + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
@@ -121,13 +125,12 @@ class PAESDoubleTest {
     }
 
     @Test
-    @DisplayName("given externalArchive config when building then external archive size is parsed and algorithm is not null")
-    void givenExternalArchiveConfig_whenBuilding_thenArchiveSizeIsParsedAndAlgorithmIsNotNull() {
+    @DisplayName("given externalArchive config when building then algorithm is not null")
+    void givenExternalArchiveConfig_whenBuilding_thenAlgorithmIsNotNull() {
       // Arrange
-      String[] args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+      String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult externalArchive "
-          + "--externalArchiveSize 50 "
-          + "--archiveType crowdingDistanceArchive "
+          + "--archiveSelectionProbability 0.0 "
           + "--createInitialSolutions default "
           + "--mutation polynomial "
           + "--mutationProbabilityFactor 1.0 "
@@ -140,7 +143,6 @@ class PAESDoubleTest {
 
       // Assert
       assertEquals("externalArchive", paes.parameterSpace().get("algorithmResult").value());
-      assertEquals(50, paes.parameterSpace().get("externalArchiveSize").value());
       assertNotNull(algorithm);
     }
   }
