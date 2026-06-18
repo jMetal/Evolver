@@ -25,7 +25,7 @@ algorithmResult:
     paesArchive: {}
     externalArchive:
       conditionalParameters:
-        populationSizeWithArchive:
+        externalArchiveSize:
           type: integer
           range: [10, 200]
         archiveType:

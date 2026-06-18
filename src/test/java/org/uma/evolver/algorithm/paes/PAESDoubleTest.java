@@ -119,5 +119,29 @@ class PAESDoubleTest {
       // Assert
       assertNotNull(algorithm);
     }
+
+    @Test
+    @DisplayName("given externalArchive config when building then external archive size is parsed and algorithm is not null")
+    void givenExternalArchiveConfig_whenBuilding_thenArchiveSizeIsParsedAndAlgorithmIsNotNull() {
+      // Arrange
+      String[] args = ("--paesArchiveType crowdingDistanceArchive --paesArchiveSize 100 "
+          + "--algorithmResult externalArchive "
+          + "--externalArchiveSize 50 "
+          + "--archiveType crowdingDistanceArchive "
+          + "--createInitialSolutions default "
+          + "--mutation polynomial "
+          + "--mutationProbabilityFactor 1.0 "
+          + "--mutationRepairStrategy bounds "
+          + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+      paes.parse(args);
+
+      // Act
+      var algorithm = paes.build();
+
+      // Assert
+      assertEquals("externalArchive", paes.parameterSpace().get("algorithmResult").value());
+      assertEquals(50, paes.parameterSpace().get("externalArchiveSize").value());
+      assertNotNull(algorithm);
+    }
   }
 }

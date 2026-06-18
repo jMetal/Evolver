@@ -124,7 +124,7 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
   protected Archive<S> createExternalArchive() {
     ExternalArchiveParameter<S> externalArchiveParameter =
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
-    externalArchiveParameter.setSize((int) parameterSpace.get("populationSizeWithArchive").value());
+    externalArchiveParameter.setSize((int) parameterSpace.get("externalArchiveSize").value());
     return externalArchiveParameter.getExternalArchive();
   }
 
