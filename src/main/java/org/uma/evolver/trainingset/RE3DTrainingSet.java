@@ -17,7 +17,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 public class RE3DTrainingSet extends AbstractTrainingSet<DoubleSolution> {
 
-  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 10000;
+  private static final int DEFAULT_NUMBER_OF_EVALUATIONS = 3000 ;
   private static final String NAME = "RE3D";
 
   private static final List<Problem<DoubleSolution>> PROBLEMS = List.of(new RE31(), new RE32(), new RE33(), new RE34(),
