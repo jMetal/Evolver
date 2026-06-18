@@ -18,7 +18,6 @@ paesArchiveType:
     crowdingDistanceArchive: {}
     hypervolumeArchive: {}
     spatialSpreadDeviationArchive: {}
-    unboundedArchive: {}
 
 algorithmResult:
   type: categorical

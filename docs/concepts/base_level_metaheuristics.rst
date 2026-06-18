@@ -257,16 +257,13 @@ The PAES archive type is set via the ``paesArchiveType`` parameter:
    * - Value
      - Description
    * - ``crowdingDistanceArchive``
-     - Bounded archive pruned by crowding distance (2D/3D problems)
+     - Bounded archive pruned by crowding distance
    * - ``hypervolumeArchive``
      - Bounded archive pruned by hypervolume contribution
    * - ``spatialSpreadDeviationArchive``
      - Bounded archive pruned by angular spread deviation
-   * - ``unboundedArchive``
-     - Uses a very large crowding-distance archive; recommended for 3+ objectives
 
-The ``paesArchiveSize`` sub-parameter (range [10, 200]) controls the maximum archive size for all
-bounded types; it is ignored when ``unboundedArchive`` is selected.
+The ``paesArchiveSize`` sub-parameter (range [10, 200]) controls the maximum archive size.
 
 Parameter space
 ~~~~~~~~~~~~~~~

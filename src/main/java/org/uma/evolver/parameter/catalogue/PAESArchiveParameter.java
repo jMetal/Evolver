@@ -34,7 +34,6 @@ public class PAESArchiveParameter<S extends Solution<?>> extends CategoricalPara
       case "crowdingDistanceArchive" -> new CrowdingDistanceArchive<>(size);
       case "hypervolumeArchive" -> new HypervolumeArchive<>(size, new WFGHypervolume<>());
       case "spatialSpreadDeviationArchive" -> new SpatialSpreadDeviationArchive<>(size);
-      case "unboundedArchive" -> new CrowdingDistanceArchive<>(Integer.MAX_VALUE);
       default -> throw new JMetalException("Unknown PAES archive type: " + value());
     };
   }
