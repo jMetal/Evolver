@@ -2,9 +2,7 @@ package org.uma.evolver.example.training;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.uma.evolver.algorithm.moead.DoubleMOEAD;
-import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.paes.DoublePAES;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
@@ -25,12 +23,12 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD} using the RE
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoublePAES} using the RE
  * problems as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D {
+public class AsyncNSGAIIOptimizingPAESForBenchmarkRE3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -49,7 +47,7 @@ public class AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D {
   public static void main(String[] args) throws IOException {
     if (args.length != 4) {
       System.err.println(
-              "Usage: AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D "
+              "Usage: AsyncNSGAIIOptimizingPAESForBenchmarkRE3D "
                       + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
       System.exit(1);
     }
@@ -59,7 +57,7 @@ public class AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D {
     int numberOfCores = Integer.parseInt(args[2]);
     String resultsDirectory = args[3];
 
-    String yamlParameterSpaceFile = "MOEADDouble.yaml";
+    String yamlParameterSpaceFile = "PAESDouble.yaml";
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor =
@@ -74,7 +72,7 @@ public class AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D {
     var indicators = List.of(new Epsilon(), new HypervolumeMinus());
     var parameterSpace =
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseAlgorithm = new DoubleMOEAD(BASE_POPULATION_SIZE, WEIGHT_VECTORS_DIRECTORY, parameterSpace);
+    var baseAlgorithm = new DoublePAES(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
@@ -109,7 +107,7 @@ public class AsyncNSGAIIOptimizingMOEADForBenchmarkRE3D {
                     .metaMaxEvaluations(META_MAX_EVALUATIONS)
                     .metaPopulationSize(META_POPULATION_SIZE)
                     .numberOfCores(numberOfCores)
-                    .baseLevelAlgorithmName("MOEA/D")
+                    .baseLevelAlgorithmName("PAES")
                     .baseLevelPopulationSize(BASE_POPULATION_SIZE)
                     .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
                     .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())

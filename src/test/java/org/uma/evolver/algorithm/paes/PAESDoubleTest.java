@@ -82,10 +82,10 @@ class PAESDoubleTest {
     }
 
     @Test
-    @DisplayName("given hypervolumeArchive config with archive selection probability when parsing then values are set")
-    void givenHypervolumeArchiveConfig_whenParsing_thenValuesAreSet() {
+    @DisplayName("given non-zero archive selection probability when parsing then probability value is set")
+    void givenNonZeroArchiveSelectionProbability_whenParsing_thenProbabilityIsSet() {
       // Arrange
-      String[] args = ("--paesArchiveType hypervolumeArchive "
+      String[] args = ("--paesArchiveType crowdingDistanceArchive "
           + "--algorithmResult paesArchive "
           + "--archiveSelectionProbability 0.5 "
           + "--mutation polynomial "
@@ -97,7 +97,7 @@ class PAESDoubleTest {
       paes.parse(args);
 
       // Assert
-      assertEquals("hypervolumeArchive", paes.parameterSpace().get("paesArchiveType").value());
+      assertEquals("crowdingDistanceArchive", paes.parameterSpace().get("paesArchiveType").value());
       assertEquals(0.5, paes.parameterSpace().get("archiveSelectionProbability").value());
     }
 

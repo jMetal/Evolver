@@ -77,6 +77,12 @@ Para saber el número correcto de parámetros, ejecuta el test con un valor prov
 - Al menos un `@Test` con `@Tag("integration")` que ejecute el algoritmo sobre ZDT1 con la configuración por defecto
 - Verifica que el hypervolume supera un mínimo razonable (usa 0.62 como referencia para ZDT1)
 - Extrae la ejecución a un método privado si hay múltiples variantes
+- **Si el algoritmo incluye `algorithmResult=externalArchive` con `archiveType=unboundedArchive`**,
+  añade un test adicional que:
+  - Ejecute el algoritmo sobre `DTLZ1` (3 objetivos) con `algorithmResult=externalArchive --archiveType unboundedArchive`
+  - Verifique que `algorithm.result().size() == populationSize` (exactamente 100 soluciones)
+  - Esto comprueba que el archivo externo no acotado aplica distance-based subset selection
+    (`BestSolutionsArchive`) y no devuelve todas las soluciones no dominadas encontradas
 
 ### 7. Crear el ejemplo runner
 

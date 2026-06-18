@@ -1,5 +1,6 @@
 package org.uma.evolver.algorithm.paes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
@@ -55,5 +57,36 @@ class PAESDoubleIT {
     double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(result));
     assertTrue(hv > 0.55,
         "Expected HV > 0.55 but got: " + hv);
+  }
+
+  @Test
+  @Tag("integration")
+  @DisplayName("given externalArchive with unboundedArchive on DTLZ1 when running then result has exactly numberOfSolutionsToFind solutions")
+  void givenExternalArchiveWithUnboundedArchive_whenRunningOnDTLZ1_thenResultHasExactlyNumberOfSolutionsToFindSolutions() {
+    // Arrange
+    int numberOfSolutionsToFind = 100;
+    var paes = new DoublePAES(
+        new DTLZ1(),
+        numberOfSolutionsToFind,
+        25000,
+        new YAMLParameterSpace("PAESDouble.yaml", new DoubleParameterFactory()));
+
+    String[] args = ("--paesArchiveType crowdingDistanceArchive "
+        + "--algorithmResult externalArchive "
+        + "--archiveSelectionProbability 0.0 "
+        + "--mutation polynomial "
+        + "--mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds "
+        + "--polynomialMutationDistributionIndex 20.0").split("\\s+");
+
+    // Act
+    paes.parse(args);
+    var algorithm = paes.build();
+    algorithm.run();
+    List<DoubleSolution> result = algorithm.result();
+
+    // Assert
+    assertEquals(numberOfSolutionsToFind, result.size(),
+        "External unbounded archive must return exactly numberOfSolutionsToFind solutions via distance-based subset selection");
   }
 }

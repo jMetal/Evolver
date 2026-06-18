@@ -15,8 +15,8 @@ paesArchiveType:
   type: categorical
   values:
     crowdingDistanceArchive: {}
-    hypervolumeArchive: {}
-    spatialSpreadDeviationArchive: {}
+#    hypervolumeArchive: {} — disabled: too slow on 3D problems
+#    spatialSpreadDeviationArchive: {} — disabled: throws error
 
 algorithmResult:
   type: categorical

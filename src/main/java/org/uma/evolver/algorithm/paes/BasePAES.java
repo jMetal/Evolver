@@ -21,6 +21,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
+import org.uma.jmetal.util.archive.impl.BestSolutionsArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
 
@@ -130,8 +131,7 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
   }
 
   protected Archive<S> createExternalArchive() {
-    // For now the external archive is always an unbounded non-dominated solution list.
-    return new NonDominatedSolutionListArchive<>();
+    return new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), numberOfSolutionsToFind);
   }
 
   private boolean usingExternalArchive() {

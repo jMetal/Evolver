@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.*;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
@@ -117,5 +118,48 @@ class SSMOEADoubleIT {
     double expectedHypervolume = 0.40;
     assertTrue(hv > expectedHypervolume,
         "Expected HV > " + expectedHypervolume + " but got " + hv);
+  }
+
+  @Tag("integration")
+  @Test
+  @DisplayName("given externalArchive with unboundedArchive on DTLZ1 when running then result has exactly populationSize solutions")
+  void givenExternalArchiveWithUnboundedArchive_whenRunningOnDTLZ1_thenResultHasExactlyPopulationSizeSolutions() {
+    // Arrange
+    var problem = new DTLZ1();
+    int populationSize = 100;
+
+    var ssmoea = new DoubleSSMOEA(
+        problem, populationSize, 25000,
+        new YAMLParameterSpace("SSMOEADouble.yaml", new DoubleParameterFactory()));
+
+    var parameters = (
+        "--algorithmResult externalArchive "
+        + "--populationSizeWithArchive 100 "
+        + "--archiveType unboundedArchive "
+        + "--createInitialSolutions default "
+        + "--ranking dominanceRanking "
+        + "--densityEstimator crowdingDistance "
+        + "--variation crossoverAndMutationVariation "
+        + "--crossover SBX "
+        + "--crossoverProbability 0.9 "
+        + "--crossoverRepairStrategy bounds "
+        + "--sbxDistributionIndex 20.0 "
+        + "--gaSelection tournament "
+        + "--selectionTournamentSize 2 "
+        + "--mutation polynomial "
+        + "--mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds "
+        + "--polynomialMutationDistributionIndex 20.0 "
+        + "--replacement rankingAndDensityEstimator"
+    ).split("\\s+");
+
+    // Act
+    var algorithm = ssmoea.parse(parameters).build();
+    algorithm.run();
+    List<DoubleSolution> result = algorithm.result();
+
+    // Assert
+    assertEquals(populationSize, result.size(),
+        "External unbounded archive must return exactly populationSize solutions via distance-based subset selection");
   }
 }
