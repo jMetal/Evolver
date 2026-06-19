@@ -9,7 +9,7 @@ import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.trainingset.RE3DTrainingSet;
+import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -23,12 +23,12 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoublePAES} using the RE
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoublePAES} using the DTLZ
  * problems as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingPAESForBenchmarkRE3D {
+public class AsyncNSGAIIOptimizingPAESForBenchmarkDTLZ {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -42,12 +42,11 @@ public class AsyncNSGAIIOptimizingPAESForBenchmarkRE3D {
   private static final int WRITE_FREQUENCY = 100;
   private static final int PLOT_UPDATE_FREQUENCY = 100;
 
-
   public static void main(String[] args) throws IOException {
     if (args.length != 4) {
       System.err.println(
-              "Usage: AsyncNSGAIIOptimizingPAESForBenchmarkRE3D "
-                      + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
+          "Usage: AsyncNSGAIIOptimizingPAESForBenchmarkDTLZ "
+              + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
       System.exit(1);
     }
 
@@ -60,9 +59,9 @@ public class AsyncNSGAIIOptimizingPAESForBenchmarkRE3D {
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor =
-            new RE3DTrainingSet()
-                    .setReferenceFrontDirectory(referenceFrontDirectory)
-                    .setEvaluationsToOptimize(baseMaxEvaluations);
+        new DTLZ3DTrainingSet()
+            .setReferenceFrontDirectory(referenceFrontDirectory)
+            .setEvaluationsToOptimize(baseMaxEvaluations);
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
@@ -70,69 +69,67 @@ public class AsyncNSGAIIOptimizingPAESForBenchmarkRE3D {
     // Step 2: Set the parameters for the algorithm to be configured
     var indicators = List.of(new Epsilon(), new HypervolumeMinus());
     var parameterSpace =
-            new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoublePAES(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
     int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
-            new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-            new MetaOptimizationProblem<>(
-                    baseAlgorithm,
-                    trainingSet,
-                    referenceFrontFileNames,
-                    indicators,
-                    evaluationBudgetStrategy,
-                    numberOfIndependentRuns);
+        new MetaOptimizationProblem<>(
+            baseAlgorithm,
+            trainingSet,
+            referenceFrontFileNames,
+            indicators,
+            evaluationBudgetStrategy,
+            numberOfIndependentRuns);
 
     // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the
     // specialized double builder
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
-            new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
-                    .setNumberOfCores(numberOfCores)
-                    .setPopulationSize(META_POPULATION_SIZE)
-                    .setMaxEvaluations(META_MAX_EVALUATIONS)
-                    .build();
+        new MetaAsyncNSGAIIBuilder(metaOptimizationProblem)
+            .setNumberOfCores(numberOfCores)
+            .setPopulationSize(META_POPULATION_SIZE)
+            .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .build();
 
     // Step 4: Create observers for the meta-optimizer
     String algorithmName = "AsyncNSGA-II";
     String problemName = trainingSetDescriptor.name();
 
     MetaOptimizerConfig config =
-            MetaOptimizerConfig.builder()
-                    .metaOptimizerName(algorithmName)
-                    .metaMaxEvaluations(META_MAX_EVALUATIONS)
-                    .metaPopulationSize(META_POPULATION_SIZE)
-                    .numberOfCores(numberOfCores)
-                    .baseLevelAlgorithmName("PAES")
-                    .baseLevelPopulationSize(BASE_POPULATION_SIZE)
-                    .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
-                    .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
-                    .yamlParameterSpaceFile(yamlParameterSpaceFile)
-                    .build();
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(algorithmName)
+            .metaMaxEvaluations(META_MAX_EVALUATIONS)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(numberOfCores)
+            .baseLevelAlgorithmName("PAES")
+            .baseLevelPopulationSize(BASE_POPULATION_SIZE)
+            .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(yamlParameterSpaceFile)
+            .build();
 
     var outputResults =
-            new ConsolidatedOutputResults(
-                    metaOptimizationProblem, problemName, indicators, resultsDirectory, config);
+        new ConsolidatedOutputResults(
+            metaOptimizationProblem, problemName, indicators, resultsDirectory, config);
 
     var writeExecutionDataToFilesObserver =
-            new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
-
+        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
     var frontChartObserver =
-            new FrontPlotObserver<DoubleSolution>(
-                    "PAES, " + trainingSetDescriptor.name(),
-                    indicators.get(0).name(),
-                    indicators.get(1).name(),
-                    trainingSetDescriptor.name(),
-                    PLOT_UPDATE_FREQUENCY);
+        new FrontPlotObserver<DoubleSolution>(
+            "PAES, " + trainingSetDescriptor.name(),
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            trainingSetDescriptor.name(),
+            PLOT_UPDATE_FREQUENCY);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(frontChartObserver);
-
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
