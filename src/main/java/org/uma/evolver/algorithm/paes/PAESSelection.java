@@ -1,6 +1,5 @@
 package org.uma.evolver.algorithm.paes;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.solution.Solution;
@@ -22,29 +21,22 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * @param <S> the solution type
  */
 public class PAESSelection<S extends Solution<?>> implements Selection<S> {
-  private final int matingPoolSize;
   private final double archiveSelectionProbability;
   private final BoundedArchive<S> archive;
   private final JMetalRandom random = JMetalRandom.getInstance();
 
-  public PAESSelection(
-      int matingPoolSize, double archiveSelectionProbability, BoundedArchive<S> archive) {
-    this.matingPoolSize = matingPoolSize;
+  public PAESSelection(double archiveSelectionProbability, BoundedArchive<S> archive) {
     this.archiveSelectionProbability = archiveSelectionProbability;
     this.archive = archive;
   }
 
   @Override
   public List<S> select(List<S> solutionList) {
-    List<S> matingPool = new ArrayList<>(matingPoolSize);
-    for (int i = 0; i < matingPoolSize; i++) {
-      List<S> archiveSolutions = archive.solutions();
-      if (!archiveSolutions.isEmpty() && random.nextDouble() < archiveSelectionProbability) {
-        matingPool.add(archiveSolutions.get(random.nextInt(0, archiveSolutions.size() - 1)));
-      } else {
-        matingPool.add(solutionList.get(0));
-      }
-    }
-    return matingPool;
+    List<S> archiveSolutions = archive.solutions();
+    S selected =
+        (!archiveSolutions.isEmpty() && random.nextDouble() < archiveSelectionProbability)
+            ? archiveSolutions.get(random.nextInt(0, archiveSolutions.size() - 1))
+            : solutionList.getFirst();
+    return List.of(selected);
   }
 }

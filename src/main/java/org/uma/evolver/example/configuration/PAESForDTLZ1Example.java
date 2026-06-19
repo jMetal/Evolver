@@ -6,6 +6,9 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -25,22 +28,23 @@ public class PAESForDTLZ1Example {
 
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "PAESDouble.yaml";
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ1.3D.csv";
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
 
     String[] parameters = String.join(
-            " ",
-            "--paesArchiveType crowdingDistanceArchive",
-            "--algorithmResult externalArchive",
-            "--archiveSelectionProbability 0.9189795374643632",
-            "--mutation levyFlight",
-            "--mutationProbabilityFactor 1.494881899307409",
-            "--mutationRepairStrategy bounds",
-            "--levyFlightMutationBeta 1.6558956256498565",
-            "--levyFlightMutationStepSize 0.323402020766443")
+                    " ",
+                    "--paesArchiveType knnDistanceArchive",
+                    "--knnDistanceArchiveK 4",
+                    "--algorithmResult externalArchive",
+                    "--archiveSelectionProbability 0.013727891319631647",
+                    "--mutation levyFlight",
+                    "--mutationProbabilityFactor 1.5474172144174396",
+                    "--mutationRepairStrategy bounds",
+                    "--levyFlightMutationBeta 1.9048695481272513",
+                    "--levyFlightMutationStepSize 0.26218782546309416")
             .split("\\s+");
 
     int numberOfSolutionsToFind = 100;
-    int maximumNumberOfEvaluations = 40000;
+    int maximumNumberOfEvaluations = 50000;
 
     var paes =
         new DoublePAES(

@@ -81,7 +81,7 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
 
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
     Variation<S> variation = createVariation();
-    Selection<S> selection = createSelection(variation, paesArchive);
+    Selection<S> selection = createSelection(paesArchive);
     Termination termination = createTermination();
     Replacement<S> replacement = new PAESReplacement<>(paesArchive, new DefaultDominanceComparator<>());
 
@@ -120,10 +120,10 @@ public abstract class BasePAES<S extends Solution<?>> implements BaseLevelAlgori
     return new MutationOnlyVariation<>(1, mutationParameter.getMutation());
   }
 
-  protected Selection<S> createSelection(Variation<S> variation, BoundedArchive<S> paesArchive) {
+  protected Selection<S> createSelection(BoundedArchive<S> paesArchive) {
     double archiveSelectionProbability =
         (double) parameterSpace.get("archiveSelectionProbability").value();
-    return new PAESSelection<>(variation.matingPoolSize(), archiveSelectionProbability, paesArchive);
+    return new PAESSelection<>(archiveSelectionProbability, paesArchive);
   }
 
   protected Termination createTermination() {
