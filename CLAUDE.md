@@ -59,7 +59,7 @@ The meta-optimizer treats algorithm parameter configurations as solutions, and t
 | `org.uma.evolver.trainingset` | Training set management wrapping jMetal benchmark problems. |
 | `org.uma.evolver.irace` | irace integration for alternative parameter tuning. |
 | `org.uma.evolver.util` | Utilities: `ConfigurationFileReader`, `OutputResults`, observers for writing evolution data. |
-| `org.uma.evolver.example` | Runnable examples for training, configuration, and validation. |
+| `org.uma.evolver.example` | Runnable examples in three packages: `baselevel` (single base-level algorithm runs, split into `standard` for typical configurations, `tuned` for meta-optimized configurations, and `features` for specific-capability demos), `training` (meta-optimization runs), and `validation` (comparative studies). |
 
 ### Parameter Spaces
 
