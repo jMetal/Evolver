@@ -2,6 +2,7 @@ package org.uma.evolver.parameter.factory;
 
 import java.util.List;
 import org.uma.evolver.parameter.catalogue.*;
+import org.uma.evolver.parameter.catalogue.PAESArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsPermutationParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.PermutationCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.PermutationMutationParameter;
@@ -73,6 +74,7 @@ public class PermutationParameterFactory implements ParameterFactory<Permutation
 
     return switch (parameterName) {
       case "archiveType" -> new ExternalArchiveParameter<PermutationSolution<Integer>>("archiveType", values);
+      case "paesArchiveType" -> new PAESArchiveParameter<PermutationSolution<Integer>>("paesArchiveType", values);
       case "aggregationFunction" -> new AggregationFunctionParameter(values);
       case "createInitialSolutions" -> new CreateInitialSolutionsPermutationParameter(values);
       case "crossover" -> new PermutationCrossoverParameter(values);

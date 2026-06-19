@@ -2,6 +2,7 @@ package org.uma.evolver.parameter.factory;
 
 import java.util.List;
 import org.uma.evolver.parameter.catalogue.*;
+import org.uma.evolver.parameter.catalogue.PAESArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsBinaryParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.BinaryCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.BinaryMutationParameter;
@@ -73,6 +74,7 @@ public class BinaryParameterFactory implements ParameterFactory<BinarySolution> 
 
     return switch (parameterName) {
       case "archiveType" -> new ExternalArchiveParameter<BinarySolution>("archiveType", values);
+      case "paesArchiveType" -> new PAESArchiveParameter<BinarySolution>("paesArchiveType", values);
       case "aggregationFunction" -> new AggregationFunctionParameter(values);
       case "createInitialSolutions" -> new CreateInitialSolutionsBinaryParameter(values);
       case "crossover" -> new BinaryCrossoverParameter(values);

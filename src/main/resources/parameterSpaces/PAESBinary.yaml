@@ -1,0 +1,42 @@
+# PAESBinary.yaml
+#
+# Parameter space for PAES (Pareto Archived Evolution Strategy) with binary encoding.
+#
+# Non-configurable (hardcoded in BasePAES / BinaryPAES):
+#   populationSize = 1, offspringPopulationSize = 1
+#   crossover = none (MutationOnlyVariation)
+#   initial solution = a single random solution (RandomSolutionsCreation)
+#   PAES archive size (numberOfSolutionsToFind) fixed via constructor (typical: 100)
+#   numberOfBitsInASolution injected from the problem at build time
+
+paesArchiveType:
+  type: categorical
+  values:
+    crowdingDistanceArchive: {}
+    spatialSpreadDeviationArchive: {}
+    knnDistanceArchive:
+      conditionalParameters:
+        knnDistanceArchiveK:
+          type: integer
+          range: [1, 10]
+    angleArchive: {}
+
+algorithmResult:
+  type: categorical
+  values:
+    paesArchive: {}
+    externalArchive: {}
+
+# Probability of mutating a randomly chosen archive member instead of the current solution.
+archiveSelectionProbability:
+  type: double
+  range: [0.0, 1.0]
+
+mutation:
+  type: categorical
+  globalSubParameters:
+    mutationProbabilityFactor:
+      type: double
+      range: [0.0, 2.0]
+  values:
+    bitFlip: {}
