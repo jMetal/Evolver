@@ -5,7 +5,7 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
+import org.uma.jmetal.problem.multiobjective.lz09.LZ09F2;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -16,40 +16,36 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 /**
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MOEAD_DTLZ2 {
+public class MOEADDELZ09F2Example {
 
   public static void main(String[] args) {
-    DoubleProblem problem = new DTLZ2() ;
-    String referenceFrontFileName = "resources/referenceFronts/DTLZ2.3D.csv";
+    DoubleProblem problem = new LZ09F2() ;
+    String referenceFrontFileName = "resources/referenceFronts/LZ09_F2.csv";
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOEADDouble.yaml" ;
 
     String[] parameters =
         ("--neighborhoodSize 20 "
-                + "--maximumNumberOfReplacedSolutions 2 "
-                + "--aggregationFunction penaltyBoundaryIntersection "
-                + "--normalizeObjectives false "
-                + "--pbiTheta 5.0 "
-                + "--algorithmResult population "
-                + "--createInitialSolutions default "
-                + "--subProblemIdGenerator randomPermutationCycle "
-                + "--variation crossoverAndMutationVariation "
-                + "--crossoverProbability 0.9 "
-                + "--crossoverRepairStrategy bounds "
-                + "--mutation polynomial "
-                + "--mutationProbabilityFactor 1.0 "
-                + "--mutationRepairStrategy bounds "
-                + "--polynomialMutationDistributionIndex 20.0 "
-                + "--crossover SBX "
-                + "--sbxDistributionIndex 20.0 "
-                + "--selection populationAndNeighborhoodMatingPoolSelection "
-                + "--neighborhoodSelectionProbability 0.9")
+            + "--maximumNumberOfReplacedSolutions 2 "
+            + "--aggregationFunction tschebyscheff "
+            + "--normalizeObjectives true "
+            + "--epsilonParameterForNormalization 4 "
+            + "--algorithmResult population "
+            + "--createInitialSolutions default "
+            + "--variation differentialEvolutionVariation "
+            + "--subProblemIdGenerator randomPermutationCycle "
+            + "--mutation polynomial "
+            + "--mutationProbabilityFactor 1.0 "
+            + "--mutationRepairStrategy bounds "
+            + "--polynomialMutationDistributionIndex 20.0 "
+            + "--differentialEvolutionCrossover RAND_1_BIN "
+            + "--CR 1.0 "
+            + "--F 0.5 "
+            + "--selection populationAndNeighborhoodMatingPoolSelection "
+            + "--neighborhoodSelectionProbability 0.9 ")
             .split("\\s+");
 
-
-    var parameterSpace = new YAMLParameterSpace("MOEADDoubleFull.yaml", new DoubleParameterFactory());
-
-    var baseMOEAD =
-        new DoubleMOEAD(
-            problem, 100, 40000, "resources/weightVectors", parameterSpace);
+    var baseMOEAD = new DoubleMOEAD(problem, 300, 175000,
+        "resources/weightVectors", new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
     baseMOEAD.parse(parameters);
 
     baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);

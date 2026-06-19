@@ -1,19 +1,15 @@
 package org.uma.evolver.example.configuration;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.moead.PermutationMOEAD;
-import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.algorithm.moead.BinaryMOEAD;
+import org.uma.evolver.parameter.factory.BinaryParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
+import org.uma.jmetal.problem.multiobjective.OneZeroMax;
+import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
@@ -21,10 +17,9 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class MOEADBiObjectiveTSP {
+public class MOEADOneZeroMaxExample {
 
   public static void main(String[] args) throws IOException {
-    String referenceFrontFileName = "resources/referenceFrontsTSP/KroAB100TSP.csv";
 
     String[] parameters =
         ("--neighborhoodSize 20 "
@@ -38,38 +33,31 @@ public class MOEADBiObjectiveTSP {
                 + "--subProblemIdGenerator randomPermutationCycle "
                 + "--variation crossoverAndMutationVariation "
                 + "--crossoverProbability 0.9 "
-                + "--mutation swap "
-                + "--mutationProbability 0.08 "
-                + "--crossover PMX "
+                + "--mutation bitFlip "
+                + "--mutationProbabilityFactor 1.0 "
+                + "--crossover singlePoint "
                 + "--selection populationAndNeighborhoodMatingPoolSelection "
                 + "--neighborhoodSelectionProbability 0.9")
             .split("\\s+");
 
-    var baseMOEAD =
-        new PermutationMOEAD(
-            new KroAB100TSP(),
+    var baseAlgorithm =
+        new BinaryMOEAD(
+            new OneZeroMax(),
             100,
-            1000000,
+            10000,
             "resources/weightVectors",
-            new YAMLParameterSpace("MOEADPermutation.yaml", new PermutationParameterFactory()));
+            new YAMLParameterSpace("MOEADBinary.yaml", new BinaryParameterFactory()));
 
-    baseMOEAD.parse(parameters);
+    baseAlgorithm.parse(parameters);
 
-    baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
+    baseAlgorithm.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = baseMOEAD.build();
+    EvolutionaryAlgorithm<BinarySolution> moead = baseAlgorithm.build();
 
-    RunTimeChartObserver<PermutationSolution<Integer>> runTimeChartObserver =
-        new RunTimeChartObserver<>("MOEA/D", 80, 1000, referenceFrontFileName, "F1", "F2");
-
-    IndicatorPlotObserver<DoubleSolution> indicatorPlotObserver =
-        new IndicatorPlotObserver<>("MOEA/D", new Epsilon(), referenceFrontFileName, 100);
-    IndicatorPlotObserver<DoubleSolution> hvPlotObserver =
-        new IndicatorPlotObserver<>("MOEA/D", new HypervolumeMinus(), referenceFrontFileName, 1000);
+    RunTimeChartObserver<BinarySolution> runTimeChartObserver =
+        new RunTimeChartObserver<>("MOEA/D", 80, 1000, null, "F1", "F2");
 
     moead.observable().register(runTimeChartObserver);
-    moead.observable().register(indicatorPlotObserver);
-    moead.observable().register(hvPlotObserver);
 
     moead.run();
 

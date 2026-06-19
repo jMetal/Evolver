@@ -13,7 +13,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class RDEMOEA_NSGAII_ZDT4Example {
+public class RDEMOEANSGAIIZDT4Example {
   public static void main(String[] args) {
     ParameterSpace parameterSpace = new YAMLParameterSpace("RDEMOEADouble.yaml", new DoubleParameterFactory());
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";

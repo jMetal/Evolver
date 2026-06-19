@@ -14,7 +14,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class MOPSO_ZCAT1 {
+public class MOPSOZCAT1Example {
   public static void main(String[] args) {
     DefaultZCATSettings.numberOfObjectives = 3 ;
     DoubleProblem problem = new ZCAT3();

@@ -13,7 +13,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class RDEMOEA_SPEA2_DTLZ2Example {
+public class RDEMOEASPEA2DTLZ2Example {
   public static void main(String[] args) {
     ParameterSpace parameterSpace = new YAMLParameterSpace("RDEMOEADouble.yaml", new DoubleParameterFactory());
     String referenceFrontFileName = "resources/referenceFronts/DTLZ2.3D.csv";

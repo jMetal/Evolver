@@ -5,7 +5,7 @@ import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -13,15 +13,18 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
-public class MOPSO_SMPSO_ZDT4 {
+public class MOPSOExternalArchiveDTLZ3Example {
   public static void main(String[] args) {
-    DoubleProblem problem = new ZDT4();
-    String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+    DoubleProblem problem = new DTLZ3();
+    String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+    String yamlParameterSpaceFile = "resources/parameterSpaces/MOPSO.yaml";
 
     String[] parameters =
         ("--swarmSize 100 "
-                + "--algorithmResult leaderArchive "
+                + "--algorithmResult externalArchive "
+                + "--externalArchiveType unboundedArchive "
                 + "--leaderArchive crowdingDistanceArchive "
+                + "--swarmSizeWithArchive 100 "
                 + "--swarmInitialization default "
                 + "--velocityInitialization defaultVelocityInitialization "
                 + "--velocityUpdate constrainedVelocityUpdate "
@@ -49,16 +52,17 @@ public class MOPSO_SMPSO_ZDT4 {
                 + "--randomInertiaWeightMax 0.5")
             .split("\\s+");
 
-    String yamlParameterSpaceFile = "MOPSO.yaml" ;
-    var parameterSpace =
-            new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory());
+    var mopso =
+        new BaseMOPSO(
+            problem,
+            100,
+            40000,
+            new YAMLParameterSpace(yamlParameterSpaceFile, new MOPSOParameterFactory()));
+    mopso.parse(parameters);
 
-    var baseMOPSO = new BaseMOPSO(problem, 100, 15000, parameterSpace);
-    baseMOPSO.parse(parameters);
+    mopso.parameterSpace().topLevelParameters().forEach(System.out::println);
 
-    baseMOPSO.parameterSpace().topLevelParameters().forEach(System.out::println);
-
-    ParticleSwarmOptimizationAlgorithm algorithm = baseMOPSO.build();
+    ParticleSwarmOptimizationAlgorithm algorithm = mopso.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
