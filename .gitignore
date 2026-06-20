@@ -42,3 +42,12 @@ experiments/rq4_validation/results/representative-configs/**/EP
 experiments/rq4_validation/results/representative-configs/**/HV
 experiments/rq4_validation/results/representative-configs/**/*.csv
 experiments/rq4_validation/results/representative-configs/RepresentativeConfigs*-ForwardAblation-*/
+
+# Local experiment output — kept on disk for convenience, not part of the repo.
+# experimentation/ was previously tracked and pushed; it is being untracked
+# (git rm --cached) and ignored from here on. The files remain on disk.
+/experimentation/
+/results/
+/FUN.csv
+/VAR.csv
+/VAR
