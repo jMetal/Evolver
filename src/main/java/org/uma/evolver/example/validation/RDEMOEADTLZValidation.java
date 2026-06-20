@@ -29,7 +29,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class RDEMOEAValidationDTLZ {
+public class RDEMOEADTLZValidation {
 
   private static final int POPULATION_SIZE = 69;
   private static final int MAX_EVALUATIONS = 40000;

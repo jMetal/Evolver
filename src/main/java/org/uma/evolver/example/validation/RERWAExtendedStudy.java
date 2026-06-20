@@ -40,7 +40,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  *
  * <p>Configuration: PopSize 100, 10000 evaluations, 25 independent runs per configuration.
  */
-public class RERWAStudyExtended {
+public class RERWAExtendedStudy {
 
   private static final int INDEPENDENT_RUNS = 30;
   private static final int MAX_EVALUATIONS = 10000;
@@ -90,7 +90,7 @@ public class RERWAStudyExtended {
         configureAlgorithmList(problemList);
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("RERWAStudyExtended")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("RERWAExtendedStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setReferenceFrontDirectory("resources/referenceFronts")
