@@ -4,12 +4,19 @@ This directory contains Python scripts for analyzing the results of Evolver meta
 
 ## Environment Setup
 
+The core Evolver framework (Java + Maven) needs no Python. These scripts are only for turning
+experiment and validation results into figures and reports. Run the setup **from the repository
+root**:
+
 ```bash
-# Activate conda environment
+# Option A — conda (creates the 'evolver' environment)
+conda env create -f environment.yml
 conda activate evolver
 
-# Install/update dependencies
-pip install -r requirements.txt
+# Option B — virtualenv
+python -m venv .venv
+source .venv/bin/activate
+pip install -r scripts/requirements.txt
 ```
 
 ## Available Analyses

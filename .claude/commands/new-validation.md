@@ -67,7 +67,10 @@ Output layout: `results/validation/<Name>/<ProblemName>/<label>_FUN.csv`.
 
 **Reference pattern:** `scripts/plot_dtlz_validation.py`.
 
-Requirements (already in `scripts/requirements.txt`): `pandas`, `numpy`, `matplotlib`, `seaborn`.
+`scripts/` is versioned, so commit this script together with the Java runner — it is reproducible
+tooling, not a throwaway. Requirements (already in `scripts/requirements.txt`): `pandas`, `numpy`,
+`matplotlib`, `seaborn`. See the README "Analysis and reports" section for how to set up the
+Python environment (conda or venv).
 
 Key points:
 - Use a headless backend and embed plots as base64 PNG (avoids the WebGL/Plotly context limit
@@ -93,12 +96,13 @@ Key points:
 ### 4. Run the validation and build the report
 
 ```bash
-# 1. Run the Java validation (generates the FUN.csv files)
+# 1. Run the Java validation (generates the FUN.csv files) — no Python needed
 mvn compile exec:java -Dexec.mainClass=org.uma.evolver.example.validation.<Name>Validation
 
-# 2. Generate the HTML report
-conda run -n evolver python scripts/plot_<name>_validation.py \
+# 2. Activate the Python environment (see README "Analysis and reports"), then generate the report
+python scripts/plot_<name>_validation.py \
     results/validation/<Name>/ resources/referenceFronts/
+# (without activating: conda run -n evolver python scripts/plot_<name>_validation.py …)
 ```
 
 The report is written to `results/validation/<Name>/report.html`.

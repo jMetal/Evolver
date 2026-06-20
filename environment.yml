@@ -1,0 +1,25 @@
+# Conda environment for the OPTIONAL Python analysis and reporting tooling.
+#
+# The core Evolver framework — training, base-level runs, and the validation
+# runners that write FUN.csv files — needs only Java 21+ and Maven. This
+# environment is required only to turn those results into figures and the HTML
+# validation reports under scripts/.
+#
+#   Create:   conda env create -f environment.yml
+#   Activate: conda activate evolver
+#   Update:   conda env update -f environment.yml --prune
+#
+# Prefer a plain virtualenv? See scripts/README.md (Option B).
+name: evolver
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - pip
+  - pandas>=1.5
+  - numpy>=1.21
+  - scipy>=1.9
+  - scikit-learn
+  - matplotlib>=3.5
+  - seaborn>=0.11
+  - tqdm>=4.64
