@@ -1,12 +1,11 @@
 # Scripts for Evolver Experimental Analysis
 
-This directory contains Python scripts for analyzing the results of Evolver meta-optimization experiments, designed for scientific publication.
+Python scripts for turning Evolver experiment and validation results into figures and reports. The
+core Evolver framework (Java + Maven) needs no Python — these scripts are optional.
 
 ## Environment Setup
 
-The core Evolver framework (Java + Maven) needs no Python. These scripts are only for turning
-experiment and validation results into figures and reports. Run the setup **from the repository
-root**:
+Run the setup **from the repository root**:
 
 ```bash
 # Option A — conda (creates the 'evolver' environment)
@@ -52,76 +51,34 @@ Notes:
 - `generate_cd_plots.py` — Critical Difference plots (Friedman + Nemenyi post-hoc) from a study's
   `QualityIndicatorSummary.csv`. Set the `RESULTS_DIR` at the top of the file to the study directory.
 
-## Available Analyses
+## Experiment-specific analysis
 
-### Experiment A: HV Evolution Analysis
-- **Script**: `analysis_A_hv_evolution.py`
-- **Purpose**: Generate hypervolume convergence comparison figures
-- **Output**: `figures/hv_comparison_convergence.png`
-- **Related**: Experiment A in `../experimentation/EXPERIMENTAL_DESIGN.md`
+### Experiment A: HV evolution
 
-### Future Scripts (Planned)
-- `analysis_B_statistical.py` - Statistical comparison between reference front types
-- `analysis_C_convergence.py` - Convergence threshold analysis
-- `analysis_D_configurations.py` - Configuration parameter analysis (D1-D5)
-- `analysis_E_representative.py` - Representative configuration extraction
-- `analysis_F_cost_quality.py` - Cost-quality trade-off analysis
+- **Directory**: `analysis_A_hv_evolution/` (has its own `README.md`).
+- **Purpose**: hypervolume convergence comparison figures and statistics.
+- **Entry points**: `analysis_A_hv_evolution.py`, `generate_figures_and_stats.py`,
+  `postprocess_analysis.py`.
 
-## Directory Structure
+## Directory layout
 
 ```
 scripts/
-├── README.md                    # This file
-├── requirements.txt             # Core Python dependencies
-├── analysis_A_hv_evolution/     # HV evolution analysis
-│   ├── README.md               # Analysis-specific documentation
-│   ├── analysis_A_hv_evolution.py
-│   ├── hv_comparison_convergence.png
-│   └── requirements.txt        # Analysis-specific dependencies
-├── analysis_B_statistical/     # Statistical comparison (planned)
-├── analysis_C_convergence/     # Convergence analysis (planned)
-├── analysis_D_configurations/   # Configuration analysis (planned)
-├── analysis_E_representative/  # Representative configurations (planned)
-├── analysis_F_cost_quality/     # Cost-quality analysis (planned)
-├── figures/                     # Legacy figures directory
-│   └── README.md
-└── utils/                       # Shared utilities (future)
-    ├── data_parser.py
-    ├── visualization.py
-    └── statistical_tests.py
+├── README.md                     # this file
+├── requirements.txt              # Python dependencies
+├── plot_front.py                 # single-front plotter (matplotlib, static)
+├── plot_front_interactive.py     # single-front plotter (Plotly, interactive)
+├── generate_cd_plots.py          # Critical Difference plots from a study summary
+├── analysis_A_hv_evolution/      # HV evolution analysis (own README)
+└── figures/                      # shared figures output
 ```
-
-## Data Sources
-
-All scripts expect data in the standardized structure:
-- **Training data**: `../experimentation/training/referenceFronts/` and `../experimentation/training/extremePoints/`
-- **Reference fronts**: `../experimentation/config/referenceFronts/`
-- **Results**: Output saved to `figures/` subdirectory
-
-## Usage Pattern
-
-```bash
-# Run individual analysis
-cd analysis_A_hv_evolution
-python analysis_A_hv_evolution.py
-
-# Run all analyses (when implemented)
-python run_all_analyses.py
-```
-
-## Publication Notes
-
-- All figures are generated at 300 DPI for journal submission
-- Color schemes are colorblind-friendly
-- Statistical significance follows the standards in the field
-- Scripts are version-controlled for reproducibility
 
 ## Dependencies
 
-Core libraries:
-- **pandas**: Data manipulation and aggregation
-- **numpy**: Numerical computations
-- **matplotlib**: Publication-quality figures
-- **plotly**: Interactive figures (`plot_front_interactive.py`)
-- **scipy**: Statistical tests and scientific computing
-- **scikit-learn**: Machine learning analyses (clustering, feature importance)
+Declared in `requirements.txt` / `environment.yml`:
+
+- **pandas**, **numpy** — data manipulation
+- **matplotlib**, **seaborn** — static figures
+- **plotly** — interactive figures (`plot_front_interactive.py`)
+- **scipy** — statistical tests
+- **scikit-learn** — clustering / feature-importance analyses
