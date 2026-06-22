@@ -19,6 +19,39 @@ source .venv/bin/activate
 pip install -r scripts/requirements.txt
 ```
 
+## Front-plotting scripts (general-purpose)
+
+Two reusable scripts plot a single Pareto front (a `FUN.csv`) against its reference front. They take
+the same arguments and comparison modes; pick by purpose:
+
+| Script | Engine | Output | Use for |
+|---|---|---|---|
+| `plot_front.py` | matplotlib | static PNG (headless) | reports, automation, embedding |
+| `plot_front_interactive.py` | Plotly | interactive (browser, or self-contained HTML with `--output`) | manual exploration: rotate 3D, hover |
+
+```bash
+# static, overlay (default): obtained front over its reference
+python scripts/plot_front.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv
+
+# side-by-side panels (clearer in 3D); 'both' adds an overlay panel
+python scripts/plot_front.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv --mode side
+
+# interactive, saved as a self-contained HTML
+python scripts/plot_front_interactive.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv --output front.html
+```
+
+Notes:
+- Objectives are auto-detected from the column count (2 → 2D, 3 → 3D, >3 → parallel coordinates).
+- `--mode overlay|side|both` (default `overlay`); `side`/`both` share axis ranges across panels.
+- The reference front is passed **explicitly** (its exact file). Reference fronts follow no single
+  naming convention (`DTLZ1.3D.csv` vs `RE31.csv`), so the filename is not guessed from the problem.
+- Run either script without arguments to print the full help.
+
+## Study statistics
+
+- `generate_cd_plots.py` — Critical Difference plots (Friedman + Nemenyi post-hoc) from a study's
+  `QualityIndicatorSummary.csv`. Set the `RESULTS_DIR` at the top of the file to the study directory.
+
 ## Available Analyses
 
 ### Experiment A: HV Evolution Analysis
@@ -89,5 +122,6 @@ Core libraries:
 - **pandas**: Data manipulation and aggregation
 - **numpy**: Numerical computations
 - **matplotlib**: Publication-quality figures
+- **plotly**: Interactive figures (`plot_front_interactive.py`)
 - **scipy**: Statistical tests and scientific computing
 - **scikit-learn**: Machine learning analyses (clustering, feature importance)
