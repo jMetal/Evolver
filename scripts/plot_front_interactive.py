@@ -74,6 +74,10 @@ def main():
     parser.add_argument("--output", type=Path, default=None,
                         help="write a self-contained interactive HTML here instead of showing it")
     parser.add_argument("--title", default=None, help="figure title")
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
     args = parser.parse_args()
 
     if not args.front.exists():
