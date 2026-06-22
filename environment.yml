@@ -22,4 +22,5 @@ dependencies:
   - scikit-learn
   - matplotlib>=3.5
   - seaborn>=0.11
+  - plotly>=5.0
   - tqdm>=4.64

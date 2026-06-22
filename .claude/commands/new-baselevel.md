@@ -53,6 +53,10 @@ given, saving a PNG next to the FUN file. If `scripts/plot_front.py` does not ex
 (matplotlib `Agg`, 2D/3D scatter; pattern: `scripts/plot_dtlz_validation.py`) and commit it —
 `scripts/` is versioned. See the README "Analysis and reports" section for the Python environment.
 
+For interactive inspection instead (rotate a 3D front, hover for values), use
+`scripts/plot_front_interactive.py` (Plotly) with the same arguments; it shows the figure or, with
+`--output figure.html`, writes a self-contained interactive HTML.
+
 ### 4. Verify
 
 - `mvn compile -q`.
