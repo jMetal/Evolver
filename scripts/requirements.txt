@@ -13,6 +13,9 @@ scikit-learn>=1.8.0
 matplotlib>=3.5.0
 seaborn>=0.11.0
 
+# YAML parsing (plot_parameter_space.py)
+PyYAML>=6.0
+
 # Interactive visualization (plot_front_interactive.py)
 plotly>=5.0.0
 

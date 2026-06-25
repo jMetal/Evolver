@@ -15,7 +15,7 @@ Arguments:
     yaml_file   Path to a parameter-space YAML file
                 (e.g. src/main/resources/parameterSpaces/NSGAIIDouble.yaml)
     --title     Figure title  (default: YAML stem)
-    --depth     Maximum nesting depth to show  (default: 2)
+    --depth     Maximum nesting depth to show  (default: 1)
     --output    Output path (.pdf / .png / .svg); omit to open an interactive window
 
 Examples:
