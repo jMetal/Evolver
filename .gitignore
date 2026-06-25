@@ -55,3 +55,6 @@ experiments/rq4_validation/results/representative-configs/RepresentativeConfigs*
 # Plot artifacts written at the repo root by the front plotters (plot_front*.py)
 /*.png
 /*.html
+
+# Generated figures produced by scripts (plot_parameter_space.py, etc.)
+/figures/
