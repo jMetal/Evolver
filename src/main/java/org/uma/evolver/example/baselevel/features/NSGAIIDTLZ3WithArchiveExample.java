@@ -1,20 +1,44 @@
 package org.uma.evolver.example.baselevel.features;
 
+import java.io.IOException;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
+/**
+ * Example: running the configurable NSGA-II on DTLZ3 with an external archive.
+ *
+ * <p>This {@code features} example illustrates the external-archive capability on a 3-objective
+ * problem: NSGA-II returns an unbounded external archive as the algorithm result
+ * ({@code --algorithmResult externalArchive --archiveType unboundedArchive}) instead of the final
+ * population. It runs a meta-optimized configuration (Latin-hypercube initialization, SBX
+ * crossover, Lévy-flight mutation, binary tournament selection) on DTLZ3 with a population of 100
+ * and 40000 evaluations, and registers an {@link EvaluationObserver} that logs progress every 100
+ * evaluations. The parsed parameter space is printed to stdout at startup.
+ *
+ * <p>The parameter space is loaded from {@code NSGAIIDouble.yaml}. Results are written to
+ * {@code VAR.csv}/{@code FUN.csv}, and the quality indicators against the DTLZ3 reference front
+ * ({@code resources/referenceFronts/DTLZ3.3D.csv}) are printed at the end of the run.
+ */
 public class NSGAIIDTLZ3WithArchiveExample {
-  public static void main(String[] args) {
 
+  /**
+   * Runs the example.
+   *
+   * @param args not used; the configuration is the built-in {@code parameters} string.
+   */
+  public static void main(String[] args) throws IOException {
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
     String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
 
     String[] parameters = """
@@ -22,7 +46,7 @@ public class NSGAIIDTLZ3WithArchiveExample {
         --populationSizeWithArchive 131
         --archiveType unboundedArchive
         --createInitialSolutions latinHypercubeSampling
-        --offspringPopulationSize 2
+        --offspringPopulationSize 5
         --variation crossoverAndMutationVariation
         --crossover SBX
         --crossoverProbability 0.976418940698032
@@ -49,22 +73,17 @@ public class NSGAIIDTLZ3WithArchiveExample {
         --selectionTournamentSize 6
         """.split("\\s+");
 
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml" ;
-
-    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-    var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 30000, parameterSpace);
+    var parameterSpace =
+        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 40000, parameterSpace);
     baseNSGAII.parse(parameters);
 
-    System.out.println(parameterSpace) ;
+    System.out.println(parameterSpace);
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseNSGAII.build();
 
     EvaluationObserver evaluationObserver = new EvaluationObserver(100);
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, 1000, referenceFrontFileName, "F1", "F2");
-
     nsgaII.observable().register(evaluationObserver);
-    nsgaII.observable().register(runTimeChartObserver);
 
     nsgaII.run();
 
@@ -75,6 +94,8 @@ public class NSGAIIDTLZ3WithArchiveExample {
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
 
-    System.exit(0);
+    QualityIndicatorUtils.printQualityIndicators(
+        SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
+        VectorUtils.readVectors(referenceFrontFileName, ","));
   }
 }

@@ -13,102 +13,79 @@ import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 
 /**
- * Example: Running NSGA-II on ZDT4 Problem
- * 
- * This example demonstrates how to configure and execute the NSGA-II algorithm to solve the ZDT4
- * multi-objective optimization problem using the Evolver framework.
- * 
- * Steps to run this example:
- * 1. The algorithm will automatically load parameters from NSGAIIDoubleFull.yaml
- * 2. The reference front is loaded from resources/referenceFronts/ZDT4.csv
- * 3. The algorithm will run for a maximum of 25,000 evaluations
- * 4. Results are saved to VAR.csv (variables) and FUN.csv (objectives)
- * 5. A real-time chart shows the evolution of the Pareto front (if enabled)
+ * Example: running the configurable NSGA-II on ZDT4 with an external archive.
+ *
+ * <p>This {@code features} example illustrates the external-archive capability: NSGA-II returns a
+ * crowding-distance external archive as the algorithm result
+ * ({@code --algorithmResult externalArchive --archiveType crowdingDistanceArchive}) instead of the
+ * final population. The rest of the configuration is standard — scatter-search initialization, SBX
+ * crossover (probability 0.9, distribution index 20), polynomial mutation (probability 1/n,
+ * distribution index 20), binary tournament selection, population 100, 25000 evaluations — so the
+ * external archive is the distinguishing feature.
+ *
+ * <p>The parameter space is loaded from {@code NSGAIIDouble.yaml}. Results are written to
+ * {@code VAR.csv}/{@code FUN.csv}, and the quality indicators against the ZDT4 reference front
+ * ({@code resources/referenceFronts/ZDT4.csv}) are printed at the end of the run.
  */
-
 public class NSGAIIZDT4WithArchiveExample {
-  
+
   /**
-   * Main execution method for the NSGA-II ZDT4 example.
-   * 
-   * The algorithm is configured with the following key parameters:
-   * - Population size: 100
-   * - Maximum evaluations: 25,000
-   * - Crossover: SBX with probability 0.9
-   * - Mutation: Polynomial with distribution index 20.0
-   * - Selection: Binary tournament
-   * 
-   * @param args Command line arguments. Not used in the example, but it is possible to run the program using as arguments the same parameter string 
-   * assigned to the parameters variable. In that case, just assign args to the
-   * parameters variable.
+   * Runs the example.
+   *
+   * @param args an optional configuration string; when provided, it overrides the built-in
+   *     parameters (pass the same {@code --param value} tokens used in the {@code parameters}
+   *     variable). When empty, the built-in external-archive configuration is used.
    */
   public static void main(String[] args) throws IOException {
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
 
-    String[] parameters ;
+    String[] parameters;
     if (args.length > 0) parameters = args;
     else
       parameters = """
           --algorithmResult externalArchive
-          --populationSizeWithArchive 89
-          --archiveType unboundedArchive
+          --populationSizeWithArchive 100
+          --archiveType crowdingDistanceArchive
           --createInitialSolutions scatterSearch
-          --offspringPopulationSize 20
+          --offspringPopulationSize 100
           --variation crossoverAndMutationVariation
           --crossover SBX
-          --crossoverProbability 0.6885278888703463
+          --crossoverProbability 0.9
           --crossoverRepairStrategy bounds
-          --sbxDistributionIndex 32.07999211591175
-          --blxAlphaCrossoverAlpha 0.640303817347435
-          --mutation linkedPolynomial
-          --mutationProbabilityFactor 0.6952851214888922
+          --sbxDistributionIndex 20.0
+          --mutation polynomial
+          --mutationProbabilityFactor 1.0
           --mutationRepairStrategy bounds
-          --uniformMutationPerturbation 0.14262698171788724
-          --polynomialMutationDistributionIndex 18.40410700737766
-          --linkedPolynomialMutationDistributionIndex 17.696253388022207
-          --nonUniformMutationPerturbation 0.9843662953835077
+          --polynomialMutationDistributionIndex 20.0
           --selection tournament
-          --selectionTournamentSize 8
+          --selectionTournamentSize 2
           """.split("\\s+");
 
-    // 2. Initialize algorithm parameters
     int populationSize = 100;
     int maximumNumberOfEvaluations = 25000;
-    
-    // 3. Create and configure NSGA-II instance
+
     var baseNSGAII = new DoubleNSGAII(
         new ZDT4(),
         populationSize,
         maximumNumberOfEvaluations,
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory())
     );
-    
-    // 4. Parse parameters and build the base-level NSGA-II algorithm
+
     baseNSGAII.parse(parameters);
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = baseNSGAII.build();
 
-    // 5. Optional: Register observers
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, 1000, referenceFrontFileName, "F1", "F2");
-
-    nsgaII.observable().register(runTimeChartObserver);
-
-    // 6. Run the algorithm
     nsgaII.run();
 
     JMetalLogger.logger.info("Total computing time: " + nsgaII.totalComputingTime());
 
-    // 7. Save results to output files
     new SolutionListOutput(nsgaII.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
 
-    // 8. Print quality indicators
     QualityIndicatorUtils.printQualityIndicators(
             SolutionListUtils.getMatrixWithObjectiveValues(nsgaII.result()),
             VectorUtils.readVectors(referenceFrontFileName, ","));
