@@ -113,11 +113,16 @@ def render_text(data: dict, title: str, max_depth: int, output: Path | None) -> 
     top = list(data.items())
     all_lines: list[str] = [title, ""]
 
+    param_lines: list[str] = []
     for i, (name, spec) in enumerate(top):
         is_last = i == len(top) - 1
         conn = "└── " if is_last else "├── "
         cont = "    " if is_last else "│   "
-        all_lines.extend(_tree_lines(name, spec, 0, max_depth, False, conn, cont))
+        param_lines.extend(_tree_lines(name, spec, 0, max_depth, False, conn, cont))
+
+    all_lines.extend(param_lines)
+    n = len(param_lines)
+    all_lines += ["", f"{'─' * 40}", f"Total configurable parameters: {n}"]
 
     text = "\n".join(all_lines)
     if output:
