@@ -20,18 +20,26 @@ values on a training set as objectives to minimize.
 
 ## Supported algorithms
 
-| Algorithm | Encodings |
-|---|---|
-| NSGA-II | Double, Binary, Permutation |
-| NSGA-III | Double |
-| MOEA/D | Double |
-| SMS-EMOA | Double |
-| MOPSO | Double |
-| RDEMOEA | Double, Permutation |
-| RVEA | Double |
-| AGE-MOEA | Double |
-| SSMOEA | Double |
-| PAES | Double |
+Configurable parameters per algorithm and encoding, shown as **total (top-level)**:
+
+| Algorithm | Double | Binary | Permutation |
+|---|---:|---:|---:|
+| NSGA-II | 32 (5) | 12 (5) | 12 (5) |
+| NSGA-III | 32 (5) | — | — |
+| MOEA/D | 40 (8) | 17 (8) | 17 (8) |
+| SMS-EMOA | 28 (4) | 9 (4) | 9 (4) |
+| MOPSO | 41 (14) | — | — |
+| RDEMOEA | 40 (8) | — | 20 (8) |
+| RVEA | 28 (4) | — | — |
+| AGE-MOEA | 33 (6) | — | — |
+| SSMOEA | 43 (6) | — | — |
+| PAES | 14 (4) | 6 (4) | 6 (4) |
+
+The figure is the number of configurable parameters (flattened, including conditional
+sub-parameters — i.e. the search-space dimensionality); the value in parentheses is the number of
+top-level parameters. `—` means the encoding is not available. Counts are derived from the YAML
+parameter spaces in `src/main/resources/parameterSpaces/` (snapshot as of 2026-06-22; regenerate if
+the spaces change).
 
 ## Requirements
 
