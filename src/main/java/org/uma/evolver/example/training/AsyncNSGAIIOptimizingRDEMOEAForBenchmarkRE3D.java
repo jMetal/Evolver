@@ -2,7 +2,6 @@ package org.uma.evolver.example.training;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
@@ -24,8 +23,8 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the WFG
- * problems as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleRDEMOEA} using the RE
+ * problems (3 objectives) as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */

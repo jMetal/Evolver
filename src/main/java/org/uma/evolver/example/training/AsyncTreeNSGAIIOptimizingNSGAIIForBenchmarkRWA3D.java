@@ -28,9 +28,9 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Asynchronous tree-encoded NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the
- * RE3D benchmark problems as training set.
+ * RWA problems (3 objectives) as training set.
  *
- * <p>This is the tree-encoding equivalent of {@link AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D}.
+ * <p>This is the tree-encoding equivalent of {@link AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D}.
  * The meta-optimizer operates on derivation tree solutions using typed subtree crossover and tree
  * mutation instead of the flat [0,1]^n double encoding.
  *

@@ -16,7 +16,6 @@ import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.zcat.DefaultZCATSettings;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -25,9 +24,8 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD}
- * using
- * problem {@link ZDT4} as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleMOEAD} using
+ * problem {@link ZCAT1} as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */

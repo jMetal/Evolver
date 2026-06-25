@@ -25,9 +25,8 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO}
- * using
- * problem DTLZ problems as training set.
+ * Class for running NSGA-II as meta-optimizer to configure {@link BaseMOPSO} using the DTLZ
+ * problems (3 objectives) as training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */

@@ -37,7 +37,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
  * Class for running NSGA-II with tree encoding as meta-optimizer to configure {@link DoubleNSGAII}
- * using the ZDT problems as training set.
+ * using the RE problems (3 objectives) as training set.
  *
  * <p>This example uses the derivation tree encoding instead of the flat [0,1]^n encoding. The
  * meta-optimizer operates directly on tree-structured solutions using typed subtree crossover
