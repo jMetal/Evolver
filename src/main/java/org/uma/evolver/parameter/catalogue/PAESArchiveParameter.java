@@ -16,8 +16,8 @@ import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.WFGHype
  * A categorical parameter representing the PAES density archive type.
  *
  * <p>Returns a {@link BoundedArchive} (not just {@link org.uma.jmetal.util.archive.Archive}),
- * which is required by {@link org.uma.evolver.algorithm.paes.PAESReplacement} to access the
- * archive's density comparator for non-dominated tiebreaking.
+ * which is required by {@link org.uma.jmetal.component.catalogue.ea.replacement.impl.PAESReplacement}
+ * to access the archive's density comparator for non-dominated tiebreaking.
  *
  * <p>The {@code unboundedArchive} option uses a very large {@link CrowdingDistanceArchive} and is
  * intended for problems with three or more objectives where a bounded archive is impractical.
