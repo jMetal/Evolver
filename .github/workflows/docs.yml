@@ -5,12 +5,10 @@ on:
     branches: [main, develop]
     paths:
       - 'docs/**'
-      - 'README.rst'
   pull_request:
     branches: [main, develop]
     paths:
       - 'docs/**'
-      - 'README.rst'
   workflow_dispatch:
 
 jobs:
