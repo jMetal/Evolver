@@ -18,7 +18,7 @@ Meta-level Optimizer (e.g., MetaNSGAII)
 The meta-optimizer treats parameter configurations as solutions and their quality indicator
 values on a training set as objectives to minimize.
 
-## Supported algorithms
+## Supported base-level algorithms
 
 Configurable parameters per algorithm and encoding, shown as **total (top-level)**:
 
