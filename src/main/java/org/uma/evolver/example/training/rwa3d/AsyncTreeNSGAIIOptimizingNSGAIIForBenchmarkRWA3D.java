@@ -1,4 +1,4 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.rwa3d;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +14,7 @@ import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
+import org.uma.evolver.trainingset.RWA3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.MetaOptimizerConfig;
@@ -27,15 +28,15 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Asynchronous tree-encoded NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the
- * RE3D benchmark problems as training set.
+ * RWA problems (3 objectives) as training set.
  *
- * <p>This is the tree-encoding equivalent of {@link AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D}.
+ * <p>This is the tree-encoding equivalent of {@link AsyncNSGAIIOptimizingNSGAIIForBenchmarkRWA3D}.
  * The meta-optimizer operates on derivation tree solutions using typed subtree crossover and tree
  * mutation instead of the flat [0,1]^n double encoding.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
+public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRWA3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 3000;
@@ -58,7 +59,7 @@ public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
   public static void main(String[] args) throws IOException {
     if (args.length != 4) {
       System.err.println(
-          "Usage: AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D "
+          "Usage: AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRWA3D "
               + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
       System.exit(1);
     }
@@ -72,7 +73,7 @@ public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
     // Step 1: Select the target problem
     TrainingSet<DoubleSolution> trainingSetDescriptor =
-        new RE3DTrainingSet()
+        new RWA3DTrainingSet()
             .setReferenceFrontDirectory(referenceFrontDirectory)
             .setEvaluationsToOptimize(baseMaxEvaluations);
 
@@ -137,7 +138,7 @@ public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
         metaProblem, problemName, indicators, resultsDirectory, config, WRITE_FREQUENCY);
 
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    /*
+    /* 
     var frontChartObserver =
         new FrontPlotObserver<DerivationTreeSolution>(
             "AsyncTreeNSGA-II, " + trainingSetDescriptor.name(),

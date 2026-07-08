@@ -1,4 +1,4 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.re3d;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,8 +10,12 @@ import org.uma.evolver.cli.training.TrainingRequest;
 import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Runs SPEA2 as meta-optimizer to configure NSGA-II using problem DTLZ3 (three-objective) as
- * training set, through {@link TrainingRunner}.
+ * Runs NSGA-II with tree (derivation tree) encoding as meta-optimizer to configure NSGA-II using
+ * the RE31-RE37 (RE3D) problems as training set, through {@link TrainingRunner}.
+ *
+ * <p>This example uses the derivation tree encoding instead of the flat [0,1]^n encoding. The
+ * meta-optimizer operates directly on tree-structured solutions using typed subtree crossover and
+ * point/subtree mutation.
  *
  * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
  * kept as Java text blocks right here instead of separate files under {@code
@@ -25,18 +29,18 @@ import org.uma.evolver.cli.training.TrainingRunner;
  *
  * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
  * as standalone files under {@code src/main/resources/baseLevelConfigurations/
- * DTLZ3NSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
- * MetaSPEA2FlatConfiguration.yaml} — this class keeps its own inline copy so the whole example
- * reads top-to-bottom from a single file, and so the recipe can be tweaked here without touching
- * the packaged resources. To run this exact experiment from a terminal instead, without building
- * or touching Java at all, use the ready-made {@code request.yaml} that references those two
- * files ({@code mvn clean package} produces {@code
+ * Re3dNSGAIITreeBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
+ * MetaNSGAIITreeConfiguration.yaml} — this class keeps its own inline copy so the whole
+ * example reads top-to-bottom from a single file, and so the recipe can be tweaked here without
+ * touching the packaged resources. To run this exact experiment from a terminal instead, without
+ * building or touching Java at all, use the ready-made {@code request.yaml} that references those
+ * two files ({@code mvn clean package} produces {@code
  * target/Evolver-<version>-jar-with-dependencies.jar}):
  *
  * <pre>{@code
  * java -cp target/Evolver-<version>-jar-with-dependencies.jar \
  *     org.uma.evolver.cli.training.TrainingRunnerMain \
- *     src/main/resources/cli/training/spea2-dtlz3-request.yaml
+ *     src/main/resources/cli/training/tree-nsgaii-re3d-request.yaml
  * }</pre>
  *
  * <p>That same {@code request.yaml} pattern works for any other combination: {@code baseLevel}/
@@ -45,14 +49,9 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} for the exact
  * lookup order), or absolute paths to standalone files of your own.
  *
- * <p>SPEA2 hardcodes its own operators (SBX crossover, polynomial mutation, strength ranking,
- * KNN density estimator, tournament selection) — unlike the NSGA-II-based examples, {@code
- * META_SEARCH_YAML} below has no crossover/mutation flags to set, only population size,
- * evaluations and cores.
- *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
+public class TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
   private static final String BASE_LEVEL_YAML =
       """
@@ -60,26 +59,37 @@ public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
       populationSize: 100
       numberOfIndependentRuns: 1
       yamlParameterSpaceFile: NSGAIIDouble.yaml
-      trainingProblemNames: [DTLZ3]
-      trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ3.3D.csv]
-      trainingEvaluations: [15000]
+      trainingProblemNames: [RE31, RE32, RE33, RE34, RE35, RE36, RE37]
+      trainingReferenceFrontFileNames:
+        - resources/referenceFronts/RE31.csv
+        - resources/referenceFronts/RE32.csv
+        - resources/referenceFronts/RE33.csv
+        - resources/referenceFronts/RE34.csv
+        - resources/referenceFronts/RE35.csv
+        - resources/referenceFronts/RE36.csv
+        - resources/referenceFronts/RE37.csv
+      trainingEvaluations: [10000, 10000, 10000, 10000, 10000, 10000, 10000]
       indicatorNames: [Epsilon, NormalizedHypervolume]
       """;
 
   private static final String META_SEARCH_YAML =
       """
-      algorithm: SPEA2
-      encoding: flat
+      algorithm: NSGA-II
+      encoding: tree
       metaMaxEvaluations: 2000
-      metaPopulationSize: 100
+      metaPopulationSize: 50
+      metaOffspringSize: 50
       numberOfCores: 8
+      crossoverProbability: 0.9
+      mutationProbability: 1.0
+      mutationDistributionIndex: 20.0
       """;
 
-  private static final String OUTPUT_DIRECTORY = "results/spea2/nsgaii/DTLZ3";
-  private static final int WRITE_FREQUENCY = 1;
-  private static final int STATUS_FREQUENCY = 100;
+  private static final String OUTPUT_DIRECTORY = "results/tree-nsgaii/RE3D";
+  private static final int WRITE_FREQUENCY = 50;
+  private static final int STATUS_FREQUENCY = 50;
   // Live Pareto front plot, as the original example had.
-  private static final int FRONT_PLOT_FREQUENCY = 1;
+  private static final int FRONT_PLOT_FREQUENCY = 50;
 
   public static void main(String[] args) throws IOException {
     BaseLevelConfig baseLevel = BaseLevelConfigurationReader.loadFromYaml(BASE_LEVEL_YAML);

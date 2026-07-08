@@ -1,4 +1,4 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.re3d;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,8 +10,8 @@ import org.uma.evolver.cli.training.TrainingRequest;
 import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Runs an asynchronous multi-threaded NSGA-II as meta-optimizer to configure NSGA-II using the
- * DTLZ1-DTLZ7 (three-objective) problems as training set, through {@link TrainingRunner}.
+ * Runs SMPSO as meta-optimizer to configure NSGA-II using problem RE31 as training set, through
+ * {@link TrainingRunner}.
  *
  * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
  * kept as Java text blocks right here instead of separate files under {@code
@@ -25,18 +25,18 @@ import org.uma.evolver.cli.training.TrainingRunner;
  *
  * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
  * as standalone files under {@code src/main/resources/baseLevelConfigurations/
- * DTLZ3DNSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
- * MetaAsyncNSGAIIFlatConfiguration.yaml} — this class keeps its own inline copy so the whole
- * example reads top-to-bottom from a single file, and so the recipe can be tweaked here without
- * touching the packaged resources. To run this exact experiment from a terminal instead, without
- * building or touching Java at all, use the ready-made {@code request.yaml} that references those
- * two files ({@code mvn clean package} produces {@code
+ * RE31NSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
+ * MetaSMPSOFlatConfiguration.yaml} — this class keeps its own inline copy so the whole example
+ * reads top-to-bottom from a single file, and so the recipe can be tweaked here without touching
+ * the packaged resources. To run this exact experiment from a terminal instead, without building
+ * or touching Java at all, use the ready-made {@code request.yaml} that references those two
+ * files ({@code mvn clean package} produces {@code
  * target/Evolver-<version>-jar-with-dependencies.jar}):
  *
  * <pre>{@code
  * java -cp target/Evolver-<version>-jar-with-dependencies.jar \
  *     org.uma.evolver.cli.training.TrainingRunnerMain \
- *     src/main/resources/cli/training/async-nsgaii-dtlz3d-request.yaml
+ *     src/main/resources/cli/training/smpso-re31-request.yaml
  * }</pre>
  *
  * <p>That same {@code request.yaml} pattern works for any other combination: {@code baseLevel}/
@@ -45,9 +45,13 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} for the exact
  * lookup order), or absolute paths to standalone files of your own.
  *
+ * <p>SMPSO exposes no operator catalogue of its own (swarm size, evaluations and cores are its
+ * only knobs, see {@code MetaSMPSOFlatConfiguration.yaml}) — unlike the NSGA-II-based examples,
+ * {@code META_SEARCH_YAML} below has no crossover/mutation flags to set.
+ *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
+public class SMPSOOptimizingNSGAIIForProblemRE31 {
 
   private static final String BASE_LEVEL_YAML =
       """
@@ -55,40 +59,26 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
       populationSize: 100
       numberOfIndependentRuns: 1
       yamlParameterSpaceFile: NSGAIIDouble.yaml
-      trainingProblemNames: [DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7]
-      trainingReferenceFrontFileNames:
-        - resources/referenceFronts/DTLZ1.3D.csv
-        - resources/referenceFronts/DTLZ2.3D.csv
-        - resources/referenceFronts/DTLZ3.3D.csv
-        - resources/referenceFronts/DTLZ4.3D.csv
-        - resources/referenceFronts/DTLZ5.3D.csv
-        - resources/referenceFronts/DTLZ6.3D.csv
-        - resources/referenceFronts/DTLZ7.3D.csv
-      trainingEvaluations: [16000, 16000, 16000, 16000, 16000, 16000, 16000]
-      indicatorNames: [Epsilon, HypervolumeMinus]
+      trainingProblemNames: [RE31]
+      trainingReferenceFrontFileNames: [resources/referenceFronts/RE31.csv]
+      trainingEvaluations: [10000]
+      indicatorNames: [Epsilon, NormalizedHypervolume]
       """;
 
   private static final String META_SEARCH_YAML =
       """
-      algorithm: AsyncNSGA-II
+      algorithm: SMPSO
       encoding: flat
       metaMaxEvaluations: 2000
       metaPopulationSize: 50
       numberOfCores: 8
-      crossover: SBX
-      mutation: polynomial
-      crossoverProbability: 0.9
-      crossoverRepairStrategy: bounds
-      sbxDistributionIndex: 20.0
-      mutationProbabilityFactor: 1.0
-      mutationRepairStrategy: bounds
-      polynomialMutationDistributionIndex: 20.0
       """;
 
-  private static final String OUTPUT_DIRECTORY = "results/nsgaii/DTLZ3D";
-  private static final int WRITE_FREQUENCY = 100;
-  private static final int STATUS_FREQUENCY = 500;
-  private static final int FRONT_PLOT_FREQUENCY = 100;
+  private static final String OUTPUT_DIRECTORY = "results/smpso/nsgaii/RE31";
+  private static final int WRITE_FREQUENCY = 50;
+  private static final int STATUS_FREQUENCY = 50;
+  // Live Pareto front plot, as the original example had.
+  private static final int FRONT_PLOT_FREQUENCY = 50;
 
   public static void main(String[] args) throws IOException {
     BaseLevelConfig baseLevel = BaseLevelConfigurationReader.loadFromYaml(BASE_LEVEL_YAML);
@@ -105,7 +95,6 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
     new TrainingRunner().run(request, Path.of(OUTPUT_DIRECTORY, "status.yaml"));
 
-    // Required for AsyncNSGA-II — see TrainingRunnerMain for why.
     System.exit(0);
   }
 }

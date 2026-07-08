@@ -1,36 +1,41 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.re3d;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.meta.builder.MetaAsyncGeneticAlgorithmBuilder;
-import org.uma.evolver.meta.problem.MetaOptimizationProblem;
+import org.uma.evolver.encoding.operator.SubtreeCrossover;
+import org.uma.evolver.encoding.operator.TreeMutation;
+import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.encoding.util.TreeOutputResults;
+import org.uma.evolver.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
-import org.uma.evolver.util.ConsolidatedOutputResults;
+import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.evolver.util.MetaOptimizerConfig;
-import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedGeneticAlgorithm;
+import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
+import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FitnessPlotObserver;
+import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running an asynchronous Genetic Algorithm as meta-optimizer to configure
- * {@link DoubleNSGAII} using the RE problems as training set.
+ * Asynchronous tree-encoded NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the
+ * RE3D benchmark problems as training set.
  *
- * <p>This example uses the Epsilon (EP) quality indicator as the single objective to optimize.</p>
+ * <p>This is the tree-encoding equivalent of {@link AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D}.
+ * The meta-optimizer operates on derivation tree solutions using typed subtree crossover and tree
+ * mutation instead of the flat [0,1]^n double encoding.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
+public class AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 3000;
@@ -40,14 +45,20 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
   private static final int BASE_POPULATION_SIZE = 100;
   private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
+  // Tree operator parameters
+  private static final double CROSSOVER_PROBABILITY = 0.9;
+  private static final double MUTATION_PROBABILITY = 1.0;
+  private static final double MUTATION_DISTRIBUTION_INDEX = 20.0;
+
   // Observer configuration
   private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
   private static final int WRITE_FREQUENCY = 100;
+  private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
     if (args.length != 4) {
       System.err.println(
-          "Usage: AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D "
+          "Usage: AsyncTreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D "
               + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
       System.exit(1);
     }
@@ -69,36 +80,44 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    List<QualityIndicator> indicators = List.of(new Epsilon());
+    var indicators = List.of(new Epsilon(), new HypervolumeMinus());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
-    int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
         new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
 
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
-        new MetaOptimizationProblem<>(
+    // Step 3: Create the tree-based meta-optimization problem
+    var treeSolutionGenerator = new TreeSolutionGenerator(parameterSpace);
+
+    TreeMetaOptimizationProblem<DoubleSolution> metaProblem =
+        new TreeMetaOptimizationProblem<>(
             baseAlgorithm,
             trainingSet,
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            numberOfIndependentRuns);
+            NUMBER_OF_INDEPENDENT_RUNS,
+            treeSolutionGenerator);
 
-    // Step 3: Set up and configure the meta-optimizer (Async Genetic Algorithm)
-    AsynchronousMultiThreadedGeneticAlgorithm<DoubleSolution> geneticAlgorithm =
-        new MetaAsyncGeneticAlgorithmBuilder(metaOptimizationProblem)
-            .setNumberOfCores(numberOfCores)
-            .setPopulationSize(META_POPULATION_SIZE)
-            .setMaxEvaluations(META_MAX_EVALUATIONS)
-            .setObjectiveIndex(0)
-            .build();
+    // Step 4: Set up the asynchronous meta-optimizer with tree operators
+    var crossover = new SubtreeCrossover(CROSSOVER_PROBABILITY);
+    var mutation = new TreeMutation(
+        MUTATION_PROBABILITY, MUTATION_DISTRIBUTION_INDEX, treeSolutionGenerator);
 
-    // Step 4: Create observers for the meta-optimizer
-    String algorithmName = "AsyncGA";
+    AsynchronousMultiThreadedNSGAII<DerivationTreeSolution> nsgaii =
+        new AsynchronousMultiThreadedNSGAII<>(
+            numberOfCores,
+            metaProblem,
+            META_POPULATION_SIZE,
+            crossover,
+            mutation,
+            new TerminationByEvaluations(META_MAX_EVALUATIONS));
+
+    // Step 5: Create observers for the meta-optimizer
+    String algorithmName = "AsyncTreeNSGA-II";
     String problemName = trainingSetDescriptor.name();
 
     MetaOptimizerConfig config =
@@ -114,29 +133,28 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
             .yamlParameterSpaceFile(yamlParameterSpaceFile)
             .build();
 
-    var outputResults =
-        new ConsolidatedOutputResults(
-            metaOptimizationProblem, problemName, indicators, resultsDirectory, config);
+    var outputResults = new TreeOutputResults(
+        metaProblem, problemName, indicators, resultsDirectory, config, WRITE_FREQUENCY);
 
-    var writeExecutionDataToFilesObserver =
-        new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
-
-    String indicatorName = indicators.get(0).name();
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    var fitnessObserver =
-        new FitnessPlotObserver<DoubleSolution>(
-            indicatorName, "Evaluations", indicatorName, algorithmName, EVALUATION_OBSERVER_FREQUENCY);
+    /*
+    var frontChartObserver =
+        new FrontPlotObserver<DerivationTreeSolution>(
+            "AsyncTreeNSGA-II, " + trainingSetDescriptor.name(),
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            trainingSetDescriptor.name(),
+            PLOT_UPDATE_FREQUENCY);
+    */
+    nsgaii.observable().register(evaluationObserver);
+    //nsgaii.observable().register(frontChartObserver);
+    nsgaii.observable().register(outputResults);
 
-    geneticAlgorithm.observable().register(evaluationObserver);
-    geneticAlgorithm.observable().register(fitnessObserver);
-    geneticAlgorithm.observable().register(writeExecutionDataToFilesObserver);
+    // Step 6: Run the meta-optimizer
+    nsgaii.run();
 
-    // Step 5: Run the meta-optimizer
-    geneticAlgorithm.run();
-
-    // Step 6: Write results
-    outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-    outputResults.writeResultsToFiles(geneticAlgorithm.result());
+    // Step 7: Write final results
+    outputResults.writeFinalResults(nsgaii.result(), META_MAX_EVALUATIONS);
 
     System.exit(0);
   }

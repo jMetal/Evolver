@@ -1,63 +1,80 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.re3d;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.meta.builder.MetaRandomSearchBuilder;
-import org.uma.evolver.meta.builder.RandomSearch;
+import org.uma.evolver.meta.builder.MetaAsyncGeneticAlgorithmBuilder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
+import org.uma.evolver.trainingset.RE3DTrainingSet;
 import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
+import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedGeneticAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import org.uma.jmetal.util.observer.impl.FitnessPlotObserver;
 
 /**
- * Class for running Random Search as meta-optimizer to configure {@link DoubleNSGAII} using the
- * DTLZ problems as training set.
+ * Class for running an asynchronous Genetic Algorithm as meta-optimizer to configure
+ * {@link DoubleNSGAII} using the RE problems as training set.
  *
- * @author Antonio J. Nebro
+ * <p>This example uses the Epsilon (EP) quality indicator as the single objective to optimize.</p>
+ *
+ * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class RandomSearchOptimizingNSGAIIForBenchmarkDTLZ {
+public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D {
 
   // Meta-optimizer configuration
-  private static final int META_MAX_EVALUATIONS = 2000;
-  private static final int NUMBER_OF_CORES = 8; // Parallel random search cores
+  private static final int META_MAX_EVALUATIONS = 3000;
+  private static final int META_POPULATION_SIZE = 50;
 
   // Base-level algorithm configuration
   private static final int BASE_POPULATION_SIZE = 100;
   private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
   // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 100; // Notify every 100 meta-evals
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
   private static final int WRITE_FREQUENCY = 100;
-  private static final int PLOT_UPDATE_FREQUENCY = 100;
 
   public static void main(String[] args) throws IOException {
+    if (args.length != 4) {
+      System.err.println(
+          "Usage: AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkRE3D "
+              + "<referenceFrontDirectory> <maximumNumberOfEvaluations> <numberOfCores> <resultsDirectory>");
+      System.exit(1);
+    }
+
+    String referenceFrontDirectory = args[0];
+    int baseMaxEvaluations = Integer.parseInt(args[1]);
+    int numberOfCores = Integer.parseInt(args[2]);
+    String resultsDirectory = args[3];
+
     String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> trainingSetDescriptor = new DTLZ3DTrainingSet();
+    TrainingSet<DoubleSolution> trainingSetDescriptor =
+        new RE3DTrainingSet()
+            .setReferenceFrontDirectory(referenceFrontDirectory)
+            .setEvaluationsToOptimize(baseMaxEvaluations);
 
     List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
     List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
 
     // Step 2: Set the parameters for the algorithm to be configured
-    var indicators = List.of(new Epsilon(), new InvertedGenerationalDistancePlus());
+    List<QualityIndicator> indicators = List.of(new Epsilon());
     var parameterSpace =
         new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
     var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
+    int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
     EvaluationBudgetStrategy evaluationBudgetStrategy =
         new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
@@ -69,25 +86,27 @@ public class RandomSearchOptimizingNSGAIIForBenchmarkDTLZ {
             referenceFrontFileNames,
             indicators,
             evaluationBudgetStrategy,
-            NUMBER_OF_INDEPENDENT_RUNS);
+            numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (Random Search)
-    RandomSearch<DoubleSolution> randomSearch =
-        new MetaRandomSearchBuilder<>(metaOptimizationProblem)
-            .setNumberOfCores(NUMBER_OF_CORES)
+    // Step 3: Set up and configure the meta-optimizer (Async Genetic Algorithm)
+    AsynchronousMultiThreadedGeneticAlgorithm<DoubleSolution> geneticAlgorithm =
+        new MetaAsyncGeneticAlgorithmBuilder(metaOptimizationProblem)
+            .setNumberOfCores(numberOfCores)
+            .setPopulationSize(META_POPULATION_SIZE)
             .setMaxEvaluations(META_MAX_EVALUATIONS)
+            .setObjectiveIndex(0)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    String algorithmName = "RandomSearch";
+    String algorithmName = "AsyncGA";
     String problemName = trainingSetDescriptor.name();
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
             .metaOptimizerName(algorithmName)
             .metaMaxEvaluations(META_MAX_EVALUATIONS)
-            .metaPopulationSize(1) // RS doesn't have a population size per se
-            .numberOfCores(NUMBER_OF_CORES)
+            .metaPopulationSize(META_POPULATION_SIZE)
+            .numberOfCores(numberOfCores)
             .baseLevelAlgorithmName("NSGA-II")
             .baseLevelPopulationSize(BASE_POPULATION_SIZE)
             .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
@@ -97,35 +116,27 @@ public class RandomSearchOptimizingNSGAIIForBenchmarkDTLZ {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem,
-            problemName,
-            indicators,
-            "results/randomsearch/" + problemName,
-            config);
+            metaOptimizationProblem, problemName, indicators, resultsDirectory, config);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
+    String indicatorName = indicators.get(0).name();
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    var frontChartObserver =
-        new FrontPlotObserver<DoubleSolution>(
-            "Random Search, " + trainingSetDescriptor.name(),
-            indicators.get(0).name(),
-            indicators.get(1).name(),
-            trainingSetDescriptor.name(),
-            PLOT_UPDATE_FREQUENCY);
+    var fitnessObserver =
+        new FitnessPlotObserver<DoubleSolution>(
+            indicatorName, "Evaluations", indicatorName, algorithmName, EVALUATION_OBSERVER_FREQUENCY);
 
-    // Register observers!
-    randomSearch.observable().register(evaluationObserver);
-    randomSearch.observable().register(frontChartObserver);
-    randomSearch.observable().register(writeExecutionDataToFilesObserver);
+    geneticAlgorithm.observable().register(evaluationObserver);
+    geneticAlgorithm.observable().register(fitnessObserver);
+    geneticAlgorithm.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
-    randomSearch.run();
+    geneticAlgorithm.run();
 
     // Step 6: Write results
     outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-    outputResults.writeResultsToFiles(randomSearch.result());
+    outputResults.writeResultsToFiles(geneticAlgorithm.result());
 
     System.exit(0);
   }

@@ -1,4 +1,4 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.dtlz;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,36 +1,35 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.dtlz;
 
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.meta.builder.MetaAsyncGeneticAlgorithmBuilder;
+import org.uma.evolver.meta.builder.MetaNSGAIIBuilder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
-import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedGeneticAlgorithm;
+import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FitnessPlotObserver;
+import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
- * Class for running an asynchronous Genetic Algorithm as meta-optimizer to configure
- * {@link DoubleNSGAII} using the DTLZ problems as training set.
- *
- * <p>This example uses the Epsilon (EP) quality indicator as the single objective to optimize.</p>
+ * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII} using the DTLZ
+ * problems (3 objectives) as the training set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkDTLZ {
+public class NSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
   // Meta-optimizer configuration
   private static final int META_MAX_EVALUATIONS = 2000;
@@ -42,28 +41,28 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkDTLZ {
   private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
 
   // Observer configuration
-  private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
-  private static final int WRITE_FREQUENCY = 100;
+  private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int PLOT_UPDATE_FREQUENCY = 1;
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     // Step 1: Select the target problem
-    TrainingSet<DoubleSolution> trainingSetDescriptor = new DTLZ3DTrainingSet();
+    var trainingSetDescriptor = new DTLZ3DTrainingSet();
 
-    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList();
-    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts();
+    List<Problem<DoubleSolution>> trainingSet = trainingSetDescriptor.problemList() ;
+    List<String> referenceFrontFileNames = trainingSetDescriptor.referenceFronts() ;
 
     // Step 2: Set the parameters for the algorithm to be configured
-    List<QualityIndicator> indicators = List.of(new Epsilon());
-    var parameterSpace =
-        new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+    var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+    var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
+
     var baseAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
-    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize();
+    var maximumNumberOfEvaluations = trainingSetDescriptor.evaluationsToOptimize() ;
     int numberOfIndependentRuns = NUMBER_OF_INDEPENDENT_RUNS;
 
-    EvaluationBudgetStrategy evaluationBudgetStrategy =
-        new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
+    EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations) ;
 
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -74,17 +73,15 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkDTLZ {
             evaluationBudgetStrategy,
             numberOfIndependentRuns);
 
-    // Step 3: Set up and configure the meta-optimizer (Async Genetic Algorithm)
-    AsynchronousMultiThreadedGeneticAlgorithm<DoubleSolution> geneticAlgorithm =
-        new MetaAsyncGeneticAlgorithmBuilder(metaOptimizationProblem)
-            .setNumberOfCores(NUMBER_OF_CORES)
-            .setPopulationSize(META_POPULATION_SIZE)
+    // Step 3: Set up and configure the meta-optimizer (NSGA-II) using the specialized double builder
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
+        new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(META_MAX_EVALUATIONS)
-            .setObjectiveIndex(0)
+            .setNumberOfCores(NUMBER_OF_CORES)
             .build();
 
     // Step 4: Create observers for the meta-optimizer
-    String algorithmName = "AsyncGA";
+    String algorithmName = "NSGA-II";
     String problemName = trainingSetDescriptor.name();
 
     MetaOptimizerConfig config =
@@ -105,26 +102,33 @@ public class AsyncGeneticAlgorithmOptimizingNSGAIIForBenchmarkDTLZ {
             metaOptimizationProblem,
             problemName,
             indicators,
-            "results/ga/" + problemName,
+            "results/nsgaii/" + problemName,
             config);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
 
-    String indicatorName = indicators.get(0).name();
     var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-    var fitnessObserver = new FitnessPlotObserver<DoubleSolution>(indicatorName, "Evaluations", indicatorName, algorithmName, EVALUATION_OBSERVER_FREQUENCY);
+    var frontChartObserver =
+        new FrontPlotObserver<DoubleSolution>(
+            "NSGA-II, " + trainingSetDescriptor.name(),
+            indicators.get(0).name(),
+            indicators.get(1).name(),
+            trainingSetDescriptor.name(),
+            PLOT_UPDATE_FREQUENCY);
 
-    geneticAlgorithm.observable().register(evaluationObserver);
-    geneticAlgorithm.observable().register(fitnessObserver);
-    geneticAlgorithm.observable().register(writeExecutionDataToFilesObserver);
+    nsgaii.observable().register(evaluationObserver);
+    nsgaii.observable().register(frontChartObserver);
+    nsgaii.observable().register(writeExecutionDataToFilesObserver);
 
     // Step 5: Run the meta-optimizer
-    geneticAlgorithm.run();
+    nsgaii.run();
 
     // Step 6: Write results
+    JMetalLogger.logger.info(() -> "Total computing time: " + nsgaii.totalComputingTime());
+
     outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-    outputResults.writeResultsToFiles(geneticAlgorithm.result());
+    outputResults.writeResultsToFiles(nsgaii.result());
 
     System.exit(0);
   }
