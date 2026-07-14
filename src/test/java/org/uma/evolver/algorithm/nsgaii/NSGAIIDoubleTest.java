@@ -30,7 +30,7 @@ class NSGAIIDoubleTest {
         @Test
         @DisplayName("The total number of parameters is correct")
         void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-            int numberOfFlattenedParameters = 32;
+            int numberOfFlattenedParameters = 33;
             assertEquals(
                     numberOfFlattenedParameters,
                     nsgaIIDouble.parameterSpace().parameters().size());
@@ -190,6 +190,33 @@ class NSGAIIDoubleTest {
           "bounds",
           parameterSpace.get("mutationRepairStrategy").value(),
           "Mutation repair strategy should be 'bounds'");
+    }
+
+    @Test
+    @DisplayName("The parameters are parsed correctly with the SDX crossover")
+    void shouldParseWorkProperlyWithTheSdxCrossover() {
+      var parameters =
+          ("--algorithmResult population "
+                  + "--createInitialSolutions default "
+                  + "--variation crossoverAndMutationVariation "
+                  + "--offspringPopulationSize 100 "
+                  + "--crossover SDX "
+                  + "--crossoverProbability 0.9 "
+                  + "--crossoverRepairStrategy bounds "
+                  + "--sdxCrossoverF 0.5 "
+                  + "--mutation polynomial "
+                  + "--mutationProbabilityFactor 1.0 "
+                  + "--mutationRepairStrategy bounds "
+                  + "--polynomialMutationDistributionIndex 20.0 "
+                  + "--selection tournament "
+                  + "--selectionTournamentSize 2")
+              .split("\\s+");
+
+      nsgaIIDouble.parse(parameters);
+      var parameterSpace = nsgaIIDouble.parameterSpace();
+
+      assertEquals("SDX", parameterSpace.get("crossover").value(), "Crossover method should be 'SDX'");
+      assertEquals(0.5, parameterSpace.get("sdxCrossoverF").value(), "SDX f should be 0.5");
     }
   }
 }

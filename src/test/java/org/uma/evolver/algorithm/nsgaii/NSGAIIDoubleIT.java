@@ -252,4 +252,55 @@ class NSGAIIDoubleIT {
     double expectedHypervolume = 0.40;
     assertTrue(hv > expectedHypervolume);
   }
+
+  /**
+   * Integration test for NSGAIIDouble solving the ZDT1 problem using the SDX crossover.
+   *
+   * <p>This test configures NSGA-II with a population of 100 and 20,000 evaluations, using SDX
+   * (Synthetic Differences Crossover) instead of SBX, and checks that the resulting population
+   * achieves a minimum hypervolume of 0.62 when compared to the ZDT1 reference front.
+   */
+  @Tag("integration")
+  @Test
+  @DisplayName("NSGAIIDouble should reach a minimum hypervolume on ZDT1 using the SDX crossover")
+  void shouldTheHypervolumeHaveAMinimumValueWhenSolvingProblemZDT1UsingSdxCrossover() {
+    var problem = new ZDT1();
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 20000;
+
+    var nsgaII =
+        new DoubleNSGAII(
+            problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
+
+    var parameters =
+        ("--algorithmResult population "
+                + "--createInitialSolutions default "
+                + "--variation crossoverAndMutationVariation "
+                + "--offspringPopulationSize 100 "
+                + "--crossover SDX "
+                + "--crossoverProbability 0.9 "
+                + "--crossoverRepairStrategy bounds "
+                + "--sdxCrossoverF 0.5 "
+                + "--mutation polynomial "
+                + "--mutationProbabilityFactor 1.0 "
+                + "--mutationRepairStrategy bounds "
+                + "--polynomialMutationDistributionIndex 20.0 "
+                + "--selection tournament "
+                + "--selectionTournamentSize 2")
+            .split("\\s+");
+
+    var algorithm = nsgaII.parse(parameters).build();
+    algorithm.run();
+
+    List<DoubleSolution> population = algorithm.result();
+
+    double[][] referenceFront = new double[][] {{0.0, 1.0}, {1.0, 0.0}};
+
+    QualityIndicator hypervolume = new PISAHypervolume(referenceFront);
+
+    double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
+
+    double expectedHypervolume = 0.62;
+    assertTrue(hv > expectedHypervolume);
+  }
 }
