@@ -43,7 +43,7 @@ Parameter spaces in Evolver are defined in YAML files. See :doc:`concepts/parame
 Solution Encoding and Evaluation
 --------------------------------
 
-Evolver encodes all parameters of a given configuration in a vector of real values in the range [0.0, 1.0]. Evaluating a solution requires decoding the real values into the corresponding parameters in order to configure the base algorithm, run it on the base-level problems, and compute the quality indicators for the obtained solutions.
+Evolver represents a base-level algorithm configuration as a solution of the meta-optimization problem, using one of two encodings: a flat vector of real values in the range [0.0, 1.0], or a derivation tree that holds only the parameters active for that configuration. Evaluating a solution requires decoding it into the corresponding parameters in order to configure the base algorithm, run it on the base-level problems, and compute the quality indicators for the obtained solutions.
 
 Refer to :doc:`concepts/solution_encoding` and :doc:`concepts/evaluation` for further details.
 
