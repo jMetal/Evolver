@@ -23,6 +23,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *   <li><b>SBX</b> (Simulated Binary Crossover): requires a distribution index.
  *   <li><b>BLX_ALPHA</b> (BLX-Alpha Crossover): requires an alpha value.
  *   <li><b>wholeArithmetic</b> (Whole Arithmetic Crossover): no additional parameters.
+ *   <li><b>SDX</b> (Synthetic Differences Crossover): requires a scale factor {@code f}. Unlike
+ *       the other operators, {@code crossoverProbability} gates recombination per variable
+ *       rather than per pair of parents.
  * </ul>
  *
  * <p>Example usage:
@@ -36,7 +39,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution> {
   long timeStamp ;
 
-  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "blxAlphaBeta", "PCX", "UNDC");
+  private static List<String> validCrossoverNames = List.of("SBX", "blxAlpha", "wholeArithmetic", "arithmetic", "fuzzyRecombination", "laplace", "blxAlphaBeta", "PCX", "UNDC", "SDX");
 
   /**
    * Constructs a crossover parameter for double solutions with the given list of supported
@@ -141,6 +144,13 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
                 crossoverProbability,
                 zeta,
                 eta,
+                repairDoubleSolution.getRepairDoubleSolutionStrategy());
+      }
+      case "SDX" -> {
+        Double f = (Double) findConditionalParameter("sdxCrossoverF").value();
+        yield new SDXCrossover(
+                crossoverProbability,
+                f,
                 repairDoubleSolution.getRepairDoubleSolutionStrategy());
       }
       default -> throw new JMetalException("Crossover operator does not exist: " + value());

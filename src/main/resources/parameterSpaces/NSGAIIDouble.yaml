@@ -88,6 +88,11 @@ variation:
                 undcCrossoverEta:
                   type: double
                   range: [0.1, 0.5]
+            SDX:
+              conditionalParameters:
+                sdxCrossoverF:
+                  type: double
+                  range: [0.0, 1.0]
 
         mutation:
           type: categorical
