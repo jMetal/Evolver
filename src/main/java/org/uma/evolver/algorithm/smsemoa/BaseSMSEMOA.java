@@ -17,6 +17,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.SMSEMOAReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
+import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
@@ -25,6 +26,7 @@ import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
+import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
 
 /**
  * Abstract base class for configurable SMS-EMOA (S-Metric Selection Evolutionary Multi-Objective Algorithm)
@@ -65,6 +67,8 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * @param <S> the solution type handled by the algorithm
  */
 public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
+  private static final String DIFFERENTIAL_EVOLUTION_VARIATION = "differentialEvolutionVariation";
+
   protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
@@ -137,8 +141,22 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
       Check.notNull(archive);
     }
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
-    Variation<S> variation = createVariation();
-    Selection<S> selection = createSelection(variation);
+
+    boolean usingDE = DIFFERENTIAL_EVOLUTION_VARIATION.equals(
+        parameterSpace.get("variation").value());
+
+    // Shared sequence generator: drives both DE variation and DE selection in lockstep
+    // (getValue() reads without advancing; generateNext() is called by one component).
+    SequenceGenerator<Integer> deSequenceGenerator = null;
+    if (usingDE) {
+      SequenceGeneratorParameter seqGenParam =
+          (SequenceGeneratorParameter) parameterSpace.get("sequenceGenerator");
+      seqGenParam.sequenceLength(populationSize);
+      deSequenceGenerator = seqGenParam.getSequenceGenerator();
+    }
+
+    Variation<S> variation = createVariation(usingDE, deSequenceGenerator);
+    Selection<S> selection = createSelection(variation, usingDE, deSequenceGenerator);
     Evaluation<S> evaluation = createEvaluation(archive);
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
@@ -220,28 +238,50 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
   }
 
   /**
-   * Creates the selection operator for the algorithm using the configured selection parameter.
-   * The mating pool size is obtained from the variation operator.
+   * Creates the selection operator for the algorithm.
+   *
+   * <p>When the differential-evolution variation branch is active, selection is fixed to
+   * {@link DifferentialEvolutionSelection} driven by the same sequence generator as the
+   * variation operator; otherwise, the configured {@code gaSelection} parameter (nested under
+   * the crossover-and-mutation variation branch) is used.
    *
    * @param variation the variation operator
+   * @param usingDE whether the differential-evolution variation branch is active
+   * @param sequenceGenerator the DE sequence generator, or {@code null} if not using DE
    * @return the selection operator
    */
-  protected Selection<S> createSelection(Variation<S> variation) {
-    var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
-    return selectionParameter.getSelection(
-        variation.matingPoolSize(), null);
+  protected Selection<S> createSelection(
+      Variation<S> variation, boolean usingDE, SequenceGenerator<Integer> sequenceGenerator) {
+    if (usingDE) {
+      boolean takeCurrentSolutionAsParent =
+          "true".equals((String) parameterSpace.get("takeCurrentSolutionAsParent").value());
+      // DifferentialEvolutionSelection implements Selection<DoubleSolution>; safe for DoubleSMSEMOA
+      return (Selection<S>)
+          new DifferentialEvolutionSelection(
+              populationSize, variation.matingPoolSize(), takeCurrentSolutionAsParent,
+              sequenceGenerator);
+    } else {
+      var selectionParameter = (SelectionParameter<S>) parameterSpace.get("gaSelection");
+      return selectionParameter.getSelection(variation.matingPoolSize(), null);
+    }
   }
 
   /**
    * Creates the variation operator for the algorithm using the configured variation parameter.
-   * Sets the offspring population size as a non-configurable sub-parameter.
+   * Sets the offspring population size as a non-configurable sub-parameter, plus the DE sequence
+   * generator when the differential-evolution branch is active.
    *
+   * @param usingDE whether the differential-evolution variation branch is active
+   * @param sequenceGenerator the DE sequence generator, or {@code null} if not using DE
    * @return the variation operator
    */
-  protected Variation<S> createVariation() {
+  protected Variation<S> createVariation(boolean usingDE, SequenceGenerator<Integer> sequenceGenerator) {
     VariationParameter<S> variationParameter =
         (VariationParameter<S>) parameterSpace.get("variation");
-    variationParameter.addNonConfigurableSubParameter("offspringPopulationSize",1);
+    variationParameter.addNonConfigurableSubParameter("offspringPopulationSize", 1);
+    if (usingDE) {
+      variationParameter.addNonConfigurableSubParameter("subProblemIdGenerator", sequenceGenerator);
+    }
 
     return variationParameter.getVariation();
   }

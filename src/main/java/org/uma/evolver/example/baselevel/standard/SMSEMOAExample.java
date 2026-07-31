@@ -29,7 +29,7 @@ public class SMSEMOAExample {
                 + "--mutationProbabilityFactor 1.0 "
                 + "--mutationRepairStrategy bounds "
                 + "--polynomialMutationDistributionIndex 20.0 "
-                + "--selection random ")
+                + "--gaSelection random ")
             .split("\\s+");
 
     var baseAlgorithm =

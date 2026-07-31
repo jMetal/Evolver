@@ -106,6 +106,33 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     writeResultsToFiles(solutions);
   }
 
+  /**
+   * Appends a wall-clock time record to METADATA.txt, in the same format as {@link
+   * org.uma.evolver.util.ConsolidatedOutputResults#writeWallClockTime}, so downstream analysis
+   * tooling (e.g. the training-convergence scripts) can read it regardless of encoding.
+   */
+  public void writeWallClockTime(long elapsedTimeMillis) {
+    File metadataFile = new File(outputDirectoryName, "METADATA.txt");
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile, true))) {
+      writer.newLine();
+      writer.write("--- Execution ---");
+      writer.newLine();
+      writer.write("Wall-clock time: " + formatDuration(elapsedTimeMillis)
+          + " (" + elapsedTimeMillis + " ms)");
+      writer.newLine();
+    } catch (IOException e) {
+      throw new JMetalException(e);
+    }
+  }
+
+  private static String formatDuration(long elapsedTimeMillis) {
+    long totalSeconds = elapsedTimeMillis / 1000;
+    long hours = totalSeconds / 3600;
+    long minutes = (totalSeconds % 3600) / 60;
+    long seconds = totalSeconds % 60;
+    return hours + "h " + minutes + "m " + seconds + "s";
+  }
+
   private void writeResultsToFiles(List<DerivationTreeSolution> solutions) throws IOException {
     if (!headersWritten) {
       writeHeaders();

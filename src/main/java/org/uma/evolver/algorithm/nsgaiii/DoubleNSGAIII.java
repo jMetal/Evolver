@@ -1,5 +1,6 @@
 package org.uma.evolver.algorithm.nsgaiii;
 
+import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
@@ -30,11 +31,29 @@ public class DoubleNSGAIII extends BaseNSGAIII<DoubleSolution> {
     super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace);
   }
 
+  /**
+   * Constructs an instance using an explicit list of reference points (e.g. read from a
+   * weight-vector file, the same convention used for MOEA/D and RVEA) instead of Das-Dennis
+   * generation.
+   */
+  public DoubleNSGAIII(
+      Problem<DoubleSolution> problem,
+      int populationSize,
+      int maximumNumberOfEvaluations,
+      ParameterSpace parameterSpace,
+      List<double[]> referencePoints) {
+    super(problem, populationSize, maximumNumberOfEvaluations, parameterSpace, referencePoints);
+  }
+
   @Override
   public synchronized BaseLevelAlgorithm<DoubleSolution> createInstance(
       Problem<DoubleSolution> problem, int maximumNumberOfEvaluations) {
     return new DoubleNSGAIII(
-        problem, populationSize, maximumNumberOfEvaluations, parameterSpace.createInstance());
+        problem,
+        populationSize,
+        maximumNumberOfEvaluations,
+        parameterSpace.createInstance(),
+        explicitReferencePoints);
   }
 
   @Override

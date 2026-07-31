@@ -153,6 +153,33 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         this.evaluations = evaluations;
     }
 
+    /**
+     * Appends a wall-clock time record to METADATA.txt. Intended to be called once, after the
+     * meta-optimizer has finished running, with the elapsed time in milliseconds.
+     */
+    public void writeWallClockTime(long elapsedTimeMillis) {
+        File metadataFile = new File(outputDirectoryName, "METADATA.txt");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile, true))) {
+            writer.newLine();
+            writer.write("--- Execution ---");
+            writer.newLine();
+            writer.write("Wall-clock time: " + formatDuration(elapsedTimeMillis)
+                    + " (" + elapsedTimeMillis + " ms)");
+            writer.newLine();
+        } catch (IOException e) {
+            throw new JMetalException("Error writing wall-clock time", e);
+        }
+    }
+
+    private static String formatDuration(long elapsedTimeMillis) {
+        long totalSeconds = elapsedTimeMillis / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        return hours + "h " + minutes + "m " + seconds + "s";
+    }
+
     @Override
     public void writeResultsToFiles(List<DoubleSolution> solutions) throws IOException {
         if (!headersWritten) {
