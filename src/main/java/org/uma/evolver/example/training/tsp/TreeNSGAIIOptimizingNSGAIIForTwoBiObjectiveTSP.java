@@ -1,4 +1,4 @@
-package org.uma.evolver.example.training;
+package org.uma.evolver.example.training.tsp;
 
 import java.io.IOException;
 import java.util.Comparator;
