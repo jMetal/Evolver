@@ -75,6 +75,42 @@ class MOEADDoubleIT {
     return hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
   }
 
+  private List<DoubleSolution> runMoeadWithExternalArchiveOnZdt1(String archiveSettings) {
+    var moead =
+        new DoubleMOEAD(
+            new ZDT1(),
+            POPULATION_SIZE,
+            MAX_EVALUATIONS,
+            WEIGHT_VECTOR_FILES_DIRECTORY,
+            new YAMLParameterSpace("MOEADDouble.yaml", new DoubleParameterFactory()));
+
+    var parameters =
+        ("--neighborhoodSize 20 "
+                + "--maximumNumberOfReplacedSolutions 2 "
+                + "--aggregationFunction tschebyscheff "
+                + "--normalizeObjectives false "
+                + "--algorithmResult externalArchive "
+                + archiveSettings
+                + " --createInitialSolutions default "
+                + "--subProblemIdGenerator randomPermutationCycle "
+                + "--variation crossoverAndMutationVariation "
+                + "--crossover SBX "
+                + "--crossoverProbability 0.9 "
+                + "--crossoverRepairStrategy bounds "
+                + "--sbxDistributionIndex 20.0 "
+                + "--mutation polynomial "
+                + "--mutationProbabilityFactor 1.0 "
+                + "--mutationRepairStrategy bounds "
+                + "--polynomialMutationDistributionIndex 20.0 "
+                + "--selection populationAndNeighborhoodMatingPoolSelection "
+                + "--neighborhoodSelectionProbability 0.9")
+            .split("\\s+");
+
+    var algorithm = moead.parse(parameters).build();
+    algorithm.run();
+    return algorithm.result();
+  }
+
   private List<DoubleSolution> runMoeadWithDeVariantOnZdt1(String deVariant) {
     var moead =
         new DoubleMOEAD(
@@ -254,6 +290,47 @@ class MOEADDoubleIT {
                   solution ->
                       Double.isFinite(solution.objectives()[0])
                           && Double.isFinite(solution.objectives()[1])));
+    }
+  }
+
+  @Nested
+  @DisplayName("When running MOEA/D with alternative external archive types")
+  class AlternativeExternalArchiveCases {
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given spatialSpreadDeviationArchive, when running on ZDT1, then result is non-empty")
+    void givenSpatialSpreadDeviationArchive_whenRunningOnZdt1_thenResultIsNonEmpty() {
+      // Act
+      List<DoubleSolution> result =
+          runMoeadWithExternalArchiveOnZdt1("--archiveType spatialSpreadDeviationArchive");
+
+      // Assert
+      assertTrue(result.size() > 0, "Result must be non-empty when using spatialSpreadDeviationArchive");
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given knnDistanceArchive, when running on ZDT1, then result is non-empty")
+    void givenKnnDistanceArchive_whenRunningOnZdt1_thenResultIsNonEmpty() {
+      // Act
+      List<DoubleSolution> result =
+          runMoeadWithExternalArchiveOnZdt1(
+              "--archiveType knnDistanceArchive --knnDistanceArchiveK 5");
+
+      // Assert
+      assertTrue(result.size() > 0, "Result must be non-empty when using knnDistanceArchive");
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("given angleArchive, when running on ZDT1, then result is non-empty")
+    void givenAngleArchive_whenRunningOnZdt1_thenResultIsNonEmpty() {
+      // Act
+      List<DoubleSolution> result = runMoeadWithExternalArchiveOnZdt1("--archiveType angleArchive");
+
+      // Assert
+      assertTrue(result.size() > 0, "Result must be non-empty when using angleArchive");
     }
   }
 }

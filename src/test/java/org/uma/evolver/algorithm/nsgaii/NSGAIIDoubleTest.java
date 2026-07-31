@@ -30,7 +30,10 @@ class NSGAIIDoubleTest {
         @Test
         @DisplayName("The total number of parameters is correct")
         void whenCreatingAnInstanceTheTotalNumberOfParametersIsCorrect() {
-            int numberOfFlattenedParameters = 32;
+            // 33, not 32: NSGAIIDouble.yaml's archiveType catalogue was expanded to match
+            // MOEADDouble.yaml's (commit 4df056ce), adding knnDistanceArchive's conditional
+            // knnDistanceArchiveK parameter.
+            int numberOfFlattenedParameters = 33;
             assertEquals(
                     numberOfFlattenedParameters,
                     nsgaIIDouble.parameterSpace().parameters().size());

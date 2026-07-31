@@ -42,8 +42,15 @@ algorithmResult:
         archiveType:
           type: categorical
           values:
-            crowdingDistanceArchive:
+#            crowdingDistanceArchive: — disabled: not competitive on 3+ objective problems (crowding distance loses resolution)
             unboundedArchive:
+            spatialSpreadDeviationArchive:
+            knnDistanceArchive:
+              conditionalParameters:
+                knnDistanceArchiveK:
+                  type: integer
+                  range: [1, 10]
+            angleArchive:
     population:
 #
 subProblemIdGenerator:
