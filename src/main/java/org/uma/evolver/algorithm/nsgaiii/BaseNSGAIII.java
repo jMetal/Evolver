@@ -40,10 +40,15 @@ import org.uma.jmetal.util.referencepoint.ReferencePointGenerator;
  * abstraction. NSGA-III selects survivors using non-dominated sorting combined with a
  * reference-point-based niching mechanism that preserves diversity in many-objective problems.
  *
- * <p>The reference points are generated with the Das-Dennis systematic approach on a unit
- * simplex. The number of lattice divisions is not a configurable parameter: it is derived from
- * the population size and the number of problem objectives as the smallest number of divisions
- * whose lattice contains at least as many points as the population size.
+ * <p>By default, reference points are generated with the Das-Dennis systematic approach on a
+ * unit simplex: the number of lattice divisions is derived from the population size and the
+ * number of problem objectives as the smallest number of divisions whose lattice contains at
+ * least as many points as the population size. Alternatively, an explicit list of reference
+ * points (e.g. read from a weight-vector file, the same convention used for MOEA/D and RVEA) can
+ * be supplied via the constructor, bypassing Das-Dennis generation entirely -- this is useful to
+ * give NSGA-III the exact same reference-vector set used by other decomposition-based algorithms
+ * in a comparison, rather than the closest Das-Dennis lattice size (which need not match the
+ * requested population size exactly).
  *
  * <p>Subclasses must implement {@link #setNonConfigurableParameters()} to set any parameters
  * derived from the problem instance.
@@ -64,12 +69,19 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
 
   protected Ranking<S> ranking;
   protected List<double[]> referencePoints;
+  protected final List<double[]> explicitReferencePoints;
   protected ReferencePointNicheDistanceEstimator<S> densityEstimator;
 
   protected BaseNSGAIII(int populationSize, ParameterSpace parameterSpace) {
+    this(populationSize, parameterSpace, null);
+  }
+
+  protected BaseNSGAIII(
+      int populationSize, ParameterSpace parameterSpace, List<double[]> explicitReferencePoints) {
     this.parameterSpace = parameterSpace;
     this.populationSize = populationSize;
     this.offspringPopulationSize = populationSize;
+    this.explicitReferencePoints = explicitReferencePoints;
   }
 
   protected BaseNSGAIII(
@@ -77,7 +89,21 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
       int populationSize,
       int maximumNumberOfEvaluations,
       ParameterSpace parameterSpace) {
-    this(populationSize, parameterSpace);
+    this(problem, populationSize, maximumNumberOfEvaluations, parameterSpace, null);
+  }
+
+  /**
+   * Constructs an instance using an explicit list of reference points instead of generating them
+   * with Das-Dennis. {@code explicitReferencePoints} must not be empty; its size does not need to
+   * equal {@code populationSize} (matching the flexibility Das-Dennis itself already has).
+   */
+  protected BaseNSGAIII(
+      Problem<S> problem,
+      int populationSize,
+      int maximumNumberOfEvaluations,
+      ParameterSpace parameterSpace,
+      List<double[]> explicitReferencePoints) {
+    this(populationSize, parameterSpace, explicitReferencePoints);
     this.problem = problem;
     this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
   }
@@ -119,14 +145,19 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
   protected abstract void setNonConfigurableParameters();
 
   /**
-   * Creates the ranking, the Das-Dennis reference points, and the niche distance estimator shared
-   * by the selection and replacement components. Must be called after the population size is
-   * final (i.e., after the external archive handling).
+   * Creates the ranking, the reference points, and the niche distance estimator shared by the
+   * selection and replacement components. Must be called after the population size is final
+   * (i.e., after the external archive handling). Uses {@link #explicitReferencePoints} if
+   * supplied at construction time; otherwise falls back to Das-Dennis generation.
    */
   private void configureReferencePointComponents() {
     int numberOfObjectives = problem.numberOfObjectives();
-    int divisions = numberOfDivisions(numberOfObjectives, populationSize);
-    referencePoints = ReferencePointGenerator.generateSingleLayer(numberOfObjectives, divisions);
+    if (explicitReferencePoints != null) {
+      referencePoints = explicitReferencePoints;
+    } else {
+      int divisions = numberOfDivisions(numberOfObjectives, populationSize);
+      referencePoints = ReferencePointGenerator.generateSingleLayer(numberOfObjectives, divisions);
+    }
     ranking = new FastNonDominatedSortRanking<>();
     densityEstimator =
         new ReferencePointNicheDistanceEstimator<>(referencePoints, numberOfObjectives);
