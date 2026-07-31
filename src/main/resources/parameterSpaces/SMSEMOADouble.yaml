@@ -20,8 +20,60 @@ createInitialSolutions:
     cauchy: {}
     oppositionBased: {}
 
+# Variation is coupled with its compatible selection: each variation branch nests the
+# selection operator(s) that make sense for it. The crossover+mutation branch uses a
+# standard mating selection (named gaSelection to avoid clashing with the
+# differential-evolution selection of the DE branch). Mutation is a global sub-parameter
+# so it is applied to BOTH branches (matching org.uma.evolver.algorithm.ssmoea's pattern).
 variation:
   type: categorical
+  globalSubParameters:
+    mutation:
+      type: categorical
+      globalSubParameters:
+        mutationProbabilityFactor:
+          type: double
+          range: [0.0, 2.0]
+        mutationRepairStrategy:
+          type: categorical
+          values:
+            random: {}
+            round: {}
+            bounds: {}
+      values:
+        uniform:
+          conditionalParameters:
+            uniformMutationPerturbation:
+              type: double
+              range: [0.0, 1.0]
+        polynomial:
+          conditionalParameters:
+            polynomialMutationDistributionIndex:
+              type: double
+              range: [5.0, 400.0]
+        linkedPolynomial:
+          conditionalParameters:
+            linkedPolynomialMutationDistributionIndex:
+              type: double
+              range: [5.0, 400.0]
+        nonUniform:
+          conditionalParameters:
+            nonUniformMutationPerturbation:
+              type: double
+              range: [0.0, 1.0]
+        levyFlight:
+          conditionalParameters:
+            levyFlightMutationBeta:
+              type: double
+              range: [1.0, 2.0]
+            levyFlightMutationStepSize:
+              type: double
+              range: [0.01, 1.0]
+        powerLaw:
+          conditionalParameters:
+            powerLawMutationDelta:
+              type: double
+              range: [0.0, 10.0]
   values:
     crossoverAndMutationVariation:
       conditionalParameters:
@@ -85,54 +137,34 @@ variation:
                   type: double
                   range: [0.1, 0.5]
 
-        mutation:
+        gaSelection:
+          type: categorical
+          values:
+            random: {}
+
+    differentialEvolutionVariation:
+      conditionalParameters:
+        differentialEvolutionCrossover:
           type: categorical
           globalSubParameters:
-            mutationProbabilityFactor:
+            CR:
               type: double
-              range: [0.0, 2.0]
-            mutationRepairStrategy:
-              type: categorical
-              values:
-                random: {}
-                round: {}
-                bounds: {}
+              range: [0.0, 1.0]
+            F:
+              type: double
+              range: [0.0, 1.0]
           values:
-            uniform:
-              conditionalParameters:
-                uniformMutationPerturbation:
-                  type: double
-                  range: [0.0, 1.0]
-            polynomial:
-              conditionalParameters:
-                polynomialMutationDistributionIndex:
-                  type: double
-                  range: [5.0, 400.0]
-            linkedPolynomial:
-              conditionalParameters:
-                linkedPolynomialMutationDistributionIndex:
-                  type: double
-                  range: [5.0, 400.0]
-            nonUniform:
-              conditionalParameters:
-                nonUniformMutationPerturbation:
-                  type: double
-                  range: [0.0, 1.0]
-            levyFlight:
-              conditionalParameters:
-                levyFlightMutationBeta:
-                  type: double
-                  range: [1.0, 2.0]
-                levyFlightMutationStepSize:
-                  type: double
-                  range: [0.01, 1.0]
-            powerLaw:
-              conditionalParameters:
-                powerLawMutationDelta:
-                  type: double
-                  range: [0.0, 10.0]
-
-selection:
-  type: categorical
-  values:
-    random: {}
+            RAND_1_BIN: {}
+            RAND_1_EXP: {}
+            RAND_2_BIN: {}
+            RAND_2_EXP: {}
+        sequenceGenerator:
+          type: categorical
+          values:
+            randomPermutationCycle: {}
+            cyclicIntegerSequence: {}
+        takeCurrentSolutionAsParent:
+          type: categorical
+          values:
+            "true": {}
+            "false": {}

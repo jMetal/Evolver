@@ -25,7 +25,7 @@ public class SMSEMOAOneZeroMaxExample {
                 + "--crossoverProbability 0.9 "
                 + "--mutation bitFlip "
                 + "--mutationProbabilityFactor 1.0 "
-                + "--selection random ")
+                + "--gaSelection random ")
             .split("\\s+");
 
     var baseAlgorithm =
