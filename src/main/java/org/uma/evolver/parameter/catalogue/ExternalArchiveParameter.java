@@ -4,9 +4,11 @@ import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.archive.impl.AngleArchive;
 import org.uma.jmetal.util.archive.impl.BestSolutionsArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.archive.impl.HypervolumeArchive;
+import org.uma.jmetal.util.archive.impl.KNNDistanceArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.archive.impl.SpatialSpreadDeviationArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -15,15 +17,18 @@ import org.uma.jmetal.util.legacy.qualityindicator.impl.hypervolume.impl.WFGHype
 /**
  * A categorical parameter representing different external archive strategies for multi-objective optimization algorithms.
  * This parameter allows selecting and configuring the archive used to store non-dominated solutions during optimization.
- * 
+ *
  * <p>The available archive types are:
  * <ul>
  *   <li>crowdingDistanceArchive: Maintains diversity using crowding distance</li>
  *   <li>hypervolumeArchive: Selects solutions based on hypervolume contribution</li>
  *   <li>spatialSpreadDeviationArchive: Maintains diversity using spatial spread deviation</li>
+ *   <li>knnDistanceArchive: Maintains diversity using a k-nearest-neighbors density estimator
+ *       (requires the conditional parameter {@code knnDistanceArchiveK})</li>
+ *   <li>angleArchive: Maintains diversity using an angle-based density estimator</li>
  *   <li>unboundedArchive: Uses a non-dominated solution list archive with best solutions</li>
  * </ul>
- * 
+ *
  * @param <S> The type of solutions stored in the archive
  */
 public class ExternalArchiveParameter<S extends Solution<?>> extends CategoricalParameter {
@@ -39,6 +44,8 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
    *                    - "crowdingDistanceArchive"
    *                    - "hypervolumeArchive"
    *                    - "spatialSpreadDeviationArchive"
+   *                    - "knnDistanceArchive"
+   *                    - "angleArchive"
    *                    - "unboundedArchive"
    * @throws IllegalArgumentException if parameterName is null or empty, or if archiveTypes is null or empty
    */
@@ -71,8 +78,11 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
       case "crowdingDistanceArchive" -> new CrowdingDistanceArchive<>(size);
       case "hypervolumeArchive" -> new HypervolumeArchive<>(size, new WFGHypervolume<>());
       case "spatialSpreadDeviationArchive" -> new SpatialSpreadDeviationArchive<>(size);
+      case "knnDistanceArchive" -> new KNNDistanceArchive<>(
+          size, (Integer) findConditionalParameter("knnDistanceArchiveK").value());
+      case "angleArchive" -> new AngleArchive<>(size);
       case "unboundedArchive" -> new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), size);
-      default -> throw new JMetalException("Archive type does not exist: " + name());
+      default -> throw new JMetalException("Archive type does not exist: " + value());
     };
   }
 

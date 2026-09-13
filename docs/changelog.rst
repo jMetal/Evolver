@@ -21,6 +21,9 @@ Fixed
 - Restore ``crowdingDistanceArchive`` as a valid ``archiveType`` option in ``NSGAIIDouble.yaml``,
   alongside ``unboundedArchive``, ``spatialSpreadDeviationArchive``, ``knnDistanceArchive`` and
   ``angleArchive``
+- Extend ``ExternalArchiveParameter`` (shared by NSGA-II, AGE-MOEA, MOEA/D, MOPSO, RDEMOEA, RVEA and
+  SMS-EMOA) to build ``knnDistanceArchive`` and ``angleArchive`` instances; selecting either value
+  previously threw ``JMetalException: Archive type does not exist`` at evaluation time
 
 
 2.0 (2025-09-09)
