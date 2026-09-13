@@ -35,7 +35,7 @@ public class NSGAIIZDT4ExampleV2 {
             .split("\\s+");
 
 
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     int populationSize = 100 ;

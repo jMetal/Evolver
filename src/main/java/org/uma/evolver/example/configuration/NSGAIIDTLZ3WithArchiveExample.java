@@ -49,7 +49,7 @@ public class NSGAIIDTLZ3WithArchiveExample {
         --selectionTournamentSize 6
         """.split("\\s+");
 
-    String yamlParameterSpaceFile = "NSGAIIDoubleFull.yaml" ;
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml" ;
 
     var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
     var baseNSGAII = new DoubleNSGAII(new DTLZ3(), 100, 30000, parameterSpace);

@@ -24,6 +24,8 @@ Fixed
 - Extend ``ExternalArchiveParameter`` (shared by NSGA-II, AGE-MOEA, MOEA/D, MOPSO, RDEMOEA, RVEA and
   SMS-EMOA) to build ``knnDistanceArchive`` and ``angleArchive`` instances; selecting either value
   previously threw ``JMetalException: Archive type does not exist`` at evaluation time
+- Fix stale ``NSGAIIDoubleFull.yaml`` references (renamed to ``NSGAIIDouble.yaml`` in a previous
+  commit) in several base-level and validation example classes
 
 
 2.0 (2025-09-09)

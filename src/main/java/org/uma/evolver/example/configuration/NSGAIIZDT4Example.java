@@ -22,7 +22,7 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
  * multi-objective optimization problem using the Evolver framework.
  * 
  * Steps to run this example:
- * 1. The algorithm will automatically load parameters from NSGAIIDoubleFull.yaml
+ * 1. The algorithm will automatically load parameters from NSGAIIDouble.yaml
  * 2. The reference front is loaded from resources/referenceFronts/ZDT4.csv
  * 3. The algorithm will run for a maximum of 25,000 evaluations
  * 4. Results are saved to VAR.csv (variables) and FUN.csv (objectives)
