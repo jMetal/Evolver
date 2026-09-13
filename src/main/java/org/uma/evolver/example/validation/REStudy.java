@@ -33,7 +33,7 @@ public class REStudy {
   private static final int INDEPENDENT_RUNS = 25;
   private static final int MAX_EVALUATIONS = 10000;
   private static final int POPULATION_SIZE = 100;
-  private static final String YAML_FILE = "NSGAIIDoubleFull";
+  private static final String YAML_FILE = "NSGAIIDouble.yaml";
 
   public static void main(String[] args) throws IOException {
     String experimentBaseDirectory = "results/swevo/experiments"; // Dedicated folder
