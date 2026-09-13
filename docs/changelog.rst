@@ -18,6 +18,9 @@ Fixed
 ~~~~~
 
 - Fix a bug in class MOEADCommonParameterSpace
+- Restore ``crowdingDistanceArchive`` as a valid ``archiveType`` option in ``NSGAIIDouble.yaml``,
+  alongside ``unboundedArchive``, ``spatialSpreadDeviationArchive``, ``knnDistanceArchive`` and
+  ``angleArchive``
 
 
 2.0 (2025-09-09)

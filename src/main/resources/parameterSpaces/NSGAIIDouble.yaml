@@ -12,6 +12,13 @@ algorithmResult:
           values:
             crowdingDistanceArchive: {}
             unboundedArchive: {}
+            spatialSpreadDeviationArchive: {}
+            knnDistanceArchive:
+              conditionalParameters:
+                knnDistanceArchiveK:
+                  type: integer
+                  range: [1, 10]
+            angleArchive: {}
 
 createInitialSolutions:
   type: categorical
