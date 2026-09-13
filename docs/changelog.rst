@@ -40,6 +40,9 @@ Fixed
 - Fix ``ReplacementParameter.getReplacement()`` to handle a null ``removalPolicy`` sub-parameter,
   defaulting to ``ONE_SHOT`` (required for steady-state configurations without a configurable
   removal policy)
+- Restore ``crowdingDistanceArchive`` as a valid ``archiveType`` option in ``NSGAIIDouble.yaml``,
+  alongside ``unboundedArchive``, ``spatialSpreadDeviationArchive``, ``knnDistanceArchive`` and
+  ``angleArchive``
 
 
 2.0 (2025-09-09)

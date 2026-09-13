@@ -10,8 +10,9 @@ algorithmResult:
         archiveType:
           type: categorical
           values:
-            # crowdingDistanceArchive disabled: not competitive on 3+ objective problems
-            # (crowding distance loses resolution) -- same reasoning as MOEADDouble.yaml
+            # crowdingDistanceArchive kept available: loses resolution on 3+ objective
+            # problems, but is still useful for bi-objective problems.
+            crowdingDistanceArchive: {}
             unboundedArchive: {}
             spatialSpreadDeviationArchive: {}
             knnDistanceArchive:
