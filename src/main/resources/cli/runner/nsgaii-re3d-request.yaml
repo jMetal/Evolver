@@ -1,0 +1,22 @@
+# Example TrainingRequest, equivalent to the values in
+# org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForBenchmarkRE3D
+#
+# Exercises the trainingSetName path (a named, multi-problem TrainingSet) instead of
+# an explicit single-problem list.
+
+metaMaxEvaluations: 2000
+numberOfCores: 8
+metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
+
+baseLevelAlgorithmName: NSGA-II
+baseLevelPopulationSize: 100
+numberOfIndependentRuns: 1
+baseLevelYamlParameterSpaceFile: NSGAIIDouble.yaml
+
+trainingSetName: RE3D
+
+indicatorNames:
+  - Epsilon
+  - InvertedGenerationalDistancePlus
+
+outputDirectory: results/nsgaii/RE3D

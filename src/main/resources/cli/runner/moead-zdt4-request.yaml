@@ -1,0 +1,28 @@
+# Example TrainingRequest, equivalent to the values in
+# org.uma.evolver.example.training.NSGAIIOptimizingMOEADForProblemZDT4
+#
+# Exercises a base-level algorithm other than NSGA-II (MOEA/D), which needs extra
+# algorithm-specific configuration (weightVectorFilesDirectory) beyond population size
+# and parameter space file.
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 100
+numberOfCores: 8
+metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
+
+baseLevelAlgorithmName: MOEAD
+baseLevelPopulationSize: 100
+numberOfIndependentRuns: 1
+baseLevelYamlParameterSpaceFile: MOEADDouble.yaml
+baseLevelExtraConfig:
+  weightVectorFilesDirectory: resources/weightVectors
+
+trainingProblemNames: [ZDT4]
+trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
+trainingEvaluations: [10000]
+
+indicatorNames:
+  - Epsilon
+  - NormalizedHypervolume
+
+outputDirectory: results/moead/ZDT4
