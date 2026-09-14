@@ -3,6 +3,8 @@ package org.uma.evolver.cli.runner.instances;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import org.uma.evolver.cli.runner.BaseLevelConfig;
+import org.uma.evolver.cli.runner.FlatMetaSearchConfig;
 import org.uma.evolver.cli.runner.TrainingRequest;
 import org.uma.evolver.cli.runner.TrainingRunner;
 
@@ -15,18 +17,13 @@ import org.uma.evolver.cli.runner.TrainingRunner;
 public class Zdt4TrainingRunner {
 
   public static void main(String[] args) throws IOException {
-    TrainingRequest request =
-        new TrainingRequest(
-            2000, // metaMaxEvaluations
-            100, // metaPopulationSize
-            8, // numberOfCores
-            1.5, // mutationProbabilityFactor
-            "NSGAIIDoubleReduced.yaml", // metaYamlParameterSpaceFile
-            "NSGA-II", // baseLevelAlgorithmName
-            100, // baseLevelPopulationSize
+    BaseLevelConfig baseLevel =
+        new BaseLevelConfig(
+            "NSGA-II", // algorithmName
+            100, // populationSize
             1, // numberOfIndependentRuns
-            "NSGAIIDouble.yaml", // baseLevelYamlParameterSpaceFile
-            null, // baseLevelExtraConfig
+            "NSGAIIDouble.yaml", // yamlParameterSpaceFile
+            null, // extraConfig
             null, // trainingSetName
             List.of("ZDT4"), // trainingProblemNames
             List.of("resources/referenceFronts/ZDT4.csv"), // trainingReferenceFrontFileNames
@@ -34,6 +31,15 @@ public class Zdt4TrainingRunner {
             List.of("Epsilon", "NormalizedHypervolume"),
             "results/nsgaii/ZDT4");
 
-    new TrainingRunner().run(request, Path.of("results/nsgaii/ZDT4/status.yaml"));
+    FlatMetaSearchConfig metaSearch =
+        new FlatMetaSearchConfig(
+            2000, // metaMaxEvaluations
+            100, // metaPopulationSize
+            8, // numberOfCores
+            1.5, // mutationProbabilityFactor
+            "NSGAIIDoubleReduced.yaml");
+
+    new TrainingRunner()
+        .run(new TrainingRequest(baseLevel, metaSearch), Path.of("results/nsgaii/ZDT4/status.yaml"));
   }
 }

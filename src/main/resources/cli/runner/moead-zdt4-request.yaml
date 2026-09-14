@@ -5,24 +5,22 @@
 # algorithm-specific configuration (weightVectorFilesDirectory) beyond population size
 # and parameter space file.
 
-metaMaxEvaluations: 2000
-metaPopulationSize: 100
-numberOfCores: 8
-metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
+baseLevel:
+  algorithmName: MOEAD
+  populationSize: 100
+  numberOfIndependentRuns: 1
+  yamlParameterSpaceFile: MOEADDouble.yaml
+  extraConfig:
+    weightVectorFilesDirectory: resources/weightVectors
+  trainingProblemNames: [ZDT4]
+  trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
+  trainingEvaluations: [10000]
+  indicatorNames: [Epsilon, NormalizedHypervolume]
+  outputDirectory: results/moead/ZDT4
 
-baseLevelAlgorithmName: MOEAD
-baseLevelPopulationSize: 100
-numberOfIndependentRuns: 1
-baseLevelYamlParameterSpaceFile: MOEADDouble.yaml
-baseLevelExtraConfig:
-  weightVectorFilesDirectory: resources/weightVectors
-
-trainingProblemNames: [ZDT4]
-trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
-trainingEvaluations: [10000]
-
-indicatorNames:
-  - Epsilon
-  - NormalizedHypervolume
-
-outputDirectory: results/moead/ZDT4
+metaSearch:
+  encoding: flat
+  metaMaxEvaluations: 2000
+  metaPopulationSize: 100
+  numberOfCores: 8
+  metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml

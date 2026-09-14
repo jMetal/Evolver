@@ -1,0 +1,24 @@
+# Example TrainingRequest, equivalent to the values in
+# org.uma.evolver.example.training.TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D
+#
+# Exercises the tree encoding: no meta-level YAML parameter space, just the scalar
+# hyperparameters of SubtreeCrossover/TreeMutation.
+
+baseLevel:
+  algorithmName: NSGA-II
+  populationSize: 100
+  numberOfIndependentRuns: 1
+  yamlParameterSpaceFile: NSGAIIDouble.yaml
+  trainingSetName: RE3D
+  indicatorNames: [Epsilon, NormalizedHypervolume]
+  outputDirectory: results/tree-nsgaii/RE3D
+
+metaSearch:
+  encoding: tree
+  metaMaxEvaluations: 2000
+  metaPopulationSize: 50
+  metaOffspringSize: 50
+  numberOfCores: 8
+  crossoverProbability: 0.9
+  mutationProbability: 1.0
+  mutationDistributionIndex: 20.0

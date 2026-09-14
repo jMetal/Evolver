@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import org.uma.evolver.cli.runner.BaseLevelConfig;
+import org.uma.evolver.cli.runner.FlatMetaSearchConfig;
 import org.uma.evolver.cli.runner.TrainingRequest;
 import org.uma.evolver.cli.runner.TrainingRunner;
 
@@ -13,22 +15,17 @@ import org.uma.evolver.cli.runner.TrainingRunner;
  * {@code org.uma.evolver.example.training.NSGAIIOptimizingMOEADForProblemZDT4}.
  *
  * <p>Exercises a base-level algorithm other than NSGA-II, which needs extra algorithm-specific
- * configuration ({@code weightVectorFilesDirectory}) carried in {@code baseLevelExtraConfig}.
+ * configuration ({@code weightVectorFilesDirectory}) carried in {@code baseLevel.extraConfig()}.
  */
 public class MoeadZdt4TrainingRunner {
 
   public static void main(String[] args) throws IOException {
-    TrainingRequest request =
-        new TrainingRequest(
-            2000, // metaMaxEvaluations
-            100, // metaPopulationSize
-            8, // numberOfCores
-            null, // mutationProbabilityFactor (use builder default)
-            "NSGAIIDoubleReduced.yaml", // metaYamlParameterSpaceFile
-            "MOEAD", // baseLevelAlgorithmName
-            100, // baseLevelPopulationSize
+    BaseLevelConfig baseLevel =
+        new BaseLevelConfig(
+            "MOEAD", // algorithmName
+            100, // populationSize
             1, // numberOfIndependentRuns
-            "MOEADDouble.yaml", // baseLevelYamlParameterSpaceFile
+            "MOEADDouble.yaml", // yamlParameterSpaceFile
             Map.of("weightVectorFilesDirectory", "resources/weightVectors"),
             null, // trainingSetName
             List.of("ZDT4"), // trainingProblemNames
@@ -37,6 +34,15 @@ public class MoeadZdt4TrainingRunner {
             List.of("Epsilon", "NormalizedHypervolume"),
             "results/moead/ZDT4");
 
-    new TrainingRunner().run(request, Path.of("results/moead/ZDT4/status.yaml"));
+    FlatMetaSearchConfig metaSearch =
+        new FlatMetaSearchConfig(
+            2000, // metaMaxEvaluations
+            100, // metaPopulationSize
+            8, // numberOfCores
+            null, // mutationProbabilityFactor (use builder default)
+            "NSGAIIDoubleReduced.yaml");
+
+    new TrainingRunner()
+        .run(new TrainingRequest(baseLevel, metaSearch), Path.of("results/moead/ZDT4/status.yaml"));
   }
 }

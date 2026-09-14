@@ -3,6 +3,8 @@ package org.uma.evolver.cli.runner.instances;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import org.uma.evolver.cli.runner.BaseLevelConfig;
+import org.uma.evolver.cli.runner.FlatMetaSearchConfig;
 import org.uma.evolver.cli.runner.TrainingRequest;
 import org.uma.evolver.cli.runner.TrainingRunner;
 
@@ -14,18 +16,13 @@ import org.uma.evolver.cli.runner.TrainingRunner;
 public class Re3dTrainingRunner {
 
   public static void main(String[] args) throws IOException {
-    TrainingRequest request =
-        new TrainingRequest(
-            2000, // metaMaxEvaluations
-            null, // metaPopulationSize (use builder default)
-            8, // numberOfCores
-            null, // mutationProbabilityFactor (use builder default)
-            "NSGAIIDoubleReduced.yaml", // metaYamlParameterSpaceFile
-            "NSGA-II", // baseLevelAlgorithmName
-            100, // baseLevelPopulationSize
+    BaseLevelConfig baseLevel =
+        new BaseLevelConfig(
+            "NSGA-II", // algorithmName
+            100, // populationSize
             1, // numberOfIndependentRuns
-            "NSGAIIDouble.yaml", // baseLevelYamlParameterSpaceFile
-            null, // baseLevelExtraConfig
+            "NSGAIIDouble.yaml", // yamlParameterSpaceFile
+            null, // extraConfig
             "RE3D", // trainingSetName
             null, // trainingProblemNames
             null, // trainingReferenceFrontFileNames
@@ -33,6 +30,15 @@ public class Re3dTrainingRunner {
             List.of("Epsilon", "InvertedGenerationalDistancePlus"),
             "results/nsgaii/RE3D");
 
-    new TrainingRunner().run(request, Path.of("results/nsgaii/RE3D/status.yaml"));
+    FlatMetaSearchConfig metaSearch =
+        new FlatMetaSearchConfig(
+            2000, // metaMaxEvaluations
+            null, // metaPopulationSize (use builder default)
+            8, // numberOfCores
+            null, // mutationProbabilityFactor (use builder default)
+            "NSGAIIDoubleReduced.yaml");
+
+    new TrainingRunner()
+        .run(new TrainingRequest(baseLevel, metaSearch), Path.of("results/nsgaii/RE3D/status.yaml"));
   }
 }
