@@ -1,23 +1,21 @@
 # Example TrainingRequest, equivalent to the values in
 # org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForProblemZDT4
 
-metaMaxEvaluations: 2000
-metaPopulationSize: 100
-numberOfCores: 8
-mutationProbabilityFactor: 1.5
-metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
+baseLevel:
+  algorithmName: NSGA-II
+  populationSize: 100
+  numberOfIndependentRuns: 1
+  yamlParameterSpaceFile: NSGAIIDouble.yaml
+  trainingProblemNames: [ZDT4]
+  trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
+  trainingEvaluations: [12000]
+  indicatorNames: [Epsilon, NormalizedHypervolume]
+  outputDirectory: results/nsgaii/ZDT4
 
-baseLevelAlgorithmName: NSGA-II
-baseLevelPopulationSize: 100
-numberOfIndependentRuns: 1
-baseLevelYamlParameterSpaceFile: NSGAIIDouble.yaml
-
-trainingProblemNames: [ZDT4]
-trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
-trainingEvaluations: [12000]
-
-indicatorNames:
-  - Epsilon
-  - NormalizedHypervolume
-
-outputDirectory: results/nsgaii/ZDT4
+metaSearch:
+  encoding: flat
+  metaMaxEvaluations: 2000
+  metaPopulationSize: 100
+  numberOfCores: 8
+  mutationProbabilityFactor: 1.5
+  metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
