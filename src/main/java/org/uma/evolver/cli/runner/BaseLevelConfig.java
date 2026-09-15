@@ -8,16 +8,14 @@ import java.util.Map;
  * that is independent of how the meta-optimizer searches the parameter space (see
  * {@link MetaSearchConfig}).
  *
- * <p>The training set is specified in exactly one of two ways, following the same
- * three-parallel-lists shape used throughout {@code org.uma.evolver.trainingset.TrainingSet}:
- * <ul>
- *   <li>{@code trainingSetName}: a named, multi-problem set resolved via
- *       {@link TrainingSetRegistry} (e.g. {@code "RE3D"}); {@code trainingProblemNames} must be
- *       null.
- *   <li>{@code trainingProblemNames} / {@code trainingReferenceFrontFileNames} /
- *       {@code trainingEvaluations}: three parallel lists (same size), each problem name resolved
- *       via {@link ProblemRegistry}; {@code trainingSetName} must be null.
- * </ul>
+ * <p>The training set is always given as three parallel lists of the same size — problem names
+ * (resolved via {@link ProblemRegistry}), their reference front files, and the number of
+ * evaluations to use for each problem — the same shape used throughout
+ * {@code org.uma.evolver.trainingset.TrainingSet}. The CLI does not resolve training sets by
+ * name: even a multi-problem set like RE3D is spelled out explicitly (see
+ * {@code Re3dTrainingRunner}), so a request is always self-contained and never has to be
+ * cross-referenced against {@code org.uma.evolver.trainingset}'s subclasses to know what it
+ * actually runs.
  */
 public record BaseLevelConfig(
     String algorithmName,
@@ -25,7 +23,6 @@ public record BaseLevelConfig(
     int numberOfIndependentRuns,
     String yamlParameterSpaceFile,
     Map<String, String> extraConfig,
-    String trainingSetName,
     List<String> trainingProblemNames,
     List<String> trainingReferenceFrontFileNames,
     List<Integer> trainingEvaluations,

@@ -18,6 +18,9 @@ import org.uma.evolver.cli.runner.TreeMetaSearchConfig;
  * space here (unlike {@link Zdt4TrainingRunner}/{@link Re3dTrainingRunner}/
  * {@link MoeadZdt4TrainingRunner}, which all use {@code FlatMetaSearchConfig}) — the
  * meta-optimizer operates directly on derivations of the base-level algorithm's own grammar.
+ *
+ * <p>The training set (RE31-RE37) is spelled out explicitly, same as in {@link Re3dTrainingRunner}
+ * — see its Javadoc for why.
  */
 public class TreeRe3dTrainingRunner {
 
@@ -29,10 +32,16 @@ public class TreeRe3dTrainingRunner {
             1, // numberOfIndependentRuns
             "NSGAIIDouble.yaml", // yamlParameterSpaceFile
             null, // extraConfig
-            "RE3D", // trainingSetName
-            null, // trainingProblemNames
-            null, // trainingReferenceFrontFileNames
-            null, // trainingEvaluations
+            List.of("RE31", "RE32", "RE33", "RE34", "RE35", "RE36", "RE37"), // trainingProblemNames
+            List.of(
+                "resources/referenceFronts/RE31.csv",
+                "resources/referenceFronts/RE32.csv",
+                "resources/referenceFronts/RE33.csv",
+                "resources/referenceFronts/RE34.csv",
+                "resources/referenceFronts/RE35.csv",
+                "resources/referenceFronts/RE36.csv",
+                "resources/referenceFronts/RE37.csv"), // trainingReferenceFrontFileNames
+            List.of(10000, 10000, 10000, 10000, 10000, 10000, 10000), // trainingEvaluations
             List.of("Epsilon", "NormalizedHypervolume"),
             "results/tree-nsgaii/RE3D");
 
