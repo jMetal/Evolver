@@ -27,7 +27,6 @@ public class MoeadZdt4TrainingRunner {
             1, // numberOfIndependentRuns
             "MOEADDouble.yaml", // yamlParameterSpaceFile
             Map.of("weightVectorFilesDirectory", "resources/weightVectors"),
-            null, // trainingSetName
             List.of("ZDT4"), // trainingProblemNames
             List.of("resources/referenceFronts/ZDT4.csv"), // trainingReferenceFrontFileNames
             List.of(10000), // trainingEvaluations

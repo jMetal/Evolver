@@ -13,7 +13,7 @@ Se probó deliberadamente contra cuatro casos distintos para evitar sobreajustar
 | Caso de referencia | Qué ejercita |
 |---|---|
 | `NSGAIIOptimizingNSGAIIForProblemZDT4` | Un solo problema de entrenamiento; codificación plana |
-| `NSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Un training set con nombre y varios problemas (`TrainingSet`); codificación plana |
+| `NSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Varios problemas de entrenamiento; codificación plana |
 | `NSGAIIOptimizingMOEADForProblemZDT4` | Un algoritmo base distinto de NSGA-II, con configuración extra propia (`weightVectorFilesDirectory`); codificación plana |
 | `TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Codificación en árbol de derivación (sin YAML de meta-nivel) |
 
@@ -21,7 +21,7 @@ Se probó deliberadamente contra cuatro casos distintos para evitar sobreajustar
 
 El cuarto caso destapó que la codificación plana y la de árbol no son solo "valores distintos para los mismos campos": la codificación en árbol ni siquiera usa `MetaNSGAIIBuilder` ni un YAML de meta-nivel — el meta-optimizador opera directamente sobre derivaciones de la propia gramática del algoritmo base, con dos operadores fijos (`SubtreeCrossover`, `TreeMutation`) parametrizados por un puñado de valores escalares. Por eso `TrainingRequest` se dividió en dos partes independientes:
 
-- **`BaseLevelConfig`**: qué se está ajustando y sobre qué training set — algoritmo base, su espacio de parámetros YAML, el training set (nombrado o explícito), los indicadores y el directorio de salida. Es exactamente igual sea cual sea la codificación del meta-nivel.
+- **`BaseLevelConfig`**: qué se está ajustando y sobre qué training set — algoritmo base, su espacio de parámetros YAML, el training set (siempre como tres listas paralelas explícitas: problemas, frentes de referencia, evaluaciones — el CLI no resuelve training sets por nombre, ver más abajo), los indicadores y el directorio de salida. Es exactamente igual sea cual sea la codificación del meta-nivel.
 - **`MetaSearchConfig`** (interfaz sellada): cómo busca el meta-optimizador. Exactamente una de dos formas:
   - `FlatMetaSearchConfig`: población, evaluaciones, núcleos, `mutationProbabilityFactor` y el YAML de meta-nivel (donde cruce/mutación/selección del propio meta-optimizador son parámetros categóricos).
   - `TreeMetaSearchConfig`: población, evaluaciones, núcleos, y los tres escalares de `SubtreeCrossover`/`TreeMutation` — sin ningún fichero YAML.
@@ -47,7 +47,6 @@ classDiagram
         populationSize
         yamlParameterSpaceFile
         extraConfig
-        trainingSetName
         trainingProblemNames
         trainingReferenceFrontFileNames
         trainingEvaluations
@@ -93,15 +92,9 @@ classDiagram
     class IndicatorRegistry {
         +resolve(name) QualityIndicator
     }
-    class TrainingSetRegistry {
-        +resolve(name) TrainingSet
-    }
 
     class BaseLevelAlgorithm {
         <<existente>>
-    }
-    class TrainingSet {
-        <<existente: org.uma.evolver.trainingset>>
     }
     class MetaNSGAIIBuilder {
         <<existente>>
@@ -148,8 +141,7 @@ classDiagram
     TrainingRunner --> TrainingRequest : lee
     TrainingRunner --> RunStatusWriter : reporta progreso
     TrainingRunner --> BaseAlgorithmRegistry : resuelve algoritmo base
-    TrainingRunner --> ProblemRegistry : resuelve problemas (lista explícita)
-    TrainingRunner --> TrainingSetRegistry : resuelve training set (nombrado)
+    TrainingRunner --> ProblemRegistry : resuelve problemas (siempre lista explícita)
     TrainingRunner --> IndicatorRegistry : resuelve indicadores
     TrainingRunner --> MetaNSGAIIBuilder : runFlat() construye meta-optimizador
     TrainingRunner --> ConsolidatedOutputResults : runFlat() escribe resultados
@@ -160,7 +152,6 @@ classDiagram
 
     StatusFileObserver --> RunStatusWriter : delega escritura
     BaseAlgorithmRegistry --> BaseLevelAlgorithm : crea
-    TrainingSetRegistry --> TrainingSet : crea
 
     Zdt4TrainingRunner --> TrainingRequest : construye en Java
     Zdt4TrainingRunner --> TrainingRunner : invoca
@@ -182,5 +173,5 @@ Ambas vías comparten exactamente el mismo motor (`TrainingRunner` y sus registr
 ## Notas de alcance (prototipo)
 
 - El algoritmo meta-optimizador está fijo a NSGA-II (como en los cuatro ejemplos de referencia) en ambas codificaciones; generalizarlo a otros meta-optimizadores (`MetaSMPSOBuilder`, etc.) queda fuera de este prototipo.
-- Los *registries* (`ProblemRegistry`, `IndicatorRegistry`, `TrainingSetRegistry`, `BaseAlgorithmRegistry`) solo registran lo necesario para los cuatro casos de referencia; son el punto de extensión natural para añadir más problemas, indicadores, training sets o algoritmos base.
-- `TrainingSetRegistry` depende únicamente de la interfaz `TrainingSet` (no de las subclases concretas como `RE3DTrainingSet`), que ya modela un training set como tres listas paralelas (problemas, frentes de referencia, evaluaciones) más un nombre — el mismo criterio se siguió al diseñar los campos equivalentes de `BaseLevelConfig`.
+- Los *registries* (`ProblemRegistry`, `IndicatorRegistry`, `BaseAlgorithmRegistry`) solo registran lo necesario para los cuatro casos de referencia; son el punto de extensión natural para añadir más problemas, indicadores o algoritmos base.
+- El CLI **no** resuelve training sets por nombre (no hay `TrainingSetRegistry`): aunque `org.uma.evolver.trainingset.RE3DTrainingSet` ya empaqueta los 7 problemas RE de tres objetivos bajo el nombre "RE3D", `Re3dTrainingRunner`/`TreeRe3dTrainingRunner` los listan explícitamente en las tres listas paralelas de `BaseLevelConfig` (mismo criterio que ya usa `TrainingSet`: problemas, frentes de referencia, evaluaciones). Así ningún request queda con campos a `null` a la espera de "una u otra forma", y no hace falta cruzar referencias con las subclases de `org.uma.evolver.trainingset` para saber qué ejecuta realmente. La contrapartida es que `METADATA.txt` etiqueta estos casos como `Problem Family: custom` en vez de `RE3D`, al no conocer el CLI ese nombre.

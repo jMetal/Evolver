@@ -17,7 +17,6 @@ import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.trainingset.TrainingSet;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
@@ -257,19 +256,6 @@ public class TrainingRunner {
   }
 
   private static ResolvedTrainingSet resolveTrainingSet(BaseLevelConfig baseLevel) {
-    boolean hasNamedSet = baseLevel.trainingSetName() != null;
-    boolean hasExplicitProblems = baseLevel.trainingProblemNames() != null;
-    if (hasNamedSet == hasExplicitProblems) {
-      throw new JMetalException(
-          "Exactly one of trainingSetName or trainingProblemNames must be set in the training request");
-    }
-
-    if (hasNamedSet) {
-      TrainingSet<DoubleSolution> namedSet = TrainingSetRegistry.resolve(baseLevel.trainingSetName());
-      return new ResolvedTrainingSet(
-          namedSet.problemList(), namedSet.referenceFronts(), namedSet.evaluationsToOptimize(), namedSet.name());
-    }
-
     List<String> problemNames = baseLevel.trainingProblemNames();
     List<String> referenceFrontFileNames = baseLevel.trainingReferenceFrontFileNames();
     List<Integer> evaluations = baseLevel.trainingEvaluations();

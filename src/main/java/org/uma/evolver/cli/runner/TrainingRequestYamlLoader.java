@@ -43,10 +43,9 @@ final class TrainingRequestYamlLoader {
         intValue(data, "numberOfIndependentRuns"),
         stringValue(data, "yamlParameterSpaceFile"),
         stringMap(data.get("extraConfig")),
-        (String) data.get("trainingSetName"),
-        stringList(data.get("trainingProblemNames")),
-        stringList(data.get("trainingReferenceFrontFileNames")),
-        intList(data.get("trainingEvaluations")),
+        stringList(require(data, "trainingProblemNames")),
+        stringList(require(data, "trainingReferenceFrontFileNames")),
+        intList(require(data, "trainingEvaluations")),
         stringList(require(data, "indicatorNames")),
         stringValue(data, "outputDirectory"));
   }

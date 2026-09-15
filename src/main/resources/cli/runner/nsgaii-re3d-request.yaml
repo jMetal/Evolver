@@ -1,15 +1,24 @@
 # Example TrainingRequest, equivalent to the values in
 # org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForBenchmarkRE3D
 #
-# Exercises the trainingSetName path (a named, multi-problem TrainingSet) instead of
-# explicit trainingProblemNames/trainingReferenceFrontFileNames/trainingEvaluations lists.
+# The training set (RE31-RE37) is the same one org.uma.evolver.trainingset.RE3DTrainingSet
+# bundles under the name "RE3D", spelled out explicitly here so the request is self-contained.
 
 baseLevel:
   algorithmName: NSGA-II
   populationSize: 100
   numberOfIndependentRuns: 1
   yamlParameterSpaceFile: NSGAIIDouble.yaml
-  trainingSetName: RE3D
+  trainingProblemNames: [RE31, RE32, RE33, RE34, RE35, RE36, RE37]
+  trainingReferenceFrontFileNames:
+    - resources/referenceFronts/RE31.csv
+    - resources/referenceFronts/RE32.csv
+    - resources/referenceFronts/RE33.csv
+    - resources/referenceFronts/RE34.csv
+    - resources/referenceFronts/RE35.csv
+    - resources/referenceFronts/RE36.csv
+    - resources/referenceFronts/RE37.csv
+  trainingEvaluations: [10000, 10000, 10000, 10000, 10000, 10000, 10000]
   indicatorNames: [Epsilon, InvertedGenerationalDistancePlus]
   outputDirectory: results/nsgaii/RE3D
 

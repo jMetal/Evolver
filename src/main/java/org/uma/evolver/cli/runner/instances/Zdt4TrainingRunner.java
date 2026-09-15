@@ -24,7 +24,6 @@ public class Zdt4TrainingRunner {
             1, // numberOfIndependentRuns
             "NSGAIIDouble.yaml", // yamlParameterSpaceFile
             null, // extraConfig
-            null, // trainingSetName
             List.of("ZDT4"), // trainingProblemNames
             List.of("resources/referenceFronts/ZDT4.csv"), // trainingReferenceFrontFileNames
             List.of(12000), // trainingEvaluations
