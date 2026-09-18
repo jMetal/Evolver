@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
