@@ -1,63 +1,63 @@
-# Prototipo de runner uniforme para entrenamiento (`org.uma.evolver.cli.training`)
+# Uniform training runner prototype (`org.uma.evolver.cli.training`)
 
-**Proyecto:** Evolver (jMetal)
-**Rama:** `study/uniform-training-runner` (prototipo de estudio, no integrado en `main`)
-**Motivación:** permitir que una herramienta externa (p. ej. un futuro GUI, [Evolver-Studio](https://github.com/jMetal/Evolver-Studio)) lance y monitorice runs de meta-optimización sin recompilar, sin sustituir los runners monolíticos existentes en `org.uma.evolver.example.training`, que siguen siendo la vía preferida para quien programa y prefiere leer un único fichero de arriba a abajo.
+**Project:** Evolver (jMetal)
+**Branch:** `study/uniform-training-runner` (study prototype, not merged into `main`)
+**Motivation:** let an external tool (e.g. a future GUI, [Evolver-Studio](https://github.com/jMetal/Evolver-Studio)) launch and monitor meta-optimization runs without recompiling, without replacing the existing monolithic runners under `org.uma.evolver.example.training`, which remain the preferred path for anyone programming who prefers reading a single file top to bottom.
 
-## Motivación
+## Motivation
 
-Los runners de `example.training` funcionan bien para ese uso, pero cada uno define su configuración con constantes Java hardcodeadas y un `main(String[] args)` ad hoc (algunos ignoran `args`, otros exigen posiciones fijas sin nombre). Eso los hace perfectos para copiar y editar, pero imposibles de invocar desde fuera del proceso Java sin recompilar. `cli.training` es la fontanería que resuelve justo ese problema: una entrada estructurada (`TrainingRequest`), un runner (`TrainingRunner`) que reutiliza el pipeline ya existente, y un contrato de fichero YAML de petición/estado/resultado pensado para ser leído por un proceso externo.
+`example.training`'s runners work well for that use case, but each one defines its configuration with hardcoded Java constants and an ad hoc `main(String[] args)` (some ignore `args`, others require fixed, unnamed positions). That makes them perfect to copy and edit, but impossible to invoke from outside the Java process without recompiling. `cli.training` is the plumbing that solves exactly that problem: a structured input (`TrainingRequest`), a runner (`TrainingRunner`) that reuses the existing pipeline, and a request/status/result YAML file contract meant to be read by an external process.
 
-Se llama `cli.training` y no simplemente `cli.runner`: el CLI seguramente gane más capacidades en el futuro (validación, generación de configuraciones, ...), y `runner` es demasiado genérico para distinguirlas — mismo criterio de partición por capacidad que ya usa `example.training`/`example.validation`/`example.configuration`. `cli` queda como namespace estable para esos futuros paquetes hermanos (`cli.validation`, ...).
+It is called `cli.training`, not simply `cli.runner`: the CLI will likely gain more capabilities in the future (validation, configuration generation, ...), and `runner` is too generic to distinguish them — the same capability-based partitioning already used by `example.training`/`example.validation`/`example.configuration`. `cli` stays as a stable namespace for those future sibling packages (`cli.validation`, ...).
 
-Se probó deliberadamente contra varios casos distintos para evitar sobreajustar el diseño a uno solo:
+Deliberately tested against several distinct cases to avoid overfitting the design to just one:
 
-| Caso de referencia | Qué ejercita |
+| Reference case | What it exercises |
 |---|---|
-| `NSGAIIOptimizingNSGAIIForProblemZDT4` | Un solo problema de entrenamiento; codificación plana |
-| `NSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Varios problemas de entrenamiento; codificación plana |
-| `NSGAIIOptimizingMOEADForProblemZDT4` | Un algoritmo base distinto de NSGA-II, con configuración extra propia (`weightVectorFilesDirectory`); codificación plana |
-| `TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Codificación en árbol de derivación (sin YAML de meta-nivel) |
-| `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ` | Motor meta-optimizador asíncrono (`"AsyncNSGA-II"`, `AsynchronousMultiThreadedNSGAII`), sin `EvolutionaryAlgorithm` como supertipo común |
-| `SMPSOOptimizingNSGAIIForProblemRE31` | Motor meta-optimizador con una tercera forma de algoritmo (`"SMPSO"`, `ParticleSwarmOptimizationAlgorithm`, no genérico), sin catálogo de operadores propio |
-| `SPEA2OptimizingNSGAIIForProblemDTLZ3` | Segundo motor meta-optimizador evolutivo (`"SPEA2"`), que reutiliza la forma `EvolutionaryAlgorithm` de `NSGA-II` pero hardcodea sus propios operadores |
+| `NSGAIIOptimizingNSGAIIForProblemZDT4` | A single training problem; flat encoding |
+| `NSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Several training problems; flat encoding |
+| `NSGAIIOptimizingMOEADForProblemZDT4` | A base algorithm other than NSGA-II, with its own extra config (`weightVectorFilesDirectory`); flat encoding |
+| `TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D` | Derivation-tree encoding (no meta-level YAML) |
+| `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ` | Asynchronous meta-optimizer engine (`"AsyncNSGA-II"`, `AsynchronousMultiThreadedNSGAII`), with no `EvolutionaryAlgorithm` common supertype |
+| `SMPSOOptimizingNSGAIIForProblemRE31` | Meta-optimizer engine with a third algorithm shape (`"SMPSO"`, `ParticleSwarmOptimizationAlgorithm`, not generic), with no operator catalogue of its own |
+| `SPEA2OptimizingNSGAIIForProblemDTLZ3` | Second evolutionary meta-optimizer engine (`"SPEA2"`), which reuses `NSGA-II`'s `EvolutionaryAlgorithm` shape but hardcodes its own operators |
 
-Los tres últimos (`AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`, `SMPSOOptimizingNSGAIIForProblemRE31`, `SPEA2OptimizingNSGAIIForProblemDTLZ3`) están además reescritos para usar el propio pipeline `cli.training` (`BaseLevelConfigurationReader`/`MetaOptimizerConfigurationReader`/`TrainingRunner`) en vez de ensamblar el meta-optimizador a mano: su configuración vive como texto YAML embebido en la clase (vía `loadFromYaml`, ver más abajo) y, en paralelo, como los mismos ficheros reusables bajo `src/main/resources/` referenciados por su `request.yaml` correspondiente — así se puede ejecutar exactamente el mismo experimento desde Java o desde el CLI sin duplicar la receta a mano.
+The last three (`AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`, `SMPSOOptimizingNSGAIIForProblemRE31`, `SPEA2OptimizingNSGAIIForProblemDTLZ3`) are additionally rewritten to use the `cli.training` pipeline itself (`BaseLevelConfigurationReader`/`MetaOptimizerConfigurationReader`/`TrainingRunner`) instead of assembling the meta-optimizer by hand: their configuration lives as YAML text embedded in the class (via `loadFromYaml`, see below) and, in parallel, as the same reusable files under `src/main/resources/` referenced by their corresponding `request.yaml` — so the exact same experiment can be run from Java or from the CLI without duplicating the recipe by hand.
 
-## `TrainingRequest` en dos partes independientes
+## `TrainingRequest` in two independent parts
 
-El cuarto caso destapó que la codificación plana y la de árbol no son solo "valores distintos para los mismos campos": la codificación en árbol no usa ningún YAML de meta-nivel — el meta-optimizador opera directamente sobre derivaciones de la propia gramática del algoritmo base, con dos operadores fijos (`SubtreeCrossover`, `TreeMutation`) parametrizados por un puñado de valores escalares. Por eso `TrainingRequest` se dividió en dos partes independientes:
+The fourth case revealed that the flat and tree encodings are not just "different values for the same fields": the tree encoding uses no meta-level YAML at all — the meta-optimizer operates directly on derivations of the base algorithm's own grammar, with two fixed operators (`SubtreeCrossover`, `TreeMutation`) parameterized by a handful of scalar values. That is why `TrainingRequest` was split into two independent parts:
 
-- **`BaseLevelConfig`**: qué se está ajustando y sobre qué training set — algoritmo base, su espacio de parámetros YAML, el training set (siempre como tres listas paralelas explícitas: problemas, frentes de referencia, evaluaciones — el CLI no resuelve training sets por nombre, ver más abajo), y los indicadores. Es exactamente igual sea cual sea la codificación del meta-nivel. Igual que `metaSearch` (ver siguiente punto), **no** se declara inline en `request.yaml`: el campo `baseLevel` es el *nombre* de un fichero reusable bajo `src/main/resources/baseLevelConfigurations/` (p. ej. `baseLevel: Zdt4NSGAIIBaseLevel.yaml`), cargado por `BaseLevelConfigurationReader`.
-- **`MetaSearchConfig`** (interfaz sellada): cómo busca el meta-optimizador. Tampoco se declara inline: el campo `metaSearch` es el *nombre* de un fichero de configuración meta-optimizador reusable (p. ej. `metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml`), cargado por `MetaOptimizerConfigurationReader` desde `src/main/resources/metaOptimizerConfigurations/`. Ambas variantes declaran un campo `algorithm` (resuelto por `MetaAlgorithmRegistry`, ver más abajo; `"NSGA-II"`, `"SPEA2"`, `"AsyncNSGA-II"` y `"SMPSO"` están registrados para `flat`, solo `"NSGA-II"` para `tree`). Ninguno de los cuatro nombres lleva calificativo "Parallel": los cuatro evalúan usando `numberOfCores` (vía `MultiThreadedEvaluation` o, para `AsyncNSGA-II`, su propia evaluación asíncrona), así que distinguir uno solo como "paralelo" sería engañoso, no informativo:
-  - `FlatMetaSearchConfig`: `algorithm`, población, evaluaciones, núcleos, y `operatorFlags` — el resto de claves del fichero meta (`crossover`, `mutation`, `crossoverProbability`, `selection`, ...), convertidas a pares `["--clave", "valor", ...]` listos para `BaseLevelAlgorithm.parse(String[])`.
-  - `TreeMetaSearchConfig`: `algorithm`, población, evaluaciones, núcleos, y los tres escalares de `SubtreeCrossover`/`TreeMutation`.
-- **`outputDirectory`, `writeFrequency`, `statusFrequency`, `frontPlotFrequency`**: a diferencia de `baseLevel`/`metaSearch`, sí se declaran inline en `request.yaml`, como campos propios de `TrainingRequest` (no de `BaseLevelConfig`/`MetaSearchConfig`). Los cuatro son específicos de *esa* ejecución concreta, no de la receta que se ejecuta — dos requests pueden compartir exactamente el mismo `baseLevel`/`metaSearch` (p. ej. comparar `NSGA-II` vs. `AsyncNSGA-II` sobre el mismo problema, ver `nsgaii-zdt4-request.yaml`/`async-nsgaii-zdt4-request.yaml`, que comparten `Zdt4NSGAIIBaseLevel.yaml`) y aun así querer escribir en sitios distintos, con una cadencia de reporte distinta, o con/sin visualización en vivo. Si vivieran dentro de un fichero reusable, esa reutilización sería imposible.
-  - `outputDirectory`: obligatorio.
-  - `writeFrequency` (cada cuántas evaluaciones se escriben `CONFIGURATIONS.csv`/`INDICATORS.csv`) y `statusFrequency` (cada cuántas evaluaciones se actualizan `status.yaml`/el log): opcionales, por defecto 100 — no todas las evaluaciones, aproximadamente una vez por generación.
-  - `frontPlotFrequency`: opcional, **sin** valor por defecto — ausente significa sin gráfico. Si está presente, `TrainingRunner` registra un `FrontPlotObserver` en vivo (frente de Pareto del meta-optimizador, actualizado cada `frontPlotFrequency` evaluaciones), derivando título/ejes/leyenda de `metaSearch.algorithm()`/los dos indicadores/`trainingSet.label()` — el usuario no tiene que indicar nada más que la frecuencia. Deliberadamente opt-in: `TrainingRunner` puede ser lanzado por un proceso externo (p. ej. un GUI) que no querría que apareciese una ventana Swing en su máquina.
+- **`BaseLevelConfig`**: what is being tuned and on which training set — base algorithm, its YAML parameter space, the training set (always as three explicit parallel lists: problems, reference fronts, evaluations — the CLI does not resolve training sets by name, see below), and the indicators. Exactly the same regardless of the meta-level encoding. Like `metaSearch` (see next point), it is **not** declared inline in `request.yaml`: the `baseLevel` field is the *name* of a reusable file under `src/main/resources/baseLevelConfigurations/` (e.g. `baseLevel: Zdt4NSGAIIBaseLevel.yaml`), loaded by `BaseLevelConfigurationReader`.
+- **`MetaSearchConfig`** (sealed interface): how the meta-optimizer searches. Also not declared inline: the `metaSearch` field is the *name* of a reusable meta-optimizer configuration file (e.g. `metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml`), loaded by `MetaOptimizerConfigurationReader` from `src/main/resources/metaOptimizerConfigurations/`. Both variants declare an `algorithm` field (resolved by `MetaAlgorithmRegistry`, see below; `"NSGA-II"`, `"SPEA2"`, `"AsyncNSGA-II"` and `"SMPSO"` are registered for `flat`, only `"NSGA-II"` for `tree`). None of the four names carries a "Parallel" qualifier: all four evaluate using `numberOfCores` (via `MultiThreadedEvaluation` or, for `AsyncNSGA-II`, its own asynchronous evaluation), so singling one out as "parallel" would be misleading, not informative:
+  - `FlatMetaSearchConfig`: `algorithm`, population, evaluations, cores, and `operatorFlags` — every other key in the meta file (`crossover`, `mutation`, `crossoverProbability`, `selection`, ...), converted into `["--key", "value", ...]` pairs ready for `BaseLevelAlgorithm.parse(String[])`.
+  - `TreeMetaSearchConfig`: `algorithm`, population, evaluations, cores, and `SubtreeCrossover`/`TreeMutation`'s three scalars.
+- **`outputDirectory`, `writeFrequency`, `statusFrequency`, `frontPlotFrequency`**: unlike `baseLevel`/`metaSearch`, these *are* declared inline in `request.yaml`, as `TrainingRequest`'s own fields (not `BaseLevelConfig`'s/`MetaSearchConfig`'s). All four are specific to *this particular* run, not to the recipe being executed — two requests can share the exact same `baseLevel`/`metaSearch` (e.g. comparing `NSGA-II` vs. `AsyncNSGA-II` on the same problem, see `nsgaii-zdt4-request.yaml`/`async-nsgaii-zdt4-request.yaml`, which share `Zdt4NSGAIIBaseLevel.yaml`) and still want to write to different places, at a different reporting cadence, or with/without live visualization. If they lived inside a reusable file, that reuse would be impossible.
+  - `outputDirectory`: required.
+  - `writeFrequency` (how often, in evaluations, `CONFIGURATIONS.csv`/`INDICATORS.csv` are written) and `statusFrequency` (how often `status.yaml`/the log are updated): optional, default 100 — not every evaluation, roughly once per generation.
+  - `frontPlotFrequency`: optional, **with no** default — absent means no plot. When present, `TrainingRunner` registers a live `FrontPlotObserver` (the meta-optimizer's Pareto front, updated every `frontPlotFrequency` evaluations), deriving title/axes/legend from `metaSearch.algorithm()`/the two indicators/`trainingSet.label()` — the user does not have to specify anything beyond the frequency. Deliberately opt-in: `TrainingRunner` can be launched by an external process (e.g. a GUI) that would not want a Swing window popping up on its machine.
 
-### `request.yaml` referencia dos ficheros reusables, no uno
+### `request.yaml` references two reusable files, not one
 
-Un `TrainingRequest` completo son en realidad **tres piezas independientes**, el mismo patrón que ya usaba `baseLevel.yamlParameterSpaceFile`/`defaultConfigurations/*.txt` a nivel de algoritmo base, aplicado ahora también al `TrainingRequest` en su conjunto:
+A full `TrainingRequest` is actually **three independent pieces**, the same pattern already used by `baseLevel.yamlParameterSpaceFile`/`defaultConfigurations/*.txt` at the base-algorithm level, now applied to `TrainingRequest` as a whole too:
 
-1. **`request.yaml`** — `baseLevel:` (nombre de fichero), `metaSearch:` (nombre de fichero), `outputDirectory:` (string inline, obligatorio) y, opcionalmente, `writeFrequency:`/`statusFrequency:` (enteros inline, por defecto 100) y `frontPlotFrequency:` (entero inline, sin default — ausente = sin gráfico) — todos específicos de esta ejecución.
-2. **El fichero de `baseLevel`** (p. ej. `Zdt4NSGAIIBaseLevel.yaml`, bajo `src/main/resources/baseLevelConfigurations/`) — qué se ajusta y sobre qué training set, reutilizable entre cualquier número de requests.
-3. **El fichero de `metaSearch`** (p. ej. `MetaParallelNSGAIIFlatConfiguration.yaml`, bajo `src/main/resources/metaOptimizerConfigurations/`) — una receta completa y reutilizable del meta-optimizador: `algorithm`, `encoding`, los escalares (`metaMaxEvaluations`, `metaPopulationSize`, `numberOfCores`) y, para `flat`, los operadores concretos (`crossover: SBX`, `crossoverProbability: 0.9`, `selection: tournament`, ...) — todo en un único nivel de claves, sin evolucionar nunca.
+1. **`request.yaml`** — `baseLevel:` (file name), `metaSearch:` (file name), `outputDirectory:` (inline string, required) and, optionally, `writeFrequency:`/`statusFrequency:` (inline integers, default 100) and `frontPlotFrequency:` (inline integer, no default — absent = no plot) — all specific to this run.
+2. **The `baseLevel` file** (e.g. `Zdt4NSGAIIBaseLevel.yaml`, under `src/main/resources/baseLevelConfigurations/`) — what is tuned and on which training set, reusable across any number of requests.
+3. **The `metaSearch` file** (e.g. `MetaParallelNSGAIIFlatConfiguration.yaml`, under `src/main/resources/metaOptimizerConfigurations/`) — a complete, reusable meta-optimizer recipe: `algorithm`, `encoding`, the scalars (`metaMaxEvaluations`, `metaPopulationSize`, `numberOfCores`) and, for `flat`, the concrete operators (`crossover: SBX`, `crossoverProbability: 0.9`, `selection: tournament`, ...) — all at a single level of keys, never evolved.
 
-El catálogo de operadores disponibles para el propio meta-optimizador (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`, mismo formato `ParameterSpace` que usa `baseLevel.yamlParameterSpaceFile` pero restringido) **no es un campo del request**: como solo hay un catálogo legal por algoritmo registrado, `MetaAlgorithmRegistry` lo hardcodea internamente en vez de repetirlo en cada fichero de `metaSearch`. `MetaAlgorithmRegistry` también fija ahí mismo los tres flags sin alternativa real dentro de ese catálogo (`--algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation`), que `.parse(String[])` exige presentes aunque solo tengan un valor legal.
+The catalogue of operators available to the meta-optimizer itself (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`, the same `ParameterSpace` format `baseLevel.yamlParameterSpaceFile` uses, but restricted) is **not a request field**: since there is exactly one legal catalogue per registered algorithm, `MetaAlgorithmRegistry` hardcodes it internally instead of repeating it in every `metaSearch` file. `MetaAlgorithmRegistry` also fixes right there the three flags with no real alternative within that catalogue (`--algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation`), which `.parse(String[])` requires present even though they only have one legal value.
 
-En resumen: `baseLevel.yamlParameterSpaceFile` es siempre el espacio evolucionado; el fichero de `baseLevel` (el `request.yaml`), el fichero de `metaSearch` y el catálogo interno que valida sus operadores nunca lo son — son la configuración, elegida una vez, de qué se ajusta y de la herramienta que hace el ajuste.
+In short: `baseLevel.yamlParameterSpaceFile` is always the space being evolved; the `baseLevel` file (the `request.yaml`), the `metaSearch` file, and the internal catalogue that validates its operators never are — they are the configuration, chosen once, of what is tuned and of the tool that does the tuning.
 
-### `loadFromYaml`: la misma configuración, embebida en Java
+### `loadFromYaml`: the same configuration, embedded in Java
 
-`BaseLevelConfigurationReader`/`MetaOptimizerConfigurationReader` no solo cargan por nombre de fichero (`load(fileName)`): también aceptan el texto YAML directamente (`loadFromYaml(String)`), con la misma validación. Los ejemplos de `example.training` que se ejercitan contra un motor meta-optimizador nuevo (`AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`, `SMPSOOptimizingNSGAIIForProblemRE31`, `SPEA2OptimizingNSGAIIForProblemDTLZ3`, `TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D`) usan esto para mantener su receta como un *text block* Java dentro de la propia clase — el ejemplo sigue siendo un único fichero legible de arriba a abajo, sin duplicar a mano la lógica de parseo/validación, y ejecuta a través del mismo `TrainingRunner` que usa el CLI. Esa misma receta también existe como los ficheros reusables bajo `src/main/resources/{baseLevelConfigurations,metaOptimizerConfigurations}/`, referenciados por un `request.yaml` equivalente bajo `src/main/resources/cli/training/` — así el mismo experimento se puede lanzar desde Java (`main()`) o desde un terminal (`TrainingRunnerMain`) sin mantener la configuración escrita a mano en dos sitios independientes.
+`BaseLevelConfigurationReader`/`MetaOptimizerConfigurationReader` do not only load by file name (`load(fileName)`): they also accept the YAML text directly (`loadFromYaml(String)`), with the same validation. The `example.training` examples exercised against a new meta-optimizer engine (`AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`, `SMPSOOptimizingNSGAIIForProblemRE31`, `SPEA2OptimizingNSGAIIForProblemDTLZ3`, `TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D`) use this to keep their recipe as a Java text block inside the class itself — the example remains a single, readable, top-to-bottom file, without duplicating parsing/validation logic by hand, and runs through the same `TrainingRunner` the CLI uses. That same recipe also exists as the reusable files under `src/main/resources/{baseLevelConfigurations,metaOptimizerConfigurations}/`, referenced by an equivalent `request.yaml` under `src/main/resources/cli/training/` — so the same experiment can be launched from Java (`main()`) or from a terminal (`TrainingRunnerMain`) without keeping the configuration written by hand in two independent places.
 
-### Los ficheros de `baseLevel`/`metaSearch` se generan, no se escriben a mano
+### `baseLevel`/`metaSearch` files are generated, not hand-written
 
-`src/main/java/org/uma/evolver/cli/training/generators/` tiene una clase por fichero de `baseLevelConfigurations/` (p. ej. `Zdt4BaseLevelConfigurationGenerator`): construye un `BaseLevelConfig` en Java (con el chequeo de tipos/tamaños de lista del compilador) y llama a `BaseLevelConfigurationWriter.save(config, path)` para (re)escribir el fichero — evita mantener los mismos valores duplicados a mano en Java y en YAML. Estas clases **no ejecutan ningún entrenamiento**: ejecutar un experimento se hace siempre vía `TrainingRunnerMain <request.yaml>`.
+`src/main/java/org/uma/evolver/cli/training/generators/` has one class per `baseLevelConfigurations/` file (e.g. `Zdt4BaseLevelConfigurationGenerator`): it builds a `BaseLevelConfig` in Java (with the compiler's type/list-size checking) and calls `BaseLevelConfigurationWriter.save(config, path)` to (re)write the file — avoiding the same values kept duplicated by hand in Java and in YAML. These classes **run no training at all**: running an experiment is always done via `TrainingRunnerMain <request.yaml>`.
 
-## Diagrama de clases
+## Class diagram
 
 ```mermaid
 classDiagram
@@ -149,28 +149,28 @@ classDiagram
     }
 
     class BaseLevelAlgorithm {
-        <<existente>>
+        <<existing>>
     }
     class DoubleNSGAII {
-        <<existente>>
+        <<existing>>
     }
     class MetaSPEA2Builder {
-        <<existente: org.uma.evolver.meta.builder>>
+        <<existing: org.uma.evolver.meta.builder>>
     }
     class MetaSMPSOBuilder {
-        <<existente: org.uma.evolver.meta.builder>>
+        <<existing: org.uma.evolver.meta.builder>>
     }
     class ConsolidatedOutputResults {
-        <<existente>>
+        <<existing>>
     }
     class TreeOutputResults {
-        <<existente: org.uma.evolver.encoding.util>>
+        <<existing: org.uma.evolver.encoding.util>>
     }
     class SubtreeCrossover {
-        <<existente>>
+        <<existing>>
     }
     class TreeMutation {
-        <<existente>>
+        <<existing>>
     }
 
     class Zdt4BaseLevelConfigurationGenerator {
@@ -195,57 +195,57 @@ classDiagram
     MetaSearchConfig <|.. FlatMetaSearchConfig
     MetaSearchConfig <|.. TreeMetaSearchConfig
 
-    TrainingRunnerMain --> TrainingRequestYamlLoader : carga
-    TrainingRunnerMain --> TrainingRunner : lanza
-    TrainingRequestYamlLoader --> TrainingRequest : construye
-    TrainingRequestYamlLoader --> BaseLevelConfigurationReader : resuelve baseLevel por nombre
-    TrainingRequestYamlLoader --> MetaOptimizerConfigurationReader : resuelve metaSearch por nombre
+    TrainingRunnerMain --> TrainingRequestYamlLoader : loads
+    TrainingRunnerMain --> TrainingRunner : launches
+    TrainingRequestYamlLoader --> TrainingRequest : builds
+    TrainingRequestYamlLoader --> BaseLevelConfigurationReader : resolves baseLevel by name
+    TrainingRequestYamlLoader --> MetaOptimizerConfigurationReader : resolves metaSearch by name
 
-    TrainingRunner --> TrainingRequest : lee
-    TrainingRunner --> RunStatusWriter : reporta progreso
-    TrainingRunner --> BaseAlgorithmRegistry : resuelve algoritmo base
-    TrainingRunner --> ProblemRegistry : resuelve problemas (siempre lista explícita)
-    TrainingRunner --> IndicatorRegistry : resuelve indicadores
-    TrainingRunner --> MetaAlgorithmRegistry : runFlat()/runTree() resuelven algoritmo meta
-    TrainingRunner --> ConsolidatedOutputResults : runFlat() escribe resultados
+    TrainingRunner --> TrainingRequest : reads
+    TrainingRunner --> RunStatusWriter : reports progress
+    TrainingRunner --> BaseAlgorithmRegistry : resolves base algorithm
+    TrainingRunner --> ProblemRegistry : resolves problems (always an explicit list)
+    TrainingRunner --> IndicatorRegistry : resolves indicators
+    TrainingRunner --> MetaAlgorithmRegistry : runFlat()/runTree() resolve meta algorithm
+    TrainingRunner --> ConsolidatedOutputResults : runFlat() writes results
     TrainingRunner --> SubtreeCrossover : runTree()
     TrainingRunner --> TreeMutation : runTree()
-    TrainingRunner --> TreeOutputResults : runTree() escribe resultados
-    TrainingRunner ..> StatusFileObserver : registra como observer
+    TrainingRunner --> TreeOutputResults : runTree() writes results
+    TrainingRunner ..> StatusFileObserver : registers as observer
 
-    MetaAlgorithmRegistry --> DoubleNSGAII : resolveFlat("NSGA-II", ...) construye
-    MetaAlgorithmRegistry --> MetaSPEA2Builder : resolveFlat("SPEA2", ...) construye
-    MetaAlgorithmRegistry --> MetaSMPSOBuilder : resolveFlatPso("SMPSO", ...) construye
+    MetaAlgorithmRegistry --> DoubleNSGAII : resolveFlat("NSGA-II", ...) builds
+    MetaAlgorithmRegistry --> MetaSPEA2Builder : resolveFlat("SPEA2", ...) builds
+    MetaAlgorithmRegistry --> MetaSMPSOBuilder : resolveFlatPso("SMPSO", ...) builds
 
-    StatusFileObserver --> RunStatusWriter : delega escritura
-    BaseAlgorithmRegistry --> BaseLevelAlgorithm : crea
+    StatusFileObserver --> RunStatusWriter : delegates writing
+    BaseAlgorithmRegistry --> BaseLevelAlgorithm : creates
 
-    Zdt4BaseLevelConfigurationGenerator --> BaseLevelConfig : construye en Java
-    Zdt4BaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : guarda a YAML
-    Re3dBaseLevelConfigurationGenerator --> BaseLevelConfig : construye en Java
-    Re3dBaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : guarda a YAML
-    MoeadZdt4BaseLevelConfigurationGenerator --> BaseLevelConfig : construye en Java
-    MoeadZdt4BaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : guarda a YAML
-    TreeRe3dBaseLevelConfigurationGenerator --> BaseLevelConfig : construye en Java
-    TreeRe3dBaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : guarda a YAML
+    Zdt4BaseLevelConfigurationGenerator --> BaseLevelConfig : builds in Java
+    Zdt4BaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : saves to YAML
+    Re3dBaseLevelConfigurationGenerator --> BaseLevelConfig : builds in Java
+    Re3dBaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : saves to YAML
+    MoeadZdt4BaseLevelConfigurationGenerator --> BaseLevelConfig : builds in Java
+    MoeadZdt4BaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : saves to YAML
+    TreeRe3dBaseLevelConfigurationGenerator --> BaseLevelConfig : builds in Java
+    TreeRe3dBaseLevelConfigurationGenerator --> BaseLevelConfigurationWriter : saves to YAML
 ```
 
-## Una única forma de ejecutar: `TrainingRunnerMain <request.yaml>`
+## One single way to run: `TrainingRunnerMain <request.yaml>`
 
-`TrainingRunnerMain <request.yaml> [status.yaml]` es ahora la única vía para ejecutar un entrenamiento — el GUI (o un usuario) escribe `request.yaml` (`baseLevel:`, `metaSearch:`, `outputDirectory:` y opcionalmente `writeFrequency:`/`statusFrequency:`/`frontPlotFrequency:`, ver más arriba), hace polling de `status.yaml` mientras el run progresa, y al terminar lee `results.yaml` (que apunta a `METADATA.txt`/`INDICATORS.csv`/`CONFIGURATIONS.csv`).
+`TrainingRunnerMain <request.yaml> [status.yaml]` is now the only way to run a training — the GUI (or a user) writes `request.yaml` (`baseLevel:`, `metaSearch:`, `outputDirectory:` and optionally `writeFrequency:`/`statusFrequency:`/`frontPlotFrequency:`, see above), polls `status.yaml` while the run progresses, and once finished reads `results.yaml` (which points at `METADATA.txt`/`INDICATORS.csv`/`CONFIGURATIONS.csv`).
 
-Antes existía una segunda vía (paquete `cli.training.instances`, objetos Java planos que construían un `TrainingRequest` y lo ejecutaban directamente). Se eliminó: en cuanto `baseLevel` pasó a cargarse por referencia a fichero igual que `metaSearch`, esas clases se volvieron duplicados casi exactos de invocar `TrainingRunnerMain` sobre el `request.yaml` correspondiente — la misma configuración escrita a mano en dos sitios sin que ninguno fuera la fuente de verdad. En su lugar, `cli.training.generators` (ver arriba) cubre el caso de uso real que sí aportaba algo (construir una configuración con el chequeo de tipos del compilador): generan los ficheros de `baseLevelConfigurations/`, no ejecutan nada.
+There used to be a second way (the `cli.training.instances` package, plain Java objects that built a `TrainingRequest` and ran it directly). It was removed: once `baseLevel` started being loaded by file reference just like `metaSearch`, those classes became near-exact duplicates of invoking `TrainingRunnerMain` on the corresponding `request.yaml` — the same configuration written by hand in two places with neither being the source of truth. Instead, `cli.training.generators` (see above) covers the real use case that did add value (building a configuration with the compiler's type checking): they generate `baseLevelConfigurations/` files, they run nothing.
 
-## Notas de alcance (prototipo)
+## Scope notes (prototype)
 
-- El algoritmo meta-optimizador se elige explícitamente vía `metaSearch.algorithm`, resuelto por `MetaAlgorithmRegistry`. Para `flat` hay cuatro motores registrados, agrupados en tres `Family` (ninguna con un supertipo jMetal común que exponga `run()`/`result()`/`observable()` — son duck-typed, no una interfaz compartida):
-  - `Family.EVOLUTIONARY` → `EvolutionaryAlgorithm`: `"NSGA-II"` (construye `DoubleNSGAII` directamente, sin pasar por `MetaNSGAIIBuilder`) y `"SPEA2"` (vía `MetaSPEA2Builder`, que hardcodea sus propios operadores — SBX, polynomial mutation, strength ranking, KNN, torneo — y solo expone `populationSize`/`offspringPopulationSize`/`maxEvaluations`/`numberOfCores`/`mutationProbabilityFactor`, sin `ParameterSpace` de operadores).
-  - `Family.ASYNCHRONOUS` → `AsynchronousMultiThreadedNSGAII`: `"AsyncNSGA-II"` (vía `MetaAsyncNSGAIIBuilder`, con crossover/mutación configurables desde un `ParameterSpace` reducido — `AsyncNSGAIIMetaDouble.yaml`, solo esos dos parámetros, ya que selección y reemplazo están hardcodeados dentro del algoritmo asíncrono).
-  - `Family.PARTICLE_SWARM` → `ParticleSwarmOptimizationAlgorithm` (no genérico, fijo a `DoubleSolution`, una tercera forma de algoritmo distinta de las otras dos): `"SMPSO"` (vía `MetaSMPSOBuilder`, que no expone ningún catálogo de operadores — solo swarm size/evaluaciones/núcleos; un `operatorFlags` no vacío falla explícitamente).
+- The meta-optimizer algorithm is chosen explicitly via `metaSearch.algorithm`, resolved by `MetaAlgorithmRegistry`. For `flat` there are four registered engines, grouped into three `Family` values (none with a common jMetal supertype exposing `run()`/`result()`/`observable()` — they are duck-typed, not a shared interface):
+  - `Family.EVOLUTIONARY` → `EvolutionaryAlgorithm`: `"NSGA-II"` (builds `DoubleNSGAII` directly, without going through `MetaNSGAIIBuilder`) and `"SPEA2"` (via `MetaSPEA2Builder`, which hardcodes its own operators — SBX, polynomial mutation, strength ranking, KNN, tournament — and only exposes `populationSize`/`offspringPopulationSize`/`maxEvaluations`/`numberOfCores`/`mutationProbabilityFactor`, with no operator `ParameterSpace`).
+  - `Family.ASYNCHRONOUS` → `AsynchronousMultiThreadedNSGAII`: `"AsyncNSGA-II"` (via `MetaAsyncNSGAIIBuilder`, with crossover/mutation configurable from a reduced `ParameterSpace` — `AsyncNSGAIIMetaDouble.yaml`, only those two parameters, since selection and replacement are hardcoded inside the asynchronous algorithm).
+  - `Family.PARTICLE_SWARM` → `ParticleSwarmOptimizationAlgorithm` (not generic, fixed to `DoubleSolution`, a third algorithm shape distinct from the other two): `"SMPSO"` (via `MetaSMPSOBuilder`, which exposes no operator catalogue at all — just swarm size/evaluations/cores; a non-empty `operatorFlags` fails explicitly).
 
-  Para `tree` sigue habiendo solo una pipeline implementada (`"NSGA-II"`). `MetaAlgorithmRegistry.familyOf(algorithm)` es la única fuente de verdad sobre qué forma de algoritmo devuelve cada nombre, y `TrainingRunner` despacha a `runFlat`/`runFlatAsync`/`runFlatPso` según esa clasificación. Nota: `TrainingRunnerMain` termina con `System.exit(0)` porque `AsynchronousMultiThreadedNSGAII` no cierra su pool de hilos por sí solo — sus `Worker` internos son `Thread`s planos no-daemon en un `while(true)` infinito — (mismo motivo por el que el ejemplo `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ` de `example.training` ya hacía lo mismo, y por el que `TrainingRunnerSmokeIT`, ver más abajo, no cubre `AsyncNSGA-II`).
-- Corrección de un defecto real destapado al registrar `"SMPSO"`: `MetaSMPSOBuilder.build()` exige `problem instanceof DoubleProblem`, pero `MetaOptimizationProblem` nunca implementó esa interfaz — así que cualquier uso de `MetaSMPSOBuilder` contra ella (incluido el propio `SMPSOOptimizingNSGAIIForProblemRE31` *antes* de este prototipo) fallaba en tiempo de ejecución con `"SMPSO requires a DoubleProblem"` pese a compilar sin problemas. Arreglado haciendo que `MetaOptimizationProblem implements DoubleProblem` (`variableBounds()` reutiliza los mismos límites `[0,1]` que ya construía `createSolution()`).
-- Los *registries* (`ProblemRegistry`, `IndicatorRegistry`, `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`) solo registran lo necesario para los casos de referencia; son el punto de extensión natural para añadir más problemas, indicadores, algoritmos base o motores meta-optimizadores.
-- **Smoke tests**: `TrainingRunnerSmokeIT` (`src/test/java/org/uma/evolver/cli/training/`, `@Tag("integration")`, ejecutado vía `mvn verify`/`integration-test`) lanza un entrenamiento real de presupuesto mínimo por cada motor `flat`/`tree` seguro de ejecutar en el mismo proceso que los tests (`NSGA-II` flat y tree, `SPEA2`, `SMPSO`) y comprueba que llega a `FINISHED` con sus ficheros de salida. `AsyncNSGA-II` queda deliberadamente fuera de esta suite por el problema de hilos no-daemon explicado arriba — ejecutarlo ahí colgaría el build.
-- **Contrato para Evolver-Studio:** un fichero de `metaSearch` (p. ej. `MetaParallelNSGAIIFlatConfiguration.yaml`) es un YAML plano de un solo nivel — `algorithm`, `encoding`, los escalares, y los operadores concretos como pares clave-valor (`crossover: SBX`, `crossoverProbability: 0.9`, ...) — deliberadamente *no* el formato `ParameterSpace` (categórico/condicional) que usa `baseLevel.yamlParameterSpaceFile`, porque aquí no hay nada que evolucionar ni que acotar: es una receta fija, no un espacio. El renderer de Evolver-Studio para el algoritmo base (`evolver_studio/parameter_space.py`/`parameter_form.py`) no aplica tal cual; lo natural del lado de Evolver-Studio es un formulario simple de campos clave-valor (o directamente editar el YAML), no el mismo componente de sliders/multiselect. Adaptar eso es trabajo pendiente en el lado de Evolver-Studio, no de este prototipo.
-- El CLI **no** resuelve training sets por nombre (no hay `TrainingSetRegistry`): aunque `org.uma.evolver.trainingset.RE3DTrainingSet` ya empaqueta los 7 problemas RE de tres objetivos bajo el nombre "RE3D", `Re3dNSGAIIBaseLevel.yaml`/`Re3dNSGAIITreeBaseLevel.yaml` (y los generadores que los producen) los listan explícitamente en las tres listas paralelas de `BaseLevelConfig` (mismo criterio que ya usa `TrainingSet`: problemas, frentes de referencia, evaluaciones). Así ningún request queda con campos a `null` a la espera de "una u otra forma", y no hace falta cruzar referencias con las subclases de `org.uma.evolver.trainingset` para saber qué ejecuta realmente. La contrapartida es que `METADATA.txt` etiqueta estos casos como `Problem Family: custom` en vez de `RE3D`, al no conocer el CLI ese nombre.
+  For `tree` there is still only one implemented pipeline (`"NSGA-II"`). `MetaAlgorithmRegistry.familyOf(algorithm)` is the single source of truth for which algorithm shape each name returns, and `TrainingRunner` dispatches to `runFlat`/`runFlatAsync`/`runFlatPso` based on that classification. Note: `TrainingRunnerMain` ends with `System.exit(0)` because `AsynchronousMultiThreadedNSGAII` does not shut down its thread pool on its own — its internal `Worker`s are plain non-daemon `Thread`s in an infinite `while(true)` — (the same reason `example.training`'s `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ` example already did the same, and why `TrainingRunnerSmokeIT`, see below, does not cover `AsyncNSGA-II`).
+- Fixed a real defect uncovered while registering `"SMPSO"`: `MetaSMPSOBuilder.build()` requires `problem instanceof DoubleProblem`, but `MetaOptimizationProblem` never implemented that interface — so any use of `MetaSMPSOBuilder` against it (including `SMPSOOptimizingNSGAIIForProblemRE31` itself *before* this prototype) failed at run time with `"SMPSO requires a DoubleProblem"` despite compiling fine. Fixed by making `MetaOptimizationProblem implements DoubleProblem` (`variableBounds()` reuses the same `[0,1]` bounds `createSolution()` already built).
+- The registries (`ProblemRegistry`, `IndicatorRegistry`, `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`) only register what the reference cases need; they are the natural extension point for adding more problems, indicators, base algorithms or meta-optimizer engines.
+- **Smoke tests**: `TrainingRunnerSmokeIT` (`src/test/java/org/uma/evolver/cli/training/`, `@Tag("integration")`, run via `mvn verify`/`integration-test`) launches a real, minimal-budget training for every `flat`/`tree` engine safe to run in the same process as the tests (`NSGA-II` flat and tree, `SPEA2`, `SMPSO`) and checks it reaches `FINISHED` with its output files. `AsyncNSGA-II` is deliberately left out of this suite for the non-daemon-thread issue explained above — running it there would hang the build.
+- **Contract for Evolver-Studio:** a `metaSearch` file (e.g. `MetaParallelNSGAIIFlatConfiguration.yaml`) is a flat, single-level YAML — `algorithm`, `encoding`, the scalars, and the concrete operators as key-value pairs (`crossover: SBX`, `crossoverProbability: 0.9`, ...) — deliberately *not* the `ParameterSpace` format (categorical/conditional) `baseLevel.yamlParameterSpaceFile` uses, because there is nothing here to evolve or bound: it is a fixed recipe, not a space. Evolver-Studio's renderer for the base algorithm (`evolver_studio/parameter_space.py`/`parameter_form.py`) does not apply as-is; the natural fit on Evolver-Studio's side is a simple key-value field form (or editing the YAML directly), not the same slider/multiselect component. Adapting that is pending work on Evolver-Studio's side, not this prototype's.
+- The CLI does **not** resolve training sets by name (there is no `TrainingSetRegistry`): even though `org.uma.evolver.trainingset.RE3DTrainingSet` already packages the 7 three-objective RE problems under the name "RE3D", `Re3dNSGAIIBaseLevel.yaml`/`Re3dNSGAIITreeBaseLevel.yaml` (and the generators that produce them) list them explicitly in `BaseLevelConfig`'s three parallel lists (the same approach `TrainingSet` already uses: problems, reference fronts, evaluations). This way no request is left with `null` fields waiting on "one shape or another", and there is no need to cross-reference `org.uma.evolver.trainingset`'s subclasses to know what it actually runs. The trade-off is that `METADATA.txt` labels these cases `Problem Family: custom` instead of `RE3D`, since the CLI does not know that name.

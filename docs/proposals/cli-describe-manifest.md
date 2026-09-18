@@ -1,28 +1,28 @@
-# Manifiesto de introspección para `cli.training` (`DescribeMain`)
+# Introspection manifest for `cli.training` (`DescribeMain`)
 
-**Proyecto:** Evolver (jMetal)
-**Rama:** `study/uniform-training-runner` (prototipo de estudio, no integrado en `main`)
-**Motivación:** permitir que una herramienta externa (p. ej. [Evolver-Studio](https://github.com/jMetal/Evolver-Studio)) descubra en tiempo de ejecución qué algoritmos base, motores de meta-optimización, problemas de entrenamiento e indicadores admite `cli.training`, sin tener que leer el código Java fuente cada vez que cambia.
+**Project:** Evolver (jMetal)
+**Branch:** `study/uniform-training-runner` (study prototype, not merged into `main`)
+**Motivation:** let an external tool (e.g. [Evolver-Studio](https://github.com/jMetal/Evolver-Studio)) discover at runtime which base algorithms, meta-optimization engines, training problems and indicators `cli.training` supports, without having to read Java source every time it changes.
 
-## Motivación
+## Motivation
 
-`cli.training` resuelve nombres (`"NSGA-II"`, `"ZDT4"`, `"Epsilon"`, ...) contra cuatro registros: `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`, `ProblemRegistry`, `IndicatorRegistry`. Todos ellos viven como `switch`/`Map` sobre literales, pensados solo para *resolver* un nombre a una instancia en tiempo de ejecución de un run — no para que un proceso externo pregunte "¿qué nombres son válidos, y con qué forma?" sin ejecutar nada.
+`cli.training` resolves names (`"NSGA-II"`, `"ZDT4"`, `"Epsilon"`, ...) against four registries: `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`, `ProblemRegistry`, `IndicatorRegistry`. All of them live as `switch`/`Map` over literals, meant only to *resolve* a name to an instance at run time — not for an external process to ask "which names are valid, and what shape do they have?" without executing anything.
 
-Una herramienta externa que quiera ofrecer estos catálogos en una UI (selectores de algoritmo, formularios de configuración) no tiene hoy más opción que leer el código Java fuente de las cuatro clases y transcribir lo que encuentra a su propio lenguaje. Eso funciona una vez, pero se desincroniza en cuanto Evolver cambia — y Evolver cambia con regularidad (algoritmos nuevos, motores de meta-optimización nuevos, problemas nuevos). El mecanismo de drift-detection ya existente en ambos proyectos (`BaseAlgorithmRegistryCompletenessTest`/`TrainingRunnerMetaBuilderCompletenessTest` en Evolver, `TestCatalogueMatchesEvolverCheckout` en Evolver-Studio) solo *avisa* de que algo cambió; no evita releer Java a mano cada vez que salta.
+An external tool that wants to offer these catalogues in a UI (algorithm selectors, configuration forms) has no option today but to read the four classes' Java source and transcribe what it finds into its own language. That works once, but drifts as soon as Evolver changes — and Evolver changes regularly (new algorithms, new meta-optimization engines, new problems). The drift-detection mechanism already in place on both sides (`BaseAlgorithmRegistryCompletenessTest`/`TrainingRunnerMetaBuilderCompletenessTest` in Evolver, `TestCatalogueMatchesEvolverCheckout` in Evolver-Studio) only *warns* that something changed; it does not avoid re-reading Java by hand every time it fires.
 
-Se llama `DescribeMain` y no un método añadido a `TrainingRunnerMain`: es una consulta puntual sin ficheros de petición/estado/resultado, con una forma de invocación e I/O completamente distinta (una única respuesta por stdout, sin polling) — mismo criterio de partición por capacidad ya usado para separar `cli.training` de futuros `cli.validation`, etc.
+It is called `DescribeMain`, not a method added to `TrainingRunnerMain`: it is a one-shot query with no request/status/result files, with a completely different invocation and I/O shape (a single stdout response, no polling) — the same capability-based partitioning already used to separate `cli.training` from future `cli.validation`, etc.
 
-## Principio de diseño: el manifiesto no es un quinto sitio que mantener sincronizado
+## Design principle: the manifest is not a fifth place to keep in sync
 
-Dos de los cuatro registros (`ProblemRegistry`, `IndicatorRegistry`) ya son `Map<String, Supplier<...>>` — sus claves son directamente enumerables, sin cambios de diseño. Los otros dos (`BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`) son actualmente `switch` sobre literales, con metadatos (codificación soportada, catálogo de operator-flags por algoritmo) que hoy solo existen implícitos en la lógica de cada rama y en comentarios/javadoc — no como dato en ningún sitio.
+Two of the four registries (`ProblemRegistry`, `IndicatorRegistry`) are already `Map<String, Supplier<...>>` — their keys are directly enumerable, no design change needed. The other two (`BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`) are currently a `switch` over literals, with metadata (supported encoding, per-algorithm operator-flag catalogue) that today only exists implicit in each branch's logic and in comments/javadoc — not as data anywhere.
 
-Generar el manifiesto a partir de esos dos registros sin cambiar su forma interna exigiría mantener esos metadatos escritos **por segunda vez**, en el propio `DescribeMain` — exactamente el problema que se quiere evitar, solo movido de Evolver-Studio a Evolver. La propuesta es en cambio refactorizar `BaseAlgorithmRegistry` y `MetaAlgorithmRegistry` para que su conocimiento viva como una tabla de datos (un record de metadatos por algoritmo registrado), de la que tanto la resolución (`resolve()`/`familyOf()`/`resolveFlat*`) como `DescribeMain` leen — una única fuente de verdad, no dos que puedan divergir.
+Generating the manifest from those two registries without changing their internal shape would require writing that metadata down **a second time**, inside `DescribeMain` itself — exactly the problem this is meant to avoid, just moved from Evolver-Studio to Evolver. The proposal instead refactors `BaseAlgorithmRegistry` and `MetaAlgorithmRegistry` so their knowledge lives as a data table (one metadata record per registered algorithm), which both resolution (`resolve()`/`familyOf()`/`resolveFlat*`) and `DescribeMain` read from — a single source of truth, not two that could diverge.
 
-## Diseño
+## Design
 
 ### `ProblemRegistry`/`IndicatorRegistry`
 
-Añadir `static Set<String> registeredNames()` a cada uno — ya son `Map`, es una línea.
+Add `static Set<String> registeredNames()` to each — already a `Map`, one line.
 
 ### `BaseAlgorithmRegistry`
 
@@ -39,7 +39,7 @@ static List<BaseAlgorithmDescriptor> registeredAlgorithms() {
 }
 ```
 
-`resolve()` puede iterar `ALGORITHMS` en vez del `switch` actual, o quedarse como está y depender del test de coherencia (más abajo) para que ambos no diverjan — decisión de implementación, no afecta a la forma del manifiesto.
+`resolve()` can iterate `ALGORITHMS` instead of the current `switch`, or stay as-is and rely on the coherence test (below) to keep both from diverging — an implementation detail, doesn't affect the manifest's shape.
 
 ### `MetaAlgorithmRegistry`
 
@@ -51,8 +51,8 @@ record MetaAlgorithmDescriptor(
     Family family,
     boolean supportsFlat,
     boolean supportsTree,
-    String operatorParameterSpaceFile,          // null si no aplica (SPEA2, SMPSO)
-    List<OperatorFlagDescriptor> hardcodedOperatorFlags) {}  // vacío salvo SPEA2
+    String operatorParameterSpaceFile,          // null when not applicable (SPEA2, SMPSO)
+    List<OperatorFlagDescriptor> hardcodedOperatorFlags) {}  // empty except for SPEA2
 
 private static final List<MetaAlgorithmDescriptor> ALGORITHMS = List.of(
     new MetaAlgorithmDescriptor(
@@ -73,19 +73,19 @@ static List<MetaAlgorithmDescriptor> registeredAlgorithms() {
 }
 ```
 
-Para `"NSGA-II"`/`"AsyncNSGA-II"`, `operatorParameterSpaceFile` apunta al mismo fichero `ParameterSpace` (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`) que ya usa internamente `buildNSGAII`/`buildAsyncNSGAII` — el manifiesto no duplica ese catálogo de operadores, solo indica dónde vive, con el mismo formato que `baseLevel.yamlParameterSpaceFile` ya usa (un cliente externo que sepa parsear ese formato no necesita código nuevo). Para `"SPEA2"`/`"SMPSO"` no hay tal fichero — sus operator-flags (si los hay) se listan explícitamente en `hardcodedOperatorFlags`, capturando lo que hoy solo está en `buildSPEA2`/`requireNoOperatorFlags`.
+For `"NSGA-II"`/`"AsyncNSGA-II"`, `operatorParameterSpaceFile` points at the same `ParameterSpace` file (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`) already used internally by `buildNSGAII`/`buildAsyncNSGAII` — the manifest does not duplicate that operator catalogue, it only says where it lives, in the same format `baseLevel.yamlParameterSpaceFile` already uses (an external client that already knows how to parse that format needs no new code). For `"SPEA2"`/`"SMPSO"` there is no such file — their operator flags (if any) are listed explicitly in `hardcodedOperatorFlags`, capturing what today only lives in `buildSPEA2`/`requireNoOperatorFlags`.
 
-### Directorios de recursos reusables
+### Reusable resource directories
 
-Listado simple (`File.list()`, sin lógica adicional) de `src/main/resources/{parameterSpaces,baseLevelConfigurations,metaOptimizerConfigurations,defaultConfigurations}/` — permite a un cliente externo saber qué nombres son válidos para `yamlParameterSpaceFile`/`baseLevel`/`metaSearch` sin tener que listarlos a mano ni asumir convenciones de nombre.
+A simple listing (`File.list()`, no extra logic) of `src/main/resources/{parameterSpaces,baseLevelConfigurations,metaOptimizerConfigurations,defaultConfigurations}/` — lets an external client know which names are valid for `yamlParameterSpaceFile`/`baseLevel`/`metaSearch` without listing them by hand or assuming a naming convention.
 
-### Esquema de `request.yaml`/`baseLevel`/`metaSearch` (vía reflexión sobre records)
+### `request.yaml`/`baseLevel`/`metaSearch` schema (via reflection over records)
 
-Los catálogos de algoritmos cubren *qué nombres* son válidos, pero no *la forma* de los tres ficheros que un cliente externo tiene que generar (`request.yaml`, el fichero de `baseLevel`, el fichero de `metaSearch`) — esa forma vive hoy solo en `TrainingRequest`/`BaseLevelConfig`/`FlatMetaSearchConfig`/`TreeMetaSearchConfig` y en `cli-training-prototype.md`. Es exactamente el tipo de cambio que ya ha roto la integración de Evolver-Studio una vez (renombrado de campos, campos movidos de nivel).
+The algorithm catalogues cover *which names* are valid, but not *the shape* of the three files an external client has to produce (`request.yaml`, the `baseLevel` file, the `metaSearch` file) — that shape today only lives in `TrainingRequest`/`BaseLevelConfig`/`FlatMetaSearchConfig`/`TreeMetaSearchConfig` and in `cli-training-prototype.md`. This is exactly the kind of change that has already broken Evolver-Studio's integration once (renamed fields, fields moved to a different level).
 
-A diferencia de los registros de algoritmos (`switch` sobre literales), estos cuatro tipos son **records Java** — su forma se puede obtener por reflexión (`Class.getRecordComponents()`, que da nombre y tipo de cada campo) en vez de mantenerla escrita a mano una segunda vez. Esto evita crear un sexto sitio que sincronizar: si un record gana/pierde/renombra un campo, el manifiesto lo refleja automáticamente sin tocar `DescribeMain`.
+Unlike the algorithm registries (`switch` over literals), these four types are **Java records** — their shape can be obtained via reflection (`Class.getRecordComponents()`, which gives each field's name and type) instead of writing it down by hand a second time. This avoids creating a sixth place to keep in sync: if a record gains/loses/renames a field, the manifest reflects it automatically without touching `DescribeMain`.
 
-Lo único que la reflexión pura no da es opcionalidad y valores por defecto (`writeFrequency`/`statusFrequency` = 100, `frontPlotFrequency` ausente = sin gráfico, `metaPopulationSize` opcional en `FlatMetaSearchConfig`) — eso sí se mantiene como una tabla pequeña y explícita junto al record correspondiente (p. ej. una anotación ligera o un `Map<String, Object>` de defaults en el propio loader), mucho más acotado que describir cada campo entero a mano:
+The one thing plain reflection does not give is optionality and default values (`writeFrequency`/`statusFrequency` = 100, `frontPlotFrequency` absent = no plot, `metaPopulationSize` optional on `FlatMetaSearchConfig`) — that is kept as a small, explicit table next to the corresponding record (e.g. a lightweight annotation or a `Map<String, Object>` of defaults in the loader itself), far more bounded than describing every field by hand:
 
 ```java
 record FieldDescriptor(String name, String javaType, boolean required, String defaultValue) {}
@@ -99,11 +99,11 @@ static List<FieldDescriptor> describe(Class<? extends Record> recordType, Map<St
 }
 ```
 
-`DescribeMain` aplicaría esto a `TrainingRequest`, `BaseLevelConfig`, `FlatMetaSearchConfig` y `TreeMetaSearchConfig`, con la tabla de defaults ya conocida (`writeFrequency=100`, `statusFrequency=100`, `frontPlotFrequency` sin default, `metaPopulationSize` sin default en `FlatMetaSearchConfig`).
+`DescribeMain` would apply this to `TrainingRequest`, `BaseLevelConfig`, `FlatMetaSearchConfig` and `TreeMetaSearchConfig`, with the already-known defaults table (`writeFrequency=100`, `statusFrequency=100`, `frontPlotFrequency` with no default, `metaPopulationSize` with no default on `FlatMetaSearchConfig`).
 
 ### `DescribeMain`
 
-Sin argumentos, serializa un único objeto YAML a stdout:
+No arguments, serializes a single YAML object to stdout:
 
 ```yaml
 baseAlgorithms:
@@ -157,7 +157,7 @@ schemas:
   baseLevel:
     - {name: algorithmName, javaType: String, required: true, defaultValue: null}
     - {name: populationSize, javaType: int, required: true, defaultValue: null}
-    # ... resto de BaseLevelConfig
+    # ... rest of BaseLevelConfig
   metaSearchFlat:
     - {name: algorithm, javaType: String, required: true, defaultValue: null}
     - {name: metaMaxEvaluations, javaType: int, required: true, defaultValue: null}
@@ -166,29 +166,29 @@ schemas:
     - {name: operatorFlags, javaType: List, required: false, defaultValue: null}
   metaSearchTree:
     - {name: algorithm, javaType: String, required: true, defaultValue: null}
-    # ... resto de TreeMetaSearchConfig
+    # ... rest of TreeMetaSearchConfig
 ```
 
-Invocable igual que `TrainingRunnerMain`:
+Invoked the same way as `TrainingRunnerMain`:
 
 ```
 java -cp Evolver-*-jar-with-dependencies.jar org.uma.evolver.cli.training.DescribeMain
 ```
 
-No es un run: no escribe `status.yaml`/`results.yaml`, no acepta ficheros de petición, termina inmediatamente tras escribir el YAML.
+Not a run: writes no `status.yaml`/`results.yaml`, accepts no request files, exits immediately after writing the YAML.
 
-### Test de coherencia
+### Coherence test
 
-Un test que, para cada `BaseAlgorithmDescriptor`/`MetaAlgorithmDescriptor` en `ALGORITHMS`, confirme que `resolve()`/`familyOf()` no lanza `JMetalException` para ese nombre (con valores mínimos válidos de los demás parámetros) — evita que la tabla de metadatos se desincronice del `switch`/lógica de resolución si ambos coexisten en vez de que uno se derive del otro. Complementa (no sustituye necesariamente) a `BaseAlgorithmRegistryCompletenessTest`/`TrainingRunnerMetaBuilderCompletenessTest`, que siguen cubriendo el caso "hay una clase Java de algoritmo que ningún registro conoce todavía".
+A test that, for every `BaseAlgorithmDescriptor`/`MetaAlgorithmDescriptor` in `ALGORITHMS`, confirms `resolve()`/`familyOf()` does not throw `JMetalException` for that name (with minimal valid values for the other parameters) — keeps the metadata table from drifting from the `switch`/resolution logic if both coexist instead of one being derived from the other. Complements (not necessarily replaces) `BaseAlgorithmRegistryCompletenessTest`/`TrainingRunnerMetaBuilderCompletenessTest`, which still cover the case "there is a Java algorithm class no registry knows about yet".
 
-## Fuera de alcance de esta propuesta
+## Out of scope for this proposal
 
-- Exponer el detalle interno de cada `yamlParameterSpaceFile`/`operatorParameterSpaceFile` (qué parámetros concretos tiene cada uno) — un cliente que ya sepa parsear el formato `ParameterSpace` (como Evolver-Studio) puede leer esos ficheros directamente; el manifiesto solo necesita decir *cuáles existen y a qué corresponden*.
-- Cualquier cambio al contrato `request.yaml`/`TrainingRunnerMain` ya establecido en `cli-training-prototype.md` — este documento es puramente aditivo; la sección de esquemas del manifiesto es una proyección automática de esos mismos records, no una redefinición.
-- Introspección para `cli.validation` u otros paquetes hermanos futuros, si llegan a existir.
+- Exposing the internal detail of each `yamlParameterSpaceFile`/`operatorParameterSpaceFile` (which concrete parameters each one has) — a client that already knows how to parse the `ParameterSpace` format (like Evolver-Studio) can read those files directly; the manifest only needs to say *which ones exist and what they correspond to*.
+- Any change to the `request.yaml`/`TrainingRunnerMain` contract already established in `cli-training-prototype.md` — this document is purely additive; the manifest's schema section is an automatic projection of those same records, not a redefinition.
+- Introspection for `cli.validation` or other future sibling packages, should they come to exist.
 
-## Consumo previsto desde Evolver-Studio
+## Expected consumption from Evolver-Studio
 
-- `evolver_studio/catalogue.py` deja de mantener `BASE_ALGORITHMS`/`META_ALGORITHMS` como listas literales y pasa a poblarlas invocando `DescribeMain` (mismo patrón de subprocess que ya usa para `TrainingRunnerMain`), cacheando el resultado por sesión.
-- `evolver_studio/request.py` puede usar la sección `schemas` del manifiesto para **validar** (no necesariamente generar) el YAML que construye antes de lanzarlo — detectando en el momento un campo renombrado/movido de nivel en vez de descubrirlo con un `ClassNotFoundException`/`JMetalException` al ejecutar contra el jar real.
-- El test de drift-detection actual (`TestCatalogueMatchesEvolverCheckout`, que compara el catálogo hardcodeado contra los ficheros reales del checkout) se sustituye por un smoke test de que la introspección sigue funcionando — ya no hay un catálogo hardcodeado que comparar contra nada.
+- `evolver_studio/catalogue.py` stops maintaining `BASE_ALGORITHMS`/`META_ALGORITHMS` as literal lists and instead populates them by invoking `DescribeMain` (the same subprocess pattern already used for `TrainingRunnerMain`), caching the result per session.
+- `evolver_studio/request.py` can use the manifest's `schemas` section to **validate** (not necessarily generate) the YAML it builds before launching it — catching a renamed/relevelled field on the spot instead of discovering it via a `ClassNotFoundException`/`JMetalException` when running against the real jar.
+- The current drift-detection test (`TestCatalogueMatchesEvolverCheckout`, which compares the hardcoded catalogue against the checkout's real files) is replaced by a smoke test that introspection still works — there is no longer a hardcoded catalogue to compare against anything.
