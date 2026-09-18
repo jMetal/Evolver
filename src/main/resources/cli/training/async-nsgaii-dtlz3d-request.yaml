@@ -1,0 +1,16 @@
+# Example TrainingRequest exercising the asynchronous multi-threaded meta-optimizer
+# (org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII, built via
+# MetaAsyncNSGAIIBuilder), equivalent to the fully self-contained
+# org.uma.evolver.example.training.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ Java example — same
+# baseLevel/metaSearch configuration, but as standalone files that can be run from the CLI without
+# touching Java. See DTLZ3DNSGAIIBaseLevel.yaml and MetaAsyncNSGAIIFlatConfiguration.yaml.
+#
+# Note: TrainingRunnerMain calls System.exit(0) after this kind of run finishes, because the
+# async algorithm's worker thread pool does not shut down on its own.
+
+baseLevel: DTLZ3DNSGAIIBaseLevel.yaml
+metaSearch: MetaAsyncNSGAIIFlatConfiguration.yaml
+outputDirectory: results/async-nsgaii/DTLZ3D
+writeFrequency: 100
+statusFrequency: 500
+frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)

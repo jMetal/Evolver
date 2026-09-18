@@ -1,0 +1,20 @@
+# Base-level NSGA-II configured against the DTLZ1-DTLZ7 (three-objective) training set.
+# Same recipe as BASE_LEVEL_YAML in
+# org.uma.evolver.example.training.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, kept here as a
+# standalone file so it can be run directly from the CLI (see async-nsgaii-dtlz3d-request.yaml).
+
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7]
+trainingReferenceFrontFileNames:
+  - resources/referenceFronts/DTLZ1.3D.csv
+  - resources/referenceFronts/DTLZ2.3D.csv
+  - resources/referenceFronts/DTLZ3.3D.csv
+  - resources/referenceFronts/DTLZ4.3D.csv
+  - resources/referenceFronts/DTLZ5.3D.csv
+  - resources/referenceFronts/DTLZ6.3D.csv
+  - resources/referenceFronts/DTLZ7.3D.csv
+trainingEvaluations: [16000, 16000, 16000, 16000, 16000, 16000, 16000]
+indicatorNames: [Epsilon, InvertedGenerationalDistancePlus]
