@@ -35,6 +35,10 @@ env/
 # Local paper workspace
 paper/
 
+# Kept locally for reference, not published on GitHub (see docs/proposals/cli-training-prototype.md
+# for the one proposal doc that IS tracked, deliberately only on this study branch)
+docs/proposals/CASH-MO-proposal.md
+
 # Generated at runtime: meta-optimization run output, aggregated analysis, ad hoc scripts,
 # and per-run cli.runner requests written by Evolver-Studio (see CLAUDE.md, "Temporary Directories")
 experimentation/
