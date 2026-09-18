@@ -67,6 +67,57 @@ final class MetaAlgorithmRegistry {
     PARTICLE_SWARM
   }
 
+  /**
+   * An operator flag {@link #resolveFlat}/{@link #resolveFlatPso} accept outside the algorithm's
+   * own {@code operatorParameterSpaceFile} (null for both here) — see {@link #buildSPEA2}, the
+   * only registered algorithm with any.
+   */
+  record OperatorFlagDescriptor(String name, String type, boolean required) {}
+
+  /**
+   * @param name the meta-optimizer algorithm name, resolved via {@link #familyOf}
+   * @param supportsTree whether {@link #validateTreeAlgorithm} accepts this name
+   * @param operatorParameterSpaceFile the {@code ParameterSpace} YAML file backing this
+   *     algorithm's operator catalogue (same format as a base-level algorithm's own
+   *     {@code yamlParameterSpaceFile}), or null when the algorithm hardcodes its operators
+   *     instead ({@code SPEA2}, {@code SMPSO})
+   * @param hardcodedOperatorFlags the operator flags accepted despite there being no {@code
+   *     operatorParameterSpaceFile} — empty unless {@code operatorParameterSpaceFile} is null and
+   *     the algorithm still exposes something (only {@code SPEA2} today)
+   */
+  record MetaAlgorithmDescriptor(
+      String name,
+      Family family,
+      boolean supportsTree,
+      String operatorParameterSpaceFile,
+      List<OperatorFlagDescriptor> hardcodedOperatorFlags) {}
+
+  private static final List<MetaAlgorithmDescriptor> ALGORITHMS =
+      List.of(
+          new MetaAlgorithmDescriptor(
+              "ParallelNSGA-II", Family.EVOLUTIONARY, true, "NSGAIIMetaDouble.yaml", List.of()),
+          new MetaAlgorithmDescriptor(
+              "SPEA2",
+              Family.EVOLUTIONARY,
+              false,
+              null,
+              List.of(
+                  new OperatorFlagDescriptor("offspringPopulationSize", "int", false),
+                  new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
+          new MetaAlgorithmDescriptor(
+              "AsyncNSGA-II",
+              Family.ASYNCHRONOUS,
+              false,
+              "AsyncNSGAIIMetaDouble.yaml",
+              List.of()),
+          new MetaAlgorithmDescriptor(
+              "SMPSO", Family.PARTICLE_SWARM, false, null, List.of()));
+
+  /** Registered algorithms, for {@link DescribeMain}. All support the flat encoding. */
+  static List<MetaAlgorithmDescriptor> registeredAlgorithms() {
+    return ALGORITHMS;
+  }
+
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String PARALLEL_NSGAII_PARAMETER_SPACE_FILE = "NSGAIIMetaDouble.yaml";
 

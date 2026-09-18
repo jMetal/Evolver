@@ -1,6 +1,7 @@
 package org.uma.evolver.cli.training;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.evolver.util.HypervolumeMinus;
@@ -25,6 +26,11 @@ final class IndicatorRegistry {
           "HypervolumeMinus", HypervolumeMinus::new);
 
   private IndicatorRegistry() {}
+
+  /** Names registered in {@link #INDICATORS}, for {@link DescribeMain}. */
+  static Set<String> registeredNames() {
+    return INDICATORS.keySet();
+  }
 
   static QualityIndicator resolve(String indicatorName) {
     Supplier<QualityIndicator> supplier = INDICATORS.get(indicatorName);

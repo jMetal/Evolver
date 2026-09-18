@@ -1,6 +1,7 @@
 package org.uma.evolver.cli.training;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
@@ -52,6 +53,11 @@ final class ProblemRegistry {
           Map.entry("RE37", RE37::new));
 
   private ProblemRegistry() {}
+
+  /** Names registered in {@link #PROBLEMS}, for {@link DescribeMain}. */
+  static Set<String> registeredNames() {
+    return PROBLEMS.keySet();
+  }
 
   static Problem<DoubleSolution> resolve(String problemName) {
     Supplier<Problem<DoubleSolution>> supplier = PROBLEMS.get(problemName);

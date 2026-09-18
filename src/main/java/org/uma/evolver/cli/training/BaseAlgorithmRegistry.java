@@ -1,5 +1,6 @@
 package org.uma.evolver.cli.training;
 
+import java.util.List;
 import java.util.Map;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.moead.DoubleMOEAD;
@@ -17,13 +18,37 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * configuration as a small string map instead of growing new dedicated request fields per
  * algorithm.
  *
+ * <p>Registered algorithms live as data in {@link #ALGORITHMS}, not only as {@code switch} cases,
+ * so that {@link DescribeMain} can list them (name, encoding, required extra-config keys) without
+ * a second, hand-maintained copy of the same information — see
+ * {@code docs/proposals/cli-describe-manifest.md}.
+ *
  * <p>Prototype scope: only the two algorithms needed to reproduce the reference examples
  * ({@code NSGAIIOptimizingNSGAIIForProblemZDT4}, {@code NSGAIIOptimizingNSGAIIForBenchmarkRE3D}
  * and {@code NSGAIIOptimizingMOEADForProblemZDT4}) are registered.
  */
 final class BaseAlgorithmRegistry {
 
+  /**
+   * @param name the base-level algorithm name, resolved via {@link #resolve}
+   * @param encoding the jMetal solution encoding it is built for (only {@code "Double"} so far)
+   * @param requiredExtraConfigKeys keys {@link #resolve} requires present in {@code extraConfig}
+   */
+  record BaseAlgorithmDescriptor(
+      String name, String encoding, List<String> requiredExtraConfigKeys) {}
+
+  private static final List<BaseAlgorithmDescriptor> ALGORITHMS =
+      List.of(
+          new BaseAlgorithmDescriptor("NSGA-II", "Double", List.of()),
+          new BaseAlgorithmDescriptor(
+              "MOEAD", "Double", List.of("weightVectorFilesDirectory")));
+
   private BaseAlgorithmRegistry() {}
+
+  /** Registered algorithms, for {@link DescribeMain}. */
+  static List<BaseAlgorithmDescriptor> registeredAlgorithms() {
+    return ALGORITHMS;
+  }
 
   static BaseLevelAlgorithm<DoubleSolution> resolve(
       String algorithmName,
