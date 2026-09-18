@@ -1,0 +1,10 @@
+# Base-level NSGA-II configured against the single RE31 problem.
+
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [RE31]
+trainingReferenceFrontFileNames: [resources/referenceFronts/RE31.csv]
+trainingEvaluations: [10000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

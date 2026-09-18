@@ -1,0 +1,12 @@
+# Meta configuration of SMPSO (flat encoding)
+#
+# MetaSMPSOBuilder exposes no operator catalogue (perturbation mutation, velocity update,
+# selection and archive are all hardcoded by SMPSOBuilder itself) — no operator flags are allowed
+# here beyond the scalars below.
+
+algorithm: SMPSO
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8

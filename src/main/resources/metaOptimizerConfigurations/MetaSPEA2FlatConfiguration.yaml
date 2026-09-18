@@ -1,0 +1,16 @@
+# Meta configuration of SPEA2 (flat encoding)
+#
+# MetaSPEA2Builder hardcodes its own operators (SBX crossover, polynomial mutation, strength
+# ranking, KNN density estimator, tournament selection) — only populationSize/maxEvaluations/
+# numberOfCores below and, optionally, offspringPopulationSize/mutationProbabilityFactor are
+# configurable.
+
+algorithm: SPEA2
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8
+
+# offspringPopulationSize: 50      # optional; defaults to 50
+# mutationProbabilityFactor: 1.0   # optional; defaults to 1.0

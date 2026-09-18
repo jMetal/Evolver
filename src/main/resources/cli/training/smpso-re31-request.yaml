@@ -1,0 +1,13 @@
+# Example TrainingRequest exercising SMPSO as meta-optimizer
+# (org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm, built via
+# MetaSMPSOBuilder), equivalent to
+# org.uma.evolver.example.training.SMPSOOptimizingNSGAIIForProblemRE31.
+# See MetaSMPSOFlatConfiguration.yaml: SMPSO exposes no operator catalogue, only swarm size,
+# evaluations and cores.
+
+baseLevel: RE31NSGAIIBaseLevel.yaml
+metaSearch: MetaSMPSOFlatConfiguration.yaml
+outputDirectory: results/smpso/nsgaii/RE31
+writeFrequency: 50
+statusFrequency: 50
+frontPlotFrequency: 50   # optional; remove this line to run headless
