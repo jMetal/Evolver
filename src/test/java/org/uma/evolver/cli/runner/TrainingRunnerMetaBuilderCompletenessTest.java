@@ -34,13 +34,23 @@ class TrainingRunnerMetaBuilderCompletenessTest {
   // intentionally not matched by this test's naming filter.
   private static final Map<String, String> KNOWN_META_BUILDER_CLASSES =
       Map.ofEntries(
-          Map.entry("MetaNSGAIIBuilder", "wired into TrainingRunner.runFlat() and .runTree()"),
+          Map.entry(
+              "MetaNSGAIIBuilder",
+              "not wired into TrainingRunner; superseded there by MetaAlgorithmRegistry, which"
+                  + " builds DoubleNSGAII directly with a request-supplied parameter space/flags"
+                  + " instead of this builder's hardcoded SBX+polynomial. Still used from"
+                  + " org.uma.evolver.example.training."),
           Map.entry("MetaSPEA2Builder", "not yet wired into TrainingRunner"),
           Map.entry(
               "MetaSMPSOBuilder",
               "not yet wired into TrainingRunner; structurally flat-only (requires a"
                   + " DoubleProblem, incompatible with tree encoding's DerivationTreeSolution)"),
-          Map.entry("MetaAsyncNSGAIIBuilder", "not yet wired into TrainingRunner"),
+          Map.entry(
+              "MetaAsyncNSGAIIBuilder",
+              "wired into TrainingRunner.runFlatAsync() via MetaAlgorithmRegistry, as"
+                  + " \"AsyncNSGA-II\"; its crossover/mutation operators come from a request-"
+                  + "supplied parameter space/flags instead of this builder's hardcoded"
+                  + " SBX+polynomial defaults"),
           Map.entry("MetaAsyncGeneticAlgorithmBuilder", "not yet wired into TrainingRunner"),
           Map.entry(
               "MetaRandomSearchBuilder",
