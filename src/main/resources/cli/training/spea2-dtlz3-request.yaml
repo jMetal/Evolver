@@ -1,0 +1,13 @@
+# Example TrainingRequest exercising SPEA2 as meta-optimizer
+# (org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm, built via MetaSPEA2Builder),
+# equivalent to org.uma.evolver.example.training.SPEA2OptimizingNSGAIIForProblemDTLZ3.
+# See MetaSPEA2FlatConfiguration.yaml: SPEA2 hardcodes its own operators, only
+# populationSize/maxEvaluations/numberOfCores (and optionally offspringPopulationSize/
+# mutationProbabilityFactor) are configurable.
+
+baseLevel: DTLZ3NSGAIIBaseLevel.yaml
+metaSearch: MetaSPEA2FlatConfiguration.yaml
+outputDirectory: results/spea2/nsgaii/DTLZ3
+writeFrequency: 1
+statusFrequency: 100
+frontPlotFrequency: 1   # optional; remove this line to run headless

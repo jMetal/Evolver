@@ -1,0 +1,10 @@
+# Base-level NSGA-II configured against the single DTLZ3 (three-objective) problem.
+
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [DTLZ3]
+trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ3.3D.csv]
+trainingEvaluations: [15000]
+indicatorNames: [Epsilon, NormalizedHypervolume]
