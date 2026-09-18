@@ -36,15 +36,33 @@ class MetaAlgorithmRegistryTest {
     }
 
     @Test
+    @DisplayName("given SPEA2, when familyOf is called, then it returns EVOLUTIONARY")
+    void givenSpea2_whenFamilyOfCalled_thenItReturnsEvolutionary() {
+      // Arrange & Act & Assert
+      assertEquals(MetaAlgorithmRegistry.Family.EVOLUTIONARY, MetaAlgorithmRegistry.familyOf("SPEA2"));
+    }
+
+    @Test
+    @DisplayName("given SMPSO, when familyOf is called, then it returns PARTICLE_SWARM")
+    void givenSmpso_whenFamilyOfCalled_thenItReturnsParticleSwarm() {
+      // Arrange & Act & Assert
+      assertEquals(
+          MetaAlgorithmRegistry.Family.PARTICLE_SWARM, MetaAlgorithmRegistry.familyOf("SMPSO"));
+    }
+
+    @Test
     @DisplayName(
         "given an unknown algorithm name, when familyOf is called, then it fails listing the"
             + " supported algorithms")
     void givenUnknownAlgorithm_whenFamilyOfCalled_thenItFails() {
       // Arrange & Act & Assert
       JMetalException exception =
-          assertThrows(JMetalException.class, () -> MetaAlgorithmRegistry.familyOf("SMPSO"));
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.familyOf("Unknown-Algorithm"));
       assertTrue(exception.getMessage().contains("ParallelNSGA-II"));
       assertTrue(exception.getMessage().contains("AsyncNSGA-II"));
+      assertTrue(exception.getMessage().contains("SPEA2"));
+      assertTrue(exception.getMessage().contains("SMPSO"));
     }
   }
 
@@ -61,7 +79,7 @@ class MetaAlgorithmRegistryTest {
       JMetalException exception =
           assertThrows(
               JMetalException.class,
-              () -> MetaAlgorithmRegistry.resolveFlat("SMPSO", null, null));
+              () -> MetaAlgorithmRegistry.resolveFlat("Unknown-Algorithm", null, null));
       assertTrue(exception.getMessage().contains("ParallelNSGA-II"));
     }
 
@@ -73,6 +91,15 @@ class MetaAlgorithmRegistryTest {
       assertThrows(
           JMetalException.class,
           () -> MetaAlgorithmRegistry.resolveFlat("AsyncNSGA-II", null, null));
+    }
+
+    @Test
+    @DisplayName(
+        "given a particle-swarm-family algorithm name, when resolveFlat is called, then it fails")
+    void givenParticleSwarmAlgorithm_whenResolveFlatCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("SMPSO", null, null));
     }
   }
 
@@ -89,6 +116,22 @@ class MetaAlgorithmRegistryTest {
       assertThrows(
           JMetalException.class,
           () -> MetaAlgorithmRegistry.resolveFlatAsync("ParallelNSGA-II", null, null));
+    }
+  }
+
+  @Nested
+  @DisplayName("When resolving a particle-swarm flat-encoding meta-optimizer algorithm: ")
+  class ResolveFlatPsoTestCases {
+
+    @Test
+    @DisplayName(
+        "given an evolutionary-family algorithm name, when resolveFlatPso is called, then it"
+            + " fails")
+    void givenEvolutionaryAlgorithm_whenResolveFlatPsoCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class,
+          () -> MetaAlgorithmRegistry.resolveFlatPso("ParallelNSGA-II", null, null));
     }
   }
 
@@ -111,7 +154,8 @@ class MetaAlgorithmRegistryTest {
       // Arrange & Act & Assert
       JMetalException exception =
           assertThrows(
-              JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("SMPSO"));
+              JMetalException.class,
+              () -> MetaAlgorithmRegistry.validateTreeAlgorithm("Unknown-Algorithm"));
       assertTrue(exception.getMessage().contains("ParallelNSGA-II"));
     }
   }

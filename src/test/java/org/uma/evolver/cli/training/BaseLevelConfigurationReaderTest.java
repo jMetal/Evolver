@@ -47,6 +47,19 @@ class BaseLevelConfigurationReaderTest {
 
     @Test
     @DisplayName(
+        "given RE31NSGAIIBaseLevel.yaml, when loaded, then a BaseLevelConfig with the single-"
+            + "problem RE31 recipe is built")
+    void givenRe31File_whenLoaded_thenConfigIsBuilt() {
+      // Arrange & Act
+      BaseLevelConfig config = BaseLevelConfigurationReader.load("RE31NSGAIIBaseLevel.yaml");
+
+      // Assert
+      assertEquals("NSGA-II", config.algorithmName());
+      assertEquals(java.util.List.of("RE31"), config.trainingProblemNames());
+    }
+
+    @Test
+    @DisplayName(
         "given inline YAML text, when loaded via loadFromYaml, then a BaseLevelConfig is built"
             + " from it, the same as from a file")
     void givenInlineYaml_whenLoadedFromYaml_thenConfigIsBuilt() {

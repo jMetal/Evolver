@@ -40,11 +40,19 @@ class TrainingRunnerMetaBuilderCompletenessTest {
                   + " builds DoubleNSGAII directly with a request-supplied parameter space/flags"
                   + " instead of this builder's hardcoded SBX+polynomial. Still used from"
                   + " org.uma.evolver.example.training."),
-          Map.entry("MetaSPEA2Builder", "not yet wired into TrainingRunner"),
+          Map.entry(
+              "MetaSPEA2Builder",
+              "wired into TrainingRunner.runFlat() via MetaAlgorithmRegistry, as \"SPEA2\" (same"
+                  + " EvolutionaryAlgorithm shape as ParallelNSGA-II); only populationSize/"
+                  + "offspringPopulationSize/maxEvaluations/numberOfCores/mutationProbabilityFactor"
+                  + " are configurable, everything else (crossover/mutation/ranking/selection) is"
+                  + " hardcoded by the builder itself"),
           Map.entry(
               "MetaSMPSOBuilder",
-              "not yet wired into TrainingRunner; structurally flat-only (requires a"
-                  + " DoubleProblem, incompatible with tree encoding's DerivationTreeSolution)"),
+              "wired into TrainingRunner.runFlatPso() via MetaAlgorithmRegistry, as \"SMPSO\";"
+                  + " flat-only (requires a DoubleProblem, incompatible with tree encoding's"
+                  + " DerivationTreeSolution), and exposes no operator catalogue at all, only"
+                  + " swarm size/evaluations/cores"),
           Map.entry(
               "MetaAsyncNSGAIIBuilder",
               "wired into TrainingRunner.runFlatAsync() via MetaAlgorithmRegistry, as"

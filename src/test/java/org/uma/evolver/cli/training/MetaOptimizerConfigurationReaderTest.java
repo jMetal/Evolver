@@ -53,6 +53,37 @@ class MetaOptimizerConfigurationReaderTest {
 
     @Test
     @DisplayName(
+        "given MetaSMPSOFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig with the"
+            + " SMPSO recipe and no operator flags is built")
+    void givenSmpsoFlatFile_whenLoaded_thenFlatConfigIsBuiltWithoutOperatorFlags() {
+      // Arrange & Act
+      MetaSearchConfig config =
+          MetaOptimizerConfigurationReader.load("MetaSMPSOFlatConfiguration.yaml");
+
+      // Assert
+      FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
+      assertEquals("SMPSO", flat.algorithm());
+      assertEquals(50, flat.metaPopulationSize());
+      assertTrue(flat.operatorFlags().isEmpty());
+    }
+
+    @Test
+    @DisplayName(
+        "given MetaSPEA2FlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig with the"
+            + " SPEA2 recipe is built")
+    void givenSpea2FlatFile_whenLoaded_thenFlatConfigIsBuilt() {
+      // Arrange & Act
+      MetaSearchConfig config =
+          MetaOptimizerConfigurationReader.load("MetaSPEA2FlatConfiguration.yaml");
+
+      // Assert
+      FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
+      assertEquals("SPEA2", flat.algorithm());
+      assertEquals(50, flat.metaPopulationSize());
+    }
+
+    @Test
+    @DisplayName(
         "given inline YAML text, when loaded via loadFromYaml, then a FlatMetaSearchConfig is"
             + " built from it, the same as from a file")
     void givenInlineYaml_whenLoadedFromYaml_thenFlatConfigIsBuilt() {
