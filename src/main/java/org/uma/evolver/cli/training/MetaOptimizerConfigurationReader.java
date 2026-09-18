@@ -14,7 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 
 /**
  * Loads a {@link MetaSearchConfig} from a meta-optimizer configuration file by name (e.g. {@code
- * MetaParallelNSGAIIFlatConfiguration.yaml}, under {@code
+ * MetaNSGAIIFlatConfiguration.yaml}, under {@code
  * src/main/resources/metaOptimizerConfigurations/}) — a reusable, named recipe for the
  * meta-optimizer, the same way a base-level algorithm's parameter space
  * (a {@code parameterSpaces/*.yaml} file) and its pre-tuned defaults

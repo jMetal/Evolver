@@ -114,7 +114,7 @@ class TrainingRunnerSmokeIT {
       // Arrange
       BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
       FlatMetaSearchConfig metaSearch =
-          smokeFlatMetaSearch("MetaParallelNSGAIIFlatConfiguration.yaml");
+          smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml");
       TrainingRequest request =
           new TrainingRequest(
               baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
@@ -172,7 +172,7 @@ class TrainingRunnerSmokeIT {
       // Arrange
       BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
       TreeMetaSearchConfig metaSearch =
-          smokeTreeMetaSearch("MetaParallelNSGAIITreeConfiguration.yaml");
+          smokeTreeMetaSearch("MetaNSGAIITreeConfiguration.yaml");
       TrainingRequest request =
           new TrainingRequest(
               baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);

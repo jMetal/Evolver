@@ -35,11 +35,11 @@ class TrainingRequestYamlLoaderTest {
     @Test
     @DisplayName(
         "given a request referencing Zdt4NSGAIIBaseLevel.yaml and"
-            + " MetaParallelNSGAIIFlatConfiguration.yaml, when loaded, then baseLevel, metaSearch"
+            + " MetaNSGAIIFlatConfiguration.yaml, when loaded, then baseLevel, metaSearch"
             + " and outputDirectory are all built from those files")
     void givenValidFlatRequest_whenLoaded_thenRequestIsBuilt() throws IOException {
       // Arrange
-      Path requestFile = writeRequestFile("metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml\n");
+      Path requestFile = writeRequestFile("metaSearch: MetaNSGAIIFlatConfiguration.yaml\n");
 
       // Act
       TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
@@ -60,11 +60,11 @@ class TrainingRequestYamlLoaderTest {
 
     @Test
     @DisplayName(
-        "given a request referencing MetaParallelNSGAIITreeConfiguration.yaml, when loaded, then"
+        "given a request referencing MetaNSGAIITreeConfiguration.yaml, when loaded, then"
             + " a TreeMetaSearchConfig is built from that file")
     void givenValidTreeRequest_whenLoaded_thenTreeConfigIsBuilt() throws IOException {
       // Arrange
-      Path requestFile = writeRequestFile("metaSearch: MetaParallelNSGAIITreeConfiguration.yaml\n");
+      Path requestFile = writeRequestFile("metaSearch: MetaNSGAIITreeConfiguration.yaml\n");
 
       // Act
       TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
@@ -86,7 +86,7 @@ class TrainingRequestYamlLoaderTest {
       Files.writeString(
           requestFile,
           BASE_LEVEL_LINE
-              + "metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml\n"
+              + "metaSearch: MetaNSGAIIFlatConfiguration.yaml\n"
               + OUTPUT_DIRECTORY_LINE
               + "writeFrequency: 1\n"
               + "statusFrequency: 50\n");
@@ -109,7 +109,7 @@ class TrainingRequestYamlLoaderTest {
       Files.writeString(
           requestFile,
           BASE_LEVEL_LINE
-              + "metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml\n"
+              + "metaSearch: MetaNSGAIIFlatConfiguration.yaml\n"
               + OUTPUT_DIRECTORY_LINE
               + "frontPlotFrequency: 20\n");
 
@@ -150,7 +150,7 @@ class TrainingRequestYamlLoaderTest {
       Files.writeString(
           requestFile,
           "baseLevel: DoesNotExist.yaml\n"
-              + "metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml\n"
+              + "metaSearch: MetaNSGAIIFlatConfiguration.yaml\n"
               + OUTPUT_DIRECTORY_LINE);
 
       // Act & Assert

@@ -6,7 +6,7 @@
 # and parameter space file.
 
 baseLevel: MoeadZdt4BaseLevel.yaml
-metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
 outputDirectory: results/moead/ZDT4
 writeFrequency: 100
 statusFrequency: 100

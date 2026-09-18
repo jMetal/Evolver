@@ -2,10 +2,10 @@
 # org.uma.evolver.example.training.TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D
 #
 # Exercises the tree encoding: no meta-level YAML parameter space, just the scalar
-# hyperparameters of SubtreeCrossover/TreeMutation (see MetaParallelNSGAIITreeConfiguration.yaml).
+# hyperparameters of SubtreeCrossover/TreeMutation (see MetaNSGAIITreeConfiguration.yaml).
 
 baseLevel: Re3dNSGAIITreeBaseLevel.yaml
-metaSearch: MetaParallelNSGAIITreeConfiguration.yaml
+metaSearch: MetaNSGAIITreeConfiguration.yaml
 outputDirectory: results/tree-nsgaii/RE3D
 writeFrequency: 100
 statusFrequency: 100

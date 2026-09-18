@@ -4,7 +4,7 @@ package org.uma.evolver.cli.training;
  * How the meta-optimizer searches the base-level algorithm's parameter space — the part of a
  * {@link TrainingRequest} that depends on the meta-level encoding, loaded from a named,
  * reusable meta-optimizer configuration file via {@link MetaOptimizerConfigurationReader} (e.g.
- * {@code MetaParallelNSGAIIFlatConfiguration.yaml}) — never inlined in the request itself.
+ * {@code MetaNSGAIIFlatConfiguration.yaml}) — never inlined in the request itself.
  *
  * <p>Evolver supports two meta-level encodings, and they are configured very differently:
  * <ul>

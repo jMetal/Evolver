@@ -145,7 +145,7 @@ indicators: [Epsilon, NormalizedHypervolume, InvertedGenerationalDistancePlus]
 resourceDirectories:
   parameterSpaces: [NSGAIIDouble.yaml, MOEADDouble.yaml, ...]
   baseLevelConfigurations: [Zdt4NSGAIIBaseLevel.yaml, ...]
-  metaOptimizerConfigurations: [MetaParallelNSGAIIFlatConfiguration.yaml, ...]
+  metaOptimizerConfigurations: [MetaNSGAIIFlatConfiguration.yaml, ...]
 schemas:
   request:
     - {name: baseLevel, javaType: String, required: true, defaultValue: null}

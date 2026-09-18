@@ -30,7 +30,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
  * as standalone files under {@code src/main/resources/baseLevelConfigurations/
  * Re3dNSGAIITreeBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
- * MetaParallelNSGAIITreeConfiguration.yaml} — this class keeps its own inline copy so the whole
+ * MetaNSGAIITreeConfiguration.yaml} — this class keeps its own inline copy so the whole
  * example reads top-to-bottom from a single file, and so the recipe can be tweaked here without
  * touching the packaged resources. To run this exact experiment from a terminal instead, without
  * building or touching Java at all, use the ready-made {@code request.yaml} that references those

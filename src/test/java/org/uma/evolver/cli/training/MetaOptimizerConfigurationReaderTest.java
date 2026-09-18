@@ -18,12 +18,12 @@ class MetaOptimizerConfigurationReaderTest {
 
     @Test
     @DisplayName(
-        "given MetaParallelNSGAIIFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig"
+        "given MetaNSGAIIFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig"
             + " with the NSGA-II recipe is built")
     void givenParallelFlatFile_whenLoaded_thenFlatConfigIsBuilt() {
       // Arrange & Act
       MetaSearchConfig config =
-          MetaOptimizerConfigurationReader.load("MetaParallelNSGAIIFlatConfiguration.yaml");
+          MetaOptimizerConfigurationReader.load("MetaNSGAIIFlatConfiguration.yaml");
 
       // Assert
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
@@ -122,12 +122,12 @@ class MetaOptimizerConfigurationReaderTest {
 
     @Test
     @DisplayName(
-        "given MetaParallelNSGAIITreeConfiguration.yaml, when loaded, then a TreeMetaSearchConfig"
+        "given MetaNSGAIITreeConfiguration.yaml, when loaded, then a TreeMetaSearchConfig"
             + " is built")
     void givenParallelTreeFile_whenLoaded_thenTreeConfigIsBuilt() {
       // Arrange & Act
       MetaSearchConfig config =
-          MetaOptimizerConfigurationReader.load("MetaParallelNSGAIITreeConfiguration.yaml");
+          MetaOptimizerConfigurationReader.load("MetaNSGAIITreeConfiguration.yaml");
 
       // Assert
       TreeMetaSearchConfig tree = (TreeMetaSearchConfig) config;

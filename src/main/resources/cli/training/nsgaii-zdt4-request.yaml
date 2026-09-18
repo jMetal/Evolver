@@ -2,7 +2,7 @@
 # org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForProblemZDT4
 
 baseLevel: Zdt4NSGAIIBaseLevel.yaml
-metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
 outputDirectory: results/nsgaii/ZDT4
 writeFrequency: 100
 statusFrequency: 100

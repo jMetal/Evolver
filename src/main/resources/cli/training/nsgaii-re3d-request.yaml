@@ -2,7 +2,7 @@
 # org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForBenchmarkRE3D
 
 baseLevel: Re3dNSGAIIBaseLevel.yaml
-metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
 outputDirectory: results/nsgaii/RE3D
 writeFrequency: 100
 statusFrequency: 100
