@@ -47,7 +47,12 @@ class BaseAlgorithmRegistryCompletenessTest {
           Map.entry("PermutationRDEMOEA", "not yet registered"),
           Map.entry("DoubleAGEMOEA", "not yet registered"),
           Map.entry("DoubleRVEA", "not yet registered"),
-          Map.entry("BaseMOPSO", "not yet registered (particle swarm, no per-encoding subclasses)"));
+          Map.entry("BaseMOPSO", "not yet registered (particle swarm, no per-encoding subclasses)"),
+          Map.entry("DoubleNSGAIII", "not yet registered"),
+          Map.entry("DoubleSSMOEA", "not yet registered"),
+          Map.entry("DoublePAES", "not yet registered"),
+          Map.entry("BinaryPAES", "not yet registered"),
+          Map.entry("PermutationPAES", "not yet registered"));
 
   @Test
   @DisplayName(
