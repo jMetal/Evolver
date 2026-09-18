@@ -23,16 +23,20 @@ package org.uma.evolver.cli.training;
  * TrainingRunner} is also driven by external processes (e.g. a GUI) that would not want a Swing
  * window popping up on their machine.
  *
- * <p>Scope note: this is a study prototype for {@link TrainingRunner}, exercised against five
+ * <p>Scope note: this is a study prototype for {@link TrainingRunner}, exercised against seven
  * reference examples to avoid overfitting to a single case:
  * {@code NSGAIIOptimizingNSGAIIForProblemZDT4} (single problem, flat encoding), {@code
  * NSGAIIOptimizingNSGAIIForBenchmarkRE3D} (named multi-problem training set, flat encoding),
  * {@code NSGAIIOptimizingMOEADForProblemZDT4} (a base-level algorithm other than NSGA-II, flat
- * encoding), {@code TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D} (tree encoding) and {@code
- * AsyncNSGAIIOptimizingNSGAIIForBenchmarkRE3D} (a meta-optimizer engine other than
- * {@code ParallelNSGA-II}). The meta-optimizer algorithm is selected explicitly via
+ * encoding), {@code TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D} (tree encoding), {@code
+ * AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ} (a meta-optimizer engine other than {@code
+ * ParallelNSGA-II}, asynchronous), {@code SMPSOOptimizingNSGAIIForProblemRE31} (a meta-optimizer
+ * engine with no {@code EvolutionaryAlgorithm}/{@code AsynchronousMultiThreadedNSGAII} shape) and
+ * {@code SPEA2OptimizingNSGAIIForProblemDTLZ3} (a second evolutionary meta-optimizer engine, with
+ * its own hardcoded operators). The meta-optimizer algorithm is selected explicitly via
  * {@link MetaSearchConfig#algorithm()}, resolved by {@link MetaAlgorithmRegistry};
- * {@code "ParallelNSGA-II"} and {@code "AsyncNSGA-II"} are registered so far.
+ * {@code "ParallelNSGA-II"}, {@code "SPEA2"}, {@code "AsyncNSGA-II"} and {@code "SMPSO"} are
+ * registered so far.
  */
 public record TrainingRequest(
     BaseLevelConfig baseLevel,
