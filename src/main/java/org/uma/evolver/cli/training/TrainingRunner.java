@@ -27,6 +27,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
+import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
@@ -107,6 +108,19 @@ public class TrainingRunner {
                       request.frontPlotFrequency());
               case ASYNCHRONOUS ->
                   runFlatAsync(
+                      baseLevel,
+                      trainingSet,
+                      indicators,
+                      baseAlgorithm,
+                      evaluationBudgetStrategy,
+                      flat,
+                      statusWriter,
+                      request.outputDirectory(),
+                      request.writeFrequency(),
+                      request.statusFrequency(),
+                      request.frontPlotFrequency());
+              case PARTICLE_SWARM ->
+                  runFlatPso(
                       baseLevel,
                       trainingSet,
                       indicators,
@@ -266,6 +280,73 @@ public class TrainingRunner {
 
     outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
     outputResults.writeResultsToFiles(nsgaii.result());
+
+    statusWriter.write(
+        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+
+    return Path.of(outputDirectory);
+  }
+
+  private Path runFlatPso(
+      BaseLevelConfig baseLevel,
+      ResolvedTrainingSet trainingSet,
+      List<QualityIndicator> indicators,
+      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      EvaluationBudgetStrategy evaluationBudgetStrategy,
+      FlatMetaSearchConfig metaSearch,
+      RunStatusWriter statusWriter,
+      String outputDirectory,
+      int writeFrequency,
+      int statusFrequency,
+      Integer frontPlotFrequency)
+      throws IOException {
+    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+        new MetaOptimizationProblem<>(
+            baseAlgorithm,
+            trainingSet.problems(),
+            trainingSet.referenceFrontFileNames(),
+            indicators,
+            evaluationBudgetStrategy,
+            baseLevel.numberOfIndependentRuns());
+
+    ParticleSwarmOptimizationAlgorithm smpso =
+        MetaAlgorithmRegistry.resolveFlatPso(
+            metaSearch.algorithm(), metaOptimizationProblem, metaSearch);
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(metaSearch.algorithm())
+            .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
+            .numberOfCores(metaSearch.numberOfCores())
+            .baseLevelAlgorithmName(baseLevel.algorithmName())
+            .baseLevelPopulationSize(baseLevel.populationSize())
+            .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .build();
+
+    var outputResults =
+        new ConsolidatedOutputResults(
+            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
+    var evaluationObserver = new EvaluationObserver(statusFrequency);
+    var statusFileObserver =
+        new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
+
+    smpso.observable().register(evaluationObserver);
+    smpso.observable().register(writeExecutionDataToFilesObserver);
+    smpso.observable().register(statusFileObserver);
+    registerFrontPlotObserverIfRequested(
+        smpso.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+
+    statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    smpso.run();
+
+    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.writeResultsToFiles(smpso.result());
 
     statusWriter.write(
         RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());

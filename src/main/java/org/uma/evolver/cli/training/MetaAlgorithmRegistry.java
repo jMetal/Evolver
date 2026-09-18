@@ -1,9 +1,12 @@
 package org.uma.evolver.cli.training;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
+import org.uma.evolver.meta.builder.MetaSMPSOBuilder;
+import org.uma.evolver.meta.builder.MetaSPEA2Builder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -12,6 +15,7 @@ import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParam
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -31,27 +35,36 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * catalogue per registered algorithm, so it is hardcoded here rather than repeated in every
  * meta-optimizer configuration file.
  *
- * <p>Registered engines have two different shapes, with no common jMetal supertype exposing
+ * <p>Registered engines have three different shapes, with no common jMetal supertype exposing
  * {@code run()}/{@code result()}/{@code observable()} (they are duck-typed, not a shared
  * interface), so {@link TrainingRunner} needs to know which one it got before it can register
  * observers on it. {@link #familyOf(String)} is the single source of truth for that:
  * <ul>
  *   <li>{@link Family#EVOLUTIONARY}: built via {@link #resolveFlat}, returns an
- *       {@link EvolutionaryAlgorithm} (currently {@code "ParallelNSGA-II"} — named for its
- *       multi-threaded evaluation, since every NSGA-II variant used as a meta-optimizer runs this
- *       way — built directly on {@link DoubleNSGAII}, a full {@code BaseLevelAlgorithm} with its
- *       own operator catalogue).
+ *       {@link EvolutionaryAlgorithm}. {@code "ParallelNSGA-II"} — named for its multi-threaded
+ *       evaluation, since every NSGA-II variant used as a meta-optimizer runs this way — is built
+ *       directly on {@link DoubleNSGAII}, a full {@code BaseLevelAlgorithm} with its own operator
+ *       catalogue exposed via {@code operatorFlags}. {@code "SPEA2"} is built via
+ *       {@link MetaSPEA2Builder}, which hardcodes its own operators (SBX crossover, polynomial
+ *       mutation, strength ranking, KNN density estimator, tournament selection) and exposes only
+ *       {@code offspringPopulationSize}/{@code mutationProbabilityFactor} as optional
+ *       {@code operatorFlags}.
  *   <li>{@link Family#ASYNCHRONOUS}: built via {@link #resolveFlatAsync}, returns an
  *       {@link AsynchronousMultiThreadedNSGAII} (currently {@code "AsyncNSGA-II"}; it hardcodes
  *       its own selection/replacement, so only its crossover/mutation operators are configurable,
  *       via a much smaller parameter space containing just those two categorical parameters).
+ *   <li>{@link Family#PARTICLE_SWARM}: built via {@link #resolveFlatPso}, returns a
+ *       {@link ParticleSwarmOptimizationAlgorithm} (currently {@code "SMPSO"}; not generic, fixed
+ *       to {@code DoubleSolution}). {@link MetaSMPSOBuilder} exposes no operator catalogue at all
+ *       (swarm size/evaluations/cores only), so {@code operatorFlags} must be empty.
  * </ul>
  */
 final class MetaAlgorithmRegistry {
 
   enum Family {
     EVOLUTIONARY,
-    ASYNCHRONOUS
+    ASYNCHRONOUS,
+    PARTICLE_SWARM
   }
 
   /** Hardcoded, not user-facing — see class javadoc. */
@@ -80,13 +93,14 @@ final class MetaAlgorithmRegistry {
 
   static Family familyOf(String algorithmName) {
     return switch (algorithmName) {
-      case "ParallelNSGA-II" -> Family.EVOLUTIONARY;
+      case "ParallelNSGA-II", "SPEA2" -> Family.EVOLUTIONARY;
       case "AsyncNSGA-II" -> Family.ASYNCHRONOUS;
+      case "SMPSO" -> Family.PARTICLE_SWARM;
       default ->
           throw new JMetalException(
               "Unknown meta-optimizer algorithm: "
                   + algorithmName
-                  + " for encoding flat. Supported: ParallelNSGA-II, AsyncNSGA-II");
+                  + " for encoding flat. Supported: ParallelNSGA-II, SPEA2, AsyncNSGA-II, SMPSO");
     };
   }
 
@@ -98,7 +112,7 @@ final class MetaAlgorithmRegistry {
       throw new JMetalException(
           "Meta-optimizer algorithm " + algorithmName + " is not an EvolutionaryAlgorithm");
     }
-    return buildNSGAII(problem, config);
+    return "SPEA2".equals(algorithmName) ? buildSPEA2(problem, config) : buildNSGAII(problem, config);
   }
 
   static AsynchronousMultiThreadedNSGAII<DoubleSolution> resolveFlatAsync(
@@ -110,6 +124,17 @@ final class MetaAlgorithmRegistry {
           "Meta-optimizer algorithm " + algorithmName + " is not an AsynchronousMultiThreadedNSGAII");
     }
     return buildAsyncNSGAII(problem, config);
+  }
+
+  static ParticleSwarmOptimizationAlgorithm resolveFlatPso(
+      String algorithmName,
+      MetaOptimizationProblem<DoubleSolution> problem,
+      FlatMetaSearchConfig config) {
+    if (familyOf(algorithmName) != Family.PARTICLE_SWARM) {
+      throw new JMetalException(
+          "Meta-optimizer algorithm " + algorithmName + " is not a ParticleSwarmOptimizationAlgorithm");
+    }
+    return buildSMPSO(problem, config);
   }
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildNSGAII(
@@ -149,6 +174,58 @@ final class MetaAlgorithmRegistry {
         .setCrossover(crossoverParameter.getCrossover())
         .setMutation(mutationParameter.getMutation())
         .build();
+  }
+
+  private static EvolutionaryAlgorithm<DoubleSolution> buildSPEA2(
+      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+    int populationSize =
+        config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
+
+    var builder =
+        new MetaSPEA2Builder(problem)
+            .setPopulationSize(populationSize)
+            .setMaxEvaluations(config.metaMaxEvaluations())
+            .setNumberOfCores(config.numberOfCores());
+    optionalIntFlag(config.operatorFlags(), "--offspringPopulationSize")
+        .ifPresent(builder::setOffspringPopulationSize);
+    optionalDoubleFlag(config.operatorFlags(), "--mutationProbabilityFactor")
+        .ifPresent(builder::setMutationProbabilityFactor);
+    return builder.build();
+  }
+
+  private static ParticleSwarmOptimizationAlgorithm buildSMPSO(
+      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+    requireNoOperatorFlags("SMPSO", config);
+    int swarmSize =
+        config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
+
+    return new MetaSMPSOBuilder(problem)
+        .setSwarmSize(swarmSize)
+        .setMaxEvaluations(config.metaMaxEvaluations())
+        .setNumberOfCores(config.numberOfCores())
+        .build();
+  }
+
+  private static void requireNoOperatorFlags(String algorithmName, FlatMetaSearchConfig config) {
+    if (!config.operatorFlags().isEmpty()) {
+      throw new JMetalException(
+          algorithmName
+              + " exposes no operator catalogue; unexpected meta-optimizer configuration fields: "
+              + config.operatorFlags());
+    }
+  }
+
+  private static Optional<Integer> optionalIntFlag(List<String> flags, String flagName) {
+    return optionalFlagValue(flags, flagName).map(Integer::parseInt);
+  }
+
+  private static Optional<Double> optionalDoubleFlag(List<String> flags, String flagName) {
+    return optionalFlagValue(flags, flagName).map(Double::parseDouble);
+  }
+
+  private static Optional<String> optionalFlagValue(List<String> flags, String flagName) {
+    int index = flags.indexOf(flagName);
+    return index < 0 ? Optional.empty() : Optional.of(flags.get(index + 1));
   }
 
   /**
