@@ -35,6 +35,13 @@ env/
 # Local paper workspace
 paper/
 
+# Generated at runtime: meta-optimization run output, aggregated analysis, ad hoc scripts,
+# and per-run cli.runner requests written by Evolver-Studio (see CLAUDE.md, "Temporary Directories")
+experimentation/
+results/
+scripts/
+cli-runner-runs/
+
 # RQ4 raw run outputs kept out of git history
 experiments/rq4_validation/results/representative-configs/**/*FUN*
 experiments/rq4_validation/results/representative-configs/**/*VAR*
