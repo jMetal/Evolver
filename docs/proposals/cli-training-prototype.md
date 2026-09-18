@@ -1,4 +1,4 @@
-# Prototipo de runner uniforme para entrenamiento (`org.uma.evolver.cli.runner`)
+# Prototipo de runner uniforme para entrenamiento (`org.uma.evolver.cli.training`)
 
 **Proyecto:** Evolver (jMetal)
 **Rama:** `study/uniform-training-runner` (prototipo de estudio, no integrado en `main`)
@@ -6,7 +6,9 @@
 
 ## Motivación
 
-Los runners de `example.training` funcionan bien para ese uso, pero cada uno define su configuración con constantes Java hardcodeadas y un `main(String[] args)` ad hoc (algunos ignoran `args`, otros exigen posiciones fijas sin nombre). Eso los hace perfectos para copiar y editar, pero imposibles de invocar desde fuera del proceso Java sin recompilar. `cli.runner` es la fontanería que resuelve justo ese problema: una entrada estructurada (`TrainingRequest`), un runner (`TrainingRunner`) que reutiliza el pipeline ya existente, y un contrato de fichero YAML de petición/estado/resultado pensado para ser leído por un proceso externo.
+Los runners de `example.training` funcionan bien para ese uso, pero cada uno define su configuración con constantes Java hardcodeadas y un `main(String[] args)` ad hoc (algunos ignoran `args`, otros exigen posiciones fijas sin nombre). Eso los hace perfectos para copiar y editar, pero imposibles de invocar desde fuera del proceso Java sin recompilar. `cli.training` es la fontanería que resuelve justo ese problema: una entrada estructurada (`TrainingRequest`), un runner (`TrainingRunner`) que reutiliza el pipeline ya existente, y un contrato de fichero YAML de petición/estado/resultado pensado para ser leído por un proceso externo.
+
+Se llama `cli.training` y no simplemente `cli.runner`: el CLI seguramente gane más capacidades en el futuro (validación, generación de configuraciones, ...), y `runner` es demasiado genérico para distinguirlas — mismo criterio de partición por capacidad que ya usa `example.training`/`example.validation`/`example.configuration`. `cli` queda como namespace estable para esos futuros paquetes hermanos (`cli.validation`, ...).
 
 Se probó deliberadamente contra cuatro casos distintos para evitar sobreajustar el diseño a uno solo:
 
@@ -46,7 +48,7 @@ En resumen: `baseLevel.yamlParameterSpaceFile` es siempre el espacio evolucionad
 
 ### Los ficheros de `baseLevel`/`metaSearch` se generan, no se escriben a mano
 
-`src/main/java/org/uma/evolver/cli/runner/generators/` tiene una clase por fichero de `baseLevelConfigurations/` (p. ej. `Zdt4BaseLevelConfigurationGenerator`): construye un `BaseLevelConfig` en Java (con el chequeo de tipos/tamaños de lista del compilador) y llama a `BaseLevelConfigurationWriter.save(config, path)` para (re)escribir el fichero — evita mantener los mismos valores duplicados a mano en Java y en YAML. Estas clases **no ejecutan ningún entrenamiento**: ejecutar un experimento se hace siempre vía `TrainingRunnerMain <request.yaml>`.
+`src/main/java/org/uma/evolver/cli/training/generators/` tiene una clase por fichero de `baseLevelConfigurations/` (p. ej. `Zdt4BaseLevelConfigurationGenerator`): construye un `BaseLevelConfig` en Java (con el chequeo de tipos/tamaños de lista del compilador) y llama a `BaseLevelConfigurationWriter.save(config, path)` para (re)escribir el fichero — evita mantener los mismos valores duplicados a mano en Java y en YAML. Estas clases **no ejecutan ningún entrenamiento**: ejecutar un experimento se hace siempre vía `TrainingRunnerMain <request.yaml>`.
 
 ## Diagrama de clases
 
@@ -213,7 +215,7 @@ classDiagram
 
 `TrainingRunnerMain <request.yaml> [status.yaml]` es ahora la única vía para ejecutar un entrenamiento — el GUI (o un usuario) escribe `request.yaml` (`baseLevel:`, `metaSearch:`, `outputDirectory:` y opcionalmente `writeFrequency:`/`statusFrequency:`/`frontPlotFrequency:`, ver más arriba), hace polling de `status.yaml` mientras el run progresa, y al terminar lee `results.yaml` (que apunta a `METADATA.txt`/`INDICATORS.csv`/`CONFIGURATIONS.csv`).
 
-Antes existía una segunda vía (paquete `cli.runner.instances`, objetos Java planos que construían un `TrainingRequest` y lo ejecutaban directamente). Se eliminó: en cuanto `baseLevel` pasó a cargarse por referencia a fichero igual que `metaSearch`, esas clases se volvieron duplicados casi exactos de invocar `TrainingRunnerMain` sobre el `request.yaml` correspondiente — la misma configuración escrita a mano en dos sitios sin que ninguno fuera la fuente de verdad. En su lugar, `cli.runner.generators` (ver arriba) cubre el caso de uso real que sí aportaba algo (construir una configuración con el chequeo de tipos del compilador): generan los ficheros de `baseLevelConfigurations/`, no ejecutan nada.
+Antes existía una segunda vía (paquete `cli.training.instances`, objetos Java planos que construían un `TrainingRequest` y lo ejecutaban directamente). Se eliminó: en cuanto `baseLevel` pasó a cargarse por referencia a fichero igual que `metaSearch`, esas clases se volvieron duplicados casi exactos de invocar `TrainingRunnerMain` sobre el `request.yaml` correspondiente — la misma configuración escrita a mano en dos sitios sin que ninguno fuera la fuente de verdad. En su lugar, `cli.training.generators` (ver arriba) cubre el caso de uso real que sí aportaba algo (construir una configuración con el chequeo de tipos del compilador): generan los ficheros de `baseLevelConfigurations/`, no ejecutan nada.
 
 ## Notas de alcance (prototipo)
 
