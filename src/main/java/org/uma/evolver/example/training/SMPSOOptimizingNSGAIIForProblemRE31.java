@@ -1,136 +1,100 @@
 package org.uma.evolver.example.training;
 
 import java.io.IOException;
-import java.util.List;
-import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.meta.builder.MetaSMPSOBuilder;
-import org.uma.evolver.meta.problem.MetaOptimizationProblem;
-import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
-import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
-import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.ConsolidatedOutputResults;
-import org.uma.evolver.util.MetaOptimizerConfig;
-import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.re.RE31;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import java.nio.file.Path;
+import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.BaseLevelConfigurationReader;
+import org.uma.evolver.cli.training.MetaOptimizerConfigurationReader;
+import org.uma.evolver.cli.training.MetaSearchConfig;
+import org.uma.evolver.cli.training.TrainingRequest;
+import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Class for running SMPSO as meta-optimizer to configure {@link DoubleNSGAII}
- * using
- * problem {@link RE31} as training set.
+ * Runs SMPSO as meta-optimizer to configure NSGA-II using problem RE31 as training set, through
+ * {@link TrainingRunner}.
+ *
+ * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
+ * kept as Java text blocks right here instead of separate files under {@code
+ * src/main/resources/{baseLevelConfigurations,metaOptimizerConfigurations}/} — the same format
+ * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} already parse
+ * from a named file, just given directly as text via {@code loadFromYaml(String)}. That keeps
+ * this example self-contained and readable top-to-bottom (the point of {@code
+ * org.uma.evolver.example.training}), while still reusing the exact same parsing/validation and
+ * the full {@link TrainingRunner} pipeline (observers, status file, output files) instead of
+ * hand-assembling them, as the older examples in this package do.
+ *
+ * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
+ * as standalone files under {@code src/main/resources/baseLevelConfigurations/
+ * RE31NSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
+ * MetaSMPSOFlatConfiguration.yaml} — this class keeps its own inline copy so the whole example
+ * reads top-to-bottom from a single file, and so the recipe can be tweaked here without touching
+ * the packaged resources. To run this exact experiment from a terminal instead, without building
+ * or touching Java at all, use the ready-made {@code request.yaml} that references those two
+ * files ({@code mvn clean package} produces {@code
+ * target/Evolver-<version>-jar-with-dependencies.jar}):
+ *
+ * <pre>{@code
+ * java -cp target/Evolver-<version>-jar-with-dependencies.jar \
+ *     org.uma.evolver.cli.training.TrainingRunnerMain \
+ *     src/main/resources/cli/training/smpso-re31-request.yaml
+ * }</pre>
+ *
+ * <p>That same {@code request.yaml} pattern works for any other combination: {@code baseLevel}/
+ * {@code metaSearch} are names resolved against the reusable recipes bundled under
+ * {@code src/main/resources/{baseLevelConfigurations, metaOptimizerConfigurations}/} (see
+ * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} for the exact
+ * lookup order), or absolute paths to standalone files of your own.
+ *
+ * <p>SMPSO exposes no operator catalogue of its own (swarm size, evaluations and cores are its
+ * only knobs, see {@code MetaSMPSOFlatConfiguration.yaml}) — unlike the NSGA-II-based examples,
+ * {@code META_SEARCH_YAML} below has no crossover/mutation flags to set.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class SMPSOOptimizingNSGAIIForProblemRE31 {
 
-    // Meta-optimizer configuration
-    private static final int META_MAX_EVALUATIONS = 2000;
-    private static final int NUMBER_OF_CORES = 8;
+  private static final String BASE_LEVEL_YAML =
+      """
+      algorithmName: NSGA-II
+      populationSize: 100
+      numberOfIndependentRuns: 1
+      yamlParameterSpaceFile: NSGAIIDouble.yaml
+      trainingProblemNames: [RE31]
+      trainingReferenceFrontFileNames: [resources/referenceFronts/RE31.csv]
+      trainingEvaluations: [10000]
+      indicatorNames: [Epsilon, NormalizedHypervolume]
+      """;
 
-    // Base-level algorithm configuration
-    private static final int BASE_POPULATION_SIZE = 100;
-    private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-    private static final int BASE_MAX_EVALUATIONS = 10000;
+  private static final String META_SEARCH_YAML =
+      """
+      algorithm: SMPSO
+      encoding: flat
+      metaMaxEvaluations: 2000
+      metaPopulationSize: 50
+      numberOfCores: 8
+      """;
 
-    // Observer configuration
-    private static final int EVALUATION_OBSERVER_FREQUENCY = 50;
-    private static final int WRITE_FREQUENCY = 1;
-    private static final int PLOT_UPDATE_FREQUENCY = 1;
+  private static final String OUTPUT_DIRECTORY = "results/smpso/nsgaii/RE31";
+  private static final int WRITE_FREQUENCY = 50;
+  private static final int STATUS_FREQUENCY = 50;
+  // Live Pareto front plot, as the original example had.
+  private static final int FRONT_PLOT_FREQUENCY = 50;
 
-    public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+  public static void main(String[] args) throws IOException {
+    BaseLevelConfig baseLevel = BaseLevelConfigurationReader.loadFromYaml(BASE_LEVEL_YAML);
+    MetaSearchConfig metaSearch = MetaOptimizerConfigurationReader.loadFromYaml(META_SEARCH_YAML);
 
-        // Step 1: Select the target problem
-        List<Problem<DoubleSolution>> trainingSet = List.of(new RE31());
-        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/RE31.csv");
-        String problemName = "RE31";
+    TrainingRequest request =
+        new TrainingRequest(
+            baseLevel,
+            metaSearch,
+            OUTPUT_DIRECTORY,
+            WRITE_FREQUENCY,
+            STATUS_FREQUENCY,
+            FRONT_PLOT_FREQUENCY);
 
-        // Step 2: Set the parameters for the algorithm to be configured
-        var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-        var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
+    new TrainingRunner().run(request, Path.of(OUTPUT_DIRECTORY, "status.yaml"));
 
-        var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
-
-        EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
-
-        MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
-                configurableAlgorithm,
-                trainingSet,
-                referenceFrontFileNames,
-                indicators,
-                evaluationBudgetStrategy,
-                NUMBER_OF_INDEPENDENT_RUNS);
-
-        // Step 3: Set up and configure the meta-optimizer (SMPSO) using the specialized
-        // builder
-        ParticleSwarmOptimizationAlgorithm smpso = new MetaSMPSOBuilder(metaOptimizationProblem)
-                .setMaxEvaluations(META_MAX_EVALUATIONS)
-                .setNumberOfCores(NUMBER_OF_CORES)
-                .build();
-
-        // Step 4: Create observers for the meta-optimizer
-        String algorithmName = "SMPSO";
-
-        MetaOptimizerConfig config = MetaOptimizerConfig.builder()
-                .metaOptimizerName(algorithmName)
-                .metaMaxEvaluations(META_MAX_EVALUATIONS)
-                .metaPopulationSize(100) // Default for SMPSO builder? Or explicitly set?
-                // Checking builder usage in original code: .build() directly after
-                // setMaxEvaluations and setNumberOfCores.
-                // SMPSO default swarm size is usually 100. MetaSMPSOBuilder likely uses
-                // default.
-                // Let's check MetaSMPSOBuilder source code later if needed, but for now
-                // assuming 100 or not setting it if not exposed.
-                // Wait, MetaSMPSOBuilder might not have setPopulationSize or it might use
-                // default.
-                // The config needs a value. I'll use 100 as it's standard for SMPSO in
-                // jMetal/Evolver meta.
-                .metaPopulationSize(100)
-                .numberOfCores(NUMBER_OF_CORES)
-                .baseLevelAlgorithmName("NSGA-II")
-                .baseLevelPopulationSize(BASE_POPULATION_SIZE)
-                .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
-                .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
-                .yamlParameterSpaceFile(yamlParameterSpaceFile)
-                .build();
-
-        var outputResults = new ConsolidatedOutputResults(
-                metaOptimizationProblem,
-                problemName,
-                indicators,
-                "results/smpso/nsgaii/" + problemName,
-                config);
-
-        var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
-
-        var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-        var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "NSGA-II, " + trainingSet.get(0).name(),
-                indicators.get(0).name(),
-                indicators.get(1).name(),
-                trainingSet.get(0).name(),
-                PLOT_UPDATE_FREQUENCY);
-
-        smpso.observable().register(evaluationObserver);
-        smpso.observable().register(frontChartObserver);
-        smpso.observable().register(writeExecutionDataToFilesObserver);
-
-        // Step 5: Run the meta-optimizer
-        smpso.run();
-
-        // Step 6: Write results
-        outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-        outputResults.writeResultsToFiles(smpso.result());
-
-        System.exit(0);
-    }
+    System.exit(0);
+  }
 }
