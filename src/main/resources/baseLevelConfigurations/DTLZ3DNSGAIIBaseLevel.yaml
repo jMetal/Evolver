@@ -17,4 +17,4 @@ trainingReferenceFrontFileNames:
   - resources/referenceFronts/DTLZ6.3D.csv
   - resources/referenceFronts/DTLZ7.3D.csv
 trainingEvaluations: [16000, 16000, 16000, 16000, 16000, 16000, 16000]
-indicatorNames: [Epsilon, InvertedGenerationalDistancePlus]
+indicatorNames: [Epsilon, HypervolumeMinus]
