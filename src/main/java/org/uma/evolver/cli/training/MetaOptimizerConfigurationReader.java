@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,8 @@ import org.yaml.snakeyaml.Yaml;
  *
  * <p>Public: used both by {@link TrainingRequestYamlLoader} (the {@code metaSearch} field of a
  * request YAML is one of these file names) and directly by {@code cli.training.generators}, for
- * requests built as plain Java objects.
+ * requests built as plain Java objects. {@link #loadFromYaml(String)} is the same parsing given
+ * the YAML content directly instead of a file name.
  */
 public final class MetaOptimizerConfigurationReader {
 
@@ -39,30 +41,37 @@ public final class MetaOptimizerConfigurationReader {
   private MetaOptimizerConfigurationReader() {}
 
   public static MetaSearchConfig load(String fileName) {
-    Map<String, Object> data = loadYaml(fileName);
-    String encoding = stringValue(data, fileName, "encoding");
+    return build(loadYaml(fileName), fileName);
+  }
+
+  public static MetaSearchConfig loadFromYaml(String yamlText) {
+    return build(new Yaml().load(new StringReader(yamlText)), "<inline YAML>");
+  }
+
+  private static MetaSearchConfig build(Map<String, Object> data, String label) {
+    String encoding = stringValue(data, label, "encoding");
     return switch (encoding) {
       case "flat" ->
           new FlatMetaSearchConfig(
-              stringValue(data, fileName, "algorithm"),
-              intValue(data, fileName, "metaMaxEvaluations"),
+              stringValue(data, label, "algorithm"),
+              intValue(data, label, "metaMaxEvaluations"),
               optionalIntValue(data, "metaPopulationSize"),
-              intValue(data, fileName, "numberOfCores"),
+              intValue(data, label, "numberOfCores"),
               operatorFlags(data));
       case "tree" ->
           new TreeMetaSearchConfig(
-              stringValue(data, fileName, "algorithm"),
-              intValue(data, fileName, "metaMaxEvaluations"),
-              intValue(data, fileName, "metaPopulationSize"),
-              intValue(data, fileName, "metaOffspringSize"),
-              intValue(data, fileName, "numberOfCores"),
-              doubleValue(data, fileName, "crossoverProbability"),
-              doubleValue(data, fileName, "mutationProbability"),
-              doubleValue(data, fileName, "mutationDistributionIndex"));
+              stringValue(data, label, "algorithm"),
+              intValue(data, label, "metaMaxEvaluations"),
+              intValue(data, label, "metaPopulationSize"),
+              intValue(data, label, "metaOffspringSize"),
+              intValue(data, label, "numberOfCores"),
+              doubleValue(data, label, "crossoverProbability"),
+              doubleValue(data, label, "mutationProbability"),
+              doubleValue(data, label, "mutationDistributionIndex"));
       default ->
           throw new JMetalException(
-              "Unknown encoding in meta-optimizer configuration file '"
-                  + fileName
+              "Unknown encoding in meta-optimizer configuration '"
+                  + label
                   + "': "
                   + encoding
                   + ". Expected flat or tree");
@@ -121,28 +130,28 @@ public final class MetaOptimizerConfigurationReader {
             + "'.");
   }
 
-  private static int intValue(Map<String, Object> data, String fileName, String key) {
-    return (Integer) require(data, fileName, key);
+  private static int intValue(Map<String, Object> data, String label, String key) {
+    return (Integer) require(data, label, key);
   }
 
   private static Integer optionalIntValue(Map<String, Object> data, String key) {
     return (Integer) data.get(key);
   }
 
-  private static double doubleValue(Map<String, Object> data, String fileName, String key) {
-    Object value = require(data, fileName, key);
+  private static double doubleValue(Map<String, Object> data, String label, String key) {
+    Object value = require(data, label, key);
     return value instanceof Integer integer ? integer.doubleValue() : (Double) value;
   }
 
-  private static String stringValue(Map<String, Object> data, String fileName, String key) {
-    return (String) require(data, fileName, key);
+  private static String stringValue(Map<String, Object> data, String label, String key) {
+    return (String) require(data, label, key);
   }
 
-  private static Object require(Map<String, Object> data, String fileName, String key) {
+  private static Object require(Map<String, Object> data, String label, String key) {
     Object value = data.get(key);
     if (value == null) {
       throw new JMetalException(
-          "Missing required field in meta-optimizer configuration file '" + fileName + "': " + key);
+          "Missing required field in meta-optimizer configuration '" + label + "': " + key);
     }
     return value;
   }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -20,6 +21,9 @@ import org.yaml.snakeyaml.Yaml;
  *
  * <p>Public: used both by {@link TrainingRequestYamlLoader} (the {@code baseLevel} field of a
  * request YAML is one of these file names) and directly by {@code cli.training.generators}.
+ * {@link #loadFromYaml(String)} is the same parsing/validation, given the YAML content directly
+ * instead of a file name — e.g. for a standalone {@code org.uma.evolver.example.training} class
+ * that would rather keep its configuration visible as a Java text block than in a separate file.
  */
 public final class BaseLevelConfigurationReader {
 
@@ -28,17 +32,24 @@ public final class BaseLevelConfigurationReader {
   private BaseLevelConfigurationReader() {}
 
   public static BaseLevelConfig load(String fileName) {
-    Map<String, Object> data = loadYaml(fileName);
+    return build(loadYaml(fileName), fileName);
+  }
+
+  public static BaseLevelConfig loadFromYaml(String yamlText) {
+    return build(new Yaml().load(new StringReader(yamlText)), "<inline YAML>");
+  }
+
+  private static BaseLevelConfig build(Map<String, Object> data, String label) {
     return new BaseLevelConfig(
-        stringValue(data, fileName, "algorithmName"),
-        intValue(data, fileName, "populationSize"),
-        intValue(data, fileName, "numberOfIndependentRuns"),
-        stringValue(data, fileName, "yamlParameterSpaceFile"),
+        stringValue(data, label, "algorithmName"),
+        intValue(data, label, "populationSize"),
+        intValue(data, label, "numberOfIndependentRuns"),
+        stringValue(data, label, "yamlParameterSpaceFile"),
         stringMap(data.get("extraConfig")),
-        stringList(require(data, fileName, "trainingProblemNames")),
-        stringList(require(data, fileName, "trainingReferenceFrontFileNames")),
-        intList(require(data, fileName, "trainingEvaluations")),
-        stringList(require(data, fileName, "indicatorNames")));
+        stringList(require(data, label, "trainingProblemNames")),
+        stringList(require(data, label, "trainingReferenceFrontFileNames")),
+        intList(require(data, label, "trainingEvaluations")),
+        stringList(require(data, label, "indicatorNames")));
   }
 
   private static Map<String, Object> loadYaml(String fileName) {
@@ -97,19 +108,19 @@ public final class BaseLevelConfigurationReader {
     return (List<Integer>) rawList;
   }
 
-  private static int intValue(Map<String, Object> data, String fileName, String key) {
-    return (Integer) require(data, fileName, key);
+  private static int intValue(Map<String, Object> data, String label, String key) {
+    return (Integer) require(data, label, key);
   }
 
-  private static String stringValue(Map<String, Object> data, String fileName, String key) {
-    return (String) require(data, fileName, key);
+  private static String stringValue(Map<String, Object> data, String label, String key) {
+    return (String) require(data, label, key);
   }
 
-  private static Object require(Map<String, Object> data, String fileName, String key) {
+  private static Object require(Map<String, Object> data, String label, String key) {
     Object value = data.get(key);
     if (value == null) {
       throw new JMetalException(
-          "Missing required field in base-level configuration file '" + fileName + "': " + key);
+          "Missing required field in base-level configuration '" + label + "': " + key);
     }
     return value;
   }
