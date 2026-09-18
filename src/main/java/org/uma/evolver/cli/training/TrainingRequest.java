@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 /**
  * Prototype request describing a single meta-optimization training run: {@link BaseLevelConfig}

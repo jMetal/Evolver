@@ -1,10 +1,10 @@
-package org.uma.evolver.cli.runner.generators;
+package org.uma.evolver.cli.training.generators;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import org.uma.evolver.cli.runner.BaseLevelConfig;
-import org.uma.evolver.cli.runner.BaseLevelConfigurationWriter;
+import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**
  * Regenerates {@code src/main/resources/baseLevelConfigurations/Zdt4NSGAIIBaseLevel.yaml} — NSGA-II

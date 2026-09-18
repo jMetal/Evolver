@@ -1,4 +1,4 @@
-# Parameter space for the meta-level NSGA-II used by cli.runner's MetaAlgorithmRegistry to tune a
+# Parameter space for the meta-level NSGA-II used by cli.training's MetaAlgorithmRegistry to tune a
 # base-level algorithm's parameters (flat [0,1]^n encoding). Same format/machinery as the
 # base-level parameter spaces (e.g. NSGAIIDouble.yaml), but deliberately restricted: a
 # meta-optimizer has no use for external archives or alternative solution-creation strategies, so

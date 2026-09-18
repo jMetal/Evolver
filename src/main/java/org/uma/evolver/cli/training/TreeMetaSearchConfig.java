@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 /**
  * Meta-search configuration for the derivation tree encoding. There is no YAML parameter space

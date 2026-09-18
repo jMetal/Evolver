@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 /**
  * How the meta-optimizer searches the base-level algorithm's parameter space — the part of a
