@@ -1,21 +1,9 @@
 # Example TrainingRequest, equivalent to the values in
 # org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForProblemZDT4
 
-baseLevel:
-  algorithmName: NSGA-II
-  populationSize: 100
-  numberOfIndependentRuns: 1
-  yamlParameterSpaceFile: NSGAIIDouble.yaml
-  trainingProblemNames: [ZDT4]
-  trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
-  trainingEvaluations: [12000]
-  indicatorNames: [Epsilon, NormalizedHypervolume]
-  outputDirectory: results/nsgaii/ZDT4
-
-metaSearch:
-  encoding: flat
-  metaMaxEvaluations: 2000
-  metaPopulationSize: 100
-  numberOfCores: 8
-  mutationProbabilityFactor: 1.5
-  metaYamlParameterSpaceFile: NSGAIIDoubleReduced.yaml
+baseLevel: Zdt4NSGAIIBaseLevel.yaml
+metaSearch: MetaParallelNSGAIIFlatConfiguration.yaml
+outputDirectory: results/nsgaii/ZDT4
+writeFrequency: 100
+statusFrequency: 100
+frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)
