@@ -6,6 +6,8 @@
 [![Docs](https://github.com/jMetal/Evolver/actions/workflows/docs.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/docs.yml)
 [![ReadTheDocs](https://readthedocs.org/projects/Evolver/badge/?version=latest)](https://Evolver.readthedocs.io/?badge=latest)
 
+Full documentation is available at [evolver.readthedocs.io](https://evolver.readthedocs.io).
+
 Evolver is a Java framework that formulates the automatic configuration of multi-objective
 metaheuristics as a multi-objective optimization problem and solves it using the same class of
 algorithms — a *meta-optimization* approach. It relies on the
