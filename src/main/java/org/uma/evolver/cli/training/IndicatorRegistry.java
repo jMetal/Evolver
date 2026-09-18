@@ -3,6 +3,7 @@ package org.uma.evolver.cli.training;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
@@ -20,7 +21,8 @@ final class IndicatorRegistry {
       Map.of(
           "Epsilon", Epsilon::new,
           "NormalizedHypervolume", NormalizedHypervolume::new,
-          "InvertedGenerationalDistancePlus", InvertedGenerationalDistancePlus::new);
+          "InvertedGenerationalDistancePlus", InvertedGenerationalDistancePlus::new,
+          "HypervolumeMinus", HypervolumeMinus::new);
 
   private IndicatorRegistry() {}
 
