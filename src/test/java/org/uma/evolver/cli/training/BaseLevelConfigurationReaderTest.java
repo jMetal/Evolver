@@ -44,6 +44,32 @@ class BaseLevelConfigurationReaderTest {
       assertEquals("MOEAD", config.algorithmName());
       assertEquals("resources/weightVectors", config.extraConfig().get("weightVectorFilesDirectory"));
     }
+
+    @Test
+    @DisplayName(
+        "given inline YAML text, when loaded via loadFromYaml, then a BaseLevelConfig is built"
+            + " from it, the same as from a file")
+    void givenInlineYaml_whenLoadedFromYaml_thenConfigIsBuilt() {
+      // Arrange
+      String yaml =
+          """
+          algorithmName: NSGA-II
+          populationSize: 100
+          numberOfIndependentRuns: 1
+          yamlParameterSpaceFile: NSGAIIDouble.yaml
+          trainingProblemNames: [DTLZ1]
+          trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ1.3D.csv]
+          trainingEvaluations: [16000]
+          indicatorNames: [Epsilon]
+          """;
+
+      // Act
+      BaseLevelConfig config = BaseLevelConfigurationReader.loadFromYaml(yaml);
+
+      // Assert
+      assertEquals("NSGA-II", config.algorithmName());
+      assertEquals(java.util.List.of("DTLZ1"), config.trainingProblemNames());
+    }
   }
 
   @Nested
@@ -58,6 +84,21 @@ class BaseLevelConfigurationReaderTest {
           assertThrows(
               JMetalException.class, () -> BaseLevelConfigurationReader.load("DoesNotExist.yaml"));
       assertTrue(exception.getMessage().contains("DoesNotExist.yaml"));
+    }
+
+    @Test
+    @DisplayName(
+        "given inline YAML text missing a required field, when loaded via loadFromYaml, then it"
+            + " fails naming that field, not a file")
+    void givenInlineYamlMissingField_whenLoadedFromYaml_thenItFails() {
+      // Arrange
+      String yaml = "algorithmName: NSGA-II\n";
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> BaseLevelConfigurationReader.loadFromYaml(yaml));
+      assertTrue(exception.getMessage().contains("populationSize"));
     }
   }
 }

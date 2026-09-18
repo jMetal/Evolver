@@ -50,6 +50,39 @@ class MetaOptimizerConfigurationReaderTest {
       assertTrue(flat.operatorFlags().contains("--crossover"));
       assertTrue(!flat.operatorFlags().contains("--selection"));
     }
+
+    @Test
+    @DisplayName(
+        "given inline YAML text, when loaded via loadFromYaml, then a FlatMetaSearchConfig is"
+            + " built from it, the same as from a file")
+    void givenInlineYaml_whenLoadedFromYaml_thenFlatConfigIsBuilt() {
+      // Arrange
+      String yaml =
+          """
+          algorithm: AsyncNSGA-II
+          encoding: flat
+          metaMaxEvaluations: 2000
+          metaPopulationSize: 50
+          numberOfCores: 8
+          crossover: SBX
+          mutation: polynomial
+          crossoverProbability: 0.9
+          crossoverRepairStrategy: bounds
+          sbxDistributionIndex: 20.0
+          mutationProbabilityFactor: 1.0
+          mutationRepairStrategy: bounds
+          polynomialMutationDistributionIndex: 20.0
+          """;
+
+      // Act
+      MetaSearchConfig config = MetaOptimizerConfigurationReader.loadFromYaml(yaml);
+
+      // Assert
+      FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
+      assertEquals("AsyncNSGA-II", flat.algorithm());
+      assertEquals(50, flat.metaPopulationSize());
+      assertTrue(flat.operatorFlags().containsAll(java.util.List.of("--crossover", "SBX")));
+    }
   }
 
   @Nested
