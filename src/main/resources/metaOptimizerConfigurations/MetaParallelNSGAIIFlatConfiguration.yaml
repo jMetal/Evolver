@@ -1,0 +1,20 @@
+# Meta configuration of Parallel NSGA-II with flat encoding
+
+algorithm: ParallelNSGA-II
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+offspringPopulationSize: 50
+numberOfCores: 8
+
+crossover: SBX 
+mutation: polynomial
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

@@ -1,0 +1,9 @@
+algorithmName: MOEAD
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: MOEADDouble.yaml
+extraConfig: {weightVectorFilesDirectory: resources/weightVectors}
+trainingProblemNames: [ZDT4]
+trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
+trainingEvaluations: [10000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

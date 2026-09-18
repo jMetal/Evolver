@@ -1,0 +1,54 @@
+# Parameter space for the meta-level Asynchronous NSGA-II used by cli.runner's
+# MetaAlgorithmRegistry (org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII,
+# built via MetaAsyncNSGAIIBuilder). Unlike NSGAIIMetaDouble.yaml, this is not fed to a
+# BaseLevelAlgorithm/ParameterSpace-driven algorithm: AsynchronousMultiThreadedNSGAII hardcodes its
+# own selection (binary tournament) and replacement (ranking + crowding distance) internally, and
+# only accepts a crossover and a mutation operator as pluggable components. So this space declares
+# only those two top-level categorical parameters (same catalogue as NSGAIIMetaDouble.yaml's
+# "variation" block, lifted to the top level) instead of a full algorithm parameter space.
+
+crossover:
+  type: categorical
+  globalSubParameters:
+    crossoverProbability:
+      type: double
+      range: [0.0, 1.0]
+    crossoverRepairStrategy:
+      type: categorical
+      values: [random, round, bounds]
+  values:
+    SBX:
+      conditionalParameters:
+        sbxDistributionIndex:
+          type: double
+          range: [5.0, 400.0]
+    blxAlpha:
+      conditionalParameters:
+        blxAlphaCrossoverAlpha:
+          type: double
+          range: [0.0, 1.0]
+    wholeArithmetic: {}
+
+mutation:
+  type: categorical
+  globalSubParameters:
+    mutationProbabilityFactor:
+      type: double
+      range: [0.0, 2.0]
+    mutationRepairStrategy:
+      type: categorical
+      values:
+        random: {}
+        round: {}
+        bounds: {}
+  values:
+    uniform:
+      conditionalParameters:
+        uniformMutationPerturbation:
+          type: double
+          range: [0.0, 1.0]
+    polynomial:
+      conditionalParameters:
+        polynomialMutationDistributionIndex:
+          type: double
+          range: [5.0, 400.0]

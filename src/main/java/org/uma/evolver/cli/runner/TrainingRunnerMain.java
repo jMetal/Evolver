@@ -31,6 +31,12 @@ public class TrainingRunnerMain {
     Path outputDirectory = new TrainingRunner().run(request, statusFile);
 
     writeResultsPointer(requestFile.resolveSibling("results.yaml"), outputDirectory);
+
+    // AsynchronousMultiThreadedNSGAII (metaSearch.algorithm: AsyncNSGA-II) leaves its
+    // master/worker thread pool running after run() returns, so the JVM never exits on its own
+    // — same reason org.uma.evolver.example.training's async examples end with System.exit(0).
+    // Harmless for the other meta-optimizer algorithms, which already terminate naturally.
+    System.exit(0);
   }
 
   private static void writeResultsPointer(Path resultsFile, Path outputDirectory) throws IOException {

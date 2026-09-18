@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.encoding.operator.SubtreeCrossover;
 import org.uma.evolver.encoding.operator.TreeMutation;
 import org.uma.evolver.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.encoding.util.TreeOutputResults;
 import org.uma.evolver.encoding.util.TreeSolutionGenerator;
-import org.uma.evolver.meta.builder.MetaNSGAIIBuilder;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
@@ -27,13 +27,17 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
+import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.comparator.MultiComparator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
+import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
@@ -45,8 +49,10 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * <p>Study prototype for uniformizing Evolver's training runners: this class replaces hardcoded
  * Java constants and an ad hoc {@code main(String[] args)} with a single structured input
  * ({@link TrainingRequest}) and a polled YAML status file, so it can be driven by an external
- * process (e.g. a GUI) without recompiling. It deliberately does not register a
- * {@code FrontPlotObserver}: this runner is meant to run headless.
+ * process (e.g. a GUI) without recompiling. It runs headless by default — a live
+ * {@code FrontPlotObserver} is registered only when {@link TrainingRequest#frontPlotFrequency()}
+ * is present, since an external process driving this runner would not want a Swing window
+ * popping up on its machine.
  */
 public class TrainingRunner {
 
@@ -85,7 +91,34 @@ public class TrainingRunner {
 
       return switch (metaSearch) {
         case FlatMetaSearchConfig flat ->
-            runFlat(baseLevel, trainingSet, indicators, baseAlgorithm, evaluationBudgetStrategy, flat, statusWriter);
+            switch (MetaAlgorithmRegistry.familyOf(flat.algorithm())) {
+              case EVOLUTIONARY ->
+                  runFlat(
+                      baseLevel,
+                      trainingSet,
+                      indicators,
+                      baseAlgorithm,
+                      evaluationBudgetStrategy,
+                      flat,
+                      statusWriter,
+                      request.outputDirectory(),
+                      request.writeFrequency(),
+                      request.statusFrequency(),
+                      request.frontPlotFrequency());
+              case ASYNCHRONOUS ->
+                  runFlatAsync(
+                      baseLevel,
+                      trainingSet,
+                      indicators,
+                      baseAlgorithm,
+                      evaluationBudgetStrategy,
+                      flat,
+                      statusWriter,
+                      request.outputDirectory(),
+                      request.writeFrequency(),
+                      request.statusFrequency(),
+                      request.frontPlotFrequency());
+            };
         case TreeMetaSearchConfig tree ->
             runTree(
                 baseLevel,
@@ -95,7 +128,11 @@ public class TrainingRunner {
                 baseLevelParameterSpace,
                 evaluationBudgetStrategy,
                 tree,
-                statusWriter);
+                statusWriter,
+                request.outputDirectory(),
+                request.writeFrequency(),
+                request.statusFrequency(),
+                request.frontPlotFrequency());
       };
     } catch (RuntimeException | IOException e) {
       statusWriter.write(RunStatusWriter.State.FAILED, 0, metaSearch.metaMaxEvaluations(), e.getMessage());
@@ -110,7 +147,11 @@ public class TrainingRunner {
       BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
-      RunStatusWriter statusWriter)
+      RunStatusWriter statusWriter,
+      String outputDirectory,
+      int writeFrequency,
+      int statusFrequency,
+      Integer frontPlotFrequency)
       throws IOException {
     MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -121,23 +162,12 @@ public class TrainingRunner {
             evaluationBudgetStrategy,
             baseLevel.numberOfIndependentRuns());
 
-    MetaNSGAIIBuilder metaBuilder =
-        new MetaNSGAIIBuilder(
-                metaOptimizationProblem,
-                new YAMLParameterSpace(metaSearch.metaYamlParameterSpaceFile(), new DoubleParameterFactory()))
-            .setMaxEvaluations(metaSearch.metaMaxEvaluations())
-            .setNumberOfCores(metaSearch.numberOfCores());
-    if (metaSearch.metaPopulationSize() != null) {
-      metaBuilder.setPopulationSize(metaSearch.metaPopulationSize());
-    }
-    if (metaSearch.mutationProbabilityFactor() != null) {
-      metaBuilder.setMutationProbabilityFactor(metaSearch.mutationProbabilityFactor());
-    }
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = metaBuilder.build();
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
+        MetaAlgorithmRegistry.resolveFlat(metaSearch.algorithm(), metaOptimizationProblem, metaSearch);
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
-            .metaOptimizerName("NSGA-II")
+            .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
             .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
@@ -150,15 +180,19 @@ public class TrainingRunner {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem, trainingSet.label(), indicators, baseLevel.outputDirectory(), config);
+            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
 
-    var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(1, outputResults);
-    var evaluationObserver = new EvaluationObserver(100);
-    var statusFileObserver = new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), 100);
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
+    var evaluationObserver = new EvaluationObserver(statusFrequency);
+    var statusFileObserver =
+        new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
     nsgaii.observable().register(statusFileObserver);
+    registerFrontPlotObserverIfRequested(
+        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     nsgaii.run();
@@ -169,7 +203,74 @@ public class TrainingRunner {
     statusWriter.write(
         RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
 
-    return Path.of(baseLevel.outputDirectory());
+    return Path.of(outputDirectory);
+  }
+
+  private Path runFlatAsync(
+      BaseLevelConfig baseLevel,
+      ResolvedTrainingSet trainingSet,
+      List<QualityIndicator> indicators,
+      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      EvaluationBudgetStrategy evaluationBudgetStrategy,
+      FlatMetaSearchConfig metaSearch,
+      RunStatusWriter statusWriter,
+      String outputDirectory,
+      int writeFrequency,
+      int statusFrequency,
+      Integer frontPlotFrequency)
+      throws IOException {
+    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+        new MetaOptimizationProblem<>(
+            baseAlgorithm,
+            trainingSet.problems(),
+            trainingSet.referenceFrontFileNames(),
+            indicators,
+            evaluationBudgetStrategy,
+            baseLevel.numberOfIndependentRuns());
+
+    AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
+        MetaAlgorithmRegistry.resolveFlatAsync(
+            metaSearch.algorithm(), metaOptimizationProblem, metaSearch);
+
+    MetaOptimizerConfig config =
+        MetaOptimizerConfig.builder()
+            .metaOptimizerName(metaSearch.algorithm())
+            .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
+            .numberOfCores(metaSearch.numberOfCores())
+            .baseLevelAlgorithmName(baseLevel.algorithmName())
+            .baseLevelPopulationSize(baseLevel.populationSize())
+            .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
+            .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
+            .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .build();
+
+    var outputResults =
+        new ConsolidatedOutputResults(
+            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+
+    var writeExecutionDataToFilesObserver =
+        new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
+    var evaluationObserver = new EvaluationObserver(statusFrequency);
+    var statusFileObserver =
+        new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
+
+    nsgaii.observable().register(evaluationObserver);
+    nsgaii.observable().register(writeExecutionDataToFilesObserver);
+    nsgaii.observable().register(statusFileObserver);
+    registerFrontPlotObserverIfRequested(
+        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+
+    statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    nsgaii.run();
+
+    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.writeResultsToFiles(nsgaii.result());
+
+    statusWriter.write(
+        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+
+    return Path.of(outputDirectory);
   }
 
   private Path runTree(
@@ -180,8 +281,13 @@ public class TrainingRunner {
       YAMLParameterSpace baseLevelParameterSpace,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       TreeMetaSearchConfig metaSearch,
-      RunStatusWriter statusWriter)
+      RunStatusWriter statusWriter,
+      String outputDirectory,
+      int writeFrequency,
+      int statusFrequency,
+      Integer frontPlotFrequency)
       throws IOException {
+    MetaAlgorithmRegistry.validateTreeAlgorithm(metaSearch.algorithm());
     var treeSolutionGenerator = new TreeSolutionGenerator(baseLevelParameterSpace);
 
     TreeMetaOptimizationProblem<DoubleSolution> metaProblem =
@@ -236,13 +342,17 @@ public class TrainingRunner {
             .build();
 
     var outputResults =
-        new TreeOutputResults(metaProblem, trainingSet.label(), indicators, baseLevel.outputDirectory(), config, 1);
-    var evaluationObserver = new EvaluationObserver(100);
-    var statusFileObserver = new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), 100);
+        new TreeOutputResults(
+            metaProblem, trainingSet.label(), indicators, outputDirectory, config, writeFrequency);
+    var evaluationObserver = new EvaluationObserver(statusFrequency);
+    var statusFileObserver =
+        new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
     nsgaii.observable().register(evaluationObserver);
     nsgaii.observable().register(outputResults);
     nsgaii.observable().register(statusFileObserver);
+    registerFrontPlotObserverIfRequested(
+        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     nsgaii.run();
@@ -252,7 +362,27 @@ public class TrainingRunner {
     statusWriter.write(
         RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
 
-    return Path.of(baseLevel.outputDirectory());
+    return Path.of(outputDirectory);
+  }
+
+  /**
+   * Registers a live {@link FrontPlotObserver} only when {@code frontPlotFrequency} is present —
+   * opt-in, see {@link TrainingRequest#frontPlotFrequency()}. Works the same regardless of the
+   * meta-optimizer's solution type ({@code DoubleSolution} or {@code DerivationTreeSolution}):
+   * {@code FrontPlotObserver} only needs {@code Solution<?>}, and every registered engine exposes
+   * the same {@code Observable<Map<String, Object>>} shape (see {@link MetaAlgorithmRegistry}).
+   */
+  private static void registerFrontPlotObserverIfRequested(
+      Observable<Map<String, Object>> observable,
+      Integer frontPlotFrequency,
+      String title,
+      List<QualityIndicator> indicators,
+      String legend) {
+    if (frontPlotFrequency != null) {
+      observable.register(
+          new FrontPlotObserver<Solution<?>>(
+              title, indicators.get(0).name(), indicators.get(1).name(), legend, frontPlotFrequency));
+    }
   }
 
   private static ResolvedTrainingSet resolveTrainingSet(BaseLevelConfig baseLevel) {
