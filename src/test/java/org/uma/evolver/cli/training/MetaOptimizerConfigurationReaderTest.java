@@ -79,7 +79,7 @@ class MetaOptimizerConfigurationReaderTest {
       // Assert
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
       assertEquals("SPEA2", flat.algorithm());
-      assertEquals(50, flat.metaPopulationSize());
+      assertEquals(100, flat.metaPopulationSize());
     }
 
     @Test
