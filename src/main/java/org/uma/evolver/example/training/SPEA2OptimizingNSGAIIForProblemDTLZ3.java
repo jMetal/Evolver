@@ -1,126 +1,101 @@
 package org.uma.evolver.example.training;
 
 import java.io.IOException;
-import java.util.List;
-import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
-import org.uma.evolver.meta.builder.MetaSPEA2Builder;
-import org.uma.evolver.meta.problem.MetaOptimizationProblem;
-import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
-import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
-import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.ConsolidatedOutputResults;
-import org.uma.evolver.util.MetaOptimizerConfig;
-import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
-import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
-import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
+import java.nio.file.Path;
+import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.BaseLevelConfigurationReader;
+import org.uma.evolver.cli.training.MetaOptimizerConfigurationReader;
+import org.uma.evolver.cli.training.MetaSearchConfig;
+import org.uma.evolver.cli.training.TrainingRequest;
+import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Class for running NSGA-II as meta-optimizer to configure {@link DoubleNSGAII}
- * using problem
- * {@link DTLZ3} as training set.
+ * Runs SPEA2 as meta-optimizer to configure NSGA-II using problem DTLZ3 (three-objective) as
+ * training set, through {@link TrainingRunner}.
+ *
+ * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
+ * kept as Java text blocks right here instead of separate files under {@code
+ * src/main/resources/{baseLevelConfigurations,metaOptimizerConfigurations}/} — the same format
+ * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} already parse
+ * from a named file, just given directly as text via {@code loadFromYaml(String)}. That keeps
+ * this example self-contained and readable top-to-bottom (the point of {@code
+ * org.uma.evolver.example.training}), while still reusing the exact same parsing/validation and
+ * the full {@link TrainingRunner} pipeline (observers, status file, output files) instead of
+ * hand-assembling them, as the older examples in this package do.
+ *
+ * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
+ * as standalone files under {@code src/main/resources/baseLevelConfigurations/
+ * DTLZ3NSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
+ * MetaSPEA2FlatConfiguration.yaml} — this class keeps its own inline copy so the whole example
+ * reads top-to-bottom from a single file, and so the recipe can be tweaked here without touching
+ * the packaged resources. To run this exact experiment from a terminal instead, without building
+ * or touching Java at all, use the ready-made {@code request.yaml} that references those two
+ * files ({@code mvn clean package} produces {@code
+ * target/Evolver-<version>-jar-with-dependencies.jar}):
+ *
+ * <pre>{@code
+ * java -cp target/Evolver-<version>-jar-with-dependencies.jar \
+ *     org.uma.evolver.cli.training.TrainingRunnerMain \
+ *     src/main/resources/cli/training/spea2-dtlz3-request.yaml
+ * }</pre>
+ *
+ * <p>That same {@code request.yaml} pattern works for any other combination: {@code baseLevel}/
+ * {@code metaSearch} are names resolved against the reusable recipes bundled under
+ * {@code src/main/resources/{baseLevelConfigurations, metaOptimizerConfigurations}/} (see
+ * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader} for the exact
+ * lookup order), or absolute paths to standalone files of your own.
+ *
+ * <p>SPEA2 hardcodes its own operators (SBX crossover, polynomial mutation, strength ranking,
+ * KNN density estimator, tournament selection) — unlike the NSGA-II-based examples, {@code
+ * META_SEARCH_YAML} below has no crossover/mutation flags to set, only population size,
+ * evaluations and cores.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class SPEA2OptimizingNSGAIIForProblemDTLZ3 {
 
-    // Meta-optimizer configuration
-    private static final int META_MAX_EVALUATIONS = 2000;
-    private static final int META_POPULATION_SIZE = 100;
-    private static final int NUMBER_OF_CORES = 8;
+  private static final String BASE_LEVEL_YAML =
+      """
+      algorithmName: NSGA-II
+      populationSize: 100
+      numberOfIndependentRuns: 1
+      yamlParameterSpaceFile: NSGAIIDouble.yaml
+      trainingProblemNames: [DTLZ3]
+      trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ3.3D.csv]
+      trainingEvaluations: [15000]
+      indicatorNames: [Epsilon, NormalizedHypervolume]
+      """;
 
-    // Base-level algorithm configuration
-    private static final int BASE_POPULATION_SIZE = 100;
-    private static final int NUMBER_OF_INDEPENDENT_RUNS = 1;
-    private static final int BASE_MAX_EVALUATIONS = 15000;
+  private static final String META_SEARCH_YAML =
+      """
+      algorithm: SPEA2
+      encoding: flat
+      metaMaxEvaluations: 2000
+      metaPopulationSize: 100
+      numberOfCores: 8
+      """;
 
-    // Observer configuration
-    private static final int EVALUATION_OBSERVER_FREQUENCY = 100;
-    private static final int WRITE_FREQUENCY = 1;
-    private static final int PLOT_UPDATE_FREQUENCY = 1;
+  private static final String OUTPUT_DIRECTORY = "results/spea2/nsgaii/DTLZ3";
+  private static final int WRITE_FREQUENCY = 1;
+  private static final int STATUS_FREQUENCY = 100;
+  // Live Pareto front plot, as the original example had.
+  private static final int FRONT_PLOT_FREQUENCY = 1;
 
-    public static void main(String[] args) throws IOException {
-        String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+  public static void main(String[] args) throws IOException {
+    BaseLevelConfig baseLevel = BaseLevelConfigurationReader.loadFromYaml(BASE_LEVEL_YAML);
+    MetaSearchConfig metaSearch = MetaOptimizerConfigurationReader.loadFromYaml(META_SEARCH_YAML);
 
-        // Step 1: Select the target problem
-        List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ3());
-        List<String> referenceFrontFileNames = List.of("resources/referenceFronts/DTLZ3.3D.csv");
-        String problemName = "DTLZ3";
+    TrainingRequest request =
+        new TrainingRequest(
+            baseLevel,
+            metaSearch,
+            OUTPUT_DIRECTORY,
+            WRITE_FREQUENCY,
+            STATUS_FREQUENCY,
+            FRONT_PLOT_FREQUENCY);
 
-        // Step 2: Set the parameters for the algorithm to be configured
-        var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-        var parameterSpace = new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory());
-        var configurableAlgorithm = new DoubleNSGAII(BASE_POPULATION_SIZE, parameterSpace);
+    new TrainingRunner().run(request, Path.of(OUTPUT_DIRECTORY, "status.yaml"));
 
-        var maximumNumberOfEvaluations = List.of(BASE_MAX_EVALUATIONS);
-
-        EvaluationBudgetStrategy evaluationBudgetStrategy = new FixedEvaluationsStrategy(maximumNumberOfEvaluations);
-
-        MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem = new MetaOptimizationProblem<>(
-                configurableAlgorithm,
-                trainingSet,
-                referenceFrontFileNames,
-                indicators,
-                evaluationBudgetStrategy,
-                NUMBER_OF_INDEPENDENT_RUNS);
-
-        // Step 3: Set up and configure the meta-optimizer (SPEA2)
-        EvolutionaryAlgorithm<DoubleSolution> spea2 = new MetaSPEA2Builder(metaOptimizationProblem)
-                .setMaxEvaluations(META_MAX_EVALUATIONS)
-                .setNumberOfCores(NUMBER_OF_CORES)
-                .setPopulationSize(META_POPULATION_SIZE)
-                .build();
-
-        // Step 4: Create observers for the meta-optimizer
-        String algorithmName = "SPEA2";
-
-        MetaOptimizerConfig config = MetaOptimizerConfig.builder()
-                .metaOptimizerName(algorithmName)
-                .metaMaxEvaluations(META_MAX_EVALUATIONS)
-                .metaPopulationSize(META_POPULATION_SIZE)
-                .numberOfCores(NUMBER_OF_CORES)
-                .baseLevelAlgorithmName("NSGA-II")
-                .baseLevelPopulationSize(BASE_POPULATION_SIZE)
-                .baseLevelMaxEvaluations(maximumNumberOfEvaluations.get(0))
-                .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
-                .yamlParameterSpaceFile(yamlParameterSpaceFile)
-                .build();
-
-        var outputResults = new ConsolidatedOutputResults(
-                metaOptimizationProblem,
-                problemName,
-                indicators,
-                "results/spea2/nsgaii/" + problemName,
-                config);
-
-        var writeExecutionDataToFilesObserver = new WriteExecutionDataToFilesObserver(WRITE_FREQUENCY, outputResults);
-
-        var evaluationObserver = new EvaluationObserver(EVALUATION_OBSERVER_FREQUENCY);
-        var frontChartObserver = new FrontPlotObserver<DoubleSolution>(
-                "NSGA-II, " + trainingSet.get(0).name(),
-                indicators.get(0).name(),
-                indicators.get(1).name(),
-                trainingSet.get(0).name(),
-                PLOT_UPDATE_FREQUENCY);
-
-        spea2.observable().register(evaluationObserver);
-        spea2.observable().register(frontChartObserver);
-        spea2.observable().register(writeExecutionDataToFilesObserver);
-
-        // Step 5: Run the meta-optimizer
-        spea2.run();
-
-        // Step 6: Write results
-        outputResults.updateEvaluations(META_MAX_EVALUATIONS);
-        outputResults.writeResultsToFiles(spea2.result());
-
-        System.exit(0);
-    }
+    System.exit(0);
+  }
 }
