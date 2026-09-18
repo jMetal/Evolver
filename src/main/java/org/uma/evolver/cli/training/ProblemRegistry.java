@@ -3,6 +3,13 @@ package org.uma.evolver.cli.training;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
 import org.uma.jmetal.problem.multiobjective.re.RE31;
 import org.uma.jmetal.problem.multiobjective.re.RE32;
 import org.uma.jmetal.problem.multiobjective.re.RE33;
@@ -29,6 +36,13 @@ final class ProblemRegistry {
       Map.ofEntries(
           Map.entry("ZDT1", ZDT1::new),
           Map.entry("ZDT4", ZDT4::new),
+          Map.entry("DTLZ1", DTLZ1::new),
+          Map.entry("DTLZ2", DTLZ2::new),
+          Map.entry("DTLZ3", DTLZ3::new),
+          Map.entry("DTLZ4", DTLZ4::new),
+          Map.entry("DTLZ5", DTLZ5::new),
+          Map.entry("DTLZ6", DTLZ6::new),
+          Map.entry("DTLZ7", DTLZ7::new),
           Map.entry("RE31", RE31::new),
           Map.entry("RE32", RE32::new),
           Map.entry("RE33", RE33::new),
