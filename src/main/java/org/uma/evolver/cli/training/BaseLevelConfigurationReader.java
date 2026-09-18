@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +19,7 @@ import org.yaml.snakeyaml.Yaml;
  * setup while writing results to different places), so it lives on {@link TrainingRequest} itself.
  *
  * <p>Public: used both by {@link TrainingRequestYamlLoader} (the {@code baseLevel} field of a
- * request YAML is one of these file names) and directly by {@code cli.runner.generators}.
+ * request YAML is one of these file names) and directly by {@code cli.training.generators}.
  */
 public final class BaseLevelConfigurationReader {
 

@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import org.yaml.snakeyaml.Yaml;
  * inlined in every {@link TrainingRequest}.
  *
  * <p>Public: used both by {@link TrainingRequestYamlLoader} (the {@code metaSearch} field of a
- * request YAML is one of these file names) and directly by {@code cli.runner.generators}, for
+ * request YAML is one of these file names) and directly by {@code cli.training.generators}, for
  * requests built as plain Java objects.
  */
 public final class MetaOptimizerConfigurationReader {

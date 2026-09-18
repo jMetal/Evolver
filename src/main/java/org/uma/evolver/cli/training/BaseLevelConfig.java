@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
  * evaluations to use for each problem — the same shape used throughout
  * {@code org.uma.evolver.trainingset.TrainingSet}. The CLI does not resolve training sets by
  * name: even a multi-problem set like RE3D is spelled out explicitly (see
- * {@code cli.runner.generators.Re3dBaseLevelConfigurationGenerator}), so a request is always
+ * {@code cli.training.generators.Re3dBaseLevelConfigurationGenerator}), so a request is always
  * self-contained and never has to be cross-referenced against
  * {@code org.uma.evolver.trainingset}'s subclasses to know what it actually runs.
  */

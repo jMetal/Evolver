@@ -1,21 +1,21 @@
-package org.uma.evolver.cli.runner.generators;
+package org.uma.evolver.cli.training.generators;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import org.uma.evolver.cli.runner.BaseLevelConfig;
-import org.uma.evolver.cli.runner.BaseLevelConfigurationWriter;
+import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**
- * Regenerates {@code src/main/resources/baseLevelConfigurations/Re3dNSGAIITreeBaseLevel.yaml} —
- * NSGA-II tuned on the RE problems with three objectives, for the tree-encoding meta-optimizer
- * example — from a compiler-checked {@link BaseLevelConfig}.
+ * Regenerates {@code src/main/resources/baseLevelConfigurations/Re3dNSGAIIBaseLevel.yaml} — NSGA-II
+ * tuned on the RE problems with three objectives — from a compiler-checked {@link BaseLevelConfig}.
  *
- * <p>Same training set as {@link Re3dBaseLevelConfigurationGenerator}, but with different
- * indicators (NormalizedHypervolume instead of InvertedGenerationalDistancePlus), so it writes a
- * separate file rather than sharing one.
+ * <p>The seven problems, reference fronts and evaluation budgets below are the same ones
+ * {@code org.uma.evolver.trainingset.RE3DTrainingSet} bundles under the name {@code "RE3D"} —
+ * spelled out explicitly here rather than referenced by name, so the generated file is
+ * self-contained and does not require cross-referencing {@code RE3DTrainingSet}.
  */
-public class TreeRe3dBaseLevelConfigurationGenerator {
+public class Re3dBaseLevelConfigurationGenerator {
 
   public static void main(String[] args) throws IOException {
     BaseLevelConfig baseLevel =
@@ -35,10 +35,10 @@ public class TreeRe3dBaseLevelConfigurationGenerator {
                 "resources/referenceFronts/RE36.csv",
                 "resources/referenceFronts/RE37.csv"), // trainingReferenceFrontFileNames
             List.of(10000, 10000, 10000, 10000, 10000, 10000, 10000), // trainingEvaluations
-            List.of("Epsilon", "NormalizedHypervolume")); // indicatorNames
+            List.of("Epsilon", "InvertedGenerationalDistancePlus")); // indicatorNames
 
     Path outputFile =
-        Path.of("src/main/resources/baseLevelConfigurations/Re3dNSGAIITreeBaseLevel.yaml");
+        Path.of("src/main/resources/baseLevelConfigurations/Re3dNSGAIIBaseLevel.yaml");
     BaseLevelConfigurationWriter.save(baseLevel, outputFile);
     System.out.println("Wrote " + outputFile);
   }

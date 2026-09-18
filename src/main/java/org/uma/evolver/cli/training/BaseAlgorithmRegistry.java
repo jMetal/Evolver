@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.runner;
+package org.uma.evolver.cli.training;
 
 import java.util.Map;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;

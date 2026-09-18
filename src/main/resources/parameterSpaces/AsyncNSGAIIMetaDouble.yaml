@@ -1,4 +1,4 @@
-# Parameter space for the meta-level Asynchronous NSGA-II used by cli.runner's
+# Parameter space for the meta-level Asynchronous NSGA-II used by cli.training's
 # MetaAlgorithmRegistry (org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII,
 # built via MetaAsyncNSGAIIBuilder). Unlike NSGAIIMetaDouble.yaml, this is not fed to a
 # BaseLevelAlgorithm/ParameterSpace-driven algorithm: AsynchronousMultiThreadedNSGAII hardcodes its
