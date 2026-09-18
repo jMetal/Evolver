@@ -1,6 +1,6 @@
-# Meta configuration of Parallel NSGA-II with flat encoding
+# Meta configuration of NSGA-II with flat encoding
 
-algorithm: ParallelNSGA-II
+algorithm: NSGA-II
 encoding: flat
 
 metaMaxEvaluations: 2000

@@ -74,7 +74,7 @@ public class TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
 
   private static final String META_SEARCH_YAML =
       """
-      algorithm: ParallelNSGA-II
+      algorithm: NSGA-II
       encoding: tree
       metaMaxEvaluations: 2000
       metaPopulationSize: 50

@@ -51,7 +51,7 @@ class TrainingRequestYamlLoaderTest {
       assertEquals(100, request.statusFrequency());
       assertNull(request.frontPlotFrequency());
       FlatMetaSearchConfig metaSearch = (FlatMetaSearchConfig) request.metaSearch();
-      assertEquals("ParallelNSGA-II", metaSearch.algorithm());
+      assertEquals("NSGA-II", metaSearch.algorithm());
       assertEquals(2000, metaSearch.metaMaxEvaluations());
       assertEquals(50, metaSearch.metaPopulationSize());
       assertEquals(8, metaSearch.numberOfCores());
@@ -71,7 +71,7 @@ class TrainingRequestYamlLoaderTest {
 
       // Assert
       TreeMetaSearchConfig metaSearch = (TreeMetaSearchConfig) request.metaSearch();
-      assertEquals("ParallelNSGA-II", metaSearch.algorithm());
+      assertEquals("NSGA-II", metaSearch.algorithm());
       assertEquals(50, metaSearch.metaPopulationSize());
     }
 

@@ -1,6 +1,6 @@
-# Meta configuration of Parallel NSGA-II with tree (derivation tree) encoding
+# Meta configuration of NSGA-II with tree (derivation tree) encoding
 
-algorithm: ParallelNSGA-II
+algorithm: NSGA-II
 encoding: tree
 
 metaMaxEvaluations: 2000

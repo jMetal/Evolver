@@ -19,7 +19,7 @@ class MetaOptimizerConfigurationReaderTest {
     @Test
     @DisplayName(
         "given MetaParallelNSGAIIFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig"
-            + " with the parallel NSGA-II recipe is built")
+            + " with the NSGA-II recipe is built")
     void givenParallelFlatFile_whenLoaded_thenFlatConfigIsBuilt() {
       // Arrange & Act
       MetaSearchConfig config =
@@ -27,7 +27,7 @@ class MetaOptimizerConfigurationReaderTest {
 
       // Assert
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
-      assertEquals("ParallelNSGA-II", flat.algorithm());
+      assertEquals("NSGA-II", flat.algorithm());
       assertEquals(2000, flat.metaMaxEvaluations());
       assertEquals(50, flat.metaPopulationSize());
       assertEquals(8, flat.numberOfCores());
@@ -131,7 +131,7 @@ class MetaOptimizerConfigurationReaderTest {
 
       // Assert
       TreeMetaSearchConfig tree = (TreeMetaSearchConfig) config;
-      assertEquals("ParallelNSGA-II", tree.algorithm());
+      assertEquals("NSGA-II", tree.algorithm());
       assertEquals(50, tree.metaOffspringSize());
       assertEquals(0.9, tree.crossoverProbability());
     }

@@ -6,7 +6,7 @@ package org.uma.evolver.cli.training;
  * algorithm's own grammar, using {@code SubtreeCrossover} and {@code TreeMutation}.
  *
  * @param algorithm the meta-optimizer algorithm name, resolved via {@link MetaAlgorithmRegistry}
- *     (only {@code "ParallelNSGA-II"} is supported for this encoding)
+ *     (only {@code "NSGA-II"} is supported for this encoding)
  */
 public record TreeMetaSearchConfig(
     String algorithm,

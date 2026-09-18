@@ -105,7 +105,7 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
-  @DisplayName("Given ParallelNSGA-II (flat encoding)")
+  @DisplayName("Given NSGA-II (flat encoding)")
   class ParallelNsgaIIFlat {
 
     @Test
@@ -163,7 +163,7 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
-  @DisplayName("Given ParallelNSGA-II (tree encoding)")
+  @DisplayName("Given NSGA-II (tree encoding)")
   class ParallelNsgaIITree {
 
     @Test

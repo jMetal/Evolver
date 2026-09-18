@@ -35,15 +35,19 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * catalogue per registered algorithm, so it is hardcoded here rather than repeated in every
  * meta-optimizer configuration file.
  *
+ * <p>None of the registered names carry a "Parallel" qualifier: every engine here evaluates via
+ * {@code numberOfCores} (whether through {@link MultiThreadedEvaluation} or, for
+ * {@code "AsyncNSGA-II"}, its own asynchronous evaluation), so singling one out as "Parallel"
+ * would be misleading rather than distinguishing.
+ *
  * <p>Registered engines have three different shapes, with no common jMetal supertype exposing
  * {@code run()}/{@code result()}/{@code observable()} (they are duck-typed, not a shared
  * interface), so {@link TrainingRunner} needs to know which one it got before it can register
  * observers on it. {@link #familyOf(String)} is the single source of truth for that:
  * <ul>
  *   <li>{@link Family#EVOLUTIONARY}: built via {@link #resolveFlat}, returns an
- *       {@link EvolutionaryAlgorithm}. {@code "ParallelNSGA-II"} — named for its multi-threaded
- *       evaluation, since every NSGA-II variant used as a meta-optimizer runs this way — is built
- *       directly on {@link DoubleNSGAII}, a full {@code BaseLevelAlgorithm} with its own operator
+ *       {@link EvolutionaryAlgorithm}. {@code "NSGA-II"} is built directly on {@link DoubleNSGAII},
+ *       a full {@code BaseLevelAlgorithm} with its own operator
  *       catalogue exposed via {@code operatorFlags}. {@code "SPEA2"} is built via
  *       {@link MetaSPEA2Builder}, which hardcodes its own operators (SBX crossover, polynomial
  *       mutation, strength ranking, KNN density estimator, tournament selection) and exposes only
@@ -95,7 +99,7 @@ final class MetaAlgorithmRegistry {
   private static final List<MetaAlgorithmDescriptor> ALGORITHMS =
       List.of(
           new MetaAlgorithmDescriptor(
-              "ParallelNSGA-II", Family.EVOLUTIONARY, true, "NSGAIIMetaDouble.yaml", List.of()),
+              "NSGA-II", Family.EVOLUTIONARY, true, "NSGAIIMetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
               "SPEA2",
               Family.EVOLUTIONARY,
@@ -119,7 +123,7 @@ final class MetaAlgorithmRegistry {
   }
 
   /** Hardcoded, not user-facing — see class javadoc. */
-  private static final String PARALLEL_NSGAII_PARAMETER_SPACE_FILE = "NSGAIIMetaDouble.yaml";
+  private static final String NSGAII_PARAMETER_SPACE_FILE = "NSGAIIMetaDouble.yaml";
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
@@ -134,7 +138,7 @@ final class MetaAlgorithmRegistry {
    * requires their flags to be present, though, so they are fixed here rather than repeated in
    * every meta-optimizer configuration file (there is nothing for a user to choose between).
    */
-  private static final String[] FIXED_PARALLEL_NSGAII_FLAGS = {
+  private static final String[] FIXED_NSGAII_FLAGS = {
     "--algorithmResult", "population",
     "--createInitialSolutions", "default",
     "--variation", "crossoverAndMutationVariation"
@@ -144,14 +148,14 @@ final class MetaAlgorithmRegistry {
 
   static Family familyOf(String algorithmName) {
     return switch (algorithmName) {
-      case "ParallelNSGA-II", "SPEA2" -> Family.EVOLUTIONARY;
+      case "NSGA-II", "SPEA2" -> Family.EVOLUTIONARY;
       case "AsyncNSGA-II" -> Family.ASYNCHRONOUS;
       case "SMPSO" -> Family.PARTICLE_SWARM;
       default ->
           throw new JMetalException(
               "Unknown meta-optimizer algorithm: "
                   + algorithmName
-                  + " for encoding flat. Supported: ParallelNSGA-II, SPEA2, AsyncNSGA-II, SMPSO");
+                  + " for encoding flat. Supported: NSGA-II, SPEA2, AsyncNSGA-II, SMPSO");
     };
   }
 
@@ -191,13 +195,13 @@ final class MetaAlgorithmRegistry {
   private static EvolutionaryAlgorithm<DoubleSolution> buildNSGAII(
       MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
     ParameterSpace parameterSpace =
-        new YAMLParameterSpace(PARALLEL_NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
+        new YAMLParameterSpace(NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
     DoubleNSGAII metaNSGAII =
         new DoubleNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
-    metaNSGAII.parse(concat(FIXED_PARALLEL_NSGAII_FLAGS, config.operatorFlags()));
+    metaNSGAII.parse(concat(FIXED_NSGAII_FLAGS, config.operatorFlags()));
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = metaNSGAII.build();
     nsgaii.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
@@ -285,11 +289,11 @@ final class MetaAlgorithmRegistry {
    * algorithm against the sole one that pipeline implements.
    */
   static void validateTreeAlgorithm(String algorithmName) {
-    if (!"ParallelNSGA-II".equals(algorithmName)) {
+    if (!"NSGA-II".equals(algorithmName)) {
       throw new JMetalException(
           "Unknown meta-optimizer algorithm: "
               + algorithmName
-              + " for encoding tree. Supported: ParallelNSGA-II");
+              + " for encoding tree. Supported: NSGA-II");
     }
   }
 

@@ -6,7 +6,7 @@
 
 ## Motivación
 
-`cli.training` resuelve nombres (`"NSGA-II"`, `"ParallelNSGA-II"`, `"ZDT4"`, `"Epsilon"`, ...) contra cuatro registros: `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`, `ProblemRegistry`, `IndicatorRegistry`. Todos ellos viven como `switch`/`Map` sobre literales, pensados solo para *resolver* un nombre a una instancia en tiempo de ejecución de un run — no para que un proceso externo pregunte "¿qué nombres son válidos, y con qué forma?" sin ejecutar nada.
+`cli.training` resuelve nombres (`"NSGA-II"`, `"ZDT4"`, `"Epsilon"`, ...) contra cuatro registros: `BaseAlgorithmRegistry`, `MetaAlgorithmRegistry`, `ProblemRegistry`, `IndicatorRegistry`. Todos ellos viven como `switch`/`Map` sobre literales, pensados solo para *resolver* un nombre a una instancia en tiempo de ejecución de un run — no para que un proceso externo pregunte "¿qué nombres son válidos, y con qué forma?" sin ejecutar nada.
 
 Una herramienta externa que quiera ofrecer estos catálogos en una UI (selectores de algoritmo, formularios de configuración) no tiene hoy más opción que leer el código Java fuente de las cuatro clases y transcribir lo que encuentra a su propio lenguaje. Eso funciona una vez, pero se desincroniza en cuanto Evolver cambia — y Evolver cambia con regularidad (algoritmos nuevos, motores de meta-optimización nuevos, problemas nuevos). El mecanismo de drift-detection ya existente en ambos proyectos (`BaseAlgorithmRegistryCompletenessTest`/`TrainingRunnerMetaBuilderCompletenessTest` en Evolver, `TestCatalogueMatchesEvolverCheckout` en Evolver-Studio) solo *avisa* de que algo cambió; no evita releer Java a mano cada vez que salta.
 
@@ -56,7 +56,7 @@ record MetaAlgorithmDescriptor(
 
 private static final List<MetaAlgorithmDescriptor> ALGORITHMS = List.of(
     new MetaAlgorithmDescriptor(
-        "ParallelNSGA-II", Family.EVOLUTIONARY, true, true,
+        "NSGA-II", Family.EVOLUTIONARY, true, true,
         "NSGAIIMetaDouble.yaml", List.of()),
     new MetaAlgorithmDescriptor(
         "SPEA2", Family.EVOLUTIONARY, true, false, null, List.of(
@@ -73,7 +73,7 @@ static List<MetaAlgorithmDescriptor> registeredAlgorithms() {
 }
 ```
 
-Para `"ParallelNSGA-II"`/`"AsyncNSGA-II"`, `operatorParameterSpaceFile` apunta al mismo fichero `ParameterSpace` (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`) que ya usa internamente `buildNSGAII`/`buildAsyncNSGAII` — el manifiesto no duplica ese catálogo de operadores, solo indica dónde vive, con el mismo formato que `baseLevel.yamlParameterSpaceFile` ya usa (un cliente externo que sepa parsear ese formato no necesita código nuevo). Para `"SPEA2"`/`"SMPSO"` no hay tal fichero — sus operator-flags (si los hay) se listan explícitamente en `hardcodedOperatorFlags`, capturando lo que hoy solo está en `buildSPEA2`/`requireNoOperatorFlags`.
+Para `"NSGA-II"`/`"AsyncNSGA-II"`, `operatorParameterSpaceFile` apunta al mismo fichero `ParameterSpace` (`NSGAIIMetaDouble.yaml`/`AsyncNSGAIIMetaDouble.yaml`) que ya usa internamente `buildNSGAII`/`buildAsyncNSGAII` — el manifiesto no duplica ese catálogo de operadores, solo indica dónde vive, con el mismo formato que `baseLevel.yamlParameterSpaceFile` ya usa (un cliente externo que sepa parsear ese formato no necesita código nuevo). Para `"SPEA2"`/`"SMPSO"` no hay tal fichero — sus operator-flags (si los hay) se listan explícitamente en `hardcodedOperatorFlags`, capturando lo que hoy solo está en `buildSPEA2`/`requireNoOperatorFlags`.
 
 ### Directorios de recursos reusables
 
@@ -114,7 +114,7 @@ baseAlgorithms:
     encoding: Double
     requiredExtraConfigKeys: [weightVectorFilesDirectory]
 metaAlgorithms:
-  - name: ParallelNSGA-II
+  - name: NSGA-II
     family: EVOLUTIONARY
     supportsFlat: true
     supportsTree: true

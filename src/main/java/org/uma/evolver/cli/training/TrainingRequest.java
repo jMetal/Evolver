@@ -30,12 +30,12 @@ package org.uma.evolver.cli.training;
  * {@code NSGAIIOptimizingMOEADForProblemZDT4} (a base-level algorithm other than NSGA-II, flat
  * encoding), {@code TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D} (tree encoding), {@code
  * AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ} (a meta-optimizer engine other than {@code
- * ParallelNSGA-II}, asynchronous), {@code SMPSOOptimizingNSGAIIForProblemRE31} (a meta-optimizer
+ * NSGA-II}, asynchronous), {@code SMPSOOptimizingNSGAIIForProblemRE31} (a meta-optimizer
  * engine with no {@code EvolutionaryAlgorithm}/{@code AsynchronousMultiThreadedNSGAII} shape) and
  * {@code SPEA2OptimizingNSGAIIForProblemDTLZ3} (a second evolutionary meta-optimizer engine, with
  * its own hardcoded operators). The meta-optimizer algorithm is selected explicitly via
  * {@link MetaSearchConfig#algorithm()}, resolved by {@link MetaAlgorithmRegistry};
- * {@code "ParallelNSGA-II"}, {@code "SPEA2"}, {@code "AsyncNSGA-II"} and {@code "SMPSO"} are
+ * {@code "NSGA-II"}, {@code "SPEA2"}, {@code "AsyncNSGA-II"} and {@code "SMPSO"} are
  * registered so far.
  */
 public record TrainingRequest(

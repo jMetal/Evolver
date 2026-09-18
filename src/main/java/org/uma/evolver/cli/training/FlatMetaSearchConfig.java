@@ -6,7 +6,7 @@ import java.util.List;
  * Meta-search configuration for the flat [0,1]^n encoding, resolved via
  * {@link MetaAlgorithmRegistry}.
  *
- * @param algorithm the meta-optimizer algorithm name (e.g. {@code "ParallelNSGA-II"})
+ * @param algorithm the meta-optimizer algorithm name (e.g. {@code "NSGA-II"})
  * @param metaPopulationSize nullable; when null, {@link MetaAlgorithmRegistry}'s own default is
  *     used
  * @param operatorFlags the meta-optimizer's own operator configuration (crossover, mutation,
