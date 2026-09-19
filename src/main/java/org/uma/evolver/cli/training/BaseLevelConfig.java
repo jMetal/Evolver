@@ -10,8 +10,9 @@ import java.util.Map;
  * {@link TrainingRequest#outputDirectory()}) — everything here is meant to be reused, unchanged,
  * across many training requests, loaded by name via {@link BaseLevelConfigurationReader}.
  *
- * <p>The training set is always given as three parallel lists of the same size — problem names
- * (resolved via {@link ProblemRegistry}), their reference front files, and the number of
+ * <p>The training set is always given as three parallel lists of the same size — problems
+ * (resolved via {@link ProblemRegistry}, each either a curated short name or a fully-qualified
+ * class name, see {@link ProblemSpec}), their reference front files, and the number of
  * evaluations to use for each problem — the same shape used throughout
  * {@code org.uma.evolver.trainingset.TrainingSet}. The CLI does not resolve training sets by
  * name: even a multi-problem set like RE3D is spelled out explicitly (see
@@ -25,7 +26,7 @@ public record BaseLevelConfig(
     int numberOfIndependentRuns,
     String yamlParameterSpaceFile,
     Map<String, String> extraConfig,
-    List<String> trainingProblemNames,
+    List<ProblemSpec> trainingProblemNames,
     List<String> trainingReferenceFrontFileNames,
     List<Integer> trainingEvaluations,
     List<String> indicatorNames) {}

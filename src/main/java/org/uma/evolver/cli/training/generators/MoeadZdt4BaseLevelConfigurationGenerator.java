@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.ProblemSpec;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**
@@ -23,7 +24,7 @@ public class MoeadZdt4BaseLevelConfigurationGenerator {
             1, // numberOfIndependentRuns
             "MOEADDouble.yaml", // yamlParameterSpaceFile
             Map.of("weightVectorFilesDirectory", "resources/weightVectors"),
-            List.of("ZDT4"), // trainingProblemNames
+            ProblemSpec.of("ZDT4"), // trainingProblemNames
             List.of("resources/referenceFronts/ZDT4.csv"), // trainingReferenceFrontFileNames
             List.of(10000), // trainingEvaluations
             List.of("Epsilon", "NormalizedHypervolume")); // indicatorNames

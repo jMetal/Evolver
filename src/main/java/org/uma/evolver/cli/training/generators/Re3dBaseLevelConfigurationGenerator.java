@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.ProblemSpec;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**
@@ -25,7 +26,7 @@ public class Re3dBaseLevelConfigurationGenerator {
             1, // numberOfIndependentRuns
             "NSGAIIDouble.yaml", // yamlParameterSpaceFile
             null, // extraConfig
-            List.of("RE31", "RE32", "RE33", "RE34", "RE35", "RE36", "RE37"), // trainingProblemNames
+            ProblemSpec.of("RE31", "RE32", "RE33", "RE34", "RE35", "RE36", "RE37"), // trainingProblemNames
             List.of(
                 "resources/referenceFronts/RE31.csv",
                 "resources/referenceFronts/RE32.csv",

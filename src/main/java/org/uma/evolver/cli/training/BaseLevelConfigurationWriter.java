@@ -27,7 +27,9 @@ public final class BaseLevelConfigurationWriter {
     if (config.extraConfig() != null && !config.extraConfig().isEmpty()) {
       data.put("extraConfig", config.extraConfig());
     }
-    data.put("trainingProblemNames", config.trainingProblemNames());
+    data.put(
+        "trainingProblemNames",
+        config.trainingProblemNames().stream().map(BaseLevelConfigurationWriter::toYamlValue).toList());
     data.put("trainingReferenceFrontFileNames", config.trainingReferenceFrontFileNames());
     data.put("trainingEvaluations", config.trainingEvaluations());
     data.put("indicatorNames", config.indicatorNames());
@@ -35,5 +37,15 @@ public final class BaseLevelConfigurationWriter {
     try (FileWriter writer = new FileWriter(outputFile.toFile())) {
       new Yaml().dump(data, writer);
     }
+  }
+
+  private static Object toYamlValue(ProblemSpec spec) {
+    if (spec.args().isEmpty()) {
+      return spec.className();
+    }
+    Map<String, Object> entry = new LinkedHashMap<>();
+    entry.put("class", spec.className());
+    entry.put("args", spec.args());
+    return entry;
   }
 }

@@ -467,20 +467,20 @@ public class TrainingRunner {
   }
 
   private static ResolvedTrainingSet resolveTrainingSet(BaseLevelConfig baseLevel) {
-    List<String> problemNames = baseLevel.trainingProblemNames();
+    List<ProblemSpec> problemSpecs = baseLevel.trainingProblemNames();
     List<String> referenceFrontFileNames = baseLevel.trainingReferenceFrontFileNames();
     List<Integer> evaluations = baseLevel.trainingEvaluations();
-    if (referenceFrontFileNames.size() != problemNames.size()
-        || evaluations.size() != problemNames.size()) {
+    if (referenceFrontFileNames.size() != problemSpecs.size()
+        || evaluations.size() != problemSpecs.size()) {
       throw new JMetalException(
           "trainingProblemNames, trainingReferenceFrontFileNames and trainingEvaluations must "
               + "have the same size");
     }
 
     return new ResolvedTrainingSet(
-        problemNames.stream().map(ProblemRegistry::resolve).toList(),
+        problemSpecs.stream().map(ProblemRegistry::resolve).toList(),
         referenceFrontFileNames,
         evaluations,
-        problemNames.size() == 1 ? problemNames.get(0) : "custom");
+        problemSpecs.size() == 1 ? problemSpecs.get(0).displayName() : "custom");
   }
 }

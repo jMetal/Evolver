@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.uma.evolver.cli.training.BaseLevelConfig;
+import org.uma.evolver.cli.training.ProblemSpec;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**
@@ -22,7 +23,7 @@ public class Zdt4BaseLevelConfigurationGenerator {
             1, // numberOfIndependentRuns
             "NSGAIIDouble.yaml", // yamlParameterSpaceFile
             null, // extraConfig
-            List.of("ZDT4"), // trainingProblemNames
+            ProblemSpec.of("ZDT4"), // trainingProblemNames
             List.of("resources/referenceFronts/ZDT4.csv"), // trainingReferenceFrontFileNames
             List.of(12000), // trainingEvaluations
             List.of("Epsilon", "NormalizedHypervolume")); // indicatorNames
