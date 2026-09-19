@@ -1,5 +1,5 @@
 # Example TrainingRequest, equivalent to the values in
-# org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForProblemZDT4
+# org.uma.evolver.example.training.zdt.NSGAIIOptimizingNSGAIIForProblemZDT4
 
 baseLevel: Zdt4NSGAIIBaseLevel.yaml
 metaSearch: MetaNSGAIIFlatConfiguration.yaml

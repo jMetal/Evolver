@@ -1,7 +1,7 @@
 # Example TrainingRequest exercising SMPSO as meta-optimizer
 # (org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm, built via
 # MetaSMPSOBuilder), equivalent to
-# org.uma.evolver.example.training.SMPSOOptimizingNSGAIIForProblemRE31.
+# org.uma.evolver.example.training.re3d.SMPSOOptimizingNSGAIIForProblemRE31.
 # See MetaSMPSOFlatConfiguration.yaml: SMPSO exposes no operator catalogue, only swarm size,
 # evaluations and cores.
 

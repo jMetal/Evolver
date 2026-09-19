@@ -1,6 +1,6 @@
 # Base-level NSGA-II configured against the DTLZ1-DTLZ7 (three-objective) training set.
 # Same recipe as BASE_LEVEL_YAML in
-# org.uma.evolver.example.training.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, kept here as a
+# org.uma.evolver.example.training.dtlz.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, kept here as a
 # standalone file so it can be run directly from the CLI (see async-nsgaii-dtlz3d-request.yaml).
 
 algorithmName: NSGA-II

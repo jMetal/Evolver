@@ -1,5 +1,5 @@
 # Example TrainingRequest, equivalent to the values in
-# org.uma.evolver.example.training.TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D
+# org.uma.evolver.example.training.re3d.TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D
 #
 # Exercises the tree encoding: no meta-level YAML parameter space, just the scalar
 # hyperparameters of SubtreeCrossover/TreeMutation (see MetaNSGAIITreeConfiguration.yaml).

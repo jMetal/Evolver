@@ -1,5 +1,5 @@
 # Example TrainingRequest, equivalent to the values in
-# org.uma.evolver.example.training.NSGAIIOptimizingMOEADForProblemZDT4
+# org.uma.evolver.example.training.zdt.NSGAIIOptimizingMOEADForProblemZDT4
 #
 # Exercises a base-level algorithm other than NSGA-II (MOEA/D), which needs extra
 # algorithm-specific configuration (weightVectorFilesDirectory) beyond population size

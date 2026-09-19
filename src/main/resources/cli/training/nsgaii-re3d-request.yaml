@@ -1,5 +1,5 @@
 # Example TrainingRequest, equivalent to the values in
-# org.uma.evolver.example.training.NSGAIIOptimizingNSGAIIForBenchmarkRE3D
+# org.uma.evolver.example.training.re3d.NSGAIIOptimizingNSGAIIForBenchmarkRE3D
 
 baseLevel: Re3dNSGAIIBaseLevel.yaml
 metaSearch: MetaNSGAIIFlatConfiguration.yaml
