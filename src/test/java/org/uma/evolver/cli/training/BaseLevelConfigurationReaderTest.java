@@ -29,7 +29,7 @@ class BaseLevelConfigurationReaderTest {
       assertEquals(100, config.populationSize());
       assertEquals(1, config.numberOfIndependentRuns());
       assertEquals("NSGAIIDouble.yaml", config.yamlParameterSpaceFile());
-      assertEquals(java.util.List.of("ZDT4"), config.trainingProblemNames());
+      assertEquals(ProblemSpec.of("ZDT4"), config.trainingProblemNames());
     }
 
     @Test
@@ -55,7 +55,7 @@ class BaseLevelConfigurationReaderTest {
 
       // Assert
       assertEquals("NSGA-II", config.algorithmName());
-      assertEquals(java.util.List.of("RE31"), config.trainingProblemNames());
+      assertEquals(ProblemSpec.of("RE31"), config.trainingProblemNames());
     }
 
     @Test
@@ -81,7 +81,36 @@ class BaseLevelConfigurationReaderTest {
 
       // Assert
       assertEquals("NSGA-II", config.algorithmName());
-      assertEquals(java.util.List.of("DTLZ1"), config.trainingProblemNames());
+      assertEquals(ProblemSpec.of("DTLZ1"), config.trainingProblemNames());
+    }
+
+    @Test
+    @DisplayName(
+        "given a trainingProblemNames entry with class/args, when loaded via loadFromYaml, then a"
+            + " ProblemSpec with those constructor arguments is built")
+    void givenParametrizedProblemEntry_whenLoadedFromYaml_thenProblemSpecCarriesArgs() {
+      // Arrange
+      String yaml =
+          """
+          algorithmName: NSGA-II
+          populationSize: 100
+          numberOfIndependentRuns: 1
+          yamlParameterSpaceFile: NSGAIIDouble.yaml
+          trainingProblemNames:
+            - class: org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1
+              args: [12, 3]
+          trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ1.3D.csv]
+          trainingEvaluations: [16000]
+          indicatorNames: [Epsilon]
+          """;
+
+      // Act
+      BaseLevelConfig config = BaseLevelConfigurationReader.loadFromYaml(yaml);
+
+      // Assert
+      ProblemSpec spec = config.trainingProblemNames().get(0);
+      assertEquals("org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1", spec.className());
+      assertEquals(java.util.List.of(12, 3), spec.args());
     }
   }
 

@@ -28,7 +28,7 @@ class BaseLevelConfigurationWriterTest {
             1,
             "NSGAIIDouble.yaml",
             Map.of("weightVectorFilesDirectory", "resources/weightVectors"),
-            List.of("RE31", "RE32"),
+            ProblemSpec.of("RE31", "RE32"),
             List.of("resources/referenceFronts/RE31.csv", "resources/referenceFronts/RE32.csv"),
             List.of(10000, 10000),
             List.of("Epsilon", "NormalizedHypervolume"));
@@ -56,7 +56,7 @@ class BaseLevelConfigurationWriterTest {
             1,
             "NSGAIIDouble.yaml",
             null,
-            List.of("ZDT4"),
+            ProblemSpec.of("ZDT4"),
             List.of("resources/referenceFronts/ZDT4.csv"),
             List.of(12000),
             List.of("Epsilon"));
