@@ -143,8 +143,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    :caption: UTILITIES
    :name: utilities
 
-   utilities/visualization
-   utilities/analysis_tools
    utilities/cli_tools
 
 .. toctree::
