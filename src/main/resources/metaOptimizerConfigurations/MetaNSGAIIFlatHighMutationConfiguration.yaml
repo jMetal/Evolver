@@ -1,0 +1,22 @@
+# Meta configuration of NSGA-II with flat encoding, with a higher mutationProbabilityFactor (1.5
+# instead of the standard 1.0) and a larger meta population (100 instead of 50) -- same recipe as
+# org.uma.evolver.example.training.zdt.NSGAIIOptimizingNSGAIIForProblemZDT4.
+
+algorithm: NSGA-II
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 100
+offspringPopulationSize: 50
+numberOfCores: 8
+
+crossover: SBX
+mutation: polynomial
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutationProbabilityFactor: 1.5
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

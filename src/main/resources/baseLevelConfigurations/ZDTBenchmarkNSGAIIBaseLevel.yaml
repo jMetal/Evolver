@@ -1,0 +1,22 @@
+# Base-level NSGA-II configured against the ZDT benchmark (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6).
+# ZDT2/ZDT3/ZDT6 are not in ProblemRegistry's curated catalogue -- resolved by reflection from
+# their fully-qualified class name instead (see ProblemRegistry/ProblemSpec).
+
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames:
+  - ZDT1
+  - org.uma.jmetal.problem.multiobjective.zdt.ZDT2
+  - org.uma.jmetal.problem.multiobjective.zdt.ZDT3
+  - ZDT4
+  - org.uma.jmetal.problem.multiobjective.zdt.ZDT6
+trainingReferenceFrontFileNames:
+  - resources/referenceFronts/ZDT1.csv
+  - resources/referenceFronts/ZDT2.csv
+  - resources/referenceFronts/ZDT3.csv
+  - resources/referenceFronts/ZDT4.csv
+  - resources/referenceFronts/ZDT6.csv
+trainingEvaluations: [10000, 10000, 10000, 10000, 10000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

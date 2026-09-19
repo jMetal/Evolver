@@ -1,0 +1,14 @@
+# Example TrainingRequest, equivalent to the values in
+# org.uma.evolver.example.training.zdt.NSGAIIOptimizingNSGAIIForBenchmarkZDT
+#
+# Exercises a training set made of several problems (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6) instead of a
+# single one. ZDT2/ZDT3/ZDT6 are not in ProblemRegistry's curated catalogue -- see
+# ZDTBenchmarkNSGAIIBaseLevel.yaml, which names them by fully-qualified class instead, resolved by
+# reflection.
+
+baseLevel: ZDTBenchmarkNSGAIIBaseLevel.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
+outputDirectory: results/nsgaii/ZDT
+writeFrequency: 1
+statusFrequency: 50
+frontPlotFrequency: 1   # optional; remove this line to run headless

@@ -8,6 +8,6 @@
 baseLevel: MoeadZdt4BaseLevel.yaml
 metaSearch: MetaNSGAIIFlatConfiguration.yaml
 outputDirectory: results/moead/ZDT4
-writeFrequency: 100
-statusFrequency: 100
-# frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)
+writeFrequency: 1
+statusFrequency: 50
+frontPlotFrequency: 1   # optional; remove this line to run headless

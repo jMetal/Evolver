@@ -2,8 +2,8 @@
 # org.uma.evolver.example.training.zdt.NSGAIIOptimizingNSGAIIForProblemZDT4
 
 baseLevel: Zdt4NSGAIIBaseLevel.yaml
-metaSearch: MetaNSGAIIFlatConfiguration.yaml
+metaSearch: MetaNSGAIIFlatHighMutationConfiguration.yaml
 outputDirectory: results/nsgaii/ZDT4
-writeFrequency: 100
+writeFrequency: 1
 statusFrequency: 100
-frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)
+frontPlotFrequency: 1   # optional; remove this line to run headless
