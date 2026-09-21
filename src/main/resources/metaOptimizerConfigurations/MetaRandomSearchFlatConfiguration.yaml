@@ -1,0 +1,10 @@
+# Meta configuration of Random Search (flat encoding)
+#
+# RandomSearch has no population concept and exposes no operator catalogue (it just samples
+# uniformly at random) — no operator flags are allowed here beyond the scalars below.
+
+algorithm: RandomSearch
+encoding: flat
+
+metaMaxEvaluations: 2000
+numberOfCores: 8

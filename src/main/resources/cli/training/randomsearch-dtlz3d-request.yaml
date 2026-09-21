@@ -1,0 +1,14 @@
+# Example TrainingRequest exercising Random Search as meta-optimizer
+# (org.uma.evolver.meta.builder.RandomSearch, built via MetaRandomSearchBuilder), equivalent to
+# the fully self-contained
+# org.uma.evolver.example.training.dtlz.RandomSearchOptimizingNSGAIIForBenchmarkDTLZ Java example —
+# same baseLevel/metaSearch configuration, but as standalone files that can be run from the CLI
+# without touching Java. See DTLZ3DNSGAIIBaseLevel.yaml and
+# MetaRandomSearchFlatConfiguration.yaml.
+
+baseLevel: DTLZ3DNSGAIIBaseLevel.yaml
+metaSearch: MetaRandomSearchFlatConfiguration.yaml
+outputDirectory: results/randomsearch/DTLZ3D
+writeFrequency: 100
+statusFrequency: 100
+frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)

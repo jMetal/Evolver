@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
+import org.uma.evolver.meta.builder.MetaRandomSearchBuilder;
 import org.uma.evolver.meta.builder.MetaSMPSOBuilder;
 import org.uma.evolver.meta.builder.MetaSPEA2Builder;
+import org.uma.evolver.meta.builder.RandomSearch;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
@@ -61,6 +63,10 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       {@link ParticleSwarmOptimizationAlgorithm} (currently {@code "SMPSO"}; not generic, fixed
  *       to {@code DoubleSolution}). {@link MetaSMPSOBuilder} exposes no operator catalogue at all
  *       (swarm size/evaluations/cores only), so {@code operatorFlags} must be empty.
+ *   <li>{@link Family#RANDOM_SEARCH}: built via {@link #resolveFlatRandomSearch}, returns a
+ *       {@link RandomSearch} (currently {@code "RandomSearch"}; a fourth, distinct shape — no
+ *       population, no operators, {@link MetaRandomSearchBuilder} exposes only
+ *       evaluations/cores, so {@code operatorFlags} must be empty, same as SMPSO).
  * </ul>
  */
 final class MetaAlgorithmRegistry {
@@ -68,7 +74,8 @@ final class MetaAlgorithmRegistry {
   enum Family {
     EVOLUTIONARY,
     ASYNCHRONOUS,
-    PARTICLE_SWARM
+    PARTICLE_SWARM,
+    RANDOM_SEARCH
   }
 
   /**
@@ -115,7 +122,9 @@ final class MetaAlgorithmRegistry {
               "AsyncNSGAIIMetaDouble.yaml",
               List.of()),
           new MetaAlgorithmDescriptor(
-              "SMPSO", Family.PARTICLE_SWARM, false, null, List.of()));
+              "SMPSO", Family.PARTICLE_SWARM, false, null, List.of()),
+          new MetaAlgorithmDescriptor(
+              "RandomSearch", Family.RANDOM_SEARCH, false, null, List.of()));
 
   /** Registered algorithms, for {@link DescribeMain}. All support the flat encoding. */
   static List<MetaAlgorithmDescriptor> registeredAlgorithms() {
@@ -151,11 +160,13 @@ final class MetaAlgorithmRegistry {
       case "NSGA-II", "SPEA2" -> Family.EVOLUTIONARY;
       case "AsyncNSGA-II" -> Family.ASYNCHRONOUS;
       case "SMPSO" -> Family.PARTICLE_SWARM;
+      case "RandomSearch" -> Family.RANDOM_SEARCH;
       default ->
           throw new JMetalException(
               "Unknown meta-optimizer algorithm: "
                   + algorithmName
-                  + " for encoding flat. Supported: NSGA-II, SPEA2, AsyncNSGA-II, SMPSO");
+                  + " for encoding flat. Supported: NSGA-II, SPEA2, AsyncNSGA-II, SMPSO,"
+                  + " RandomSearch");
     };
   }
 
@@ -190,6 +201,17 @@ final class MetaAlgorithmRegistry {
           "Meta-optimizer algorithm " + algorithmName + " is not a ParticleSwarmOptimizationAlgorithm");
     }
     return buildSMPSO(problem, config);
+  }
+
+  static RandomSearch<DoubleSolution> resolveFlatRandomSearch(
+      String algorithmName,
+      MetaOptimizationProblem<DoubleSolution> problem,
+      FlatMetaSearchConfig config) {
+    if (familyOf(algorithmName) != Family.RANDOM_SEARCH) {
+      throw new JMetalException(
+          "Meta-optimizer algorithm " + algorithmName + " is not a RandomSearch");
+    }
+    return buildRandomSearch(problem, config);
   }
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildNSGAII(
@@ -256,6 +278,15 @@ final class MetaAlgorithmRegistry {
 
     return new MetaSMPSOBuilder(problem)
         .setSwarmSize(swarmSize)
+        .setMaxEvaluations(config.metaMaxEvaluations())
+        .setNumberOfCores(config.numberOfCores())
+        .build();
+  }
+
+  private static RandomSearch<DoubleSolution> buildRandomSearch(
+      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+    requireNoOperatorFlags("RandomSearch", config);
+    return new MetaRandomSearchBuilder<>(problem)
         .setMaxEvaluations(config.metaMaxEvaluations())
         .setNumberOfCores(config.numberOfCores())
         .build();
