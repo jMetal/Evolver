@@ -3,6 +3,7 @@ package org.uma.evolver.meta.builder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -48,31 +49,38 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   @Override
   public void run() {
     AtomicInteger evaluations = new AtomicInteger(0);
-    IntStream.range(0, maxEvaluations)
-        .parallel()
-        .forEach(
-            i -> {
-              S newSolution = problem.createSolution();
-              problem.evaluate(newSolution);
+    ForkJoinPool pool = new ForkJoinPool(numberOfCores);
+    try {
+      pool.submit(
+              () ->
+                  IntStream.range(0, maxEvaluations)
+                      .parallel()
+                      .forEach(
+                          i -> {
+                            S newSolution = problem.createSolution();
+                            problem.evaluate(newSolution);
 
-              int currentEvaluations = evaluations.incrementAndGet();
+                            int currentEvaluations = evaluations.incrementAndGet();
+                            List<S> populationSnapshot;
+                            synchronized (nonDominatedArchive) {
+                              nonDominatedArchive.add(newSolution);
+                              populationSnapshot = result();
+                            }
 
-              synchronized (nonDominatedArchive) {
-                nonDominatedArchive.add(newSolution);
-              }
-
-              synchronized (observable) {
-                observable.setChanged();
-                Map<String, Object> data = new HashMap<>();
-                data.put("EVALUATIONS", currentEvaluations);
-                data.put("POPULATION", result());
-                data.put("ALGORITHM_NAME", name());
-                data.put("PROBLEM_NAME", problem.name());
-                // Optional: STRATEGY_PARAMETERS equivalent if needed?
-                // Usually 'POPULATION' is enough for standard observers.
-                observable.notifyObservers(data);
-              }
-            });
+                            synchronized (observable) {
+                              observable.setChanged();
+                              Map<String, Object> data = new HashMap<>();
+                              data.put("EVALUATIONS", currentEvaluations);
+                              data.put("POPULATION", populationSnapshot);
+                              data.put("ALGORITHM_NAME", name());
+                              data.put("PROBLEM_NAME", problem.name());
+                              observable.notifyObservers(data);
+                            }
+                          }))
+          .join();
+    } finally {
+      pool.shutdown();
+    }
   }
 
   @Override
