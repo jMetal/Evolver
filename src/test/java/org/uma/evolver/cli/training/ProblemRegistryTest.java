@@ -118,5 +118,22 @@ class ProblemRegistryTest {
       assertTrue(ProblemRegistry.registeredNames().contains("DTLZ3"));
       assertTrue(ProblemRegistry.registeredNames().contains("RE31"));
     }
+
+    @Test
+    @DisplayName(
+        "given every curated name, when resolved with no args, then none of them fail (each has"
+            + " a public no-arg constructor)")
+    void givenEveryCuratedName_whenResolvedWithNoArgs_thenNoneFail() {
+      // Arrange
+      var names = ProblemRegistry.registeredNames();
+      assertTrue(names.size() >= 90, "expected the full benchmark catalogue, found: " + names.size());
+
+      // Act & Assert
+      for (String name : names) {
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+            () -> ProblemRegistry.resolve(new ProblemSpec(name)),
+            "registered but not resolvable with no args: " + name);
+      }
+    }
   }
 }
