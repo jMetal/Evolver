@@ -78,7 +78,7 @@ perturbation:
               conditionalParameters:
                 levyFlightMutationBeta:
                   type: double
-                  range: [1.0, 2.0]
+                  range: [1.0001, 2.0]
                 levyFlightMutationStepSize:
                   type: double
                   range: [0.01, 1.0]
