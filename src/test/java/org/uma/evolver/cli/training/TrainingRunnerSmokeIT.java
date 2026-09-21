@@ -163,6 +163,26 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
+  @DisplayName("Given RandomSearch (flat encoding)")
+  class RandomSearchFlat {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaRandomSearchFlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
   @DisplayName("Given NSGA-II (tree encoding)")
   class ParallelNsgaIITree {
 

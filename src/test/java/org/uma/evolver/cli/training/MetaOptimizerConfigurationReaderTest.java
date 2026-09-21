@@ -1,6 +1,7 @@
 package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,6 +81,22 @@ class MetaOptimizerConfigurationReaderTest {
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
       assertEquals("SPEA2", flat.algorithm());
       assertEquals(100, flat.metaPopulationSize());
+    }
+
+    @Test
+    @DisplayName(
+        "given MetaRandomSearchFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig"
+            + " with the RandomSearch recipe, no population size and no operator flags is built")
+    void givenRandomSearchFlatFile_whenLoaded_thenFlatConfigIsBuiltWithoutPopulationOrFlags() {
+      // Arrange & Act
+      MetaSearchConfig config =
+          MetaOptimizerConfigurationReader.load("MetaRandomSearchFlatConfiguration.yaml");
+
+      // Assert
+      FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
+      assertEquals("RandomSearch", flat.algorithm());
+      assertNull(flat.metaPopulationSize());
+      assertTrue(flat.operatorFlags().isEmpty());
     }
 
     @Test

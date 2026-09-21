@@ -62,8 +62,10 @@ class TrainingRunnerMetaBuilderCompletenessTest {
           Map.entry("MetaAsyncGeneticAlgorithmBuilder", "not yet wired into TrainingRunner"),
           Map.entry(
               "MetaRandomSearchBuilder",
-              "not yet wired into TrainingRunner; generic over the solution type, so usable with"
-                  + " either encoding once wired"));
+              "wired into TrainingRunner.runFlatRandomSearch() via MetaAlgorithmRegistry, as"
+                  + " \"RandomSearch\" (flat only for now — generic over the solution type, so"
+                  + " could support tree too if TrainingRunner.runTree() grows a pluggable"
+                  + " meta-optimizer the way the flat encoding has)"));
 
   @Test
   @DisplayName(

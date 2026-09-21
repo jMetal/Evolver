@@ -51,6 +51,15 @@ class MetaAlgorithmRegistryTest {
     }
 
     @Test
+    @DisplayName("given RandomSearch, when familyOf is called, then it returns RANDOM_SEARCH")
+    void givenRandomSearch_whenFamilyOfCalled_thenItReturnsRandomSearch() {
+      // Arrange & Act & Assert
+      assertEquals(
+          MetaAlgorithmRegistry.Family.RANDOM_SEARCH,
+          MetaAlgorithmRegistry.familyOf("RandomSearch"));
+    }
+
+    @Test
     @DisplayName(
         "given an unknown algorithm name, when familyOf is called, then it fails listing the"
             + " supported algorithms")
@@ -63,6 +72,7 @@ class MetaAlgorithmRegistryTest {
       assertTrue(exception.getMessage().contains("AsyncNSGA-II"));
       assertTrue(exception.getMessage().contains("SPEA2"));
       assertTrue(exception.getMessage().contains("SMPSO"));
+      assertTrue(exception.getMessage().contains("RandomSearch"));
     }
   }
 
@@ -101,6 +111,16 @@ class MetaAlgorithmRegistryTest {
       assertThrows(
           JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("SMPSO", null, null));
     }
+
+    @Test
+    @DisplayName(
+        "given a random-search-family algorithm name, when resolveFlat is called, then it fails")
+    void givenRandomSearchAlgorithm_whenResolveFlatCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class,
+          () -> MetaAlgorithmRegistry.resolveFlat("RandomSearch", null, null));
+    }
   }
 
   @Nested
@@ -132,6 +152,22 @@ class MetaAlgorithmRegistryTest {
       assertThrows(
           JMetalException.class,
           () -> MetaAlgorithmRegistry.resolveFlatPso("NSGA-II", null, null));
+    }
+  }
+
+  @Nested
+  @DisplayName("When resolving a random-search flat-encoding meta-optimizer algorithm: ")
+  class ResolveFlatRandomSearchTestCases {
+
+    @Test
+    @DisplayName(
+        "given an evolutionary-family algorithm name, when resolveFlatRandomSearch is called,"
+            + " then it fails")
+    void givenEvolutionaryAlgorithm_whenResolveFlatRandomSearchCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class,
+          () -> MetaAlgorithmRegistry.resolveFlatRandomSearch("NSGA-II", null, null));
     }
   }
 
