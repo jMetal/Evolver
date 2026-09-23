@@ -133,8 +133,13 @@ as-is:
      - What it exercises
    * - ``nsgaii-zdt4-request.yaml``
      - NSGA-II tuning NSGA-II on a single problem (flat encoding)
+   * - ``nsgaii-zdt-benchmark-request.yaml``
+     - NSGA-II tuning NSGA-II on a multi-problem ZDT training set (flat encoding)
    * - ``nsgaii-re3d-request.yaml``
      - NSGA-II tuning NSGA-II on a named multi-problem training set (flat encoding)
+   * - ``nsgaii-two-biobjective-tsp-request.yaml``
+     - NSGA-II tuning a **Permutation**-encoded base-level algorithm (``PermutationNSGAII`` on two
+       bi-objective TSP instances), instead of the Double encoding every other bundled request uses
    * - ``moead-zdt4-request.yaml``
      - NSGA-II tuning MOEA/D, a base algorithm with its own extra config (flat encoding)
    * - ``tree-nsgaii-re3d-request.yaml``
@@ -147,6 +152,8 @@ as-is:
      - SMPSO as the meta-optimizer engine (flat encoding)
    * - ``spea2-dtlz3-request.yaml``
      - SPEA2 as the meta-optimizer engine (flat encoding)
+   * - ``randomsearch-dtlz3d-request.yaml``
+     - RandomSearch as the meta-optimizer engine (flat encoding)
 
 DescribeMain
 ------------
@@ -174,6 +181,9 @@ Example output
    baseAlgorithms:
    - name: NSGA-II
      encoding: Double
+     requiredExtraConfigKeys: []
+   - name: NSGA-II
+     encoding: Permutation
      requiredExtraConfigKeys: []
    - name: MOEAD
      encoding: Double
@@ -210,12 +220,19 @@ Example output
      supportsTree: false
      operatorParameterSpaceFile: null
      hardcodedOperatorFlags: []
+   - name: RandomSearch
+     family: RANDOM_SEARCH
+     supportsFlat: true
+     supportsTree: false
+     operatorParameterSpaceFile: null
+     hardcodedOperatorFlags: []
    problems:
    - DTLZ1
    - DTLZ2
    # ... every problem ProblemRegistry resolves
    indicators:
    - Epsilon
+   - HypervolumeMinus
    - InvertedGenerationalDistancePlus
    - NormalizedHypervolume
    resourceDirectories:
@@ -239,8 +256,9 @@ Manifest sections
    * - Key
      - Contents
    * - ``baseAlgorithms``
-     - Every base-level algorithm name accepted by a ``BaseLevelConfig.algorithmName``, its
-       encoding, and any ``extraConfig`` keys it requires (e.g. MOEA/D's
+     - Every ``(algorithmName, encoding)`` pair accepted by ``BaseLevelConfig``'s
+       ``algorithmName``/``encoding`` fields (e.g. NSGA-II is registered for both ``Double`` and
+       ``Permutation``), and any ``extraConfig`` keys it requires (e.g. MOEA/D's
        ``weightVectorFilesDirectory``)
    * - ``metaAlgorithms``
      - Every meta-optimizer algorithm name accepted by ``metaSearch.algorithm``, its family
