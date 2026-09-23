@@ -53,6 +53,7 @@ class TrainingRunnerSmokeIT {
     BaseLevelConfig baseLevel = BaseLevelConfigurationReader.load(fileName);
     return new BaseLevelConfig(
         baseLevel.algorithmName(),
+        baseLevel.encoding(),
         SMOKE_BASE_POPULATION_SIZE,
         baseLevel.numberOfIndependentRuns(),
         baseLevel.yamlParameterSpaceFile(),
@@ -173,6 +174,26 @@ class TrainingRunnerSmokeIT {
       BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
       FlatMetaSearchConfig metaSearch =
           smokeFlatMetaSearch("MetaRandomSearchFlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given NSGA-II (Permutation base-level encoding)")
+  class PermutationNsgaIIFlat {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("TwoBiObjectiveTSPPermutationBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml");
       TrainingRequest request =
           new TrainingRequest(
               baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);

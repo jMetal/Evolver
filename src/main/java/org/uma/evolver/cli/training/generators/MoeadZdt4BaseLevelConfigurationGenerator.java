@@ -20,6 +20,7 @@ public class MoeadZdt4BaseLevelConfigurationGenerator {
     BaseLevelConfig baseLevel =
         new BaseLevelConfig(
             "MOEAD", // algorithmName
+            "Double", // encoding
             100, // populationSize
             1, // numberOfIndependentRuns
             "MOEADDouble.yaml", // yamlParameterSpaceFile

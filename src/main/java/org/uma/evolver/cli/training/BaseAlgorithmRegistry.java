@@ -5,12 +5,16 @@ import java.util.Map;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.nsgaii.PermutationNSGAII;
 import org.uma.evolver.parameter.ParameterSpace;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.ParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Builds the base-level algorithm to be tuned, from a name and its parameter space.
+ * Builds the base-level algorithm to be tuned, from a name, an encoding and its parameter space.
  *
  * <p>Base-level algorithms are not built uniformly: {@code DoubleMOEAD} needs an extra
  * constructor argument ({@code weightVectorFilesDirectory}) that {@code DoubleNSGAII} does not.
@@ -23,15 +27,18 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * a second, hand-maintained copy of the same information — see
  * {@code docs/proposals/cli-describe-manifest.md}.
  *
- * <p>Prototype scope: only the two algorithms needed to reproduce the reference examples
- * ({@code NSGAIIOptimizingNSGAIIForProblemZDT4}, {@code NSGAIIOptimizingNSGAIIForBenchmarkRE3D}
- * and {@code NSGAIIOptimizingMOEADForProblemZDT4}) are registered.
+ * <p>{@link #resolve} returns {@code BaseLevelAlgorithm<?>}: the concrete solution type it is
+ * built for depends on {@code encoding} and is only known at runtime, the same trust model
+ * {@link ProblemRegistry} already uses for reflective problem resolution — a training set whose
+ * problems do not actually match the declared encoding fails with a {@code ClassCastException} at
+ * run time, not at compile time.
  */
 final class BaseAlgorithmRegistry {
 
   /**
    * @param name the base-level algorithm name, resolved via {@link #resolve}
-   * @param encoding the jMetal solution encoding it is built for (only {@code "Double"} so far)
+   * @param encoding the jMetal solution encoding it is built for ({@code "Double"} or
+   *     {@code "Permutation"})
    * @param requiredExtraConfigKeys keys {@link #resolve} requires present in {@code extraConfig}
    */
   record BaseAlgorithmDescriptor(
@@ -40,6 +47,7 @@ final class BaseAlgorithmRegistry {
   private static final List<BaseAlgorithmDescriptor> ALGORITHMS =
       List.of(
           new BaseAlgorithmDescriptor("NSGA-II", "Double", List.of()),
+          new BaseAlgorithmDescriptor("NSGA-II", "Permutation", List.of()),
           new BaseAlgorithmDescriptor(
               "MOEAD", "Double", List.of("weightVectorFilesDirectory")));
 
@@ -50,7 +58,39 @@ final class BaseAlgorithmRegistry {
     return ALGORITHMS;
   }
 
-  static BaseLevelAlgorithm<DoubleSolution> resolve(
+  /**
+   * Builds the {@link ParameterSpace} for {@code algorithmName}/{@code encoding}, using the
+   * {@link ParameterFactory} that matches the encoding — this must stay in lockstep with
+   * {@link #resolve}, so both are driven by the same {@code encoding} value.
+   */
+  static YAMLParameterSpace resolveParameterSpace(String encoding, String yamlParameterSpaceFile) {
+    return new YAMLParameterSpace(yamlParameterSpaceFile, parameterFactory(encoding));
+  }
+
+  static BaseLevelAlgorithm<?> resolve(
+      String algorithmName,
+      String encoding,
+      int populationSize,
+      ParameterSpace parameterSpace,
+      Map<String, String> extraConfig) {
+    return switch (encoding) {
+      case "Double" -> resolveDouble(algorithmName, populationSize, parameterSpace, extraConfig);
+      case "Permutation" -> resolvePermutation(algorithmName, populationSize, parameterSpace);
+      default -> throw new JMetalException(
+          "Unknown base-level encoding: " + encoding + ". Supported: Double, Permutation");
+    };
+  }
+
+  private static ParameterFactory<?> parameterFactory(String encoding) {
+    return switch (encoding) {
+      case "Double" -> new DoubleParameterFactory();
+      case "Permutation" -> new PermutationParameterFactory();
+      default -> throw new JMetalException(
+          "Unknown base-level encoding: " + encoding + ". Supported: Double, Permutation");
+    };
+  }
+
+  private static BaseLevelAlgorithm<?> resolveDouble(
       String algorithmName,
       int populationSize,
       ParameterSpace parameterSpace,
@@ -60,7 +100,20 @@ final class BaseAlgorithmRegistry {
       case "MOEAD" -> new DoubleMOEAD(
           populationSize, requireExtra(extraConfig, "weightVectorFilesDirectory"), parameterSpace);
       default -> throw new JMetalException(
-          "Unknown base-level algorithm: " + algorithmName + ". Supported: NSGA-II, MOEAD");
+          "Unknown base-level algorithm: "
+              + algorithmName
+              + " for encoding Double. Supported: NSGA-II, MOEAD");
+    };
+  }
+
+  private static BaseLevelAlgorithm<?> resolvePermutation(
+      String algorithmName, int populationSize, ParameterSpace parameterSpace) {
+    return switch (algorithmName) {
+      case "NSGA-II" -> new PermutationNSGAII(populationSize, parameterSpace);
+      default -> throw new JMetalException(
+          "Unknown base-level algorithm: "
+              + algorithmName
+              + " for encoding Permutation. Supported: NSGA-II");
     };
   }
 

@@ -24,6 +24,7 @@ class BaseLevelConfigurationWriterTest {
     BaseLevelConfig original =
         new BaseLevelConfig(
             "NSGA-II",
+            "Double",
             100,
             1,
             "NSGAIIDouble.yaml",
@@ -52,6 +53,7 @@ class BaseLevelConfigurationWriterTest {
     BaseLevelConfig original =
         new BaseLevelConfig(
             "NSGA-II",
+            "Double",
             100,
             1,
             "NSGAIIDouble.yaml",

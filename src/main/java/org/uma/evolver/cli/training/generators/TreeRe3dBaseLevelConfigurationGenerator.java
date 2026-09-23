@@ -22,6 +22,7 @@ public class TreeRe3dBaseLevelConfigurationGenerator {
     BaseLevelConfig baseLevel =
         new BaseLevelConfig(
             "NSGA-II", // algorithmName
+            "Double", // encoding
             100, // populationSize
             1, // numberOfIndependentRuns
             "NSGAIIDouble.yaml", // yamlParameterSpaceFile

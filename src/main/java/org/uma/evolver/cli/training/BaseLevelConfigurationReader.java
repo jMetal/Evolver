@@ -28,6 +28,7 @@ import org.yaml.snakeyaml.Yaml;
 public final class BaseLevelConfigurationReader {
 
   private static final String RESOURCE_DIRECTORY = "baseLevelConfigurations/";
+  private static final String DEFAULT_ENCODING = "Double";
 
   private BaseLevelConfigurationReader() {}
 
@@ -42,6 +43,7 @@ public final class BaseLevelConfigurationReader {
   private static BaseLevelConfig build(Map<String, Object> data, String label) {
     return new BaseLevelConfig(
         stringValue(data, label, "algorithmName"),
+        data.get("encoding") == null ? DEFAULT_ENCODING : (String) data.get("encoding"),
         intValue(data, label, "populationSize"),
         intValue(data, label, "numberOfIndependentRuns"),
         stringValue(data, label, "yamlParameterSpaceFile"),

@@ -1,0 +1,21 @@
+# Base-level configuration equivalent to the values in
+# org.uma.evolver.example.training.tsp.NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP
+#
+# Exercises the Permutation encoding: the base-level algorithm (PermutationNSGAII) operates on
+# PermutationSolution<Integer>, not DoubleSolution. KroAB100TSP/KroAC100TSP are not in
+# ProblemRegistry's curated catalogue (it only covers Problem<DoubleSolution> families) -- named
+# here by fully-qualified class instead, resolved by reflection.
+
+algorithmName: NSGA-II
+encoding: Permutation
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIPermutation.yaml
+trainingProblemNames:
+  - org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP
+  - org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAC100TSP
+trainingReferenceFrontFileNames:
+  - resources/referenceFrontsTSP/KroAB100TSP.csv
+  - resources/referenceFrontsTSP/KroAC100TSP.csv
+trainingEvaluations: [50000, 50000]
+indicatorNames: [HypervolumeMinus, Epsilon]

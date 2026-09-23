@@ -172,7 +172,7 @@ final class MetaAlgorithmRegistry {
 
   static EvolutionaryAlgorithm<DoubleSolution> resolveFlat(
       String algorithmName,
-      MetaOptimizationProblem<DoubleSolution> problem,
+      MetaOptimizationProblem<?> problem,
       FlatMetaSearchConfig config) {
     if (familyOf(algorithmName) != Family.EVOLUTIONARY) {
       throw new JMetalException(
@@ -183,7 +183,7 @@ final class MetaAlgorithmRegistry {
 
   static AsynchronousMultiThreadedNSGAII<DoubleSolution> resolveFlatAsync(
       String algorithmName,
-      MetaOptimizationProblem<DoubleSolution> problem,
+      MetaOptimizationProblem<?> problem,
       FlatMetaSearchConfig config) {
     if (familyOf(algorithmName) != Family.ASYNCHRONOUS) {
       throw new JMetalException(
@@ -194,7 +194,7 @@ final class MetaAlgorithmRegistry {
 
   static ParticleSwarmOptimizationAlgorithm resolveFlatPso(
       String algorithmName,
-      MetaOptimizationProblem<DoubleSolution> problem,
+      MetaOptimizationProblem<?> problem,
       FlatMetaSearchConfig config) {
     if (familyOf(algorithmName) != Family.PARTICLE_SWARM) {
       throw new JMetalException(
@@ -205,7 +205,7 @@ final class MetaAlgorithmRegistry {
 
   static RandomSearch<DoubleSolution> resolveFlatRandomSearch(
       String algorithmName,
-      MetaOptimizationProblem<DoubleSolution> problem,
+      MetaOptimizationProblem<?> problem,
       FlatMetaSearchConfig config) {
     if (familyOf(algorithmName) != Family.RANDOM_SEARCH) {
       throw new JMetalException(
@@ -215,7 +215,7 @@ final class MetaAlgorithmRegistry {
   }
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildNSGAII(
-      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     ParameterSpace parameterSpace =
         new YAMLParameterSpace(NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     int populationSize =
@@ -231,7 +231,7 @@ final class MetaAlgorithmRegistry {
   }
 
   private static AsynchronousMultiThreadedNSGAII<DoubleSolution> buildAsyncNSGAII(
-      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     ParameterSpace parameterSpace =
         new YAMLParameterSpace(ASYNC_NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     applyFlags(parameterSpace, config.operatorFlags().toArray(new String[0]));
@@ -254,7 +254,7 @@ final class MetaAlgorithmRegistry {
   }
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildSPEA2(
-      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
@@ -271,7 +271,7 @@ final class MetaAlgorithmRegistry {
   }
 
   private static ParticleSwarmOptimizationAlgorithm buildSMPSO(
-      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     requireNoOperatorFlags("SMPSO", config);
     int swarmSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
@@ -284,7 +284,7 @@ final class MetaAlgorithmRegistry {
   }
 
   private static RandomSearch<DoubleSolution> buildRandomSearch(
-      MetaOptimizationProblem<DoubleSolution> problem, FlatMetaSearchConfig config) {
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     requireNoOperatorFlags("RandomSearch", config);
     return new MetaRandomSearchBuilder<>(problem)
         .setMaxEvaluations(config.metaMaxEvaluations())

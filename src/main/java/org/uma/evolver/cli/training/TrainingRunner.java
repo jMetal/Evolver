@@ -16,7 +16,6 @@ import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
-import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
@@ -59,7 +58,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 public class TrainingRunner {
 
   private record ResolvedTrainingSet(
-      List<Problem<DoubleSolution>> problems,
+      List<Problem<?>> problems,
       List<String> referenceFrontFileNames,
       List<Integer> evaluationsToOptimize,
       String label) {}
@@ -81,10 +80,12 @@ public class TrainingRunner {
       List<QualityIndicator> indicators =
           baseLevel.indicatorNames().stream().map(IndicatorRegistry::resolve).toList();
       var baseLevelParameterSpace =
-          new YAMLParameterSpace(baseLevel.yamlParameterSpaceFile(), new DoubleParameterFactory());
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm =
+          BaseAlgorithmRegistry.resolveParameterSpace(
+              baseLevel.encoding(), baseLevel.yamlParameterSpaceFile());
+      BaseLevelAlgorithm<?> baseAlgorithm =
           BaseAlgorithmRegistry.resolve(
               baseLevel.algorithmName(),
+              baseLevel.encoding(),
               baseLevel.populationSize(),
               baseLevelParameterSpace,
               baseLevel.extraConfig());
@@ -168,11 +169,11 @@ public class TrainingRunner {
     }
   }
 
-  private Path runFlat(
+  private <S extends Solution<?>> Path runFlat(
       BaseLevelConfig baseLevel,
       ResolvedTrainingSet trainingSet,
       List<QualityIndicator> indicators,
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
       RunStatusWriter statusWriter,
@@ -181,10 +182,10 @@ public class TrainingRunner {
       int statusFrequency,
       Integer frontPlotFrequency)
       throws IOException {
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+    MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
-            trainingSet.problems(),
+            problemsOf(trainingSet),
             trainingSet.referenceFrontFileNames(),
             indicators,
             evaluationBudgetStrategy,
@@ -234,11 +235,11 @@ public class TrainingRunner {
     return Path.of(outputDirectory);
   }
 
-  private Path runFlatAsync(
+  private <S extends Solution<?>> Path runFlatAsync(
       BaseLevelConfig baseLevel,
       ResolvedTrainingSet trainingSet,
       List<QualityIndicator> indicators,
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
       RunStatusWriter statusWriter,
@@ -247,10 +248,10 @@ public class TrainingRunner {
       int statusFrequency,
       Integer frontPlotFrequency)
       throws IOException {
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+    MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
-            trainingSet.problems(),
+            problemsOf(trainingSet),
             trainingSet.referenceFrontFileNames(),
             indicators,
             evaluationBudgetStrategy,
@@ -301,11 +302,11 @@ public class TrainingRunner {
     return Path.of(outputDirectory);
   }
 
-  private Path runFlatPso(
+  private <S extends Solution<?>> Path runFlatPso(
       BaseLevelConfig baseLevel,
       ResolvedTrainingSet trainingSet,
       List<QualityIndicator> indicators,
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
       RunStatusWriter statusWriter,
@@ -314,10 +315,10 @@ public class TrainingRunner {
       int statusFrequency,
       Integer frontPlotFrequency)
       throws IOException {
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+    MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
-            trainingSet.problems(),
+            problemsOf(trainingSet),
             trainingSet.referenceFrontFileNames(),
             indicators,
             evaluationBudgetStrategy,
@@ -368,11 +369,11 @@ public class TrainingRunner {
     return Path.of(outputDirectory);
   }
 
-  private Path runFlatRandomSearch(
+  private <S extends Solution<?>> Path runFlatRandomSearch(
       BaseLevelConfig baseLevel,
       ResolvedTrainingSet trainingSet,
       List<QualityIndicator> indicators,
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
       RunStatusWriter statusWriter,
@@ -381,10 +382,10 @@ public class TrainingRunner {
       int statusFrequency,
       Integer frontPlotFrequency)
       throws IOException {
-    MetaOptimizationProblem<DoubleSolution> metaOptimizationProblem =
+    MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
             baseAlgorithm,
-            trainingSet.problems(),
+            problemsOf(trainingSet),
             trainingSet.referenceFrontFileNames(),
             indicators,
             evaluationBudgetStrategy,
@@ -439,11 +440,11 @@ public class TrainingRunner {
     return Path.of(outputDirectory);
   }
 
-  private Path runTree(
+  private <S extends Solution<?>> Path runTree(
       BaseLevelConfig baseLevel,
       ResolvedTrainingSet trainingSet,
       List<QualityIndicator> indicators,
-      BaseLevelAlgorithm<DoubleSolution> baseAlgorithm,
+      BaseLevelAlgorithm<S> baseAlgorithm,
       YAMLParameterSpace baseLevelParameterSpace,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       TreeMetaSearchConfig metaSearch,
@@ -456,10 +457,10 @@ public class TrainingRunner {
     MetaAlgorithmRegistry.validateTreeAlgorithm(metaSearch.algorithm());
     var treeSolutionGenerator = new TreeSolutionGenerator(baseLevelParameterSpace);
 
-    TreeMetaOptimizationProblem<DoubleSolution> metaProblem =
+    TreeMetaOptimizationProblem<S> metaProblem =
         new TreeMetaOptimizationProblem<>(
             baseAlgorithm,
-            trainingSet.problems(),
+            problemsOf(trainingSet),
             trainingSet.referenceFrontFileNames(),
             indicators,
             evaluationBudgetStrategy,
@@ -567,5 +568,18 @@ public class TrainingRunner {
         referenceFrontFileNames,
         evaluations,
         problemSpecs.size() == 1 ? problemSpecs.get(0).displayName() : "custom");
+  }
+
+  /**
+   * Casts a resolved training set's problems to the base-level algorithm's own solution type
+   * {@code S}, trusting that {@link BaseLevelConfig#encoding()} is coherent with the problems
+   * listed in {@link BaseLevelConfig#trainingProblemNames()} — same trust model {@link
+   * ProblemRegistry} already uses for reflective problem resolution: a mismatch surfaces as a
+   * {@code ClassCastException} once a base-level run actually evaluates a solution, not here.
+   */
+  @SuppressWarnings("unchecked")
+  private static <S extends Solution<?>> List<Problem<S>> problemsOf(
+      ResolvedTrainingSet trainingSet) {
+    return (List<Problem<S>>) (List<?>) trainingSet.problems();
   }
 }

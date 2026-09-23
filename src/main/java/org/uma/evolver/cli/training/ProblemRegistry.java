@@ -100,7 +100,6 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
@@ -236,10 +235,9 @@ final class ProblemRegistry {
     return CURATED.keySet();
   }
 
-  @SuppressWarnings("unchecked")
-  static Problem<DoubleSolution> resolve(ProblemSpec spec) {
+  static Problem<?> resolve(ProblemSpec spec) {
     Class<?> problemClass = resolveClass(spec.className());
-    return (Problem<DoubleSolution>) instantiate(problemClass, spec.args(), spec.className());
+    return (Problem<?>) instantiate(problemClass, spec.args(), spec.className());
   }
 
   private static Class<?> resolveClass(String className) {

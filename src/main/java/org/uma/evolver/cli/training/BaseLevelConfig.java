@@ -19,9 +19,14 @@ import java.util.Map;
  * {@code cli.training.generators.Re3dBaseLevelConfigurationGenerator}), so a request is always
  * self-contained and never has to be cross-referenced against
  * {@code org.uma.evolver.trainingset}'s subclasses to know what it actually runs.
+ *
+ * <p>{@code encoding} is the jMetal solution encoding the base-level algorithm is built for (e.g.
+ * {@code "Double"}, {@code "Permutation"}), resolved together with {@code algorithmName} by
+ * {@link BaseAlgorithmRegistry}.
  */
 public record BaseLevelConfig(
     String algorithmName,
+    String encoding,
     int populationSize,
     int numberOfIndependentRuns,
     String yamlParameterSpaceFile,

@@ -21,6 +21,7 @@ public final class BaseLevelConfigurationWriter {
   public static void save(BaseLevelConfig config, Path outputFile) throws IOException {
     Map<String, Object> data = new LinkedHashMap<>();
     data.put("algorithmName", config.algorithmName());
+    data.put("encoding", config.encoding());
     data.put("populationSize", config.populationSize());
     data.put("numberOfIndependentRuns", config.numberOfIndependentRuns());
     data.put("yamlParameterSpaceFile", config.yamlParameterSpaceFile());

@@ -1,0 +1,14 @@
+# Example TrainingRequest, equivalent to the values in
+# org.uma.evolver.example.training.tsp.NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP
+#
+# Exercises a Permutation-encoded base-level algorithm (PermutationNSGAII) through the CLI --
+# baseLevel names TwoBiObjectiveTSPPermutationBaseLevel.yaml, whose encoding: Permutation field
+# routes BaseAlgorithmRegistry/ProblemRegistry to the Permutation-specific pipeline instead of the
+# Double-only path every other bundled request exercises.
+
+baseLevel: TwoBiObjectiveTSPPermutationBaseLevel.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
+outputDirectory: results/nsgaii/MOTSPs
+writeFrequency: 1
+statusFrequency: 50
+frontPlotFrequency: 1   # optional; remove this line to run headless

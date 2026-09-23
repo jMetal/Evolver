@@ -43,16 +43,24 @@ class DescribeMainTest {
         assertDoesNotThrow(
             () ->
                 BaseAlgorithmRegistry.resolve(
-                    algorithm.name(), 10, minimalParameterSpaceFor(algorithm), extraConfig),
+                    algorithm.name(),
+                    algorithm.encoding(),
+                    10,
+                    minimalParameterSpaceFor(algorithm),
+                    extraConfig),
             "registered but not resolvable: " + algorithm.name());
       }
     }
 
     private org.uma.evolver.parameter.ParameterSpace minimalParameterSpaceFor(
         BaseAlgorithmRegistry.BaseAlgorithmDescriptor algorithm) {
-      String fileName = algorithm.name().equals("MOEAD") ? "MOEADDouble.yaml" : "NSGAIIDouble.yaml";
-      return new org.uma.evolver.parameter.yaml.YAMLParameterSpace(
-          fileName, new org.uma.evolver.parameter.factory.DoubleParameterFactory());
+      String fileName =
+          switch (algorithm.name() + "/" + algorithm.encoding()) {
+            case "MOEAD/Double" -> "MOEADDouble.yaml";
+            case "NSGA-II/Permutation" -> "NSGAIIPermutation.yaml";
+            default -> "NSGAIIDouble.yaml";
+          };
+      return BaseAlgorithmRegistry.resolveParameterSpace(algorithm.encoding(), fileName);
     }
   }
 
@@ -107,7 +115,7 @@ class DescribeMainTest {
       Map<String, Object> manifest = DescribeMain.manifest();
 
       // Assert
-      assertEquals(2, ((List<?>) manifest.get("baseAlgorithms")).size());
+      assertEquals(3, ((List<?>) manifest.get("baseAlgorithms")).size());
       assertEquals(5, ((List<?>) manifest.get("metaAlgorithms")).size());
       assertTrue(((List<?>) manifest.get("problems")).contains("ZDT4"));
       assertTrue(((List<?>) manifest.get("indicators")).contains("Epsilon"));
