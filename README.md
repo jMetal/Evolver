@@ -262,6 +262,22 @@ If you use Evolver in your research, please cite:
   (`meta.encoding`, `meta.trainingset`, `meta.output`), and meta-only algorithms under
   `meta.algorithm`. Remove unused classes, including `OutputResults` (superseded by
   `ConsolidatedOutputResults`).
+- Add `cli.training`, a command-line training runner driven by YAML files: `TrainingRunnerMain`
+  runs a training job described by a `request.yaml` (reusable base-level and meta-search
+  configuration files) and reports its progress in a status file; `DescribeMain` prints a manifest
+  of the algorithms, problems and indicators it can use. It supports the flat and tree encodings,
+  Double and Permutation base-level algorithms, and any jMetal problem by class name.
+- Meta-optimizers: add AGE-MOEA (flat and tree encodings); NSGA-II, AGE-MOEA and Random Search can
+  now be used with the tree encoding, and SPEA2, SMPSO, Async NSGA-II and Random Search from
+  `cli.training`. Meta-optimizers always generate as many offspring as their population size,
+  return their final population, and use a population of 50 by default.
+- Add a Tutorials section to the documentation, with runnable code in `example.tutorial`:
+  E1 (parameter spaces) and E2 (base-level algorithms). The planned tutorials are listed in
+  `docs/proposals/tutorials.md`.
+- Add the Evolver logo, and recommend JDK 21 (the version used by CI).
+- Evolver-Studio, a companion Python/Streamlit application, builds on `cli.training` and
+  `DescribeMain` to explore parameter spaces, launch and monitor training runs, and follow
+  interactive tutorials without writing Java code.
 
 ### v2.0 (2025-09-09)
 

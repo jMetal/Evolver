@@ -35,6 +35,21 @@ Added
 - Add AGE-MOEA as a meta-optimizer, for both the flat and the tree encodings
 - Support NSGA-II, AGE-MOEA and Random Search as tree-encoding meta-optimizers
   (``TreeNSGAII``, ``TreeAGEMOEA``), configured from ``NSGAIIMetaTree.yaml``/``AGEMOEAMetaTree.yaml``
+- Add ``cli.training``, a command-line training runner driven by YAML files
+  (``TrainingRunnerMain``: a ``request.yaml`` referencing reusable base-level and meta-search
+  configuration files, with progress reported in a status file) and ``DescribeMain``, a manifest
+  of the algorithms, problems and indicators it can use. Supports the flat and tree encodings,
+  Double and Permutation base-level algorithms, and any jMetal problem by class name
+  (see :doc:`utilities/cli_tools`)
+- Register SPEA2, SMPSO, Async NSGA-II and Random Search as ``cli.training`` meta-optimizers
+- Add a Tutorials section to the documentation, with runnable code in the
+  ``org.uma.evolver.example.tutorial`` package: :doc:`E1. Parameter spaces
+  <tutorials/parameter_spaces>` and :doc:`E2. Base-level algorithms <tutorials/base_level_algorithms>`
+- Add the Evolver logo (README, documentation sidebar and favicon)
+- Add ``PackageLayeringTest``, which keeps the configurable core free of dependencies on the meta level
+- Evolver-Studio, a companion Python/Streamlit application, builds on ``cli.training`` and
+  ``DescribeMain`` to explore parameter spaces, launch and monitor training runs, and follow
+  interactive tutorials (paired with the documentation's tutorials) without writing Java code
 
 Changed
 ~~~~~~~
@@ -45,6 +60,9 @@ Changed
 - The default meta population size is 50 for every meta-optimizer and both encodings
 - Tree-encoding meta-optimizer configuration files use operator flags, like the flat ones, and
   must declare the selection (``selection``, ``selectionTournamentSize``)
+- JDK 21, the version used by the CI workflows, is the recommended JDK
+- The Javadoc under ``docs/_static/javadoc`` is regenerated for 2.1-SNAPSHOT, and stale
+  documentation pages (quick start, examples, parameter spaces, meta-optimizers, irace) are updated
 - Separate the configurable core (``algorithm``, ``parameter``, ``util``) from the meta level:
   the derivation tree encoding, training sets and training output classes move to
   ``meta.encoding``, ``meta.trainingset`` and ``meta.output``, and meta-only algorithms to
@@ -71,6 +89,8 @@ Fixed
 - Extend ``ExternalArchiveParameter`` (shared by NSGA-II, AGE-MOEA, MOEA/D, MOPSO, RDEMOEA, RVEA and
   SMS-EMOA) to build ``knnDistanceArchive`` and ``angleArchive`` instances; selecting either value
   previously threw ``JMetalException: Archive type does not exist`` at evaluation time
+- Record the default meta population size, instead of 0, in ``METADATA.txt`` when a meta-search
+  configuration omits it
 - Fix stale ``NSGAIIDoubleFull.yaml`` references (renamed to ``NSGAIIDouble.yaml`` in a previous
   commit) in several base-level and validation example classes
 
