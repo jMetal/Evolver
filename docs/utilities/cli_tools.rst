@@ -150,6 +150,8 @@ as-is:
      - AsyncNSGA-II over a seven-problem DTLZ training set (flat encoding)
    * - ``smpso-re31-request.yaml``
      - SMPSO as the meta-optimizer engine (flat encoding)
+   * - ``agemoea-zdt4-request.yaml``
+     - AGE-MOEA as the meta-optimizer engine (flat encoding)
    * - ``spea2-dtlz3-request.yaml``
      - SPEA2 as the meta-optimizer engine (flat encoding)
    * - ``randomsearch-dtlz3d-request.yaml``
@@ -195,6 +197,12 @@ Example output
      supportsFlat: true
      supportsTree: true
      operatorParameterSpaceFile: NSGAIIMetaDouble.yaml
+     hardcodedOperatorFlags: []
+   - name: AGE-MOEA
+     family: EVOLUTIONARY
+     supportsFlat: true
+     supportsTree: false
+     operatorParameterSpaceFile: AGEMOEAMetaDouble.yaml
      hardcodedOperatorFlags: []
    - name: SPEA2
      family: EVOLUTIONARY
