@@ -314,7 +314,7 @@ twice, its first occurrence is used.
 
 This is exactly what configuring an algorithm in Evolver means: the ``parse`` method of an
 algorithm such as ``DoubleNSGAII`` runs this same loop over its parameter space, and the algorithm
-is then assembled from the chosen components (tutorial E2).
+is then assembled from the chosen components (:doc:`tutorial E2 <base_level_algorithms>`).
 
 Step 5: wrong configurations
 ----------------------------
@@ -363,7 +363,7 @@ Try it yourself
 What's next
 -----------
 
-- **E2. Base-level algorithms** (coming soon): configuring and running NSGA-II and other algorithms
-  from a parameter space.
+- :doc:`E2. Base-level algorithms <base_level_algorithms>`: configuring and running NSGA-II and
+  other algorithms from a parameter space.
 - :doc:`../concepts/parameter_spaces` covers parameter spaces in more depth, including how they are
   implemented.
