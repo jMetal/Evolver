@@ -116,7 +116,7 @@ class DescribeMainTest {
 
       // Assert
       assertEquals(3, ((List<?>) manifest.get("baseAlgorithms")).size());
-      assertEquals(5, ((List<?>) manifest.get("metaAlgorithms")).size());
+      assertEquals(6, ((List<?>) manifest.get("metaAlgorithms")).size());
       assertTrue(((List<?>) manifest.get("problems")).contains("ZDT4"));
       assertTrue(((List<?>) manifest.get("indicators")).contains("Epsilon"));
       assertTrue(manifest.containsKey("resourceDirectories"));

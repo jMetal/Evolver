@@ -85,6 +85,22 @@ class MetaOptimizerConfigurationReaderTest {
 
     @Test
     @DisplayName(
+        "given MetaAGEMOEAFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig with the"
+            + " AGE-MOEA recipe, including its variant, is built")
+    void givenAgemoeaFlatFile_whenLoaded_thenFlatConfigIsBuilt() {
+      // Arrange & Act
+      MetaSearchConfig config =
+          MetaOptimizerConfigurationReader.load("MetaAGEMOEAFlatConfiguration.yaml");
+
+      // Assert
+      FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
+      assertEquals("AGE-MOEA", flat.algorithm());
+      assertEquals(50, flat.metaPopulationSize());
+      assertTrue(flat.operatorFlags().containsAll(java.util.List.of("--agemoeaVariant", "agemoea")));
+    }
+
+    @Test
+    @DisplayName(
         "given MetaRandomSearchFlatConfiguration.yaml, when loaded, then a FlatMetaSearchConfig"
             + " with the RandomSearch recipe, no population size and no operator flags is built")
     void givenRandomSearchFlatFile_whenLoaded_thenFlatConfigIsBuiltWithoutPopulationOrFlags() {

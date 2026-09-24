@@ -28,6 +28,14 @@ class MetaAlgorithmRegistryTest {
     }
 
     @Test
+    @DisplayName("given AGE-MOEA, when familyOf is called, then it returns EVOLUTIONARY")
+    void givenAgemoea_whenFamilyOfCalled_thenItReturnsEvolutionary() {
+      // Arrange & Act & Assert
+      assertEquals(
+          MetaAlgorithmRegistry.Family.EVOLUTIONARY, MetaAlgorithmRegistry.familyOf("AGE-MOEA"));
+    }
+
+    @Test
     @DisplayName("given AsyncNSGA-II, when familyOf is called, then it returns ASYNCHRONOUS")
     void givenAsyncNSGAII_whenFamilyOfCalled_thenItReturnsAsynchronous() {
       // Arrange & Act & Assert
@@ -71,6 +79,7 @@ class MetaAlgorithmRegistryTest {
               JMetalException.class, () -> MetaAlgorithmRegistry.familyOf("Unknown-Algorithm"));
       assertTrue(exception.getMessage().contains("NSGA-II"));
       assertTrue(exception.getMessage().contains("AsyncNSGA-II"));
+      assertTrue(exception.getMessage().contains("AGE-MOEA"));
       assertTrue(exception.getMessage().contains("SPEA2"));
       assertTrue(exception.getMessage().contains("SMPSO"));
       assertTrue(exception.getMessage().contains("RandomSearch"));
@@ -159,6 +168,24 @@ class MetaAlgorithmRegistryTest {
 
     @Test
     @DisplayName(
+        "given AGE-MOEA with an offspringPopulationSize operator flag, when resolveFlat is called,"
+            + " then it fails because the offspring size is fixed to the population size")
+    void givenAgemoeaWithOffspringFlag_whenResolveFlatCalled_thenItFails() {
+      // Arrange
+      var config =
+          new FlatMetaSearchConfig(
+              "AGE-MOEA", 1000, 50, 1, List.of("--offspringPopulationSize", "10"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class,
+              () -> MetaAlgorithmRegistry.resolveFlat("AGE-MOEA", null, config));
+      assertTrue(exception.getMessage().contains("offspringPopulationSize"));
+    }
+
+    @Test
+    @DisplayName(
         "given SPEA2 with an offspringPopulationSize operator flag, when resolveFlat is called,"
             + " then it fails listing the allowed fields")
     void givenSpea2WithOffspringFlag_whenResolveFlatCalled_thenItFails() {
@@ -232,6 +259,16 @@ class MetaAlgorithmRegistryTest {
     void givenNSGAII_whenValidateTreeAlgorithmCalled_thenItDoesNotFail() {
       // Arrange & Act & Assert
       assertDoesNotThrow(() -> MetaAlgorithmRegistry.validateTreeAlgorithm("NSGA-II"));
+    }
+
+    @Test
+    @DisplayName(
+        "given AGE-MOEA, when validateTreeAlgorithm is called, then it fails because it only"
+            + " supports the flat encoding")
+    void givenAgemoea_whenValidateTreeAlgorithmCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("AGE-MOEA"));
     }
 
     @Test
