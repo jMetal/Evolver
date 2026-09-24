@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>Evolver icon (tile, for small sizes)</title>
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B3C6E"/><stop offset="1" stop-color="#0E6BA8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="112" height="112" rx="26" fill="url(#tile)"/>
+  <g fill="none" stroke-linecap="round" stroke-width="9">
+    <path d="M62 22 C62 50 72 62 98 62" stroke="#7CD69B"/>
+    <path d="M44 22 C44 62 58 78 98 78" stroke="#5CC8D6"/>
+    <path d="M26 22 C26 74 44 94 98 94" stroke="#FFFFFF"/>
+  </g>
+</svg>

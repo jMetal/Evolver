@@ -35,6 +35,9 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+# The sidebar header of sphinx_rtd_theme is dark, hence the dark-background variant of the logo.
+html_logo = 'figures/logo/evolver-logo-dark.svg'
+html_favicon = 'figures/logo/evolver-icon-tile.svg'
 
 # -- Extension configuration -------------------------------------------------
 

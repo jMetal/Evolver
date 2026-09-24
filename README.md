@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/figures/logo/evolver-logo-dark.svg">
+    <img src="docs/figures/logo/evolver-logo.svg" alt="Evolver" width="480">
+  </picture>
+</p>
+
 # Evolver: Automated meta-optimization of multi-objective metaheuristics
 
 [![Tests](https://github.com/jMetal/Evolver/actions/workflows/tests.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/tests.yml)

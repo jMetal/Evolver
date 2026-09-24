@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="480" height="480">
+  <title>Evolver icon</title>
+  <!-- Three Pareto fronts approaching the origin (bottom-left): an evolving approximation. -->
+  <g fill="none" stroke-linecap="round" stroke-width="9">
+    <path d="M52 14 C52 50 66 66 108 66" stroke="#7CD69B"/>
+    <path d="M36 14 C36 62 54 82 108 82" stroke="#14A3B8"/>
+    <path d="M20 14 C20 74 42 98 108 98" stroke="#0B3C6E"/>
+  </g>
+  <g fill="#FFFFFF" stroke="#0B3C6E" stroke-width="4">
+    <circle cx="21" cy="40" r="6"/>
+    <circle cx="36" cy="80" r="6"/>
+    <circle cx="74" cy="96" r="6"/>
+  </g>
+</svg>
