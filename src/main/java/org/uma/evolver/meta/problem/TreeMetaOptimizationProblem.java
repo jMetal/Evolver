@@ -52,6 +52,14 @@ public class TreeMetaOptimizationProblem<S extends Solution<?>>
     this.solutionGenerator = solutionGenerator;
   }
 
+  /**
+   * Returns the generator of random derivation trees for the base algorithm's grammar, needed by
+   * tree-encoding meta-optimizers to regenerate subtrees when mutating.
+   */
+  public TreeSolutionGenerator solutionGenerator() {
+    return solutionGenerator;
+  }
+
   @Override
   public int numberOfVariables() {
     return baseAlgorithm.parameterSpace().topLevelParameters().size();

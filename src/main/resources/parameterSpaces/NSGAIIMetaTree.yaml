@@ -1,0 +1,61 @@
+# Parameter space for the meta-level NSGA-II (org.uma.evolver.algorithm.nsgaii.TreeNSGAII) used by
+# cli.training's MetaAlgorithmRegistry with the derivation tree encoding. Parsed with a
+# TreeParameterFactory.
+#
+# The tree encoding has a single crossover (subtree) and a single mutation (tree), so only their
+# probabilities, the mutation distribution index and the selection are left to the meta-optimizer
+# configuration file. As for every meta-optimizer, algorithmResult (always population),
+# createInitialSolutions, variation, crossover, mutation and offspringPopulationSize (always the
+# meta population size, so that each generation is evaluated in parallel as a whole) are fixed by
+# MetaAlgorithmRegistry. offspringPopulationSize is declared as an integer range only so that any
+# meta population size is accepted.
+
+algorithmResult:
+  type: categorical
+  values:
+    population: {}
+
+createInitialSolutions:
+  type: categorical
+  values:
+    default: {}
+
+offspringPopulationSize:
+  type: integer
+  range: [1, 100000]
+
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            subtree: {}
+
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            tree:
+              conditionalParameters:
+                mutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
