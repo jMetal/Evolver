@@ -1,4 +1,4 @@
-package org.uma.evolver.encoding.solution;
+package org.uma.evolver.meta.encoding.solution;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.uma.evolver.encoding.solution.TreeNode.NodeType;
+import org.uma.evolver.meta.encoding.solution.TreeNode.NodeType;
 import org.uma.evolver.parameter.type.BooleanParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;

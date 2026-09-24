@@ -1,4 +1,4 @@
-package org.uma.evolver.encoding.operator;
+package org.uma.evolver.meta.encoding.operator;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,9 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.solution.TreeNode;
-import org.uma.evolver.encoding.util.GrammarConverter;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.TreeNode;
+import org.uma.evolver.meta.encoding.util.GrammarConverter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;

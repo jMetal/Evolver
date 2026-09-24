@@ -1,4 +1,4 @@
-package org.uma.evolver.encoding.util;
+package org.uma.evolver.meta.encoding.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;

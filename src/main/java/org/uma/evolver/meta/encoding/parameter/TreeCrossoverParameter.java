@@ -1,8 +1,9 @@
-package org.uma.evolver.parameter.catalogue.crossoverparameter;
+package org.uma.evolver.meta.encoding.parameter;
 
 import java.util.List;
-import org.uma.evolver.encoding.operator.SubtreeCrossover;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.operator.SubtreeCrossover;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 

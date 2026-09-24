@@ -1,4 +1,4 @@
-package org.uma.evolver.encoding.solution;
+package org.uma.evolver.meta.encoding.solution;
 
 import java.util.ArrayList;
 import java.util.Collections;

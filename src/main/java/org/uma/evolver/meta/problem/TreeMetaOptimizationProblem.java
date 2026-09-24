@@ -2,8 +2,8 @@ package org.uma.evolver.meta.problem;
 
 import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;

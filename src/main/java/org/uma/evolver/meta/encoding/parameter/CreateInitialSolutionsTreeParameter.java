@@ -1,7 +1,8 @@
-package org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter;
+package org.uma.evolver.meta.encoding.parameter;
 
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
 import org.uma.jmetal.problem.Problem;

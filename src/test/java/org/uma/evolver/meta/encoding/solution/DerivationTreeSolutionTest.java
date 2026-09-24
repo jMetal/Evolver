@@ -1,4 +1,4 @@
-package org.uma.evolver.encoding.solution;
+package org.uma.evolver.meta.encoding.solution;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

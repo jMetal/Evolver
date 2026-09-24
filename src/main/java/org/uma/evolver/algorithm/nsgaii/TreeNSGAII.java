@@ -1,7 +1,7 @@
 package org.uma.evolver.algorithm.nsgaii;
 
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;

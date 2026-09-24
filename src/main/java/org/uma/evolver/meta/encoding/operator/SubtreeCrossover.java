@@ -1,9 +1,9 @@
-package org.uma.evolver.encoding.operator;
+package org.uma.evolver.meta.encoding.operator;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.solution.TreeNode;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.TreeNode;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;

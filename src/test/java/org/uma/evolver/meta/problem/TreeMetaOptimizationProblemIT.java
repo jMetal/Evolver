@@ -1,5 +1,7 @@
 package org.uma.evolver.meta.problem;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.nsgaii.PermutationNSGAII;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.meta.strategy.RandomRangeEvaluationsStrategy;
@@ -29,8 +31,6 @@ import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests for {@link TreeMetaOptimizationProblem}.

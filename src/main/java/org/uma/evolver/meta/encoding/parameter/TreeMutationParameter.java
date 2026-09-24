@@ -1,9 +1,10 @@
-package org.uma.evolver.parameter.catalogue.mutationparameter;
+package org.uma.evolver.meta.encoding.parameter;
 
 import java.util.List;
-import org.uma.evolver.encoding.operator.TreeMutation;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.meta.encoding.operator.TreeMutation;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 

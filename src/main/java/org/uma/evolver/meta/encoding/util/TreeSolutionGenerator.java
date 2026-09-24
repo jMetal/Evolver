@@ -1,9 +1,9 @@
-package org.uma.evolver.encoding.util;
+package org.uma.evolver.meta.encoding.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.solution.TreeNode;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.TreeNode;
 import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;

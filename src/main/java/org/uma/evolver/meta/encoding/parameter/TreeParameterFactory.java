@@ -1,15 +1,16 @@
-package org.uma.evolver.parameter.factory;
+package org.uma.evolver.meta.encoding.parameter;
 
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.parameter.CreateInitialSolutionsTreeParameter;
+import org.uma.evolver.meta.encoding.parameter.TreeCrossoverParameter;
+import org.uma.evolver.meta.encoding.parameter.TreeMutationParameter;
+import org.uma.evolver.meta.encoding.parameter.TreeVariationParameter;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.parameter.catalogue.DensityEstimatorParameter;
 import org.uma.evolver.parameter.catalogue.RankingParameter;
 import org.uma.evolver.parameter.catalogue.ReplacementParameter;
-import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsTreeParameter;
-import org.uma.evolver.parameter.catalogue.crossoverparameter.TreeCrossoverParameter;
-import org.uma.evolver.parameter.catalogue.mutationparameter.TreeMutationParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
-import org.uma.evolver.parameter.catalogue.variationparameter.TreeVariationParameter;
+import org.uma.evolver.parameter.factory.ParameterFactory;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 
 /**

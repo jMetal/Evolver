@@ -1,10 +1,10 @@
-package org.uma.evolver.encoding.operator;
+package org.uma.evolver.meta.encoding.operator;
 
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
-import org.uma.evolver.encoding.solution.TreeNode;
-import org.uma.evolver.encoding.solution.TreeNode.NodeType;
-import org.uma.evolver.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.TreeNode.NodeType;
+import org.uma.evolver.meta.encoding.solution.TreeNode;
+import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;

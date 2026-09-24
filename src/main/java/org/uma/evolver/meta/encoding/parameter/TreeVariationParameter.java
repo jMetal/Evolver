@@ -1,9 +1,10 @@
-package org.uma.evolver.parameter.catalogue.variationparameter;
+package org.uma.evolver.meta.encoding.parameter;
 
 import java.util.List;
-import org.uma.evolver.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
+import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
 import org.uma.jmetal.util.errorchecking.JMetalException;
