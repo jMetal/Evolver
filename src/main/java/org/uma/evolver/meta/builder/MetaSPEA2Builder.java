@@ -17,6 +17,12 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * solutions. This builder provides sensible defaults for meta-optimization scenarios and internally
  * manages SBX crossover and polynomial mutation operators.
  *
+ * <p>As for every meta-optimizer, two settings are fixed rather than configurable: the offspring
+ * population size always equals the population size (so each generation's offspring can be
+ * evaluated in parallel as a whole), and the result is the final population, never an external
+ * archive (meta-level fronts usually hold very few solutions). Its parameter space, {@code
+ * SPEA2MetaDouble.yaml}, is a reduced {@code RDEMOEADouble.yaml} that admits any population size.
+ *
  * <p>The builder follows the builder pattern for easy configuration of SPEA2 parameters
  * and creates a fully configured SPEA2 instance ready for execution.</p>
  *
@@ -41,9 +47,6 @@ public class MetaSPEA2Builder {
   /** The population size (default: 50) */
   private int populationSize = 50;
 
-  /** The offspring population size (default: 50) */
-  private int offspringPopulationSize = 50;
-
   /** The maximum number of evaluations (default: 2000) */
   private int maxEvaluations = 2000;
 
@@ -65,7 +68,7 @@ public class MetaSPEA2Builder {
   public MetaSPEA2Builder(MetaOptimizationProblem<?> problem) {
     Check.notNull(problem);
     this.problem = problem;
-    this.parameterSpace = new YAMLParameterSpace("RDEMOEADouble.yaml", new DoubleParameterFactory());
+    this.parameterSpace = new YAMLParameterSpace("SPEA2MetaDouble.yaml", new DoubleParameterFactory());
   }
 
   /**
@@ -78,19 +81,6 @@ public class MetaSPEA2Builder {
   public MetaSPEA2Builder setPopulationSize(int populationSize) {
     Check.valueIsNotNegative(populationSize);
     this.populationSize = populationSize;
-    return this;
-  }
-
-  /**
-   * Sets the offspring population size for the SPEA2 algorithm.
-   *
-   * @param offspringPopulationSize the offspring population size (must be non-negative)
-   * @return this builder instance for method chaining
-   * @throws JMetalException if offspringPopulationSize is negative
-   */
-  public MetaSPEA2Builder setOffspringPopulationSize(int offspringPopulationSize) {
-    Check.valueIsNotNegative(offspringPopulationSize);
-    this.offspringPopulationSize = offspringPopulationSize;
     return this;
   }
 
@@ -157,7 +147,7 @@ public class MetaSPEA2Builder {
             ("--algorithmResult population "
                     + "--createInitialSolutions default "
                     + "--variation crossoverAndMutationVariation "
-                    + "--offspringPopulationSize " + offspringPopulationSize + " "
+                    + "--offspringPopulationSize " + populationSize + " "
                     + "--crossover SBX "
                     + "--crossoverProbability 0.9 "
                     + "--crossoverRepairStrategy bounds "

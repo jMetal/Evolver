@@ -15,6 +15,13 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * solutions. This builder provides sensible defaults for meta-optimization scenarios and internally
  * manages SBX crossover and polynomial mutation operators.
  *
+ * <p>As for every meta-optimizer, two settings are fixed rather than configurable: the offspring
+ * population size always equals the population size (so each generation's offspring can be
+ * evaluated in parallel as a whole), and the result is the final population, never an external
+ * archive (meta-level fronts usually hold very few solutions). If the supplied parameter space
+ * declares {@code offspringPopulationSize} as a categorical parameter (as {@code
+ * NSGAIIDouble.yaml} does), the population size must be one of its legal values.
+ *
  * <p>The builder follows the builder pattern for easy configuration of NSGA-II parameters
  * and creates a fully configured NSGA-II instance ready for execution.</p>
  *
@@ -38,9 +45,6 @@ public class MetaNSGAIIBuilder {
   
   /** The population size (default: 50) */
   private int populationSize = 50;
-  
-  /** The offspring population size (default: 50) */
-  private int offspringPopulationSize = 50;
   
   /** The maximum number of evaluations (default: 2000) */
   private int maxEvaluations = 2000;
@@ -76,22 +80,6 @@ public class MetaNSGAIIBuilder {
   public MetaNSGAIIBuilder setPopulationSize(int populationSize) {
     Check.valueIsNotNegative(populationSize);
     this.populationSize = populationSize;
-    return this;
-  }
-
-  /**
-   * Sets the offspring population size for the NSGA-II algorithm.
-   *
-   * @param offspringPopulationSize the offspring population size (must be positive)
-   * @return this builder instance for method chaining
-   * @throws JMetalException if offspringPopulationSize is not positive
-   */
-  public MetaNSGAIIBuilder setOffspringPopulationSize(int offspringPopulationSize) {
-    if (offspringPopulationSize <= 0) {
-      throw new JMetalException(
-          "Offspring population size must be positive: " + offspringPopulationSize);
-    }
-    this.offspringPopulationSize = offspringPopulationSize;
     return this;
   }
 
@@ -155,7 +143,7 @@ public class MetaNSGAIIBuilder {
             ("--algorithmResult population "
                     + "--createInitialSolutions default "
                     + "--variation crossoverAndMutationVariation "
-                    + "--offspringPopulationSize " + offspringPopulationSize + " "
+                    + "--offspringPopulationSize " + populationSize + " "
                     + "--crossover SBX "
                     + "--crossoverProbability 0.9 "
                     + "--crossoverRepairStrategy bounds "

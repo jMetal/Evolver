@@ -78,7 +78,6 @@ public class TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
       encoding: tree
       metaMaxEvaluations: 2000
       metaPopulationSize: 50
-      metaOffspringSize: 50
       numberOfCores: 8
       crossoverProbability: 0.9
       mutationProbability: 1.0

@@ -62,7 +62,6 @@ public class NSGAIIOptimizingNSGAIIForProblemZDT4 {
       encoding: flat
       metaMaxEvaluations: 2000
       metaPopulationSize: 100
-      offspringPopulationSize: 50
       numberOfCores: 8
       crossover: SBX
       mutation: polynomial

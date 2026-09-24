@@ -2,8 +2,8 @@
 # (org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm, built via MetaSPEA2Builder),
 # equivalent to org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3.
 # See MetaSPEA2FlatConfiguration.yaml: SPEA2 hardcodes its own operators, only
-# populationSize/maxEvaluations/numberOfCores (and optionally offspringPopulationSize/
-# mutationProbabilityFactor) are configurable.
+# populationSize/maxEvaluations/numberOfCores (and optionally mutationProbabilityFactor) are
+# configurable.
 
 baseLevel: DTLZ3NSGAIIBaseLevel.yaml
 metaSearch: MetaSPEA2FlatConfiguration.yaml

@@ -58,16 +58,17 @@ public final class MetaOptimizerConfigurationReader {
               optionalIntValue(data, "metaPopulationSize"),
               intValue(data, label, "numberOfCores"),
               operatorFlags(data));
-      case "tree" ->
-          new TreeMetaSearchConfig(
+      case "tree" -> {
+        rejectOffspringSize(data, label);
+        yield new TreeMetaSearchConfig(
               stringValue(data, label, "algorithm"),
               intValue(data, label, "metaMaxEvaluations"),
-              intValue(data, label, "metaPopulationSize"),
-              intValue(data, label, "metaOffspringSize"),
-              intValue(data, label, "numberOfCores"),
-              doubleValue(data, label, "crossoverProbability"),
-              doubleValue(data, label, "mutationProbability"),
-              doubleValue(data, label, "mutationDistributionIndex"));
+            intValue(data, label, "metaPopulationSize"),
+            intValue(data, label, "numberOfCores"),
+            doubleValue(data, label, "crossoverProbability"),
+            doubleValue(data, label, "mutationProbability"),
+            doubleValue(data, label, "mutationDistributionIndex"));
+      }
       default ->
           throw new JMetalException(
               "Unknown encoding in meta-optimizer configuration '"
@@ -76,6 +77,20 @@ public final class MetaOptimizerConfigurationReader {
                   + encoding
                   + ". Expected flat or tree");
     };
+  }
+
+  /**
+   * The tree pipeline reads only known keys, so a leftover {@code metaOffspringSize} would be
+   * silently ignored — fail instead, since the offspring size is no longer configurable.
+   */
+  private static void rejectOffspringSize(Map<String, Object> data, String label) {
+    if (data.containsKey("metaOffspringSize")) {
+      throw new JMetalException(
+          "Unexpected field in meta-optimizer configuration '"
+              + label
+              + "': metaOffspringSize. The offspring population size always equals"
+              + " metaPopulationSize");
+    }
   }
 
   private static List<String> operatorFlags(Map<String, Object> data) {

@@ -1,0 +1,105 @@
+# Parameter space for the meta-level SPEA2 built by org.uma.evolver.meta.builder.MetaSPEA2Builder
+# (flat [0,1]^n encoding). SPEA2 is expressed as a DoubleRDEMOEA configuration, so this space keeps
+# the top-level parameter names org.uma.evolver.algorithm.rdemoea.BaseRDEMOEA#build() requires, but
+# narrows each one to the single choice MetaSPEA2Builder hardcodes (SBX crossover, polynomial
+# mutation, strength ranking, KNN density estimator, tournament selection, sequential removal).
+# Only the numeric values those choices carry are left open, and MetaSPEA2Builder fixes them too,
+# except for mutationProbabilityFactor.
+#
+# A meta-optimizer never uses an external archive (algorithmResult is always population), and its
+# offspring population size always equals its population size, so that each generation's offspring
+# is evaluated in parallel as a whole. offspringPopulationSize is declared as an integer range
+# (rather than RDEMOEADouble.yaml's categorical list) only so that any meta population size is
+# accepted.
+
+algorithmResult:
+  type: categorical
+  values:
+    population: {}
+
+createInitialSolutions:
+  type: categorical
+  values:
+    default: {}
+
+offspringPopulationSize:
+  type: integer
+  range: [1, 100000]
+
+densityEstimator:
+  type: categorical
+  values:
+    knn:
+      conditionalParameters:
+        knnNeighborhoodSize:
+          type: integer
+          range: [1, 5]
+        knnNormalizeObjectives:
+          type: categorical
+          values:
+            "true":
+            "false":
+
+ranking:
+  type: categorical
+  values:
+    strengthRanking:
+
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+            crossoverRepairStrategy:
+              type: categorical
+              values: [random, round, bounds]
+          values:
+            SBX:
+              conditionalParameters:
+                sbxDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbabilityFactor:
+              type: double
+              range: [0.0, 2.0]
+            mutationRepairStrategy:
+              type: categorical
+              values:
+                random: {}
+                round: {}
+                bounds: {}
+          values:
+            polynomial:
+              conditionalParameters:
+                polynomialMutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+
+replacement:
+  type: categorical
+  values:
+    rankingAndDensityEstimator:
+      conditionalParameters:
+        removalPolicy:
+          type: categorical
+          values:
+            sequential:

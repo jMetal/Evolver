@@ -77,7 +77,6 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
       encoding: flat
       metaMaxEvaluations: 2000
       metaPopulationSize: 50
-      offspringPopulationSize: 50
       numberOfCores: 8
       crossover: SBX
       mutation: polynomial

@@ -37,6 +37,12 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * catalogue per registered algorithm, so it is hardcoded here rather than repeated in every
  * meta-optimizer configuration file.
  *
+ * <p>Two settings are fixed for every population-based engine and never taken from a request:
+ * the offspring population size always equals the meta population size (each generation's
+ * offspring is evaluated in parallel as a whole), and the result is the final population, never an
+ * external archive (meta-level fronts usually hold very few solutions). A request that tries to
+ * set either one fails explicitly instead of being silently ignored.
+ *
  * <p>None of the registered names carry a "Parallel" qualifier: every engine here evaluates via
  * {@code numberOfCores} (whether through {@link MultiThreadedEvaluation} or, for
  * {@code "AsyncNSGA-II"}, its own asynchronous evaluation), so singling one out as "Parallel"
@@ -53,8 +59,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       catalogue exposed via {@code operatorFlags}. {@code "SPEA2"} is built via
  *       {@link MetaSPEA2Builder}, which hardcodes its own operators (SBX crossover, polynomial
  *       mutation, strength ranking, KNN density estimator, tournament selection) and exposes only
- *       {@code offspringPopulationSize}/{@code mutationProbabilityFactor} as optional
- *       {@code operatorFlags}.
+ *       {@code mutationProbabilityFactor} as an optional {@code operatorFlags} entry.
  *   <li>{@link Family#ASYNCHRONOUS}: built via {@link #resolveFlatAsync}, returns an
  *       {@link AsynchronousMultiThreadedNSGAII} (currently {@code "AsyncNSGA-II"}; it hardcodes
  *       its own selection/replacement, so only its crossover/mutation operators are configurable,
@@ -112,9 +117,7 @@ final class MetaAlgorithmRegistry {
               Family.EVOLUTIONARY,
               false,
               null,
-              List.of(
-                  new OperatorFlagDescriptor("offspringPopulationSize", "int", false),
-                  new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
+              List.of(new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
           new MetaAlgorithmDescriptor(
               "AsyncNSGA-II",
               Family.ASYNCHRONOUS,
@@ -140,18 +143,24 @@ final class MetaAlgorithmRegistry {
   private static final int DEFAULT_POPULATION_SIZE = 50;
 
   /**
-   * {@code NSGAIIMetaDouble.yaml} declares {@code algorithmResult}, {@code
-   * createInitialSolutions} and {@code variation} (all required by {@code BaseNSGAII.build()},
-   * and {@code variation} is also what makes its {@code crossover}/{@code mutation} conditional
-   * sub-parameters reachable) with only one legal value each — {@code .parse(String[])} still
-   * requires their flags to be present, though, so they are fixed here rather than repeated in
-   * every meta-optimizer configuration file (there is nothing for a user to choose between).
+   * Flags fixed by the registry, not by the request, for a meta-optimizer built on a
+   * {@code BaseLevelAlgorithm} parameter space. {@code NSGAIIMetaDouble.yaml} declares {@code
+   * algorithmResult}, {@code createInitialSolutions} and {@code variation} (all required by
+   * {@code BaseNSGAII.build()}, and {@code variation} is also what makes its {@code
+   * crossover}/{@code mutation} conditional sub-parameters reachable) with only one legal value
+   * each — {@code .parse(String[])} still requires their flags to be present, though, so they are
+   * fixed here rather than repeated in every meta-optimizer configuration file (there is nothing
+   * for a user to choose between). {@code offspringPopulationSize} is fixed to the population
+   * size (see class javadoc).
    */
-  private static final String[] FIXED_NSGAII_FLAGS = {
-    "--algorithmResult", "population",
-    "--createInitialSolutions", "default",
-    "--variation", "crossoverAndMutationVariation"
-  };
+  private static String[] fixedFlags(int populationSize) {
+    return new String[] {
+      "--algorithmResult", "population",
+      "--createInitialSolutions", "default",
+      "--variation", "crossoverAndMutationVariation",
+      "--offspringPopulationSize", String.valueOf(populationSize)
+    };
+  }
 
   private MetaAlgorithmRegistry() {}
 
@@ -221,9 +230,12 @@ final class MetaAlgorithmRegistry {
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
+    String[] fixedFlags = fixedFlags(populationSize);
+    requireNoFixedFlags("NSGA-II", config, fixedFlags);
+
     DoubleNSGAII metaNSGAII =
         new DoubleNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
-    metaNSGAII.parse(concat(FIXED_NSGAII_FLAGS, config.operatorFlags()));
+    metaNSGAII.parse(concat(fixedFlags, config.operatorFlags()));
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = metaNSGAII.build();
     nsgaii.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
@@ -258,13 +270,13 @@ final class MetaAlgorithmRegistry {
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
+    requireOnlyFlags("SPEA2", config, List.of("--mutationProbabilityFactor"));
+
     var builder =
         new MetaSPEA2Builder(problem)
             .setPopulationSize(populationSize)
             .setMaxEvaluations(config.metaMaxEvaluations())
             .setNumberOfCores(config.numberOfCores());
-    optionalIntFlag(config.operatorFlags(), "--offspringPopulationSize")
-        .ifPresent(builder::setOffspringPopulationSize);
     optionalDoubleFlag(config.operatorFlags(), "--mutationProbabilityFactor")
         .ifPresent(builder::setMutationProbabilityFactor);
     return builder.build();
@@ -301,8 +313,38 @@ final class MetaAlgorithmRegistry {
     }
   }
 
-  private static Optional<Integer> optionalIntFlag(List<String> flags, String flagName) {
-    return optionalFlagValue(flags, flagName).map(Integer::parseInt);
+  /**
+   * {@code .parse(String[])} takes the first occurrence of a flag, so a request flag repeating one
+   * of {@code fixedFlags} would be silently ignored — fail instead, naming the offending flag.
+   */
+  private static void requireNoFixedFlags(
+      String algorithmName, FlatMetaSearchConfig config, String[] fixedFlags) {
+    for (int i = 0; i < fixedFlags.length; i += 2) {
+      if (config.operatorFlags().contains(fixedFlags[i])) {
+        throw new JMetalException(
+            algorithmName
+                + " meta-optimizer: "
+                + fixedFlags[i].substring(2)
+                + " is fixed by the registry and cannot be set in a meta-optimizer configuration"
+                + " (the offspring population size always equals metaPopulationSize, and the"
+                + " result is always the final population)");
+      }
+    }
+  }
+
+  private static void requireOnlyFlags(
+      String algorithmName, FlatMetaSearchConfig config, List<String> allowedFlags) {
+    List<String> flags = config.operatorFlags();
+    for (int i = 0; i < flags.size(); i += 2) {
+      if (!allowedFlags.contains(flags.get(i))) {
+        throw new JMetalException(
+            algorithmName
+                + " meta-optimizer: unexpected meta-optimizer configuration field "
+                + flags.get(i).substring(2)
+                + ". Allowed: "
+                + allowedFlags.stream().map(flag -> flag.substring(2)).toList());
+      }
+    }
   }
 
   private static Optional<Double> optionalDoubleFlag(List<String> flags, String flagName) {

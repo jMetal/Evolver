@@ -4,6 +4,11 @@
 # meta-optimizer has no use for external archives or alternative solution-creation strategies, so
 # those choices are narrowed to a single value while keeping the top-level parameter names that
 # org.uma.evolver.algorithm.nsgaii.BaseNSGAII#build() requires to be present.
+#
+# offspringPopulationSize is not a user choice either: MetaAlgorithmRegistry always sets it to the
+# meta population size, so that each generation's offspring is evaluated in parallel as a whole.
+# It is declared as an integer range (rather than a categorical list) only so that any meta
+# population size is accepted.
 
 algorithmResult:
   type: categorical
@@ -16,8 +21,8 @@ createInitialSolutions:
     default: {}
 
 offspringPopulationSize:
-  type: categorical
-  values: [1, 2, 5, 10, 20, 50, 100, 200, 400]
+  type: integer
+  range: [1, 100000]
 
 variation:
   type: categorical

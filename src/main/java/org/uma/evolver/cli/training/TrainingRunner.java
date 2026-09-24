@@ -476,7 +476,7 @@ public class TrainingRunner {
     var mutation =
         new TreeMutation(
             metaSearch.mutationProbability(), metaSearch.mutationDistributionIndex(), treeSolutionGenerator);
-    var variation = new CrossoverAndMutationVariation<>(metaSearch.metaOffspringSize(), crossover, mutation);
+    var variation = new CrossoverAndMutationVariation<>(metaSearch.metaPopulationSize(), crossover, mutation);
 
     var ranking = new FastNonDominatedSortRanking<DerivationTreeSolution>();
     var densityEstimator = new CrowdingDistanceDensityEstimator<DerivationTreeSolution>();
