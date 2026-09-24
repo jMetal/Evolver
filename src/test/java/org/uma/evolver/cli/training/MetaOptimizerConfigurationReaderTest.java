@@ -80,7 +80,7 @@ class MetaOptimizerConfigurationReaderTest {
       // Assert
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
       assertEquals("SPEA2", flat.algorithm());
-      assertEquals(100, flat.metaPopulationSize());
+      assertEquals(50, flat.metaPopulationSize());
     }
 
     @Test
@@ -151,6 +151,31 @@ class MetaOptimizerConfigurationReaderTest {
       assertEquals("NSGA-II", tree.algorithm());
       assertEquals(50, tree.metaPopulationSize());
       assertEquals(0.9, tree.crossoverProbability());
+    }
+
+    @Test
+    @DisplayName(
+        "given a tree configuration without metaPopulationSize, when loaded, then the default"
+            + " meta population size of 50 is used")
+    void givenTreeConfigWithoutPopulationSize_whenLoaded_thenDefaultIsUsed() {
+      // Arrange
+      String yaml =
+          """
+          algorithm: NSGA-II
+          encoding: tree
+          metaMaxEvaluations: 2000
+          numberOfCores: 8
+          crossoverProbability: 0.9
+          mutationProbability: 1.0
+          mutationDistributionIndex: 20.0
+          """;
+
+      // Act
+      TreeMetaSearchConfig tree =
+          (TreeMetaSearchConfig) MetaOptimizerConfigurationReader.loadFromYaml(yaml);
+
+      // Assert
+      assertEquals(50, tree.metaPopulationSize());
     }
 
     @Test
