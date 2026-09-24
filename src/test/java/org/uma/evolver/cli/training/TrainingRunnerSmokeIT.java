@@ -123,6 +123,40 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
+  @DisplayName("Given NSGA-II (flat encoding) without metaPopulationSize")
+  class DefaultPopulationNsgaIIFlat {
+
+    @Test
+    @DisplayName(
+        "when run, then it finishes and records the default meta population size in METADATA.txt")
+    void whenRun_thenItRecordsTheDefaultPopulationSize(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      FlatMetaSearchConfig configured = smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml");
+      FlatMetaSearchConfig metaSearch =
+          new FlatMetaSearchConfig(
+              configured.algorithm(),
+              SMOKE_META_MAX_EVALUATIONS,
+              null,
+              SMOKE_NUMBER_OF_CORES,
+              configured.operatorFlags());
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act
+      assertRunFinished(request, tempDir);
+
+      // Assert
+      String metadata = Files.readString(tempDir.resolve("output").resolve("METADATA.txt"));
+      assertTrue(
+          metadata.contains(
+              "Population Size: " + MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE),
+          metadata);
+    }
+  }
+
+  @Nested
   @DisplayName("Given AGE-MOEA (flat encoding)")
   class AgemoeaFlat {
 
