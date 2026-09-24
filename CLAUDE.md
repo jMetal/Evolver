@@ -50,15 +50,18 @@ The meta-optimizer treats algorithm parameter configurations as solutions, and t
 
 ### Key Packages
 
+The packages form two layers. The **configurable core** (`algorithm`, `parameter`, `util`) can be
+used on its own, as an alternative to jMetal for configuring and running algorithms; it never
+depends on the **meta level** (`meta`, `cli`, `irace`), which `PackageLayeringTest` enforces.
+
 | Package | Role |
 |---|---|
-| `org.uma.evolver.parameter` | Parameter space definition and YAML parsing. Supports integer, double, categorical, binary, and conditional (hierarchical) parameters. |
-| `org.uma.evolver.algorithm` | Configurable base-level algorithms: NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA, AGE-MOEA, SSMOEA, PAES. Each supports multiple encodings (Double, Binary, Permutation); SSMOEA and PAES only Double. |
-| `org.uma.evolver.encoding` | Derivation tree encoding: `DerivationTreeSolution`, `SubtreeCrossover`, `TreeMutation`, `TreeSolutionGenerator`, `GrammarConverter`. |
-| `org.uma.evolver.meta` | Meta-optimizer builders (`MetaNSGAIIBuilder`, `MetaSMPSOBuilder`, etc.) and problem classes: `AbstractMetaOptimizationProblem`, `MetaOptimizationProblem` (flat encoding), `TreeMetaOptimizationProblem` (tree encoding). |
-| `org.uma.evolver.trainingset` | Training set management wrapping jMetal benchmark problems. |
-| `org.uma.evolver.irace` | irace integration for alternative parameter tuning. |
-| `org.uma.evolver.util` | Utilities: `ConfigurationFileReader`, `OutputResults`, observers for writing evolution data. |
+| `org.uma.evolver.algorithm` | *Core.* Configurable algorithms (`BaseLevelAlgorithm`): NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA, AGE-MOEA, SSMOEA, PAES. Each supports multiple encodings (Double, Binary, Permutation); SSMOEA and PAES only Double. |
+| `org.uma.evolver.parameter` | *Core.* Parameter space definition and YAML parsing. Supports integer, double, categorical, binary, and conditional (hierarchical) parameters. |
+| `org.uma.evolver.util` | *Core.* `ConfigurationFileReader` (reads configurations such as `defaultConfigurations/*.txt`) and `HypervolumeMinus`. |
+| `org.uma.evolver.meta` | *Meta level.* `algorithm` (meta-only algorithms: `RandomSearch`, `TreeNSGAII`, `TreeAGEMOEA`), `builder` (`Meta*Builder`), `problem` (`AbstractMetaOptimizationProblem`, `MetaOptimizationProblem` for the flat encoding, `TreeMetaOptimizationProblem` for the tree encoding), `strategy` (evaluation budgets), `encoding` (derivation tree encoding: `DerivationTreeSolution`, `SubtreeCrossover`, `TreeMutation`, `TreeSolutionGenerator`, `GrammarConverter` and the tree operator parameters), `trainingset` (training sets wrapping jMetal benchmark problems) and `output` (`ConsolidatedOutputResults`, `WriteExecutionDataToFilesObserver`, `MetaOptimizerConfig`, `TreeOutputResults`). |
+| `org.uma.evolver.cli` | *Meta level.* `cli.training`: request/status/result runner for training jobs, used by Evolver-Studio. |
+| `org.uma.evolver.irace` | *Meta level.* irace integration for alternative parameter tuning. |
 | `org.uma.evolver.example` | Runnable examples in three packages: `baselevel` (single base-level algorithm runs, split into `standard` for typical configurations, `tuned` for meta-optimized configurations, and `features` for specific-capability demos), `training` (meta-optimization runs), and `validation` (comparative studies). |
 
 ### Parameter Spaces

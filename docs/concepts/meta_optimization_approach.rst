@@ -131,14 +131,14 @@ To simplify the process, Evolver provides a builder some meta-optimizers, such a
             .setNumberOfCores(numberOfCores)
             .build();
    
-Before running the meta-optimizer, we need to indicate where to store the results. This can be done create an instance of the ``OutputResults`` class:
+Before running the meta-optimizer, we need to indicate where to store the results. This can be done by creating an instance of the ``ConsolidatedOutputResults`` class, which writes ``METADATA.txt``, ``INDICATORS.csv`` and ``CONFIGURATIONS.csv``:
 
 .. code-block:: java
 
     String algorithmName = "NSGA-II" ;
     String problemName = "ZDT" ;
     var outputResults =
-        new OutputResults(
+        new ConsolidatedOutputResults(
             algorithmName,
             metaOptimizationProblem,
             problemName,

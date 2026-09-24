@@ -40,7 +40,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * }</pre>
  *
  * <p>Random Search has no population concept and exposes no operator catalogue (see {@code
- * org.uma.evolver.meta.builder.RandomSearch}) — {@code META_SEARCH_YAML} below has only
+ * org.uma.evolver.meta.algorithm.RandomSearch}) — {@code META_SEARCH_YAML} below has only
  * evaluations and cores, no crossover/mutation flags.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)

@@ -1,5 +1,5 @@
 # Example TrainingRequest exercising Random Search as meta-optimizer
-# (org.uma.evolver.meta.builder.RandomSearch, built via MetaRandomSearchBuilder), equivalent to
+# (org.uma.evolver.meta.algorithm.RandomSearch, built via MetaRandomSearchBuilder), equivalent to
 # the fully self-contained
 # org.uma.evolver.example.training.dtlz.RandomSearchOptimizingNSGAIIForBenchmarkDTLZ Java example —
 # same baseLevel/metaSearch configuration, but as standalone files that can be run from the CLI

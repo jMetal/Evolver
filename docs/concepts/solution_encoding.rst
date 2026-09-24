@@ -83,7 +83,7 @@ The **derivation tree encoding** eliminates both problems by representing an alg
 .. note::
 
    Operators, solution types, and utilities for the derivation tree encoding live in the
-   ``org.uma.evolver.encoding`` package. The meta-optimization problem classes for both
+   ``org.uma.evolver.meta.encoding`` package. The meta-optimization problem classes for both
    encodings—``MetaOptimizationProblem`` (flat) and ``TreeMetaOptimizationProblem`` (tree)—
    share a common base class ``AbstractMetaOptimizationProblem`` and both reside in
    ``org.uma.evolver.meta.problem``.
@@ -126,7 +126,7 @@ Data Structures
 TreeNode
 ^^^^^^^^
 
-``TreeNode`` (``org.uma.evolver.encoding.solution.TreeNode``) is a single node in the derivation tree. Each node wraps one ``Parameter<?>`` object and stores its decoded value together with two child lists:
+``TreeNode`` (``org.uma.evolver.meta.encoding.solution.TreeNode``) is a single node in the derivation tree. Each node wraps one ``Parameter<?>`` object and stores its decoded value together with two child lists:
 
 - **Global children** – always present, regardless of the node's value (mirrors global sub-parameters).
 - **Conditional children** – present only for the production that was selected (mirrors conditional parameters for the chosen categorical value).
@@ -148,7 +148,7 @@ Numeric nodes expose ``lowerBound()`` and ``upperBound()`` to support type-aware
 DerivationTreeSolution
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-``DerivationTreeSolution`` (``org.uma.evolver.encoding.solution.DerivationTreeSolution``) implements jMetal's ``Solution<TreeNode>`` interface, making it compatible with any evolutionary algorithm in the framework. It holds:
+``DerivationTreeSolution`` (``org.uma.evolver.meta.encoding.solution.DerivationTreeSolution``) implements jMetal's ``Solution<TreeNode>`` interface, making it compatible with any evolutionary algorithm in the framework. It holds:
 
 - A list of **root nodes** (one per top-level parameter in the parameter space).
 - Objective and constraint arrays (same as any jMetal solution).
@@ -171,7 +171,7 @@ Only nodes that are part of the tree (i.e., active parameters) appear in the out
 Generating Solutions
 ~~~~~~~~~~~~~~~~~~~~~
 
-``TreeSolutionGenerator`` (``org.uma.evolver.encoding.util.TreeSolutionGenerator``) traverses the parameter space hierarchy and produces random derivation tree solutions:
+``TreeSolutionGenerator`` (``org.uma.evolver.meta.encoding.util.TreeSolutionGenerator``) traverses the parameter space hierarchy and produces random derivation tree solutions:
 
 .. code-block:: java
 
@@ -197,7 +197,7 @@ Operators
 SubtreeCrossover
 ^^^^^^^^^^^^^^^^
 
-``SubtreeCrossover`` (``org.uma.evolver.encoding.operator.SubtreeCrossover``) implements **Strongly Typed GP (STGP) crossover** (Montana, 1995 [#montana1995]_): the operator selects a random node in one parent and swaps its subtree with a node of the **same grammar symbol** in the other parent, guaranteeing that both offspring are valid configurations.
+``SubtreeCrossover`` (``org.uma.evolver.meta.encoding.operator.SubtreeCrossover``) implements **Strongly Typed GP (STGP) crossover** (Montana, 1995 [#montana1995]_): the operator selects a random node in one parent and swaps its subtree with a node of the **same grammar symbol** in the other parent, guaranteeing that both offspring are valid configurations.
 
 Algorithm:
 
@@ -223,7 +223,7 @@ Swapping content in-place (rather than re-wiring parent pointers) keeps the impl
 TreeMutation
 ^^^^^^^^^^^^
 
-``TreeMutation`` (``org.uma.evolver.encoding.operator.TreeMutation``) applies one mutation event per individual, combining standard GP mutation (Koza, 1992 [#koza1992]_; Poli et al., 2008 [#poli2008]_) with polynomial mutation for numeric nodes:
+``TreeMutation`` (``org.uma.evolver.meta.encoding.operator.TreeMutation``) applies one mutation event per individual, combining standard GP mutation (Koza, 1992 [#koza1992]_; Poli et al., 2008 [#poli2008]_) with polynomial mutation for numeric nodes:
 
 1. With probability ``mutationProbability``, select a random node from ``allNodes()``.
 2. Mutate it according to its type:

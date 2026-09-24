@@ -33,28 +33,38 @@ The Evolver project is structured as follows:
 Source Code Organization
 ------------------------
 
-The main source code is organized into the following packages:
+The main source code is organized in two layers. The **configurable core** can be used on its own,
+as an alternative to jMetal for configuring and running multi-objective algorithms; the **meta
+level** uses the core to tune those algorithms automatically. The core never depends on the meta
+level (``PackageLayeringTest`` enforces it).
 
-- ``org.uma.evolver``: Core framework components and interfaces
-- ``org.uma.evolver.algorithm``: Configurable base-level algorithms (NSGA-II, MOEA/D, SMS-EMOA, …)
-- ``org.uma.evolver.encoding``: Derivation tree encoding for meta-optimization
+Configurable core:
 
-    - ``org.uma.evolver.encoding.solution``: ``DerivationTreeSolution`` and ``TreeNode``
-    - ``org.uma.evolver.encoding.operator``: ``SubtreeCrossover`` and ``TreeMutation``
-    - ``org.uma.evolver.encoding.util``: ``TreeSolutionGenerator``, ``GrammarConverter``, ``TreeOutputResults``
-- ``org.uma.evolver.example``: Runnable example programs
+- ``org.uma.evolver.algorithm``: Configurable algorithms (``BaseLevelAlgorithm``): NSGA-II, MOEA/D, SMS-EMOA, …
+- ``org.uma.evolver.parameter``: Parameter space definition and YAML parsing
+- ``org.uma.evolver.util``: ``ConfigurationFileReader`` and ``HypervolumeMinus``
 
-    - ``org.uma.evolver.example.training``: Meta-optimization training examples
-    - ``org.uma.evolver.example.configuration``: Base-level algorithm configuration examples
-    - ``org.uma.evolver.example.validation``: Validation programs and experimental studies
-- ``org.uma.evolver.meta``: Meta-optimization problem and builder classes
+Meta level:
 
+- ``org.uma.evolver.meta``: Meta-optimization
+
+    - ``org.uma.evolver.meta.algorithm``: Meta-only algorithms: ``RandomSearch``, ``TreeNSGAII``, ``TreeAGEMOEA``
+    - ``org.uma.evolver.meta.builder``: Meta-optimizer builders (``MetaNSGAIIBuilder``, ``MetaSPEA2Builder``, …)
     - ``org.uma.evolver.meta.problem``: ``AbstractMetaOptimizationProblem`` (shared evaluation pipeline), ``MetaOptimizationProblem`` (flat double encoding), ``TreeMetaOptimizationProblem`` (tree encoding)
     - ``org.uma.evolver.meta.strategy``: ``FixedEvaluationsStrategy``, ``RandomRangeEvaluationsStrategy``
-- ``org.uma.evolver.parameter``: Parameter space definition and YAML parsing
-- ``org.uma.evolver.trainingset``: Training set definitions for benchmark problems
+    - ``org.uma.evolver.meta.encoding``: Derivation tree encoding (``solution``: ``DerivationTreeSolution``, ``TreeNode``; ``operator``: ``SubtreeCrossover``, ``TreeMutation``; ``util``: ``TreeSolutionGenerator``, ``GrammarConverter``; ``parameter``: tree operator parameters and ``TreeParameterFactory``)
+    - ``org.uma.evolver.meta.trainingset``: Training set definitions for benchmark problems
+    - ``org.uma.evolver.meta.output``: ``ConsolidatedOutputResults``, ``WriteExecutionDataToFilesObserver``, ``MetaOptimizerConfig``, ``TreeOutputResults``
+- ``org.uma.evolver.cli.training``: Request/status/result runner for training jobs
 - ``org.uma.evolver.irace``: irace integration
-- ``org.uma.evolver.util``: Utilities: ``ConfigurationFileReader``, ``OutputResults``, observers
+
+Runnable examples:
+
+- ``org.uma.evolver.example``: Runnable example programs
+
+    - ``org.uma.evolver.example.baselevel``: Configurable algorithms used on their own
+    - ``org.uma.evolver.example.training``: Meta-optimization training examples
+    - ``org.uma.evolver.example.validation``: Validation programs and experimental studies
 
 Resource Files
 --------------

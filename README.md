@@ -45,6 +45,10 @@ The flow is:
   inactive-variable problem of flat encodings. Includes typed subtree crossover (STGP) and a tree
   mutation operator.
 - **irace integration** — base-level configuration search can also be performed with irace.
+- **Usable on its own** — the configurable algorithms (`org.uma.evolver.algorithm`,
+  `org.uma.evolver.parameter`) do not depend on the meta level, so Evolver can also be used as an
+  alternative to jMetal to configure and run algorithms from a parameter space and a
+  configuration string.
 
 ## Supported algorithms
 
@@ -111,6 +115,34 @@ mvn verify
 
 ## Quick start
 
+### Configuring and running an algorithm
+
+The configurable algorithms can be used on their own. The following example runs NSGA-II on ZDT1
+with a configuration chosen from the `NSGAIIDouble.yaml` parameter space:
+
+```java
+String[] configuration =
+    ("--algorithmResult population --createInitialSolutions default "
+        + "--offspringPopulationSize 100 --variation crossoverAndMutationVariation "
+        + "--crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds "
+        + "--sbxDistributionIndex 20.0 --mutation polynomial --mutationProbabilityFactor 1.0 "
+        + "--mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0 "
+        + "--selection tournament --selectionTournamentSize 2")
+        .split(" ");
+
+var parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
+var nsgaii = new DoubleNSGAII(new ZDT1(), 100, 20000, parameterSpace);
+nsgaii.parse(configuration);
+
+EvolutionaryAlgorithm<DoubleSolution> algorithm = nsgaii.build();
+algorithm.run();
+```
+
+See `org.uma.evolver.example.baselevel` for more examples, including configurations found by
+meta-optimization (`example.baselevel.tuned`).
+
+### Meta-optimizing an algorithm
+
 The following example configures NSGA-II (base level) for DTLZ1 using NSGA-II as meta-optimizer.
 
 ```java
@@ -135,13 +167,15 @@ EvolutionaryAlgorithm<DoubleSolution> metaNSGAII =
         .setNumberOfCores(8)
         .build();
 
-var outputResults = new OutputResults("NSGA-II", problem, "DTLZ1", indicators, "RESULTS/NSGAII/DTLZ1");
+var outputResults =
+    new ConsolidatedOutputResults("NSGA-II", problem, "DTLZ1", indicators, "RESULTS/NSGAII/DTLZ1");
 metaNSGAII.observable().register(new WriteExecutionDataToFilesObserver(1, outputResults));
 
 metaNSGAII.run();
 ```
 
-After running, the best configuration is written to the output folder as a `VAR.*.txt` file.
+After running, the output folder holds `METADATA.txt`, `INDICATORS.csv` (the indicator values of
+each configuration) and `CONFIGURATIONS.csv` (the configurations themselves).
 See the examples in `org.uma.evolver.example` for complete runnable code.
 
 ## Parameter spaces
@@ -201,7 +235,7 @@ If you use Evolver in your research, please cite:
 
 ### v2.1-SNAPSHOT
 
-- Add derivation tree encoding (`org.uma.evolver.encoding`): `DerivationTreeSolution`, `TreeNode`,
+- Add derivation tree encoding (`org.uma.evolver.meta.encoding`): `DerivationTreeSolution`, `TreeNode`,
   `SubtreeCrossover` (STGP), `TreeMutation`, `TreeMetaOptimizationProblem`,
   `TreeSolutionGenerator`, and `GrammarConverter`.
 - Add configurable NSGA-III, RVEA, AGE-MOEA, SSMOEA, and PAES.
@@ -210,6 +244,11 @@ If you use Evolver in your research, please cite:
 - Add `ConfigurationFileReader` to read algorithm configurations from text files.
 - Remove hard-coded parameter space classes; all parameter spaces now use `YAMLParameterSpace`.
 - Restructure package layout: `algorithm`, `meta`, `trainingset`, `irace`, `example`.
+- Separate the configurable core (`algorithm`, `parameter`, `util`) from the meta level: the
+  derivation tree encoding, training sets and training output classes move under `meta`
+  (`meta.encoding`, `meta.trainingset`, `meta.output`), and meta-only algorithms under
+  `meta.algorithm`. Remove unused classes, including `OutputResults` (superseded by
+  `ConsolidatedOutputResults`).
 
 ### v2.0 (2025-09-09)
 
