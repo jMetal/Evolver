@@ -1,0 +1,10 @@
+# Example TrainingRequest exercising AGE-MOEA as meta-optimizer
+# (org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm, built directly on DoubleAGEMOEA), on
+# the same base level as nsgaii-zdt4-request.yaml.
+
+baseLevel: Zdt4NSGAIIBaseLevel.yaml
+metaSearch: MetaAGEMOEAFlatConfiguration.yaml
+outputDirectory: results/agemoea/nsgaii/ZDT4
+writeFrequency: 1
+statusFrequency: 100
+frontPlotFrequency: 1   # optional; remove this line to run headless

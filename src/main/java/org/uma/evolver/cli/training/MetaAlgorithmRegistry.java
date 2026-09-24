@@ -3,6 +3,7 @@ package org.uma.evolver.cli.training;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.meta.builder.MetaRandomSearchBuilder;
@@ -56,7 +57,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *   <li>{@link Family#EVOLUTIONARY}: built via {@link #resolveFlat}, returns an
  *       {@link EvolutionaryAlgorithm}. {@code "NSGA-II"} is built directly on {@link DoubleNSGAII},
  *       a full {@code BaseLevelAlgorithm} with its own operator
- *       catalogue exposed via {@code operatorFlags}. {@code "SPEA2"} is built via
+ *       catalogue exposed via {@code operatorFlags}. {@code "AGE-MOEA"} is built the same way,
+ *       directly on {@link DoubleAGEMOEA}, with the same operator catalogue plus its
+ *       environmental selection variant ({@code agemoeaVariant}). {@code "SPEA2"} is built via
  *       {@link MetaSPEA2Builder}, which hardcodes its own operators (SBX crossover, polynomial
  *       mutation, strength ranking, KNN density estimator, tournament selection) and exposes only
  *       {@code mutationProbabilityFactor} as an optional {@code operatorFlags} entry.
@@ -113,6 +116,8 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "NSGA-II", Family.EVOLUTIONARY, true, "NSGAIIMetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
+              "AGE-MOEA", Family.EVOLUTIONARY, false, "AGEMOEAMetaDouble.yaml", List.of()),
+          new MetaAlgorithmDescriptor(
               "SPEA2",
               Family.EVOLUTIONARY,
               false,
@@ -138,6 +143,9 @@ final class MetaAlgorithmRegistry {
   private static final String NSGAII_PARAMETER_SPACE_FILE = "NSGAIIMetaDouble.yaml";
 
   /** Hardcoded, not user-facing — see class javadoc. */
+  private static final String AGEMOEA_PARAMETER_SPACE_FILE = "AGEMOEAMetaDouble.yaml";
+
+  /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
 
   /**
@@ -148,9 +156,9 @@ final class MetaAlgorithmRegistry {
 
   /**
    * Flags fixed by the registry, not by the request, for a meta-optimizer built on a
-   * {@code BaseLevelAlgorithm} parameter space. {@code NSGAIIMetaDouble.yaml} declares {@code
-   * algorithmResult}, {@code createInitialSolutions} and {@code variation} (all required by
-   * {@code BaseNSGAII.build()}, and {@code variation} is also what makes its {@code
+   * {@code BaseLevelAlgorithm} parameter space. {@code NSGAIIMetaDouble.yaml}/{@code
+   * AGEMOEAMetaDouble.yaml} declare {@code algorithmResult}, {@code createInitialSolutions} and
+   * {@code variation} (all required by {@code BaseNSGAII.build()}/{@code BaseAGEMOEA.build()}, and {@code variation} is also what makes its {@code
    * crossover}/{@code mutation} conditional sub-parameters reachable) with only one legal value
    * each — {@code .parse(String[])} still requires their flags to be present, though, so they are
    * fixed here rather than repeated in every meta-optimizer configuration file (there is nothing
@@ -170,7 +178,7 @@ final class MetaAlgorithmRegistry {
 
   static Family familyOf(String algorithmName) {
     return switch (algorithmName) {
-      case "NSGA-II", "SPEA2" -> Family.EVOLUTIONARY;
+      case "NSGA-II", "AGE-MOEA", "SPEA2" -> Family.EVOLUTIONARY;
       case "AsyncNSGA-II" -> Family.ASYNCHRONOUS;
       case "SMPSO" -> Family.PARTICLE_SWARM;
       case "RandomSearch" -> Family.RANDOM_SEARCH;
@@ -178,7 +186,7 @@ final class MetaAlgorithmRegistry {
           throw new JMetalException(
               "Unknown meta-optimizer algorithm: "
                   + algorithmName
-                  + " for encoding flat. Supported: NSGA-II, SPEA2, AsyncNSGA-II, SMPSO,"
+                  + " for encoding flat. Supported: NSGA-II, AGE-MOEA, SPEA2, AsyncNSGA-II, SMPSO,"
                   + " RandomSearch");
     };
   }
@@ -191,7 +199,11 @@ final class MetaAlgorithmRegistry {
       throw new JMetalException(
           "Meta-optimizer algorithm " + algorithmName + " is not an EvolutionaryAlgorithm");
     }
-    return "SPEA2".equals(algorithmName) ? buildSPEA2(problem, config) : buildNSGAII(problem, config);
+    return switch (algorithmName) {
+      case "SPEA2" -> buildSPEA2(problem, config);
+      case "AGE-MOEA" -> buildAGEMOEA(problem, config);
+      default -> buildNSGAII(problem, config);
+    };
   }
 
   static AsynchronousMultiThreadedNSGAII<DoubleSolution> resolveFlatAsync(
@@ -244,6 +256,25 @@ final class MetaAlgorithmRegistry {
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = metaNSGAII.build();
     nsgaii.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
     return nsgaii;
+  }
+
+  private static EvolutionaryAlgorithm<DoubleSolution> buildAGEMOEA(
+      MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
+    ParameterSpace parameterSpace =
+        new YAMLParameterSpace(AGEMOEA_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
+    int populationSize =
+        config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
+
+    String[] fixedFlags = fixedFlags(populationSize);
+    requireNoFixedFlags("AGE-MOEA", config, fixedFlags);
+
+    DoubleAGEMOEA metaAGEMOEA =
+        new DoubleAGEMOEA(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+    metaAGEMOEA.parse(concat(fixedFlags, config.operatorFlags()));
+
+    EvolutionaryAlgorithm<DoubleSolution> agemoea = metaAGEMOEA.build();
+    agemoea.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    return agemoea;
   }
 
   private static AsynchronousMultiThreadedNSGAII<DoubleSolution> buildAsyncNSGAII(

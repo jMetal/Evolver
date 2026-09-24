@@ -1,0 +1,92 @@
+# Parameter space for the meta-level AGE-MOEA used by cli.training's MetaAlgorithmRegistry to tune
+# a base-level algorithm's parameters (flat [0,1]^n encoding). Same restricted catalogue as
+# NSGAIIMetaDouble.yaml (crossover, mutation and selection), plus AGE-MOEA's own environmental
+# selection variant. A meta-optimizer has no use for external archives or alternative
+# solution-creation strategies, so those choices are narrowed to a single value while keeping the
+# top-level parameter names that org.uma.evolver.algorithm.agemoea.BaseAGEMOEA#build() requires
+# to be present.
+#
+# offspringPopulationSize is not a user choice either: MetaAlgorithmRegistry always sets it to the
+# meta population size, so that each generation's offspring is evaluated in parallel as a whole.
+# It is declared as an integer range (rather than a categorical list) only so that any meta
+# population size is accepted.
+
+agemoeaVariant:
+  type: categorical
+  values:
+    agemoea: {}
+    agemoea2: {}
+
+algorithmResult:
+  type: categorical
+  values:
+    population: {}
+
+createInitialSolutions:
+  type: categorical
+  values:
+    default: {}
+
+offspringPopulationSize:
+  type: integer
+  range: [1, 100000]
+
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+            crossoverRepairStrategy:
+              type: categorical
+              values: [random, round, bounds]
+          values:
+            SBX:
+              conditionalParameters:
+                sbxDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+            blxAlpha:
+              conditionalParameters:
+                blxAlphaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            wholeArithmetic: {}
+
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbabilityFactor:
+              type: double
+              range: [0.0, 2.0]
+            mutationRepairStrategy:
+              type: categorical
+              values:
+                random: {}
+                round: {}
+                bounds: {}
+          values:
+            uniform:
+              conditionalParameters:
+                uniformMutationPerturbation:
+                  type: double
+                  range: [0.0, 1.0]
+            polynomial:
+              conditionalParameters:
+                polynomialMutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
