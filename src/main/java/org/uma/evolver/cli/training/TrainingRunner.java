@@ -187,7 +187,9 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
-            .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
+            .metaPopulationSize(metaSearch.metaPopulationSize() == null
+                ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
+                : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
             .baseLevelAlgorithmName(baseLevel.algorithmName())
             .baseLevelPopulationSize(baseLevel.populationSize())
@@ -254,7 +256,9 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
-            .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
+            .metaPopulationSize(metaSearch.metaPopulationSize() == null
+                ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
+                : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
             .baseLevelAlgorithmName(baseLevel.algorithmName())
             .baseLevelPopulationSize(baseLevel.populationSize())
@@ -321,7 +325,9 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
-            .metaPopulationSize(metaSearch.metaPopulationSize() == null ? 0 : metaSearch.metaPopulationSize())
+            .metaPopulationSize(metaSearch.metaPopulationSize() == null
+                ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
+                : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
             .baseLevelAlgorithmName(baseLevel.algorithmName())
             .baseLevelPopulationSize(baseLevel.populationSize())
