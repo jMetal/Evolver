@@ -3,14 +3,14 @@ package org.uma.evolver.example.training.dtlz;
 import java.io.IOException;
 import java.util.List;
 import org.uma.evolver.algorithm.smsemoa.DoubleSMSEMOA;
+import org.uma.evolver.meta.output.ConsolidatedOutputResults;
+import org.uma.evolver.meta.output.MetaOptimizerConfig;
+import org.uma.evolver.meta.output.WriteExecutionDataToFilesObserver;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.ConsolidatedOutputResults;
-import org.uma.evolver.util.MetaOptimizerConfig;
-import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
@@ -23,7 +23,6 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 

@@ -1,4 +1,4 @@
-package org.uma.evolver.util;
+package org.uma.evolver.meta.output;
 
 /**
  * Configuration record for meta-optimization experiment metadata.

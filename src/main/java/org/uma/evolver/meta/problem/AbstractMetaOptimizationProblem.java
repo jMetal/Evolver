@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
-import org.uma.evolver.util.EvaluationsQualityIndicator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;

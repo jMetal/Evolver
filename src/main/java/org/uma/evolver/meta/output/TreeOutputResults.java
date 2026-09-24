@@ -1,4 +1,4 @@
-package org.uma.evolver.meta.encoding.util;
+package org.uma.evolver.meta.output;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +12,6 @@ import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
-import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.archive.Archive;
@@ -24,7 +23,7 @@ import org.uma.jmetal.util.observer.Observer;
 /**
  * Output writer for tree-encoded meta-optimization experiments.
  *
- * <p>Generates the same file structure as {@link org.uma.evolver.util.ConsolidatedOutputResults}:
+ * <p>Generates the same file structure as {@link org.uma.evolver.meta.output.ConsolidatedOutputResults}:
  * <ul>
  *   <li>METADATA.txt: Experiment metadata</li>
  *   <li>INDICATORS.csv: Quality indicator values per solution over time</li>
@@ -108,7 +107,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
 
   /**
    * Appends a wall-clock time record to METADATA.txt, in the same format as {@link
-   * org.uma.evolver.util.ConsolidatedOutputResults#writeWallClockTime}, so downstream analysis
+   * org.uma.evolver.meta.output.ConsolidatedOutputResults#writeWallClockTime}, so downstream analysis
    * tooling (e.g. the training-convergence scripts) can read it regardless of encoding.
    */
   public void writeWallClockTime(long elapsedTimeMillis) {

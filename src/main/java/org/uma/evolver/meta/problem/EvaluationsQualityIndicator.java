@@ -1,4 +1,4 @@
-package org.uma.evolver.util;
+package org.uma.evolver.meta.problem;
 
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 

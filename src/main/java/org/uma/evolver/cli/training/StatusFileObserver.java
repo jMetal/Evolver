@@ -6,7 +6,7 @@ import org.uma.jmetal.util.observer.Observer;
 
 /** Observer that reports meta-optimizer progress to a {@link RunStatusWriter}, following the
  * same {@code Observer<Map<String, Object>>} pattern as
- * {@code org.uma.evolver.util.WriteExecutionDataToFilesObserver}. */
+ * {@code org.uma.evolver.meta.output.WriteExecutionDataToFilesObserver}. */
 final class StatusFileObserver implements Observer<Map<String, Object>> {
 
   private final RunStatusWriter statusWriter;
