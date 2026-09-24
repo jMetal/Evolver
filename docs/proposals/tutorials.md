@@ -53,7 +53,7 @@ Two tracks: **solving problems** (configure and run algorithms, jMetal-runner st
 | Id | Level | Track | Tutorial | Description | Pairs with | Status |
 |---|---|---|---|---|---|---|
 | S1 | Introductory | Both | A tour of Evolver-Studio | Installation, connecting to an Evolver checkout or jar, and the pages of the app. | E4 | Planned |
-| S2 | Introductory | Both | Exploring a parameter space | The Explore page: the tree view of a parameter space and the catalogue of algorithms and meta-optimizers. | E1 | Planned |
+| S2 | Introductory | Both | Exploring a parameter space | The Explore page: the tree view of a parameter space and the catalogue of algorithms and meta-optimizers. | E1 | First version (Tutorials page, `evolver_studio/tutorial_parameter_spaces.py`), in review |
 | S3 | Introductory | Solving | Solving a problem with a configurable algorithm | Pick a problem, an algorithm and its encoding, and a configuration (default or edited in the guided form); run it; inspect the front and the quality indicators; export `VAR`/`FUN`. | E2 | Blocked (see dependencies) |
 | S4 | Introductory | Meta-optimization | Your first guided training | A ready-made scenario (NSGA-II on ZDT4, small budget) with the live front and the resulting files. | E3 | Planned |
 | S5 | Intermediate | Solving | Comparing configurations on a problem | Run several configurations (standard, tuned, custom) with several independent runs each, and compare their indicator distributions and fronts. | E5, E9 | Blocked (see dependencies) |
