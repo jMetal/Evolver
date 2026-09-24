@@ -60,7 +60,6 @@ private static final List<MetaAlgorithmDescriptor> ALGORITHMS = List.of(
         "NSGAIIMetaDouble.yaml", List.of()),
     new MetaAlgorithmDescriptor(
         "SPEA2", Family.EVOLUTIONARY, true, false, null, List.of(
-            new OperatorFlagDescriptor("offspringPopulationSize", "int", false),
             new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
     new MetaAlgorithmDescriptor(
         "AsyncNSGA-II", Family.ASYNCHRONOUS, true, false,
@@ -126,7 +125,6 @@ metaAlgorithms:
     supportsTree: false
     operatorParameterSpaceFile: null
     hardcodedOperatorFlags:
-      - {name: offspringPopulationSize, type: int, required: false}
       - {name: mutationProbabilityFactor, type: double, required: false}
   - name: AsyncNSGA-II
     family: ASYNCHRONOUS

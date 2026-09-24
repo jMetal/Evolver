@@ -202,9 +202,6 @@ Example output
      supportsTree: false
      operatorParameterSpaceFile: null
      hardcodedOperatorFlags:
-     - name: offspringPopulationSize
-       type: int
-       required: false
      - name: mutationProbabilityFactor
        type: double
        required: false
