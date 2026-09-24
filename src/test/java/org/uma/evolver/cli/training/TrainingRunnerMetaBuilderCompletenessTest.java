@@ -44,8 +44,8 @@ class TrainingRunnerMetaBuilderCompletenessTest {
               "MetaSPEA2Builder",
               "wired into TrainingRunner.runFlat() via MetaAlgorithmRegistry, as \"SPEA2\" (same"
                   + " EvolutionaryAlgorithm shape as NSGA-II); only populationSize/"
-                  + "offspringPopulationSize/maxEvaluations/numberOfCores/mutationProbabilityFactor"
-                  + " are configurable, everything else (crossover/mutation/ranking/selection) is"
+                  + "maxEvaluations/numberOfCores/mutationProbabilityFactor are configurable"
+                  + " (offspring size is always the population size), everything else (crossover/mutation/ranking/selection) is"
                   + " hardcoded by the builder itself"),
           Map.entry(
               "MetaSMPSOBuilder",

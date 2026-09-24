@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -120,6 +121,57 @@ class MetaAlgorithmRegistryTest {
       assertThrows(
           JMetalException.class,
           () -> MetaAlgorithmRegistry.resolveFlat("RandomSearch", null, null));
+    }
+
+    @Test
+    @DisplayName(
+        "given NSGA-II with an offspringPopulationSize operator flag, when resolveFlat is called,"
+            + " then it fails because the offspring size is fixed to the population size")
+    void givenNSGAIIWithOffspringFlag_whenResolveFlatCalled_thenItFails() {
+      // Arrange
+      var config =
+          new FlatMetaSearchConfig(
+              "NSGA-II", 1000, 50, 1, List.of("--offspringPopulationSize", "10"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("NSGA-II", null, config));
+      assertTrue(exception.getMessage().contains("offspringPopulationSize"));
+    }
+
+    @Test
+    @DisplayName(
+        "given NSGA-II with an algorithmResult operator flag, when resolveFlat is called, then it"
+            + " fails because the result is always the final population")
+    void givenNSGAIIWithAlgorithmResultFlag_whenResolveFlatCalled_thenItFails() {
+      // Arrange
+      var config =
+          new FlatMetaSearchConfig(
+              "NSGA-II", 1000, 50, 1, List.of("--algorithmResult", "externalArchive"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("NSGA-II", null, config));
+      assertTrue(exception.getMessage().contains("algorithmResult"));
+    }
+
+    @Test
+    @DisplayName(
+        "given SPEA2 with an offspringPopulationSize operator flag, when resolveFlat is called,"
+            + " then it fails listing the allowed fields")
+    void givenSpea2WithOffspringFlag_whenResolveFlatCalled_thenItFails() {
+      // Arrange
+      var config =
+          new FlatMetaSearchConfig("SPEA2", 1000, 50, 1, List.of("--offspringPopulationSize", "10"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("SPEA2", null, config));
+      assertTrue(exception.getMessage().contains("offspringPopulationSize"));
+      assertTrue(exception.getMessage().contains("mutationProbabilityFactor"));
     }
   }
 

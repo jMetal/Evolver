@@ -82,7 +82,6 @@ class TrainingRunnerSmokeIT {
         metaSearch.algorithm(),
         SMOKE_META_MAX_EVALUATIONS,
         SMOKE_META_POPULATION_SIZE,
-        SMOKE_META_POPULATION_SIZE,
         SMOKE_NUMBER_OF_CORES,
         metaSearch.crossoverProbability(),
         metaSearch.mutationProbability(),

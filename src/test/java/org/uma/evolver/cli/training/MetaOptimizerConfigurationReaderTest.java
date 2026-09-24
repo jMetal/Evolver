@@ -149,8 +149,34 @@ class MetaOptimizerConfigurationReaderTest {
       // Assert
       TreeMetaSearchConfig tree = (TreeMetaSearchConfig) config;
       assertEquals("NSGA-II", tree.algorithm());
-      assertEquals(50, tree.metaOffspringSize());
+      assertEquals(50, tree.metaPopulationSize());
       assertEquals(0.9, tree.crossoverProbability());
+    }
+
+    @Test
+    @DisplayName(
+        "given a tree configuration declaring metaOffspringSize, when loaded, then it fails"
+            + " because the offspring size always equals metaPopulationSize")
+    void givenTreeConfigWithOffspringSize_whenLoaded_thenItFails() {
+      // Arrange
+      String yaml =
+          """
+          algorithm: NSGA-II
+          encoding: tree
+          metaMaxEvaluations: 2000
+          metaPopulationSize: 50
+          metaOffspringSize: 10
+          numberOfCores: 8
+          crossoverProbability: 0.9
+          mutationProbability: 1.0
+          mutationDistributionIndex: 20.0
+          """;
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaOptimizerConfigurationReader.loadFromYaml(yaml));
+      assertTrue(exception.getMessage().contains("metaOffspringSize"));
     }
   }
 
