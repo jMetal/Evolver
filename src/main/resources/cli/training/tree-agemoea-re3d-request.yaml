@@ -1,0 +1,9 @@
+# Example TrainingRequest exercising AGE-MOEA as meta-optimizer with the tree encoding, on the
+# same base level as tree-nsgaii-re3d-request.yaml.
+
+baseLevel: Re3dNSGAIITreeBaseLevel.yaml
+metaSearch: MetaAGEMOEATreeConfiguration.yaml
+outputDirectory: results/tree-agemoea/RE3D
+writeFrequency: 100
+statusFrequency: 100
+# frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)

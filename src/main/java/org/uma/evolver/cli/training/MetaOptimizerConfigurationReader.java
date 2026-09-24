@@ -31,11 +31,11 @@ public final class MetaOptimizerConfigurationReader {
   private static final String RESOURCE_DIRECTORY = "metaOptimizerConfigurations/";
 
   /**
-   * Keys consumed directly as {@link FlatMetaSearchConfig} fields; everything else in a
-   * flat-encoding meta-optimizer configuration file is an operator flag (see
-   * {@link FlatMetaSearchConfig#operatorFlags()}).
+   * Keys consumed directly as {@link FlatMetaSearchConfig}/{@link TreeMetaSearchConfig} fields;
+   * everything else in a meta-optimizer configuration file is an operator flag (see {@link
+   * FlatMetaSearchConfig#operatorFlags()}).
    */
-  private static final Set<String> FLAT_SCALAR_KEYS =
+  private static final Set<String> SCALAR_KEYS =
       Set.of("algorithm", "encoding", "metaMaxEvaluations", "metaPopulationSize", "numberOfCores");
 
   private MetaOptimizerConfigurationReader() {}
@@ -65,9 +65,7 @@ public final class MetaOptimizerConfigurationReader {
               intValue(data, label, "metaMaxEvaluations"),
             intValue(data, "metaPopulationSize", MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE),
             intValue(data, label, "numberOfCores"),
-            doubleValue(data, label, "crossoverProbability"),
-            doubleValue(data, label, "mutationProbability"),
-            doubleValue(data, label, "mutationDistributionIndex"));
+            operatorFlags(data));
       }
       default ->
           throw new JMetalException(
@@ -96,7 +94,7 @@ public final class MetaOptimizerConfigurationReader {
   private static List<String> operatorFlags(Map<String, Object> data) {
     List<String> flags = new ArrayList<>();
     for (Map.Entry<String, Object> entry : data.entrySet()) {
-      if (!FLAT_SCALAR_KEYS.contains(entry.getKey())) {
+      if (!SCALAR_KEYS.contains(entry.getKey())) {
         flags.add("--" + entry.getKey());
         flags.add(String.valueOf(entry.getValue()));
       }
@@ -156,11 +154,6 @@ public final class MetaOptimizerConfigurationReader {
 
   private static Integer optionalIntValue(Map<String, Object> data, String key) {
     return (Integer) data.get(key);
-  }
-
-  private static double doubleValue(Map<String, Object> data, String label, String key) {
-    Object value = require(data, label, key);
-    return value instanceof Integer integer ? integer.doubleValue() : (Double) value;
   }
 
   private static String stringValue(Map<String, Object> data, String label, String key) {

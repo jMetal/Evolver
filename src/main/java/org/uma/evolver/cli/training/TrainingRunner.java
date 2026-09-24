@@ -2,12 +2,10 @@ package org.uma.evolver.cli.training;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
-import org.uma.evolver.encoding.operator.SubtreeCrossover;
-import org.uma.evolver.encoding.operator.TreeMutation;
 import org.uma.evolver.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.encoding.util.TreeOutputResults;
 import org.uma.evolver.encoding.util.TreeSolutionGenerator;
@@ -21,28 +19,19 @@ import org.uma.evolver.util.ConsolidatedOutputResults;
 import org.uma.evolver.util.MetaOptimizerConfig;
 import org.uma.evolver.util.WriteExecutionDataToFilesObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
-import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
-import org.uma.jmetal.component.catalogue.common.solutionscreation.impl.RandomSolutionsCreation;
-import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
-import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
-import org.uma.jmetal.component.catalogue.ea.selection.impl.NaryTournamentSelection;
-import org.uma.jmetal.component.catalogue.ea.variation.impl.CrossoverAndMutationVariation;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.comparator.MultiComparator;
-import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
-import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 
 /**
- * Runs a single NSGA-II-tunes-&lt;base-level-algorithm&gt; meta-optimization training job
+ * Runs a single &lt;meta-optimizer&gt;-tunes-&lt;base-level-algorithm&gt; meta-optimization training job
  * described by a {@link TrainingRequest}, reusing the same builder/observer/output pipeline as
  * the {@code org.uma.evolver.example.training} reference examples — one pipeline per meta-level
  * encoding (see {@link FlatMetaSearchConfig}, {@link TreeMetaSearchConfig}).
@@ -467,39 +456,17 @@ public class TrainingRunner {
             baseLevel.numberOfIndependentRuns(),
             treeSolutionGenerator);
 
-    var initialSolutionsCreation = new RandomSolutionsCreation<>(metaProblem, metaSearch.metaPopulationSize());
-    var evaluation =
-        new MultiThreadedEvaluation<DerivationTreeSolution>(metaSearch.numberOfCores(), metaProblem);
-    var termination = new TerminationByEvaluations(metaSearch.metaMaxEvaluations());
-
-    var crossover = new SubtreeCrossover(metaSearch.crossoverProbability());
-    var mutation =
-        new TreeMutation(
-            metaSearch.mutationProbability(), metaSearch.mutationDistributionIndex(), treeSolutionGenerator);
-    var variation = new CrossoverAndMutationVariation<>(metaSearch.metaPopulationSize(), crossover, mutation);
-
-    var ranking = new FastNonDominatedSortRanking<DerivationTreeSolution>();
-    var densityEstimator = new CrowdingDistanceDensityEstimator<DerivationTreeSolution>();
-    var replacement = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator);
-
-    var rankingAndCrowdingComparator =
-        new MultiComparator<>(
-            List.of(
-                Comparator.comparing(ranking::getRank),
-                Comparator.comparing(densityEstimator::value).reversed()));
-    var selection =
-        new NaryTournamentSelection<DerivationTreeSolution>(
-            2, variation.matingPoolSize(), rankingAndCrowdingComparator);
-
-    EvolutionaryAlgorithm<DerivationTreeSolution> nsgaii =
-        new EvolutionaryAlgorithm<>(
-            "TreeNSGAII", initialSolutionsCreation, evaluation, termination, selection, variation, replacement);
+    TreeEngine engine = resolveTreeEngine(metaSearch, metaProblem);
+    boolean randomSearch =
+        MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
+            == MetaAlgorithmRegistry.Family.RANDOM_SEARCH;
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
-            .metaOptimizerName("TreeNSGA-II")
+            .metaOptimizerName("Tree" + metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
-            .metaPopulationSize(metaSearch.metaPopulationSize())
+            // RandomSearch has no population concept
+            .metaPopulationSize(randomSearch ? 0 : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
             .baseLevelAlgorithmName(baseLevel.algorithmName())
             .baseLevelPopulationSize(baseLevel.populationSize())
@@ -515,21 +482,51 @@ public class TrainingRunner {
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    nsgaii.observable().register(evaluationObserver);
-    nsgaii.observable().register(outputResults);
-    nsgaii.observable().register(statusFileObserver);
+    engine.observable().register(evaluationObserver);
+    engine.observable().register(outputResults);
+    engine.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
-        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+        engine.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
-    nsgaii.run();
+    engine.run().run();
 
-    outputResults.writeFinalResults(nsgaii.result(), metaSearch.metaMaxEvaluations());
+    outputResults.writeFinalResults(engine.result().get(), metaSearch.metaMaxEvaluations());
 
     statusWriter.write(
         RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
+  }
+
+  /**
+   * The parts of a tree-encoding meta-optimizer {@link #runTree} needs. The registered engines
+   * ({@link EvolutionaryAlgorithm}, {@link RandomSearch}) share no common supertype exposing
+   * {@code run()}/{@code result()}/{@code observable()}, so they are adapted to this record.
+   */
+  private record TreeEngine(
+      Runnable run,
+      Supplier<List<DerivationTreeSolution>> result,
+      Observable<Map<String, Object>> observable) {}
+
+  private static TreeEngine resolveTreeEngine(
+      TreeMetaSearchConfig metaSearch, TreeMetaOptimizationProblem<?> metaProblem) {
+    return switch (MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())) {
+      case EVOLUTIONARY -> {
+        EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
+            MetaAlgorithmRegistry.resolveTree(metaSearch.algorithm(), metaProblem, metaSearch);
+        yield new TreeEngine(algorithm::run, algorithm::result, algorithm.observable());
+      }
+      case RANDOM_SEARCH -> {
+        RandomSearch<DerivationTreeSolution> algorithm =
+            MetaAlgorithmRegistry.resolveTreeRandomSearch(
+                metaSearch.algorithm(), metaProblem, metaSearch);
+        yield new TreeEngine(algorithm::run, algorithm::result, algorithm.observable());
+      }
+      default ->
+          throw new JMetalException(
+              "Meta-optimizer algorithm " + metaSearch.algorithm() + " does not support tree");
+    };
   }
 
   /**

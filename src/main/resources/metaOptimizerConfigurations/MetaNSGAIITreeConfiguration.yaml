@@ -1,4 +1,8 @@
 # Meta configuration of NSGA-II with tree (derivation tree) encoding
+#
+# The operator fields below are parsed against NSGAIIMetaTree.yaml. Crossover (subtree), mutation
+# (tree), the offspring population size (always metaPopulationSize) and the result (always the
+# final population) are fixed by MetaAlgorithmRegistry.
 
 algorithm: NSGA-II
 encoding: tree
@@ -10,3 +14,5 @@ numberOfCores: 8
 crossoverProbability: 0.9
 mutationProbability: 1.0
 mutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

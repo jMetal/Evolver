@@ -4,18 +4,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
+import org.uma.evolver.algorithm.agemoea.TreeAGEMOEA;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.nsgaii.TreeNSGAII;
+import org.uma.evolver.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.meta.builder.MetaRandomSearchBuilder;
 import org.uma.evolver.meta.builder.MetaSMPSOBuilder;
 import org.uma.evolver.meta.builder.MetaSPEA2Builder;
 import org.uma.evolver.meta.builder.RandomSearch;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
+import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.TreeParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
@@ -25,8 +30,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Builds the meta-optimizer for the flat [0,1]^n encoding, from an algorithm name and a
- * {@link FlatMetaSearchConfig}.
+ * Builds the meta-optimizer from an algorithm name and a {@link FlatMetaSearchConfig} (flat
+ * [0,1]^n encoding) or a {@link TreeMetaSearchConfig} (derivation tree encoding).
  *
  * <p>The meta-optimizer's own operators are configured the same way a base-level algorithm is: a
  * {@link ParameterSpace} declares what is configurable, and a fixed point within it is selected by
@@ -76,6 +81,13 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       population, no operators, {@link MetaRandomSearchBuilder} exposes only
  *       evaluations/cores, so {@code operatorFlags} must be empty, same as SMPSO).
  * </ul>
+ *
+ * <p>For the tree encoding, {@link #resolveTree} builds {@code "NSGA-II"} and {@code "AGE-MOEA"}
+ * on {@link TreeNSGAII}/{@link TreeAGEMOEA} ({@code NSGAIIMetaTree.yaml}/{@code
+ * AGEMOEAMetaTree.yaml}, with subtree crossover and tree mutation), and {@link
+ * #resolveTreeRandomSearch} builds {@code "RandomSearch"}. The remaining engines are flat-only:
+ * {@code "SMPSO"} needs a {@code DoubleProblem}, and {@code "SPEA2"}/{@code "AsyncNSGA-II"} are
+ * built with {@code DoubleSolution} operators.
  */
 final class MetaAlgorithmRegistry {
 
@@ -116,7 +128,7 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "NSGA-II", Family.EVOLUTIONARY, true, "NSGAIIMetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
-              "AGE-MOEA", Family.EVOLUTIONARY, false, "AGEMOEAMetaDouble.yaml", List.of()),
+              "AGE-MOEA", Family.EVOLUTIONARY, true, "AGEMOEAMetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
               "SPEA2",
               Family.EVOLUTIONARY,
@@ -132,9 +144,12 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "SMPSO", Family.PARTICLE_SWARM, false, null, List.of()),
           new MetaAlgorithmDescriptor(
-              "RandomSearch", Family.RANDOM_SEARCH, false, null, List.of()));
+              "RandomSearch", Family.RANDOM_SEARCH, true, null, List.of()));
 
-  /** Registered algorithms, for {@link DescribeMain}. All support the flat encoding. */
+  /**
+   * Registered algorithms, for {@link DescribeMain}. All support the flat encoding; {@code
+   * operatorParameterSpaceFile} names the flat one (the tree ones are {@code *MetaTree.yaml}).
+   */
   static List<MetaAlgorithmDescriptor> registeredAlgorithms() {
     return ALGORITHMS;
   }
@@ -144,6 +159,12 @@ final class MetaAlgorithmRegistry {
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String AGEMOEA_PARAMETER_SPACE_FILE = "AGEMOEAMetaDouble.yaml";
+
+  /** Hardcoded, not user-facing — see class javadoc. */
+  private static final String NSGAII_TREE_PARAMETER_SPACE_FILE = "NSGAIIMetaTree.yaml";
+
+  /** Hardcoded, not user-facing — see class javadoc. */
+  private static final String AGEMOEA_TREE_PARAMETER_SPACE_FILE = "AGEMOEAMetaTree.yaml";
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
@@ -172,6 +193,15 @@ final class MetaAlgorithmRegistry {
       "--variation", "crossoverAndMutationVariation",
       "--offspringPopulationSize", String.valueOf(populationSize)
     };
+  }
+
+  /**
+   * {@link #fixedFlags(int)} plus the tree encoding's only crossover ({@code subtree}) and
+   * mutation ({@code tree}): there is nothing for a user to choose between.
+   */
+  private static String[] fixedTreeFlags(int populationSize) {
+    return concat(
+        fixedFlags(populationSize), List.of("--crossover", "subtree", "--mutation", "tree"));
   }
 
   private MetaAlgorithmRegistry() {}
@@ -247,7 +277,7 @@ final class MetaAlgorithmRegistry {
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
     String[] fixedFlags = fixedFlags(populationSize);
-    requireNoFixedFlags("NSGA-II", config, fixedFlags);
+    requireNoFixedFlags("NSGA-II", config.operatorFlags(), fixedFlags);
 
     DoubleNSGAII metaNSGAII =
         new DoubleNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
@@ -266,7 +296,7 @@ final class MetaAlgorithmRegistry {
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
     String[] fixedFlags = fixedFlags(populationSize);
-    requireNoFixedFlags("AGE-MOEA", config, fixedFlags);
+    requireNoFixedFlags("AGE-MOEA", config.operatorFlags(), fixedFlags);
 
     DoubleAGEMOEA metaAGEMOEA =
         new DoubleAGEMOEA(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
@@ -305,7 +335,7 @@ final class MetaAlgorithmRegistry {
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
-    requireOnlyFlags("SPEA2", config, List.of("--mutationProbabilityFactor"));
+    requireOnlyFlags("SPEA2", config.operatorFlags(), List.of("--mutationProbabilityFactor"));
 
     var builder =
         new MetaSPEA2Builder(problem)
@@ -319,7 +349,7 @@ final class MetaAlgorithmRegistry {
 
   private static ParticleSwarmOptimizationAlgorithm buildSMPSO(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
-    requireNoOperatorFlags("SMPSO", config);
+    requireNoOperatorFlags("SMPSO", config.operatorFlags());
     int swarmSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
@@ -332,19 +362,19 @@ final class MetaAlgorithmRegistry {
 
   private static RandomSearch<DoubleSolution> buildRandomSearch(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
-    requireNoOperatorFlags("RandomSearch", config);
+    requireNoOperatorFlags("RandomSearch", config.operatorFlags());
     return new MetaRandomSearchBuilder<>(problem)
         .setMaxEvaluations(config.metaMaxEvaluations())
         .setNumberOfCores(config.numberOfCores())
         .build();
   }
 
-  private static void requireNoOperatorFlags(String algorithmName, FlatMetaSearchConfig config) {
-    if (!config.operatorFlags().isEmpty()) {
+  private static void requireNoOperatorFlags(String algorithmName, List<String> operatorFlags) {
+    if (!operatorFlags.isEmpty()) {
       throw new JMetalException(
           algorithmName
               + " exposes no operator catalogue; unexpected meta-optimizer configuration fields: "
-              + config.operatorFlags());
+              + operatorFlags);
     }
   }
 
@@ -353,23 +383,23 @@ final class MetaAlgorithmRegistry {
    * of {@code fixedFlags} would be silently ignored — fail instead, naming the offending flag.
    */
   private static void requireNoFixedFlags(
-      String algorithmName, FlatMetaSearchConfig config, String[] fixedFlags) {
+      String algorithmName, List<String> operatorFlags, String[] fixedFlags) {
     for (int i = 0; i < fixedFlags.length; i += 2) {
-      if (config.operatorFlags().contains(fixedFlags[i])) {
+      if (operatorFlags.contains(fixedFlags[i])) {
         throw new JMetalException(
             algorithmName
                 + " meta-optimizer: "
                 + fixedFlags[i].substring(2)
                 + " is fixed by the registry and cannot be set in a meta-optimizer configuration"
-                + " (the offspring population size always equals metaPopulationSize, and the"
-                + " result is always the final population)");
+                + " (the offspring population size always equals metaPopulationSize, the"
+                + " result is always the final population, and the tree encoding has a single"
+                + " crossover and mutation)");
       }
     }
   }
 
   private static void requireOnlyFlags(
-      String algorithmName, FlatMetaSearchConfig config, List<String> allowedFlags) {
-    List<String> flags = config.operatorFlags();
+      String algorithmName, List<String> flags, List<String> allowedFlags) {
     for (int i = 0; i < flags.size(); i += 2) {
       if (!allowedFlags.contains(flags.get(i))) {
         throw new JMetalException(
@@ -392,17 +422,70 @@ final class MetaAlgorithmRegistry {
   }
 
   /**
-   * The tree encoding has no pluggable meta-optimizer builders yet (its pipeline is assembled
-   * directly in {@link TrainingRunner#runTree}) — this only validates the request's declared
-   * algorithm against the sole one that pipeline implements.
+   * Fails unless {@code algorithmName} is registered with {@code supportsTree}, listing the
+   * algorithms that are.
    */
   static void validateTreeAlgorithm(String algorithmName) {
-    if (!"NSGA-II".equals(algorithmName)) {
+    List<String> treeAlgorithms =
+        ALGORITHMS.stream()
+            .filter(MetaAlgorithmDescriptor::supportsTree)
+            .map(MetaAlgorithmDescriptor::name)
+            .toList();
+    if (!treeAlgorithms.contains(algorithmName)) {
       throw new JMetalException(
           "Unknown meta-optimizer algorithm: "
               + algorithmName
-              + " for encoding tree. Supported: NSGA-II");
+              + " for encoding tree. Supported: "
+              + String.join(", ", treeAlgorithms));
     }
+  }
+
+  static EvolutionaryAlgorithm<DerivationTreeSolution> resolveTree(
+      String algorithmName, TreeMetaOptimizationProblem<?> problem, TreeMetaSearchConfig config) {
+    validateTreeAlgorithm(algorithmName);
+    if (familyOf(algorithmName) != Family.EVOLUTIONARY) {
+      throw new JMetalException(
+          "Meta-optimizer algorithm " + algorithmName + " is not an EvolutionaryAlgorithm");
+    }
+
+    boolean agemoea = "AGE-MOEA".equals(algorithmName);
+    ParameterSpace parameterSpace =
+        new YAMLParameterSpace(
+            agemoea ? AGEMOEA_TREE_PARAMETER_SPACE_FILE : NSGAII_TREE_PARAMETER_SPACE_FILE,
+            new TreeParameterFactory());
+    int populationSize = config.metaPopulationSize();
+    String[] fixedFlags = fixedTreeFlags(populationSize);
+    requireNoFixedFlags(algorithmName, config.operatorFlags(), fixedFlags);
+
+    String[] flags = concat(fixedFlags, config.operatorFlags());
+    EvolutionaryAlgorithm<DerivationTreeSolution> algorithm;
+    if (agemoea) {
+      var treeAGEMOEA =
+          new TreeAGEMOEA(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+      treeAGEMOEA.parse(flags);
+      algorithm = treeAGEMOEA.build();
+    } else {
+      var treeNSGAII =
+          new TreeNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+      treeNSGAII.parse(flags);
+      algorithm = treeNSGAII.build();
+    }
+    algorithm.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    return algorithm;
+  }
+
+  static RandomSearch<DerivationTreeSolution> resolveTreeRandomSearch(
+      String algorithmName, TreeMetaOptimizationProblem<?> problem, TreeMetaSearchConfig config) {
+    validateTreeAlgorithm(algorithmName);
+    if (familyOf(algorithmName) != Family.RANDOM_SEARCH) {
+      throw new JMetalException(
+          "Meta-optimizer algorithm " + algorithmName + " is not a RandomSearch");
+    }
+    requireNoOperatorFlags(algorithmName, config.operatorFlags());
+    return new MetaRandomSearchBuilder<>(problem)
+        .setMaxEvaluations(config.metaMaxEvaluations())
+        .setNumberOfCores(config.numberOfCores())
+        .build();
   }
 
   private static String[] concat(String[] fixedFlags, List<String> requestFlags) {

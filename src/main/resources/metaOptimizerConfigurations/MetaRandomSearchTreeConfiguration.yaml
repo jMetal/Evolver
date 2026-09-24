@@ -1,0 +1,11 @@
+# Meta configuration of Random Search (tree encoding)
+#
+# RandomSearch samples random derivation trees of the base-level grammar; it has no population
+# concept and exposes no operator catalogue — no operator flags are allowed here beyond the
+# scalars below.
+
+algorithm: RandomSearch
+encoding: tree
+
+metaMaxEvaluations: 2000
+numberOfCores: 8

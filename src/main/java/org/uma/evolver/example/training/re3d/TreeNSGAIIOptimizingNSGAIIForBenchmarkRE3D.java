@@ -82,6 +82,8 @@ public class TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
       crossoverProbability: 0.9
       mutationProbability: 1.0
       mutationDistributionIndex: 20.0
+      selection: tournament
+      selectionTournamentSize: 2
       """;
 
   private static final String OUTPUT_DIRECTORY = "results/tree-nsgaii/RE3D";
