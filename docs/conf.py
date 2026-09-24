@@ -6,7 +6,7 @@ copyright = '2025, Antonio J. Nebro'
 author = 'Antonio J. Nebro'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0'
+release = '2.1'
 
 # -- General configuration ---------------------------------------------------
 

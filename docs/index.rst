@@ -7,7 +7,7 @@ Evolver Documentation
 Evolver is a software tool designed for the automatic configuration of multi-objective metaheuristics. 
 Its core approach is meta-optimization, where the process of tuning the parameters of a base-level metaheuristic is framed as a multi-objective problem which is solvable by a multi-objective optimizer (i.e., the meta-optimization algorithm). In this problem, the variable encoding represents a particular configuration of the base-level algorithm and  evaluating a solution involves a run of the metaheuristic under that configuration; the resulting solution front is evaluated against a combination of quality indicators, which are the objective functions of the resulting multi-objective problem.
 
-The current stable version is 2.0 (https://github.com/jMetal/Evolver). The working version in GitHub is 2.1-SNAPSHOT.
+The current stable version is 2.1 (https://github.com/jMetal/Evolver). The working version in GitHub is 2.2-SNAPSHOT.
 
 Evolver 2.0 is a full re-implementation of the original Evolver framework, which is described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
 

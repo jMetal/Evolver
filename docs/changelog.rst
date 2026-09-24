@@ -5,8 +5,8 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
-2.1-SNAPSHOT
-------------
+2.1 (2026-09-24)
+----------------
 
 Added
 ~~~~~
