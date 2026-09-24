@@ -84,7 +84,7 @@ The algorithm catalogues cover *which names* are valid, but not *the shape* of t
 
 Unlike the algorithm registries (`switch` over literals), these four types are **Java records** — their shape can be obtained via reflection (`Class.getRecordComponents()`, which gives each field's name and type) instead of writing it down by hand a second time. This avoids creating a sixth place to keep in sync: if a record gains/loses/renames a field, the manifest reflects it automatically without touching `DescribeMain`.
 
-The one thing plain reflection does not give is optionality and default values (`writeFrequency`/`statusFrequency` = 100, `frontPlotFrequency` absent = no plot, `metaPopulationSize` optional on `FlatMetaSearchConfig`) — that is kept as a small, explicit table next to the corresponding record (e.g. a lightweight annotation or a `Map<String, Object>` of defaults in the loader itself), far more bounded than describing every field by hand:
+The one thing plain reflection does not give is optionality and default values (`writeFrequency`/`statusFrequency` = 100, `frontPlotFrequency` absent = no plot, `metaPopulationSize` optional, default 50, on both meta-search records) — that is kept as a small, explicit table next to the corresponding record (e.g. a lightweight annotation or a `Map<String, Object>` of defaults in the loader itself), far more bounded than describing every field by hand:
 
 ```java
 record FieldDescriptor(String name, String javaType, boolean required, String defaultValue) {}
@@ -98,7 +98,7 @@ static List<FieldDescriptor> describe(Class<? extends Record> recordType, Map<St
 }
 ```
 
-`DescribeMain` would apply this to `TrainingRequest`, `BaseLevelConfig`, `FlatMetaSearchConfig` and `TreeMetaSearchConfig`, with the already-known defaults table (`writeFrequency=100`, `statusFrequency=100`, `frontPlotFrequency` with no default, `metaPopulationSize` with no default on `FlatMetaSearchConfig`).
+`DescribeMain` would apply this to `TrainingRequest`, `BaseLevelConfig`, `FlatMetaSearchConfig` and `TreeMetaSearchConfig`, with the already-known defaults table (`writeFrequency=100`, `statusFrequency=100`, `frontPlotFrequency` with no default, `metaPopulationSize` = 50 on both `FlatMetaSearchConfig` and `TreeMetaSearchConfig`).
 
 ### `DescribeMain`
 
@@ -159,7 +159,7 @@ schemas:
   metaSearchFlat:
     - {name: algorithm, javaType: String, required: true, defaultValue: null}
     - {name: metaMaxEvaluations, javaType: int, required: true, defaultValue: null}
-    - {name: metaPopulationSize, javaType: Integer, required: false, defaultValue: null}
+    - {name: metaPopulationSize, javaType: Integer, required: false, defaultValue: "50"}
     - {name: numberOfCores, javaType: int, required: true, defaultValue: null}
     - {name: operatorFlags, javaType: List, required: false, defaultValue: null}
   metaSearchTree:
