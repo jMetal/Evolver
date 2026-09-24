@@ -246,6 +246,10 @@ If you use Evolver in your research, please cite:
 
 ## Changelog
 
+### v2.2-SNAPSHOT
+
+- No changes yet.
+
 ### v2.1 (2026-09-24)
 
 - Add derivation tree encoding (`org.uma.evolver.meta.encoding`): `DerivationTreeSolution`, `TreeNode`,
