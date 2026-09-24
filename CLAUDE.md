@@ -31,7 +31,7 @@ mvn integration-test
 mvn verify
 ```
 
-Requirements: Java 21+, Maven 3.6+.
+Requirements: Java 21+ (JDK 21 recommended, as in CI; SpotBugs in `mvn verify` fails with JDK 26), Maven 3.6+.
 
 ## Architecture
 

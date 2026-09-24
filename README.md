@@ -87,8 +87,13 @@ the spaces change).
 
 ## Requirements
 
-- Java 21+
+- Java 21+ (JDK 21 recommended)
 - Maven 3.6+
+
+JDK 21, an LTS release, is the version used by the CI workflows. Newer JDKs can compile the
+project, but some build plugins may not support them yet: SpotBugs, run by `mvn verify`, fails with
+JDK 26, for instance. If several JDKs are installed, make `JAVA_HOME` point to JDK 21 (check it
+with `mvn -v`).
 
 The core framework needs nothing else. Python is optional, required only to generate analysis
 figures and HTML validation reports — see [Analysis and reports](#analysis-and-reports-optional).
