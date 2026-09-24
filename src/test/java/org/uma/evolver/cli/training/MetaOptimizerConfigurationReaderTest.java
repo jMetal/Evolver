@@ -166,7 +166,7 @@ class MetaOptimizerConfigurationReaderTest {
       TreeMetaSearchConfig tree = (TreeMetaSearchConfig) config;
       assertEquals("NSGA-II", tree.algorithm());
       assertEquals(50, tree.metaPopulationSize());
-      assertEquals(0.9, tree.crossoverProbability());
+      assertTrue(tree.operatorFlags().containsAll(java.util.List.of("--crossoverProbability", "0.9")));
     }
 
     @Test

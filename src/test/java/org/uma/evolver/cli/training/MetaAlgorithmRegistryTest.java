@@ -251,6 +251,76 @@ class MetaAlgorithmRegistryTest {
   }
 
   @Nested
+  @DisplayName("When resolving a tree-encoding meta-optimizer algorithm: ")
+  class ResolveTreeTestCases {
+
+    @Test
+    @DisplayName(
+        "given NSGA-II with an offspringPopulationSize operator flag, when resolveTree is called,"
+            + " then it fails because the offspring size is fixed to the population size")
+    void givenNSGAIIWithOffspringFlag_whenResolveTreeCalled_thenItFails() {
+      // Arrange
+      var config =
+          new TreeMetaSearchConfig(
+              "NSGA-II", 1000, 50, 1, List.of("--offspringPopulationSize", "10"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveTree("NSGA-II", null, config));
+      assertTrue(exception.getMessage().contains("offspringPopulationSize"));
+    }
+
+    @Test
+    @DisplayName(
+        "given AGE-MOEA with a crossover operator flag, when resolveTree is called, then it fails"
+            + " because the tree encoding has a single crossover")
+    void givenAgemoeaWithCrossoverFlag_whenResolveTreeCalled_thenItFails() {
+      // Arrange
+      var config = new TreeMetaSearchConfig("AGE-MOEA", 1000, 50, 1, List.of("--crossover", "SBX"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class,
+              () -> MetaAlgorithmRegistry.resolveTree("AGE-MOEA", null, config));
+      assertTrue(exception.getMessage().contains("crossover"));
+    }
+
+    @Test
+    @DisplayName(
+        "given SMPSO, when resolveTree is called, then it fails listing the tree-supporting"
+            + " algorithms")
+    void givenSmpso_whenResolveTreeCalled_thenItFails() {
+      // Arrange
+      var config = new TreeMetaSearchConfig("SMPSO", 1000, 50, 1, List.of());
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveTree("SMPSO", null, config));
+      assertTrue(exception.getMessage().contains("AGE-MOEA"));
+      assertTrue(exception.getMessage().contains("RandomSearch"));
+    }
+
+    @Test
+    @DisplayName(
+        "given RandomSearch with operator flags, when resolveTreeRandomSearch is called, then it"
+            + " fails because RandomSearch exposes no operator catalogue")
+    void givenRandomSearchWithFlags_whenResolveTreeRandomSearchCalled_thenItFails() {
+      // Arrange
+      var config =
+          new TreeMetaSearchConfig(
+              "RandomSearch", 1000, 50, 1, List.of("--mutationProbability", "0.5"));
+
+      // Act & Assert
+      assertThrows(
+          JMetalException.class,
+          () -> MetaAlgorithmRegistry.resolveTreeRandomSearch("RandomSearch", null, config));
+    }
+  }
+
+  @Nested
   @DisplayName("When validating a tree-encoding meta-optimizer algorithm: ")
   class ValidateTreeTestCases {
 
@@ -262,13 +332,37 @@ class MetaAlgorithmRegistryTest {
     }
 
     @Test
+    @DisplayName("given AGE-MOEA, when validateTreeAlgorithm is called, then it does not fail")
+    void givenAgemoea_whenValidateTreeAlgorithmCalled_thenItDoesNotFail() {
+      // Arrange & Act & Assert
+      assertDoesNotThrow(() -> MetaAlgorithmRegistry.validateTreeAlgorithm("AGE-MOEA"));
+    }
+
+    @Test
+    @DisplayName("given RandomSearch, when validateTreeAlgorithm is called, then it does not fail")
+    void givenRandomSearch_whenValidateTreeAlgorithmCalled_thenItDoesNotFail() {
+      // Arrange & Act & Assert
+      assertDoesNotThrow(() -> MetaAlgorithmRegistry.validateTreeAlgorithm("RandomSearch"));
+    }
+
+    @Test
     @DisplayName(
-        "given AGE-MOEA, when validateTreeAlgorithm is called, then it fails because it only"
-            + " supports the flat encoding")
-    void givenAgemoea_whenValidateTreeAlgorithmCalled_thenItFails() {
+        "given SMPSO, when validateTreeAlgorithm is called, then it fails because it requires a"
+            + " DoubleProblem")
+    void givenSmpso_whenValidateTreeAlgorithmCalled_thenItFails() {
       // Arrange & Act & Assert
       assertThrows(
-          JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("AGE-MOEA"));
+          JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("SMPSO"));
+    }
+
+    @Test
+    @DisplayName(
+        "given SPEA2, when validateTreeAlgorithm is called, then it fails because it is built with"
+            + " DoubleSolution operators")
+    void givenSpea2_whenValidateTreeAlgorithmCalled_thenItFails() {
+      // Arrange & Act & Assert
+      assertThrows(
+          JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("SPEA2"));
     }
 
     @Test

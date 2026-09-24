@@ -83,9 +83,7 @@ class TrainingRunnerSmokeIT {
         SMOKE_META_MAX_EVALUATIONS,
         SMOKE_META_POPULATION_SIZE,
         SMOKE_NUMBER_OF_CORES,
-        metaSearch.crossoverProbability(),
-        metaSearch.mutationProbability(),
-        metaSearch.mutationDistributionIndex());
+        metaSearch.operatorFlags());
   }
 
   private static void assertRunFinished(TrainingRequest request, Path tempDir) throws IOException {
@@ -213,6 +211,46 @@ class TrainingRunnerSmokeIT {
       BaseLevelConfig baseLevel = smokeBaseLevel("TwoBiObjectiveTSPPermutationBaseLevel.yaml");
       FlatMetaSearchConfig metaSearch =
           smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given AGE-MOEA (tree encoding)")
+  class AgemoeaTree {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      TreeMetaSearchConfig metaSearch =
+          smokeTreeMetaSearch("MetaAGEMOEATreeConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given RandomSearch (tree encoding)")
+  class RandomSearchTree {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      TreeMetaSearchConfig metaSearch =
+          smokeTreeMetaSearch("MetaRandomSearchTreeConfiguration.yaml");
       TrainingRequest request =
           new TrainingRequest(
               baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
