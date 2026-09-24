@@ -144,6 +144,10 @@ as-is:
      - NSGA-II tuning MOEA/D, a base algorithm with its own extra config (flat encoding)
    * - ``tree-nsgaii-re3d-request.yaml``
      - NSGA-II tuning NSGA-II with the derivation-tree encoding
+   * - ``tree-agemoea-re3d-request.yaml``
+     - AGE-MOEA as the meta-optimizer engine with the derivation-tree encoding
+   * - ``tree-randomsearch-re3d-request.yaml``
+     - RandomSearch as the meta-optimizer engine with the derivation-tree encoding
    * - ``async-nsgaii-zdt4-request.yaml``
      - AsyncNSGA-II as the meta-optimizer engine (flat encoding)
    * - ``async-nsgaii-dtlz3d-request.yaml``
@@ -201,7 +205,7 @@ Example output
    - name: AGE-MOEA
      family: EVOLUTIONARY
      supportsFlat: true
-     supportsTree: false
+     supportsTree: true
      operatorParameterSpaceFile: AGEMOEAMetaDouble.yaml
      hardcodedOperatorFlags: []
    - name: SPEA2
@@ -228,7 +232,7 @@ Example output
    - name: RandomSearch
      family: RANDOM_SEARCH
      supportsFlat: true
-     supportsTree: false
+     supportsTree: true
      operatorParameterSpaceFile: null
      hardcodedOperatorFlags: []
    problems:
@@ -267,8 +271,9 @@ Manifest sections
        ``weightVectorFilesDirectory``)
    * - ``metaAlgorithms``
      - Every meta-optimizer algorithm name accepted by ``metaSearch.algorithm``, its family
-       (``EVOLUTIONARY``, ``ASYNCHRONOUS``, ``PARTICLE_SWARM``), whether it supports the tree
-       encoding, and its operator configuration (a ``ParameterSpace`` YAML file, or a fixed list
+       (``EVOLUTIONARY``, ``ASYNCHRONOUS``, ``PARTICLE_SWARM``, ``RANDOM_SEARCH``), whether it
+       supports the tree encoding, and its flat-encoding operator configuration (a
+       ``ParameterSpace`` YAML file, or a fixed list
        of hardcoded operator flags for algorithms with no parameter space of their own)
    * - ``problems``
      - Every training problem name ``ProblemRegistry`` resolves, usable in
