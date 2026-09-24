@@ -63,7 +63,7 @@ public final class MetaOptimizerConfigurationReader {
         yield new TreeMetaSearchConfig(
               stringValue(data, label, "algorithm"),
               intValue(data, label, "metaMaxEvaluations"),
-            intValue(data, label, "metaPopulationSize"),
+            intValue(data, "metaPopulationSize", MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE),
             intValue(data, label, "numberOfCores"),
             doubleValue(data, label, "crossoverProbability"),
             doubleValue(data, label, "mutationProbability"),
@@ -147,6 +147,11 @@ public final class MetaOptimizerConfigurationReader {
 
   private static int intValue(Map<String, Object> data, String label, String key) {
     return (Integer) require(data, label, key);
+  }
+
+  private static int intValue(Map<String, Object> data, String key, int defaultValue) {
+    Integer value = optionalIntValue(data, key);
+    return value == null ? defaultValue : value;
   }
 
   private static Integer optionalIntValue(Map<String, Object> data, String key) {

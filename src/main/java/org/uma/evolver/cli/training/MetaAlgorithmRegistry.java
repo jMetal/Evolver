@@ -140,7 +140,11 @@ final class MetaAlgorithmRegistry {
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
 
-  private static final int DEFAULT_POPULATION_SIZE = 50;
+  /**
+   * Meta population size used when a meta-optimizer configuration omits {@code
+   * metaPopulationSize}, for both encodings (also the default of every {@code meta.builder}).
+   */
+  static final int DEFAULT_POPULATION_SIZE = 50;
 
   /**
    * Flags fixed by the registry, not by the request, for a meta-optimizer built on a

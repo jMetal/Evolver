@@ -7,8 +7,8 @@ import java.util.List;
  * {@link MetaAlgorithmRegistry}.
  *
  * @param algorithm the meta-optimizer algorithm name (e.g. {@code "NSGA-II"})
- * @param metaPopulationSize nullable; when null, {@link MetaAlgorithmRegistry}'s own default is
- *     used
+ * @param metaPopulationSize nullable; when null, {@link MetaAlgorithmRegistry}'s own default (50)
+ *     is used
  * @param operatorFlags the meta-optimizer's own operator configuration (crossover, mutation,
  *     selection, ...), as {@code ["--flag", "value", ...]} pairs taken directly from the
  *     meta-optimizer configuration file (every key besides {@code algorithm}, {@code encoding},

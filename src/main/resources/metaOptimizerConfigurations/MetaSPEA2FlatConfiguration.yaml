@@ -4,13 +4,14 @@
 # ranking, KNN density estimator, tournament selection) — only populationSize/maxEvaluations/
 # numberOfCores below and, optionally, mutationProbabilityFactor are configurable. The offspring
 # population size always equals metaPopulationSize. Same recipe as
-# org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3.
+# org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3, except for the meta
+# population size (the default 50 here, 100 in that example).
 
 algorithm: SPEA2
 encoding: flat
 
 metaMaxEvaluations: 2000
-metaPopulationSize: 100
+metaPopulationSize: 50
 numberOfCores: 8
 
 # mutationProbabilityFactor: 1.0   # optional; defaults to 1.0

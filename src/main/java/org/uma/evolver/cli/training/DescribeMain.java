@@ -114,8 +114,10 @@ public final class DescribeMain {
     Map<String, String> baseLevelDefaults = new HashMap<>();
     baseLevelDefaults.put("extraConfig", null); // optional; only required by algorithms that need it
 
-    Map<String, String> flatMetaSearchDefaults = new HashMap<>();
-    flatMetaSearchDefaults.put("metaPopulationSize", null); // optional: falls back to registry default
+    // Optional in both encodings: falls back to the registry's default meta population size.
+    Map<String, String> metaSearchDefaults =
+        Map.of(
+            "metaPopulationSize", String.valueOf(MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE));
 
     Map<String, Object> schemas = new LinkedHashMap<>();
     schemas.put(
@@ -130,11 +132,11 @@ public final class DescribeMain {
     schemas.put(
         "metaSearchFlat",
         fieldDescriptorsAsMaps(
-            RequestSchemaDescriptor.describe(FlatMetaSearchConfig.class, flatMetaSearchDefaults)));
+            RequestSchemaDescriptor.describe(FlatMetaSearchConfig.class, metaSearchDefaults)));
     schemas.put(
         "metaSearchTree",
         fieldDescriptorsAsMaps(
-            RequestSchemaDescriptor.describe(TreeMetaSearchConfig.class, Map.of())));
+            RequestSchemaDescriptor.describe(TreeMetaSearchConfig.class, metaSearchDefaults)));
     return schemas;
   }
 

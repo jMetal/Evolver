@@ -1,6 +1,7 @@
 # Example TrainingRequest exercising SPEA2 as meta-optimizer
 # (org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm, built via MetaSPEA2Builder),
-# equivalent to org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3.
+# equivalent to org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3
+# except for the meta population size (50 here, 100 there).
 # See MetaSPEA2FlatConfiguration.yaml: SPEA2 hardcodes its own operators, only
 # populationSize/maxEvaluations/numberOfCores (and optionally mutationProbabilityFactor) are
 # configurable.
