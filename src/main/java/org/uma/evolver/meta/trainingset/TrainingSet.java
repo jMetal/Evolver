@@ -1,4 +1,4 @@
-package org.uma.evolver.trainingset;
+package org.uma.evolver.meta.trainingset;
 
 import java.util.List;
 import org.uma.jmetal.problem.Problem;

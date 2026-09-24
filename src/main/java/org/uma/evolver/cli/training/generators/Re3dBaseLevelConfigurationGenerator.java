@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.uma.evolver.cli.training.BaseLevelConfig;
-import org.uma.evolver.cli.training.ProblemSpec;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
+import org.uma.evolver.cli.training.ProblemSpec;
 
 /**
  * Regenerates {@code src/main/resources/baseLevelConfigurations/Re3dNSGAIIBaseLevel.yaml} — NSGA-II
  * tuned on the RE problems with three objectives — from a compiler-checked {@link BaseLevelConfig}.
  *
  * <p>The seven problems, reference fronts and evaluation budgets below are the same ones
- * {@code org.uma.evolver.trainingset.RE3DTrainingSet} bundles under the name {@code "RE3D"} —
+ * {@code org.uma.evolver.meta.trainingset.RE3DTrainingSet} bundles under the name {@code "RE3D"} —
  * spelled out explicitly here rather than referenced by name, so the generated file is
  * self-contained and does not require cross-referencing {@code RE3DTrainingSet}.
  */

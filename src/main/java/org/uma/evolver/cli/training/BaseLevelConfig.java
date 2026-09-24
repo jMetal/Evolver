@@ -14,11 +14,11 @@ import java.util.Map;
  * (resolved via {@link ProblemRegistry}, each either a curated short name or a fully-qualified
  * class name, see {@link ProblemSpec}), their reference front files, and the number of
  * evaluations to use for each problem — the same shape used throughout
- * {@code org.uma.evolver.trainingset.TrainingSet}. The CLI does not resolve training sets by
+ * {@code org.uma.evolver.meta.trainingset.TrainingSet}. The CLI does not resolve training sets by
  * name: even a multi-problem set like RE3D is spelled out explicitly (see
  * {@code cli.training.generators.Re3dBaseLevelConfigurationGenerator}), so a request is always
  * self-contained and never has to be cross-referenced against
- * {@code org.uma.evolver.trainingset}'s subclasses to know what it actually runs.
+ * {@code org.uma.evolver.meta.trainingset}'s subclasses to know what it actually runs.
  *
  * <p>{@code encoding} is the jMetal solution encoding the base-level algorithm is built for (e.g.
  * {@code "Double"}, {@code "Permutation"}), resolved together with {@code algorithmName} by

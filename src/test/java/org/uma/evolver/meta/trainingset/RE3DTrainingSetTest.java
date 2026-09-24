@@ -1,4 +1,4 @@
-package org.uma.evolver.trainingset;
+package org.uma.evolver.meta.trainingset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,19 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.uma.evolver.trainingset.DTLZ3DTrainingSet;
-import org.uma.evolver.trainingset.TrainingSet;
+import org.uma.evolver.meta.trainingset.RE3DTrainingSet;
+import org.uma.evolver.meta.trainingset.TrainingSet;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-@DisplayName("DTLZ3DTrainingSet Tests")
-class DTLZ3DTrainingSetTest {
+@DisplayName("RE3DTrainingSet Tests")
+class RE3DTrainingSetTest {
 
   private TrainingSet<DoubleSolution> trainingSet;
 
   @BeforeEach
   void setUp() {
-    trainingSet = new DTLZ3DTrainingSet();
+    trainingSet = new RE3DTrainingSet();
   }
 
   @Nested
@@ -27,8 +27,8 @@ class DTLZ3DTrainingSetTest {
   class ProblemListTests {
 
     @Test
-    @DisplayName("given new instance when getting problem list then returns seven DTLZ problems")
-    void givenNewInstance_whenGettingProblemList_thenReturnsSevenDTLZProblems() {
+    @DisplayName("given new instance when getting problem list then returns seven RE problems")
+    void givenNewInstance_whenGettingProblemList_thenReturnsSevenREProblems() {
       // Arrange - done in setUp
 
       // Act
@@ -39,23 +39,22 @@ class DTLZ3DTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting problem list then contains all DTLZ variants")
-    void givenNewInstance_whenGettingProblemList_thenContainsAllDTLZVariants() {
+    @DisplayName("given new instance when getting problem list then contains RE31 to RE37")
+    void givenNewInstance_whenGettingProblemList_thenContainsRE31ToRE37() {
       // Arrange - done in setUp
 
       // Act
       List<Problem<DoubleSolution>> problems = trainingSet.problemList();
 
       // Assert
-      List<String> problemNames =
-          problems.stream().map(p -> p.getClass().getSimpleName()).toList();
-      assertTrue(problemNames.contains("DTLZ1"));
-      assertTrue(problemNames.contains("DTLZ2"));
-      assertTrue(problemNames.contains("DTLZ3"));
-      assertTrue(problemNames.contains("DTLZ4"));
-      assertTrue(problemNames.contains("DTLZ5"));
-      assertTrue(problemNames.contains("DTLZ6"));
-      assertTrue(problemNames.contains("DTLZ7"));
+      List<String> problemNames = problems.stream().map(p -> p.getClass().getSimpleName()).toList();
+      assertTrue(problemNames.contains("RE31"));
+      assertTrue(problemNames.contains("RE32"));
+      assertTrue(problemNames.contains("RE33"));
+      assertTrue(problemNames.contains("RE34"));
+      assertTrue(problemNames.contains("RE35"));
+      assertTrue(problemNames.contains("RE36"));
+      assertTrue(problemNames.contains("RE37"));
     }
 
     @Test
@@ -76,8 +75,7 @@ class DTLZ3DTrainingSetTest {
   class ReferenceFrontsTests {
 
     @Test
-    @DisplayName(
-        "given new instance when getting reference fronts then returns same count as problems")
+    @DisplayName("given new instance when getting reference fronts then returns same count as problems")
     void givenNewInstance_whenGettingReferenceFronts_thenReturnsSameCountAsProblems() {
       // Arrange - done in setUp
 
@@ -89,27 +87,15 @@ class DTLZ3DTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting reference fronts then all paths contain DTLZ")
-    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsContainDTLZ() {
+    @DisplayName("given new instance when getting reference fronts then all paths contain RE3")
+    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsContainRE3() {
       // Arrange - done in setUp
 
       // Act
       List<String> fronts = trainingSet.referenceFronts();
 
       // Assert
-      assertTrue(fronts.stream().allMatch(f -> f.contains("DTLZ")));
-    }
-
-    @Test
-    @DisplayName("given new instance when getting reference fronts then all paths indicate 3D")
-    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsIndicate3D() {
-      // Arrange - done in setUp
-
-      // Act
-      List<String> fronts = trainingSet.referenceFronts();
-
-      // Assert
-      assertTrue(fronts.stream().allMatch(f -> f.contains("3D")));
+      assertTrue(fronts.stream().allMatch(f -> f.contains("RE3")));
     }
   }
 
@@ -118,8 +104,7 @@ class DTLZ3DTrainingSetTest {
   class EvaluationsTests {
 
     @Test
-    @DisplayName(
-        "given new instance when getting evaluations then returns same count as problems")
+    @DisplayName("given new instance when getting evaluations then returns same count as problems")
     void givenNewInstance_whenGettingEvaluations_thenReturnsSameCountAsProblems() {
       // Arrange - done in setUp
 
@@ -131,15 +116,15 @@ class DTLZ3DTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting evaluations then default is 16000")
-    void givenNewInstance_whenGettingEvaluations_thenDefaultIs16000() {
+    @DisplayName("given new instance when getting evaluations then default is 3000")
+    void givenNewInstance_whenGettingEvaluations_thenDefaultIs3000() {
       // Arrange - done in setUp
 
       // Act
       List<Integer> evaluations = trainingSet.evaluationsToOptimize();
 
       // Assert
-      assertTrue(evaluations.stream().allMatch(e -> e == 16000));
+      assertTrue(evaluations.stream().allMatch(e -> e == 3000));
     }
   }
 
@@ -148,15 +133,15 @@ class DTLZ3DTrainingSetTest {
   class NameTests {
 
     @Test
-    @DisplayName("given new instance when getting name then returns DTLZ3D")
-    void givenNewInstance_whenGettingName_thenReturnsDTLZ3D() {
+    @DisplayName("given new instance when getting name then returns RE3D")
+    void givenNewInstance_whenGettingName_thenReturnsRE3D() {
       // Arrange - done in setUp
 
       // Act
       String name = trainingSet.name();
 
       // Assert
-      assertEquals("DTLZ3D", name);
+      assertEquals("RE3D", name);
     }
   }
 
@@ -170,17 +155,17 @@ class DTLZ3DTrainingSetTest {
       // Arrange - done in setUp
 
       // Act
-      trainingSet.setEvaluationsToOptimize(20000);
+      trainingSet.setEvaluationsToOptimize(15000);
 
       // Assert
-      assertTrue(trainingSet.evaluationsToOptimize().stream().allMatch(e -> e == 20000));
+      assertTrue(trainingSet.evaluationsToOptimize().stream().allMatch(e -> e == 15000));
     }
 
     @Test
     @DisplayName("given instance when setting evaluation list then problems have individual values")
     void givenInstance_whenSettingEvaluationList_thenProblemsHaveIndividualValues() {
       // Arrange
-      List<Integer> customEvaluations = List.of(10000, 12000, 14000, 16000, 18000, 20000, 22000);
+      List<Integer> customEvaluations = List.of(5000, 6000, 7000, 8000, 9000, 10000, 11000);
 
       // Act
       trainingSet.setEvaluationsToOptimize(customEvaluations);

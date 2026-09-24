@@ -1,4 +1,4 @@
-package org.uma.evolver.trainingset;
+package org.uma.evolver.meta.trainingset;
 
 import java.util.Collections;
 import java.util.List;

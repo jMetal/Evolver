@@ -1,4 +1,4 @@
-package org.uma.evolver.trainingset;
+package org.uma.evolver.meta.trainingset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,19 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.uma.evolver.trainingset.TrainingSet;
-import org.uma.evolver.trainingset.ZDTTrainingSet;
+import org.uma.evolver.meta.trainingset.TrainingSet;
+import org.uma.evolver.meta.trainingset.WFG2DTrainingSet;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
-@DisplayName("ZDTTrainingSet Tests")
-class ZDTTrainingSetTest {
+@DisplayName("WFG2DTrainingSet Tests")
+class WFG2DTrainingSetTest {
 
   private TrainingSet<DoubleSolution> trainingSet;
 
   @BeforeEach
   void setUp() {
-    trainingSet = new ZDTTrainingSet();
+    trainingSet = new WFG2DTrainingSet();
   }
 
   @Nested
@@ -27,21 +27,20 @@ class ZDTTrainingSetTest {
   class ProblemListTests {
 
     @Test
-    @DisplayName("given new instance when getting problem list then returns five ZDT problems")
-    void givenNewInstance_whenGettingProblemList_thenReturnsFiveZDTProblems() {
+    @DisplayName("given new instance when getting problem list then returns nine WFG problems")
+    void givenNewInstance_whenGettingProblemList_thenReturnsNineWFGProblems() {
       // Arrange - done in setUp
 
       // Act
       List<Problem<DoubleSolution>> problems = trainingSet.problemList();
 
       // Assert
-      assertEquals(5, problems.size());
+      assertEquals(9, problems.size());
     }
 
     @Test
-    @DisplayName(
-        "given new instance when getting problem list then contains ZDT1 ZDT2 ZDT3 ZDT4 ZDT6")
-    void givenNewInstance_whenGettingProblemList_thenContainsExpectedZDTVariants() {
+    @DisplayName("given new instance when getting problem list then contains WFG1 to WFG9")
+    void givenNewInstance_whenGettingProblemList_thenContainsWFG1ToWFG9() {
       // Arrange - done in setUp
 
       // Act
@@ -50,12 +49,15 @@ class ZDTTrainingSetTest {
       // Assert
       List<String> problemNames =
           problems.stream().map(p -> p.getClass().getSimpleName()).toList();
-      assertTrue(problemNames.contains("ZDT1"));
-      assertTrue(problemNames.contains("ZDT2"));
-      assertTrue(problemNames.contains("ZDT3"));
-      assertTrue(problemNames.contains("ZDT4"));
-      assertTrue(problemNames.contains("ZDT6"));
-      assertFalse(problemNames.contains("ZDT5")); // ZDT5 is binary, not included
+      assertTrue(problemNames.contains("WFG1"));
+      assertTrue(problemNames.contains("WFG2"));
+      assertTrue(problemNames.contains("WFG3"));
+      assertTrue(problemNames.contains("WFG4"));
+      assertTrue(problemNames.contains("WFG5"));
+      assertTrue(problemNames.contains("WFG6"));
+      assertTrue(problemNames.contains("WFG7"));
+      assertTrue(problemNames.contains("WFG8"));
+      assertTrue(problemNames.contains("WFG9"));
     }
 
     @Test
@@ -89,27 +91,27 @@ class ZDTTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting reference fronts then all paths contain ZDT")
-    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsContainZDT() {
+    @DisplayName("given new instance when getting reference fronts then all paths contain WFG")
+    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsContainWFG() {
       // Arrange - done in setUp
 
       // Act
       List<String> fronts = trainingSet.referenceFronts();
 
       // Assert
-      assertTrue(fronts.stream().allMatch(f -> f.contains("ZDT")));
+      assertTrue(fronts.stream().allMatch(f -> f.contains("WFG")));
     }
 
     @Test
-    @DisplayName("given new instance when getting reference fronts then paths are csv files")
-    void givenNewInstance_whenGettingReferenceFronts_thenPathsAreCsvFiles() {
+    @DisplayName("given new instance when getting reference fronts then all paths indicate 2D")
+    void givenNewInstance_whenGettingReferenceFronts_thenAllPathsIndicate2D() {
       // Arrange - done in setUp
 
       // Act
       List<String> fronts = trainingSet.referenceFronts();
 
       // Assert
-      assertTrue(fronts.stream().allMatch(f -> f.endsWith(".csv")));
+      assertTrue(fronts.stream().allMatch(f -> f.contains("2D")));
     }
   }
 
@@ -131,15 +133,15 @@ class ZDTTrainingSetTest {
     }
 
     @Test
-    @DisplayName("given new instance when getting evaluations then default is 10000")
-    void givenNewInstance_whenGettingEvaluations_thenDefaultIs10000() {
+    @DisplayName("given new instance when getting evaluations then default is 25000")
+    void givenNewInstance_whenGettingEvaluations_thenDefaultIs25000() {
       // Arrange - done in setUp
 
       // Act
       List<Integer> evaluations = trainingSet.evaluationsToOptimize();
 
       // Assert
-      assertTrue(evaluations.stream().allMatch(e -> e == 10000));
+      assertTrue(evaluations.stream().allMatch(e -> e == 25000));
     }
   }
 
@@ -148,15 +150,15 @@ class ZDTTrainingSetTest {
   class NameTests {
 
     @Test
-    @DisplayName("given new instance when getting name then returns ZDT")
-    void givenNewInstance_whenGettingName_thenReturnsZDT() {
+    @DisplayName("given new instance when getting name then returns WFG2D")
+    void givenNewInstance_whenGettingName_thenReturnsWFG2D() {
       // Arrange - done in setUp
 
       // Act
       String name = trainingSet.name();
 
       // Assert
-      assertEquals("ZDT", name);
+      assertEquals("WFG2D", name);
     }
   }
 
@@ -170,17 +172,18 @@ class ZDTTrainingSetTest {
       // Arrange - done in setUp
 
       // Act
-      trainingSet.setEvaluationsToOptimize(25000);
+      trainingSet.setEvaluationsToOptimize(30000);
 
       // Assert
-      assertTrue(trainingSet.evaluationsToOptimize().stream().allMatch(e -> e == 25000));
+      assertTrue(trainingSet.evaluationsToOptimize().stream().allMatch(e -> e == 30000));
     }
 
     @Test
     @DisplayName("given instance when setting evaluation list then problems have individual values")
     void givenInstance_whenSettingEvaluationList_thenProblemsHaveIndividualValues() {
       // Arrange
-      List<Integer> customEvaluations = List.of(8000, 10000, 12000, 15000, 20000);
+      List<Integer> customEvaluations =
+          List.of(20000, 22000, 24000, 26000, 28000, 30000, 32000, 34000, 36000);
 
       // Act
       trainingSet.setEvaluationsToOptimize(customEvaluations);

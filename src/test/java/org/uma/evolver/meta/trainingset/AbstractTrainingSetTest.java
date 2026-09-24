@@ -1,4 +1,4 @@
-package org.uma.evolver.trainingset;
+package org.uma.evolver.meta.trainingset;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.uma.evolver.trainingset.AbstractTrainingSet;
-import org.uma.evolver.trainingset.TrainingSet;
+import org.uma.evolver.meta.trainingset.AbstractTrainingSet;
+import org.uma.evolver.meta.trainingset.TrainingSet;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
