@@ -56,7 +56,7 @@ depends on the **meta level** (`meta`, `cli`, `irace`), which `PackageLayeringTe
 
 | Package | Role |
 |---|---|
-| `org.uma.evolver.algorithm` | *Core.* Configurable algorithms (`BaseLevelAlgorithm`): NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA, AGE-MOEA, SSMOEA, PAES. Each supports multiple encodings (Double, Binary, Permutation); SSMOEA and PAES only Double. |
+| `org.uma.evolver.algorithm` | *Core.* Configurable algorithms (`BaseLevelAlgorithm`): NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, MOPSO, RDEMOEA, RVEA, AGE-MOEA, SSMOEA, PAES. Each supports multiple encodings (Double, Binary, Permutation), except NSGA-III, MOPSO, RVEA, AGE-MOEA and SSMOEA (Double only) and RDEMOEA (Double and Permutation). |
 | `org.uma.evolver.parameter` | *Core.* Parameter space definition and YAML parsing. Supports integer, double, categorical, binary, and conditional (hierarchical) parameters. |
 | `org.uma.evolver.util` | *Core.* `ConfigurationFileReader` (reads configurations such as `defaultConfigurations/*.txt`) and `HypervolumeMinus`. |
 | `org.uma.evolver.meta` | *Meta level.* `algorithm` (meta-only algorithms: `RandomSearch`, `TreeNSGAII`, `TreeAGEMOEA`), `builder` (`Meta*Builder`), `problem` (`AbstractMetaOptimizationProblem`, `MetaOptimizationProblem` for the flat encoding, `TreeMetaOptimizationProblem` for the tree encoding), `strategy` (evaluation budgets), `encoding` (derivation tree encoding: `DerivationTreeSolution`, `SubtreeCrossover`, `TreeMutation`, `TreeSolutionGenerator`, `GrammarConverter` and the tree operator parameters), `trainingset` (training sets wrapping jMetal benchmark problems) and `output` (`ConsolidatedOutputResults`, `WriteExecutionDataToFilesObserver`, `MetaOptimizerConfig`, `TreeOutputResults`). |

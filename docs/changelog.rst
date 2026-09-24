@@ -32,6 +32,31 @@ Added
   (43 parameters, 6 top-level).
 - Add ``singleSolutionReplacement`` to ``ReplacementParameter``, enabling one-to-one DEMO-style
   replacement based on dominance comparison
+- Add AGE-MOEA as a meta-optimizer, for both the flat and the tree encodings
+- Support NSGA-II, AGE-MOEA and Random Search as tree-encoding meta-optimizers
+  (``TreeNSGAII``, ``TreeAGEMOEA``), configured from ``NSGAIIMetaTree.yaml``/``AGEMOEAMetaTree.yaml``
+
+Changed
+~~~~~~~
+
+- Meta-optimizers always generate as many offspring as their population size and return their
+  final population (never an external archive); ``offspringPopulationSize`` and
+  ``metaOffspringSize`` are no longer configurable
+- The default meta population size is 50 for every meta-optimizer and both encodings
+- Tree-encoding meta-optimizer configuration files use operator flags, like the flat ones, and
+  must declare the selection (``selection``, ``selectionTournamentSize``)
+- Separate the configurable core (``algorithm``, ``parameter``, ``util``) from the meta level:
+  the derivation tree encoding, training sets and training output classes move to
+  ``meta.encoding``, ``meta.trainingset`` and ``meta.output``, and meta-only algorithms to
+  ``meta.algorithm``
+
+Removed
+~~~~~~~
+
+- ``OutputResults`` (use ``ConsolidatedOutputResults``), ``TrainingSetRunner``,
+  ``ExtremePointsEstimator``, ``EstimatedReferenceFrontGenerator``, ``SingleObjectiveWrapper``,
+  ``ProbabilityParameter``, ``DifferentialEvolutionSelectionParameter`` and
+  ``DoubleSelectionParameter``, which were not used
 
 Fixed
 ~~~~~

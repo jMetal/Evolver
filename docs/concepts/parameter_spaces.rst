@@ -114,7 +114,7 @@ If we take a look to the `parameter space for NSGA-II for double problems <https
 - variation
 - selection
 
-However, the first-level parameters of the `base-level MOEA/D parameter space <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/MOEADouble.yaml>`_ are eight:
+However, the first-level parameters of the `base-level MOEA/D parameter space <https://github.com/jMetal/Evolver/blob/main/src/main/resources/parameterSpaces/MOEADDouble.yaml>`_ are eight:
 
 - neighborhoodSize
 - maximumNumberOfReplacedSolutions
@@ -206,160 +206,59 @@ Usage Example
    List<Parameter<?>> mainParameters = parameterSpace.topLevelParameters();
 
 
-Defining Parameter Spaces Programmatically: NSGA-II Case Study
----------------------------------------------------------------
-While YAML files provide a declarative way to define parameter spaces, you can also define them programmatically by extending the ``ParameterSpace`` class. This approach offers more flexibility and type safety. Here's how to implement a programmatic parameter space:
+Encoding-Specific Parameter Spaces: NSGA-II Case Study
+------------------------------------------------------
+Most algorithms are available for several encodings (see :doc:`base_level_metaheuristics`), and
+each encoding needs its own operators: SBX or BLX-alpha make sense for continuous problems, HUX or
+bit-flip for binary ones, PMX or swap for permutations. Evolver handles this with one YAML file
+per algorithm and encoding, all sharing the same top-level structure, together with a
+**parameter factory** for that encoding.
 
-1. **Class Structure**: Create a subclass of ``ParameterSpace``
-2. **Parameter Definition**: Define all parameters in the constructor
-3. **Parameter Relationships**: Set up conditional parameters and global sub-parameters
-4. **Top-level Parameters**: Register parameters using ``addTopLevelParameter()``
-5. **Instance Creation**: Implement the ``createInstance()`` method for the factory pattern
+For NSGA-II, the three parameter spaces are ``NSGAIIDouble.yaml``, ``NSGAIIBinary.yaml`` and
+``NSGAIIPermutation.yaml`` (in ``src/main/resources/parameterSpaces/``). All of them declare the
+same top-level parameters (``algorithmResult``, ``createInitialSolutions``,
+``offspringPopulationSize``, ``variation`` and ``selection``); they differ in the operators the
+``variation`` parameter can choose from:
 
-The following sections demonstrate how to define parameter spaces for different implementations of NSGA-II, specifically optimized for double, binary, and permutation problems. The implementation is organized in the ``org.uma.evolver.algorithm.base.nsgaii.parameterspace`` package. The UML class diagram below shows the inheritance structure of the parameter space classes for NSGA-II:
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
 
-.. figure:: ../../docs/figures/NSGAIIParameterSpacesUML.png
-   :align: center
-   :alt: NSGA-II Parameter Space Class Hierarchy
-   :figclass: align-center
-   
-   NSGA-II Parameter Space Class Hierarchy
+   * - Encoding
+     - ``crossover`` values
+     - ``mutation`` values
+   * - Double
+     - ``SBX``, ``blxAlpha``, ``wholeArithmetic``, ``PCX``, …
+     - ``polynomial``, ``uniform``, ``linkedPolynomial``, ``nonUniform``, …
+   * - Binary
+     - ``HUX``, ``uniform``, ``singlePoint``
+     - ``bitFlip``
+   * - Permutation
+     - ``PMX``, ``OXD``, ``CX``
+     - ``swap``, ``insert``, ``scramble``, ``inversion``, ``simpleInversion``, ``displacement``
 
-The idea is that the ``NSGAIICommonParameterSpace`` abstract class defines the common parameters a generic NSGA-II algorithm for any encoding, while the concrete classes define the specific parameters for each flavour of NSGA-II.
-This is a code snippet of the ``NSGAIICommonParameterSpace`` class:
-
-.. code-block:: java
-
-   public abstract class NSGAIICommonParameterSpace extends ParameterSpace {
-
-    // Algorithm result options
-    public static final String ALGORITHM_RESULT = "algorithmResult";
-    public static final String POPULATION = "population";
-    public static final String EXTERNAL_ARCHIVE = "externalArchive";
-    public static final String ARCHIVE_TYPE = "archiveType";
-    public static final String POPULATION_SIZE_WITH_ARCHIVE = "populationSizeWithArchive";
-
-    // Algorithm result options
-    public static final String ALGORITHM_RESULT = "algorithmResult";
-    public static final String POPULATION = "population";
-    public static final String EXTERNAL_ARCHIVE = "externalArchive";
-    public static final String ARCHIVE_TYPE = "archiveType";
-    public static final String POPULATION_SIZE_WITH_ARCHIVE = "populationSizeWithArchive";
-
-    ...
-  
-    protected void setParameterSpace() {
-      put(new CategoricalParameter(ALGORITHM_RESULT, List.of(POPULATION, EXTERNAL_ARCHIVE)));
-      put(new IntegerParameter(POPULATION_SIZE_WITH_ARCHIVE, 10, 200));
-    
-      ...
-    }
-   
-    protected void setParameterRelationships() {
-      // AlgorithmResult dependencies
-      get(ALGORITHM_RESULT)
-          .addConditionalParameter(EXTERNAL_ARCHIVE, get(POPULATION_SIZE_WITH_ARCHIVE))
-          .addConditionalParameter(EXTERNAL_ARCHIVE, get(ARCHIVE_TYPE));
-
-      ...
-    }
-
-    protected void setTopLevelParameters() {
-      topLevelParameters.add(parameterSpace.get(ALGORITHM_RESULT));
-      topLevelParameters.add(parameterSpace.get(CREATE_INITIAL_SOLUTIONS));
-      topLevelParameters.add(parameterSpace.get(OFFSPRING_POPULATION_SIZE));
-      topLevelParameters.add(parameterSpace.get(VARIATION));
-      topLevelParameters.add(parameterSpace.get(SELECTION));
-  }
-
-As the diagram shows three are three concrete implementations that inherit from 
-NSGAIICommonParameterSpace: NSGAIIDoubleParameterSpace, NSGAIIBinaryParameterSpace, and NSGAIIPermutationParameterSpace. These concrete classes implement the parameter space for NSGA-II when working with double, binary, and permutation-encoded solutions respectively. Each concrete class overrides the createInstance() method to return a new instance of its specific type, ensuring proper polymorphic behavior. The inheritance structure demonstrates a clean separation of concerns, where common parameter management logic is centralized in the abstract base classes while allowing for specific parameter configurations in the concrete implementations.
-
-We include here a code snippet of the NSGAIIDoubleParameterSpace class:
+The YAML file only states *which* values a parameter can take. The parameter factory turns each
+categorical parameter into the class that knows how to build the corresponding jMetal component:
+``DoubleParameterFactory``, ``BinaryParameterFactory`` and ``PermutationParameterFactory`` (in
+``org.uma.evolver.parameter.factory``) map, for instance, ``crossover`` to
+``DoubleCrossoverParameter``, ``BinaryCrossoverParameter`` or ``PermutationCrossoverParameter``.
+The algorithm class for each encoding (``DoubleNSGAII``, ``BinaryNSGAII``, ``PermutationNSGAII``)
+then assembles the algorithm from those parameters:
 
 .. code-block:: java
 
-  public class NSGAIIDoubleParameterSpace extends NSGAIICommonParameterSpace<DoubleSolution> {
-    public NSGAIIDoubleParameterSpace() {
-      super();
-      setParameterSpace();
-      setParameterRelationships();
-      setTopLevelParameters();
-    }
+   var parameterSpace =
+       new YAMLParameterSpace("NSGAIIPermutation.yaml", new PermutationParameterFactory());
+   var nsgaii = new PermutationNSGAII(problem, 100, 25000, parameterSpace);
+   nsgaii.parse(configuration);   // e.g. "--crossover PMX --mutation swap ..."
+   var algorithm = nsgaii.build();
 
-    @Override
-    public NSGAIIDoubleParameterSpace createInstance() {
-      return new NSGAIIDoubleParameterSpace();
-    }
+Adding an operator to an existing encoding therefore means adding its value (and any conditional
+sub-parameters) to the YAML file and, if it is new to Evolver, supporting it in the corresponding
+``*CrossoverParameter`` or ``*MutationParameter`` class. Restricting the search space, e.g. to tune
+NSGA-II with SBX only, just needs a YAML file with fewer values, as ``NSGAIIDoubleReduced.yaml``
+does.
 
-    // Initial solutions creation
-    public static final String DEFAULT = "default";
-    public static final String LATIN_HYPERCUBE_SAMPLING = "latinHypercubeSampling";
-    public static final String SCATTER_SEARCH = "scatterSearch";
-
-    // Crossover
-    public static final String CROSSOVER_PROBABILITY = "crossoverProbability";
-    public static final String CROSSOVER_REPAIR_STRATEGY = "crossoverRepairStrategy";
-
-    // Crossover strategies
-    public static final String SBX = "SBX";
-    public static final String PCX = "PCX";
-    public static final String BLX_ALPHA = "blxAlpha";
-  
-    ...
-
-    // Mutation
-    public static final String MUTATION_PROBABILITY_FACTOR = "mutationProbabilityFactor";
-    public static final String MUTATION_REPAIR_STRATEGY = "mutationRepairStrategy";
-
-    // Mutation strategies
-    public static final String UNIFORM = "uniform";
-    public static final String POLYNOMIAL = "polynomial";
-
-    ...
-
-    @Override
-    protected void setParameterSpace() {
-      super.setParameterSpace();
-      put(
-          new CreateInitialSolutionsDoubleParameter(
-              List.of(DEFAULT, LATIN_HYPERCUBE_SAMPLING, SCATTER_SEARCH)));
-
-      put(
-        new DoubleCrossoverParameter(
-            List.of(
-                SBX,
-                BLX_ALPHA,
-                PCX)));
-
-      ... 
-      
-      put(
-        new DoubleMutationParameter(
-            List.of(UNIFORM, POLYNOMIAL)));
-      put(new DoubleParameter(MUTATION_PROBABILITY_FACTOR, 0.0, 2.0));
-      
-      ...
-    }
-
-    @Override
-    protected void setParameterRelationships() {
-      super.setParameterRelationships();
-      // Variation dependencies
-      get(CROSSOVER)
-          .addGlobalSubParameter(get(CROSSOVER_PROBABILITY))
-          .addConditionalParameter(SBX, get(SBX_DISTRIBUTION_INDEX))
-          .addConditionalParameter(PCX, get(PCX_CROSSOVER_ZETA))
-          .addConditionalParameter(PCX, get(PCX_CROSSOVER_ETA))
-          .addConditionalParameter(BLX_ALPHA, get(BLX_ALPHA_CROSSOVER_ALPHA));
-      get(MUTATION)
-          .addGlobalSubParameter(get(MUTATION_PROBABILITY_FACTOR))
-          .addConditionalParameter(UNIFORM, get(UNIFORM_MUTATION_PERTURBATION))
-          .addConditionalParameter(POLYNOMIAL, get(POLYNOMIAL_MUTATION_DISTRIBUTION_INDEX));
-    }
-  }
-    
-We can observe as this incorporates the parameters for the crossover and mutation operators, as well as the parameters for the initial solutions creation, related to deal with continuous problems. The above code snippets include examples of how conditional and global sub-parameters are set up.
-
-Defining a parameter space programmatically is more flexible and type-safe than using YAML files. It allows for dynamic parameter definition and ensures type safety. However, it can be more cumbersome, especially when making changes to the parameter space (e.g., removing crossover operators). Such changes require modifying the code of the parameter space class.
-
+Parameter spaces can still be built programmatically by subclassing ``ParameterSpace`` (see
+`Implementation Details`_ above), but every parameter space shipped with Evolver is defined in
+YAML.

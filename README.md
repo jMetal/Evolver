@@ -78,6 +78,7 @@ the spaces change).
 ### Meta-level algorithms
 
 - NSGA-II
+- AGE-MOEA
 - Async NSGA-II
 - Async Genetic Algorithm
 - SMPSO

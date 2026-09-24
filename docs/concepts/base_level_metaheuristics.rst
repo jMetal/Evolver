@@ -5,7 +5,9 @@ Base-Level Metaheuristics
 
 Base-level metaheuristics in Evolver are multi-objective optimization algorithms that can be automatically configured through the meta-optimization process. This section describes the how to implement the algorithms, the provided solveres, and  their configuration options.
 
-The base-level metaheuristics are implemented in the ``org.uma.evolver.algorithm.base`` package. This package contains the ``BaseLevelAlgorithm`` interface that defines the contract for all configurable metaheuristics in Evolver.
+The base-level metaheuristics are implemented in the ``org.uma.evolver.algorithm`` package, one sub-package per algorithm (``nsgaii``, ``moead``, …). This package contains the ``BaseLevelAlgorithm`` interface that defines the contract for all configurable metaheuristics in Evolver.
+
+Together with ``org.uma.evolver.parameter``, these algorithms form Evolver's configurable core, which does not depend on the meta-optimization classes. They can therefore be used on their own, as an alternative to jMetal for configuring and running multi-objective algorithms from a parameter space and a configuration string (see the examples in ``org.uma.evolver.example.baselevel``).
 
 Supported Algorithms
 --------------------
@@ -26,7 +28,7 @@ The following algorithms are currently available as configurable base-level meta
      - Double
      - Reference-point-based many-objective variant of NSGA-II
    * - MOEA/D
-     - Double
+     - Double, Binary, Permutation
      - Decomposition-based EA; supports multiple aggregation functions and DE variants
    * - SMS-EMOA
      - Double, Binary, Permutation
@@ -47,7 +49,7 @@ The following algorithms are currently available as configurable base-level meta
      - Double
      - Steady-state MOEA (offspring population size fixed at 1); see :ref:`ssmoea` below
    * - PAES
-     - Double
+     - Double, Binary, Permutation
      - Pareto Archived Evolution Strategy (1+1 ES with archive-based density tiebreaking); see :ref:`paes` below
 
 BaseLevelAlgorithm Interface

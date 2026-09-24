@@ -3,34 +3,78 @@
 Meta-Optimization-Level Metaheuristics
 ======================================
 
-In Evolver, the meta-optimization process is performed by a meta-optimization metaheuristic, which is a multi-objective optimization algorithm that searches for the best configuration of a base-level metaheuristic by solving a meta-optimization problem. This problem is a continuous optimization problem, so most of the metaheuristics available in jMetal could potentially be used as meta-optimization metaheuristics. 
+In Evolver, the meta-optimization process is performed by a meta-optimization metaheuristic, which is a multi-objective optimization algorithm that searches for the best configuration of a base-level metaheuristic by solving a meta-optimization problem.
 
-In this context, were each solution of the meta-optimization problem requires one or more independent runs of the base-level metaheuristic on all the problems of the training set, using non-parallel meta-optimizers can lead to very long running times, making the meta-optimization process unfeasible. For this reason, it is advisable to use parallel meta-optimizers. This means that, for instance, algorithms such as a MOEA/D or SMS-EMOA are not good candidates because their steady-state nature difficults to make parallel versions of them. On the other hand, algorithms such as NSGA-II or SMPSO are good candidates because they can be easily parallelized. 
+Requirements for a Meta-Optimizer
+---------------------------------
 
-A further constraint is that meta-optimization metaheuristics must implement the `EvolutionaryAlgorithm` or the `ParticleSwarmOptimizationAlgorithm` classes of the jMetal ``jmetal-component`` subpackage, as the meta-optimization approach requires the use of observers to store the population or swarm of solutions at each generation or iteration of the meta-optimizers. This means that, for instance, SPEA2 could not be used as is, although it can be parallelized. 
+Evaluating a single solution of the meta-optimization problem requires one or more independent runs of the base-level metaheuristic on every problem of the training set, so a sequential meta-optimizer would lead to unfeasible running times. Evolver's meta-optimizers are therefore required to:
 
-With these considerations, Evolver provides currently three meta-optimizers:
+- **Evaluate whole populations in parallel.** Only generational algorithms qualify; steady-state ones such as MOEA/D or SMS-EMOA are excluded, since they produce a single solution per iteration.
+- **Generate as many offspring as the population size.** The offspring population size always equals the meta population size, so that each generation can be evaluated in parallel as a whole. It is not configurable.
+- **Return the final population.** Meta-level fronts usually hold very few solutions, so meta-optimizers never use an external archive.
+- **Expose their population to observers**, which store the configurations and their indicator values at each generation (see :doc:`meta_optimization_approach`).
 
-- NSGA-II
-- SMPSO
-- Async NSGA-II
+The default meta population size is 50.
 
-NSGA-II and SMPSO can be parallelized by using a synchronous parallel scheme, in which all the solutions/particles in the population/swarm are evaluated in parallel. According to this scheme, the behavior of these algorithms is the same as if they were run sequentially. However, scalability may be limited when the number of cores is high, because once the solutions have been evaluated, the rest of the algorithm consists of sequential code.
+Available Meta-Optimizers
+-------------------------
 
-The Async NSGA-II variant uses an asynchronous parallel scheme, where new solutions are sent to workers to be evaluated in an asynchronous manner. The consequence of this scheme is that the behavior of the algorithm is different from the sequential version, but it can scale to a higher number of cores.
+.. list-table::
+   :header-rows: 1
+   :widths: 18 16 16 50
 
-To facilitate the instantion of meta-optimizers, Evolver includes three builders: ``MetaNSGAIIBuilder``, ``MetaSMPSOBuilder``, and ``MetaAsyncNSGAIIBuilder``. These builders provide a simple way to create the meta-optimizers using typical parameter settings. For example, class ``MetaNSGAIIBuilder`` can be used in this way:
+   * - Meta-optimizer
+     - Flat encoding
+     - Tree encoding
+     - Notes
+   * - NSGA-II
+     - Yes
+     - Yes
+     - Built on Evolver's own configurable NSGA-II (``DoubleNSGAII`` or ``TreeNSGAII``), with its operators chosen from ``NSGAIIMetaDouble.yaml``/``NSGAIIMetaTree.yaml``
+   * - AGE-MOEA
+     - Yes
+     - Yes
+     - Built on Evolver's configurable AGE-MOEA (``DoubleAGEMOEA`` or ``TreeAGEMOEA``); same operators as NSGA-II plus its environmental selection variant
+   * - SPEA2
+     - Yes
+     - No
+     - ``MetaSPEA2Builder``: an RDEMOEA configured as SPEA2 with fixed operators; only the mutation probability factor is configurable
+   * - SMPSO
+     - Yes
+     - No
+     - ``MetaSMPSOBuilder``; requires a continuous (``DoubleProblem``) meta-problem
+   * - Async NSGA-II
+     - Yes
+     - No
+     - ``MetaAsyncNSGAIIBuilder``; asynchronous parallel evaluation (see below)
+   * - Random Search
+     - Yes
+     - Yes
+     - Samples random configurations; no population and no operators
+   * - Async Genetic Algorithm
+     - Yes
+     - No
+     - ``MetaAsyncGeneticAlgorithmBuilder``; available from Java, not yet from ``cli.training``
+
+The flat encoding represents a configuration as a vector in [0,1]\ :sup:`n`; the tree encoding represents it as a derivation tree of the base-level parameter space grammar (see :doc:`solution_encoding`).
+
+NSGA-II, AGE-MOEA, SPEA2 and SMPSO use a synchronous parallel scheme: all the solutions (or particles) of a generation are evaluated in parallel, so the algorithm behaves exactly as its sequential version. Scalability may be limited when the number of cores is high, because the rest of each generation runs sequentially. Async NSGA-II instead sends new solutions to workers as soon as one is free; its behavior differs from the sequential version, but it scales to a higher number of cores.
+
+Building a Meta-Optimizer
+-------------------------
+
+The simplest way to run a meta-optimization is through ``cli.training``, where the meta-optimizer is chosen by name in a meta-optimizer configuration file (see :doc:`../utilities/cli_tools`). From Java, the ``Meta*Builder`` classes in ``org.uma.evolver.meta.builder`` create meta-optimizers with typical parameter settings. For example, class ``MetaNSGAIIBuilder`` can be used in this way:
 
 .. code-block:: java
-  
+
     int maxEvaluations = 2000;
     int numberOfCores = 8 ;
 
-    EvolutionaryAlgorithm<DoubleSolution> nsgaii = 
+    EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         new MetaNSGAIIBuilder(metaOptimizationProblem, parameterSpace)
             .setMaxEvaluations(maxEvaluations)
             .setNumberOfCores(numberOfCores)
             .build();
-  
 
 At this point, it should be remarked that finding the best parameter settings for the meta-optimizers is a task that deserves further research. Adding another level of meta-optimization, in which meta-level metaheuristics are treated as base-level metaheuristics, would introduce an additional layer of computational complexity that would require a vast amount of resources.

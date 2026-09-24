@@ -126,7 +126,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    concepts/objective_functions
    concepts/base_level_metaheuristics
    concepts/meta_optimization_level_metaheuristics
-   concepts/analysis_methods
 
 .. toctree::
    :maxdepth: 2

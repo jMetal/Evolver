@@ -44,10 +44,7 @@ See the :ref:`getting_started` guide for an example of creating a custom problem
 
 How do I configure a base-level metaheuristic?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Algorithms can be configured using YAML configuration files. See the :ref:`user_guide` for examples.
-
-Troubleshooting
----------------
+An algorithm is configured by choosing values from its parameter space, which is defined in a YAML file. See :doc:`concepts/parameter_spaces` and the :ref:`getting_started` guide for examples.
 
 Getting Help
 ------------
@@ -58,6 +55,8 @@ Where can I get help with Evolver?
 - Search the `GitHub issues <https://github.com/jMetal/Evolver/issues>`_ to see if your question has been asked before
 - Open a new issue on GitHub for bug reports or feature requests
 - For general discussions, use the jMetal discussion forum
+
+.. _troubleshooting:
 
 Troubleshooting
 ---------------
