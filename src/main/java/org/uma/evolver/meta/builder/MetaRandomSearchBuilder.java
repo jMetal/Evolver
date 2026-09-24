@@ -1,5 +1,6 @@
 package org.uma.evolver.meta.builder;
 
+import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.errorchecking.Check;

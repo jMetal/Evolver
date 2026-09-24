@@ -1,4 +1,4 @@
-package org.uma.evolver.meta.builder;
+package org.uma.evolver.meta.algorithm;
 
 import java.util.HashMap;
 import java.util.List;

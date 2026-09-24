@@ -1,4 +1,4 @@
-# Parameter space for the meta-level AGE-MOEA (org.uma.evolver.algorithm.agemoea.TreeAGEMOEA)
+# Parameter space for the meta-level AGE-MOEA (org.uma.evolver.meta.algorithm.TreeAGEMOEA)
 # used by cli.training's MetaAlgorithmRegistry with the derivation tree encoding. Same catalogue as
 # NSGAIIMetaTree.yaml, plus AGE-MOEA's environmental selection variant. Parsed with a
 # TreeParameterFactory.

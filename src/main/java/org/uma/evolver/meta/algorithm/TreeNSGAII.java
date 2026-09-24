@@ -1,6 +1,7 @@
-package org.uma.evolver.algorithm.nsgaii;
+package org.uma.evolver.meta.algorithm;
 
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
+import org.uma.evolver.algorithm.nsgaii.BaseNSGAII;
 import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.ParameterSpace;

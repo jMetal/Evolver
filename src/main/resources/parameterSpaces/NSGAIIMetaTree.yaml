@@ -1,4 +1,4 @@
-# Parameter space for the meta-level NSGA-II (org.uma.evolver.algorithm.nsgaii.TreeNSGAII) used by
+# Parameter space for the meta-level NSGA-II (org.uma.evolver.meta.algorithm.TreeNSGAII) used by
 # cli.training's MetaAlgorithmRegistry with the derivation tree encoding. Parsed with a
 # TreeParameterFactory.
 #

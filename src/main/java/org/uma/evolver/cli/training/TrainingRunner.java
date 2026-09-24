@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
-import org.uma.evolver.meta.builder.RandomSearch;
+import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.encoding.util.TreeOutputResults;
 import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
