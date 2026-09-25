@@ -248,6 +248,12 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
+- Add tutorial E3 (meta-optimization workflow): tuning NSGA-II for ZDT4 from Java and from the
+  command line, choosing a configuration from the training results, and comparing its front with
+  that of the default configuration.
+- Add `scripts/plot_fronts.py`, which plots several labelled bi-objective fronts against a reference
+  front, and `scripts/plot_training_convergence.py`, which plots how each meta-objective of one or
+  several training runs converges over the meta-evaluations.
 - Clean up `scripts/`, which keeps only active, reusable scripts: remove the experiment-specific
   analyses (`analysis_A_hv_evolution/`, `compare_moead_vs_paes.py`, `generate_cd_plots.py`) and the
   PAES vs MOEA/D validation examples with their report script, and trim the Python dependencies

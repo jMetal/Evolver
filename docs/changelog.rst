@@ -8,6 +8,18 @@ All notable changes to Evolver will be documented in this file.
 2.2-SNAPSHOT
 ------------
 
+Added
+~~~~~
+
+- Add :doc:`tutorial E3, meta-optimization workflow <tutorials/meta_optimization_workflow>`:
+  tuning NSGA-II for ZDT4 from Java and from the command line, choosing a configuration from the
+  training results, and comparing its front with that of the default configuration
+- Add ``scripts/plot_fronts.py``, which plots several labelled bi-objective fronts against a
+  reference front
+- Add ``scripts/plot_training_convergence.py``, which plots how each meta-objective of one or
+  several training runs converges over the meta-evaluations (median and best-worst band at each
+  checkpoint, and the meta-evaluation at which 95% of the improvement is reached)
+
 Changed
 ~~~~~~~
 
