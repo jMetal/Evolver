@@ -159,4 +159,3 @@ Evolver currently supports the following base-level and meta-optimization algori
    contributing
    changelog
    faq
-   references
