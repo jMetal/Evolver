@@ -1,5 +1,6 @@
 package org.uma.evolver.cli.training;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,10 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 @DisplayName("Unit tests for class TrainingRequestYamlLoader")
@@ -171,6 +175,28 @@ class TrainingRequestYamlLoaderTest {
       JMetalException exception =
           assertThrows(JMetalException.class, () -> TrainingRequestYamlLoader.load(requestFile));
       assertTrue(exception.getMessage().contains("DoesNotExist.yaml"));
+    }
+  }
+
+  static Stream<Path> bundledRequestFiles() throws IOException {
+    return Files.list(Path.of("src/main/resources/cli/training"))
+        .filter(path -> path.toString().endsWith("-request.yaml"))
+        .sorted();
+  }
+
+  @Nested
+  @DisplayName("When loading the request files bundled with Evolver: ")
+  class BundledRequestFilesTestCases {
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource(
+        "org.uma.evolver.cli.training.TrainingRequestYamlLoaderTest#bundledRequestFiles")
+    @DisplayName(
+        "given a bundled request file, when loaded, then its base-level and meta-search files are"
+            + " found and parsed")
+    void givenBundledRequestFile_whenLoaded_thenItIsParsed(Path requestFile) {
+      // Arrange & Act & Assert
+      assertDoesNotThrow(() -> TrainingRequestYamlLoader.load(requestFile));
     }
   }
 }
