@@ -4,6 +4,7 @@ E3. Meta-Optimization Workflow
 ==============================
 
 :Level: Introductory
+:Version: 1.0 (2026-09-25)
 :Time: about 30 minutes, of which the training takes about 4 minutes
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK)

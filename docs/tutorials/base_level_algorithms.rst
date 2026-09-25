@@ -4,7 +4,7 @@ E2. Base-Level Algorithms
 =========================
 
 :Level: Introductory
-:Version: 1.0 (2026-09-25)
+:Version: 1.1 (2026-09-25)
 :Time: about 25 minutes (running the tutorial class takes a few seconds)
 :Timings measured on: Apple M5 Pro (18 cores), 64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
 :Prerequisites: :doc:`E1. Parameter spaces <parameter_spaces>`
@@ -211,6 +211,26 @@ Among other things, this configuration:
 
    Standard configuration on ZDT1: EP = 0.0103, NHV = 0.0098
    Other configuration on ZDT1:    EP = 0.0056, NHV = 0.0062
+
+The step also writes the front it finds to ``results/tutorial/E2/other``. The script
+``scripts/plot_fronts.py`` draws both fronts, each in its own panel, against the reference front of
+ZDT1 (the thin line):
+
+.. code-block:: bash
+
+    python scripts/plot_fronts.py resources/referenceFronts/ZDT1.csv \
+        --front "Standard configuration=results/tutorial/E2/FUN.csv" \
+        --front "Other configuration=results/tutorial/E2/other/FUN.csv" \
+        --title "NSGA-II on ZDT1 (25000 evaluations)" --output fronts.png
+
+.. figure:: ../figures/tutorials/e2-fronts.png
+   :align: center
+   :alt: Fronts of the standard and the other configuration of NSGA-II on ZDT1
+   :figwidth: 100%
+
+Both configurations reach the reference front, but the second one spreads its solutions much more
+evenly along it: that is the effect of its crowding-distance archive, which keeps the solutions that
+are farthest apart from each other.
 
 On this run, the second configuration obtains better values of both indicators. A single run is not
 enough to conclude that it is better (that needs several runs and a statistical test, see
