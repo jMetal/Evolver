@@ -1,0 +1,16 @@
+# Runs NSGA-II, with its default configuration, on ZDT1: 5 independent runs of 25000 evaluations.
+# Run from the root of the Evolver repository:
+#   java -cp target/Evolver-*-jar-with-dependencies.jar \
+#       org.uma.evolver.cli.solving.SolveRunnerMain <copy of this file>
+algorithmName: NSGA-II
+encoding: Double
+populationSize: 100
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+configurationFile: defaultConfigurations/NSGAIIDoubleDefault.txt
+problem: ZDT1
+referenceFrontFileName: resources/referenceFronts/ZDT1.csv
+maxEvaluations: 25000
+numberOfIndependentRuns: 5
+seed: 1
+indicatorNames: [Epsilon, NormalizedHypervolume]
+outputDirectory: results/solve/NSGA-II.ZDT1

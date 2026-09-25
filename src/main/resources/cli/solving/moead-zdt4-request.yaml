@@ -1,0 +1,28 @@
+# Runs MOEA/D, with its default configuration, on ZDT4, giving the configuration inline.
+# Run from the root of the Evolver repository:
+#   java -cp target/Evolver-*-jar-with-dependencies.jar \
+#       org.uma.evolver.cli.solving.SolveRunnerMain <copy of this file>
+algorithmName: MOEAD
+encoding: Double
+populationSize: 100
+yamlParameterSpaceFile: MOEADDouble.yaml
+extraConfig:
+  weightVectorFilesDirectory: resources/weightVectors
+configuration: >-
+  --neighborhoodSize 20 --maximumNumberOfReplacedSolutions 2
+  --aggregationFunction penaltyBoundaryIntersection --normalizeObjectives false --pbiTheta 5.0
+  --algorithmResult population --createInitialSolutions default
+  --subProblemIdGenerator randomPermutationCycle
+  --variation crossoverAndMutationVariation
+  --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds
+  --sbxDistributionIndex 20.0
+  --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds
+  --polynomialMutationDistributionIndex 20.0
+  --selection populationAndNeighborhoodMatingPoolSelection
+  --neighborhoodSelectionProbability 0.9
+problem: ZDT4
+referenceFrontFileName: resources/referenceFronts/ZDT4.csv
+maxEvaluations: 25000
+numberOfIndependentRuns: 1
+indicatorNames: [Epsilon, NormalizedHypervolume, InvertedGenerationalDistancePlus]
+outputDirectory: results/solve/MOEAD.ZDT4

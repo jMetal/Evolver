@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -122,6 +123,27 @@ class DescribeMainTest {
       assertTrue(((List<?>) manifest.get("indicators")).contains("Epsilon"));
       assertTrue(manifest.containsKey("resourceDirectories"));
       assertTrue(manifest.containsKey("schemas"));
+    }
+
+    @Test
+    @DisplayName(
+        "given the solve request record, when manifest is built, then its schema marks the"
+            + " configuration fields as optional and the problem as required")
+    @SuppressWarnings("unchecked")
+    void givenSolveRequest_whenManifestBuilt_thenSchemaMarksOptionalFields() {
+      // Arrange & Act
+      Map<String, Object> schemas = (Map<String, Object>) DescribeMain.manifest().get("schemas");
+      List<Map<String, Object>> fields = (List<Map<String, Object>>) schemas.get("solveRequest");
+
+      // Assert
+      Map<String, Boolean> required = new HashMap<>();
+      fields.forEach(
+          field -> required.put((String) field.get("name"), (Boolean) field.get("required")));
+      assertTrue(required.get("problem"));
+      assertTrue(required.get("maxEvaluations"));
+      assertFalse(required.get("configuration"));
+      assertFalse(required.get("configurationFile"));
+      assertFalse(required.get("seed"));
     }
   }
 }

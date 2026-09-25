@@ -7,6 +7,8 @@ import java.util.Map;
 import org.uma.evolver.cli.BaseAlgorithmRegistry;
 import org.uma.evolver.cli.IndicatorRegistry;
 import org.uma.evolver.cli.ProblemRegistry;
+import org.uma.evolver.cli.solving.SolveRequest;
+import org.uma.evolver.cli.solving.SolveRequestYamlLoader;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -14,7 +16,8 @@ import org.yaml.snakeyaml.Yaml;
  * Prints a single, machine-readable YAML manifest to stdout describing everything {@code
  * cli.training} can resolve today: registered base algorithms, meta-optimizer algorithms,
  * training problems, indicators, the names available under each reusable resource directory, and
- * the shape of {@code request.yaml}/{@code baseLevel}/{@code metaSearch} themselves.
+ * the shape of {@code request.yaml}/{@code baseLevel}/{@code metaSearch} themselves — plus the
+ * shape of a {@code cli.solving} request ({@code solveRequest}), which uses the same registries.
  *
  * <p>Not a run: takes no arguments, writes no {@code status.yaml}/{@code results.yaml}, and exits
  * as soon as the manifest is written. Exists so an external tool (e.g. Evolver-Studio) can
@@ -122,6 +125,20 @@ public final class DescribeMain {
         Map.of(
             "metaPopulationSize", String.valueOf(MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE));
 
+    // Optional fields of a solve request (cli.solving); exactly one of configuration and
+    // configurationFile must be given, and indicatorNames requires referenceFrontFileName.
+    Map<String, String> solveRequestDefaults = new HashMap<>();
+    solveRequestDefaults.put("encoding", SolveRequestYamlLoader.DEFAULT_ENCODING);
+    solveRequestDefaults.put("extraConfig", null);
+    solveRequestDefaults.put("configuration", null);
+    solveRequestDefaults.put("configurationFile", null);
+    solveRequestDefaults.put("referenceFrontFileName", null);
+    solveRequestDefaults.put(
+        "numberOfIndependentRuns",
+        String.valueOf(SolveRequestYamlLoader.DEFAULT_NUMBER_OF_INDEPENDENT_RUNS));
+    solveRequestDefaults.put("seed", null); // absent: drawn at random
+    solveRequestDefaults.put("indicatorNames", null);
+
     Map<String, Object> schemas = new LinkedHashMap<>();
     schemas.put(
         "request",
@@ -140,6 +157,10 @@ public final class DescribeMain {
         "metaSearchTree",
         fieldDescriptorsAsMaps(
             RequestSchemaDescriptor.describe(TreeMetaSearchConfig.class, metaSearchDefaults)));
+    schemas.put(
+        "solveRequest",
+        fieldDescriptorsAsMaps(
+            RequestSchemaDescriptor.describe(SolveRequest.class, solveRequestDefaults)));
     return schemas;
   }
 
