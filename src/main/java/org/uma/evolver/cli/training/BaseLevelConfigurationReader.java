@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import org.uma.evolver.cli.ProblemSpec;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -55,38 +56,9 @@ public final class BaseLevelConfigurationReader {
   }
 
   private static List<ProblemSpec> problemSpecList(Object rawList, String label) {
-    return ((List<?>) rawList).stream().map(item -> toProblemSpec(item, label)).toList();
-  }
-
-  @SuppressWarnings("unchecked")
-  private static ProblemSpec toProblemSpec(Object item, String label) {
-    if (item instanceof String name) {
-      return new ProblemSpec(name);
-    }
-    if (item instanceof Map<?, ?> rawEntry) {
-      Map<String, Object> entry = (Map<String, Object>) rawEntry;
-      if (!(entry.get("class") instanceof String className)) {
-        throw new JMetalException(
-            "Invalid trainingProblemNames entry in '"
-                + label
-                + "': expected a 'class' key with a string value, got: "
-                + entry);
-      }
-      Object rawArgs = entry.getOrDefault("args", List.of());
-      if (!(rawArgs instanceof List<?> args)) {
-        throw new JMetalException(
-            "Invalid trainingProblemNames entry in '"
-                + label
-                + "': 'args' must be a list, got: "
-                + rawArgs);
-      }
-      return new ProblemSpec(className, (List<Object>) args);
-    }
-    throw new JMetalException(
-        "Invalid trainingProblemNames entry in '"
-            + label
-            + "': expected a string or a {class, args} map, got: "
-            + item);
+    return ((List<?>) rawList).stream()
+        .map(item -> ProblemSpec.fromYamlValue(item, "trainingProblemNames entry in '" + label + "'"))
+        .toList();
   }
 
   private static Map<String, Object> loadYaml(String fileName) {

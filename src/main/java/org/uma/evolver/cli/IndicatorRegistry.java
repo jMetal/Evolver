@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.training;
+package org.uma.evolver.cli;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +11,12 @@ import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Maps indicator names used in a {@link TrainingRequest} to jMetal quality indicator instances.
+ * Maps indicator names used in a training or solve request to jMetal quality indicator instances.
  *
  * <p>Prototype scope: only the indicators needed to reproduce the reference example
  * ({@code NSGAIIOptimizingNSGAIIForProblemZDT4}) are registered.
  */
-final class IndicatorRegistry {
+public final class IndicatorRegistry {
 
   private static final Map<String, Supplier<QualityIndicator>> INDICATORS =
       Map.of(
@@ -27,12 +27,12 @@ final class IndicatorRegistry {
 
   private IndicatorRegistry() {}
 
-  /** Names registered in {@link #INDICATORS}, for {@link DescribeMain}. */
-  static Set<String> registeredNames() {
+  /** Names registered in {@link #INDICATORS}, for {@code DescribeMain}. */
+  public static Set<String> registeredNames() {
     return INDICATORS.keySet();
   }
 
-  static QualityIndicator resolve(String indicatorName) {
+  public static QualityIndicator resolve(String indicatorName) {
     Supplier<QualityIndicator> supplier = INDICATORS.get(indicatorName);
     if (supplier == null) {
       throw new JMetalException(

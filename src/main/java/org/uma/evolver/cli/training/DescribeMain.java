@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.uma.evolver.cli.BaseAlgorithmRegistry;
+import org.uma.evolver.cli.IndicatorRegistry;
+import org.uma.evolver.cli.ProblemRegistry;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 

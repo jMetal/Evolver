@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.uma.evolver.cli.training.BaseLevelConfig;
-import org.uma.evolver.cli.training.ProblemSpec;
+import org.uma.evolver.cli.ProblemSpec;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
 
 /**

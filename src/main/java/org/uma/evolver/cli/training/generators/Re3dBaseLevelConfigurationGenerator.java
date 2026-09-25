@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 import org.uma.evolver.cli.training.BaseLevelConfig;
 import org.uma.evolver.cli.training.BaseLevelConfigurationWriter;
-import org.uma.evolver.cli.training.ProblemSpec;
+import org.uma.evolver.cli.ProblemSpec;
 
 /**
  * Regenerates {@code src/main/resources/baseLevelConfigurations/Re3dNSGAIIBaseLevel.yaml} — NSGA-II

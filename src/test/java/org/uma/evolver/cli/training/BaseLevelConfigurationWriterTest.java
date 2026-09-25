@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.uma.evolver.cli.ProblemSpec;
 
 @DisplayName("Unit tests for class BaseLevelConfigurationWriter")
 class BaseLevelConfigurationWriterTest {

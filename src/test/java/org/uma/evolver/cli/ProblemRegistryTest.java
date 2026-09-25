@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.training;
+package org.uma.evolver.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

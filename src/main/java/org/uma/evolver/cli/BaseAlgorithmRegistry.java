@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.training;
+package org.uma.evolver.cli;
 
 import java.util.List;
 import java.util.Map;
@@ -18,12 +18,12 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>Base-level algorithms are not built uniformly: {@code DoubleMOEAD} needs an extra
  * constructor argument ({@code weightVectorFilesDirectory}) that {@code DoubleNSGAII} does not.
- * {@link TrainingRequest#baseLevelExtraConfig()} carries that kind of algorithm-specific extra
+ * The {@code extraConfig} map of a training or solve request carries that kind of algorithm-specific extra
  * configuration as a small string map instead of growing new dedicated request fields per
  * algorithm.
  *
  * <p>Registered algorithms live as data in {@link #ALGORITHMS}, not only as {@code switch} cases,
- * so that {@link DescribeMain} can list them (name, encoding, required extra-config keys) without
+ * so that {@code DescribeMain} can list them (name, encoding, required extra-config keys) without
  * a second, hand-maintained copy of the same information — see
  * {@code docs/proposals/cli-describe-manifest.md}.
  *
@@ -33,7 +33,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * problems do not actually match the declared encoding fails with a {@code ClassCastException} at
  * run time, not at compile time.
  */
-final class BaseAlgorithmRegistry {
+public final class BaseAlgorithmRegistry {
 
   /**
    * @param name the base-level algorithm name, resolved via {@link #resolve}
@@ -41,7 +41,7 @@ final class BaseAlgorithmRegistry {
    *     {@code "Permutation"})
    * @param requiredExtraConfigKeys keys {@link #resolve} requires present in {@code extraConfig}
    */
-  record BaseAlgorithmDescriptor(
+  public record BaseAlgorithmDescriptor(
       String name, String encoding, List<String> requiredExtraConfigKeys) {}
 
   private static final List<BaseAlgorithmDescriptor> ALGORITHMS =
@@ -53,8 +53,8 @@ final class BaseAlgorithmRegistry {
 
   private BaseAlgorithmRegistry() {}
 
-  /** Registered algorithms, for {@link DescribeMain}. */
-  static List<BaseAlgorithmDescriptor> registeredAlgorithms() {
+  /** Registered algorithms, for {@code DescribeMain}. */
+  public static List<BaseAlgorithmDescriptor> registeredAlgorithms() {
     return ALGORITHMS;
   }
 
@@ -63,11 +63,11 @@ final class BaseAlgorithmRegistry {
    * {@link ParameterFactory} that matches the encoding — this must stay in lockstep with
    * {@link #resolve}, so both are driven by the same {@code encoding} value.
    */
-  static YAMLParameterSpace resolveParameterSpace(String encoding, String yamlParameterSpaceFile) {
+  public static YAMLParameterSpace resolveParameterSpace(String encoding, String yamlParameterSpaceFile) {
     return new YAMLParameterSpace(yamlParameterSpaceFile, parameterFactory(encoding));
   }
 
-  static BaseLevelAlgorithm<?> resolve(
+  public static BaseLevelAlgorithm<?> resolve(
       String algorithmName,
       String encoding,
       int populationSize,

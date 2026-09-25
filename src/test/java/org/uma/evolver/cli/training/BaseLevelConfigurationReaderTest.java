@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.uma.evolver.cli.ProblemSpec;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 @DisplayName("Unit tests for class BaseLevelConfigurationReader")

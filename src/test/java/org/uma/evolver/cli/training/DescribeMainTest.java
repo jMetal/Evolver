@@ -10,6 +10,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.uma.evolver.cli.BaseAlgorithmRegistry;
 
 /**
  * Coherence test for {@link DescribeMain}'s manifest: every name the registries claim to support

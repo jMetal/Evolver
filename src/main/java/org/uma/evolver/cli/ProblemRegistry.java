@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.training;
+package org.uma.evolver.cli;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -103,7 +103,7 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Resolves a {@link ProblemSpec} (used in a {@link BaseLevelConfig}) to a jMetal problem
+ * Resolves a {@link ProblemSpec} (used in a training or solve request) to a jMetal problem
  * instance.
  *
  * <p>{@link #CURATED} is a discoverable catalogue of short names (surfaced by {@code
@@ -119,7 +119,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * TSP instance file) is just a matter of supplying the right constructor arguments — no
  * per-parameterization subclass needed.
  */
-final class ProblemRegistry {
+public final class ProblemRegistry {
 
   private static final Map<String, Class<?>> CURATED =
       Map.ofEntries(
@@ -231,11 +231,11 @@ final class ProblemRegistry {
   private ProblemRegistry() {}
 
   /** Names registered in {@link #CURATED}, for {@code DescribeMain}. */
-  static Set<String> registeredNames() {
+  public static Set<String> registeredNames() {
     return CURATED.keySet();
   }
 
-  static Problem<?> resolve(ProblemSpec spec) {
+  public static Problem<?> resolve(ProblemSpec spec) {
     Class<?> problemClass = resolveClass(spec.className());
     return (Problem<?>) instantiate(problemClass, spec.args(), spec.className());
   }

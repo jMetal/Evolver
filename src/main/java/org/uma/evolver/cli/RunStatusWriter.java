@@ -1,4 +1,4 @@
-package org.uma.evolver.cli.training;
+package org.uma.evolver.cli;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.util.Map;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
-/** Writes the progress of a {@link TrainingRunner} run to a YAML status file, so an external
+/** Writes the progress of a training or solve run to a YAML status file, so an external
  * process (e.g. a GUI) can poll it instead of parsing log output. */
-final class RunStatusWriter {
+public final class RunStatusWriter {
 
-  enum State {
+  public enum State {
     RUNNING,
     FINISHED,
     FAILED
@@ -21,15 +21,15 @@ final class RunStatusWriter {
 
   private final Path statusFile;
 
-  RunStatusWriter(Path statusFile) {
+  public RunStatusWriter(Path statusFile) {
     this.statusFile = statusFile;
   }
 
-  void write(State state, int evaluationsDone, int maxEvaluations) {
+  public void write(State state, int evaluationsDone, int maxEvaluations) {
     write(state, evaluationsDone, maxEvaluations, null);
   }
 
-  void write(State state, int evaluationsDone, int maxEvaluations, String errorMessage) {
+  public void write(State state, int evaluationsDone, int maxEvaluations, String errorMessage) {
     Map<String, Object> status = new LinkedHashMap<>();
     status.put("status", state.name());
     status.put("evaluationsDone", evaluationsDone);

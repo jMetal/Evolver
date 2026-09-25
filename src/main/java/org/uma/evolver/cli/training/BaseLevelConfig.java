@@ -2,6 +2,9 @@ package org.uma.evolver.cli.training;
 
 import java.util.List;
 import java.util.Map;
+import org.uma.evolver.cli.BaseAlgorithmRegistry;
+import org.uma.evolver.cli.ProblemRegistry;
+import org.uma.evolver.cli.ProblemSpec;
 
 /**
  * Describes what is being tuned and on what training set — the part of a {@link TrainingRequest}

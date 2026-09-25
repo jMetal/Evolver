@@ -1,6 +1,7 @@
 package org.uma.evolver.cli.training;
 
 import java.util.Map;
+import org.uma.evolver.cli.RunStatusWriter;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
 
