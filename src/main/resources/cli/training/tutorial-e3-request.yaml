@@ -1,0 +1,8 @@
+# Training request of tutorial E3 (docs/tutorials/meta_optimization_workflow.rst): tune NSGA-II for
+# ZDT4 with NSGA-II as meta-optimizer. Copy it to a working directory before running it, since
+# TrainingRunnerMain writes results.yaml (and, by default, status.yaml) next to the request file.
+baseLevel: TutorialZdt4BaseLevel.yaml
+metaSearch: TutorialNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial/E3
+writeFrequency: 50
+statusFrequency: 50

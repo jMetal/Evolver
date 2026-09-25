@@ -1,0 +1,19 @@
+# Meta-optimizer of tutorial E3 (docs/tutorials/meta_optimization_workflow.rst): NSGA-II, searching the
+# flat encoding of the base-level parameter space. It evaluates 2000 configurations, 14 at a time.
+algorithm: NSGA-II
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 14
+
+crossover: SBX
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutation: polynomial
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

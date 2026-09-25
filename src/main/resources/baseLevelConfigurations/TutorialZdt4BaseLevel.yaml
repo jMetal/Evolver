@@ -1,0 +1,12 @@
+# Base level of tutorial E3 (docs/tutorials/meta_optimization_workflow.rst): NSGA-II, to be tuned for
+# the ZDT4 problem. Each configuration proposed by the meta-optimizer is run once, with 12000
+# evaluations; the meta-optimizer's objectives are the Epsilon and normalized hypervolume
+# indicators of the front it finds.
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [ZDT4]
+trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT4.csv]
+trainingEvaluations: [12000]
+indicatorNames: [Epsilon, NormalizedHypervolume]
