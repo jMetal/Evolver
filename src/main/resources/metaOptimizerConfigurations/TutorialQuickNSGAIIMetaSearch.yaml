@@ -1,0 +1,20 @@
+# Meta-optimizer of tutorial E4 (docs/quick_start.rst): a short NSGA-II search, meant to finish in
+# a couple of minutes. It evaluates 500 configurations, 8 at a time: set numberOfCores to the number
+# of cores of your machine.
+algorithm: NSGA-II
+encoding: flat
+
+metaMaxEvaluations: 500
+metaPopulationSize: 50
+numberOfCores: 8
+
+crossover: SBX
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutation: polynomial
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

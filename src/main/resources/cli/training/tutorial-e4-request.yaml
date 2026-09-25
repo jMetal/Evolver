@@ -1,0 +1,8 @@
+# Training request of tutorial E4 (docs/quick_start.rst): a short run tuning NSGA-II for ZDT4 with
+# NSGA-II as meta-optimizer. Copy it to a working directory before running it, since
+# TrainingRunnerMain writes results.yaml (and, by default, status.yaml) next to the request file.
+baseLevel: TutorialZdt4BaseLevel.yaml
+metaSearch: TutorialQuickNSGAIIMetaSearch.yaml
+outputDirectory: results/quick-start/training
+writeFrequency: 50
+statusFrequency: 50
