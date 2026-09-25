@@ -4,6 +4,7 @@ E1. Parameter Spaces
 ====================
 
 :Level: Introductory
+:Version: 1.0 (2026-09-25)
 :Time: about 20 minutes
 :Prerequisites: Evolver built with Maven (see :ref:`installation`); basic Java
 
