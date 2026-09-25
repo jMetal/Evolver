@@ -48,7 +48,8 @@ public class BaseLevelAlgorithmsTutorial {
   /**
    * Runs every step of the tutorial.
    *
-   * @param outputDirectory where step 2 writes the {@code VAR.csv}/{@code FUN.csv} files
+   * @param outputDirectory where steps 2 and 3 write the {@code VAR.csv}/{@code FUN.csv} files of the
+   *     fronts they find (step 3, in its {@code other} subdirectory)
    */
   public static void run(String outputDirectory) throws IOException {
     JMetalRandom.getInstance().setSeed(1);
@@ -129,6 +130,14 @@ public class BaseLevelAlgorithmsTutorial {
     otherAlgorithm.run();
     System.out.println(
         "Other configuration on ZDT1:    " + indicators(otherAlgorithm.result(), "ZDT1.csv"));
+
+    new File(outputDirectory, "other").mkdirs();
+    new SolutionListOutput(otherAlgorithm.result())
+        .setVarFileOutputContext(
+            new DefaultFileOutputContext(outputDirectory + "/other/VAR.csv", ","))
+        .setFunFileOutputContext(
+            new DefaultFileOutputContext(outputDirectory + "/other/FUN.csv", ","))
+        .print();
     // [step-3-end]
 
     // [step-4-start]
