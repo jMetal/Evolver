@@ -33,7 +33,7 @@ class BaseLevelAlgorithmsTutorialTest {
     @Test
     @DisplayName(
         "given the tutorial, when it is run, then every step prints its result and"
-            + " step 2 writes the VAR/FUN files")
+            + " steps 2 and 3 write the VAR/FUN files")
     void givenTutorial_whenRun_thenEveryStepCompletes(@TempDir Path tempDir)
         throws IOException {
       // Arrange
@@ -58,6 +58,7 @@ class BaseLevelAlgorithmsTutorialTest {
       assertTrue(printed.contains("binary solutions; the first one has objectives -"), printed);
       assertTrue(Files.exists(tempDir.resolve("VAR.csv")));
       assertTrue(Files.exists(tempDir.resolve("FUN.csv")));
+      assertTrue(Files.exists(tempDir.resolve("other/FUN.csv")));
     }
   }
 
