@@ -27,7 +27,8 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Code of tutorial E2, "Base-level algorithms" (see {@code docs/tutorials/base_level_algorithms.rst}).
+ * Code of tutorial E2, "Base-level algorithms" (see {@code
+ * docs/tutorials/base_level_algorithms.rst}).
  *
  * <p>It configures and runs Evolver's NSGA-II: from a configuration string, with a different
  * configuration, with a configuration read from a file, on another problem, and on a binary
@@ -38,26 +39,24 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  */
 public class BaseLevelAlgorithmsTutorial {
 
-  /** Evaluation budget of every run in the tutorial. */
-  public static final int MAXIMUM_NUMBER_OF_EVALUATIONS = 25000;
-
   private BaseLevelAlgorithmsTutorial() {}
 
   public static void main(String[] args) throws IOException {
-    run(MAXIMUM_NUMBER_OF_EVALUATIONS, "results/tutorial/E2");
+    run("results/tutorial/E2");
   }
 
   /**
    * Runs every step of the tutorial.
    *
-   * @param maximumNumberOfEvaluations the evaluation budget of each run
    * @param outputDirectory where step 2 writes the {@code VAR.csv}/{@code FUN.csv} files
    */
-  public static void run(int maximumNumberOfEvaluations, String outputDirectory)
-      throws IOException {
+  public static void run(String outputDirectory) throws IOException {
     JMetalRandom.getInstance().setSeed(1);
 
     // [step-1-start]
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 25000;
+
     String[] configuration =
         ("--algorithmResult population "
                 + "--createInitialSolutions default "
@@ -76,7 +75,8 @@ public class BaseLevelAlgorithmsTutorial {
             .split(" ");
 
     var parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
-    var nsgaii = new DoubleNSGAII(new ZDT1(), 100, maximumNumberOfEvaluations, parameterSpace);
+    var nsgaii =
+        new DoubleNSGAII(new ZDT1(), populationSize, maximumNumberOfEvaluations, parameterSpace);
     nsgaii.parse(configuration);
 
     EvolutionaryAlgorithm<DoubleSolution> algorithm = nsgaii.build();
@@ -120,7 +120,7 @@ public class BaseLevelAlgorithmsTutorial {
     var otherNSGAII =
         new DoubleNSGAII(
             new ZDT1(),
-            100,
+            populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
     otherNSGAII.parse(otherConfiguration);
@@ -132,9 +132,11 @@ public class BaseLevelAlgorithmsTutorial {
     // [step-3-end]
 
     // [step-4-start]
-    var configurations = new ConfigurationFileReader("defaultConfigurations/NSGAIIDoubleDefault.txt");
+    var configurations =
+        new ConfigurationFileReader("defaultConfigurations/NSGAIIDoubleDefault.txt");
     String[] defaultConfiguration = configurations.getConfiguration(1).split(" ");
-    System.out.println(configurations.getNumberOfConfigurations() + " configuration(s) in the file");
+    System.out.println(
+        configurations.getNumberOfConfigurations() + " configuration(s) in the file");
     // [step-4-end]
 
     // [step-5-start]
@@ -165,7 +167,7 @@ public class BaseLevelAlgorithmsTutorial {
     var binaryNSGAII =
         new BinaryNSGAII(
             new OneZeroMax(512),
-            100,
+            populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace("NSGAIIBinary.yaml", new BinaryParameterFactory()));
     binaryNSGAII.parse(binaryConfiguration);
