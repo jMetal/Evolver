@@ -8,7 +8,19 @@ All notable changes to Evolver will be documented in this file.
 2.2-SNAPSHOT
 ------------
 
-No changes yet.
+Changed
+~~~~~~~
+
+- ``scripts/`` keeps only active, reusable scripts, and is no longer ignored by git; the Python
+  dependencies (``scripts/requirements.txt``, ``environment.yml``) are trimmed to what they use
+
+Removed
+~~~~~~~
+
+- The experiment-specific analysis scripts ``analysis_A_hv_evolution/``,
+  ``compare_moead_vs_paes.py`` and ``generate_cd_plots.py``
+- The ``PAESvsMOEADValidation`` and ``PAESvsMOEADDTLZValidation`` examples, with their report
+  script ``plot_paes_vs_moead_validation.py``
 
 2.1 (2026-09-24)
 ----------------

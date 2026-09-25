@@ -49,9 +49,9 @@ python scripts/plot_front.py FUN.csv resources/referenceFronts/<P>.csv
 ```
 
 It auto-detects 2D/3D (by the number of objective columns) and overlays the reference front when
-given, saving a PNG next to the FUN file. If `scripts/plot_front.py` does not exist, create it
-(matplotlib `Agg`, 2D/3D scatter; pattern: `scripts/plot_dtlz_validation.py`) and commit it —
-`scripts/` is versioned. See the README "Analysis and reports" section for the Python environment.
+given, saving a PNG next to the FUN file. To compare several fronts on the same bi-objective
+problem (e.g. two configurations), use `scripts/plot_fronts.py` instead. See `scripts/README.md`
+for the Python environment.
 
 For interactive inspection instead (rotate a 3D front, hover for values), use
 `scripts/plot_front_interactive.py` (Plotly) with the same arguments; it shows the figure or, with

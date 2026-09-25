@@ -27,7 +27,7 @@ Clarify (ask the user only if not derivable from the request or the repository):
 
 **Path:** `src/main/java/org/uma/evolver/example/validation/<Name>Validation.java`
 
-**Reference pattern:** `PAESvsMOEADDTLZValidation.java` (same package).
+**Reference pattern:** `RDEMOEADTLZValidation.java` (same package).
 
 Structure:
 - Constants:
@@ -65,11 +65,12 @@ Output layout: `results/validation/<Name>/<ProblemName>/<label>_FUN.csv`.
 
 **Path:** `scripts/plot_<name>_validation.py`
 
-**Reference pattern:** `scripts/plot_dtlz_validation.py`.
+**Reference patterns:** `scripts/plot_fronts.py` (loading `FUN.csv` files and plotting labelled
+fronts over a reference front with matplotlib `Agg`) and `scripts/plot_front.py` (3D fronts).
 
 `scripts/` is versioned, so commit this script together with the Java runner — it is reproducible
 tooling, not a throwaway. Requirements (already in `scripts/requirements.txt`): `pandas`, `numpy`,
-`matplotlib`, `seaborn`. See the README "Analysis and reports" section for how to set up the
+`matplotlib`. See the README "Analysis and reports" section for how to set up the
 Python environment (conda or venv).
 
 Key points:

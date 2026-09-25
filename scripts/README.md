@@ -1,9 +1,10 @@
-# Scripts for Evolver Experimental Analysis
+# Scripts for Evolver
 
-Python scripts for turning Evolver experiment and validation results into figures and reports. The
-core Evolver framework (Java + Maven) needs no Python — these scripts are optional.
+Python scripts that turn Evolver's results into figures. The core Evolver framework (Java + Maven)
+needs no Python: these scripts are optional. Only active, reusable scripts live here; one-off
+analyses of a particular experiment belong with that experiment's data, not in this directory.
 
-## Environment Setup
+## Environment setup
 
 Run the setup **from the repository root**:
 
@@ -18,67 +19,54 @@ source .venv/bin/activate
 pip install -r scripts/requirements.txt
 ```
 
-## Front-plotting scripts (general-purpose)
+## Scripts
 
-Two reusable scripts plot a single Pareto front (a `FUN.csv`) against its reference front. They take
-the same arguments and comparison modes; pick by purpose:
+| Script | What it does |
+|---|---|
+| `plot_front.py` | Plots one front (a `FUN.csv`) against its reference front: 2D, 3D, or parallel coordinates for more objectives. Static PNG (matplotlib). |
+| `plot_front_interactive.py` | Same as `plot_front.py`, as an interactive Plotly figure (in the browser, or a self-contained HTML file). |
+| `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
+| `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. |
+| `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. |
 
-| Script | Engine | Output | Use for |
-|---|---|---|---|
-| `plot_front.py` | matplotlib | static PNG (headless) | reports, automation, embedding |
-| `plot_front_interactive.py` | Plotly | interactive (browser, or self-contained HTML with `--output`) | manual exploration: rotate 3D, hover |
+Run any script without arguments (or with `--help`) for its full usage.
+
+### Fronts
 
 ```bash
-# static, overlay (default): obtained front over its reference
+# one front over its reference front (overlay by default; --mode side|both for panels)
 python scripts/plot_front.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv
-
-# side-by-side panels (clearer in 3D); 'both' adds an overlay panel
-python scripts/plot_front.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv --mode side
-
-# interactive, saved as a self-contained HTML
 python scripts/plot_front_interactive.py FUN.csv resources/referenceFronts/DTLZ2.3D.csv --output front.html
+
+# several labelled fronts over the reference front (bi-objective)
+python scripts/plot_fronts.py resources/referenceFronts/ZDT4.csv \
+    --front "Default=path/to/default/FUN.csv" --front "Tuned=path/to/tuned/FUN.csv" \
+    --output fronts.png
 ```
 
-Notes:
-- Objectives are auto-detected from the column count (2 → 2D, 3 → 3D, >3 → parallel coordinates).
-- `--mode overlay|side|both` (default `overlay`); `side`/`both` share axis ranges across panels.
-- The reference front is passed **explicitly** (its exact file). Reference fronts follow no single
-  naming convention (`DTLZ1.3D.csv` vs `RE31.csv`), so the filename is not guessed from the problem.
-- Run either script without arguments to print the full help.
+The reference front is always passed explicitly: reference fronts follow no single naming
+convention (`DTLZ1.3D.csv` vs `RE31.csv`), so the file name is not guessed from the problem.
 
-## Study statistics
+### Training convergence
 
-- `generate_cd_plots.py` — Critical Difference plots (Friedman + Nemenyi post-hoc) from a study's
-  `QualityIndicatorSummary.csv`. Set the `RESULTS_DIR` at the top of the file to the study directory.
+```bash
+# one training run (the output directory of a training, with INDICATORS.csv)
+python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV
 
-## Experiment-specific analysis
-
-### Experiment A: HV evolution
-
-- **Directory**: `analysis_A_hv_evolution/` (has its own `README.md`).
-- **Purpose**: hypervolume convergence comparison figures and statistics.
-- **Entry points**: `analysis_A_hv_evolution.py`, `generate_figures_and_stats.py`,
-  `postprocess_analysis.py`.
-
-## Directory layout
-
+# several replications: a directory with one training output directory per replication
+python scripts/plot_training_convergence.py path/to/campaign --primary IGD+ --output-dir plots
 ```
-scripts/
-├── README.md                     # this file
-├── requirements.txt              # Python dependencies
-├── plot_front.py                 # single-front plotter (matplotlib, static)
-├── plot_front_interactive.py     # single-front plotter (Plotly, interactive)
-├── generate_cd_plots.py          # Critical Difference plots from a study summary
-├── analysis_A_hv_evolution/      # HV evolution analysis (own README)
-└── figures/                      # shared figures output
+
+It writes one `convergence_<indicator>.png` per meta-objective and prints the final value of the
+primary indicator and when 95% of its improvement was reached.
+
+### Parameter spaces
+
+```bash
+python scripts/plot_parameter_space.py src/main/resources/parameterSpaces/NSGAIIDouble.yaml --depth 3
 ```
 
 ## Dependencies
 
-Declared in `requirements.txt` / `environment.yml`:
-
-- **pandas**, **numpy** — data manipulation
-- **matplotlib**, **seaborn** — static figures
-- **plotly** — interactive figures (`plot_front_interactive.py`)
-- **scipy** — statistical tests
-- **scikit-learn** — clustering / feature-importance analyses
+`requirements.txt` (and `../environment.yml`): pandas, numpy and matplotlib for every script, plus
+Plotly for `plot_front_interactive.py` and PyYAML for `plot_parameter_space.py`.

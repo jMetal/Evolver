@@ -248,7 +248,10 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
-- No changes yet.
+- Clean up `scripts/`, which keeps only active, reusable scripts: remove the experiment-specific
+  analyses (`analysis_A_hv_evolution/`, `compare_moead_vs_paes.py`, `generate_cd_plots.py`) and the
+  PAES vs MOEA/D validation examples with their report script, and trim the Python dependencies
+  to what the remaining scripts use.
 
 ### v2.1 (2026-09-24)
 
