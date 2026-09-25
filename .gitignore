@@ -39,11 +39,11 @@ paper/
 # for the one proposal doc that IS tracked, deliberately only on this study branch)
 docs/proposals/CASH-MO-proposal.md
 
-# Generated at runtime: meta-optimization run output, aggregated analysis, ad hoc scripts,
-# and per-run cli.runner requests written by Evolver-Studio (see CLAUDE.md, "Temporary Directories")
+# Generated at runtime: meta-optimization run output, aggregated analysis, and per-run
+# cli.runner requests written by Evolver-Studio (see CLAUDE.md, "Generated Output Directories").
+# scripts/ is not listed: it holds versioned, reusable analysis tooling.
 experimentation/
 results/
-scripts/
 cli-runner-runs/
 
 # RQ4 raw run outputs kept out of git history
