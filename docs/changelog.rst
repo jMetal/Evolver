@@ -11,6 +11,10 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add :doc:`tutorial E4, Evolver in 10 minutes <quick_start>`, which replaces the former quick
+  start: build Evolver, run a configurable algorithm, tune it with a short training run, and run it
+  with the configuration found, all from the command line
+- Add a test that loads every request file bundled under ``src/main/resources/cli/training``
 - Add :doc:`tutorial E3, meta-optimization workflow <tutorials/meta_optimization_workflow>`:
   tuning NSGA-II for ZDT4 from Java and from the command line, choosing a configuration from the
   training results, and comparing its front with that of the default configuration

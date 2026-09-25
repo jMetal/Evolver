@@ -1,105 +1,168 @@
 .. _getting_started:
 
-Quick Start
-===========
+E4. Evolver in 10 Minutes
+=========================
 
-This guide will help you get started with Evolver by walking you through some simple examples.
+:Level: Introductory
+:Time: about 10 minutes, of which building takes about 20 seconds and the training about 35 seconds
+:Timings measured on: Apple M5 Pro (18 cores, 8 of them used by the training), 64 GB of RAM,
+   macOS 26.6.2, Java 21.0.12 (Oracle JDK), Maven 3.9.16
+:Prerequisites: a terminal, git, a JDK and Maven
 
-The simplest way to use Evolver is to take a look at the examples included in the ``org.uma.evolver.example`` package. Two of its sub-packages match the two ways of using Evolver:
+This quick start gets Evolver working on your machine and shows its two uses, from the command
+line and without writing any code:
 
-- ``org.uma.evolver.example.baselevel``: the configurable algorithms used on their own
-- ``org.uma.evolver.example.training``: meta-optimization, i.e. finding configurations of those algorithms automatically
+- running one of its **configurable algorithms** on a problem;
+- **tuning** that algorithm automatically, and running it with the configuration found.
 
-Let us examine an example of each.
+Each step links to the tutorial that explains it in depth.
 
-Configurable Algorithm Example: NSGA-II
----------------------------------------
-The `NSGAIIForZDT1Example <https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/example/baselevel/standard/NSGAIIForZDT1Example.java>`_ class shows how to use the configurable NSGA-II to solve the ZDT1 problem. The contents of this class are as follows:
+Step 1: check the requirements
+------------------------------
 
-.. literalinclude:: ../src/main/java/org/uma/evolver/example/baselevel/standard/NSGAIIForZDT1Example.java
-   :language: java
-   :linenos:
-   :caption: NSGAIIForZDT1Example.java
-   :name: nsgaii-zdt1
-
-The configuration string corresponds to a standard NSGA-II configuration commonly used in the literature. The resulting solutions and their corresponding function values are stored in the ``VAR.csv`` and ``FUN.csv`` files in the current directory, respectively.
-
-Some examples, such as ``NSGAIIZDT4WithArchiveExample`` or ``AGEMOEAZDT4Example``, also accept the configuration string as command-line arguments, overriding the built-in one. We have first to create a .jar file using Maven:
+Evolver needs **Java 21 or later** (JDK 21 recommended) and **Maven 3.6 or later**:
 
 .. code-block:: bash
 
-    mvn -DskipTests=true clean package
+    java -version     # should report version 21 or later
+    mvn -v            # should report Maven 3.6 or later, running on Java 21 or later
 
-As a result, a file called ``Evolver-<version>-jar-with-dependencies.jar`` will be created in the ``target`` folder. We can now run the program with a configuration of our own:
+If you have several JDKs installed, make ``JAVA_HOME`` point to JDK 21: ``mvn -v`` shows which one
+Maven uses. See :ref:`installation` for more details.
 
-.. code-block:: bash
-
-    java -cp target/Evolver-<version>-jar-with-dependencies.jar org.uma.evolver.example.baselevel.features.NSGAIIZDT4WithArchiveExample --algorithmResult population --createInitialSolutions default --variation crossoverAndMutationVariation --offspringPopulationSize 100 --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds --sbxDistributionIndex 20.0 --mutation polynomial --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds --polynomialMutationDistributionIndex 20.0 --selection tournament --selectionTournamentSize 2
-
-
-Meta-Optimization Example: NSGA-II Optimizing NSGA-II
------------------------------------------------------
-To illustrate a simple example of meta-optimization, let us consider the `NSGAIIOptimizingNSGAIIForProblemZDT4 <https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/example/training/zdt/NSGAIIOptimizingNSGAIIForProblemZDT4.java>`_ class. This class uses NSGA-II to optimize the parameters of NSGA-II for solving a training set composed only of the ZDT4 problem. We include the class next:
-
-.. literalinclude:: ../src/main/java/org/uma/evolver/example/training/zdt/NSGAIIOptimizingNSGAIIForProblemZDT4.java
-   :language: java
-   :linenos:
-   :caption: NSGAIIOptimizingNSGAIIForProblemZDT4.java
-   :name: nsgaii-optimizing-nsgaii
-
-The example describes the run in two YAML blocks: the base level (the algorithm to configure, its parameter space, the training set and the quality indicators used as objectives, here EP and NHV) and the meta-optimizer (NSGA-II with a population of 100, a mutation probability factor of 1.5 and a stopping condition of 2000 evaluations, meaning that 2000 configurations of the base-level NSGA-II will be generated). ``TrainingRunner`` then runs the meta-optimization. The same experiment can be run without writing Java code, from ``src/main/resources/cli/training/nsgaii-zdt4-request.yaml`` (see :doc:`utilities/cli_tools`).
-
-The following screenshots show how the population of the meta-optimizer evolves over time (at 200, 500, and 1000 function evaluations):
-
-.. figure:: figures/NSGAII.ZDT4.200.png
-   :align: center
-   :alt: NSGAII.ZDT4.200
-   :figwidth: 70%
-   
-.. figure:: figures/NSGAII.ZDT4.500.png
-   :align: center
-   :alt: NSGAII.ZDT4.500
-   :figwidth: 70%   
-
-.. figure:: figures/NSGAII.ZDT4.1000.png
-   :align: center
-   :alt: NSGAII.ZDT4.1000
-   :figwidth: 70%   
-
-We observe that after 300 function evaluations of the meta-optimizer, many solutions has a NHV equal to 1.0, meaning that corresponding configurations of these solutions lead the base-optimizer to obtain poor-quality fronts that are dominated by the reference point. At that stage, the meta-optimizer has found also solutions with NHV values lower than 1.0, existing only one non-dominated solution with NHV and EP values of 0,5304 and 0.305, respectively. When the meta-optimizer has generated 500 solutions we can see that the population is diverse, with again only a non-dominated solution (with NHV and EP values of 0,5304 and 0.305, respectively). After generating 1000 solutions the non-dominated solution of the population has NHV and EP values of 0.0096 and 0.0077, respectively; these values are rather low, suggesting that at this point the found configurations should be very accurate.
-
-During the execution of the meta-optimizer, output files are written in the ``results/nsgaii/ZDT4`` directory:
-
-- ``METADATA.txt``: the settings of the run (meta-optimizer, base-level algorithm, training set, indicators, …).
-- ``INDICATORS.csv``: the indicator values (EP and NHV) of the configurations in the meta-optimizer population, per evaluation checkpoint.
-- ``CONFIGURATIONS.csv``: the corresponding configurations, one parameter per column.
-- ``VAR_CONF.txt``: the same configurations as configuration strings, together with their indicator values.
-- ``status.yaml``: the progress of the run.
-
-This is one of the configurations found after 1000 evaluations:
+Step 2: get and build Evolver
+-----------------------------
 
 .. code-block:: bash
 
-  --algorithmResult externalArchive --populationSizeWithArchive 89 --archiveType unboundedArchive --createInitialSolutions scatterSearch --offspringPopulationSize 20 --variation crossoverAndMutationVariation --crossover SBX --crossoverProbability 0.6885278888703463 --crossoverRepairStrategy bounds --sbxDistributionIndex 32.07999211591175 --blxAlphaCrossoverAlpha 0.640303817347435 --mutation linkedPolynomial --mutationProbabilityFactor 0.6952851214888922 --mutationRepairStrategy bounds --uniformMutationPerturbation 0.14262698171788724 --polynomialMutationDistributionIndex 18.40410700737766 --linkedPolynomialMutationDistributionIndex 17.696253388022207 --nonUniformMutationPerturbation 0.9843662953835077 --selection tournament --selectionTournamentSize 8 
+    git clone https://github.com/jMetal/Evolver.git
+    cd Evolver
+    mvn -DskipTests package
 
-If we configure the base-level NSGA-II to solve problem ZDT4 with these settings and run it, we get the following front:
+``-DskipTests`` skips the tests to make the build quicker (``mvn clean install`` runs them). The
+build produces a single JAR file with Evolver and all its dependencies in ``target/``. Keep its
+name in a variable, so that the following commands work whatever the version:
 
-.. figure:: figures/ZDT4.png
-   :align: center
-   :alt: ZDT4
-   :figwidth: 70%
+.. code-block:: bash
 
-This meta-optimization example can be easily extended to find, for instance, a configuration for the full ZDT benchmark. The only change required is the training set in the base-level YAML block:
+    JAR=$(ls target/Evolver-*-jar-with-dependencies.jar)
 
-.. code-block:: yaml
+Run every command of this guide **from the root of the Evolver repository**: the examples read
+their reference fronts from ``resources/referenceFronts/`` with relative paths.
 
-    trainingProblemNames: [ZDT1, ZDT2, ZDT3, ZDT4, ZDT6]
-    trainingReferenceFrontFileNames:
-      - resources/referenceFronts/ZDT1.csv
-      - resources/referenceFronts/ZDT2.csv
-      - resources/referenceFronts/ZDT3.csv
-      - resources/referenceFronts/ZDT4.csv
-      - resources/referenceFronts/ZDT6.csv
-    trainingEvaluations: [12000, 12000, 12000, 12000, 12000]
+Step 3: run a configurable algorithm
+------------------------------------
 
-The `NSGAIIOptimizingNSGAIIForBenchmarkZDT <https://github.com/jMetal/Evolver/blob/main/src/main/java/org/uma/evolver/example/training/zdt/NSGAIIOptimizingNSGAIIForBenchmarkZDT.java>`_ class follows this approach, with a budget of 10000 evaluations per problem.
+Evolver's algorithms are configurable: each one is described by a parameter space, and a
+configuration chooses a value for each of its parameters. The example ``NSGAIIForZDT1Example`` runs
+NSGA-II, with its standard configuration, on the ZDT1 problem:
+
+.. code-block:: bash
+
+    java -cp "$JAR" org.uma.evolver.example.baselevel.standard.NSGAIIForZDT1Example
+
+It runs in less than a second, writes the solutions found to ``VAR.csv`` (their variables) and
+``FUN.csv`` (their objective values), and prints several quality indicators of the front against
+the reference front of ZDT1, among them:
+
+.. code-block:: none
+
+    INFO: EP: 0.011759127031143582
+    INFO: NHV: 0.013234132557747302
+
+Both are to be minimized. The example does not fix the random seed, so your values will be slightly
+different. If you have set up the optional Python environment (see ``scripts/README.md``), you can
+plot the front:
+
+.. code-block:: bash
+
+    python scripts/plot_front.py FUN.csv resources/referenceFronts/ZDT1.csv
+
+To learn more: :doc:`tutorials/parameter_spaces` explains parameter spaces, and
+:doc:`tutorials/base_level_algorithms` how to configure and run the algorithms from Java.
+
+Step 4: tune the algorithm
+--------------------------
+
+Now let Evolver find a configuration of NSGA-II for the ZDT4 problem, a harder one, on which the
+standard configuration struggles. A **meta-optimizer** (NSGA-II as well) searches the parameter
+space of NSGA-II: it tries 500 configurations, runs NSGA-II with each of them on ZDT4, and minimizes
+two quality indicators of the fronts found, NHV and EP.
+
+The training is described by a request file, bundled with Evolver. Copy it to a working directory,
+since the run writes its status and results next to it, and run it:
+
+.. code-block:: bash
+
+    mkdir -p results/quick-start
+    cp src/main/resources/cli/training/tutorial-e4-request.yaml results/quick-start/request.yaml
+    java -cp "$JAR" org.uma.evolver.cli.training.TrainingRunnerMain results/quick-start/request.yaml
+
+It takes about 35 seconds with 8 cores. The meta-optimizer uses 8 cores to evaluate configurations
+in parallel: if your machine has a different number of cores, change ``numberOfCores`` in
+``src/main/resources/metaOptimizerConfigurations/TutorialQuickNSGAIIMetaSearch.yaml`` and build
+again.
+
+While it runs, ``results/quick-start/status.yaml`` shows its progress. When it finishes:
+
+.. code-block:: none
+
+    {status: FINISHED, evaluationsDone: 500, maxEvaluations: 500, ...}
+
+and the results are in ``results/quick-start/training/``:
+
+- ``METADATA.txt``: the settings of the run;
+- ``INDICATORS.csv`` and ``CONFIGURATIONS.csv``: the indicator values and the parameters of the
+  configurations on the meta-optimizer's front, at every checkpoint;
+- ``VAR_CONF.txt``: the same configurations as configuration strings, one per line, preceded by
+  their indicator values (``EP=... NHV=... | --algorithmResult ...``).
+
+To learn more: :doc:`tutorials/meta_optimization_workflow` explains each piece of a training run,
+how to run it from Java, and how to read its results.
+
+Step 5: use the configuration found
+-----------------------------------
+
+The last block of ``VAR_CONF.txt`` is the meta-optimizer's final front. This command keeps the
+configuration with the lowest NHV, the main objective, and saves it to a file:
+
+.. code-block:: bash
+
+    awk '/^# Evaluation/ {block = ""} / \| / {block = block $0 "\n"} END {printf "%s", block}' \
+        results/quick-start/training/VAR_CONF.txt \
+      | sed 's/.*NHV=\([^ ]*\) | \(.*\)/\1 \2/' | sort -g | head -1 | cut -d' ' -f2- \
+      > results/quick-start/best-configuration.txt
+
+The example ``NSGAIIZDT4WithArchiveExample`` runs NSGA-II on ZDT4 with 25000 evaluations, and
+accepts a configuration as its arguments. Run it with the configuration found, and with the default
+configuration of NSGA-II, stored in ``src/main/resources/defaultConfigurations/``:
+
+.. code-block:: bash
+
+    java -cp "$JAR" org.uma.evolver.example.baselevel.features.NSGAIIZDT4WithArchiveExample \
+        $(cat results/quick-start/best-configuration.txt)
+
+    java -cp "$JAR" org.uma.evolver.example.baselevel.features.NSGAIIZDT4WithArchiveExample \
+        $(cat src/main/resources/defaultConfigurations/NSGAIIDoubleDefault.txt)
+
+In three runs of each, the configuration found obtained NHV values between 0.0073 and 0.0077, and
+the default one between 0.011 and 0.016. Your values will differ, since the training and the runs
+are random, but the tuned configuration should be clearly better on ZDT4. A proper comparison needs
+more runs and a statistical test, which later tutorials cover.
+
+Working from an IDE
+-------------------
+
+Evolver is a standard Maven project: open the repository root in IntelliJ IDEA, Eclipse or VS Code
+(with its Java extensions) as a Maven project. You can then run the examples and tutorials, under
+``org.uma.evolver.example``, from their ``main`` methods; set the working directory to the root of
+the repository, so that they find the reference fronts.
+
+What's next
+-----------
+
+- The :ref:`tutorials_index` explain each part in depth, starting with
+  :doc:`tutorials/parameter_spaces`.
+- :doc:`utilities/cli_tools` describes the request files of ``TrainingRunnerMain`` and the
+  ``DescribeMain`` manifest.
+- :doc:`examples/index` lists the runnable examples.

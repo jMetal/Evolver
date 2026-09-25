@@ -40,7 +40,7 @@ Usage
 
 How do I create a custom optimization problem?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-See the :ref:`getting_started` guide for an example of creating a custom problem.
+Evolver solves jMetal problems: implement jMetal's ``Problem`` interface (for instance, by extending ``AbstractDoubleProblem``), and Evolver's algorithms can solve it (see :doc:`tutorials/base_level_algorithms`). ``cli.training`` can also use it in a training set, by its fully qualified class name (see :doc:`utilities/cli_tools`).
 
 How do I configure a base-level metaheuristic?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

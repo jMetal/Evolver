@@ -3,9 +3,9 @@
 Tutorials
 =========
 
-Step-by-step tutorials with runnable code. Each one comes with a class in the
-``org.uma.evolver.example.tutorial`` package, so you can run it and experiment with it. They are
-grouped in three levels:
+Step-by-step tutorials with runnable code. Most come with a class in the
+``org.uma.evolver.example.tutorial`` package, so you can run it and experiment with it; the quick
+start (E4) only uses the command line. They are grouped in three levels:
 
 - **Introductory**: the basic concepts, needed for everything else.
 - **Intermediate**: designing experiments, analyzing and validating their results.
@@ -29,6 +29,9 @@ Introductory
    * - :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`
      - Base-level algorithm, meta-optimizer, training problem and quality indicators: a complete
        training run, from Java and from the command line, and choosing the configuration it finds.
+   * - :doc:`E4. Evolver in 10 minutes <../quick_start>`
+     - Build Evolver, run a configurable algorithm, tune it, and run it with the configuration
+       found, from the command line.
 
 More tutorials are planned for the intermediate and advanced levels.
 

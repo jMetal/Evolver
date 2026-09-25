@@ -222,7 +222,8 @@ See [`scripts/README.md`](scripts/README.md) for the available analyses.
 Full documentation is available at <https://evolver.readthedocs.io>, including:
 
 - Installation guide
-- Quick start and examples
+- Quick start ("Evolver in 10 minutes") and step-by-step tutorials
+- Examples
 - Concepts (parameter spaces, evaluation strategies, base-level and meta-level metaheuristics)
 - API reference
 - irace integration
@@ -248,6 +249,9 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
+- Add tutorial E4 (Evolver in 10 minutes), which replaces the former quick start: build Evolver,
+  run a configurable algorithm, tune it with a short training run, and run it with the
+  configuration found, all from the command line.
 - Add tutorial E3 (meta-optimization workflow): tuning NSGA-II for ZDT4 from Java and from the
   command line, choosing a configuration from the training results, and comparing its front with
   that of the default configuration.
