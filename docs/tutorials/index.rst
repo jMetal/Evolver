@@ -26,8 +26,9 @@ Introductory
    * - :doc:`E2. Base-level algorithms <base_level_algorithms>`
      - Configuring and running Evolver's algorithms from a parameter space, reading their results,
        and running them on other problems and encodings: Evolver as an alternative to jMetal.
-   * - E3. Meta-optimization workflow *(coming soon)*
-     - Base-level algorithm, meta-optimizer, training problems and results: a complete training run.
+   * - :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`
+     - Base-level algorithm, meta-optimizer, training problem and quality indicators: a complete
+       training run, from Java and from the command line, and choosing the configuration it finds.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -36,3 +37,4 @@ More tutorials are planned for the intermediate and advanced levels.
 
    parameter_spaces
    base_level_algorithms
+   meta_optimization_workflow

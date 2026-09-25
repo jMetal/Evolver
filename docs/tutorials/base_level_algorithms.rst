@@ -4,7 +4,8 @@ E2. Base-Level Algorithms
 =========================
 
 :Level: Introductory
-:Time: about 25 minutes
+:Time: about 25 minutes (running the tutorial class takes a few seconds)
+:Timings measured on: Apple M5 Pro (18 cores), 64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
 :Prerequisites: :doc:`E1. Parameter spaces <parameter_spaces>`
 
 Evolver's algorithms are **configurable**: instead of being written with a fixed crossover,
@@ -295,7 +296,8 @@ Try it yourself
 What's next
 -----------
 
-- **E3. Meta-optimization workflow** (coming soon): finding good configurations automatically.
+- :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`: finding good configurations
+  automatically.
 - :doc:`../concepts/base_level_metaheuristics` describes each algorithm in more depth.
 - The examples in ``org.uma.evolver.example.baselevel`` configure and run every algorithm, including
   configurations found by meta-optimization (``baselevel.tuned``).
