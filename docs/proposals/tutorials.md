@@ -73,9 +73,7 @@ Evolver-Studio currently only launches training runs (through `cli.training`), a
 page is not implemented. The solving-track tutorials (S3, S5, S6, S10) need first:
 
 - **Evolver:** a CLI entry point to run a single configurable algorithm on a problem, analogous to
-  `cli.training` (a request with algorithm, encoding, problem, configuration, budget and number of
-  runs; status and result files with `VAR`/`FUN` and indicator values). To be designed as its own
-  proposal in `docs/proposals/`.
+  `cli.training`. Done: `cli.solving.SolveRunnerMain`, see `cli-solving.md`.
 - **Evolver-Studio:** a page to configure and run algorithms on problems (jMetal-runner style),
   reusing the guided parameter form and the live front already used by Training.
 

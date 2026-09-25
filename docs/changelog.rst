@@ -11,6 +11,10 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add ``org.uma.evolver.cli.solving.SolveRunnerMain``, which runs a configurable algorithm, with a
+  configuration given inline or as a file, on a problem, with several independent runs and
+  reproducible seeds, and writes the fronts and quality indicators of each run (see
+  :doc:`utilities/cli_tools`); ``DescribeMain`` adds the shape of its request
 - Add :doc:`tutorial E4, Evolver in 10 minutes <quick_start>`, which replaces the former quick
   start: build Evolver, run a configurable algorithm, tune it with a short training run, and run it
   with the configuration found, all from the command line
@@ -27,6 +31,9 @@ Added
 Changed
 ~~~~~~~
 
+- ``BaseAlgorithmRegistry``, ``ProblemRegistry``, ``ProblemSpec``, ``IndicatorRegistry`` and
+  ``RunStatusWriter`` move from ``cli.training`` to ``org.uma.evolver.cli``, shared by the training
+  and solving tools; request files and entry points do not change
 - ``scripts/`` keeps only active, reusable scripts, and is no longer ignored by git; the Python
   dependencies (``scripts/requirements.txt``, ``environment.yml``) are trimmed to what they use
 

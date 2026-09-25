@@ -249,6 +249,10 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
+- Add `SolveRunnerMain` (`org.uma.evolver.cli.solving`), which runs a configurable algorithm on a
+  problem from a YAML request (configuration inline or from a file, independent runs, reproducible
+  seeds) and writes the fronts and quality indicators of each run. The registries shared with the
+  training tools move to `org.uma.evolver.cli`.
 - Add tutorial E4 (Evolver in 10 minutes), which replaces the former quick start: build Evolver,
   run a configurable algorithm, tune it with a short training run, and run it with the
   configuration found, all from the command line.

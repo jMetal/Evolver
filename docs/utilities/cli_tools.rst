@@ -1,12 +1,13 @@
 CLI Tools
 =========
 
-The ``org.uma.evolver.cli.training`` package lets an external tool (or a terminal) launch and
-inspect meta-optimization training jobs without recompiling anything: a job is described entirely
-by YAML files, and the two entry points below are plain Java classes with a ``main`` method,
-runnable straight from the packaged jar.
+The ``org.uma.evolver.cli`` packages let an external tool (or a terminal) launch and inspect jobs
+without recompiling anything: ``cli.training`` runs meta-optimization training jobs, and
+``cli.solving`` runs a configurable algorithm on a problem. A job is described entirely by YAML
+files, and the entry points below are plain Java classes with a ``main`` method, runnable straight
+from the packaged jar.
 
-Both tools are built with the rest of the project:
+All the tools are built with the rest of the project:
 
 .. code-block:: bash
 
@@ -161,10 +162,141 @@ as-is:
    * - ``randomsearch-dtlz3d-request.yaml``
      - RandomSearch as the meta-optimizer engine (flat encoding)
 
+SolveRunnerMain
+---------------
+
+Runs a configurable algorithm, with a given configuration, on a problem, once or several times
+(independent runs), and writes the fronts found and their quality indicators — the command-line
+counterpart of writing a Java ``main`` as in :doc:`../tutorials/base_level_algorithms`. It uses the
+same registries as ``TrainingRunnerMain``: the algorithms, problems and indicators it accepts are
+those listed by ``DescribeMain``.
+
+Usage
+~~~~~
+
+.. code-block:: bash
+
+   java -cp target/Evolver-<version>-jar-with-dependencies.jar \
+       org.uma.evolver.cli.solving.SolveRunnerMain <request.yaml> [status.yaml]
+
+As with ``TrainingRunnerMain``, ``status.yaml`` defaults to a file next to ``request.yaml``.
+
+Example
+~~~~~~~
+
+A solve request is a single, self-contained file
+(``src/main/resources/cli/solving/nsgaii-zdt1-request.yaml``):
+
+.. code-block:: yaml
+
+   algorithmName: NSGA-II
+   encoding: Double
+   populationSize: 100
+   yamlParameterSpaceFile: NSGAIIDouble.yaml
+   configurationFile: defaultConfigurations/NSGAIIDoubleDefault.txt
+   problem: ZDT1
+   referenceFrontFileName: resources/referenceFronts/ZDT1.csv
+   maxEvaluations: 25000
+   numberOfIndependentRuns: 5
+   seed: 1
+   indicatorNames: [Epsilon, NormalizedHypervolume]
+   outputDirectory: results/solve/NSGA-II.ZDT1
+
+.. list-table:: Solve request fields
+   :header-rows: 1
+   :widths: 28 14 58
+
+   * - Field
+     - Default
+     - Meaning
+   * - ``algorithmName``, ``encoding``, ``populationSize``, ``yamlParameterSpaceFile``,
+       ``extraConfig``
+     - ``encoding``: ``Double``; ``extraConfig``: none
+     - The algorithm, as in a training run's ``baseLevel`` file
+   * - ``configuration``
+     - —
+     - The configuration, as a string (``--algorithmResult population ...``)
+   * - ``configurationFile``
+     - —
+     - Instead of ``configuration``: a file with one configuration per line, of which the first is
+       used, such as those in ``defaultConfigurations/``. Exactly one of the two must be given
+   * - ``problem``
+     - required
+     - A name listed by ``DescribeMain`` (``ZDT1``), or a fully-qualified class name, optionally
+       with constructor arguments: ``{class: org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1,
+       args: [7, 3]}``
+   * - ``referenceFrontFileName``
+     - none
+     - The reference front of the problem; required when ``indicatorNames`` is given
+   * - ``maxEvaluations``
+     - required
+     - The evaluation budget of each run
+   * - ``numberOfIndependentRuns``
+     - 1
+     - The number of runs
+   * - ``seed``
+     - drawn at random
+     - The seed of the first run; run *i* uses ``seed + i - 1``, so every run can be reproduced
+   * - ``indicatorNames``
+     - none
+     - The quality indicators computed for each run
+   * - ``outputDirectory``
+     - required
+     - Where the results are written
+
+Output
+~~~~~~
+
+In ``outputDirectory``:
+
+- ``run-<i>/VAR.csv`` and ``run-<i>/FUN.csv``: the result of each run (``run-1``, ``run-2``, ...);
+- ``INDICATORS.csv``: one row per run, with its seed, its computing time and its indicator values:
+
+  .. code-block:: none
+
+     Run,Seed,TimeMs,EP,NHV
+     1,1,336,0.010348755426522999,0.009763737439173137
+     2,2,242,0.012313320050797077,0.010281578438605998
+
+- ``METADATA.txt``: the settings of the run, including the configuration used and the seeds.
+
+The indicators are computed as in a training run, so their values are comparable: on the
+non-dominated solutions of the result, with the front and the reference front normalized to the
+bounds of the reference front.
+
+``status.yaml`` has the same fields as for ``TrainingRunnerMain``. It is updated after each run,
+counting the evaluations of the runs already finished out of ``numberOfIndependentRuns *
+maxEvaluations``. ``results.yaml`` points at the output files:
+
+.. code-block:: yaml
+
+   outputDirectory: results/solve/NSGA-II.ZDT1
+   metadataFile: results/solve/NSGA-II.ZDT1/METADATA.txt
+   indicatorsFile: results/solve/NSGA-II.ZDT1/INDICATORS.csv
+   numberOfIndependentRuns: 5
+   runDirectoryPattern: results/solve/NSGA-II.ZDT1/run-<i>
+
+Bundled examples
+~~~~~~~~~~~~~~~~
+
+``src/main/resources/cli/solving/`` ships two requests, runnable from the root of the repository:
+
+.. list-table:: Bundled solve requests
+   :header-rows: 1
+   :widths: 35 65
+
+   * - File
+     - What it exercises
+   * - ``nsgaii-zdt1-request.yaml``
+     - NSGA-II with its default configuration, read from a file, on ZDT1; five runs with a fixed
+       seed
+   * - ``moead-zdt4-request.yaml``
+     - MOEA/D, an algorithm with its own extra config, with an inline configuration, on ZDT4
+
 DescribeMain
 ------------
 
-Prints a single, machine-readable YAML manifest describing everything ``cli.training`` can
+Prints a single, machine-readable YAML manifest describing everything the CLI tools can
 resolve: registered base-level algorithms, meta-optimizer algorithms, training problems,
 indicators, the file names available under each reusable resource directory, and the shape of
 ``request.yaml``/``baseLevel``/``metaSearch`` themselves. It takes no arguments, runs no training
@@ -254,6 +386,7 @@ Example output
      baseLevel: [...]
      metaSearchFlat: [...]
      metaSearchTree: [...]
+     solveRequest: [...]
 
 Manifest sections
 ~~~~~~~~~~~~~~~~~
@@ -285,12 +418,12 @@ Manifest sections
        (``parameterSpaces``, ``baseLevelConfigurations``, ``metaOptimizerConfigurations``,
        ``defaultConfigurations``), so a caller does not have to guess a naming convention
    * - ``schemas``
-     - The field shape of ``request.yaml``, ``baseLevel``, and the two ``metaSearch`` variants
-       (``metaSearchFlat``, ``metaSearchTree``) — name, Java type, whether it is required, and its
-       default when optional
+     - The field shape of ``request.yaml``, ``baseLevel``, the two ``metaSearch`` variants
+       (``metaSearchFlat``, ``metaSearchTree``) and the request of ``SolveRunnerMain``
+       (``solveRequest``) — name, Java type, whether it is required, and its default when optional
 
 The data behind the manifest comes from the same registries ``TrainingRunner`` itself uses to
 resolve a request (``BaseAlgorithmRegistry``, ``MetaAlgorithmRegistry``, ``ProblemRegistry``,
 ``IndicatorRegistry``), plus reflection over the ``BaseLevelConfig``/``FlatMetaSearchConfig``/
-``TreeMetaSearchConfig``/``TrainingRequest`` records — not a second, hand-maintained copy that
+``TreeMetaSearchConfig``/``TrainingRequest``/``SolveRequest`` records — not a second, hand-maintained copy that
 could drift from the actual resolution logic.
