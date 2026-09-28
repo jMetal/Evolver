@@ -30,7 +30,8 @@ public class TrainingRunnerMain {
     TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
     Path outputDirectory = new TrainingRunner().run(request, statusFile);
 
-    writeResultsPointer(requestFile.resolveSibling("results.yaml"), outputDirectory);
+    writeResultsPointer(
+        requestFile.resolveSibling("results.yaml"), outputDirectory, request.writePopulation());
 
     // AsynchronousMultiThreadedNSGAII (metaSearch.algorithm: AsyncNSGA-II) leaves its
     // master/worker thread pool running after run() returns, so the JVM never exits on its own
@@ -39,12 +40,21 @@ public class TrainingRunnerMain {
     System.exit(0);
   }
 
-  private static void writeResultsPointer(Path resultsFile, Path outputDirectory) throws IOException {
+  private static void writeResultsPointer(
+      Path resultsFile, Path outputDirectory, boolean writePopulation) throws IOException {
     Map<String, Object> results = new LinkedHashMap<>();
     results.put("outputDirectory", outputDirectory.toString());
     results.put("metadataFile", outputDirectory.resolve("METADATA.txt").toString());
     results.put("indicatorsFile", outputDirectory.resolve("INDICATORS.csv").toString());
     results.put("configurationsFile", outputDirectory.resolve("CONFIGURATIONS.csv").toString());
+    if (writePopulation) {
+      results.put(
+          "populationIndicatorsFile",
+          outputDirectory.resolve("POPULATION_INDICATORS.csv").toString());
+      results.put(
+          "populationConfigurationsFile",
+          outputDirectory.resolve("POPULATION_CONFIGURATIONS.csv").toString());
+    }
 
     try (FileWriter writer = new FileWriter(resultsFile.toFile())) {
       new Yaml().dump(results, writer);

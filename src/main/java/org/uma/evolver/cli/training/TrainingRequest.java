@@ -23,6 +23,12 @@ package org.uma.evolver.cli.training;
  * TrainingRunner} is also driven by external processes (e.g. a GUI) that would not want a Swing
  * window popping up on their machine.
  *
+ * <p>{@code writePopulation} is a fifth, optional, monitoring-only field: at every checkpoint, the
+ * output files keep only the non-dominated configurations of the meta-optimizer's population; when
+ * {@code writePopulation} is true, the whole population is also written, to {@code
+ * POPULATION_INDICATORS.csv} and {@code POPULATION_CONFIGURATIONS.csv}, so that its diversity can
+ * be analyzed afterwards. It is false by default.
+ *
  * <p>Scope note: this is a study prototype for {@link TrainingRunner}, exercised against seven
  * reference examples to avoid overfitting to a single case:
  * {@code NSGAIIOptimizingNSGAIIForProblemZDT4} (single problem, flat encoding), {@code
@@ -44,4 +50,24 @@ public record TrainingRequest(
     String outputDirectory,
     int writeFrequency,
     int statusFrequency,
-    Integer frontPlotFrequency) {}
+    Integer frontPlotFrequency,
+    boolean writePopulation) {
+
+  /** A request that writes only the non-dominated configurations of each checkpoint. */
+  public TrainingRequest(
+      BaseLevelConfig baseLevel,
+      MetaSearchConfig metaSearch,
+      String outputDirectory,
+      int writeFrequency,
+      int statusFrequency,
+      Integer frontPlotFrequency) {
+    this(
+        baseLevel,
+        metaSearch,
+        outputDirectory,
+        writeFrequency,
+        statusFrequency,
+        frontPlotFrequency,
+        false);
+  }
+}

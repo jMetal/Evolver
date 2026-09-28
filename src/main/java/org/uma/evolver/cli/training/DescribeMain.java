@@ -112,6 +112,7 @@ public final class DescribeMain {
     requestDefaults.put("writeFrequency", "100");
     requestDefaults.put("statusFrequency", "100");
     requestDefaults.put("frontPlotFrequency", null); // optional, no default: absent means no plot
+    requestDefaults.put("writePopulation", "false");
     // In request.yaml these are file names, resolved by TrainingRequestYamlLoader before
     // TrainingRequest is built — see RequestSchemaDescriptor#describe(Class, Map, Map).
     Map<String, String> requestTypeOverrides =

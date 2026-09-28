@@ -29,6 +29,9 @@ import org.uma.jmetal.util.observer.Observer;
  *   <li>INDICATORS.csv: Quality indicator values per solution over time</li>
  *   <li>CONFIGURATIONS.csv: Decoded parameter configurations per solution over time</li>
  *   <li>VAR_CONF.txt: Human-readable configurations with indicator values</li>
+ *   <li>POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv, only with
+ *       {@link #writePopulation(boolean)}: the same as INDICATORS.csv and CONFIGURATIONS.csv for
+ *       the whole population, not only its non-dominated solutions</li>
  * </ul>
  *
  * <p>Also implements {@link Observer} so it can be registered directly on the meta-optimizer's
@@ -47,6 +50,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
   private final int writeFrequency;
 
   private boolean headersWritten = false;
+  private boolean writePopulation = false;
 
   /**
    * Constructs the output writer.
@@ -93,6 +97,18 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
   }
 
   /**
+   * Sets whether the whole population of each checkpoint is written as well, to
+   * POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv (false by default); the other files
+   * keep only the non-dominated solutions.
+   *
+   * @return this object, for chaining
+   */
+  public TreeOutputResults writePopulation(boolean writePopulation) {
+    this.writePopulation = writePopulation;
+    return this;
+  }
+
+  /**
    * Writes final results to files.
    *
    * @param solutions the solutions to write
@@ -134,7 +150,10 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
 
   private void writeResultsToFiles(List<DerivationTreeSolution> solutions) throws IOException {
     if (!headersWritten) {
-      writeHeaders();
+      writeHeaders("INDICATORS.csv", "CONFIGURATIONS.csv");
+      if (writePopulation) {
+        writeHeaders("POPULATION_INDICATORS.csv", "POPULATION_CONFIGURATIONS.csv");
+      }
       headersWritten = true;
     }
 
@@ -142,9 +161,13 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     solutions.forEach(archive::add);
     List<DerivationTreeSolution> nonDominatedSolutions = archive.solutions();
 
-    writeIndicators(nonDominatedSolutions);
-    writeConfigurations(nonDominatedSolutions);
+    writeIndicators(nonDominatedSolutions, "INDICATORS.csv");
+    writeConfigurations(nonDominatedSolutions, "CONFIGURATIONS.csv");
     writeVarConf(nonDominatedSolutions);
+    if (writePopulation) {
+      writeIndicators(solutions, "POPULATION_INDICATORS.csv");
+      writeConfigurations(solutions, "POPULATION_CONFIGURATIONS.csv");
+    }
   }
 
   private void createOutputDirectory() {
@@ -219,8 +242,9 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     }
   }
 
-  private void writeHeaders() throws IOException {
-    File indicatorsFile = new File(outputDirectoryName, "INDICATORS.csv");
+  private void writeHeaders(String indicatorsFileName, String configurationsFileName)
+      throws IOException {
+    File indicatorsFile = new File(outputDirectoryName, indicatorsFileName);
     if (indicatorsFile.length() == 0 || !indicatorsFile.exists()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(indicatorsFile, true))) {
         writer.write("Evaluation,SolutionId,"
@@ -229,7 +253,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       }
     }
 
-    File configurationsFile = new File(outputDirectoryName, "CONFIGURATIONS.csv");
+    File configurationsFile = new File(outputDirectoryName, configurationsFileName);
     if (configurationsFile.length() == 0 || !configurationsFile.exists()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(configurationsFile, true))) {
         String parameterNames = problem.parameters().stream()
@@ -241,9 +265,10 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     }
   }
 
-  private void writeIndicators(List<DerivationTreeSolution> solutions) throws IOException {
+  private void writeIndicators(List<DerivationTreeSolution> solutions, String fileName)
+      throws IOException {
     try (BufferedWriter writer = new BufferedWriter(
-        new FileWriter(new File(outputDirectoryName, "INDICATORS.csv"), true))) {
+        new FileWriter(new File(outputDirectoryName, fileName), true))) {
       for (int i = 0; i < solutions.size(); i++) {
         DerivationTreeSolution solution = solutions.get(i);
         StringBuilder line = new StringBuilder();
@@ -257,10 +282,11 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     }
   }
 
-  private void writeConfigurations(List<DerivationTreeSolution> solutions) throws IOException {
+  private void writeConfigurations(List<DerivationTreeSolution> solutions, String fileName)
+      throws IOException {
     List<Parameter<?>> parameters = problem.parameters();
     try (BufferedWriter writer = new BufferedWriter(
-        new FileWriter(new File(outputDirectoryName, "CONFIGURATIONS.csv"), true))) {
+        new FileWriter(new File(outputDirectoryName, fileName), true))) {
       for (int i = 0; i < solutions.size(); i++) {
         DerivationTreeSolution solution = solutions.get(i);
         List<Double> numericValues = ParameterManagement.decodeConfigArrayToDoubleValues(

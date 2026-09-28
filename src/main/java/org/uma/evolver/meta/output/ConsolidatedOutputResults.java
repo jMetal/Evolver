@@ -31,6 +31,11 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <li>VAR_CONF.txt: Human-readable configurations with indicator values,
  * appended per checkpoint.
  * </ul>
+ *
+ * <p>
+ * The three files keep only the non-dominated solutions of each checkpoint. With
+ * {@link #writePopulation(boolean)}, the whole population of each checkpoint is also written, in the
+ * same formats, to POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv.
  */
 public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
@@ -42,6 +47,7 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
     private final MetaOptimizerConfig config;
 
     private boolean headersWritten = false;
+    private boolean writePopulation = false;
 
     public ConsolidatedOutputResults(
             String algorithmName,
@@ -148,6 +154,17 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         }
     }
 
+    /**
+     * Sets whether the whole population of each checkpoint is written as well, to
+     * POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv (false by default).
+     *
+     * @return this object, for chaining
+     */
+    public ConsolidatedOutputResults writePopulation(boolean writePopulation) {
+        this.writePopulation = writePopulation;
+        return this;
+    }
+
     @Override
     public void updateEvaluations(int evaluations) {
         this.evaluations = evaluations;
@@ -183,7 +200,10 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
     @Override
     public void writeResultsToFiles(List<DoubleSolution> solutions) throws IOException {
         if (!headersWritten) {
-            writeHeaders();
+            writeHeaders("INDICATORS.csv", "CONFIGURATIONS.csv");
+            if (writePopulation) {
+                writeHeaders("POPULATION_INDICATORS.csv", "POPULATION_CONFIGURATIONS.csv");
+            }
             headersWritten = true;
         }
 
@@ -191,26 +211,31 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         solutions.forEach(archive::add);
         List<DoubleSolution> nonDominatedSolutions = archive.solutions();
 
-        writeIndicators(nonDominatedSolutions);
-        writeConfigurations(nonDominatedSolutions);
+        writeIndicators(nonDominatedSolutions, "INDICATORS.csv");
+        writeConfigurations(nonDominatedSolutions, "CONFIGURATIONS.csv");
         writeVarConf(nonDominatedSolutions);
+        if (writePopulation) {
+            writeIndicators(solutions, "POPULATION_INDICATORS.csv");
+            writeConfigurations(solutions, "POPULATION_CONFIGURATIONS.csv");
+        }
     }
 
-    private void writeHeaders() throws IOException {
-        // INDICATORS.csv header
+    private void writeHeaders(String indicatorsFileName, String configurationsFileName)
+            throws IOException {
+        // Indicators file header
         try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(new File(outputDirectoryName, "INDICATORS.csv"), true))) {
-            if (new File(outputDirectoryName, "INDICATORS.csv").length() == 0) {
+                new FileWriter(new File(outputDirectoryName, indicatorsFileName), true))) {
+            if (new File(outputDirectoryName, indicatorsFileName).length() == 0) {
                 writer.write("Evaluation,SolutionId,"
                         + indicators.stream().map(QualityIndicator::name).collect(Collectors.joining(",")));
                 writer.newLine();
             }
         }
 
-        // CONFIGURATIONS.csv header
+        // Configurations file header
         try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(new File(outputDirectoryName, "CONFIGURATIONS.csv"), true))) {
-            if (new File(outputDirectoryName, "CONFIGURATIONS.csv").length() == 0) {
+                new FileWriter(new File(outputDirectoryName, configurationsFileName), true))) {
+            if (new File(outputDirectoryName, configurationsFileName).length() == 0) {
                 String paramNames = configurableAlgorithmProblem.parameters().stream()
                         .map(Parameter::name)
                         .collect(Collectors.joining(","));
@@ -220,9 +245,10 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         }
     }
 
-    private void writeIndicators(List<DoubleSolution> solutions) throws IOException {
+    private void writeIndicators(List<DoubleSolution> solutions, String fileName)
+            throws IOException {
         try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(new File(outputDirectoryName, "INDICATORS.csv"), true))) {
+                new FileWriter(new File(outputDirectoryName, fileName), true))) {
             for (int i = 0; i < solutions.size(); i++) {
                 DoubleSolution solution = solutions.get(i);
                 StringBuilder line = new StringBuilder();
@@ -236,12 +262,13 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         }
     }
 
-    private void writeConfigurations(List<DoubleSolution> solutions) throws IOException {
+    private void writeConfigurations(List<DoubleSolution> solutions, String fileName)
+            throws IOException {
         List<Parameter<?>> topLevelParams = configurableAlgorithmProblem.topLevelParameters();
         List<Parameter<?>> flattenedParams = configurableAlgorithmProblem.parameters();
 
         try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(new File(outputDirectoryName, "CONFIGURATIONS.csv"), true))) {
+                new FileWriter(new File(outputDirectoryName, fileName), true))) {
             for (int i = 0; i < solutions.size(); i++) {
                 DoubleSolution solution = solutions.get(i);
                 java.util.Set<Integer> activeIndices = ParameterManagement.getActiveParameterIndices(

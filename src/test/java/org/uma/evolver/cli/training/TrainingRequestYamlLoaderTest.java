@@ -2,6 +2,7 @@ package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +55,7 @@ class TrainingRequestYamlLoaderTest {
       assertEquals(100, request.writeFrequency());
       assertEquals(100, request.statusFrequency());
       assertNull(request.frontPlotFrequency());
+      assertFalse(request.writePopulation());
       FlatMetaSearchConfig metaSearch = (FlatMetaSearchConfig) request.metaSearch();
       assertEquals("NSGA-II", metaSearch.algorithm());
       assertEquals(2000, metaSearch.metaMaxEvaluations());
@@ -122,6 +124,22 @@ class TrainingRequestYamlLoaderTest {
 
       // Assert
       assertEquals(20, request.frontPlotFrequency());
+    }
+
+    @Test
+    @DisplayName(
+        "given a request with writePopulation: true, when loaded, then the population is to be"
+            + " written")
+    void givenRequestWithWritePopulation_whenLoaded_thenItIsCarriedOver() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile("metaSearch: MetaNSGAIIFlatConfiguration.yaml\nwritePopulation: true\n");
+
+      // Act
+      TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
+
+      // Assert
+      assertTrue(request.writePopulation());
     }
   }
 

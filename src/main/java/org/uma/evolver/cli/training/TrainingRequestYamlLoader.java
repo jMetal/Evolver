@@ -17,7 +17,8 @@ import org.yaml.snakeyaml.Yaml;
  * {@link BaseLevelConfigurationReader}/{@link MetaOptimizerConfigurationReader}); {@code
  * outputDirectory} is a required plain string; {@code writeFrequency}/{@code statusFrequency} are
  * optional plain integers (default {@value #DEFAULT_FREQUENCY}); {@code frontPlotFrequency} is an
- * optional plain integer with no default — absent means no live plot (see {@link TrainingRequest}).
+ * optional plain integer with no default — absent means no live plot; {@code writePopulation} is an
+ * optional boolean, false by default (see {@link TrainingRequest}).
  * All five are specific to this one run, never shared with any other request, even one reusing the
  * exact same {@code baseLevel}/{@code metaSearch} files.
  */
@@ -43,7 +44,8 @@ final class TrainingRequestYamlLoader {
         stringValue(data, "outputDirectory"),
         optionalIntValue(data, "writeFrequency", DEFAULT_FREQUENCY),
         optionalIntValue(data, "statusFrequency", DEFAULT_FREQUENCY),
-        (Integer) data.get("frontPlotFrequency"));
+        (Integer) data.get("frontPlotFrequency"),
+        data.get("writePopulation") != null && (Boolean) data.get("writePopulation"));
   }
 
   private static String stringValue(Map<String, Object> data, String key) {

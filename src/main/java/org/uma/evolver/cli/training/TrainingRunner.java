@@ -101,7 +101,8 @@ public class TrainingRunner {
                       request.outputDirectory(),
                       request.writeFrequency(),
                       request.statusFrequency(),
-                      request.frontPlotFrequency());
+                      request.frontPlotFrequency(),
+                      request.writePopulation());
               case ASYNCHRONOUS ->
                   runFlatAsync(
                       baseLevel,
@@ -114,7 +115,8 @@ public class TrainingRunner {
                       request.outputDirectory(),
                       request.writeFrequency(),
                       request.statusFrequency(),
-                      request.frontPlotFrequency());
+                      request.frontPlotFrequency(),
+                      request.writePopulation());
               case PARTICLE_SWARM ->
                   runFlatPso(
                       baseLevel,
@@ -127,7 +129,8 @@ public class TrainingRunner {
                       request.outputDirectory(),
                       request.writeFrequency(),
                       request.statusFrequency(),
-                      request.frontPlotFrequency());
+                      request.frontPlotFrequency(),
+                      request.writePopulation());
               case RANDOM_SEARCH ->
                   runFlatRandomSearch(
                       baseLevel,
@@ -140,7 +143,8 @@ public class TrainingRunner {
                       request.outputDirectory(),
                       request.writeFrequency(),
                       request.statusFrequency(),
-                      request.frontPlotFrequency());
+                      request.frontPlotFrequency(),
+                      request.writePopulation());
             };
         case TreeMetaSearchConfig tree ->
             runTree(
@@ -155,7 +159,8 @@ public class TrainingRunner {
                 request.outputDirectory(),
                 request.writeFrequency(),
                 request.statusFrequency(),
-                request.frontPlotFrequency());
+                request.frontPlotFrequency(),
+                request.writePopulation());
       };
     } catch (RuntimeException | IOException e) {
       statusWriter.write(RunStatusWriter.State.FAILED, 0, metaSearch.metaMaxEvaluations(), e.getMessage());
@@ -174,7 +179,8 @@ public class TrainingRunner {
       String outputDirectory,
       int writeFrequency,
       int statusFrequency,
-      Integer frontPlotFrequency)
+      Integer frontPlotFrequency,
+      boolean writePopulation)
       throws IOException {
     MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -205,7 +211,8 @@ public class TrainingRunner {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+                metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config)
+            .writePopulation(writePopulation);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
@@ -242,7 +249,8 @@ public class TrainingRunner {
       String outputDirectory,
       int writeFrequency,
       int statusFrequency,
-      Integer frontPlotFrequency)
+      Integer frontPlotFrequency,
+      boolean writePopulation)
       throws IOException {
     MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -274,7 +282,8 @@ public class TrainingRunner {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+                metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config)
+            .writePopulation(writePopulation);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
@@ -311,7 +320,8 @@ public class TrainingRunner {
       String outputDirectory,
       int writeFrequency,
       int statusFrequency,
-      Integer frontPlotFrequency)
+      Integer frontPlotFrequency,
+      boolean writePopulation)
       throws IOException {
     MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -343,7 +353,8 @@ public class TrainingRunner {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+                metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config)
+            .writePopulation(writePopulation);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
@@ -380,7 +391,8 @@ public class TrainingRunner {
       String outputDirectory,
       int writeFrequency,
       int statusFrequency,
-      Integer frontPlotFrequency)
+      Integer frontPlotFrequency,
+      boolean writePopulation)
       throws IOException {
     MetaOptimizationProblem<S> metaOptimizationProblem =
         new MetaOptimizationProblem<>(
@@ -410,7 +422,8 @@ public class TrainingRunner {
 
     var outputResults =
         new ConsolidatedOutputResults(
-            metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config);
+                metaOptimizationProblem, trainingSet.label(), indicators, outputDirectory, config)
+            .writePopulation(writePopulation);
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
@@ -452,7 +465,8 @@ public class TrainingRunner {
       String outputDirectory,
       int writeFrequency,
       int statusFrequency,
-      Integer frontPlotFrequency)
+      Integer frontPlotFrequency,
+      boolean writePopulation)
       throws IOException {
     MetaAlgorithmRegistry.validateTreeAlgorithm(metaSearch.algorithm());
     var treeSolutionGenerator = new TreeSolutionGenerator(baseLevelParameterSpace);
@@ -488,7 +502,8 @@ public class TrainingRunner {
 
     var outputResults =
         new TreeOutputResults(
-            metaProblem, trainingSet.label(), indicators, outputDirectory, config, writeFrequency);
+                metaProblem, trainingSet.label(), indicators, outputDirectory, config, writeFrequency)
+            .writePopulation(writePopulation);
     var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
