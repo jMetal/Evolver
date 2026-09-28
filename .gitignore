@@ -10,8 +10,9 @@ jMetal*.log
 .DS_Store
 _build
 
-# Output directories - generated analysis results
+# Output directories - generated analysis results (not the meta.output source packages)
 output/
+!src/**/output/
 
 # Python cache
 __pycache__/
