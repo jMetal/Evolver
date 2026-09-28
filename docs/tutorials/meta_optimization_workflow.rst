@@ -356,8 +356,9 @@ Try it yourself
 What's next
 -----------
 
-- Training sets with several problems, other indicators and evaluation budgets (tutorial E7),
-  analyzing the results of a training (E8), and validating a configuration (E9) come in later
+- :doc:`E7 <training_sets_indicators_budgets>` covers training sets with several problems, the
+  choice of indicators and budgets, and the validation of a configuration against other
+  algorithms; analyzing the results of a training (E8) and validation studies (E9) come in later
   tutorials.
 - :doc:`../concepts/meta_optimization_approach` and
   :doc:`../concepts/meta_optimization_level_metaheuristics` describe the approach and the available

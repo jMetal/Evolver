@@ -33,6 +33,20 @@ Introductory
      - Build Evolver, run a configurable algorithm, tune it, and run it with the configuration
        found, from the command line.
 
+Intermediate
+------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Tutorial
+     - What you will learn
+   * - :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`
+     - Designing a training run (training set, meta-objectives, training and meta-optimizer
+       budgets, independent runs) and validating its result against other algorithms, on problems
+       seen and not seen during the training.
+
 More tutorials are planned for the intermediate and advanced levels.
 
 .. toctree::
@@ -41,3 +55,4 @@ More tutorials are planned for the intermediate and advanced levels.
    parameter_spaces
    base_level_algorithms
    meta_optimization_workflow
+   training_sets_indicators_budgets

@@ -89,7 +89,13 @@ fields:
    * - ``frontPlotFrequency``
      - no
      - none (headless)
-     - When present, shows a live Pareto front plot every that many evaluations
+     - When present, opens a window that plots the meta-optimizer's population in the space of the
+       first two indicators, updated every that many evaluations. Closing the window ends the run
+   * - ``writePopulation``
+     - no
+     - ``false``
+     - When ``true``, also writes the whole population of the meta-optimizer at every checkpoint to
+       ``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv``
 
 Output
 ~~~~~~
@@ -113,6 +119,16 @@ the output files:
    metadataFile: results/nsgaii/ZDT4/METADATA.txt
    indicatorsFile: results/nsgaii/ZDT4/INDICATORS.csv
    configurationsFile: results/nsgaii/ZDT4/CONFIGURATIONS.csv
+
+In the output directory, ``METADATA.txt`` has the settings of the run; ``INDICATORS.csv``,
+``CONFIGURATIONS.csv`` and ``VAR_CONF.txt`` have, every ``writeFrequency`` evaluations, the
+**non-dominated** configurations of the meta-optimizer's population, with their indicator values,
+their parameter values and their configuration strings. With ``writePopulation: true``,
+``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv`` have the same columns as
+``INDICATORS.csv`` and ``CONFIGURATIONS.csv`` for the **whole** population, which shows its
+diversity, and ``results.yaml`` also points at them (``populationIndicatorsFile``,
+``populationConfigurationsFile``). ``scripts/plot_meta_population.py`` plots the population at
+several checkpoints from them.
 
 .. note::
 

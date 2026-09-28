@@ -11,6 +11,19 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add :doc:`tutorial E7, training sets, indicators and budgets
+  <tutorials/training_sets_indicators_budgets>`: tuning NSGA-II for DTLZ1-7 with a quarter of the
+  validation budget, and validating the configuration found against NSGA-II, NSGA-III, SMS-EMOA and
+  AGE-MOEA on DTLZ1-7 and WFG1-9, with its validation study
+  (``example.tutorial.TrainingSetsValidationTutorial``)
+- Add the optional ``writePopulation`` field to training requests (and to ``TrainingRequest``):
+  it also writes the whole population of the meta-optimizer at every checkpoint to
+  ``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv``, not only its non-dominated
+  configurations; ``scripts/plot_meta_population.py`` plots it
+- Add ``scripts/plot_median_fronts.py``, which plots the fronts with the median HV of each
+  algorithm and problem of a jMetal validation study
+- Add ``scripts/wilcoxon_pivot_tables.py``, which writes Wilcoxon pivot tables (with SAES) of a
+  jMetal ``QualityIndicatorSummary.csv``, with the tuned configuration as pivot
 - Add ``org.uma.evolver.cli.solving.SolveRunnerMain``, which runs a configurable algorithm, with a
   configuration given inline or as a file, on a problem, with several independent runs and
   reproducible seeds, and writes the fronts and quality indicators of each run (see
@@ -31,6 +44,11 @@ Added
 Changed
 ~~~~~~~
 
+- ``AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`` and the bundled ``DTLZ3DNSGAIIBaseLevel.yaml``
+  use NHV and EP as meta-objectives (instead of HV− and EP) and 20000 evaluations per problem
+  (instead of 16000); the class uses 16 cores, writes the whole population of the meta-optimizer,
+  writes to ``results/tutorial-e7/training``, and no longer calls ``System.exit`` at the end, so
+  that its live plot stays open with the final population until the window is closed
 - ``BaseAlgorithmRegistry``, ``ProblemRegistry``, ``ProblemSpec``, ``IndicatorRegistry`` and
   ``RunStatusWriter`` move from ``cli.training`` to ``org.uma.evolver.cli``, shared by the training
   and solving tools; request files and entry points do not change

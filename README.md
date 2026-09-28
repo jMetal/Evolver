@@ -249,6 +249,17 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
+- Add tutorial E7 (training sets, indicators and budgets): tuning NSGA-II for DTLZ1-7 with a
+  quarter of the validation budget, and validating the configuration found against NSGA-II,
+  NSGA-III, SMS-EMOA and AGE-MOEA on DTLZ1-7 and WFG1-9. `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`
+  and `DTLZ3DNSGAIIBaseLevel.yaml` now use NHV and EP with 20000 evaluations per problem.
+- Add the optional `writePopulation` field to training requests, which also writes the whole
+  population of the meta-optimizer at every checkpoint (`POPULATION_INDICATORS.csv`,
+  `POPULATION_CONFIGURATIONS.csv`), and `scripts/plot_meta_population.py`, which plots it.
+- Add `scripts/plot_median_fronts.py`, which plots the fronts with the median HV of each algorithm
+  and problem of a jMetal validation study.
+- Add `scripts/wilcoxon_pivot_tables.py`, which writes Wilcoxon pivot tables (with SAES) of a
+  jMetal validation study, with the tuned configuration as pivot.
 - Add `SolveRunnerMain` (`org.uma.evolver.cli.solving`), which runs a configurable algorithm on a
   problem from a YAML request (configuration inline or from a file, independent runs, reproducible
   seeds) and writes the fronts and quality indicators of each run. The registries shared with the

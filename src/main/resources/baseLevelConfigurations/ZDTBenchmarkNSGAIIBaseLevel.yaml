@@ -1,6 +1,6 @@
 # Base-level NSGA-II configured against the ZDT benchmark (ZDT1, ZDT2, ZDT3, ZDT4, ZDT6).
-# ZDT2/ZDT3/ZDT6 are not in ProblemRegistry's curated catalogue -- resolved by reflection from
-# their fully-qualified class name instead (see ProblemRegistry/ProblemSpec).
+# ZDT2/ZDT3/ZDT6 are given by their fully-qualified class name, to show that any jMetal problem
+# can be used this way; their short names work as well (see ProblemRegistry/ProblemSpec).
 
 algorithmName: NSGA-II
 populationSize: 100
