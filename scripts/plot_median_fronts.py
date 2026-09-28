@@ -82,11 +82,13 @@ def main() -> None:
             directory = data / algorithm / problem
             run, value = median_run(directory / args.indicator)
             front = pd.read_csv(directory / f"FUN{run}.csv", header=None).values
+            # In 3D, draw in the order of the calls, so that the front always stays on top of the
+            # reference front (matplotlib's own depth ordering can hide it behind the surface)
             ax = fig.add_subplot(
                 len(problems),
                 len(algorithms),
                 row * len(algorithms) + column + 1,
-                projection="3d" if three_d else None,
+                **({"projection": "3d", "computed_zorder": False} if three_d else {}),
             )
             draw(ax, front, reference, three_d)
             ax.set_title(f"{algorithm}\n{args.indicator} = {value:.4f}", fontsize=8)
