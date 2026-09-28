@@ -28,6 +28,7 @@ pip install -r scripts/requirements.txt
 | `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
 | `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. |
 | `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. |
+| `critical_difference_plots.py` | Critical difference plots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): average Friedman ranks, with bars joining the algorithms whose differences are not significant (Nemenyi). Needs `pip install SAES`. |
 | `plot_meta_population.py` | Plots the population of the meta-optimizer at several checkpoints of a training run, in the space of two meta-objectives, with its non-dominated configurations highlighted. Needs a training run with `writePopulation: true`. |
 | `plot_median_fronts.py` | For a jMetal validation study, plots the front of the run with the median value of an indicator (HV by default) for each problem and algorithm, over the reference front: one row per problem, one column per algorithm (2D or 3D). |
 | `wilcoxon_pivot_tables.py` | Wilcoxon pivot tables of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): median and IQR of each algorithm per problem, with the tuned configuration as pivot in the last column. LaTeX, and optionally PNG. Needs `pip install SAES`. |
@@ -55,12 +56,18 @@ convention (`DTLZ1.3D.csv` vs `RE31.csv`), so the file name is not guessed from 
 ```bash
 # needs SAES (pip install SAES); --png also needs pdflatex and pdftoppm
 python scripts/wilcoxon_pivot_tables.py results/tutorial-e7/validation/QualityIndicatorSummary.csv \
-    --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
+    --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
     --output-dir results/tutorial-e7/tables --png
 ```
 
 In each cell, `+` means that the pivot (last column) is significantly better than that algorithm,
 `-` that it is worse, and `=` that the difference is not significant.
+
+```bash
+# critical difference plots (average Friedman ranks, Nemenyi test), with SAES as well
+python scripts/critical_difference_plots.py results/tutorial-e7/validation/QualityIndicatorSummary.csv \
+    --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
+```
 
 ### Population of the meta-optimizer
 
