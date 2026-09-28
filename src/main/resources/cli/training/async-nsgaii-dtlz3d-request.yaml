@@ -13,4 +13,5 @@ metaSearch: MetaAsyncNSGAIIFlatConfiguration.yaml
 outputDirectory: results/async-nsgaii/DTLZ3D
 writeFrequency: 100
 statusFrequency: 500
-frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)
+frontPlotFrequency: 100   # optional; opens a live plot of the meta-optimizer front (remove for headless runs)
+writePopulation: true     # optional; also writes the whole population at each checkpoint

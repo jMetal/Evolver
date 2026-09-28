@@ -11,7 +11,11 @@ import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
  * Runs an asynchronous multi-threaded NSGA-II as meta-optimizer to configure NSGA-II using the
- * DTLZ1-DTLZ7 (three-objective) problems as training set, through {@link TrainingRunner}.
+ * DTLZ1-DTLZ7 (three-objective) problems as training set, through {@link TrainingRunner}. It is
+ * the training run of tutorial E7 ({@code docs/tutorials/training_sets_indicators_budgets.rst}):
+ * NHV and EP as meta-objectives, and 20000 evaluations per problem, less than half of the
+ * validation budget (50000). The live plot of the meta-optimizer front
+ * ({@code FRONT_PLOT_FREQUENCY}) is on.
  *
  * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
  * kept as Java text blocks right here instead of separate files under {@code
@@ -23,10 +27,11 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * the full {@link TrainingRunner} pipeline (observers, status file, output files) instead of
  * hand-assembling them, as the older examples in this package do.
  *
- * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
- * as standalone files under {@code src/main/resources/baseLevelConfigurations/
+ * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are the same recipe already bundled as
+ * standalone files under {@code src/main/resources/baseLevelConfigurations/
  * DTLZ3DNSGAIIBaseLevel.yaml} and {@code src/main/resources/metaOptimizerConfigurations/
- * MetaAsyncNSGAIIFlatConfiguration.yaml} — this class keeps its own inline copy so the whole
+ * MetaAsyncNSGAIIFlatConfiguration.yaml}, except for {@code numberOfCores} (16 here, 8 in the
+ * bundled file, which suits smaller machines) — this class keeps its own inline copy so the whole
  * example reads top-to-bottom from a single file, and so the recipe can be tweaked here without
  * touching the packaged resources. To run this exact experiment from a terminal instead, without
  * building or touching Java at all, use the ready-made {@code request.yaml} that references those
@@ -49,6 +54,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
  */
 public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
 
+  // [step-1-start]
   private static final String BASE_LEVEL_YAML =
       """
       algorithmName: NSGA-II
@@ -64,8 +70,8 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
         - resources/referenceFronts/DTLZ5.3D.csv
         - resources/referenceFronts/DTLZ6.3D.csv
         - resources/referenceFronts/DTLZ7.3D.csv
-      trainingEvaluations: [16000, 16000, 16000, 16000, 16000, 16000, 16000]
-      indicatorNames: [Epsilon, HypervolumeMinus]
+      trainingEvaluations: [20000, 20000, 20000, 20000, 20000, 20000, 20000]
+      indicatorNames: [Epsilon, NormalizedHypervolume]
       """;
 
   private static final String META_SEARCH_YAML =
@@ -74,7 +80,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
       encoding: flat
       metaMaxEvaluations: 2000
       metaPopulationSize: 50
-      numberOfCores: 8
+      numberOfCores: 16
       crossover: SBX
       mutation: polynomial
       crossoverProbability: 0.9
@@ -84,13 +90,18 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
       mutationRepairStrategy: bounds
       polynomialMutationDistributionIndex: 20.0
       """;
+  // [step-1-end]
 
-  private static final String OUTPUT_DIRECTORY = "results/nsgaii/DTLZ3D";
+  private static final String OUTPUT_DIRECTORY = "results/tutorial-e7/training";
   private static final int WRITE_FREQUENCY = 100;
   private static final int STATUS_FREQUENCY = 500;
   private static final int FRONT_PLOT_FREQUENCY = 100;
+  // Also writes the whole population of the meta-optimizer at each checkpoint, not only its
+  // non-dominated configurations (POPULATION_INDICATORS.csv, POPULATION_CONFIGURATIONS.csv)
+  private static final boolean WRITE_POPULATION = true;
 
   public static void main(String[] args) throws IOException {
+    // [step-2-start]
     BaseLevelConfig baseLevel = BaseLevelConfigurationReader.loadFromYaml(BASE_LEVEL_YAML);
     MetaSearchConfig metaSearch = MetaOptimizerConfigurationReader.loadFromYaml(META_SEARCH_YAML);
 
@@ -101,11 +112,15 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
             OUTPUT_DIRECTORY,
             WRITE_FREQUENCY,
             STATUS_FREQUENCY,
-            FRONT_PLOT_FREQUENCY);
+            FRONT_PLOT_FREQUENCY,
+            WRITE_POPULATION);
 
     new TrainingRunner().run(request, Path.of(OUTPUT_DIRECTORY, "status.yaml"));
+    // [step-2-end]
 
-    // Required for AsyncNSGA-II — see TrainingRunnerMain for why.
-    System.exit(0);
+    // AsyncNSGA-II leaves its worker threads running (see TrainingRunnerMain), so the JVM does not
+    // end by itself. That keeps the live plot open to show the final population: closing its
+    // window ends the JVM (the plot's Swing window exits on close).
+    System.out.println("Training finished: close the plot window to exit.");
   }
 }
