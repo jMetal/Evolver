@@ -4,7 +4,7 @@ E7. Training Sets, Indicators and Budgets
 =========================================
 
 :Level: Intermediate
-:Time: about 1 hour, of which the training takes about 35 minutes and the validation about 11
+:Time: about 1 hour, of which the training takes about 35 minutes and the validation about 15
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
 :Prerequisites: :doc:`E2. Base-level algorithms <base_level_algorithms>`,
@@ -21,7 +21,7 @@ training run and validates its result, deciding the four things that define a tr
 - the **independent runs** of each configuration.
 
 The case study tunes NSGA-II for the DTLZ1-7 problems with three objectives, and then validates the
-configuration found against the standard NSGA-II, NSGA-III, SMS-EMOA and AGE-MOEA, on those
+configuration found against the standard NSGA-II, NSGA-III, MOEA/D, SMS-EMOA and AGE-MOEA, on those
 problems and on the WFG1-9 problems, which the training never saw.
 
 The code of this tutorial is in two classes: the training,
@@ -109,14 +109,14 @@ The budgets
 
 The budget of the **validation** follows the literature: studies with the DTLZ and WFG problems
 with three objectives usually give each algorithm 40000 or 50000 evaluations. The validation
-below uses 40000.
+below uses 50000.
 
 The budget of the **training** is a decision of its own, and a key one in real applications.
 Meta-optimizing is expensive: its cost grows linearly with the evaluations of each base-level run.
 The training budget should be small enough for the training to be affordable, but large enough
 for the configurations it finds to be competitive when they are validated with the full budget.
-This case study trains with **10000 evaluations per problem**, a quarter of the validation budget,
-which makes the training four times cheaper than training with 40000.
+This case study trains with **10000 evaluations per problem**, a fifth of the validation budget,
+which makes the training five times cheaper than training with 50000.
 
 The risk of a small training budget is that it rewards configurations that converge fast but may
 stall, or lose diversity, when they are given more evaluations. Only the validation with the full
@@ -298,18 +298,20 @@ little variation: crossover is applied with probability 0.08, and the mutation p
 0.131 / n per variable, with a high distribution index, which makes small steps. The diversity of
 the result comes from the external archive, which keeps 100 solutions spread by the angles they
 form in the objective space. It is a very exploitative configuration: the validation tells whether
-it pays off with 40000 evaluations and on other problems.
+it pays off with 50000 evaluations and on other problems.
 
 Step 4: validation
 ------------------
 
-The validation is a jMetal experiment (``ExperimentBuilder``) that runs five algorithms, with 40000
+The validation is a jMetal experiment (``ExperimentBuilder``) that runs six algorithms, with 50000
 evaluations and a population of 100, on DTLZ1-7 (the training problems) and WFG1-9 (problems the
 training never saw), all with three objectives:
 
 - the standard NSGA-II, first, and the tuned NSGA-II (``NSGAIIDTLZ``), last;
-- NSGA-III, SMS-EMOA and AGE-MOEA, three algorithms designed for or commonly used with three or
-  more objectives, with their default configurations (``src/main/resources/defaultConfigurations/``).
+- NSGA-III, MOEA/D, SMS-EMOA and AGE-MOEA, four algorithms designed for or commonly used with
+  three or more objectives, with their default configurations
+  (``src/main/resources/defaultConfigurations/``); MOEA/D reads its weight vectors from
+  ``resources/weightVectors/W3D_100.dat``.
 
 Each algorithm is run 15 times on each problem. This is enough for a tutorial; a real study should
 use 30 or more runs.
@@ -327,7 +329,7 @@ From the root of the repository:
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
         org.uma.evolver.example.tutorial.TrainingSetsValidationTutorial
 
-It took about 11 minutes. The fronts of every run are written to
+It took about 15 minutes. The fronts of every run are written to
 ``results/tutorial-e7/validation/data``, and the values of the indicators (EP, HV and IGD+) of every
 run to ``results/tutorial-e7/validation/QualityIndicatorSummary.csv``.
 
@@ -339,7 +341,7 @@ studies (``pip install SAES``), with the script ``scripts/wilcoxon_pivot_tables.
 
     python scripts/wilcoxon_pivot_tables.py \
         results/tutorial-e7/validation/QualityIndicatorSummary.csv \
-        --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
+        --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
         --output-dir results/tutorial-e7/tables --png
 
 It writes a **Wilcoxon pivot table** per indicator, in LaTeX and as an image. Each cell has the
@@ -355,34 +357,69 @@ and ``=`` of each algorithm.
    :alt: Wilcoxon pivot table of the hypervolume (HV, to be maximized)
    :figwidth: 100%
 
-   Hypervolume (HV, higher is better), 40000 evaluations, 15 runs.
+   Hypervolume (HV, higher is better), 50000 evaluations, 15 runs.
 
 .. figure:: ../figures/tutorials/e7-wilcoxon-igdplus.png
    :align: center
    :alt: Wilcoxon pivot table of IGD+ (to be minimized)
    :figwidth: 100%
 
-   IGD+ (lower is better), 40000 evaluations, 15 runs.
+   IGD+ (lower is better), 50000 evaluations, 15 runs.
+
+The tables compare the algorithms problem by problem. A **critical difference plot** compares them
+over all the problems at once: each algorithm is placed by its average rank (the mean over the
+problems of its Friedman rank, computed on the medians), and a bar joins the algorithms whose
+average ranks differ by less than the critical difference of the Nemenyi test (``CD``, for a
+significance level of 0.05), meaning that their differences are not significant. The script
+``scripts/critical_difference_plots.py`` draws them with SAES as well:
+
+.. code-block:: bash
+
+    python scripts/critical_difference_plots.py \
+        results/tutorial-e7/validation/QualityIndicatorSummary.csv \
+        --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
+
+.. list-table::
+   :widths: 50 50
+
+   * - .. figure:: ../figures/tutorials/e7-cdplot-hv.png
+          :alt: Critical difference plot of HV
+
+          HV
+     - .. figure:: ../figures/tutorials/e7-cdplot-igdplus.png
+          :alt: Critical difference plot of IGD+
+
+          IGD+
 
 Reading the results
 ~~~~~~~~~~~~~~~~~~~
 
-**Did the training budget work?** Yes. Trained with 10000 evaluations and run with 40000, the tuned
-NSGA-II is significantly better than the standard one on 13 of the 16 problems in HV (and in IGD+),
-and worse only on 2. The compromise of training with a quarter of the budget paid off, and there is
-no need to repeat the training with a larger budget.
+**Did the training budget work?** Yes. Trained with 10000 evaluations and run with 50000, the tuned
+NSGA-II is significantly better than the standard one on 14 of the 16 problems in HV (13 in IGD+),
+and worse only on 2. Training with a fifth of the validation budget found a competitive
+configuration.
 
 **On the training problems (DTLZ1-7)**, the tuned NSGA-II beats the standard NSGA-II and NSGA-III on
-all seven, and AGE-MOEA on six (the seventh is a tie). SMS-EMOA, which selects its solutions by their
-contribution to the hypervolume, has the best HV on most problems; the tuned NSGA-II is second on
-all of them but DTLZ3, where it has the best median.
+all seven, and MOEA/D and AGE-MOEA on six (the seventh, DTLZ1, is a tie with both). Against
+SMS-EMOA, which selects its solutions by their contribution to the hypervolume, it ties on three
+(DTLZ3, DTLZ4 and DTLZ6) and loses on four by small margins; on those three it has the best median
+of all.
 
-**On the problems it never saw (WFG1-9)**, the picture is mixed. The tuned NSGA-II is still better
-than the standard one on 6 of the 9 problems, but it loses to NSGA-III on 5 and to AGE-MOEA on 6. On
-WFG1 it is clearly worse than every other algorithm (HV = 0.35, against 0.79 to 0.90). WFG1 biases
-the distribution of its solutions and has a flat region in its search space, features that no DTLZ
-problem has; a plausible explanation is that a configuration with so little variation cannot
-overcome them, and nothing in the training set told the meta-optimizer so.
+**On the problems it never saw (WFG1-9)**, the picture is mixed. The tuned NSGA-II is better than the
+standard NSGA-II on 7 of the 9 problems and than MOEA/D on 6, but it loses to NSGA-III on 4, to
+AGE-MOEA on 5 and to SMS-EMOA on all of them. On WFG1 it is clearly worse than every other algorithm
+(HV = 0.42, against 0.85 to 0.91). WFG1 biases the distribution of its solutions and has a flat
+region in its search space, features that no DTLZ problem has; a plausible explanation is that a
+configuration with so little variation cannot overcome them, and nothing in the training set told
+the meta-optimizer so.
+
+**Over all the problems**, the critical difference plots rank the tuned NSGA-II second in HV, after
+SMS-EMOA, and third in IGD+, after SMS-EMOA and AGE-MOEA. With 16 problems and six algorithms the
+critical difference is large (2.149): in HV, the tuned NSGA-II is significantly better than the
+standard NSGA-II and not significantly different from the rest, SMS-EMOA included; in IGD+, it is
+not significantly different from any of them. The two analyses answer different questions: the
+tables show significant differences on each problem, while the plots compare ranks over the whole
+set of problems, which needs larger differences to be significant.
 
 This is the main lesson about training sets: a configuration generalizes to problems that resemble
 the ones it was trained on. To tune NSGA-II for both families, the training set should include
@@ -398,7 +435,7 @@ the median HV, over the reference front (in gray):
 .. code-block:: bash
 
     python scripts/plot_median_fronts.py results/tutorial-e7/validation \
-        --problems DTLZ1,DTLZ3,DTLZ7 --algorithms NSGAII,NSGAIII,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
+        --problems DTLZ1,DTLZ3,DTLZ7 --algorithms NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
         --reference-fronts resources/referenceFronts --reference-suffix .3D.csv \
         --output median-fronts.png
 
@@ -407,18 +444,20 @@ the median HV, over the reference front (in gray):
    :alt: Fronts with the median HV of each algorithm on DTLZ1, DTLZ3 and DTLZ7
    :figwidth: 100%
 
-   Fronts with the median HV of each algorithm on DTLZ1, DTLZ3 and DTLZ7 (40000 evaluations).
+   Fronts with the median HV of each algorithm on DTLZ1, DTLZ3 and DTLZ7 (50000 evaluations).
    Each panel has its own axes.
 
-- On **DTLZ1**, the tuned NSGA-II reaches the front and covers it as evenly as NSGA-III, SMS-EMOA
-  and AGE-MOEA, while the standard NSGA-II leaves gaps. SMS-EMOA has a significantly better HV, but
-  the difference is in the third decimal (0.7891 against 0.7867): with 15 runs and small
-  interquartile ranges, very small differences are significant.
-- On **DTLZ3**, a problem with many local fronts, the median run of the tuned NSGA-II is the only
-  one that reaches the whole front; those of NSGA-III, SMS-EMOA and AGE-MOEA leave solutions stuck
-  on local fronts, and the standard NSGA-II is far from it (note the scale of its axes).
+- On **DTLZ1**, the tuned NSGA-II reaches the front and covers it as evenly as NSGA-III, MOEA/D,
+  SMS-EMOA and AGE-MOEA, while the standard NSGA-II leaves gaps. SMS-EMOA has a significantly
+  better HV, but the difference is in the third decimal (0.7894 against 0.7868): with 15 runs and
+  small interquartile ranges, very small differences are significant.
+- On **DTLZ3**, a problem with many local fronts, all of them reach the front with 50000
+  evaluations, although the standard NSGA-II leaves gaps. The tuned NSGA-II has the highest HV
+  (0.414, against 0.407 of SMS-EMOA); its points are spread over the whole front, while those of
+  SMS-EMOA gather on its edges, which is how a selection based on the contribution to the
+  hypervolume distributes them.
 - On **DTLZ7**, with four disconnected regions, the tuned NSGA-II covers the four of them, as
-  SMS-EMOA does.
+  SMS-EMOA does, while the median run of MOEA/D concentrates its solutions in one region.
 
 On the problems it was trained for, the fronts of the tuned configuration have the expected
 quality; its weak point is the problems it was not trained for, such as WFG1.
