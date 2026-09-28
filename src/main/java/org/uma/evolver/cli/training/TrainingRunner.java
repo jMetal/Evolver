@@ -572,7 +572,7 @@ public class TrainingRunner {
     }
 
     return new ResolvedTrainingSet(
-        problemSpecs.stream().map(ProblemRegistry::resolve).toList(),
+        problemSpecs.stream().<Problem<?>>map(ProblemRegistry::resolve).toList(),
         referenceFrontFileNames,
         evaluations,
         problemSpecs.size() == 1 ? problemSpecs.get(0).displayName() : "custom");
