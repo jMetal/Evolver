@@ -3,7 +3,7 @@
 # org.uma.evolver.example.training.dtlz.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, kept here as a
 # standalone file so it can be run directly from the CLI (see async-nsgaii-dtlz3d-request.yaml).
 # Used by tutorial E7 (docs/tutorials/training_sets_indicators_budgets.rst): the training budget,
-# 20000 evaluations, is less than half of the validation budget used there (50000).
+# 10000 evaluations, is a fifth of the validation budget used there (50000).
 
 algorithmName: NSGA-II
 populationSize: 100
@@ -18,5 +18,5 @@ trainingReferenceFrontFileNames:
   - resources/referenceFronts/DTLZ5.3D.csv
   - resources/referenceFronts/DTLZ6.3D.csv
   - resources/referenceFronts/DTLZ7.3D.csv
-trainingEvaluations: [20000, 20000, 20000, 20000, 20000, 20000, 20000]
+trainingEvaluations: [10000, 10000, 10000, 10000, 10000, 10000, 10000]
 indicatorNames: [Epsilon, NormalizedHypervolume]

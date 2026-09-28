@@ -36,7 +36,8 @@ class TrainingSetsValidationTutorialIT {
 
     // Assert
     Path data = tempDir.resolve("validation/data");
-    for (String algorithm : new String[] {"NSGAII", "NSGAIIDTLZ", "NSGAIII", "SMSEMOA", "AGEMOEA"}) {
+    String[] algorithms = {"NSGAII", "NSGAIII", "MOEAD", "SMSEMOA", "AGEMOEA", "NSGAIIDTLZ"};
+    for (String algorithm : algorithms) {
       for (String problem : new String[] {"DTLZ1", "DTLZ7", "WFG1", "WFG9"}) {
         assertTrue(
             Files.exists(data.resolve(algorithm).resolve(problem).resolve("FUN1.csv")),

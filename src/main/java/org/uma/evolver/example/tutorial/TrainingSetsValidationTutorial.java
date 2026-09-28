@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
+import org.uma.evolver.algorithm.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.nsgaiii.DoubleNSGAIII;
 import org.uma.evolver.algorithm.smsemoa.DoubleSMSEMOA;
@@ -43,8 +44,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 /**
  * Validation study of tutorial E7 (training sets, indicators and budgets): compares the NSGA-II
  * configuration found by {@code AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ}, trained on DTLZ1-7
- * with 20000 evaluations per problem, with the standard NSGA-II, NSGA-III, SMS-EMOA and AGE-MOEA
- * (their default configurations), with a budget usual for these problems: 50000 evaluations.
+ * with 10000 evaluations per problem, with the standard NSGA-II, NSGA-III, MOEA/D, SMS-EMOA and
+ * AGE-MOEA (their default configurations), with a budget usual for these problems: 50000 evaluations.
  *
  * <p>The problems are DTLZ1-7, seen during training, and WFG1-9, not seen, all with three
  * objectives. The study runs {@value #INDEPENDENT_RUNS} independent runs per algorithm and problem,
@@ -66,6 +67,8 @@ public class TrainingSetsValidationTutorial {
   static final int NUMBER_OF_CORES = 16;
 
   private static final int POPULATION_SIZE = 100;
+  // MOEA/D reads its weight vectors from W3D_100.dat, for three objectives and 100 subproblems
+  private static final String WEIGHT_VECTOR_FILES_DIRECTORY = "resources/weightVectors";
 
   public static void main(String[] args) throws IOException {
     String tunedConfiguration =
@@ -118,6 +121,18 @@ public class TrainingSetsValidationTutorial {
                 new DoubleNSGAIII(p, POPULATION_SIZE, maxEvaluations, space("NSGAIIIDouble.yaml")),
                 defaultConfiguration("NSGAIIIDoubleDefault.txt"),
                 "NSGAIII",
+                problem,
+                run));
+        algorithms.add(
+            algorithm(
+                new DoubleMOEAD(
+                    p,
+                    POPULATION_SIZE,
+                    maxEvaluations,
+                    WEIGHT_VECTOR_FILES_DIRECTORY,
+                    space("MOEADDouble.yaml")),
+                defaultConfiguration("MOEADDoubleDefault.txt"),
+                "MOEAD",
                 problem,
                 run));
         algorithms.add(

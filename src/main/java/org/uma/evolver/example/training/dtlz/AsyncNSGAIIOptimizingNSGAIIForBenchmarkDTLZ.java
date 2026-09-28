@@ -13,8 +13,8 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * Runs an asynchronous multi-threaded NSGA-II as meta-optimizer to configure NSGA-II using the
  * DTLZ1-DTLZ7 (three-objective) problems as training set, through {@link TrainingRunner}. It is
  * the training run of tutorial E7 ({@code docs/tutorials/training_sets_indicators_budgets.rst}):
- * NHV and EP as meta-objectives, and 20000 evaluations per problem, less than half of the
- * validation budget (50000). The live plot of the meta-optimizer front
+ * NHV and EP as meta-objectives, and 10000 evaluations per problem, a fifth of the validation
+ * budget (50000). The live plot of the meta-optimizer front
  * ({@code FRONT_PLOT_FREQUENCY}) is on.
  *
  * <p>Both halves of the configuration ({@code BASE_LEVEL_YAML}, {@code META_SEARCH_YAML}) are
@@ -70,7 +70,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
         - resources/referenceFronts/DTLZ5.3D.csv
         - resources/referenceFronts/DTLZ6.3D.csv
         - resources/referenceFronts/DTLZ7.3D.csv
-      trainingEvaluations: [20000, 20000, 20000, 20000, 20000, 20000, 20000]
+      trainingEvaluations: [10000, 10000, 10000, 10000, 10000, 10000, 10000]
       indicatorNames: [Epsilon, NormalizedHypervolume]
       """;
 
