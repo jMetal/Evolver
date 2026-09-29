@@ -39,6 +39,7 @@ Introductory
    parameter_spaces
    base_level_algorithms
    meta_optimization_workflow
+   ../quick_start
 
 Intermediate
 ------------
@@ -57,10 +58,28 @@ Intermediate
      - Reading the output files of a training run, its convergence and the population of the
        meta-optimizer, choosing a configuration from the final front, and validating the choice.
 
-More tutorials are planned for the intermediate and advanced levels.
-
 .. toctree::
    :hidden:
 
    training_sets_indicators_budgets
    analyzing_training_results
+
+Advanced
+--------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Tutorial
+     - What you will learn
+   * - :doc:`E14. Tuning with irace <tuning_with_irace>`
+     - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
+       target runner, the scenario, running irace, and applying the configuration it finds.
+
+More tutorials are planned for the intermediate and advanced levels.
+
+.. toctree::
+   :hidden:
+
+   tuning_with_irace

@@ -43,7 +43,7 @@ Levels: **Introductory**, **Intermediate**, **Advanced**.
 | E11 | Intermediate | Binary and permutation encodings | Configuring and meta-optimizing algorithms on binary (OneZeroMax) and permutation (multi-objective TSP) problems. | Planned |
 | E12 | Advanced | Choosing the meta-optimizer | NSGA-II, AGE-MOEA, SPEA2, SMPSO, Async NSGA-II and RandomSearch; parallel evaluation and number of cores; the constraints meta-optimizers meet (offspring size equal to the population, no external archive); when to use each. | Planned |
 | E13 | Advanced | Tree versus flat encoding | Derivation trees and the grammar of a parameter space; the inactive-variable problem of the flat encoding; when the tree encoding pays off. | Planned |
-| E14 | Advanced | Tuning with irace | irace as an alternative to meta-optimization: generating irace files from a YAML space, running it and comparing the results. | Planned |
+| E14 | Advanced | Tuning with irace | irace as an alternative to meta-optimization: generating irace files from a YAML space, running it and comparing the results. | First version (`docs/tutorials/tuning_with_irace.rst`, `example.tutorial.IraceTutorial`, `src/main/resources/irace/`; NSGA-II tuned for ZDT1-6 with the HV+EP runner, irace 4.4.3). Shows how to use irace only; the comparison with Evolver is a separate research line (`irace-vs-evolver.md`). In review |
 | E15 | Advanced | Automating Evolver with the CLI | Reusable request files, the `DescribeMain` manifest, batches of runs, integration with external tools. | Planned |
 | E16 | Advanced | Extending Evolver | Adding an operator to the catalogue, or a new configurable algorithm (its YAML space, factory entries, `Base*`/`Double*` classes and tests). | Planned |
 

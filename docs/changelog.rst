@@ -11,6 +11,12 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add :doc:`tutorial E14, tuning with irace <tutorials/tuning_with_irace>`, which replaces the
+  former irace page: generating irace's parameter file from a YAML parameter space, the target
+  runner, the scenario, running irace, and applying the configuration it finds to the ZDT problems
+  (``example.tutorial.IraceTutorial``)
+- Add ``docs/proposals/irace-vs-evolver.md``, which describes the comparison of irace with Evolver's
+  meta-optimization as an open research line
 - Add :doc:`tutorial E8, analyzing training results <tutorials/analyzing_training_results>`:
   the output files, convergence and population of a training run that tunes NSGA-II for ZDT1-6
   with five runs per configuration, choosing a configuration from its final front, and validating
@@ -52,6 +58,16 @@ Added
 Changed
 ~~~~~~~
 
+- The irace resources (``src/main/resources/irace``) are updated: irace 4.4.3 instead of 4.2.0,
+  ``parameters-NSGAII.txt`` regenerated from the current ``NSGAIIDouble.yaml``, a scenario that
+  runs ``org.uma.evolver.irace.AutoNSGAIIIraceHVEP`` (it referred to a class that no longer exists)
+  on the ZDT problems with 8000 evaluations, and ``run.sh`` with a configurable number of cores
+  (``N_CPUS``)
+- The irace target runners ``AutoNSGAIIIraceHV`` and ``AutoNSGAIIIraceHVEP`` apply the seed irace
+  passes (``--randomGeneratorSeed``), so that their experiments are reproducible
+- The quick start of the README shows the command-line route and a meta-optimization example based
+  on ``TrainingRunner`` and YAML configurations; the changelog is kept only in the documentation
+- Tutorial E4 appears under the introductory tutorials in the sidebar of the documentation
 - ``AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`` and the bundled ``DTLZ3DNSGAIIBaseLevel.yaml``
   use NHV and EP as meta-objectives (instead of HV− and EP) and 10000 evaluations per problem
   (instead of 16000); the class uses 16 cores, writes the whole population of the meta-optimizer,
@@ -66,6 +82,8 @@ Changed
 Removed
 ~~~~~~~
 
+- ``parameterSpaces/NSGAIIDouble.irace`` and ``parameterSpaces/MOEADouble.irace``, outdated and
+  unused: the generators in ``org.uma.evolver.irace.generator`` produce irace's parameter files
 - The experiment-specific analysis scripts ``analysis_A_hv_evolution/``,
   ``compare_moead_vs_paes.py`` and ``generate_cd_plots.py``
 - The ``PAESvsMOEADValidation`` and ``PAESvsMOEADDTLZValidation`` examples, with their report

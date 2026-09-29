@@ -82,7 +82,7 @@ Key Features
 
 Other Features
 ^^^^^^^^^^^^^^
-- **irace Support**: The search of base-level metaheuristic configurations can be performed with irace.
+- **irace Support**: The search of base-level metaheuristic configurations can also be performed with irace (see :ref:`irace_integration`).
 
 Available algorithms
 --------------------
@@ -110,7 +110,6 @@ Evolver currently supports the following base-level and meta-optimization algori
 
    introduction
    installation
-   quick_start
    project_structure
    examples/index
 
@@ -139,7 +138,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    :caption: ADVANCED TOPICS
    :name: advanced
 
-   irace_integration
    reference_fronts
    api_reference
    glossary
