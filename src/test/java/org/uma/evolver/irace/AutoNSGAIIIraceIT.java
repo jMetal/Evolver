@@ -1,6 +1,7 @@
 package org.uma.evolver.irace;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -92,6 +93,18 @@ class AutoNSGAIIIraceIT {
           () -> AutoNSGAIIIraceHV.main(ZDT2_ARGS.split("\\s+")));
       double value = Double.parseDouble(output);
       assertTrue(value < 0, "HV output should be negative (negated for irace minimization), got: " + value);
+    }
+
+    @Tag("integration")
+    @Test
+    @DisplayName("Should print the same value twice when run with the same irace seed")
+    void shouldPrintTheSameValueTwiceWhenRunWithTheSameSeed() throws Exception {
+      String[] args = ("--randomGeneratorSeed 12345 " + ZDT1_ARGS).split("\\s+");
+
+      String first = captureMainOutput(() -> AutoNSGAIIIraceHV.main(args));
+      String second = captureMainOutput(() -> AutoNSGAIIIraceHV.main(args));
+
+      assertEquals(first, second, "The same seed must give the same result");
     }
   }
 

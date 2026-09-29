@@ -33,6 +33,8 @@ public class AutoNSGAIIIraceHVEP {
    * @throws IOException If there is an error reading the reference front file
    */
   public static void main(String[] args) throws IOException {
+    IraceSeed.applyIfPresent(args);
+
     // Parse problem name parameter and load the problem
     StringParameter problemNameParameter = new StringParameter("problemName");
     problemNameParameter.parse(args);
