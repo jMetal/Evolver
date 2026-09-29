@@ -477,7 +477,8 @@ Try it yourself
 What's next
 -----------
 
-- Analyzing the results of a training (E8) and designing and interpreting validation studies (E9)
-  come in later tutorials.
+- :doc:`E8 <analyzing_training_results>` shows how to analyze the results of a training run and
+  choose a configuration; designing and interpreting validation studies (E9) comes in a later
+  tutorial.
 - Tutorial E10 covers problems without a reference front, with HV− as meta-objective.
 - :doc:`../concepts/meta_optimization_level_metaheuristics` describes the available meta-optimizers.

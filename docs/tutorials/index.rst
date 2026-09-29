@@ -46,6 +46,9 @@ Intermediate
      - Designing a training run (training set, meta-objectives, training and meta-optimizer
        budgets, independent runs) and validating its result against other algorithms, on problems
        seen and not seen during the training.
+   * - :doc:`E8. Analyzing training results <analyzing_training_results>`
+     - Reading the output files of a training run, its convergence and the population of the
+       meta-optimizer, choosing a configuration from the final front, and validating the choice.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -56,3 +59,4 @@ More tutorials are planned for the intermediate and advanced levels.
    base_level_algorithms
    meta_optimization_workflow
    training_sets_indicators_budgets
+   analyzing_training_results

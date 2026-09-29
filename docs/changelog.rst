@@ -11,6 +11,12 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add :doc:`tutorial E8, analyzing training results <tutorials/analyzing_training_results>`:
+  the output files, convergence and population of a training run that tunes NSGA-II for ZDT1-6
+  with five runs per configuration, choosing a configuration from its final front, and validating
+  the candidates against the standard NSGA-II
+- Add ``AbstractMetaOptimizationProblem.evaluateConfiguration``, which evaluates a configuration
+  given as a configuration string exactly as the meta-optimizer evaluates its solutions
 - Add :doc:`tutorial E7, training sets, indicators and budgets
   <tutorials/training_sets_indicators_budgets>`: tuning NSGA-II for DTLZ1-7 with a fifth of the
   validation budget, and validating the configuration found against NSGA-II, NSGA-III, MOEA/D,

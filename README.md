@@ -249,6 +249,11 @@ If you use Evolver in your research, please cite:
 
 ### v2.2-SNAPSHOT
 
+- Add tutorial E8 (analyzing training results): the output files, convergence and population of a
+  training run that tunes NSGA-II for ZDT1-6, choosing a configuration from its final front, and
+  validating the candidates against the standard NSGA-II. Add
+  `AbstractMetaOptimizationProblem.evaluateConfiguration`, which evaluates a configuration exactly
+  as the meta-optimizer does.
 - Add tutorial E7 (training sets, indicators and budgets): tuning NSGA-II for DTLZ1-7 with a
   fifth of the validation budget, and validating the configuration found against NSGA-II,
   NSGA-III, MOEA/D, SMS-EMOA and AGE-MOEA on DTLZ1-7 and WFG1-9. `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`
