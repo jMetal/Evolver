@@ -107,10 +107,34 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   @Override
   public META evaluate(META solution) {
     Check.notNull(solution);
-    String[] parameterArray = toParameterArray(solution);
-    double[][] indicatorValuesPerProblem = computeIndicatorValuesForAllProblems(parameterArray);
-    updateObjectives(solution, indicatorValuesPerProblem);
+    double[] objectives = evaluateConfiguration(toParameterArray(solution));
+    System.arraycopy(objectives, 0, solution.objectives(), 0, objectives.length);
     return solution;
+  }
+
+  /**
+   * Evaluates a configuration of the base-level algorithm exactly as the meta-optimizer evaluates
+   * its solutions: the algorithm is run with it {@code numberOfIndependentRuns} times on every
+   * problem, and the value of each indicator is the mean over the problems of its median over the
+   * runs. Useful to re-evaluate the configurations found by a training run, for instance with more
+   * independent runs than the training used.
+   *
+   * @param parameterArray the configuration, as the tokens of a configuration string ({@code
+   *     "--param1 value1 --param2 value2 ..."} split by whitespace)
+   * @return the value of each indicator, in the order of the indicators of this problem
+   */
+  public double[] evaluateConfiguration(String[] parameterArray) {
+    Check.notNull(parameterArray);
+    double[][] indicatorValuesPerProblem = computeIndicatorValuesForAllProblems(parameterArray);
+    double[] objectives = new double[indicators.size()];
+    for (int i = 0; i < indicators.size(); i++) {
+      double sum = 0.0;
+      for (int p = 0; p < problems.size(); p++) {
+        sum += indicatorValuesPerProblem[p][i];
+      }
+      objectives[i] = sum / problems.size();
+    }
+    return objectives;
   }
 
   protected abstract String[] toParameterArray(META solution);
@@ -189,16 +213,6 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       }
     }
     return values;
-  }
-
-  private void updateObjectives(META solution, double[][] indicatorValuesPerProblem) {
-    for (int i = 0; i < indicators.size(); i++) {
-      double sum = 0.0;
-      for (int p = 0; p < problems.size(); p++) {
-        sum += indicatorValuesPerProblem[p][i];
-      }
-      solution.objectives()[i] = sum / problems.size();
-    }
   }
 
   private static double median(double[] values) {

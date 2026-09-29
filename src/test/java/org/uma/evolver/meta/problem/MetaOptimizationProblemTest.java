@@ -404,4 +404,52 @@ class MetaOptimizationProblemTest {
       assertTrue(differ, "Two randomly created solutions should differ in at least one variable");
     }
   }
+
+  @Nested
+  @DisplayName("When evaluating a configuration given as a parameter array")
+  class EvaluateConfigurationTests {
+
+    @Test
+    @DisplayName(
+        "Given the default NSGA-II configuration, when evaluated, then it returns one value per"
+            + " indicator, within the range of the normalized indicators")
+    void givenDefaultConfiguration_whenEvaluated_thenOneValuePerIndicator() {
+      // Arrange
+      var problem =
+          new MetaOptimizationProblem<>(
+              baseAlgorithm,
+              singleProblem,
+              singleReferenceFront,
+              List.<QualityIndicator>of(new Epsilon(), new NormalizedHypervolume()),
+              new FixedEvaluationsStrategy(List.of(2000)),
+              ONE_RUN);
+      String[] configuration =
+          ("--algorithmResult population --createInitialSolutions default"
+                  + " --variation crossoverAndMutationVariation --offspringPopulationSize 100"
+                  + " --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds"
+                  + " --sbxDistributionIndex 20.0 --mutation polynomial"
+                  + " --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds"
+                  + " --polynomialMutationDistributionIndex 20.0 --selection tournament"
+                  + " --selectionTournamentSize 2")
+              .split("\\s+");
+
+      // Act
+      double[] objectives = problem.evaluateConfiguration(configuration);
+
+      // Assert
+      assertEquals(2, objectives.length);
+      assertTrue(objectives[0] >= 0.0, "EP should be non-negative");
+      assertTrue(objectives[1] >= 0.0 && objectives[1] <= 1.0, "NHV should be in [0, 1]");
+    }
+
+    @Test
+    @DisplayName("Given a null parameter array, when evaluated, then throw NullParameterException")
+    void givenNullParameterArray_whenEvaluated_thenThrowException() {
+      // Arrange
+      var problem = createValidInstance();
+
+      // Act & Assert
+      assertThrows(NullParameterException.class, () -> problem.evaluateConfiguration(null));
+    }
+  }
 }
