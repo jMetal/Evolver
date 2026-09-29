@@ -113,6 +113,13 @@ cd Evolver
 mvn clean install
 ```
 
+`mvn clean install` runs the whole test suite, integration tests included, which takes several
+minutes. To just build the JAR with all its dependencies (in `target/`), skip the tests:
+
+```bash
+mvn -DskipTests package
+```
+
 ## Build and test
 
 ```bash
@@ -127,6 +134,22 @@ mvn verify
 ```
 
 ## Quick start
+
+The quickest way to try Evolver needs no code: the tutorial
+[Evolver in 10 minutes](https://evolver.readthedocs.io/en/latest/quick_start.html) builds it, runs
+a configurable algorithm and tunes it from the command line. For instance, this runs a short
+training run that tunes NSGA-II for ZDT4 (about half a minute with 8 cores), from the root of the
+repository:
+
+```bash
+JAR=$(ls target/Evolver-*-jar-with-dependencies.jar)
+mkdir -p results/quick-start
+cp src/main/resources/cli/training/tutorial-e4-request.yaml results/quick-start/request.yaml
+java -cp "$JAR" org.uma.evolver.cli.training.TrainingRunnerMain results/quick-start/request.yaml
+```
+
+From Java, the configurable algorithms and the meta-optimizers are used as the next two examples
+show.
 
 ### Configuring and running an algorithm
 
@@ -156,40 +179,59 @@ meta-optimization (`example.baselevel.tuned`).
 
 ### Meta-optimizing an algorithm
 
-The following example configures NSGA-II (base level) for DTLZ1 using NSGA-II as meta-optimizer.
+The following example tunes NSGA-II (base level) for DTLZ1, with NSGA-II as meta-optimizer. A
+training run is described by two YAML texts, the same ones the command-line tools read from files:
+what to tune and on what training set, and how the meta-optimizer searches. `TrainingRunner` runs
+it and writes the results.
 
 ```java
-// 1. Define the YAML parameter space and the training set
-var parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
-List<Problem<DoubleSolution>> trainingSet = List.of(new DTLZ1());
-List<String> referenceFronts = List.of("resources/referenceFronts/DTLZ1.3D.csv");
+// 1. What to tune (NSGA-II and its parameter space), on what training set, and the quality
+//    indicators the meta-optimizer minimizes
+BaseLevelConfig baseLevel =
+    BaseLevelConfigurationReader.loadFromYaml(
+        """
+        algorithmName: NSGA-II
+        populationSize: 100
+        numberOfIndependentRuns: 1
+        yamlParameterSpaceFile: NSGAIIDouble.yaml
+        trainingProblemNames: [DTLZ1]
+        trainingReferenceFrontFileNames: [resources/referenceFronts/DTLZ1.3D.csv]
+        trainingEvaluations: [15000]
+        indicatorNames: [Epsilon, NormalizedHypervolume]
+        """);
 
-// 2. Set up the base-level algorithm to configure
-var indicators = List.of(new Epsilon(), new NormalizedHypervolume());
-var baseAlgorithm = new DoubleNSGAII(100, parameterSpace);
-EvaluationBudgetStrategy budget = new FixedEvaluationsStrategy(List.of(15000));
+// 2. The meta-optimizer: NSGA-II, trying 2000 configurations, 8 at a time
+MetaSearchConfig metaSearch =
+    MetaOptimizerConfigurationReader.loadFromYaml(
+        """
+        algorithm: NSGA-II
+        encoding: flat
+        metaMaxEvaluations: 2000
+        metaPopulationSize: 50
+        numberOfCores: 8
+        crossover: SBX
+        crossoverProbability: 0.9
+        crossoverRepairStrategy: bounds
+        sbxDistributionIndex: 20.0
+        mutation: polynomial
+        mutationProbabilityFactor: 1.0
+        mutationRepairStrategy: bounds
+        polynomialMutationDistributionIndex: 20.0
+        selection: tournament
+        selectionTournamentSize: 2
+        """);
 
-// 3. Create the meta-optimization problem
-MetaOptimizationProblem<DoubleSolution> problem =
-    new MetaOptimizationProblem<>(baseAlgorithm, trainingSet, referenceFronts, indicators, budget, 1);
-
-// 4. Build and run the meta-optimizer
-EvolutionaryAlgorithm<DoubleSolution> metaNSGAII =
-    new MetaNSGAIIBuilder(problem, parameterSpace)
-        .setMaxEvaluations(2000)
-        .setNumberOfCores(8)
-        .build();
-
-var outputResults =
-    new ConsolidatedOutputResults("NSGA-II", problem, "DTLZ1", indicators, "RESULTS/NSGAII/DTLZ1");
-metaNSGAII.observable().register(new WriteExecutionDataToFilesObserver(1, outputResults));
-
-metaNSGAII.run();
+// 3. Run it, writing the results every 100 meta-evaluations
+String outputDirectory = "results/NSGAII/DTLZ1";
+var request = new TrainingRequest(baseLevel, metaSearch, outputDirectory, 100, 100, null);
+new TrainingRunner().run(request, Path.of(outputDirectory, "status.yaml"));
 ```
 
-After running, the output folder holds `METADATA.txt`, `INDICATORS.csv` (the indicator values of
-each configuration) and `CONFIGURATIONS.csv` (the configurations themselves).
-See the examples in `org.uma.evolver.example` for complete runnable code.
+After running, the output folder holds, for the non-dominated configurations found at every
+checkpoint: `METADATA.txt` (the settings of the run), `INDICATORS.csv` (their indicator values),
+`CONFIGURATIONS.csv` (their parameter values) and `VAR_CONF.txt` (their configuration strings,
+ready to be used). The examples in `org.uma.evolver.example.training` follow this pattern, and the
+tutorials of the documentation explain each part.
 
 ## Parameter spaces
 
@@ -226,7 +268,7 @@ Full documentation is available at <https://evolver.readthedocs.io>, including:
 - Examples
 - Concepts (parameter spaces, evaluation strategies, base-level and meta-level metaheuristics)
 - API reference
-- irace integration
+- Tuning with irace (tutorial E14)
 - FAQ and glossary
 
 ## Citation
@@ -247,83 +289,9 @@ If you use Evolver in your research, please cite:
 
 ## Changelog
 
-### v2.2-SNAPSHOT
-
-- Add tutorial E8 (analyzing training results): the output files, convergence and population of a
-  training run that tunes NSGA-II for ZDT1-6, choosing a configuration from its final front, and
-  validating the candidates against the standard NSGA-II. Add
-  `AbstractMetaOptimizationProblem.evaluateConfiguration`, which evaluates a configuration exactly
-  as the meta-optimizer does.
-- Add tutorial E7 (training sets, indicators and budgets): tuning NSGA-II for DTLZ1-7 with a
-  fifth of the validation budget, and validating the configuration found against NSGA-II,
-  NSGA-III, MOEA/D, SMS-EMOA and AGE-MOEA on DTLZ1-7 and WFG1-9. `AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ`
-  and `DTLZ3DNSGAIIBaseLevel.yaml` now use NHV and EP with 10000 evaluations per problem.
-- Add the optional `writePopulation` field to training requests, which also writes the whole
-  population of the meta-optimizer at every checkpoint (`POPULATION_INDICATORS.csv`,
-  `POPULATION_CONFIGURATIONS.csv`), and `scripts/plot_meta_population.py`, which plots it.
-- Add `scripts/plot_median_fronts.py`, which plots the fronts with the median HV of each algorithm
-  and problem of a jMetal validation study.
-- Add `scripts/critical_difference_plots.py`, which draws critical difference plots (with SAES) of
-  a jMetal validation study.
-- Add `scripts/wilcoxon_pivot_tables.py`, which writes Wilcoxon pivot tables (with SAES) of a
-  jMetal validation study, with the tuned configuration as pivot.
-- Add `SolveRunnerMain` (`org.uma.evolver.cli.solving`), which runs a configurable algorithm on a
-  problem from a YAML request (configuration inline or from a file, independent runs, reproducible
-  seeds) and writes the fronts and quality indicators of each run. The registries shared with the
-  training tools move to `org.uma.evolver.cli`.
-- Add tutorial E4 (Evolver in 10 minutes), which replaces the former quick start: build Evolver,
-  run a configurable algorithm, tune it with a short training run, and run it with the
-  configuration found, all from the command line.
-- Add tutorial E3 (meta-optimization workflow): tuning NSGA-II for ZDT4 from Java and from the
-  command line, choosing a configuration from the training results, and comparing its front with
-  that of the default configuration.
-- Add `scripts/plot_fronts.py`, which plots several labelled bi-objective fronts against a reference
-  front, and `scripts/plot_training_convergence.py`, which plots how each meta-objective of one or
-  several training runs converges over the meta-evaluations.
-- Clean up `scripts/`, which keeps only active, reusable scripts: remove the experiment-specific
-  analyses (`analysis_A_hv_evolution/`, `compare_moead_vs_paes.py`, `generate_cd_plots.py`) and the
-  PAES vs MOEA/D validation examples with their report script, and trim the Python dependencies
-  to what the remaining scripts use.
-
-### v2.1 (2026-09-24)
-
-- Add derivation tree encoding (`org.uma.evolver.meta.encoding`): `DerivationTreeSolution`, `TreeNode`,
-  `SubtreeCrossover` (STGP), `TreeMutation`, `TreeMetaOptimizationProblem`,
-  `TreeSolutionGenerator`, and `GrammarConverter`.
-- Add configurable NSGA-III, RVEA, AGE-MOEA, SSMOEA, and PAES.
-- Add Binary and Permutation encodings for MOEA/D, SMS-EMOA, and PAES.
-- Add Async Genetic Algorithm and Random Search meta-optimizers.
-- Add `ConfigurationFileReader` to read algorithm configurations from text files.
-- Remove hard-coded parameter space classes; all parameter spaces now use `YAMLParameterSpace`.
-- Restructure package layout: `algorithm`, `meta`, `trainingset`, `irace`, `example`.
-- Separate the configurable core (`algorithm`, `parameter`, `util`) from the meta level: the
-  derivation tree encoding, training sets and training output classes move under `meta`
-  (`meta.encoding`, `meta.trainingset`, `meta.output`), and meta-only algorithms under
-  `meta.algorithm`. Remove unused classes, including `OutputResults` (superseded by
-  `ConsolidatedOutputResults`).
-- Add `cli.training`, a command-line training runner driven by YAML files: `TrainingRunnerMain`
-  runs a training job described by a `request.yaml` (reusable base-level and meta-search
-  configuration files) and reports its progress in a status file; `DescribeMain` prints a manifest
-  of the algorithms, problems and indicators it can use. It supports the flat and tree encodings,
-  Double and Permutation base-level algorithms, and any jMetal problem by class name.
-- Meta-optimizers: add AGE-MOEA (flat and tree encodings); NSGA-II, AGE-MOEA and Random Search can
-  now be used with the tree encoding, and SPEA2, SMPSO, Async NSGA-II and Random Search from
-  `cli.training`. Meta-optimizers always generate as many offspring as their population size,
-  return their final population, and use a population of 50 by default.
-- Add a Tutorials section to the documentation, with runnable code in `example.tutorial`:
-  E1 (parameter spaces) and E2 (base-level algorithms). The planned tutorials are listed in
-  `docs/proposals/tutorials.md`.
-- Add the Evolver logo, and recommend JDK 21 (the version used by CI).
-- Evolver-Studio, a companion Python/Streamlit application, builds on `cli.training` and
-  `DescribeMain` to explore parameter spaces, launch and monitor training runs, and follow
-  interactive tutorials without writing Java code.
-
-### v2.0 (2025-09-09)
-
-- Complete rewrite of the original Evolver framework.
-- New architecture for improved flexibility and maintainability.
-- Enhanced support for meta-optimization of multi-objective metaheuristics.
-- Improved documentation and examples.
+The changes of each version are listed in the
+[changelog](https://evolver.readthedocs.io/en/latest/changelog.html) of the documentation
+([`docs/changelog.rst`](docs/changelog.rst)).
 
 ## License
 
