@@ -1,22 +1,25 @@
 #!/bin/bash
 
-## This script installs the irace package, sets up the environment and launches
-## irace. Then compresses its output as a tar.gz.
+## Installs the bundled irace package in ./R, and runs irace on a scenario.
+##
+## Usage: ./run.sh <scenario file> <run number>
+##
+## The run number distinguishes replications of irace: it sets irace's seed and the execution
+## directory, execdir-<run number>, next to the scenario file. The number of cores irace uses to
+## run experiments in parallel is 8 by default; set N_CPUS to change it, e.g.
+##     N_CPUS=16 ./run.sh scenario-NSGAII.txt 1
 
-#SCENARIO is a irace's scenario file
 SCENARIO=$1
-# RUN is the run number to distinguish replications of irace
 RUN=$2
 shift 2
-N_CPUS=8
+N_CPUS=${N_CPUS:-8}
 let SEED=1234567+RUN
 EXECDIR=$(dirname ${SCENARIO})/execdir-${RUN}
 IRACE_PARAMS="--scenario ${SCENARIO} --debug-level 1 --parallel $N_CPUS --seed ${SEED} --exec-dir=${EXECDIR}"
 
-#RPACKAGE="./irace_3.5.1.tar.gz"
-RPACKAGE="./irace_4.2.0.tar.gz"
+RPACKAGE="./irace_4.4.3.tar.gz"
 
-# install irace
+# Install irace in ./R
 if [ ! -r $RPACKAGE ]; then
     echo "cannot read $RPACKAGE"
     exit 1
@@ -31,15 +34,10 @@ if [ ! -x $irace ]; then
     exit 1
 fi
 export PATH="$(pwd)/":${PATH}
-#cat /proc/cpuinfo
+
+# Run irace. The target runner reads the reference fronts from resources/referenceFronts, relative
+# to the execution directory, so a link to ./resources is created there.
 echo "$irace ${IRACE_PARAMS} 1> ${EXECDIR}/irace.stdout.txt 2> ${EXECDIR}/irace.stderr.txt"
 mkdir -p $EXECDIR \
     && ln -fs $(pwd)/resources ${EXECDIR}/ \
     && $irace ${IRACE_PARAMS} 1> ${EXECDIR}/irace.stdout.txt 2> ${EXECDIR}/irace.stderr.txt
-#| xz - > execdir/irace.stdout.xz
-#cd ..
-#tar acf result.tar.gz irace/execdir
-#ls ./execdir
-#cat ./execdir/c1-1.stderr
-#cd .. && tar acf result.tar.gz irace
-#ls ../result.tar.gz
