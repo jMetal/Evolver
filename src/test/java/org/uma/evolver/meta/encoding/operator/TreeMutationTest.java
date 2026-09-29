@@ -72,8 +72,12 @@ class TreeMutationTest {
   }
 
   private DerivationTreeSolution integerSolution(int value) {
+    return integerSolution(value, 1, 100);
+  }
+
+  private DerivationTreeSolution integerSolution(int value, int lowerBound, int upperBound) {
     var s = new DerivationTreeSolution(2, 0);
-    s.addRoot(new TreeNode(new IntegerParameter("p", 1, 100), value));
+    s.addRoot(new TreeNode(new IntegerParameter("p", lowerBound, upperBound), value));
     return s;
   }
 
@@ -257,6 +261,50 @@ class TreeMutationTest {
       // Assert
       assertTrue(value instanceof Integer, "Value must be an Integer");
     }
+
+    @Test
+    @DisplayName("the value always changes and stays in range, even with a small range")
+    void givenIntegerNodeWithSmallRange_whenMutated_thenValueAlwaysChangesWithinRange() {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+
+      for (int original = 2; original <= 10; original++) {
+        for (int repetition = 0; repetition < 200; repetition++) {
+          var solution = integerSolution(original, 2, 10);
+
+          // Act
+          mutation.execute(solution);
+          int mutatedValue = (int) solution.roots().get(0).value();
+
+          // Assert
+          assertNotEquals(original, mutatedValue);
+          assertTrue(mutatedValue >= 2 && mutatedValue <= 10,
+              "Value must be in [2, 10], was: " + mutatedValue);
+        }
+      }
+    }
+
+    @Test
+    @DisplayName("the bounds of the range are reachable from their neighbours")
+    void givenIntegerNodeNextToABound_whenMutatedRepeatedly_thenTheBoundIsReached() {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+      boolean lowerReached = false;
+      boolean upperReached = false;
+
+      // Act
+      for (int repetition = 0; repetition < 200; repetition++) {
+        var nextToLower = integerSolution(3, 2, 10);
+        var nextToUpper = integerSolution(9, 2, 10);
+        mutation.execute(nextToLower);
+        mutation.execute(nextToUpper);
+        lowerReached |= (int) nextToLower.roots().get(0).value() == 2;
+        upperReached |= (int) nextToUpper.roots().get(0).value() == 10;
+      }
+
+      // Assert
+      assertTrue(lowerReached && upperReached);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -333,6 +381,32 @@ class TreeMutationTest {
 
       // Assert
       assertEquals(true, mutatedValue);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  @Nested
+  @DisplayName("When selecting the node to mutate")
+  class NodeSelectionTests {
+
+    @Test
+    @DisplayName("categorical nodes with a single value are never selected")
+    void givenTreeWithSingleValuedCategoricalNode_whenMutated_thenTheOtherNodeAlwaysChanges() {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+
+      for (int repetition = 0; repetition < 100; repetition++) {
+        var solution = new DerivationTreeSolution(2, 0);
+        solution.addRoot(new TreeNode(new CategoricalParameter("single", List.of("A")), "A"));
+        solution.addRoot(new TreeNode(new BooleanParameter("flag"), true));
+
+        // Act
+        mutation.execute(solution);
+
+        // Assert
+        assertEquals(false, solution.roots().get(1).value());
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 # TreeMutation: analysis and open questions
 
-**Status:** analysis done (2026-09-29); the distribution index is set to 5 provisionally, and its
-value, like the other points below, is still to be studied.
+**Status:** analysis done (2026-09-29); the mutation of integer nodes is fixed (question 2), the
+distribution index is set to 5 provisionally, and the other questions are still to be studied.
 
 ## What it does
 
@@ -49,14 +49,26 @@ final fronts. Estimated cost with 2000 meta-evaluations and 16 cores: about 17 m
 (extrapolated from tutorial E8), so about 3 hours for 5 replications of two values; 1000
 meta-evaluations and 3 replications, about 50 minutes.
 
-### 2. Integer nodes with small ranges often do not change
+### 2. Integer nodes with small ranges often did not change (fixed)
 
-Rounding a small polynomial step leaves the value unchanged in most mutations (simulated, η = 20):
+Rounding a small polynomial step left the value unchanged in most mutations (simulated, η = 20):
 77% for `selectionTournamentSize` [2, 10], 74% for `knnDistanceArchiveK` [1, 10], 7% for
-`populationSizeWithArchive` [10, 200]. Each of those mutations spends a whole meta-evaluation on a
-configuration identical to its parent. A larger η reduces it but does not remove it. Possible fix:
-when the rounded value equals the original one, move it one unit within the range; more generally,
-mutate again when the mutant is identical to its parent.
+`populationSizeWithArchive` [10, 200]. Each of those mutations spent a whole meta-evaluation on a
+configuration identical to its parent. Rounding on `[lower, upper]` also made the bounds half as
+likely as the inner values.
+
+Fixed (2026-09-29): integer values are mutated on `[lower - 0.5, upper + 0.5]` and rounded; if the
+value does not change, it is moved one unit in the direction of the perturbation (inwards at a
+bound); and categorical nodes with a single value, the only nodes that cannot change, are never
+selected. Every mutation event now changes exactly one node. With a small range the mutation is
+mostly a move to a neighbouring value (simulated on [2, 10]: a change of one unit in 76% of the
+mutations with η = 5, 98% with η = 20), as configurators do with integer and ordinal parameters.
+
+A mutant can still be identical to its parent when no mutation is applied (`mutationProbability`
+below 1) and there is no crossover. Whether a meta-optimizer should skip evaluating configurations
+it has already seen is a separate question: the evaluation is noisy, but the meta-optimizers do not
+aggregate repeated evaluations, so a duplicate with a lucky evaluation survives and the population
+loses diversity.
 
 ### 3. Ordinal categorical parameters
 

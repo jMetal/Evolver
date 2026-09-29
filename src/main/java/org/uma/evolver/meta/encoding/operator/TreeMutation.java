@@ -15,15 +15,18 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * <p>Implements standard GP mutation (Koza, 1992; Poli et al., 2008):
  * <ul>
  *   <li><b>Numeric nodes (point mutation):</b> the value is perturbed using polynomial mutation
- *       within the parameter's range.</li>
+ *       within the parameter's range. Integer values are mutated on {@code [lower - 0.5, upper +
+ *       0.5]} and rounded, so that the bounds are as likely as the inner values; if the rounded
+ *       value equals the original one, it is moved one unit in the direction of the perturbation
+ *       (inwards at a bound), so that the mutation always changes the node.</li>
  *   <li><b>Categorical nodes (subtree mutation):</b> a new production is selected from the
  *       grammar alternatives, and the conditional subtree is regenerated randomly. Global
  *       children are preserved.</li>
  * </ul>
  *
- * <p>One node is selected uniformly at random from all active nodes in the tree, and mutated
- * according to its type. This follows the standard GP convention of one mutation event per
- * individual.
+ * <p>One node is selected uniformly at random from the active nodes in the tree that can change
+ * (all of them except categorical nodes with a single value), and mutated according to its type. This follows the standard GP
+ * convention of one mutation event per individual, and every mutation event changes the tree.
  *
  * @author Antonio J. Nebro
  */
@@ -60,7 +63,8 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
     Check.notNull(solution);
 
     if (random.nextDouble() < probability) {
-      List<TreeNode> nodes = solution.allNodes();
+      List<TreeNode> nodes =
+          solution.allNodes().stream().filter(TreeMutation::canChange).toList();
       if (!nodes.isEmpty()) {
         TreeNode selected = nodes.get(random.nextInt(0, nodes.size() - 1));
         mutateNode(selected);
@@ -73,6 +77,17 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
   @Override
   public double mutationProbability() {
     return probability;
+  }
+
+  /**
+   * Whether mutating a node can change its value: categorical nodes with a single value cannot
+   * (numeric ranges always have more than one value), so they are never selected.
+   */
+  private static boolean canChange(TreeNode node) {
+    return switch (node.type()) {
+      case CATEGORICAL -> node.validValues().size() > 1;
+      case DOUBLE, INTEGER, BOOLEAN -> true;
+    };
   }
 
   /**
@@ -103,15 +118,32 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
   }
 
   /**
-   * Polynomial mutation for integer-valued nodes, rounded to nearest integer.
+   * Polynomial mutation for integer-valued nodes: the value is perturbed on {@code [lower - 0.5,
+   * upper + 0.5]} and rounded; if it does not change, it is moved one unit in the direction of the
+   * perturbation (at random if there was none), or inwards at a bound.
    */
   private void mutateInteger(TreeNode node) {
     int value = ((Number) node.value()).intValue();
-    double lower = node.lowerBound();
-    double upper = node.upperBound();
+    int lower = (int) node.lowerBound();
+    int upper = (int) node.upperBound();
 
-    double mutatedValue = polynomialMutation(value, lower, upper);
-    node.value((int) Math.round(mutatedValue));
+    double perturbed = polynomialMutation(value, lower - 0.5, upper + 0.5);
+    int mutatedValue = (int) Math.max(lower, Math.min(upper, Math.round(perturbed)));
+    if (mutatedValue == value) {
+      int step;
+      if (perturbed > value) {
+        step = 1;
+      } else if (perturbed < value) {
+        step = -1;
+      } else {
+        step = random.nextDouble() < 0.5 ? -1 : 1;
+      }
+      if (value + step < lower || value + step > upper) {
+        step = -step;
+      }
+      mutatedValue = value + step;
+    }
+    node.value(mutatedValue);
   }
 
   /**

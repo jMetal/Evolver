@@ -60,6 +60,11 @@ Added
 Changed
 ~~~~~~~
 
+- ``TreeMutation`` always changes the tree: integer values are mutated on ``[lower - 0.5, upper +
+  0.5]`` and rounded, and moved one unit if they do not change (with small ranges, such as the
+  tournament size [2, 10], about three quarters of the mutations used to leave the value unchanged
+  and spend a meta-evaluation on a copy of the parent); categorical nodes with a single value are
+  never selected
 - The meta-optimizer configurations with the tree encoding (``MetaNSGAIITreeConfiguration.yaml``,
   ``MetaAGEMOEATreeConfiguration.yaml``) and ``TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D`` use a
   distribution index of 5 instead of 20 in ``TreeMutation``, for larger steps in the mutation of
