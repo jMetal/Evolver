@@ -61,7 +61,10 @@ likely as the inner values.
 Fixed (2026-09-29): integer values are mutated on `[lower - 0.5, upper + 0.5]` and rounded; if the
 value does not change, it is moved one unit in the direction of the perturbation (inwards at a
 bound); and categorical nodes with a single value, the only nodes that cannot change, are never
-selected. Every mutation event now changes exactly one node. With a small range the mutation is
+selected. Double values at a bound had the same problem (half of the polynomial steps point
+outwards and leave the value unchanged); although the initial population practically never
+produces them, the step is now drawn again when it does not change the value. Every mutation event
+now changes exactly one node. With a small range the mutation is
 mostly a move to a neighbouring value (simulated on [2, 10]: a change of one unit in 76% of the
 mutations with η = 5, 98% with η = 20), as configurators do with integer and ordinal parameters.
 

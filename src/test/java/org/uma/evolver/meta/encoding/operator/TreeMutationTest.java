@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.encoding.solution.TreeNode;
 import org.uma.evolver.meta.encoding.util.GrammarConverter;
@@ -225,6 +227,27 @@ class TreeMutationTest {
 
       // Assert
       assertTrue(mutatedValue <= 1.0, "Value must be <= upperBound (1.0)");
+    }
+
+    @ParameterizedTest(name = "starting at {0}")
+    @ValueSource(doubles = {0.0, 1.0})
+    @DisplayName("a value at a bound always changes and stays within the range")
+    void givenDoubleNodeAtABound_whenMutated_thenValueAlwaysChangesWithinRange(double bound) {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+
+      for (int repetition = 0; repetition < 1000; repetition++) {
+        var solution = doubleSolution(bound);
+
+        // Act
+        mutation.execute(solution);
+        double mutatedValue = (double) solution.roots().get(0).value();
+
+        // Assert
+        assertNotEquals(bound, mutatedValue);
+        assertTrue(mutatedValue >= 0.0 && mutatedValue <= 1.0,
+            "Value must be in [0, 1], was: " + mutatedValue);
+      }
     }
   }
 

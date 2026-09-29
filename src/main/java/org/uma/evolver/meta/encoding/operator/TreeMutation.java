@@ -16,7 +16,8 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * <p>Implements standard GP mutation (Koza, 1992; Poli et al., 2008):
  * <ul>
  *   <li><b>Numeric nodes (point mutation):</b> the value is perturbed using polynomial mutation
- *       within the parameter's range. Integer values are mutated on {@code [lower - 0.5, upper +
+ *       within the parameter's range; a step that leaves a double value unchanged (half of them,
+ *       when the value is at a bound) is drawn again. Integer values are mutated on {@code [lower - 0.5, upper +
  *       0.5]} and rounded, so that the bounds are as likely as the inner values; if the rounded
  *       value equals the original one, it is moved one unit in the direction of the perturbation
  *       (inwards at a bound), so that the mutation always changes the node.</li>
@@ -32,6 +33,9 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * @author Antonio J. Nebro
  */
 public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
+
+  /** Draws of the polynomial mutation of a double node before moving it by the smallest step. */
+  private static final int MAX_DOUBLE_ATTEMPTS = 20;
 
   private final double probability;
   private final double distributionIndex;
@@ -114,7 +118,16 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
     double lower = node.lowerBound();
     double upper = node.upperBound();
 
+    // At a bound, half of the polynomial steps point outwards and leave the value unchanged: they
+    // are drawn again, and in the (practically impossible) case that none changes it, the value
+    // is moved to the next double inwards
     double mutatedValue = polynomialMutation(value, lower, upper);
+    for (int attempt = 1; mutatedValue == value && attempt < MAX_DOUBLE_ATTEMPTS; attempt++) {
+      mutatedValue = polynomialMutation(value, lower, upper);
+    }
+    if (mutatedValue == value) {
+      mutatedValue = value < upper ? Math.nextUp(value) : Math.nextDown(value);
+    }
     node.value(mutatedValue);
   }
 
