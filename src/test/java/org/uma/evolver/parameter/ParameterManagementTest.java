@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.uma.evolver.parameter.type.BooleanParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
+import org.uma.evolver.parameter.type.IntegerParameter;
 
 class ParameterManagementTest {
   @Nested
@@ -152,6 +153,61 @@ class ParameterManagementTest {
 
       // Assert
       assertEquals("C", result);
+    }
+  }
+
+  @Nested
+  @DisplayName("Decode integer parameter test cases")
+  class DecodeIntegerParameterTestCases {
+    private final IntegerParameter parameter = new IntegerParameter("ParameterName", 2, 10);
+
+    @Test
+    @DisplayName("Decode 0 returns the lower bound")
+    void decodeValueZeroReturnsLowerBound() {
+      // Act
+      String result = decodeParameter(parameter, 0.0);
+
+      // Assert
+      assertEquals("2", result);
+    }
+
+    @Test
+    @DisplayName("Decode 1.0 returns the upper bound")
+    void decodeValueOneReturnsUpperBound() {
+      // Act
+      String result = decodeParameter(parameter, 1.0);
+
+      // Assert
+      assertEquals("10", result);
+    }
+
+    @Test
+    @DisplayName("The upper bound has an interval as wide as the other values")
+    void decodeValueInTheLastNinthReturnsUpperBound() {
+      // Act
+      String result = decodeParameter(parameter, 0.9);
+
+      // Assert
+      assertEquals("10", result);
+    }
+
+    @Test
+    @DisplayName("Every integer of the range gets an interval of the same width")
+    void decodeValuesUniformlyGivesEveryIntegerTheSameFrequency() {
+      // Arrange
+      int[] counts = new int[9];
+      int samples = 9000;
+
+      // Act
+      for (int i = 0; i < samples; i++) {
+        double value = (i + 0.5) / samples;
+        counts[Integer.parseInt(decodeParameter(parameter, value)) - 2]++;
+      }
+
+      // Assert
+      for (int count : counts) {
+        assertEquals(samples / 9, count);
+      }
     }
   }
 }

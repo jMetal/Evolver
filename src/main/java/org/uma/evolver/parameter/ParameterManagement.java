@@ -33,10 +33,7 @@ public class ParameterManagement {
       double decodedValue = min + value * (max - min);
       return "" + decodedValue;
     } else if (parameter instanceof IntegerParameter integerParameter) {
-      int min = integerParameter.minValue();
-      int max = integerParameter.maxValue();
-      int decodedValue = min + (int) Math.floor(value * (max - min));
-      return "" + decodedValue;
+      return "" + decodeInteger(integerParameter, value);
     } else if (parameter instanceof BooleanParameter) {
       String decodedValue;
       if (value < 0.5) {
@@ -64,9 +61,7 @@ public class ParameterManagement {
       double max = realParameter.maxValue();
       return min + value * (max - min);
     } else if (parameter instanceof IntegerParameter integerParameter) {
-      int min = integerParameter.minValue();
-      int max = integerParameter.maxValue();
-      return min + (int) Math.floor(value * (max - min));
+      return decodeInteger(integerParameter, value);
     } else if (parameter instanceof BooleanParameter) {
       return value;
     } else {
@@ -87,6 +82,17 @@ public class ParameterManagement {
    * @param values     List of encoded parameter values in the range [0.0, 1.0]
    * @return A {@link StringBuilder} object
    */
+  /**
+   * Decodes a value in [0, 1] to an integer of the parameter's range, giving every integer of the
+   * range an interval of the same width: {@code [min, max]} is split into {@code max - min + 1}
+   * equal parts (the value 1.0 belongs to the last one).
+   */
+  private static int decodeInteger(IntegerParameter parameter, double value) {
+    int min = parameter.minValue();
+    int max = parameter.maxValue();
+    return min + Math.min((int) Math.floor(value * (max - min + 1)), max - min);
+  }
+
   public static StringBuilder decodeParametersToString(List<Parameter<?>> parameters,
       List<Double> values) {
     StringBuilder parameterString = new StringBuilder();

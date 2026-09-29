@@ -60,6 +60,9 @@ Added
 Changed
 ~~~~~~~
 
+- The flat encoding decodes integer parameters giving every integer of the range an interval of the
+  same width: the upper bound was only decoded from the value 1.0 exactly, so it was almost never
+  chosen (e.g. a tournament size of 10 in [2, 10])
 - ``TreeMutation`` mutates categorical parameters with integer values, such as
   ``offspringPopulationSize``: they were never mutated (their node had no valid values), so the
   tree meta-optimizers only changed them through the initial population and crossover. They are
