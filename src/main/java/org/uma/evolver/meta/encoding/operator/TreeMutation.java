@@ -5,6 +5,7 @@ import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.encoding.solution.TreeNode.NodeType;
 import org.uma.evolver.meta.encoding.solution.TreeNode;
 import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
+import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -85,7 +86,7 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
    */
   private static boolean canChange(TreeNode node) {
     return switch (node.type()) {
-      case CATEGORICAL -> node.validValues().size() > 1;
+      case CATEGORICAL -> categoricalValues(node).size() > 1;
       case DOUBLE, INTEGER, BOOLEAN -> true;
     };
   }
@@ -151,13 +152,13 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
    * conditional branch. Global children are preserved.
    */
   private void mutateCategorical(TreeNode node) {
-    List<String> validValues = node.validValues();
+    List<?> validValues = categoricalValues(node);
     if (validValues.size() <= 1) {
       return;
     }
 
-    String currentValue = (String) node.value();
-    String newValue;
+    Object currentValue = node.value();
+    Object newValue;
     do {
       newValue = validValues.get(random.nextInt(0, validValues.size() - 1));
     } while (newValue.equals(currentValue));
@@ -166,9 +167,21 @@ public class TreeMutation implements MutationOperator<DerivationTreeSolution> {
 
     // Regenerate conditional children for the new production
     List<TreeNode> newConditionalChildren =
-        generator.generateConditionalChildren(node.parameter(), newValue);
+        generator.generateConditionalChildren(node.parameter(), String.valueOf(newValue));
     node.replaceConditionalChildren(newConditionalChildren);
   }
+
+  /**
+   * The values of a categorical node: strings for a categorical parameter, integers for a
+   * categorical integer one (e.g. {@code offspringPopulationSize}), whose values are treated as
+   * nominal like any other categorical ones.
+   */
+  private static List<?> categoricalValues(TreeNode node) {
+    return node.parameter() instanceof CategoricalIntegerParameter parameter
+        ? parameter.validValues()
+        : node.validValues();
+  }
+
 
   /**
    * Flips a boolean node.

@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.uma.evolver.meta.encoding.util.GrammarConverter;
 import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.type.BooleanParameter;
+import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
@@ -344,6 +347,59 @@ class TreeMutationTest {
 
       // Assert
       assertEquals(1, s.roots().get(0).globalChildren().size());
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  @Nested
+  @DisplayName("When mutating a categorical INTEGER node")
+  class CategoricalIntegerNodeMutationTests {
+
+    private static final List<Integer> VALUES = List.of(1, 5, 10, 20, 50, 100, 200, 400);
+
+    @Test
+    @DisplayName("the value always changes to another valid integer value")
+    void givenCategoricalIntegerNode_whenMutated_thenValueChangesToAnotherValidValue() {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+
+      for (int repetition = 0; repetition < 100; repetition++) {
+        var solution = categoricalIntegerSolution(100);
+
+        // Act
+        mutation.execute(solution);
+        var mutatedValue = solution.roots().get(0).value();
+
+        // Assert
+        assertTrue(mutatedValue instanceof Integer, "Value must be an Integer");
+        assertNotEquals(100, mutatedValue);
+        assertTrue(VALUES.contains(mutatedValue), "Invalid value: " + mutatedValue);
+      }
+    }
+
+    @Test
+    @DisplayName("every other value is reachable, as in a nominal parameter")
+    void givenCategoricalIntegerNode_whenMutatedRepeatedly_thenEveryOtherValueIsReached() {
+      // Arrange
+      var mutation = new TreeMutation(PROB_ONE, DISTRIBUTION_INDEX, buildGenerator());
+      Set<Object> reached = new HashSet<>();
+
+      // Act
+      for (int repetition = 0; repetition < 500; repetition++) {
+        var solution = categoricalIntegerSolution(100);
+        mutation.execute(solution);
+        reached.add(solution.roots().get(0).value());
+      }
+
+      // Assert
+      assertEquals(Set.of(1, 5, 10, 20, 50, 200, 400), reached);
+    }
+
+    private DerivationTreeSolution categoricalIntegerSolution(int value) {
+      var s = new DerivationTreeSolution(2, 0);
+      s.addRoot(new TreeNode(new CategoricalIntegerParameter("p", VALUES), value));
+      return s;
     }
   }
 

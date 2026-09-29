@@ -158,6 +158,8 @@ public final class GrammarConverter {
 
     if (param instanceof CategoricalParameter categorical) {
       validateCategoricalNode(node, categorical, name, errors);
+    } else if (param instanceof CategoricalIntegerParameter categoricalInteger) {
+      validateCategoricalIntegerNode(node, categoricalInteger, name, errors);
     } else if (param instanceof DoubleParameter doubleParam) {
       validateDoubleNode(node, doubleParam, name, errors);
     } else if (param instanceof IntegerParameter intParam) {
@@ -182,6 +184,17 @@ public final class GrammarConverter {
     }
     if (!param.validValues().contains(value)) {
       errors.add(name + ": invalid value '" + value + "', valid values: " + param.validValues());
+    }
+  }
+
+  private static void validateCategoricalIntegerNode(
+      TreeNode node, CategoricalIntegerParameter param, String name, List<String> errors) {
+    if (!(node.value() instanceof Integer value)) {
+      errors.add(name + ": expected Integer value for categorical integer parameter");
+      return;
+    }
+    if (!param.validValues().contains(value)) {
+      errors.add(name + ": invalid value " + value + ", valid values: " + param.validValues());
     }
   }
 

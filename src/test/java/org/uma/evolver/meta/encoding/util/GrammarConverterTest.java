@@ -13,6 +13,7 @@ import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.encoding.solution.TreeNode;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.type.BooleanParameter;
+import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.type.DoubleParameter;
 import org.uma.evolver.parameter.type.IntegerParameter;
@@ -254,6 +255,21 @@ class GrammarConverterTest {
 
       // Assert
       assertFalse(errors.isEmpty(), "Expected an error for invalid categorical value 'PCX'");
+    }
+
+    @Test
+    @DisplayName("an error is returned when a categorical integer value is not in the valid set")
+    void givenInvalidCategoricalIntegerValue_whenValidating_thenErrorIsReturned() {
+      // Arrange
+      var solution = new DerivationTreeSolution(2, 0);
+      solution.addRoot(
+          new TreeNode(new CategoricalIntegerParameter("p", List.of(1, 5, 10)), 7));
+
+      // Act
+      var errors = GrammarConverter.validate(solution);
+
+      // Assert
+      assertFalse(errors.isEmpty(), "Expected an error for invalid categorical integer value 7");
     }
 
     @Test

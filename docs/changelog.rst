@@ -60,6 +60,11 @@ Added
 Changed
 ~~~~~~~
 
+- ``TreeMutation`` mutates categorical parameters with integer values, such as
+  ``offspringPopulationSize``: they were never mutated (their node had no valid values), so the
+  tree meta-optimizers only changed them through the initial population and crossover. They are
+  mutated as nominal parameters: another value, chosen uniformly. ``GrammarConverter.validate``
+  also checks their values
 - ``TreeMutation`` always changes the tree: integer values are mutated on ``[lower - 0.5, upper +
   0.5]`` and rounded, and moved one unit if they do not change (with small ranges, such as the
   tournament size [2, 10], about three quarters of the mutations used to leave the value unchanged
