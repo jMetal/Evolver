@@ -1,7 +1,8 @@
 # TreeMutation: analysis and open questions
 
 **Status:** analysis done (2026-09-29); the mutation of integer nodes is fixed (question 2), the
-distribution index is set to 5 provisionally, and the other questions are still to be studied.
+treatment of `offspringPopulationSize` is decided (question 3, nominal, with two related fixes), the
+distribution index is set to 5 provisionally, and the mutation strength is still to be studied.
 
 ## What it does
 
@@ -70,12 +71,43 @@ it has already seen is a separate question: the evaluation is noisy, but the met
 aggregate repeated evaluations, so a duplicate with a lucky evaluation survives and the population
 loses diversity.
 
-### 3. Ordinal categorical parameters
+### 3. Ordinal categorical parameters (decided: nominal)
 
-Categorical parameters with ordered numeric values, such as `offspringPopulationSize` ([1, 5, 10,
-20, 50, 100, 200, 400]), are mutated as nominal ones: any other value with the same probability.
-irace and SMAC have an ordinal type mutated to neighbouring values. It would need an ordinal type in
-Evolver's YAML parameter spaces.
+The only categorical parameter with numeric values is `offspringPopulationSize` ([1, 5, 10, 20, 50,
+100, 200, 400], or with 2 as well), in the NSGA-II, NSGA-III, AGE-MOEA, RDEMOEA and RVEA spaces. An
+ordinal type (mutation to neighbouring values, as in irace and SMAC) was considered and **rejected**
+for it: the parameter was originally an integer in [1, 400], but the value 1 (steady-state) is so
+influential, and so unlikely to be sampled in that range, that it was turned into an enumeration so
+that 1 is as likely as any other value. The value 1 is qualitatively different from the others
+(steady-state versus generational), so the order does not reflect how the performance changes, and
+an ordinal mutation would make steady-state unreachable again from large values. Simulated
+probability of reaching 1:
+
+| Sampling or mutation | Probability of 1 |
+|---|---|
+| Integer in [1, 400], uniform (the original definition) | 0.3% |
+| Integer in [1, 400], log scale | 6.8% |
+| Enumeration, uniform sampling (current) | 12.5% |
+| Nominal mutation, from any other value | 14.3% |
+| Ordinal mutation (η = 5), from 5 / 20 / 100 | 50% / 3.8% / 0.3% |
+
+So it stays a nominal categorical parameter. Two related defects were found and fixed
+(2026-09-29):
+
+- In the tree encoding, `offspringPopulationSize` was **never mutated**: `TreeNode.validValues()`
+  only knows the values of `CategoricalParameter`, so the node had no values to choose from and
+  steady-state could only come from the initial population or crossover. `TreeMutation` now mutates
+  categorical integer parameters as nominal ones, and `GrammarConverter.validate` checks their
+  values.
+- In the flat encoding, integer parameters were decoded as `min + floor(x · (max − min))`, so the
+  upper bound was only reached with x = 1.0 exactly (e.g. a tournament size of 10 in [2, 10] almost
+  never appeared). The range is now split into intervals of the same width.
+
+A limitation remains in the flat encoding: it decodes every categorical parameter by the index of
+its value in the list, so its polynomial mutation moves `offspringPopulationSize` mostly to
+neighbouring values in the list, and reaches 1 easily only from 5 (or 2). This is the order that
+the flat encoding imposes on every categorical parameter, one more of its known weaknesses; it is
+left as it is.
 
 ### 4. Mutation strength
 
