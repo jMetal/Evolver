@@ -81,7 +81,7 @@ public class TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D {
       numberOfCores: 8
       crossoverProbability: 0.9
       mutationProbability: 1.0
-      mutationDistributionIndex: 20.0
+      mutationDistributionIndex: 5.0
       selection: tournament
       selectionTournamentSize: 2
       """;

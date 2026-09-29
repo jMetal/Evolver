@@ -13,6 +13,6 @@ numberOfCores: 8
 
 crossoverProbability: 0.9
 mutationProbability: 1.0
-mutationDistributionIndex: 20.0
+mutationDistributionIndex: 5.0   # provisional; its value is to be studied (docs/proposals/tree-mutation.md)
 selection: tournament
 selectionTournamentSize: 2

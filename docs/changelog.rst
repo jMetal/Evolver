@@ -15,6 +15,8 @@ Added
   former irace page: generating irace's parameter file from a YAML parameter space, the target
   runner, the scenario, running irace, and applying the configuration it finds to the ZDT problems
   (``example.tutorial.IraceTutorial``)
+- Add ``docs/proposals/tree-mutation.md``, an analysis of ``TreeMutation`` with its open questions
+  (distribution index, integer parameters with small ranges, ordinal parameters, mutation strength)
 - Add ``docs/proposals/irace-vs-evolver.md``, which describes the comparison of irace with Evolver's
   meta-optimization as an open research line
 - Add :doc:`tutorial E8, analyzing training results <tutorials/analyzing_training_results>`:
@@ -58,6 +60,11 @@ Added
 Changed
 ~~~~~~~
 
+- The meta-optimizer configurations with the tree encoding (``MetaNSGAIITreeConfiguration.yaml``,
+  ``MetaAGEMOEATreeConfiguration.yaml``) and ``TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D`` use a
+  distribution index of 5 instead of 20 in ``TreeMutation``, for larger steps in the mutation of
+  numeric parameters; the value is provisional and still to be studied
+  (``docs/proposals/tree-mutation.md``)
 - The irace resources (``src/main/resources/irace``) are updated: irace 4.4.3 instead of 4.2.0,
   ``parameters-NSGAII.txt`` regenerated from the current ``NSGAIIDouble.yaml``, a scenario that
   runs ``org.uma.evolver.irace.AutoNSGAIIIraceHVEP`` (it referred to a class that no longer exists)
