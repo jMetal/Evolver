@@ -1,0 +1,11 @@
+# Training request of tutorial E8 (docs/tutorials/analyzing_training_results.rst): NSGA-II tuned
+# for the ZDT problems (TutorialZdtBaseLevel.yaml), with the asynchronous NSGA-II of tutorial E7 as
+# meta-optimizer, writing the whole population of the meta-optimizer at every checkpoint. Copy it
+# to a working directory before running it, since TrainingRunnerMain writes results.yaml (and, by
+# default, status.yaml) next to the request file.
+baseLevel: TutorialZdtBaseLevel.yaml
+metaSearch: TutorialAsyncNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial-e8/training
+writeFrequency: 100
+statusFrequency: 100
+writePopulation: true

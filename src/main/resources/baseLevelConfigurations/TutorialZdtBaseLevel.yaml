@@ -1,0 +1,17 @@
+# Base level of tutorial E8 (docs/tutorials/analyzing_training_results.rst): NSGA-II tuned for the
+# bi-objective ZDT problems, with 8000 evaluations per problem. Each configuration is run 5 times
+# on each problem, and its indicator values are the medians of those runs, which makes the values
+# of the configurations on the meta-optimizer's front reliable.
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 5
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [ZDT1, ZDT2, ZDT3, ZDT4, ZDT6]
+trainingReferenceFrontFileNames:
+  - resources/referenceFronts/ZDT1.csv
+  - resources/referenceFronts/ZDT2.csv
+  - resources/referenceFronts/ZDT3.csv
+  - resources/referenceFronts/ZDT4.csv
+  - resources/referenceFronts/ZDT6.csv
+trainingEvaluations: [8000, 8000, 8000, 8000, 8000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

@@ -1,0 +1,18 @@
+# Meta-optimizer of tutorials E7 and E8: the asynchronous NSGA-II of
+# AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, which evaluates 2000 configurations, 16 at a time.
+# Set numberOfCores to the number of cores of your machine.
+algorithm: AsyncNSGA-II
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 16
+
+crossover: SBX
+mutation: polynomial
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
