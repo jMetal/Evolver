@@ -33,6 +33,13 @@ Introductory
      - Build Evolver, run a configurable algorithm, tune it, and run it with the configuration
        found, from the command line.
 
+.. toctree::
+   :hidden:
+
+   parameter_spaces
+   base_level_algorithms
+   meta_optimization_workflow
+
 Intermediate
 ------------
 
@@ -55,8 +62,5 @@ More tutorials are planned for the intermediate and advanced levels.
 .. toctree::
    :hidden:
 
-   parameter_spaces
-   base_level_algorithms
-   meta_optimization_workflow
    training_sets_indicators_budgets
    analyzing_training_results
