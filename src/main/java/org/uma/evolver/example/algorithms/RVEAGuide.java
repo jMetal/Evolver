@@ -20,6 +20,7 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2Minus;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
+import org.uma.jmetal.problem.multiobjective.maf.MaF08;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
@@ -33,7 +34,9 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * iRVEA, each with its default configuration, with NSGA-II on problems chosen to show where each
  * variant does well and where it does badly: a regular front (DTLZ2), a many-objective one (DTLZ2
  * with six objectives), a degenerate one (DTLZ5), a disconnected one (DTLZ7), an inverted one
- * (DTLZ2Minus) and a bi-objective convex one (ZDT1). The population size is 100 in every case,
+ * (DTLZ2Minus), one whose Pareto set is a polygon in a two-dimensional decision space (MaF08 with
+ * three objectives, with the {@value #MAX_EVALUATIONS_MAF08} evaluations of the iRVEA paper) and a
+ * bi-objective convex one (ZDT1). The population size is 100 in every case,
  * with the reference vectors of {@code resources/weightVectors}.
  *
  * <p>The comments {@code // [step-N-start]}/{@code // [step-N-end]} delimit the fragments that the
@@ -45,6 +48,7 @@ public class RVEAGuide {
   static final int INDEPENDENT_RUNS = 15;
   static final int MAX_EVALUATIONS = 25000;
   static final int MAX_EVALUATIONS_MANY_OBJECTIVES = 50000;
+  static final int MAX_EVALUATIONS_MAF08 = 60000;
   static final int NUMBER_OF_CORES = 16;
   static final int POPULATION_SIZE = 100;
   static final String WEIGHT_VECTORS = "resources/weightVectors";
@@ -60,12 +64,7 @@ public class RVEAGuide {
 
   public static void main(String[] args) throws IOException {
     runOnDTLZ2();
-    compare(
-        OUTPUT_DIRECTORY,
-        INDEPENDENT_RUNS,
-        MAX_EVALUATIONS,
-        MAX_EVALUATIONS_MANY_OBJECTIVES,
-        NUMBER_OF_CORES);
+    compare(OUTPUT_DIRECTORY, INDEPENDENT_RUNS, 1.0, NUMBER_OF_CORES);
   }
 
   /** Step 1: RVEA with its default configuration on DTLZ2. */
@@ -92,13 +91,12 @@ public class RVEAGuide {
     return front;
   }
 
-  /** Step 2: the three variants and NSGA-II on the six problems. */
+  /**
+   * Step 2: the three variants and NSGA-II on the seven problems. The evaluation budgets are those of
+   * the constants, multiplied by {@code budgetFactor} (1.0 in the guide; smaller in the test).
+   */
   static void compare(
-      String outputDirectory,
-      int independentRuns,
-      int maxEvaluations,
-      int maxEvaluationsManyObjectives,
-      int numberOfCores)
+      String outputDirectory, int independentRuns, double budgetFactor, int numberOfCores)
       throws IOException {
     // [step-2-start]
     List<ExperimentProblem<DoubleSolution>> problems =
@@ -110,6 +108,7 @@ public class RVEAGuide {
             new ExperimentProblem<>(new DTLZ7(), "DTLZ7").setReferenceFront("DTLZ7.3D.csv"),
             new ExperimentProblem<>(new DTLZ2Minus(), "DTLZ2Minus")
                 .setReferenceFront("DTLZ2Minus.3D.csv"),
+            new ExperimentProblem<>(maF08(), "MaF08").setReferenceFront("MaF08.3D.csv"),
             new ExperimentProblem<>(new ZDT1(), "ZDT1").setReferenceFront("ZDT1.csv"));
 
     String nsgaIIConfiguration =
@@ -120,9 +119,13 @@ public class RVEAGuide {
     for (int run = 0; run < independentRuns; run++) {
       for (ExperimentProblem<DoubleSolution> problem : problems) {
         int evaluations =
-            problem.getProblem().numberOfObjectives() > 3
-                ? maxEvaluationsManyObjectives
-                : maxEvaluations;
+            (int)
+                (budgetFactor
+                    * switch (problem.getTag()) {
+                      case "DTLZ2.6D" -> MAX_EVALUATIONS_MANY_OBJECTIVES;
+                      case "MaF08" -> MAX_EVALUATIONS_MAF08;
+                      default -> MAX_EVALUATIONS;
+                    });
         for (List<String> variant : RVEA_VARIANTS) {
           String configuration =
               new ConfigurationFileReader(variant.get(1)).getConfiguration(1);
@@ -160,6 +163,18 @@ public class RVEAGuide {
     new ExecuteAlgorithms<>(experiment).run();
     new ComputeQualityIndicators<>(experiment).run();
     // [step-2-end]
+  }
+
+  /**
+   * MaF08 with three objectives and the decision space of the MaF test suite, {@code [-10000,
+   * 10000]}. jMetal's class bounds the variables to {@code [0, 1]}, which contains only a fifth of
+   * the polygon that is its Pareto set (the vertices are at distance 1 from the origin), so most of
+   * its Pareto front could not be reached.
+   */
+  private static MaF08 maF08() {
+    MaF08 problem = new MaF08(2, 3);
+    problem.variableBounds(List.of(-10000.0, -10000.0), List.of(10000.0, 10000.0));
+    return problem;
   }
 
   private static Algorithm<List<DoubleSolution>> rvea(

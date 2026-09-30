@@ -33,13 +33,13 @@ class RVEAGuideIT {
   void givenMinimalBudgets_whenCompared_thenEveryProblemIsCovered(@TempDir Path tempDir)
       throws IOException {
     // Act
-    RVEAGuide.compare(tempDir.toString(), 2, 1000, 1000, 4);
+    RVEAGuide.compare(tempDir.toString(), 2, 0.05, 4);
 
     // Assert
     Path data = tempDir.resolve("comparison/data");
     for (String algorithm : new String[] {"RVEA", "RVEAStar", "iRVEA", "NSGAII"}) {
       for (String problem :
-          new String[] {"DTLZ2", "DTLZ2.6D", "DTLZ5", "DTLZ7", "DTLZ2Minus", "ZDT1"}) {
+          new String[] {"DTLZ2", "DTLZ2.6D", "DTLZ5", "DTLZ7", "DTLZ2Minus", "MaF08", "ZDT1"}) {
         assertTrue(
             Files.exists(data.resolve(algorithm).resolve(problem).resolve("FUN1.csv")),
             algorithm + " on " + problem);
