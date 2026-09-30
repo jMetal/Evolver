@@ -1,0 +1,19 @@
+# Runs RVEA, with its default configuration, on DTLZ2: 5 independent runs of 25000 evaluations.
+# The reference vectors are read from resources/weightVectors/W3D_100.dat.
+# Run from the root of the Evolver repository:
+#   java -cp target/Evolver-*-jar-with-dependencies.jar \
+#       org.uma.evolver.cli.solving.SolveRunnerMain <copy of this file>
+algorithmName: RVEA
+encoding: Double
+populationSize: 100
+yamlParameterSpaceFile: RVEADouble.yaml
+extraConfig:
+  weightVectorFilesDirectory: resources/weightVectors
+configurationFile: defaultConfigurations/RVEADoubleDefault.txt
+problem: DTLZ2
+referenceFrontFileName: resources/referenceFronts/DTLZ2.3D.csv
+maxEvaluations: 25000
+numberOfIndependentRuns: 5
+seed: 1
+indicatorNames: [Epsilon, NormalizedHypervolume]
+outputDirectory: results/solve/RVEA.DTLZ2

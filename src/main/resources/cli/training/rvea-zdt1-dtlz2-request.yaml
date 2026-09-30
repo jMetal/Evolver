@@ -1,0 +1,10 @@
+# Example TrainingRequest: NSGA-II tuning RVEA (RVEA, RVEA* or iRVEA, chosen by the replacement
+# parameter) on ZDT1 and DTLZ2, problems with different numbers of objectives. Like MOEA/D, RVEA
+# needs extra configuration (weightVectorFilesDirectory) beyond population size and parameter
+# space file.
+
+baseLevel: RveaZdt1Dtlz2BaseLevel.yaml
+metaSearch: MetaNSGAIIFlatConfiguration.yaml
+outputDirectory: results/rvea/ZDT1-DTLZ2
+writeFrequency: 100
+statusFrequency: 100

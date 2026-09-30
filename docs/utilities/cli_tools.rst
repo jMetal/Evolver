@@ -159,6 +159,9 @@ as-is:
        bi-objective TSP instances), instead of the Double encoding every other bundled request uses
    * - ``moead-zdt4-request.yaml``
      - NSGA-II tuning MOEA/D, a base algorithm with its own extra config (flat encoding)
+   * - ``rvea-zdt1-dtlz2-request.yaml``
+     - NSGA-II tuning RVEA (RVEA, RVEA* or iRVEA) on problems with two and three objectives, each
+       with its own weight vector file (flat encoding)
    * - ``tree-nsgaii-re3d-request.yaml``
      - NSGA-II tuning NSGA-II with the derivation-tree encoding
    * - ``tree-agemoea-re3d-request.yaml``
@@ -308,6 +311,8 @@ Bundled examples
        seed
    * - ``moead-zdt4-request.yaml``
      - MOEA/D, an algorithm with its own extra config, with an inline configuration, on ZDT4
+   * - ``rvea-dtlz2-request.yaml``
+     - RVEA with its default configuration, read from a file, on DTLZ2; five runs with a fixed seed
 
 DescribeMain
 ------------
@@ -340,6 +345,10 @@ Example output
      encoding: Permutation
      requiredExtraConfigKeys: []
    - name: MOEAD
+     encoding: Double
+     requiredExtraConfigKeys:
+     - weightVectorFilesDirectory
+   - name: RVEA
      encoding: Double
      requiredExtraConfigKeys:
      - weightVectorFilesDirectory

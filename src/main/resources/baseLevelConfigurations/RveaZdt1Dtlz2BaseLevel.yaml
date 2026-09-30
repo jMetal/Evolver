@@ -1,0 +1,12 @@
+# RVEA tuned on a training set whose problems have two (ZDT1) and three (DTLZ2) objectives: the
+# reference vectors of each problem are read from resources/weightVectors (W2D_100.dat and
+# W3D_100.dat), which is why RVEA, like MOEA/D, needs weightVectorFilesDirectory.
+algorithmName: RVEA
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: RVEADouble.yaml
+extraConfig: {weightVectorFilesDirectory: resources/weightVectors}
+trainingProblemNames: [ZDT1, DTLZ2]
+trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT1.csv, resources/referenceFronts/DTLZ2.3D.csv]
+trainingEvaluations: [10000, 10000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

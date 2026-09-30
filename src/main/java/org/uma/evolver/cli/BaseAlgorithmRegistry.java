@@ -6,6 +6,7 @@ import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.nsgaii.PermutationNSGAII;
+import org.uma.evolver.algorithm.rvea.DoubleRVEA;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.factory.ParameterFactory;
@@ -16,8 +17,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 /**
  * Builds the base-level algorithm to be tuned, from a name, an encoding and its parameter space.
  *
- * <p>Base-level algorithms are not built uniformly: {@code DoubleMOEAD} needs an extra
- * constructor argument ({@code weightVectorFilesDirectory}) that {@code DoubleNSGAII} does not.
+ * <p>Base-level algorithms are not built uniformly: {@code DoubleMOEAD} and {@code DoubleRVEA} need
+ * an extra constructor argument ({@code weightVectorFilesDirectory}) that {@code DoubleNSGAII} does
+ * not.
  * The {@code extraConfig} map of a training or solve request carries that kind of algorithm-specific extra
  * configuration as a small string map instead of growing new dedicated request fields per
  * algorithm.
@@ -49,7 +51,9 @@ public final class BaseAlgorithmRegistry {
           new BaseAlgorithmDescriptor("NSGA-II", "Double", List.of()),
           new BaseAlgorithmDescriptor("NSGA-II", "Permutation", List.of()),
           new BaseAlgorithmDescriptor(
-              "MOEAD", "Double", List.of("weightVectorFilesDirectory")));
+              "MOEAD", "Double", List.of("weightVectorFilesDirectory")),
+          new BaseAlgorithmDescriptor(
+              "RVEA", "Double", List.of("weightVectorFilesDirectory")));
 
   private BaseAlgorithmRegistry() {}
 
@@ -99,10 +103,12 @@ public final class BaseAlgorithmRegistry {
       case "NSGA-II" -> new DoubleNSGAII(populationSize, parameterSpace);
       case "MOEAD" -> new DoubleMOEAD(
           populationSize, requireExtra(extraConfig, "weightVectorFilesDirectory"), parameterSpace);
+      case "RVEA" -> new DoubleRVEA(
+          populationSize, requireExtra(extraConfig, "weightVectorFilesDirectory"), parameterSpace);
       default -> throw new JMetalException(
           "Unknown base-level algorithm: "
               + algorithmName
-              + " for encoding Double. Supported: NSGA-II, MOEAD");
+              + " for encoding Double. Supported: NSGA-II, MOEAD, RVEA");
     };
   }
 

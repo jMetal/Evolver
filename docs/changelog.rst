@@ -11,6 +11,10 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- RVEA can be tuned and run from the command line and Evolver-Studio: it is registered in
+  ``BaseAlgorithmRegistry`` as ``RVEA`` (Double encoding), with the extra configuration
+  ``weightVectorFilesDirectory`` as MOEA/D. Bundled requests: ``rvea-zdt1-dtlz2-request.yaml``
+  (training on problems with two and three objectives) and ``rvea-dtlz2-request.yaml`` (solving)
 - RVEA covers RVEA, RVEA* and iRVEA, as in jMetal 7.6's ``AutoRVEA``: the ``replacement``
   parameter of ``RVEADouble.yaml`` selects the variant, with ``alpha`` and ``fr`` (and, for iRVEA,
   ``numberOfSubregions``, ``lateStageFraction`` and ``epsilonKappa``) as its sub-parameters, and the
