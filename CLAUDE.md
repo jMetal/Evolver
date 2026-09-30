@@ -76,7 +76,7 @@ Algorithms come in encoding-specific variants: `DoubleNSGAII`, `BinaryNSGAII`, `
 
 ### Dependencies
 
-Built on [jMetal 7.4](https://github.com/jMetal/jMetal) (`jmetal-core`, `jmetal-algorithm`, `jmetal-component`, `jmetal-parallel`, `jmetal-lab`, `jmetal-problem`). YAML parsing uses SnakeYAML 2.4.
+Built on [jMetal 7.6](https://github.com/jMetal/jMetal) (`jmetal-core`, `jmetal-algorithm`, `jmetal-component`, `jmetal-parallel`, `jmetal-lab`, `jmetal-problem`). YAML parsing uses SnakeYAML 2.4.
 
 ## Testing
 

@@ -101,7 +101,7 @@ public class DifferentialEvolutionCrossoverParameter extends CategoricalParamete
 
     String variant = value();
 
-    // jMetal 7.4 has a bug where RAND_2_EXP is in the enum but not in getVariantFromString.
+    // jMetal (up to 7.6) has a bug where RAND_2_EXP is in the enum but not in getVariantFromString.
     // We create it directly here by detecting the case.
     if ("RAND_2_EXP".equals(variant)) {
       return new DifferentialEvolutionCrossover(

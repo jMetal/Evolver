@@ -60,6 +60,7 @@ Added
 Changed
 ~~~~~~~
 
+- jMetal 7.6 instead of 7.5
 - The flat encoding decodes integer parameters giving every integer of the range an interval of the
   same width: the upper bound was only decoded from the value 1.0 exactly, so it was almost never
   chosen (e.g. a tournament size of 10 in [2, 10])
