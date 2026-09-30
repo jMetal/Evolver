@@ -121,7 +121,8 @@ The reference vectors of NSGA-III, MOEA/D and RVEA are the same thing under diff
 objective space, one per niche or sub-problem, whose number is tied to the population size. Each
 algorithm obtains them differently: NSGA-III generates them (Das-Dennis) unless it is given a set,
 MOEA/D reads them from a directory of files named after the number of objectives and the population
-size (``W3D_100.dat``, …), and RVEA requires them.
+size (``W3D_100.dat``, …), and RVEA takes them either as a list or, like MOEA/D, from such a
+directory.
 
 Apart from those extra arguments, all of them are configured and run exactly as NSGA-II is in this
 tutorial.

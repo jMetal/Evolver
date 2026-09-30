@@ -71,7 +71,7 @@ Configurable parameters per algorithm and encoding, shown as **total (top-level)
 | SMS-EMOA | 28 (4) | 9 (4) | 9 (4) |
 | MOPSO | 41 (14) | — | — |
 | RDEMOEA | 40 (8) | — | 20 (8) |
-| RVEA | 28 (4) | — | — |
+| RVEA | 36 (6) | — | — |
 | AGE-MOEA | 33 (6) | — | — |
 | SSMOEA | 43 (6) | — | — |
 | PAES | 14 (4) | 6 (4) | 6 (4) |

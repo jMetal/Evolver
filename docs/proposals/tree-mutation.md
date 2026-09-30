@@ -112,6 +112,11 @@ neighbouring values in the list, and reaches 1 easily only from 5 (or 2). This i
 the flat encoding imposes on every categorical parameter, one more of its known weaknesses; it is
 left as it is.
 
+RVEA is different: since jMetal 7.6 its `offspringPopulationSize` takes the values of jMetal's
+`AutoRVEA`, [10, 20, 50, 100, 150, 200], none of them special, so it would be the first real
+candidate for an ordinal type. It stays a nominal categorical parameter for now, as in `AutoRVEA`;
+an ordinal type remains an open question.
+
 ### 4. Mutation strength
 
 Exactly one node per mutation is the convention; mutating each node with probability 1/n (one

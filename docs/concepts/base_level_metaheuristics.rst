@@ -41,7 +41,7 @@ The following algorithms are currently available as configurable base-level meta
      - Ranking- and density-estimator-based EA with differential evolution variation
    * - RVEA
      - Double
-     - Reference-vector-guided EA
+     - Reference-vector-guided EA; its replacement selects the variant: RVEA, RVEA* or iRVEA
    * - AGE-MOEA
      - Double
      - Adaptive geometry estimation-based MOEA
