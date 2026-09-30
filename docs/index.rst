@@ -122,6 +122,13 @@ Evolver currently supports the following base-level and meta-optimization algori
 
 .. toctree::
    :maxdepth: 2
+   :caption: ALGORITHMS
+   :name: algorithms
+
+   algorithms/index
+
+.. toctree::
+   :maxdepth: 2
    :caption: CONCEPTS
    :name: concepts
 

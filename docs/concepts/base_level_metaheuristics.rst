@@ -12,6 +12,9 @@ Together with ``org.uma.evolver.parameter``, these algorithms form Evolver's con
 Supported Algorithms
 --------------------
 
+Each algorithm has, or will have, a guide describing it, its variants and default configurations,
+and where it works well and where it works poorly: see :ref:`algorithm_guides`.
+
 The following algorithms are currently available as configurable base-level metaheuristics:
 
 .. list-table::

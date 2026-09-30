@@ -11,6 +11,9 @@ start (E4) only uses the command line. They are grouped in three levels:
 - **Intermediate**: designing experiments, analyzing and validating their results.
 - **Advanced**: meta-optimizers, encodings, alternative tuners and extending Evolver.
 
+The algorithms themselves (what each one does, and where it works well or poorly) are described in
+the :ref:`algorithm guides <algorithm_guides>`.
+
 Introductory
 ------------
 
