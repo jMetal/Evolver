@@ -169,7 +169,8 @@ public class RVEAGuide {
    * MaF08 with three objectives and the decision space of the MaF test suite, {@code [-10000,
    * 10000]}. jMetal's class bounds the variables to {@code [0, 1]}, which contains only a fifth of
    * the polygon that is its Pareto set (the vertices are at distance 1 from the origin), so most of
-   * its Pareto front could not be reached.
+   * its Pareto front could not be reached. Fixed in jMetal's develop branch after 7.6 (db77a48ff):
+   * remove this method when Evolver depends on the first release that includes the fix.
    */
   private static MaF08 maF08() {
     MaF08 problem = new MaF08(2, 3);
