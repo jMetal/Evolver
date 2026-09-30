@@ -11,6 +11,8 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Add the reference front of MaF08 with three objectives (``MaF08.3D.csv``), the image of its
+  Pareto set (a triangle in the decision space), used by the RVEA guide
 - Add the :ref:`algorithm guides <algorithm_guides>`, one per base-level algorithm, with where it
   works well and where it works poorly backed by an experiment; the first is the guide of
   :doc:`RVEA, RVEA* and iRVEA <algorithms/rvea>` (``example.algorithms.RVEAGuide``), and

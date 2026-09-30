@@ -15,7 +15,8 @@ RVEA, RVEA* and iRVEA
 In short: **RVEA** spreads its solutions evenly on regular fronts and keeps doing so with many
 objectives, where NSGA-II fails; it does poorly on fronts that do not cover the whole simplex
 (degenerate, disconnected or inverted fronts) and, surprisingly, on the bi-objective ZDT1.
-**RVEA*** and **iRVEA** fix most of those cases at a small cost on regular fronts.
+**RVEA*** and **iRVEA** fix most of those cases at a small cost on regular fronts. On MaF08, a
+problem of the iRVEA paper, iRVEA is the best of the four.
 
 Idea and origin
 ---------------
@@ -135,9 +136,10 @@ The experiment
 --------------
 
 ``RVEAGuide`` compares the three variants, each with its default configuration, with NSGA-II (its
-default configuration too) on six problems chosen for the kind of front they have. Each algorithm
-runs 15 times on each problem, with a population of 100 and 25,000 evaluations (50,000 with six
-objectives):
+default configuration too) on seven problems chosen for the kind of front they have. Each algorithm
+runs 15 times on each problem, with a population of 100. The budget is 25,000 evaluations, except
+for DTLZ2 with six objectives (50,000) and MaF08 (60,000, the budget of the iRVEA paper, which uses
+a population of 105 instead of 100):
 
 .. list-table::
    :header-rows: 1
@@ -161,9 +163,19 @@ objectives):
    * - DTLZ2Minus
      - inverted
      - the front does not fill the simplex the vectors are spread over
+   * - MaF08
+     - the Pareto set is a triangle in a two-dimensional decision space, 3 objectives
+     - a problem of the iRVEA paper, where iRVEA stands out
    * - ZDT1
      - convex, 2 objectives
      - a simple bi-objective reference
+
+MaF08 asks to find a small polygon (its Pareto set, a triangle of side 1.7) in a large decision
+space: the MaF test suite defines its two variables in ``[-10000, 10000]``. jMetal's ``MaF08``
+bounds them to ``[0, 1]``, which contains only a fifth of the triangle, so ``RVEAGuide`` sets the
+bounds of the suite. The reference front with three objectives,
+``resources/referenceFronts/MaF08.3D.csv``, is the image of the whole triangle: 10,011 points
+obtained by evaluating the problem on a lattice of it (all of them nondominated).
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/algorithms/RVEAGuide.java
    :language: java
@@ -185,39 +197,43 @@ test, 0.05), and every other value is significantly worse:
      - iRVEA
      - NSGA-II
    * - DTLZ2
-     - **0.0223** (0.0002)
-     - 0.0236 (0.0006)
-     - 0.0249 (0.0014)
-     - 0.0373 (0.0024)
+     - **0.0223** (0.0003)
+     - 0.0239 (0.0006)
+     - 0.0253 (0.0011)
+     - 0.0374 (0.0019)
    * - DTLZ2 (6 obj.)
-     - **0.1040** (0.0001)
-     - 0.1188 (0.0017)
-     - 0.1323 (0.0068)
-     - 0.8609 (0.1052)
+     - **0.1039** (0.0002)
+     - 0.1188 (0.0027)
+     - 0.1378 (0.0140)
+     - 0.9718 (0.1842)
    * - DTLZ5
-     - 0.0690 (0.0264)
-     - 0.0050 (0.0022)
-     - **0.0030** (0.0002)
+     - 0.0694 (0.0173)
+     - 0.0059 (0.0029)
+     - **0.0030** (0.0003)
      - 0.0037 (0.0002)
    * - DTLZ7
-     - 0.0479 (0.0089)
-     - **0.0243** (0.0014)
-     - 0.0343 (0.0036)
-     - 0.0352 (0.0044)
+     - 0.0579 (0.0110)
+     - **0.0248** (0.0012)
+     - 0.0344 (0.0058)
+     - 0.0366 (0.0030)
    * - DTLZ2Minus
-     - 0.0433 (0.0019)
-     - **0.0303** (0.0008)
-     - 0.0323 (0.0015)
-     - 0.0352 (0.0014)
+     - 0.0433 (0.0012)
+     - **0.0294** (0.0014)
+     - 0.0333 (0.0021)
+     - 0.0355 (0.0023)
+   * - MaF08
+     - 0.0487 (0.0052)
+     - 0.0274 (0.0031)
+     - **0.0236** (0.0008)
+     - 0.0363 (0.0025)
    * - ZDT1
-     - 0.0319 (0.0059)
-     - 0.0039 (0.0002) =
-     - **0.0037** (0.0004)
-     - 0.0038 (0.0003) =
+     - 0.0319 (0.0026)
+     - 0.0039 (0.0003) =
+     - **0.0038** (0.0003)
+     - 0.0039 (0.0003) =
 
-The hypervolume agrees with IGD+ on the first four problems; on DTLZ2Minus, RVEA* and iRVEA, and on
-ZDT1, RVEA*, iRVEA and NSGA-II, are practically tied (hypervolume differences below 0.001). The
-fronts with the median hypervolume of each algorithm:
+The hypervolume names the same best algorithm on every problem, except on ZDT1, where iRVEA and
+NSGA-II are tied in both indicators. The fronts with the median hypervolume of each algorithm:
 
 .. figure:: ../figures/algorithms/rvea-median-fronts-3d.png
    :align: center
@@ -225,6 +241,13 @@ fronts with the median hypervolume of each algorithm:
    :figwidth: 100%
 
    Fronts with the median HV on the three-objective problems (reference front in gray).
+
+.. figure:: ../figures/algorithms/rvea-median-fronts-maf08.png
+   :align: center
+   :alt: Fronts with the median HV of RVEA, RVEA*, iRVEA and NSGA-II on MaF08
+   :figwidth: 100%
+
+   Fronts with the median HV on MaF08.
 
 .. figure:: ../figures/algorithms/rvea-median-fronts-zdt1.png
    :align: center
@@ -239,34 +262,42 @@ Where it works well
 - **Regular fronts, and above all many objectives.** RVEA is the best of the four on DTLZ2 with
   three and with six objectives, with a very small spread between runs, and places its solutions
   evenly on the front (first row of the figure). With six objectives the gap to NSGA-II is the
-  largest of the study: NSGA-II's median hypervolume is 0.003, against 0.716 for RVEA, since Pareto
-  dominance barely discriminates between solutions there. RVEA* and iRVEA are close behind RVEA on
-  these problems.
+  largest of the study: NSGA-II's median hypervolume is 0.0002, against 0.715 for RVEA, since
+  Pareto dominance barely discriminates between solutions there. RVEA* and iRVEA are close behind
+  RVEA on these problems.
 - **Irregular fronts, with the variants.** RVEA* is the best on the disconnected (DTLZ7) and the
   inverted (DTLZ2Minus) fronts, and iRVEA on the degenerate one (DTLZ5), where it also beats
-  NSGA-II. Note that on DTLZ7, the kind of front iRVEA was proposed for, RVEA* does better with
-  these settings, and iRVEA places most of its solutions in one of the four regions.
+  NSGA-II. Note that on DTLZ7, a disconnected front, RVEA* does better than iRVEA with these
+  settings, and iRVEA places most of its solutions in one of the four regions.
+- **MaF08: iRVEA stands out.** With the 60,000 evaluations of the iRVEA paper, it is the best of
+  the four in IGD+ and in hypervolume, significantly better than RVEA*, than NSGA-II and than plain
+  RVEA, and with the smallest spread between runs. It returns 100 solutions spread over the whole
+  surface (figure), while RVEA* returns 95, NSGA-II crowds its solutions at the three tips of the
+  surface, and RVEA returns only 36, some of them away from it.
 
 Where it works poorly
 ---------------------
 
-- **Fronts that do not fill the simplex, with plain RVEA.** On DTLZ5, DTLZ7 and DTLZ2Minus many
-  reference vectors meet no solution: RVEA ends with a median of 57, 65 and 58 solutions instead
-  of 100, and on DTLZ5 it does not even reach the curve (its IGD+ is 14 times RVEA*'s, and varies
-  widely between runs). This is the case RVEA* and iRVEA were designed for, and both fix it.
+- **Fronts that do not fill the simplex, with plain RVEA.** On DTLZ5, DTLZ7, DTLZ2Minus and MaF08
+  many reference vectors meet no solution: RVEA ends with a median of 57, 65, 58 and 36 solutions
+  instead of 100, and on DTLZ5 it does not even reach the curve (its IGD+ is twelve times RVEA*'s,
+  and varies widely between runs). This is the case RVEA* and iRVEA were designed for. iRVEA fixes
+  it completely (100 solutions everywhere); RVEA* improves the IGD+ and returns 100 solutions
+  except on DTLZ5 and MaF08, where it still returns 57 and 95.
 - **ZDT1.** On this simple bi-objective problem RVEA has not converged after 25,000 evaluations
-  (IGD+ 0.032, eight times the others'), although it keeps 100 solutions; RVEA*, iRVEA and NSGA-II
-  reach the front. A likely cause is that the variants add dominance to APD in their selection,
-  while plain RVEA relies on APD alone.
+  (IGD+ 0.032, more than eight times the others'), although it keeps 100 solutions; RVEA*, iRVEA
+  and NSGA-II reach the front. A likely cause is that the variants add dominance to APD in their
+  selection, while plain RVEA relies on APD alone.
 - **The variants on regular fronts.** RVEA* and iRVEA are slightly but significantly worse than
-  RVEA on DTLZ2, and iRVEA's spread between runs is larger with six objectives.
+  RVEA on DTLZ2 and with six objectives, and iRVEA's spread between runs is larger with six
+  objectives.
 
 Tuning notes
 ------------
 
 - ``replacement`` matters most: none of the three variants is best everywhere. When the shape of
-  the front is unknown, RVEA* was the most robust in this study; on regular fronts with many
-  objectives, RVEA.
+  the front is unknown, the variants (RVEA* or iRVEA) are the safer choice in this study; on regular
+  fronts with many objectives, RVEA.
 - ``alpha`` and ``fr`` trade convergence for spread and control how often the vectors adapt; the
   defaults (2 and 0.1) come from the RVEA paper.
 - The population size is fixed by the reference vectors, so it is not tuned; the offspring
