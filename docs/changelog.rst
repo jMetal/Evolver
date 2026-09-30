@@ -18,8 +18,9 @@ Added
 - RVEA covers RVEA, RVEA* and iRVEA, as in jMetal 7.6's ``AutoRVEA``: the ``replacement``
   parameter of ``RVEADouble.yaml`` selects the variant, with ``alpha`` and ``fr`` (and, for iRVEA,
   ``numberOfSubregions``, ``lateStageFraction`` and ``epsilonKappa``) as its sub-parameters, and the
-  mating ``selection`` (random or tournament) is configurable. ``RVEADoubleDefault.txt`` holds the
-  standard RVEA configuration, and ``IRVEADTLZ7Example`` runs iRVEA
+  mating ``selection`` (random or tournament) is configurable. ``RVEADoubleDefault.txt``,
+  ``RVEAStarDoubleDefault.txt`` and ``IRVEADoubleDefault.txt`` hold the standard configuration of
+  each variant, and ``IRVEADTLZ7Example`` runs iRVEA
 - Add :doc:`tutorial E14, tuning with irace <tutorials/tuning_with_irace>`, which replaces the
   former irace page: generating irace's parameter file from a YAML parameter space, the target
   runner, the scenario, running irace, and applying the configuration it finds to the ZDT problems

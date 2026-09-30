@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConfigurationFileReader;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEABuilder;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEAStarBuilder;
@@ -82,6 +84,31 @@ class DoubleRVEATest {
 
       // Act & Assert
       assertThrows(RuntimeException.class, () -> rvea.parse(configuration));
+    }
+  }
+
+  @Nested
+  @DisplayName("When using the default configurations")
+  class DefaultConfigurationTests {
+
+    @ParameterizedTest(name = "{0} builds {1}")
+    @CsvSource({
+      "RVEADoubleDefault.txt, RVEA",
+      "RVEAStarDoubleDefault.txt, RVEA*",
+      "IRVEADoubleDefault.txt, iRVEA"
+    })
+    @DisplayName("each default configuration file builds its variant")
+    void givenDefaultConfigurationFile_whenBuilt_thenItsVariantIsBuilt(
+        String fileName, String expectedName) throws IOException {
+      // Arrange
+      String configuration =
+          new ConfigurationFileReader("defaultConfigurations/" + fileName).getConfiguration(1);
+
+      // Act
+      Algorithm<List<DoubleSolution>> algorithm = smallRVEA(configuration).build();
+
+      // Assert
+      assertEquals(expectedName, algorithm.name());
     }
   }
 
