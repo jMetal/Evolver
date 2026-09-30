@@ -1,14 +1,10 @@
 package org.uma.evolver.example.baselevel.standard;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.uma.evolver.algorithm.rvea.DoubleRVEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
-import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -27,17 +23,20 @@ public class RVEADTLZ1Example {
         --mutationProbabilityFactor 1.0
         --mutationRepairStrategy bounds
         --polynomialMutationDistributionIndex 20.0
+        --selection random
+        --replacement rvea
+        --alpha 2.0
+        --fr 0.1
         """.split("\\s+");
 
-    double[][] weightVectorMatrix =
-        VectorUtils.readVectors("resources/weightVectors/W3D_100.dat");
-    List<double[]> referenceVectors = Arrays.asList(weightVectorMatrix);
-    int populationSize = referenceVectors.size();
+    // The reference vectors are read from resources/weightVectors/W3D_100.dat
+    int populationSize = 100;
 
     var problem = new DTLZ1();
     var parameterSpace = new YAMLParameterSpace("RVEADouble.yaml", new DoubleParameterFactory());
-    var rvea = new DoubleRVEA(problem, populationSize, 40000, parameterSpace,
-        2.0, 0.1, referenceVectors);
+    var rvea =
+        new DoubleRVEA(
+            problem, populationSize, 40000, "resources/weightVectors", parameterSpace);
     rvea.parse(parameters);
 
     var algorithm = rvea.build();

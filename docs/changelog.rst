@@ -11,6 +11,11 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- RVEA covers RVEA, RVEA* and iRVEA, as in jMetal 7.6's ``AutoRVEA``: the ``replacement``
+  parameter of ``RVEADouble.yaml`` selects the variant, with ``alpha`` and ``fr`` (and, for iRVEA,
+  ``numberOfSubregions``, ``lateStageFraction`` and ``epsilonKappa``) as its sub-parameters, and the
+  mating ``selection`` (random or tournament) is configurable. ``RVEADoubleDefault.txt`` holds the
+  standard RVEA configuration, and ``IRVEADTLZ7Example`` runs iRVEA
 - Add :doc:`tutorial E14, tuning with irace <tutorials/tuning_with_irace>`, which replaces the
   former irace page: generating irace's parameter file from a YAML parameter space, the target
   runner, the scenario, running irace, and applying the configuration it finds to the ZDT problems
@@ -60,6 +65,12 @@ Added
 Changed
 ~~~~~~~
 
+- ``DoubleRVEA`` no longer takes ``alpha`` and ``fr`` (they are parameters of the parameter
+  space), builds the algorithm from jMetal's components instead of ``RVEABuilder`` (with the same
+  result, which a test checks), and can read its reference vectors, for each problem, from a
+  directory of weight vector files as MOEA/D does, so that it can be trained on problems with
+  different numbers of objectives. ``offspringPopulationSize`` in ``RVEADouble.yaml`` takes the
+  values of ``AutoRVEA`` (10 to 200)
 - jMetal 7.6 instead of 7.5
 - The flat encoding decodes integer parameters giving every integer of the range an interval of the
   same width: the upper bound was only decoded from the value 1.0 exactly, so it was almost never

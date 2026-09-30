@@ -20,9 +20,47 @@ createInitialSolutions:
     cauchy: {}
     oppositionBased: {}
 
+# The values of jMetal's AutoRVEA: below 10 the running time grows (the selection cost per
+# generation hardly depends on the offspring size) without better results, and above 200 the
+# results degrade.
 offspringPopulationSize:
   type: categorical
-  values: [1, 5, 10, 20, 50, 100, 200, 400]
+  values: [10, 20, 50, 100, 150, 200]
+
+selection:
+  type: categorical
+  values:
+    random: {}
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+
+# The variant of the RVEA family, as in jMetal's AutoRVEA: RVEA, RVEA* or iRVEA.
+replacement:
+  type: categorical
+  globalSubParameters:
+    alpha:
+      type: double
+      range: [0.5, 10.0]
+    fr:
+      type: double
+      range: [0.01, 1.0]
+  values:
+    rvea: {}
+    rveaStar: {}
+    iRVEA:
+      conditionalParameters:
+        numberOfSubregions:
+          type: integer
+          range: [10, 100]
+        lateStageFraction:
+          type: double
+          range: [0.5, 1.0]
+        epsilonKappa:
+          type: double
+          range: [0.01, 0.2]
 
 variation:
   type: categorical
