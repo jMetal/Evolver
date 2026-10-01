@@ -35,7 +35,6 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
-import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
 
 /**
  * Runs a single &lt;meta-optimizer&gt;-tunes-&lt;base-level-algorithm&gt; meta-optimization training job
@@ -47,9 +46,9 @@ import org.uma.jmetal.util.observer.impl.FrontPlotObserver;
  * Java constants and an ad hoc {@code main(String[] args)} with a single structured input
  * ({@link TrainingRequest}) and a polled YAML status file, so it can be driven by an external
  * process (e.g. a GUI) without recompiling. It runs headless by default — a live
- * {@code FrontPlotObserver} is registered only when {@link TrainingRequest#frontPlotFrequency()}
- * is present, since an external process driving this runner would not want a Swing window
- * popping up on its machine.
+ * {@link TrainingFrontPlotObserver} is registered only when
+ * {@link TrainingRequest#frontPlotFrequency()} is present, since an external process driving this
+ * runner would not want a Swing window popping up on its machine.
  */
 public class TrainingRunner {
 
@@ -230,7 +229,12 @@ public class TrainingRunner {
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
     nsgaii.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
-        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+        nsgaii.observable(),
+        frontPlotFrequency,
+        metaSearch,
+        baseLevel.algorithmName(),
+        indicators,
+        trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -307,7 +311,12 @@ public class TrainingRunner {
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
     nsgaii.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
-        nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+        nsgaii.observable(),
+        frontPlotFrequency,
+        metaSearch,
+        baseLevel.algorithmName(),
+        indicators,
+        trainingSet.label());
     // The asynchronous algorithm has no getter for its evaluations: keep the last one it published
     var evaluationsPerformed = new AtomicInteger();
     nsgaii.observable().register((observable, data) ->
@@ -388,7 +397,12 @@ public class TrainingRunner {
     smpso.observable().register(writeExecutionDataToFilesObserver);
     smpso.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
-        smpso.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+        smpso.observable(),
+        frontPlotFrequency,
+        metaSearch,
+        baseLevel.algorithmName(),
+        indicators,
+        trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -465,7 +479,8 @@ public class TrainingRunner {
     registerFrontPlotObserverIfRequested(
         randomSearch.observable(),
         frontPlotFrequency,
-        metaSearch.algorithm(),
+        metaSearch,
+        baseLevel.algorithmName(),
         indicators,
         trainingSet.label());
 
@@ -546,7 +561,12 @@ public class TrainingRunner {
     engine.observable().register(outputResults);
     engine.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
-        engine.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+        engine.observable(),
+        frontPlotFrequency,
+        metaSearch,
+        baseLevel.algorithmName(),
+        indicators,
+        trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -607,22 +627,28 @@ public class TrainingRunner {
   }
 
   /**
-   * Registers a live {@link FrontPlotObserver} only when {@code frontPlotFrequency} is present —
-   * opt-in, see {@link TrainingRequest#frontPlotFrequency()}. Works the same regardless of the
-   * meta-optimizer's solution type ({@code DoubleSolution} or {@code DerivationTreeSolution}):
-   * {@code FrontPlotObserver} only needs {@code Solution<?>}, and every registered engine exposes
-   * the same {@code Observable<Map<String, Object>>} shape (see {@link MetaAlgorithmRegistry}).
+   * Registers a live {@link TrainingFrontPlotObserver} only when {@code frontPlotFrequency} is
+   * present — opt-in, see {@link TrainingRequest#frontPlotFrequency()}. Works the same regardless of
+   * the meta-optimizer's solution type ({@code DoubleSolution} or {@code DerivationTreeSolution}):
+   * the observer only needs {@code Solution<?>}, and every registered engine exposes the same
+   * {@code Observable<Map<String, Object>>} shape (see {@link MetaAlgorithmRegistry}).
    */
   private static void registerFrontPlotObserverIfRequested(
       Observable<Map<String, Object>> observable,
       Integer frontPlotFrequency,
-      String title,
+      MetaSearchConfig metaSearch,
+      String baseLevelAlgorithmName,
       List<QualityIndicator> indicators,
       String legend) {
     if (frontPlotFrequency != null) {
       observable.register(
-          new FrontPlotObserver<Solution<?>>(
-              title, indicators.get(0).name(), indicators.get(1).name(), legend, frontPlotFrequency));
+          new TrainingFrontPlotObserver(
+              metaSearch,
+              baseLevelAlgorithmName,
+              indicators.get(0).name(),
+              indicators.get(1).name(),
+              legend,
+              frontPlotFrequency));
     }
   }
 

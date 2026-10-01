@@ -90,7 +90,10 @@ fields:
      - no
      - none (headless)
      - When present, opens a window that plots the meta-optimizer's population in the space of the
-       first two indicators, updated every that many evaluations. Closing the window ends the run
+       first two indicators, updated every that many evaluations. Its title names the
+       meta-optimizer and the base-level algorithm, with the progress against the stopping
+       condition (``Evaluations: 500 of 2000``, or ``Time: 12.3 of 60 min (500 evaluations)``).
+       Closing the window ends the run
    * - ``writePopulation``
      - no
      - ``false``

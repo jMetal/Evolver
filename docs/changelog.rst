@@ -102,6 +102,11 @@ Added
 Changed
 ~~~~~~~
 
+- The live front plot of ``cli.training`` (``frontPlotFrequency``) names the meta-optimizer and the
+  base-level algorithm in its title, with the progress against the stopping condition:
+  ``NSGA-II optimizing RVEA. Evaluations: 500 of 2000``, or, bounded by computing time,
+  ``NSGA-II optimizing RVEA. Time: 12.3 of 60 min (500 evaluations)``; it showed only the
+  meta-optimizer and the evaluations
 - The error of a parameter space that lacks a parameter the algorithm requires (for example a
   top-level parameter removed from ``NSGAIIDouble.yaml``) now says that the space must define it and
   lists the defined parameters; the behaviour is unchanged: there are no default values
