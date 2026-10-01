@@ -84,6 +84,7 @@ public class PermutationParameterFactory implements ParameterFactory<Permutation
       case "ranking" -> new RankingParameter<PermutationSolution<Integer>>("ranking", values);
       case "replacement" -> new ReplacementParameter<PermutationSolution<Integer>>(values);
       case "selection" -> new SelectionParameter<PermutationSolution<Integer>>(values);
+      case "gaSelection" -> new SelectionParameter<PermutationSolution<Integer>>("gaSelection", values);
       case "variation" -> new PermutationVariationParameter(values);
       default -> new CategoricalParameter(parameterName, values);
     };

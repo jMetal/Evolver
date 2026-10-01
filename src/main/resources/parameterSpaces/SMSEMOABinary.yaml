@@ -41,7 +41,7 @@ variation:
           values:
             bitFlip:
 
-selection:
+gaSelection:
   type: categorical
   values:
     random: {}

@@ -84,6 +84,7 @@ public class BinaryParameterFactory implements ParameterFactory<BinarySolution> 
       case "ranking" -> new RankingParameter<BinarySolution>("ranking", values);
       case "replacement" -> new ReplacementParameter<BinarySolution>(values);
       case "selection" -> new SelectionParameter<BinarySolution>(values);
+      case "gaSelection" -> new SelectionParameter<BinarySolution>("gaSelection", values);
       case "variation" -> new BinaryVariationParameter(values);
       default -> new CategoricalParameter(parameterName, values);
     };

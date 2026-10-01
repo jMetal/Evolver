@@ -157,6 +157,21 @@ Changed
 - ``scripts/`` keeps only active, reusable scripts, and is no longer ignored by git; the Python
   dependencies (``scripts/requirements.txt``, ``environment.yml``) are trimmed to what they use
 
+Fixed
+~~~~~
+
+- ``BinarySMSEMOA`` and ``PermutationSMSEMOA`` could not be built from their parameter spaces: the
+  algorithm reads the selection as ``gaSelection`` (renamed in ``SMSEMOADouble.yaml``), but
+  ``SMSEMOABinary.yaml`` and ``SMSEMOAPermutation.yaml`` still called it ``selection``, and their
+  parameter factories did not create it. The spaces now call it ``gaSelection``
+- ``PermutationMOEAD`` could not be built from ``MOEADPermutation.yaml``, where the mutation is a
+  global sub-parameter of the variation: ``PermutationVariationParameter`` now looks for it there
+  as well, as ``BinaryVariationParameter`` does
+- ``MOEADDTLZ2Example`` used ``MOEADDoubleFull.yaml``, renamed to ``MOEADDouble.yaml``, and
+  ``SMSEMOABiObjectiveTSPExample`` used the binary space and operators on a permutation problem;
+  the chart titles of ``MOPSOSMPSOZDT4Example``, ``SMSEMOAExample`` and
+  ``RDEMOEASPEA2DTLZ2Example`` named another algorithm
+
 Removed
 ~~~~~~~
 

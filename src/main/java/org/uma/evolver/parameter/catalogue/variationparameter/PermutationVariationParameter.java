@@ -106,10 +106,16 @@ public class PermutationVariationParameter extends VariationParameter<Permutatio
       }
       
       // Get and validate the mutation parameter
-      MutationParameter<PermutationSolution<Integer>> mutationParameter = 
-          (MutationParameter<PermutationSolution<Integer>>) findConditionalParameter("mutation");
+      // (a global sub-parameter of the variation, as in MOEADPermutation.yaml, or a conditional
+      // parameter of crossoverAndMutationVariation, as in NSGAIIPermutation.yaml)
+      MutationParameter<PermutationSolution<Integer>> mutationParameter =
+          (MutationParameter<PermutationSolution<Integer>>) findGlobalSubParameter("mutation");
       if (mutationParameter == null) {
-        throw new JMetalException("mutation parameter not found");
+        mutationParameter =
+            (MutationParameter<PermutationSolution<Integer>>) findConditionalParameter("mutation");
+        if (mutationParameter == null) {
+          throw new JMetalException("mutation parameter not found");
+        }
       }
       
       // Get the operators

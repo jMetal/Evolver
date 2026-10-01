@@ -44,7 +44,7 @@ variation:
             simpleInversion:
             displacement:
 
-selection:
+gaSelection:
   type: categorical
   values:
     random: {}
