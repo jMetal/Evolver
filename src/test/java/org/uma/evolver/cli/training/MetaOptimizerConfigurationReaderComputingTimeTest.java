@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -45,6 +47,37 @@ class MetaOptimizerConfigurationReaderComputingTimeTest {
     // Assert
     assertEquals(90.0, config.metaMaxComputingTimeMinutes());
     assertTrue(config.boundedByComputingTime());
+  }
+
+  @Test
+  @DisplayName("Given the bundled computing-time configuration, when loaded, then it is bounded by 60 minutes")
+  void givenBundledComputingTimeConfigurationWhenLoadedThenItIsBoundedBySixtyMinutes() {
+    // Arrange
+    String file = "MetaNSGAIIFlatComputingTimeConfiguration.yaml";
+
+    // Act
+    var config = (FlatMetaSearchConfig) MetaOptimizerConfigurationReader.load(file);
+
+    // Assert
+    assertEquals(60.0, config.metaMaxComputingTimeMinutes());
+    assertEquals(0, config.metaMaxEvaluations());
+    assertTrue(config.boundedByComputingTime());
+  }
+
+  @Test
+  @DisplayName("Given the bundled computing-time request, when loaded, then its meta-search is bounded by time")
+  void givenBundledComputingTimeRequestWhenLoadedThenItsMetaSearchIsBoundedByTime()
+      throws IOException {
+    // Arrange
+    Path requestFile =
+        Path.of("src/main/resources/cli/training/nsgaii-re3d-computing-time-request.yaml");
+
+    // Act
+    TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
+
+    // Assert
+    assertTrue(((FlatMetaSearchConfig) request.metaSearch()).boundedByComputingTime());
+    assertEquals("results/nsgaii/RE3D-computing-time", request.outputDirectory());
   }
 
   @Test

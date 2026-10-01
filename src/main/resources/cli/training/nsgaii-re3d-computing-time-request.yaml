@@ -1,0 +1,11 @@
+# Example TrainingRequest bounded by computing time: nsgaii-re3d-request.yaml with the
+# meta-optimizer stopped after 60 minutes instead of after 2000 meta-evaluations
+# (see MetaNSGAIIFlatComputingTimeConfiguration.yaml). status.yaml reports the limit and the
+# elapsed minutes, and METADATA.txt the meta-evaluations actually performed.
+
+baseLevel: Re3dNSGAIIBaseLevel.yaml
+metaSearch: MetaNSGAIIFlatComputingTimeConfiguration.yaml
+outputDirectory: results/nsgaii/RE3D-computing-time
+writeFrequency: 100
+statusFrequency: 100
+# frontPlotFrequency: 100   # optional; uncomment for a live Pareto front plot (not headless)

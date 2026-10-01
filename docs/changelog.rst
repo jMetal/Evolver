@@ -18,6 +18,9 @@ Added
   (flat and tree encodings; not ``AsyncNSGA-II``). The condition is checked at the beginning of each
   generation, so the generation in progress is completed; ``status.yaml`` gets
   ``maxComputingTimeMinutes`` and ``elapsedMinutes``. See ``docs/proposals/meta-termination-by-time.md``
+- Bundled example of a training bounded by computing time:
+  ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and
+  ``nsgaii-re3d-computing-time-request.yaml``
 - ``METADATA.txt`` states the stopping condition of the meta-optimizer (``Max Evaluations`` or
   ``Max Computing Time``, and ``Stopping condition``) and, in its ``Execution`` section, the
   meta-evaluations performed; the runs of ``cli.training`` now write that section too, with the

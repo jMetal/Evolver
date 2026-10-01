@@ -110,6 +110,9 @@ half replaces ``metaMaxEvaluations: 2000`` by:
 
    metaMaxComputingTimeMinutes: 90
 
+The bundled ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` is such a copy, with a limit of 60
+minutes, and ``nsgaii-re3d-computing-time-request.yaml`` uses it.
+
 The limit is checked at the beginning of each generation, so when it is reached the generation in
 progress is completed before the run stops: the real time exceeds the limit by up to the time of one
 generation (random search works in batches of ``numberOfCores`` evaluations). The initial population
@@ -189,6 +192,9 @@ as-is:
      - NSGA-II tuning NSGA-II on a multi-problem ZDT training set (flat encoding)
    * - ``nsgaii-re3d-request.yaml``
      - NSGA-II tuning NSGA-II on a named multi-problem training set (flat encoding)
+   * - ``nsgaii-re3d-computing-time-request.yaml``
+     - The same, with the meta-optimizer bounded by computing time (60 minutes) instead of by
+       meta-evaluations
    * - ``nsgaii-two-biobjective-tsp-request.yaml``
      - NSGA-II tuning a **Permutation**-encoded base-level algorithm (``PermutationNSGAII`` on two
        bi-objective TSP instances), instead of the Double encoding every other bundled request uses

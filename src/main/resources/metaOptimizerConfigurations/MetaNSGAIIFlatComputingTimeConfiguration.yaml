@@ -1,0 +1,23 @@
+# Meta configuration of NSGA-II with flat encoding, bounded by computing time instead of by
+# meta-evaluations. Same settings as MetaNSGAIIFlatConfiguration.yaml except for the stopping
+# condition: metaMaxComputingTimeMinutes (minutes, decimals allowed) replaces metaMaxEvaluations,
+# and the two keys are mutually exclusive. The generation in progress when the limit is reached
+# is completed, so the run takes slightly longer than the limit.
+
+algorithm: NSGA-II
+encoding: flat
+
+metaMaxComputingTimeMinutes: 60
+metaPopulationSize: 50
+numberOfCores: 8
+
+crossover: SBX
+mutation: polynomial
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2
