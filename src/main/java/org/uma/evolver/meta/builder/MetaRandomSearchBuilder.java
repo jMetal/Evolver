@@ -11,6 +11,8 @@ import org.uma.jmetal.util.errorchecking.Check;
 public class MetaRandomSearchBuilder<S extends Solution<?>> {
     private final Problem<S> problem;
     private int maxEvaluations = 25000;
+    private boolean maxEvaluationsSet = false;
+    private Double maxComputingTimeMinutes = null;
     private int numberOfCores = 1;
 
     public MetaRandomSearchBuilder(Problem<S> problem) {
@@ -20,6 +22,20 @@ public class MetaRandomSearchBuilder<S extends Solution<?>> {
     public MetaRandomSearchBuilder<S> setMaxEvaluations(int maxEvaluations) {
         Check.valueIsNotNegative(maxEvaluations);
         this.maxEvaluations = maxEvaluations;
+        this.maxEvaluationsSet = true;
+        ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
+        return this;
+    }
+
+    /**
+     * Bounds the search by computing time instead of by evaluations (the two are mutually
+     * exclusive). See {@link RandomSearch#byComputingTime}.
+     *
+     * @param minutes the maximum computing time in minutes, with decimals (greater than zero)
+     */
+    public MetaRandomSearchBuilder<S> setMaxComputingTimeMinutes(double minutes) {
+        this.maxComputingTimeMinutes = ComputingTimeLimit.checkMinutes(minutes);
+        ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
         return this;
     }
 
@@ -30,6 +46,9 @@ public class MetaRandomSearchBuilder<S extends Solution<?>> {
     }
 
     public RandomSearch<S> build() {
+        if (maxComputingTimeMinutes != null) {
+            return RandomSearch.byComputingTime(problem, maxComputingTimeMinutes, numberOfCores);
+        }
         return new RandomSearch<>(problem, maxEvaluations, numberOfCores);
     }
 }

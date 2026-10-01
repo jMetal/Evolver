@@ -48,6 +48,12 @@ public class MetaSMPSOBuilder {
   /** The maximum number of evaluations (default: 2000) */
   private int maxEvaluations = 2000;
 
+  /** Whether the maximum number of evaluations has been set explicitly */
+  private boolean maxEvaluationsSet = false;
+
+  /** The maximum computing time in minutes, or null if the run is bounded by evaluations */
+  private Double maxComputingTimeMinutes = null;
+
   /** The number of cores to use for parallel evaluation (default: available processors) */
   private int numberOfCores = Runtime.getRuntime().availableProcessors();
 
@@ -85,6 +91,23 @@ public class MetaSMPSOBuilder {
   public MetaSMPSOBuilder setMaxEvaluations(int maxEvaluations) {
     Check.valueIsNotNegative(maxEvaluations);
     this.maxEvaluations = maxEvaluations;
+    this.maxEvaluationsSet = true;
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
+    return this;
+  }
+
+  /**
+   * Bounds the run by computing time instead of by evaluations (the two are mutually exclusive).
+   * See {@link ComputingTimeLimit} for when the limit is checked.
+   *
+   * @param minutes the maximum computing time in minutes, with decimals (greater than zero)
+   * @return this builder instance for method chaining
+   * @throws IllegalArgumentException if minutes is not a finite number greater than zero
+   * @throws IllegalStateException if the maximum number of evaluations has been set
+   */
+  public MetaSMPSOBuilder setMaxComputingTimeMinutes(double minutes) {
+    this.maxComputingTimeMinutes = ComputingTimeLimit.checkMinutes(minutes);
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
     return this;
   }
 
@@ -120,7 +143,10 @@ public class MetaSMPSOBuilder {
     Check.that(problem instanceof DoubleProblem, "SMPSO requires a DoubleProblem");
     
     var evaluation = new MultiThreadedEvaluation<DoubleSolution>(numberOfCores, problem);
-    Termination termination = new TerminationByEvaluations(maxEvaluations);
+    Termination termination =
+        maxComputingTimeMinutes != null
+            ? ComputingTimeLimit.termination(maxComputingTimeMinutes)
+            : new TerminationByEvaluations(maxEvaluations);
 
     return new SMPSOBuilder((DoubleProblem) problem, swarmSize)
         .setTermination(termination)
