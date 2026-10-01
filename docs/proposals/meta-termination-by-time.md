@@ -22,17 +22,23 @@ useful in practice, for three reasons:
 
 ## Proposal
 
-A second termination condition: **maximum computing time**, in seconds. The two conditions are
+A second termination condition: **maximum computing time**, in minutes. The two conditions are
 **mutually exclusive**: a run is bounded either by meta-evaluations or by time, never by both, and a
 configuration that gives both is rejected with an error. Evaluations stay the default, so existing
 requests, examples and tutorials do not change.
 
 - **Mechanism.** jMetal's `TerminationByComputingTime` (jmetal-component), which takes the limit in
-  milliseconds; the builders convert the seconds. The builders get a setter such as
-  `setMaxComputingTime(int seconds)` as the alternative to `maxEvaluations`; `TreeNSGAII` and
-  `RandomSearch`, which have their own loops, check the clock at the end of each generation.
-- **Limit in seconds.** An integer number of seconds everywhere (builders, requests, `METADATA.txt`);
-  the metadata also shows it formatted (`1h 0m 0s`), as the wall-clock time does today.
+  milliseconds. The builders get a setter as the alternative to `maxEvaluations`; `TreeNSGAII` and
+  `RandomSearch`, which have their own loops, apply the same rule.
+- **Limit in minutes.** A meta-optimization rarely takes less than several minutes, so minutes are
+  the unit of everything the user writes or reads: requests, Evolver-Studio and `METADATA.txt`
+  (which also shows it formatted, `1h 0m 0s`, as the wall-clock time does today). Decimal values
+  are accepted (`0.5`), which integration tests and quick trials need; the builders' setter takes a
+  `java.time.Duration`, so the unit is converted in one place.
+- **When the condition is evaluated.** At the beginning of each iteration, as in jMetal's
+  evolutionary loop. The initial population is always evaluated; if that takes longer than the
+  limit, no generation is run and the result is the initial population. This is the intended
+  behaviour, not an error case.
 - **Granularity: the current generation is always completed.** When the limit is reached the
   generation in progress is not interrupted: the run waits until its evaluations finish and the
   population is updated, and only then stops. An abrupt stop would leave evaluations lost or a
@@ -42,8 +48,8 @@ requests, examples and tutorials do not change.
   overshoot.
 - **Budget strategies** (`meta.strategy`, evaluations of the base-level algorithm) are not affected:
   only the stopping rule of the meta level changes.
-- **CLI.** `cli.training` requests accept `maxComputingTime` (for example in seconds or as an ISO
-  duration, to decide) as an alternative or in addition to the existing meta-evaluation limit.
+- **CLI.** `cli.training` requests accept `maxComputingTimeMinutes` as the alternative to the existing
+  meta-evaluation limit (giving both is an error).
   Evolver-Studio exposes it in the training page.
 - **Convergence plots.** `scripts/plot_training_convergence.py` uses the meta-evaluation as the
   axis; add elapsed time as an alternative axis, so runs stopped by time can be compared. The
@@ -57,7 +63,7 @@ section with the wall-clock time. It must also say **why the run stopped and wit
 for every run, including those stopped by evaluations:
 
 - in `--- Meta-Optimizer ---`: the stopping condition and its limit, either `Max Evaluations: 2000`
-  or `Max Computing Time: 3600 s (1h 0m 0s)`, and the line `Stopping condition: evaluations` or
+  or `Max Computing Time: 60 min (1h 0m 0s)`, and the line `Stopping condition: evaluations` or
   `Stopping condition: computing time`;
 - in `--- Execution ---`: the meta-evaluations actually performed and the wall-clock time already
   written, which with a time limit is slightly above the limit (the generation in progress is
@@ -93,5 +99,4 @@ the budget; the strategies should give a readable description. It can be fixed w
 
 ## Open questions
 
-- Whether a time-only run should require a minimum number of generations.
 - Whether the validation studies of the papers move to time budgets, and with which values.
