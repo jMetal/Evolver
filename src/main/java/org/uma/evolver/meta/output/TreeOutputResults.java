@@ -42,6 +42,8 @@ import org.uma.jmetal.util.observer.Observer;
 public class TreeOutputResults implements Observer<Map<String, Object>> {
 
   private int evaluations;
+  private final long creationMillis = System.currentTimeMillis();
+  private Long computingTimeMillis;
   private final TreeMetaOptimizationProblem<?> problem;
   private final String problemName;
   private final List<QualityIndicator> indicators;
@@ -88,6 +90,9 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     int evals = (int) data.get("EVALUATIONS");
     if ((evals % writeFrequency) == 0) {
       this.evaluations = evals;
+      if (data.get("COMPUTING_TIME") instanceof Long computingTime) {
+        this.computingTimeMillis = computingTime;
+      }
       try {
         writeResultsToFiles(population);
       } catch (IOException e) {
@@ -119,6 +124,33 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       throws IOException {
     this.evaluations = finalEvaluations;
     writeResultsToFiles(solutions);
+  }
+
+  /**
+   * Writes final results to files, with the computing time of the meta-optimizer.
+   *
+   * @param solutions the solutions to write
+   * @param finalEvaluations the final evaluation count
+   * @param computingTimeMillis the computing time of the run, in milliseconds
+   * @throws IOException if file writing fails
+   */
+  public void writeFinalResults(
+      List<DerivationTreeSolution> solutions, int finalEvaluations, long computingTimeMillis)
+      throws IOException {
+    this.computingTimeMillis = computingTimeMillis;
+    writeFinalResults(solutions, finalEvaluations);
+  }
+
+  /**
+   * The computing time to write at a checkpoint, in minutes: the meta-optimizer's own clock when it
+   * publishes it, or else the time elapsed since this object was created. It is written whatever the
+   * stopping condition is.
+   */
+  private double checkpointMinutes() {
+    long millis = computingTimeMillis != null
+        ? computingTimeMillis
+        : System.currentTimeMillis() - creationMillis;
+    return millis / 60_000.0;
   }
 
   /**
@@ -170,6 +202,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writeIndicators(solutions, "POPULATION_INDICATORS.csv");
       writeConfigurations(solutions, "POPULATION_CONFIGURATIONS.csv");
     }
+    computingTimeMillis = null;
   }
 
   private void createOutputDirectory() {
@@ -310,6 +343,8 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     try (BufferedWriter writer = new BufferedWriter(
         new FileWriter(new File(outputDirectoryName, "VAR_CONF.txt"), true))) {
       writer.write("# Evaluation: " + evaluations);
+      writer.newLine();
+      writer.write(ConsolidatedOutputResults.timeLine(checkpointMinutes()));
       writer.newLine();
       for (int i = 0; i < solutions.size(); i++) {
         DerivationTreeSolution solution = solutions.get(i);

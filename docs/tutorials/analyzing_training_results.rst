@@ -74,7 +74,9 @@ The output directory, ``results/tutorial-e8/training``, holds:
      - The same configurations, one parameter per column (``NaN`` for the parameters that are not
        active).
    * - ``VAR_CONF.txt``
-     - The same configurations as configuration strings, with their indicator values.
+     - The same configurations as configuration strings, with their indicator values. Each
+       checkpoint starts with two lines, ``# Evaluation: <meta-evaluations>`` and
+       ``# Time (min): <minutes>``, the computing time of the meta-optimizer at that checkpoint.
    * - ``POPULATION_INDICATORS.csv``, ``POPULATION_CONFIGURATIONS.csv``
      - The same as ``INDICATORS.csv`` and ``CONFIGURATIONS.csv`` for the **whole population**
        (only with ``writePopulation: true``).

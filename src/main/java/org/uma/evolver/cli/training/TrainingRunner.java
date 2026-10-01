@@ -238,6 +238,7 @@ public class TrainingRunner {
     int finalEvaluations = finalEvaluations(metaSearch, nsgaii.numberOfEvaluations());
 
     outputResults.updateEvaluations(finalEvaluations);
+    outputResults.updateComputingTime(elapsedMillis);
     outputResults.writeResultsToFiles(nsgaii.result());
     outputResults.writeWallClockTime(elapsedMillis);
 
@@ -314,6 +315,7 @@ public class TrainingRunner {
     int finalEvaluations = finalEvaluations(metaSearch, metaSearch.metaMaxEvaluations());
 
     outputResults.updateEvaluations(finalEvaluations);
+    outputResults.updateComputingTime(elapsedMillis);
     outputResults.writeResultsToFiles(nsgaii.result());
     outputResults.writeWallClockTime(elapsedMillis);
 
@@ -390,6 +392,7 @@ public class TrainingRunner {
     int finalEvaluations = finalEvaluations(metaSearch, smpso.numberOfEvaluations());
 
     outputResults.updateEvaluations(finalEvaluations);
+    outputResults.updateComputingTime(elapsedMillis);
     outputResults.writeResultsToFiles(smpso.result());
     outputResults.writeWallClockTime(elapsedMillis);
 
@@ -468,6 +471,7 @@ public class TrainingRunner {
     int finalEvaluations = finalEvaluations(metaSearch, randomSearch.numberOfEvaluations());
 
     outputResults.updateEvaluations(finalEvaluations);
+    outputResults.updateComputingTime(elapsedMillis);
     outputResults.writeResultsToFiles(randomSearch.result());
     outputResults.writeWallClockTime(elapsedMillis);
 
@@ -545,7 +549,7 @@ public class TrainingRunner {
     long elapsedMillis = System.currentTimeMillis() - startMillis;
     int finalEvaluations = finalEvaluations(metaSearch, engine.evaluations().getAsInt());
 
-    outputResults.writeFinalResults(engine.result().get(), finalEvaluations);
+    outputResults.writeFinalResults(engine.result().get(), finalEvaluations, elapsedMillis);
     outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(

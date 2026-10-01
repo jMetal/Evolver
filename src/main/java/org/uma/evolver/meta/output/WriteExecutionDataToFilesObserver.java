@@ -43,6 +43,9 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
       try {
         JMetalLogger.logger.info("EVAlS -> " + evaluations);
         outputResults.updateEvaluations(evaluations);
+        if (data.get("COMPUTING_TIME") instanceof Long computingTime) {
+          outputResults.updateComputingTime(computingTime);
+        }
         outputResults.writeResultsToFiles(population);
       } catch (IOException e) {
         throw new JMetalException(e);

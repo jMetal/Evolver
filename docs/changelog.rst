@@ -22,6 +22,9 @@ Added
   ``Max Computing Time``, and ``Stopping condition``) and, in its ``Execution`` section, the
   meta-evaluations performed; the runs of ``cli.training`` now write that section too, with the
   wall-clock time
+- Each checkpoint of ``VAR_CONF.txt`` has, after ``# Evaluation: <n>``, the line
+  ``# Time (min): <minutes>`` with the computing time of the meta-optimizer, whatever the stopping
+  condition
 - Add the reference front of MaF08 with three objectives (``MaF08.3D.csv``), the image of its
   Pareto set (a triangle in the decision space), used by the RVEA guide
 - Add the :ref:`algorithm guides <algorithm_guides>`, one per base-level algorithm, with where it

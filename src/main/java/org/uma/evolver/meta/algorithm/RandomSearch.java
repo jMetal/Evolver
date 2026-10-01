@@ -28,6 +28,7 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   private long maxComputingTimeMillis = 0;
   private int evaluationsDone = 0;
   private long computingTimeMillis = 0;
+  private long runStartMillis;
   private NonDominatedSolutionListArchive<S> nonDominatedArchive;
   private int numberOfCores;
   private Observable<Map<String, Object>> observable;
@@ -91,6 +92,7 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   @Override
   public void run() {
     long start = System.currentTimeMillis();
+    runStartMillis = start;
     AtomicInteger evaluations = new AtomicInteger(0);
     ForkJoinPool pool = new ForkJoinPool(numberOfCores);
     try {
@@ -129,6 +131,7 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
                             observable.setChanged();
                             Map<String, Object> data = new HashMap<>();
                             data.put("EVALUATIONS", currentEvaluations);
+                            data.put("COMPUTING_TIME", System.currentTimeMillis() - runStartMillis);
                             data.put("POPULATION", populationSnapshot);
                             data.put("ALGORITHM_NAME", name());
                             data.put("PROBLEM_NAME", problem.name());

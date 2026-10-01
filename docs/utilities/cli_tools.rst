@@ -148,7 +148,17 @@ condition (``Max Evaluations`` or ``Max Computing Time``, and ``Stopping conditi
 ``Execution`` section, the wall-clock time and the meta-evaluations performed; ``INDICATORS.csv``,
 ``CONFIGURATIONS.csv`` and ``VAR_CONF.txt`` have, every ``writeFrequency`` evaluations, the
 **non-dominated** configurations of the meta-optimizer's population, with their indicator values,
-their parameter values and their configuration strings. With ``writePopulation: true``,
+their parameter values and their configuration strings. In ``VAR_CONF.txt`` each checkpoint starts
+with the meta-evaluations and the computing time of the meta-optimizer in minutes, whatever the
+stopping condition:
+
+.. code-block:: none
+
+   # Evaluation: 1000
+   # Time (min): 3.200
+   EP=0.015577074645407418 NHV=0.014837681855983442 | --algorithmResult externalArchive ...
+
+With ``writePopulation: true``,
 ``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv`` have the same columns as
 ``INDICATORS.csv`` and ``CONFIGURATIONS.csv`` for the **whole** population, which shows its
 diversity, and ``results.yaml`` also points at them (``populationIndicatorsFile``,

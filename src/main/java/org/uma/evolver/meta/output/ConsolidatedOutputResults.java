@@ -40,6 +40,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
     private int evaluations;
+    private final long creationMillis = System.currentTimeMillis();
+    private Long computingTimeMillis;
     private final MetaOptimizationProblem<?> configurableAlgorithmProblem;
     private final String problemName;
     private final List<QualityIndicator> indicators;
@@ -172,6 +174,27 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         this.evaluations = evaluations;
     }
 
+    @Override
+    public void updateComputingTime(long computingTimeMillis) {
+        this.computingTimeMillis = computingTimeMillis;
+    }
+
+    /**
+     * The computing time to write at a checkpoint, in minutes: the one set with {@link
+     * #updateComputingTime} (the meta-optimizer's own clock), or else the time elapsed since this
+     * object was created. It is written whatever the stopping condition is.
+     */
+    private double checkpointMinutes() {
+        long millis = computingTimeMillis != null
+                ? computingTimeMillis
+                : System.currentTimeMillis() - creationMillis;
+        return millis / 60_000.0;
+    }
+
+    static String timeLine(double minutes) {
+        return "# Time (min): " + String.format(java.util.Locale.ROOT, "%.3f", minutes);
+    }
+
     /**
      * Appends a wall-clock time record to METADATA.txt. Intended to be called once, after the
      * meta-optimizer has finished running, with the elapsed time in milliseconds.
@@ -222,6 +245,7 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writeIndicators(solutions, "POPULATION_INDICATORS.csv");
             writeConfigurations(solutions, "POPULATION_CONFIGURATIONS.csv");
         }
+        computingTimeMillis = null;
     }
 
     private void writeHeaders(String indicatorsFileName, String configurationsFileName)
@@ -305,6 +329,8 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter(new File(outputDirectoryName, "VAR_CONF.txt"), true))) {
             writer.write("# Evaluation: " + evaluations);
+            writer.newLine();
+            writer.write(timeLine(checkpointMinutes()));
             writer.newLine();
             for (int i = 0; i < solutions.size(); i++) {
                 DoubleSolution solution = solutions.get(i);

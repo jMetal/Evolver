@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,6 +99,16 @@ class TrainingRunnerComputingTimeIT {
     assertTrue(performed.find(), metadata);
     assertTrue(Integer.parseInt(performed.group(1)) > 0, metadata);
 
+    assertCheckpointsHaveTime(outputDirectory);
+    List<String> varConf = Files.readAllLines(outputDirectory.resolve("VAR_CONF.txt"));
+    double lastMinutes =
+        varConf.stream()
+            .filter(line -> line.startsWith("# Time (min): "))
+            .mapToDouble(line -> Double.parseDouble(line.substring("# Time (min): ".length())))
+            .reduce((first, second) -> second)
+            .orElseThrow();
+    assertTrue(lastMinutes >= LIMIT_MINUTES, "last checkpoint time: " + lastMinutes);
+
     @SuppressWarnings("unchecked")
     Map<String, Object> status =
         (Map<String, Object>) new Yaml().load(Files.newBufferedReader(statusFile));
@@ -106,6 +117,41 @@ class TrainingRunnerComputingTimeIT {
     assertEquals(LIMIT_MINUTES, ((Number) status.get("maxComputingTimeMinutes")).doubleValue());
     assertTrue(((Number) status.get("elapsedMinutes")).doubleValue() >= LIMIT_MINUTES - 0.01);
     assertEquals(Integer.parseInt(performed.group(1)), status.get("evaluationsDone"));
+  }
+
+  /** Every {@code # Evaluation} line of VAR_CONF.txt is followed by a {@code # Time (min)} line. */
+  private static void assertCheckpointsHaveTime(Path outputDirectory) throws IOException {
+    List<String> lines = Files.readAllLines(outputDirectory.resolve("VAR_CONF.txt"));
+    int checkpoints = 0;
+    for (int i = 0; i < lines.size(); i++) {
+      if (lines.get(i).startsWith("# Evaluation: ")) {
+        checkpoints++;
+        assertTrue(lines.get(i + 1).matches("# Time \\(min\\): \\d+\\.\\d{3}"), lines.get(i + 1));
+      }
+    }
+    assertTrue(checkpoints > 0, "no checkpoint in VAR_CONF.txt");
+  }
+
+  @Test
+  @DisplayName("Given a limit on evaluations, when run, then the checkpoints also record the time")
+  void givenEvaluationLimitWhenRunThenCheckpointsAlsoRecordTime(@TempDir Path tempDir)
+      throws IOException {
+    // Arrange
+    var configured =
+        (FlatMetaSearchConfig) MetaOptimizerConfigurationReader.load("MetaNSGAIIFlatConfiguration.yaml");
+    var metaSearch =
+        new FlatMetaSearchConfig(
+            configured.algorithm(), 12, META_POPULATION_SIZE, NUMBER_OF_CORES, configured.operatorFlags());
+    var request =
+        new TrainingRequest(baseLevel(), metaSearch, tempDir.resolve("output").toString(), 4, 4, null);
+
+    // Act
+    Path outputDirectory = new TrainingRunner().run(request, tempDir.resolve("status.yaml"));
+
+    // Assert
+    assertCheckpointsHaveTime(outputDirectory);
+    String metadata = Files.readString(outputDirectory.resolve("METADATA.txt"));
+    assertTrue(metadata.contains("Stopping condition: evaluations"), metadata);
   }
 
   @ParameterizedTest(name = "{0}")

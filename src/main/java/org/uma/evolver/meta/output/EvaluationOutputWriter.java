@@ -12,5 +12,11 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 public interface EvaluationOutputWriter {
     void updateEvaluations(int evaluations);
 
+    /**
+     * Sets the computing time of the meta-optimizer at the next write, in milliseconds. Writers
+     * that do not receive it use the time elapsed since they were created.
+     */
+    default void updateComputingTime(long computingTimeMillis) {}
+
     void writeResultsToFiles(List<DoubleSolution> solutions) throws IOException;
 }

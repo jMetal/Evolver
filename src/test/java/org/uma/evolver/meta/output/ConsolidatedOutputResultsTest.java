@@ -2,6 +2,7 @@ package org.uma.evolver.meta.output;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -120,6 +121,45 @@ class ConsolidatedOutputResultsTest {
       assertEquals(
           Files.readAllLines(tempDir.resolve("CONFIGURATIONS.csv")).get(0),
           Files.readAllLines(tempDir.resolve("POPULATION_CONFIGURATIONS.csv")).get(0));
+    }
+  }
+
+  @Nested
+  @DisplayName("Time of each checkpoint in VAR_CONF.txt")
+  class CheckpointTime {
+
+    @Test
+    @DisplayName("Given the computing time of the meta-optimizer, when written, then each checkpoint has the evaluations and the minutes")
+    void givenComputingTimeWhenWrittenThenCheckpointHasEvaluationsAndMinutes() throws IOException {
+      // Arrange
+      ConsolidatedOutputResults outputResults = outputResults();
+
+      // Act
+      outputResults.updateEvaluations(1000);
+      outputResults.updateComputingTime(192_000);
+      outputResults.writeResultsToFiles(population);
+
+      // Assert
+      List<String> lines = Files.readAllLines(tempDir.resolve("VAR_CONF.txt"));
+      assertEquals("# Evaluation: 1000", lines.get(0));
+      assertEquals("# Time (min): 3.200", lines.get(1));
+      assertTrue(lines.get(2).contains(" | "));
+    }
+
+    @Test
+    @DisplayName("Given no computing time, when written, then the time elapsed since creation is used")
+    void givenNoComputingTimeWhenWrittenThenElapsedTimeIsUsed() throws IOException {
+      // Arrange
+      ConsolidatedOutputResults outputResults = outputResults();
+
+      // Act
+      outputResults.updateEvaluations(500);
+      outputResults.writeResultsToFiles(population);
+
+      // Assert
+      List<String> lines = Files.readAllLines(tempDir.resolve("VAR_CONF.txt"));
+      assertEquals("# Evaluation: 500", lines.get(0));
+      assertTrue(lines.get(1).matches("# Time \\(min\\): \\d+\\.\\d{3}"), lines.get(1));
     }
   }
 }
