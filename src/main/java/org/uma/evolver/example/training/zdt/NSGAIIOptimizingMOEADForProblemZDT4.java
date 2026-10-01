@@ -61,7 +61,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
       """
       algorithm: NSGA-II
       encoding: flat
-      metaMaxEvaluations: 2000
+      metaMaxComputingTimeMinutes: 5
       metaPopulationSize: 50
       numberOfCores: 8
       crossover: SBX
@@ -77,7 +77,7 @@ public class NSGAIIOptimizingMOEADForProblemZDT4 {
       """;
 
   private static final String OUTPUT_DIRECTORY = "results/moead/ZDT4";
-  private static final int WRITE_FREQUENCY = 1;
+  private static final int WRITE_FREQUENCY = 100;
   private static final int STATUS_FREQUENCY = 50;
   // Live Pareto front plot, as the original example had.
   private static final int FRONT_PLOT_FREQUENCY = 1;
