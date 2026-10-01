@@ -12,7 +12,9 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByC
  * <p>The limit is given in minutes, with decimals (for example {@code 0.5}). It is checked at the
  * beginning of each iteration of the algorithm, so the generation in progress when the limit is
  * reached is always completed (the real time can exceed the limit by up to one generation), and the
- * initial population is always evaluated, even if that takes longer than the limit.
+ * initial population is always evaluated, even if that takes longer than the limit. The asynchronous
+ * meta-optimizers have no generations: they use {@link #asynchronousTermination}, checked after every
+ * evaluation.
  *
  * @see <a href="../../../../../../../../docs/proposals/meta-termination-by-time.md">proposal</a>
  */
@@ -42,6 +44,18 @@ public final class ComputingTimeLimit {
   /** A termination condition that is met when the computing time reaches the limit. */
   public static Termination termination(double minutes) {
     return new TerminationByComputingTime(toDuration(minutes).toMillis());
+  }
+
+  /**
+   * A termination condition for the asynchronous meta-optimizers, which are checked after every
+   * evaluation and have no initial population evaluated as a block: it is met when the computing
+   * time reaches the limit, but not before {@code populationSize} evaluations have been performed,
+   * so the initial population is always evaluated. The real time exceeds the limit by up to one
+   * evaluation; the evaluations in progress when it is met are discarded.
+   */
+  public static Termination asynchronousTermination(double minutes, int populationSize) {
+    Termination byTime = termination(minutes);
+    return data -> (int) data.get("EVALUATIONS") >= populationSize && byTime.isMet(data);
   }
 
   /**

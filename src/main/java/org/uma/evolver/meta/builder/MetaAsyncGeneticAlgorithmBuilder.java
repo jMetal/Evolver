@@ -1,6 +1,7 @@
 package org.uma.evolver.meta.builder;
 
 import java.util.List;
+import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.MuPlusLambdaReplacement;
@@ -48,6 +49,12 @@ public class MetaAsyncGeneticAlgorithmBuilder {
 
   /** The maximum number of evaluations (default: 2000) */
   private int maxEvaluations = 2000;
+
+  /** Whether the maximum number of evaluations has been set explicitly */
+  private boolean maxEvaluationsSet = false;
+
+  /** The maximum computing time in minutes, or null if the run is bounded by evaluations */
+  private Double maxComputingTimeMinutes = null;
 
   /** The number of CPU cores to use (default: available processors) */
   private int numberOfCores = Runtime.getRuntime().availableProcessors();
@@ -118,6 +125,24 @@ public class MetaAsyncGeneticAlgorithmBuilder {
   public MetaAsyncGeneticAlgorithmBuilder setMaxEvaluations(int maxEvaluations) {
     Check.valueIsNotNegative(maxEvaluations);
     this.maxEvaluations = maxEvaluations;
+    this.maxEvaluationsSet = true;
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
+    return this;
+  }
+
+  /**
+   * Bounds the run by computing time instead of by evaluations (the two are mutually exclusive).
+   * The limit is checked after every evaluation, once the initial population has been evaluated;
+   * see {@link ComputingTimeLimit#asynchronousTermination}.
+   *
+   * @param minutes the maximum computing time in minutes, with decimals (greater than zero)
+   * @return this builder instance for method chaining
+   * @throws IllegalArgumentException if minutes is not a finite number greater than zero
+   * @throws IllegalStateException if the maximum number of evaluations has been set
+   */
+  public MetaAsyncGeneticAlgorithmBuilder setMaxComputingTimeMinutes(double minutes) {
+    this.maxComputingTimeMinutes = ComputingTimeLimit.checkMinutes(minutes);
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
     return this;
   }
 
@@ -225,7 +250,7 @@ public class MetaAsyncGeneticAlgorithmBuilder {
    *
    * <p>The returned instance is ready for execution with the configured parameters. The algorithm
    * will use the specified number of cores for parallel evaluation and will terminate after
-   * reaching the maximum number of evaluations.</p>
+   * reaching the maximum number of evaluations or computing time.</p>
    *
    * @return a fully configured asynchronous Genetic Algorithm instance
    * @throws IllegalStateException if required parameters are not set properly
@@ -239,6 +264,12 @@ public class MetaAsyncGeneticAlgorithmBuilder {
         mutation,
         selection,
         replacement,
-        new TerminationByEvaluations(maxEvaluations));
+        termination());
+  }
+
+  private Termination termination() {
+    return maxComputingTimeMinutes != null
+        ? ComputingTimeLimit.asynchronousTermination(maxComputingTimeMinutes, populationSize)
+        : new TerminationByEvaluations(maxEvaluations);
   }
 }

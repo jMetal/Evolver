@@ -146,6 +146,46 @@ class MetaComputingTimeIT {
   }
 
   @Test
+  @DisplayName("Given a time limit, when running the asynchronous NSGA-II, then it stops after the limit with a whole population")
+  void givenTimeLimitWhenRunningAsyncNsgaIIThenItStopsAfterTheLimitWithAWholePopulation() {
+    // Arrange
+    var algorithm =
+        new MetaAsyncNSGAIIBuilder(metaProblem())
+            .setPopulationSize(POPULATION_SIZE)
+            .setNumberOfCores(2)
+            .setMaxComputingTimeMinutes(LIMIT_MINUTES)
+            .build();
+
+    // Act
+    long start = System.currentTimeMillis();
+    algorithm.run();
+    long elapsed = System.currentTimeMillis() - start;
+
+    // Assert
+    assertTrue(elapsed >= LIMIT_MILLIS, "stopped before the limit: " + elapsed + " ms");
+    assertTrue(elapsed < MAX_REAL_MILLIS, "overshoot too large: " + elapsed + " ms");
+    assertEquals(POPULATION_SIZE, algorithm.result().size());
+  }
+
+  @Test
+  @DisplayName("Given a limit shorter than the initial population, when running the asynchronous NSGA-II, then the initial population is evaluated")
+  void givenLimitShorterThanInitialPopulationWhenRunningAsyncNsgaIIThenInitialPopulationIsEvaluated() {
+    // Arrange
+    var algorithm =
+        new MetaAsyncNSGAIIBuilder(metaProblem())
+            .setPopulationSize(POPULATION_SIZE)
+            .setNumberOfCores(2)
+            .setMaxComputingTimeMinutes(0.00001)
+            .build();
+
+    // Act
+    algorithm.run();
+
+    // Assert
+    assertEquals(POPULATION_SIZE, algorithm.result().size());
+  }
+
+  @Test
   @DisplayName("Given a time limit, when running random search, then it evaluates whole batches")
   void givenTimeLimitWhenRunningRandomSearchThenItEvaluatesWholeBatches() {
     // Arrange

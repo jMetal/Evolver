@@ -1,6 +1,7 @@
 package org.uma.evolver.meta.builder;
 
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
@@ -42,6 +43,12 @@ public class MetaAsyncNSGAIIBuilder {
   
   /** The maximum number of evaluations (default: 2000) */
   private int maxEvaluations = 2000;
+
+  /** Whether the maximum number of evaluations has been set explicitly */
+  private boolean maxEvaluationsSet = false;
+
+  /** The maximum computing time in minutes, or null if the run is bounded by evaluations */
+  private Double maxComputingTimeMinutes = null;
   
   /** The number of CPU cores to use (default: available processors) */
   private int numberOfCores = Runtime.getRuntime().availableProcessors();
@@ -97,6 +104,24 @@ private double mutationProbabilityFactor = 1.0  ;
   public MetaAsyncNSGAIIBuilder setMaxEvaluations(int maxEvaluations) {
     Check.valueIsNotNegative(maxEvaluations);
     this.maxEvaluations = maxEvaluations;
+    this.maxEvaluationsSet = true;
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
+    return this;
+  }
+
+  /**
+   * Bounds the run by computing time instead of by evaluations (the two are mutually exclusive).
+   * The limit is checked after every evaluation, once the initial population has been evaluated;
+   * see {@link ComputingTimeLimit#asynchronousTermination}.
+   *
+   * @param minutes the maximum computing time in minutes, with decimals (greater than zero)
+   * @return this builder instance for method chaining
+   * @throws IllegalArgumentException if minutes is not a finite number greater than zero
+   * @throws IllegalStateException if the maximum number of evaluations has been set
+   */
+  public MetaAsyncNSGAIIBuilder setMaxComputingTimeMinutes(double minutes) {
+    this.maxComputingTimeMinutes = ComputingTimeLimit.checkMinutes(minutes);
+    ComputingTimeLimit.checkExclusive(maxEvaluationsSet, maxComputingTimeMinutes);
     return this;
   }
 
@@ -157,7 +182,7 @@ private double mutationProbabilityFactor = 1.0  ;
    *
    * <p>The returned instance is ready for execution with the configured parameters.
    * The algorithm will use the specified number of cores for parallel evaluation
-   * and will terminate after reaching the maximum number of evaluations.</p>
+   * and will terminate after reaching the maximum number of evaluations or computing time.</p>
    *
    * @return a fully configured asynchronous NSGA-II instance
    * @throws IllegalStateException if required parameters are not set properly
@@ -169,8 +194,13 @@ private double mutationProbabilityFactor = 1.0  ;
         populationSize, 
         crossover, 
         mutation,
-        new TerminationByEvaluations(maxEvaluations)
+        termination()
     );
   }
-    
+
+  private Termination termination() {
+    return maxComputingTimeMinutes != null
+        ? ComputingTimeLimit.asynchronousTermination(maxComputingTimeMinutes, populationSize)
+        : new TerminationByEvaluations(maxEvaluations);
+  }
 }
