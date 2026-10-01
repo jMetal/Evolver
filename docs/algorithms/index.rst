@@ -32,7 +32,7 @@ integration test.
      - Guide
    * - NSGA-II
      - Double, Binary, Permutation
-     - planned
+     - :doc:`NSGA-II <nsgaii>`
    * - NSGA-III
      - Double
      - planned
@@ -64,4 +64,5 @@ integration test.
 .. toctree::
    :hidden:
 
+   nsgaii
    rvea

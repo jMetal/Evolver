@@ -40,6 +40,9 @@ Added
   works well and where it works poorly backed by an experiment; the first is the guide of
   :doc:`RVEA, RVEA* and iRVEA <algorithms/rvea>` (``example.algorithms.RVEAGuide``), and
   ``docs/proposals/algorithm-guides.md`` tracks the rest
+- Add the :doc:`NSGA-II guide <algorithms/nsgaii>` (``example.algorithms.NSGAIIGuide``): the
+  standard version against the steady-state one on ZDT1, a crowding distance archive on ZDT4 and an
+  unbounded archive on DTLZ2, with the spread of the fronts measured by the generalized spread
 - RVEA can be tuned and run from the command line and Evolver-Studio: it is registered in
   ``BaseAlgorithmRegistry`` as ``RVEA`` (Double encoding), with the extra configuration
   ``weightVectorFilesDirectory`` as MOEA/D. Bundled requests: ``rvea-zdt1-dtlz2-request.yaml``

@@ -36,7 +36,7 @@ budgets. Figures go to `docs/figures/algorithms/`.
 | Algorithm | Encodings | Problems of the experiment | Status |
 |---|---|---|---|
 | RVEA (RVEA, RVEA*, iRVEA) | Double | DTLZ2 (3 and 6 objectives), DTLZ5, DTLZ7, DTLZ2Minus, ZDT1 | First version (`docs/algorithms/rvea.rst`, `example.algorithms.RVEAGuide`), in review |
-| NSGA-II | Double, Binary, Permutation | to be chosen; the reference algorithm of the other guides | Planned (next) |
+| NSGA-II | Double, Binary, Permutation | ZDT1 (steady-state), ZDT4 (crowding distance archive), DTLZ2 (unbounded archive) | First version (`docs/algorithms/nsgaii.rst`, `example.algorithms.NSGAIIGuide`), in review |
 | MOEA/D | Double, Binary, Permutation | to be chosen | Planned |
 | NSGA-III | Double | to be chosen | Planned |
 | SMS-EMOA | Double, Binary, Permutation | to be chosen | Planned |
