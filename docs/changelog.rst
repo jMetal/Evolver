@@ -76,6 +76,9 @@ Added
 Changed
 ~~~~~~~
 
+- The error of a parameter space that lacks a parameter the algorithm requires (for example a
+  top-level parameter removed from ``NSGAIIDouble.yaml``) now says that the space must define it and
+  lists the defined parameters; the behaviour is unchanged: there are no default values
 - ``DoubleRVEA`` no longer takes ``alpha`` and ``fr`` (they are parameters of the parameter
   space), builds the algorithm from jMetal's components instead of ``RVEABuilder`` (with the same
   result, which a test checks), and can read its reference vectors, for each problem, from a

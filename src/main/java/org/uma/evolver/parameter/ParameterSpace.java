@@ -119,7 +119,13 @@ public abstract class ParameterSpace {
   public Parameter<?> get(String parameterName) {
     Parameter<?> parameter = parameterSpace.get(parameterName);
     if (parameter == null) {
-      throw new IllegalArgumentException("Parameter not found: " + parameterName);
+      throw new IllegalArgumentException(
+          "Parameter not found: "
+              + parameterName
+              + ". The parameter space does not define it; a parameter space must define every"
+              + " parameter the algorithm requires (defined: "
+              + new TreeSet<>(parameterSpace.keySet())
+              + ")");
     }
     return parameter;
   }
