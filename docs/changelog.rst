@@ -13,10 +13,12 @@ Added
 
 - The meta-optimizers can be bounded by computing time, in minutes with decimals, instead of by
   meta-evaluations (the two limits are mutually exclusive): ``setMaxComputingTimeMinutes`` in
-  ``MetaNSGAIIBuilder``, ``MetaSPEA2Builder``, ``MetaSMPSOBuilder`` and ``MetaRandomSearchBuilder``,
-  and ``metaMaxComputingTimeMinutes`` in the meta-optimizer configuration files of ``cli.training``
-  (flat and tree encodings; not ``AsyncNSGA-II``). The condition is checked at the beginning of each
-  generation, so the generation in progress is completed; ``status.yaml`` gets
+  ``MetaNSGAIIBuilder``, ``MetaSPEA2Builder``, ``MetaSMPSOBuilder``, ``MetaRandomSearchBuilder``,
+  ``MetaAsyncNSGAIIBuilder`` and ``MetaAsyncGeneticAlgorithmBuilder``, and
+  ``metaMaxComputingTimeMinutes`` in the meta-optimizer configuration files of ``cli.training``
+  (flat and tree encodings, all the meta-optimizers). The condition is checked at the beginning of
+  each generation, so the generation in progress is completed (the asynchronous meta-optimizers check
+  it after every evaluation, once the initial population is evaluated); ``status.yaml`` gets
   ``maxComputingTimeMinutes`` and ``elapsedMinutes``. See ``docs/proposals/meta-termination-by-time.md``
 - Bundled example of a training bounded by computing time:
   ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and

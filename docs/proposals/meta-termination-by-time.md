@@ -2,8 +2,11 @@
 
 **Status:** implemented (2026-10-01) for the builders, the metadata, `cli.training` and the
 convergence plot with elapsed time as an axis (steps 1 to 4 of the plan); pending: Evolver-Studio
-(step 5). `AsyncNSGA-II` does not support the time limit (it does not publish the computing time and
-has no generation to complete): it is rejected with an error. The proposal below is the original
+(step 5). The asynchronous meta-optimizers (`AsyncNSGA-II`, and the asynchronous genetic algorithm
+of the builders) support it too: jMetal's asynchronous algorithms publish `COMPUTING_TIME` after
+every evaluation, so the limit is checked after each one, once the initial population has been
+evaluated; the evaluations in progress when it is reached are discarded, as with the evaluation
+limit. The proposal below is the original
 text, with the decisions taken in review (minutes, mutually exclusive limits).
 
 ## Motivation
@@ -87,7 +90,9 @@ the budget; the strategies should give a readable description. It can be fixed w
   under another load. Mitigation: record the evaluations reached and keep the evaluation limit as the
   default for the tutorials and for validations that must be exact.
 - **Termination in the asynchronous builders.** Check that the clock is read where the evaluation
-  count is today and that in-flight evaluations are not lost.
+  count is today and that in-flight evaluations are not lost. *Resolved:* the clock is read after
+  every evaluation; the in-flight evaluations are discarded when the run stops, as they already were
+  with the evaluation limit.
 
 ## Plan (atomic commits on `develop`)
 

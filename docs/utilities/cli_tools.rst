@@ -117,8 +117,10 @@ The limit is checked at the beginning of each generation, so when it is reached 
 progress is completed before the run stops: the real time exceeds the limit by up to the time of one
 generation (random search works in batches of ``numberOfCores`` evaluations). The initial population
 is always evaluated, even if that takes longer than the limit, in which case no generation is run.
-All the meta-optimizers support it except the asynchronous ``AsyncNSGA-II``, which is rejected with
-an error.
+All the meta-optimizers support it. The asynchronous ``AsyncNSGA-II`` has no generations: it checks
+the limit after every evaluation, once the initial population has been evaluated, so it exceeds the
+limit by up to the time of one evaluation, and the evaluations in progress when it stops are
+discarded.
 
 Output
 ~~~~~~
