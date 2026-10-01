@@ -20,9 +20,24 @@ public final class RunStatusWriter {
   }
 
   private final Path statusFile;
+  private Double maxComputingTimeMinutes;
+  private long startMillis;
 
   public RunStatusWriter(Path statusFile) {
     this.statusFile = statusFile;
+  }
+
+  /**
+   * Declares that the run is bounded by computing time: from now on the status file also has the
+   * limit ({@code maxComputingTimeMinutes}) and the time elapsed since this call ({@code
+   * elapsedMinutes}), and {@code maxEvaluations} is 0 (there is no limit on the evaluations).
+   *
+   * @return this writer
+   */
+  public RunStatusWriter limitComputingTime(double minutes) {
+    this.maxComputingTimeMinutes = minutes;
+    this.startMillis = System.currentTimeMillis();
+    return this;
   }
 
   public void write(State state, int evaluationsDone, int maxEvaluations) {
@@ -34,6 +49,12 @@ public final class RunStatusWriter {
     status.put("status", state.name());
     status.put("evaluationsDone", evaluationsDone);
     status.put("maxEvaluations", maxEvaluations);
+    if (maxComputingTimeMinutes != null) {
+      status.put("maxComputingTimeMinutes", maxComputingTimeMinutes);
+      status.put(
+          "elapsedMinutes",
+          Math.round((System.currentTimeMillis() - startMillis) / 600.0) / 100.0);
+    }
     status.put("updatedAt", LocalDateTime.now().toString());
     if (errorMessage != null) {
       status.put("errorMessage", errorMessage);

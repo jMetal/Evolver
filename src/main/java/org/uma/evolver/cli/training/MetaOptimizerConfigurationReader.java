@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.uma.evolver.meta.builder.ComputingTimeLimit;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -36,7 +37,13 @@ public final class MetaOptimizerConfigurationReader {
    * FlatMetaSearchConfig#operatorFlags()}).
    */
   private static final Set<String> SCALAR_KEYS =
-      Set.of("algorithm", "encoding", "metaMaxEvaluations", "metaPopulationSize", "numberOfCores");
+      Set.of(
+          "algorithm",
+          "encoding",
+          "metaMaxEvaluations",
+          "metaMaxComputingTimeMinutes",
+          "metaPopulationSize",
+          "numberOfCores");
 
   private MetaOptimizerConfigurationReader() {}
 
@@ -54,7 +61,8 @@ public final class MetaOptimizerConfigurationReader {
       case "flat" ->
           new FlatMetaSearchConfig(
               stringValue(data, label, "algorithm"),
-              intValue(data, label, "metaMaxEvaluations"),
+              metaMaxEvaluations(data, label),
+              metaMaxComputingTimeMinutes(data, label),
               optionalIntValue(data, "metaPopulationSize"),
               intValue(data, label, "numberOfCores"),
               operatorFlags(data));
@@ -62,7 +70,8 @@ public final class MetaOptimizerConfigurationReader {
         rejectOffspringSize(data, label);
         yield new TreeMetaSearchConfig(
               stringValue(data, label, "algorithm"),
-              intValue(data, label, "metaMaxEvaluations"),
+              metaMaxEvaluations(data, label),
+              metaMaxComputingTimeMinutes(data, label),
             intValue(data, "metaPopulationSize", MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE),
             intValue(data, label, "numberOfCores"),
             operatorFlags(data));
@@ -75,6 +84,48 @@ public final class MetaOptimizerConfigurationReader {
                   + encoding
                   + ". Expected flat or tree");
     };
+  }
+
+  /**
+   * The limit on the meta-evaluations: required unless {@code metaMaxComputingTimeMinutes} is given
+   * instead (the two limits are mutually exclusive), in which case it is 0.
+   */
+  private static int metaMaxEvaluations(Map<String, Object> data, String label) {
+    rejectBothLimits(data, label);
+    return data.containsKey("metaMaxComputingTimeMinutes")
+        ? 0
+        : intValue(data, label, "metaMaxEvaluations");
+  }
+
+  /** The limit on the computing time in minutes (decimals allowed), or 0 if not given. */
+  private static double metaMaxComputingTimeMinutes(Map<String, Object> data, String label) {
+    if (!data.containsKey("metaMaxComputingTimeMinutes")) {
+      return 0.0;
+    }
+    Object value = data.get("metaMaxComputingTimeMinutes");
+    if (!(value instanceof Number number)) {
+      throw new JMetalException(
+          "Field metaMaxComputingTimeMinutes of meta-optimizer configuration '"
+              + label
+              + "' must be a number of minutes: "
+              + value);
+    }
+    try {
+      return ComputingTimeLimit.checkMinutes(number.doubleValue());
+    } catch (IllegalArgumentException e) {
+      throw new JMetalException(
+          "Meta-optimizer configuration '" + label + "': " + e.getMessage());
+    }
+  }
+
+  private static void rejectBothLimits(Map<String, Object> data, String label) {
+    if (data.containsKey("metaMaxEvaluations") && data.containsKey("metaMaxComputingTimeMinutes")) {
+      throw new JMetalException(
+          "Meta-optimizer configuration '"
+              + label
+              + "': metaMaxEvaluations and metaMaxComputingTimeMinutes are mutually exclusive;"
+              + " give only one of them");
+    }
   }
 
   /**

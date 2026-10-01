@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.cli.BaseAlgorithmRegistry;
@@ -68,6 +69,9 @@ public class TrainingRunner {
     BaseLevelConfig baseLevel = request.baseLevel();
     MetaSearchConfig metaSearch = request.metaSearch();
     RunStatusWriter statusWriter = new RunStatusWriter(statusFile);
+    if (metaSearch.boundedByComputingTime()) {
+      statusWriter.limitComputingTime(metaSearch.metaMaxComputingTimeMinutes());
+    }
 
     try {
       ResolvedTrainingSet trainingSet = resolveTrainingSet(baseLevel);
@@ -198,6 +202,7 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaMaxComputingTimeMinutes(metaSearch.metaMaxComputingTimeMinutes())
             .metaPopulationSize(metaSearch.metaPopulationSize() == null
                 ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
                 : metaSearch.metaPopulationSize())
@@ -227,13 +232,17 @@ public class TrainingRunner {
         nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    long startMillis = System.currentTimeMillis();
     nsgaii.run();
+    long elapsedMillis = System.currentTimeMillis() - startMillis;
+    int finalEvaluations = finalEvaluations(metaSearch, nsgaii.numberOfEvaluations());
 
-    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.updateEvaluations(finalEvaluations);
     outputResults.writeResultsToFiles(nsgaii.result());
+    outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(
-        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+        RunStatusWriter.State.FINISHED, finalEvaluations, metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
   }
@@ -269,6 +278,7 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaMaxComputingTimeMinutes(metaSearch.metaMaxComputingTimeMinutes())
             .metaPopulationSize(metaSearch.metaPopulationSize() == null
                 ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
                 : metaSearch.metaPopulationSize())
@@ -298,13 +308,17 @@ public class TrainingRunner {
         nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    long startMillis = System.currentTimeMillis();
     nsgaii.run();
+    long elapsedMillis = System.currentTimeMillis() - startMillis;
+    int finalEvaluations = finalEvaluations(metaSearch, metaSearch.metaMaxEvaluations());
 
-    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.updateEvaluations(finalEvaluations);
     outputResults.writeResultsToFiles(nsgaii.result());
+    outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(
-        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+        RunStatusWriter.State.FINISHED, finalEvaluations, metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
   }
@@ -340,6 +354,7 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaMaxComputingTimeMinutes(metaSearch.metaMaxComputingTimeMinutes())
             .metaPopulationSize(metaSearch.metaPopulationSize() == null
                 ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
                 : metaSearch.metaPopulationSize())
@@ -369,13 +384,17 @@ public class TrainingRunner {
         smpso.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    long startMillis = System.currentTimeMillis();
     smpso.run();
+    long elapsedMillis = System.currentTimeMillis() - startMillis;
+    int finalEvaluations = finalEvaluations(metaSearch, smpso.numberOfEvaluations());
 
-    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.updateEvaluations(finalEvaluations);
     outputResults.writeResultsToFiles(smpso.result());
+    outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(
-        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+        RunStatusWriter.State.FINISHED, finalEvaluations, metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
   }
@@ -411,6 +430,7 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName(metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaMaxComputingTimeMinutes(metaSearch.metaMaxComputingTimeMinutes())
             .metaPopulationSize(0) // RandomSearch has no population concept
             .numberOfCores(metaSearch.numberOfCores())
             .baseLevelAlgorithmName(baseLevel.algorithmName())
@@ -442,13 +462,17 @@ public class TrainingRunner {
         trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    long startMillis = System.currentTimeMillis();
     randomSearch.run();
+    long elapsedMillis = System.currentTimeMillis() - startMillis;
+    int finalEvaluations = finalEvaluations(metaSearch, randomSearch.numberOfEvaluations());
 
-    outputResults.updateEvaluations(metaSearch.metaMaxEvaluations());
+    outputResults.updateEvaluations(finalEvaluations);
     outputResults.writeResultsToFiles(randomSearch.result());
+    outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(
-        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+        RunStatusWriter.State.FINISHED, finalEvaluations, metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
   }
@@ -490,6 +514,7 @@ public class TrainingRunner {
         MetaOptimizerConfig.builder()
             .metaOptimizerName("Tree" + metaSearch.algorithm())
             .metaMaxEvaluations(metaSearch.metaMaxEvaluations())
+            .metaMaxComputingTimeMinutes(metaSearch.metaMaxComputingTimeMinutes())
             // RandomSearch has no population concept
             .metaPopulationSize(randomSearch ? 0 : metaSearch.metaPopulationSize())
             .numberOfCores(metaSearch.numberOfCores())
@@ -515,12 +540,16 @@ public class TrainingRunner {
         engine.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
+    long startMillis = System.currentTimeMillis();
     engine.run().run();
+    long elapsedMillis = System.currentTimeMillis() - startMillis;
+    int finalEvaluations = finalEvaluations(metaSearch, engine.evaluations().getAsInt());
 
-    outputResults.writeFinalResults(engine.result().get(), metaSearch.metaMaxEvaluations());
+    outputResults.writeFinalResults(engine.result().get(), finalEvaluations);
+    outputResults.writeWallClockTime(elapsedMillis);
 
     statusWriter.write(
-        RunStatusWriter.State.FINISHED, metaSearch.metaMaxEvaluations(), metaSearch.metaMaxEvaluations());
+        RunStatusWriter.State.FINISHED, finalEvaluations, metaSearch.metaMaxEvaluations());
 
     return Path.of(outputDirectory);
   }
@@ -533,7 +562,18 @@ public class TrainingRunner {
   private record TreeEngine(
       Runnable run,
       Supplier<List<DerivationTreeSolution>> result,
+      IntSupplier evaluations,
       Observable<Map<String, Object>> observable) {}
+
+  /**
+   * The meta-evaluations to report at the end of a run: the limit when the meta-optimizer is
+   * bounded by evaluations, and those actually performed when it is bounded by computing time.
+   */
+  private static int finalEvaluations(MetaSearchConfig metaSearch, int evaluationsPerformed) {
+    return metaSearch.boundedByComputingTime()
+        ? evaluationsPerformed
+        : metaSearch.metaMaxEvaluations();
+  }
 
   private static TreeEngine resolveTreeEngine(
       TreeMetaSearchConfig metaSearch, TreeMetaOptimizationProblem<?> metaProblem) {
@@ -541,13 +581,15 @@ public class TrainingRunner {
       case EVOLUTIONARY -> {
         EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
             MetaAlgorithmRegistry.resolveTree(metaSearch.algorithm(), metaProblem, metaSearch);
-        yield new TreeEngine(algorithm::run, algorithm::result, algorithm.observable());
+        yield new TreeEngine(
+            algorithm::run, algorithm::result, algorithm::numberOfEvaluations, algorithm.observable());
       }
       case RANDOM_SEARCH -> {
         RandomSearch<DerivationTreeSolution> algorithm =
             MetaAlgorithmRegistry.resolveTreeRandomSearch(
                 metaSearch.algorithm(), metaProblem, metaSearch);
-        yield new TreeEngine(algorithm::run, algorithm::result, algorithm.observable());
+        yield new TreeEngine(
+            algorithm::run, algorithm::result, algorithm::numberOfEvaluations, algorithm.observable());
       }
       default ->
           throw new JMetalException(

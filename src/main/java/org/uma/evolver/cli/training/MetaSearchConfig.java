@@ -24,7 +24,22 @@ public sealed interface MetaSearchConfig permits FlatMetaSearchConfig, TreeMetaS
   /** The meta-optimizer algorithm to use, resolved via {@link MetaAlgorithmRegistry}. */
   String algorithm();
 
+  /**
+   * The limit on the meta-evaluations, or 0 if the meta-optimizer is bounded by computing time (the
+   * two limits are mutually exclusive).
+   */
   int metaMaxEvaluations();
+
+  /**
+   * The limit on the computing time in minutes (with decimals), or 0 if the meta-optimizer is
+   * bounded by evaluations.
+   */
+  double metaMaxComputingTimeMinutes();
+
+  /** Whether the meta-optimizer is bounded by computing time instead of by evaluations. */
+  default boolean boundedByComputingTime() {
+    return metaMaxComputingTimeMinutes() > 0.0;
+  }
 
   int numberOfCores();
 }

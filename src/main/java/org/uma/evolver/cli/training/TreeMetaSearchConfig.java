@@ -13,6 +13,9 @@ import java.util.List;
  *
  * @param algorithm the meta-optimizer algorithm name, resolved via {@link MetaAlgorithmRegistry}
  *     (only algorithms whose descriptor declares {@code supportsTree})
+ * @param metaMaxEvaluations the limit on the meta-evaluations, or 0 if bounded by computing time
+ * @param metaMaxComputingTimeMinutes the limit on the computing time in minutes, or 0 if bounded
+ *     by evaluations (exactly one of the two limits is given)
  * @param metaPopulationSize ignored by meta-optimizers without a population ({@code RandomSearch})
  * @param operatorFlags the meta-optimizer's own operator configuration (crossover/mutation
  *     probabilities, mutation distribution index, selection, ...), as {@code ["--flag", "value",
@@ -23,7 +26,19 @@ import java.util.List;
 public record TreeMetaSearchConfig(
     String algorithm,
     int metaMaxEvaluations,
+    double metaMaxComputingTimeMinutes,
     int metaPopulationSize,
     int numberOfCores,
     List<String> operatorFlags)
-    implements MetaSearchConfig {}
+    implements MetaSearchConfig {
+
+  /** A configuration bounded by evaluations. */
+  public TreeMetaSearchConfig(
+      String algorithm,
+      int metaMaxEvaluations,
+      int metaPopulationSize,
+      int numberOfCores,
+      List<String> operatorFlags) {
+    this(algorithm, metaMaxEvaluations, 0.0, metaPopulationSize, numberOfCores, operatorFlags);
+  }
+}

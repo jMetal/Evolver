@@ -8,6 +8,9 @@ import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.algorithm.TreeAGEMOEA;
 import org.uma.evolver.meta.algorithm.TreeNSGAII;
+import org.uma.evolver.meta.builder.ComputingTimeLimit;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.Solution;
 import org.uma.evolver.meta.builder.MetaAsyncNSGAIIBuilder;
 import org.uma.evolver.meta.builder.MetaRandomSearchBuilder;
 import org.uma.evolver.meta.builder.MetaSMPSOBuilder;
@@ -280,11 +283,12 @@ final class MetaAlgorithmRegistry {
     requireNoFixedFlags("NSGA-II", config.operatorFlags(), fixedFlags);
 
     DoubleNSGAII metaNSGAII =
-        new DoubleNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+        new DoubleNSGAII(problem, populationSize, nominalEvaluations(config), parameterSpace);
     metaNSGAII.parse(concat(fixedFlags, config.operatorFlags()));
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = metaNSGAII.build();
     nsgaii.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    applyComputingTimeLimit(nsgaii, config);
     return nsgaii;
   }
 
@@ -299,16 +303,22 @@ final class MetaAlgorithmRegistry {
     requireNoFixedFlags("AGE-MOEA", config.operatorFlags(), fixedFlags);
 
     DoubleAGEMOEA metaAGEMOEA =
-        new DoubleAGEMOEA(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+        new DoubleAGEMOEA(problem, populationSize, nominalEvaluations(config), parameterSpace);
     metaAGEMOEA.parse(concat(fixedFlags, config.operatorFlags()));
 
     EvolutionaryAlgorithm<DoubleSolution> agemoea = metaAGEMOEA.build();
     agemoea.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    applyComputingTimeLimit(agemoea, config);
     return agemoea;
   }
 
   private static AsynchronousMultiThreadedNSGAII<DoubleSolution> buildAsyncNSGAII(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
+    if (config.boundedByComputingTime()) {
+      throw new JMetalException(
+          "The asynchronous meta-optimizer AsyncNSGA-II cannot be bounded by computing time: use"
+              + " metaMaxEvaluations");
+    }
     ParameterSpace parameterSpace =
         new YAMLParameterSpace(ASYNC_NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     applyFlags(parameterSpace, config.operatorFlags().toArray(new String[0]));
@@ -340,8 +350,12 @@ final class MetaAlgorithmRegistry {
     var builder =
         new MetaSPEA2Builder(problem)
             .setPopulationSize(populationSize)
-            .setMaxEvaluations(config.metaMaxEvaluations())
             .setNumberOfCores(config.numberOfCores());
+    if (config.boundedByComputingTime()) {
+      builder.setMaxComputingTimeMinutes(config.metaMaxComputingTimeMinutes());
+    } else {
+      builder.setMaxEvaluations(config.metaMaxEvaluations());
+    }
     optionalDoubleFlag(config.operatorFlags(), "--mutationProbabilityFactor")
         .ifPresent(builder::setMutationProbabilityFactor);
     return builder.build();
@@ -353,20 +367,22 @@ final class MetaAlgorithmRegistry {
     int swarmSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
-    return new MetaSMPSOBuilder(problem)
-        .setSwarmSize(swarmSize)
-        .setMaxEvaluations(config.metaMaxEvaluations())
-        .setNumberOfCores(config.numberOfCores())
-        .build();
+    var builder =
+        new MetaSMPSOBuilder(problem)
+            .setSwarmSize(swarmSize)
+            .setNumberOfCores(config.numberOfCores());
+    if (config.boundedByComputingTime()) {
+      builder.setMaxComputingTimeMinutes(config.metaMaxComputingTimeMinutes());
+    } else {
+      builder.setMaxEvaluations(config.metaMaxEvaluations());
+    }
+    return builder.build();
   }
 
   private static RandomSearch<DoubleSolution> buildRandomSearch(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
     requireNoOperatorFlags("RandomSearch", config.operatorFlags());
-    return new MetaRandomSearchBuilder<>(problem)
-        .setMaxEvaluations(config.metaMaxEvaluations())
-        .setNumberOfCores(config.numberOfCores())
-        .build();
+    return randomSearchBuilder(problem, config).build();
   }
 
   private static void requireNoOperatorFlags(String algorithmName, List<String> operatorFlags) {
@@ -461,16 +477,17 @@ final class MetaAlgorithmRegistry {
     EvolutionaryAlgorithm<DerivationTreeSolution> algorithm;
     if (agemoea) {
       var treeAGEMOEA =
-          new TreeAGEMOEA(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+          new TreeAGEMOEA(problem, populationSize, nominalEvaluations(config), parameterSpace);
       treeAGEMOEA.parse(flags);
       algorithm = treeAGEMOEA.build();
     } else {
       var treeNSGAII =
-          new TreeNSGAII(problem, populationSize, config.metaMaxEvaluations(), parameterSpace);
+          new TreeNSGAII(problem, populationSize, nominalEvaluations(config), parameterSpace);
       treeNSGAII.parse(flags);
       algorithm = treeNSGAII.build();
     }
     algorithm.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    applyComputingTimeLimit(algorithm, config);
     return algorithm;
   }
 
@@ -482,10 +499,35 @@ final class MetaAlgorithmRegistry {
           "Meta-optimizer algorithm " + algorithmName + " is not a RandomSearch");
     }
     requireNoOperatorFlags(algorithmName, config.operatorFlags());
-    return new MetaRandomSearchBuilder<>(problem)
-        .setMaxEvaluations(config.metaMaxEvaluations())
-        .setNumberOfCores(config.numberOfCores())
-        .build();
+    return randomSearchBuilder(problem, config).build();
+  }
+
+  private static <S extends Solution<?>> MetaRandomSearchBuilder<S> randomSearchBuilder(
+      Problem<S> problem, MetaSearchConfig config) {
+    var builder = new MetaRandomSearchBuilder<>(problem).setNumberOfCores(config.numberOfCores());
+    if (config.boundedByComputingTime()) {
+      builder.setMaxComputingTimeMinutes(config.metaMaxComputingTimeMinutes());
+    } else {
+      builder.setMaxEvaluations(config.metaMaxEvaluations());
+    }
+    return builder;
+  }
+
+  /**
+   * The evaluations handed to the algorithm constructors: the limit, or a nominal value when the
+   * meta-optimizer is bounded by time (its termination is then replaced, see {@link
+   * #applyComputingTimeLimit}).
+   */
+  private static int nominalEvaluations(MetaSearchConfig config) {
+    return config.boundedByComputingTime() ? 1 : config.metaMaxEvaluations();
+  }
+
+  /** Replaces the termination by evaluations by the one by computing time, if so configured. */
+  private static void applyComputingTimeLimit(
+      EvolutionaryAlgorithm<?> algorithm, MetaSearchConfig config) {
+    if (config.boundedByComputingTime()) {
+      algorithm.termination(ComputingTimeLimit.termination(config.metaMaxComputingTimeMinutes()));
+    }
   }
 
   private static String[] concat(String[] fixedFlags, List<String> requestFlags) {
