@@ -5,6 +5,7 @@ import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -24,8 +25,12 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class AGEMOEAForDTLZ3Example {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "AGEMOEADouble.yaml";
+    DoubleProblem problem = new DTLZ3();
     String referenceFrontFileName = "resources/referenceFronts/DTLZ3.3D.csv";
+
+    String yamlParameterSpaceFile = "AGEMOEADouble.yaml";
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 40000;
 
     String[] parameters =
         """
@@ -47,12 +52,9 @@ public class AGEMOEAForDTLZ3Example {
         """
             .split("\\s+");
 
-    int populationSize = 100;
-    int maximumNumberOfEvaluations = 40000;
-
     var baseAGEMOEA =
         new DoubleAGEMOEA(
-            new DTLZ3(),
+            problem,
             populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));

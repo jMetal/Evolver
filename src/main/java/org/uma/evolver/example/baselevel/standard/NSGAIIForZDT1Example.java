@@ -5,6 +5,7 @@ import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -27,8 +28,12 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class NSGAIIForZDT1Example {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    DoubleProblem problem = new ZDT1();
     String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+
+    String yamlParameterSpaceFile = "NSGAIIDouble.yaml";
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 20000;
 
     String[] parameters =
         """
@@ -49,12 +54,9 @@ public class NSGAIIForZDT1Example {
         """
             .split("\\s+");
 
-    int populationSize = 100;
-    int maximumNumberOfEvaluations = 20000;
-
     var baseNSGAII =
         new DoubleNSGAII(
-            new ZDT1(),
+            problem,
             populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));

@@ -7,77 +7,105 @@ import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
+import org.uma.jmetal.problem.permutationproblem.PermutationProblem;
+import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
-import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.IndicatorPlotObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Class configuring MOEA/D using arguments in the form &lt;key, value&gt;
+ * Runs MOEA/D with PMX crossover and swap mutation on the bi-objective TSP instance KroAB100,
+ * plotting the front and the evolution of the epsilon and HV- indicators as the run advances.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
 public class MOEADBiObjectiveTSPExample {
 
   public static void main(String[] args) throws IOException {
+    PermutationProblem<PermutationSolution<Integer>> problem = new KroAB100TSP();
     String referenceFrontFileName = "resources/referenceFrontsTSP/KroAB100TSP.csv";
 
+    String yamlParameterSpaceFile = "MOEADPermutation.yaml";
+    String weightVectorFilesDirectory = "resources/weightVectors";
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 1000000;
+
     String[] parameters =
-        ("--neighborhoodSize 20 "
-                + "--maximumNumberOfReplacedSolutions 2 "
-                + "--aggregationFunction penaltyBoundaryIntersection "
-                + "--normalizeObjectives true "
-                + "--epsilonParameterForNormalization 6 "
-                + "--pbiTheta 5.0 "
-                + "--algorithmResult population "
-                + "--createInitialSolutions default "
-                + "--subProblemIdGenerator randomPermutationCycle "
-                + "--variation crossoverAndMutationVariation "
-                + "--crossoverProbability 0.9 "
-                + "--mutation swap "
-                + "--mutationProbability 0.08 "
-                + "--crossover PMX "
-                + "--selection populationAndNeighborhoodMatingPoolSelection "
-                + "--neighborhoodSelectionProbability 0.9")
+        """
+        --neighborhoodSize 20
+        --maximumNumberOfReplacedSolutions 2
+        --aggregationFunction penaltyBoundaryIntersection
+        --normalizeObjectives true
+        --epsilonParameterForNormalization 6
+        --pbiTheta 5.0
+        --algorithmResult population
+        --createInitialSolutions default
+        --subProblemIdGenerator randomPermutationCycle
+        --variation crossoverAndMutationVariation
+        --crossover PMX
+        --crossoverProbability 0.9
+        --mutation swap
+        --mutationProbability 0.08
+        --selection populationAndNeighborhoodMatingPoolSelection
+        --neighborhoodSelectionProbability 0.9
+        """
             .split("\\s+");
+
+    int chartUpdateFrequency = 1000;
+    int chartDisplayDelay = 80;
+    int epsilonPlotUpdateFrequency = 100;
+    int hypervolumePlotUpdateFrequency = 1000;
 
     var baseMOEAD =
         new PermutationMOEAD(
-            new KroAB100TSP(),
-            100,
-            1000000,
-            "resources/weightVectors",
-            new YAMLParameterSpace("MOEADPermutation.yaml", new PermutationParameterFactory()));
+            problem,
+            populationSize,
+            maximumNumberOfEvaluations,
+            weightVectorFilesDirectory,
+            new YAMLParameterSpace(yamlParameterSpaceFile, new PermutationParameterFactory()));
 
     baseMOEAD.parse(parameters);
-
-    baseMOEAD.parameterSpace().topLevelParameters().forEach(System.out::println);
-
     EvolutionaryAlgorithm<PermutationSolution<Integer>> moead = baseMOEAD.build();
 
-    RunTimeChartObserver<PermutationSolution<Integer>> runTimeChartObserver =
-        new RunTimeChartObserver<>("MOEA/D", 80, 1000, referenceFrontFileName, "F1", "F2");
-
-    IndicatorPlotObserver<DoubleSolution> indicatorPlotObserver =
-        new IndicatorPlotObserver<>("MOEA/D", new Epsilon(), referenceFrontFileName, 100);
-    IndicatorPlotObserver<DoubleSolution> hvPlotObserver =
-        new IndicatorPlotObserver<>("MOEA/D", new HypervolumeMinus(), referenceFrontFileName, 1000);
-
+    var runTimeChartObserver =
+        new RunTimeChartObserver<PermutationSolution<Integer>>(
+            "MOEA/D",
+            chartDisplayDelay,
+            chartUpdateFrequency,
+            referenceFrontFileName,
+            "F1",
+            "F2");
+    var epsilonPlotObserver =
+        new IndicatorPlotObserver<PermutationSolution<Integer>>(
+            "MOEA/D", new Epsilon(), referenceFrontFileName, epsilonPlotUpdateFrequency);
+    var hypervolumePlotObserver =
+        new IndicatorPlotObserver<PermutationSolution<Integer>>(
+            "MOEA/D", new HypervolumeMinus(), referenceFrontFileName, hypervolumePlotUpdateFrequency);
     moead.observable().register(runTimeChartObserver);
-    moead.observable().register(indicatorPlotObserver);
-    moead.observable().register(hvPlotObserver);
+    moead.observable().register(epsilonPlotObserver);
+    moead.observable().register(hypervolumePlotObserver);
 
     moead.run();
 
-    JMetalLogger.logger.info("Total computing time: " + moead.totalComputingTime());
+    JMetalLogger.logger.info("Total execution time : " + moead.totalComputingTime() + "ms");
+    JMetalLogger.logger.info("Number of evaluations: " + moead.numberOfEvaluations());
 
     new SolutionListOutput(moead.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
+
+    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+
+    QualityIndicatorUtils.printQualityIndicators(
+        SolutionListUtils.getMatrixWithObjectiveValues(moead.result()),
+        VectorUtils.readVectors(referenceFrontFileName, ","));
   }
 }

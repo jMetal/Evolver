@@ -5,6 +5,7 @@ import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -14,6 +15,7 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * Example: running AGE-MOEA (AGE-MOEA-II variant by default) on the ZDT4 problem.
@@ -25,8 +27,12 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 public class AGEMOEAZDT4Example {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "AGEMOEADouble.yaml";
+    DoubleProblem problem = new ZDT4();
     String referenceFrontFileName = "resources/referenceFronts/ZDT4.csv";
+
+    String yamlParameterSpaceFile = "AGEMOEADouble.yaml";
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 25000;
 
     String[] parameters;
     if (args.length > 0) {
@@ -53,12 +59,12 @@ public class AGEMOEAZDT4Example {
               .split("\\s+");
     }
 
-    int populationSize = 100;
-    int maximumNumberOfEvaluations = 25000;
+    int chartUpdateFrequency = 1000;
+    int chartDisplayDelay = 80;
 
     var baseAGEMOEA =
         new DoubleAGEMOEA(
-            new ZDT4(),
+            problem,
             populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
@@ -66,18 +72,27 @@ public class AGEMOEAZDT4Example {
     baseAGEMOEA.parse(parameters);
     EvolutionaryAlgorithm<DoubleSolution> agemoea = baseAGEMOEA.build();
 
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("AGE-MOEA", 80, 1000, referenceFrontFileName, "F1", "F2");
+    var runTimeChartObserver =
+        new RunTimeChartObserver<DoubleSolution>(
+            "AGE-MOEA",
+            chartDisplayDelay,
+            chartUpdateFrequency,
+            referenceFrontFileName,
+            "F1",
+            "F2");
     agemoea.observable().register(runTimeChartObserver);
 
     agemoea.run();
 
-    JMetalLogger.logger.info("Total computing time: " + agemoea.totalComputingTime());
+    JMetalLogger.logger.info("Total execution time : " + agemoea.totalComputingTime() + "ms");
+    JMetalLogger.logger.info("Number of evaluations: " + agemoea.numberOfEvaluations());
 
     new SolutionListOutput(agemoea.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
+
+    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
 
     QualityIndicatorUtils.printQualityIndicators(
         SolutionListUtils.getMatrixWithObjectiveValues(agemoea.result()),

@@ -5,6 +5,7 @@ import org.uma.evolver.algorithm.ssmoea.DoubleSSMOEA;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -26,8 +27,12 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class SSMOEAForZDT1Example {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "SSMOEADouble.yaml";
+    DoubleProblem problem = new ZDT1();
     String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+
+    String yamlParameterSpaceFile = "SSMOEADouble.yaml";
+    int populationSize = 100;
+    int maximumNumberOfEvaluations = 25000;
 
     String[] parameters =
         """
@@ -50,24 +55,21 @@ public class SSMOEAForZDT1Example {
         """
             .split("\\s+");
 
-    int populationSize = 100;
-    int maximumNumberOfEvaluations = 25000;
-
-    var ssmoea =
+    var baseSSMOEA =
         new DoubleSSMOEA(
-            new ZDT1(),
+            problem,
             populationSize,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
 
-    ssmoea.parse(parameters);
-    EvolutionaryAlgorithm<DoubleSolution> algorithm = ssmoea.build();
-    algorithm.run();
+    baseSSMOEA.parse(parameters);
+    EvolutionaryAlgorithm<DoubleSolution> ssmoea = baseSSMOEA.build();
+    ssmoea.run();
 
-    JMetalLogger.logger.info("Total execution time : " + algorithm.totalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.numberOfEvaluations());
+    JMetalLogger.logger.info("Total execution time : " + ssmoea.totalComputingTime() + "ms");
+    JMetalLogger.logger.info("Number of evaluations: " + ssmoea.numberOfEvaluations());
 
-    new SolutionListOutput(algorithm.result())
+    new SolutionListOutput(ssmoea.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
@@ -75,7 +77,7 @@ public class SSMOEAForZDT1Example {
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
 
     QualityIndicatorUtils.printQualityIndicators(
-        SolutionListUtils.getMatrixWithObjectiveValues(algorithm.result()),
+        SolutionListUtils.getMatrixWithObjectiveValues(ssmoea.result()),
         VectorUtils.readVectors(referenceFrontFileName, ","));
   }
 }

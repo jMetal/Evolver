@@ -5,6 +5,7 @@ import org.uma.evolver.algorithm.paes.DoublePAES;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicatorUtils;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -24,8 +25,12 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 public class PAESForZDT1Example {
 
   public static void main(String[] args) throws IOException {
-    String yamlParameterSpaceFile = "PAESDouble.yaml";
+    DoubleProblem problem = new ZDT1();
     String referenceFrontFileName = "resources/referenceFronts/ZDT1.csv";
+
+    String yamlParameterSpaceFile = "PAESDouble.yaml";
+    int numberOfSolutionsToFind = 100;
+    int maximumNumberOfEvaluations = 25000;
 
     String[] parameters =
         """
@@ -39,24 +44,21 @@ public class PAESForZDT1Example {
         """
             .split("\\s+");
 
-    int numberOfSolutionsToFind = 100;
-    int maximumNumberOfEvaluations = 25000;
-
-    var paes =
+    var basePAES =
         new DoublePAES(
-            new ZDT1(),
+            problem,
             numberOfSolutionsToFind,
             maximumNumberOfEvaluations,
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
 
-    paes.parse(parameters);
-    EvolutionaryAlgorithm<DoubleSolution> algorithm = paes.build();
-    algorithm.run();
+    basePAES.parse(parameters);
+    EvolutionaryAlgorithm<DoubleSolution> paes = basePAES.build();
+    paes.run();
 
-    JMetalLogger.logger.info("Total execution time : " + algorithm.totalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + algorithm.numberOfEvaluations());
+    JMetalLogger.logger.info("Total execution time : " + paes.totalComputingTime() + "ms");
+    JMetalLogger.logger.info("Number of evaluations: " + paes.numberOfEvaluations());
 
-    new SolutionListOutput(algorithm.result())
+    new SolutionListOutput(paes.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
@@ -64,7 +66,7 @@ public class PAESForZDT1Example {
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
 
     QualityIndicatorUtils.printQualityIndicators(
-        SolutionListUtils.getMatrixWithObjectiveValues(algorithm.result()),
+        SolutionListUtils.getMatrixWithObjectiveValues(paes.result()),
         VectorUtils.readVectors(referenceFrontFileName, ","));
   }
 }

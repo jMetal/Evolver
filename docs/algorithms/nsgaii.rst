@@ -314,7 +314,9 @@ change. The binary and permutation spaces are smaller:
 - ``selection``: only ``tournament`` and ``random``.
 
 There are no default configuration files for these encodings, so the configuration is written
-explicitly. For example, for OneZeroMax (``example.baselevel.standard.NSGAIIOneZeroMaxExample``):
+explicitly. For example, for OneZeroMax
+(``example.baselevel.standard.NSGAIIOneZeroMaxExample`` runs the steady-state version of this
+configuration):
 
 .. code-block:: java
 

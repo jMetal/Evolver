@@ -26,15 +26,30 @@ Clarify (or derive from the request / repository):
 
 **Path:** `src/main/java/org/uma/evolver/example/baselevel/<bucket>/<Name>Example.java`
 
-Follow `AGEMOEAForZDT1Example.java`:
-- Declare `yamlParameterSpaceFile` (e.g. `AGEMOEADouble.yaml`) and `referenceFrontFileName`.
-- Define `parameters` as a text block (triple quotes) with the configuration.
-- Instantiate
-  `new Double<Algo>(problem, populationSize, maxEvaluations, new YAMLParameterSpace(yaml, new DoubleParameterFactory()))`.
-- `parse(parameters)` → `build()` → `run()`.
+Follow `AGEMOEAForZDT1Example.java`. Every value of the example is a local variable at the start of
+`main`, in this order, so that they can be seen at a glance; there are no numbers or file names
+further down:
+
+1. The problem (`DoubleProblem problem = new ZDT1();`) and `referenceFrontFileName`. A problem with
+   parameters names them first (`int numberOfBits = 512;`, then `new OneZeroMax(numberOfBits)`).
+   Problems without a reference front (OneZeroMax) have no `referenceFrontFileName`.
+2. A blank line, then `yamlParameterSpaceFile` (e.g. `AGEMOEADouble.yaml`), the algorithm's own
+   inputs (`weightVectorFilesDirectory`, `referenceVectorDivisions`, …), `populationSize` (or the
+   algorithm's name for it, e.g. `numberOfSolutionsToFind`) and `maximumNumberOfEvaluations`.
+3. A blank line, then `parameters` as a text block (triple quotes) with the configuration.
+4. Only if the example has observers: their frequencies (`evaluationObserverFrequency`,
+   `chartUpdateFrequency`, `chartDisplayDelay`).
+
+Then the procedure:
+
+- `var baseAlgo = new Double<Algo>(problem, populationSize, maximumNumberOfEvaluations, new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));`
+- `baseAlgo.parse(parameters)` → `EvolutionaryAlgorithm<DoubleSolution> algo = baseAlgo.build()` →
+  observers, if any → `algo.run()`.
+- Log the execution time and the number of evaluations.
 - Save with `SolutionListOutput` to `FUN.csv` and `VAR.csv`.
-- Print indicators:
-  `QualityIndicatorUtils.printQualityIndicators(SolutionListUtils.getMatrixWithObjectiveValues(result), VectorUtils.readVectors(referenceFrontFileName, ","))`.
+- Log the random seed and, when there is a reference front, print the indicators:
+  `QualityIndicatorUtils.printQualityIndicators(SolutionListUtils.getMatrixWithObjectiveValues(algo.result()), VectorUtils.readVectors(referenceFrontFileName, ","))`.
+- `System.exit(0)` only after a run with a chart window, to close it.
 
 For Binary/Permutation encodings use the matching factory and YAML
 (`<Algo>Binary.yaml` + `BinaryParameterFactory`, `<Algo>Permutation.yaml` + `PermutationParameterFactory`).

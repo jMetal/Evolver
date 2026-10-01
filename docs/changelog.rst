@@ -156,6 +156,12 @@ Changed
   and solving tools; request files and entry points do not change
 - ``scripts/`` keeps only active, reusable scripts, and is no longer ignored by git; the Python
   dependencies (``scripts/requirements.txt``, ``environment.yml``) are trimmed to what they use
+- The examples of ``example.baselevel.standard`` follow one structure: every value (problem,
+  reference front, parameter space, population size, evaluations, configuration and observer
+  frequencies) is a local variable at the start of ``main``, the configuration is a text block, and
+  they all end by logging the time, the evaluations and the seed, writing ``VAR.csv``/``FUN.csv``
+  and printing the quality indicators when there is a reference front. The ``new-baselevel``
+  command describes the structure
 
 Fixed
 ~~~~~
