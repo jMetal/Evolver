@@ -121,3 +121,25 @@ an ordinal type remains an open question.
 
 Exactly one node per mutation is the convention; mutating each node with probability 1/n (one
 change on average, sometimes several) is an alternative to consider together with question 1.
+
+### 5. Single-valued parameters in the flat encoding (reported, not changed)
+
+A parameter with a single possible value (a categorical with one option, or an integer or real
+range `[a, a]`) is still a gene in [0, 1] of the flat encoding, and the mutation changes it
+without effect: it always decodes to the same value (`floor(v * 1) = 0`). The mutation event and
+the re-evaluation of the identical configuration are wasted, and part of the per-gene probability
+1/n is spent on it. The tree encoding does not have the problem: `TreeMutation` never selects a
+categorical node with a single value. Nobody has counted how many such parameters the YAML
+spaces of `parameterSpaces/` have; the effect grows with the reduced spaces of tutorial E6.
+
+Alternatives considered, none applied:
+
+- Bounds `[0, 0]` for those variables in `MetaOptimizationProblem.variableBounds()`. It works
+  with `PolynomialMutation` and `LinkedPolynomialMutation` (they check `yl == yu`) and with the
+  jMetal operators that clip with `solutionRepair`, but it is not guaranteed for any operator.
+- A mutation decorator that saves and restores those genes: independent of the operator.
+- Using 1/n with n the number of free variables, so the expected number of effective mutations
+  per individual does not drop.
+
+**Decision:** leave it as it is. The experiments so far show no negative effect, and the fronts of
+the meta-optimizers converge quickly, also compared with irace.
