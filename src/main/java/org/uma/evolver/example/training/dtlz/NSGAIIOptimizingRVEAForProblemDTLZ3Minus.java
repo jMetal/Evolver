@@ -10,8 +10,8 @@ import org.uma.evolver.cli.training.TrainingRequest;
 import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Runs NSGA-II with the tree (derivation tree) encoding as meta-optimizer to configure RVEA using
- * problem DTLZ3Minus as training set, through {@link TrainingRunner}.
+ * Runs the asynchronous NSGA-II with the tree (derivation tree) encoding as meta-optimizer to
+ * configure RVEA using problem DTLZ3Minus as training set, through {@link TrainingRunner}.
  *
  * <p>DTLZ3Minus is DTLZ3 with its objectives negated and rescaled (Ishibuchi et al., IEEE TEVC
  * 2017): a multimodal problem (many local fronts, as DTLZ3) whose Pareto front is inverted, so it
@@ -26,7 +26,12 @@ import org.uma.evolver.cli.training.TrainingRunner;
  *
  * <p>The meta-optimizer works directly on derivation trees of {@code RVEADouble.yaml}, with typed
  * subtree crossover and point/subtree mutation, so it never sees the inactive parameters of the
- * flat encoding (for example, the iRVEA parameters when the replacement is RVEA).
+ * flat encoding (for example, the iRVEA parameters when the replacement is RVEA). Being
+ * asynchronous, it does not wait for a whole generation: as soon as a core finishes evaluating a
+ * configuration it creates the next one, which keeps the cores busy when the configurations take
+ * very different times to evaluate. Its selection (binary tournament) and replacement (ranking and
+ * crowding distance) are fixed by the algorithm, so the configuration has no selection fields. The
+ * run stops after 5 minutes on 12 cores; the evaluations in progress at that moment are discarded.
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
@@ -47,7 +52,7 @@ public class NSGAIIOptimizingRVEAForProblemDTLZ3Minus {
 
   private static final String META_SEARCH_YAML =
       """
-      algorithm: NSGA-II
+      algorithm: AsyncNSGA-II
       encoding: tree
       metaMaxComputingTimeMinutes: 5
       metaPopulationSize: 50
@@ -55,8 +60,6 @@ public class NSGAIIOptimizingRVEAForProblemDTLZ3Minus {
       crossoverProbability: 0.9
       mutationProbability: 1.0
       mutationDistributionIndex: 5.0
-      selection: tournament
-      selectionTournamentSize: 2
       """;
 
   private static final String OUTPUT_DIRECTORY = "results/tree-nsgaii/rvea/DTLZ3Minus";

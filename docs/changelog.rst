@@ -25,6 +25,8 @@ Added
   (``AsyncNSGAIIMetaTree.yaml``; its selection and replacement are fixed by the algorithm), bounded
   by meta-evaluations or by computing time. Bundled configuration:
   ``MetaAsyncNSGAIITreeConfiguration.yaml``
+- ``example.training.dtlz.NSGAIIOptimizingRVEAForProblemDTLZ3Minus``: the tree-encoded
+  AsyncNSGA-II tuning RVEA on DTLZ3Minus for 5 minutes on 12 cores
 - Bundled example of a training bounded by computing time:
   ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and
   ``nsgaii-re3d-computing-time-request.yaml``
