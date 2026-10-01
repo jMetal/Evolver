@@ -15,3 +15,6 @@ plotly>=5.0.0
 
 # plot_parameter_space.py
 PyYAML>=6.0
+
+# tests of the scripts (python -m pytest scripts/tests)
+pytest>=7.0

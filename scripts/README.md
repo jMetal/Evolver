@@ -112,12 +112,12 @@ python scripts/plot_parameter_space.py src/main/resources/parameterSpaces/NSGAII
 ## Dependencies
 
 `requirements.txt` (and `../environment.yml`): pandas, numpy and matplotlib for every script, plus
-Plotly for `plot_front_interactive.py` and PyYAML for `plot_parameter_space.py`.
+Plotly for `plot_front_interactive.py`, PyYAML for `plot_parameter_space.py` and pytest for the
+tests.
 
 ## Tests
 
-`tests/` has pytest tests of the time axis of the training plots. From the root of the repository
-(pytest is not in `requirements.txt`; install it with `pip install pytest`):
+`tests/` has pytest tests of the time axis of the training plots. From the root of the repository:
 
 ```bash
 python -m pytest scripts/tests
