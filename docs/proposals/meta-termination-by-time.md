@@ -22,19 +22,24 @@ useful in practice, for three reasons:
 
 ## Proposal
 
-A second, optional termination condition: **maximum computing time**. The two conditions can be
-given together and the run stops at the first one that is met. Evaluations stay the default, so
-existing requests, examples and tutorials do not change.
+A second termination condition: **maximum computing time**, in seconds. The two conditions are
+**mutually exclusive**: a run is bounded either by meta-evaluations or by time, never by both, and a
+configuration that gives both is rejected with an error. Evaluations stay the default, so existing
+requests, examples and tutorials do not change.
 
-- **Mechanism.** jMetal's `TerminationByComputingTime` (jmetal-component) and, for both conditions
-  at once, a composite that stops when any of them is met (to be checked whether jMetal already has
-  one; otherwise a small class in `org.uma.evolver.meta`). The builders get a setter such as
-  `setMaxComputingTime(Duration)` next to `maxEvaluations`; `TreeNSGAII` and `RandomSearch`, which
-  have their own loops, check the clock at the end of each generation.
-- **Granularity.** The meta-optimizers are parallel and generational, so the time is checked
-  between generations: a run can exceed the limit by up to one generation. With 16 cores and long
-  evaluations this can be noticeable; the report (below) states the real elapsed time, and the
-  documentation states the overshoot.
+- **Mechanism.** jMetal's `TerminationByComputingTime` (jmetal-component), which takes the limit in
+  milliseconds; the builders convert the seconds. The builders get a setter such as
+  `setMaxComputingTime(int seconds)` as the alternative to `maxEvaluations`; `TreeNSGAII` and
+  `RandomSearch`, which have their own loops, check the clock at the end of each generation.
+- **Limit in seconds.** An integer number of seconds everywhere (builders, requests, `METADATA.txt`);
+  the metadata also shows it formatted (`1h 0m 0s`), as the wall-clock time does today.
+- **Granularity: the current generation is always completed.** When the limit is reached the
+  generation in progress is not interrupted: the run waits until its evaluations finish and the
+  population is updated, and only then stops. An abrupt stop would leave evaluations lost or a
+  population in an inconsistent state. So the real time exceeds the limit by up to one generation
+  (the time to evaluate one population in parallel). With 16 cores and long evaluations this can be
+  noticeable; the report (below) states the real elapsed time and the documentation states the
+  overshoot.
 - **Budget strategies** (`meta.strategy`, evaluations of the base-level algorithm) are not affected:
   only the stopping rule of the meta level changes.
 - **CLI.** `cli.training` requests accept `maxComputingTime` (for example in seconds or as an ISO
@@ -49,13 +54,14 @@ existing requests, examples and tutorials do not change.
 `METADATA.txt` (written by `ConsolidatedOutputResults` and `TreeOutputResults`) already has the
 configured `Max Evaluations` of the meta-optimizer and, appended at the end, a `--- Execution ---`
 section with the wall-clock time. It must also say **why the run stopped and with what budget**,
-for every run, including those stopped only by evaluations:
+for every run, including those stopped by evaluations:
 
-- in `--- Meta-Optimizer ---`: the configured limits, `Max Evaluations: 2000` (or `none`) and
-  `Max Computing Time: 1h 0m 0s (3600000 ms)` (or `none`);
-- in `--- Execution ---`: `Stopping condition: evaluations | computing time`, the meta-evaluations
-  actually performed and the wall-clock time already written. With the two limits given, the one that
-  stopped the run.
+- in `--- Meta-Optimizer ---`: the stopping condition and its limit, either `Max Evaluations: 2000`
+  or `Max Computing Time: 3600 s (1h 0m 0s)`, and the line `Stopping condition: evaluations` or
+  `Stopping condition: computing time`;
+- in `--- Execution ---`: the meta-evaluations actually performed and the wall-clock time already
+  written, which with a time limit is slightly above the limit (the generation in progress is
+  finished).
 
 This makes a result stopped by time reproducible in intent (same limit) and comparable in fact (the
 evaluations it reached). Studio and the analysis scripts that read `METADATA.txt` need the new
@@ -75,8 +81,9 @@ the budget; the strategies should give a readable description. It can be fixed w
 
 ## Plan (atomic commits on `develop`)
 
-1. Maximum computing time in the builders and in `TreeNSGAII`/`RandomSearch`, with the composite
-   condition, and tests (short limit, both limits, evaluations only).
+1. Maximum computing time in the builders and in `TreeNSGAII`/`RandomSearch`, with the error when
+   both conditions are given, and tests (short limit, the generation in progress completes,
+   evaluations only, both given).
 2. `METADATA.txt`: limits and stopping condition in the two writers, readable description of the
    evaluation strategies, tests; changelog.
 3. `cli.training`: the request field, documentation in `docs/utilities/cli_tools.rst`, bundled
@@ -86,6 +93,5 @@ the budget; the strategies should give a readable description. It can be fixed w
 
 ## Open questions
 
-- Format of the limit in requests (seconds, ISO 8601 duration, or `1h30m`).
 - Whether a time-only run should require a minimum number of generations.
 - Whether the validation studies of the papers move to time budgets, and with which values.
