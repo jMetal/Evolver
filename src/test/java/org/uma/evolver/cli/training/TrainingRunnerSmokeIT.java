@@ -313,4 +313,24 @@ class TrainingRunnerSmokeIT {
       assertRunFinished(request, tempDir);
     }
   }
+
+  @Nested
+  @DisplayName("Given AsyncNSGA-II (tree encoding)")
+  class AsyncNsgaIITree {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      TreeMetaSearchConfig metaSearch =
+          smokeTreeMetaSearch("MetaAsyncNSGAIITreeConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
 }

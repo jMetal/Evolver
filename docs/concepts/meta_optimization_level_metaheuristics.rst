@@ -46,8 +46,8 @@ Available Meta-Optimizers
      - ``MetaSMPSOBuilder``; requires a continuous (``DoubleProblem``) meta-problem
    * - Async NSGA-II
      - Yes
-     - No
-     - ``MetaAsyncNSGAIIBuilder``; asynchronous parallel evaluation (see below)
+     - Yes
+     - ``MetaAsyncNSGAIIBuilder`` (flat); asynchronous parallel evaluation (see below). With the tree encoding, jMetal's ``AsynchronousMultiThreadedNSGAII`` with subtree crossover and tree mutation (``AsyncNSGAIIMetaTree.yaml``)
    * - Random Search
      - Yes
      - Yes

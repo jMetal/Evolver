@@ -423,7 +423,7 @@ Example output
    - name: AsyncNSGA-II
      family: ASYNCHRONOUS
      supportsFlat: true
-     supportsTree: false
+     supportsTree: true
      operatorParameterSpaceFile: AsyncNSGAIIMetaDouble.yaml
      hardcodedOperatorFlags: []
    - name: SMPSO

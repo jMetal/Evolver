@@ -585,8 +585,9 @@ public class TrainingRunner {
 
   /**
    * The parts of a tree-encoding meta-optimizer {@link #runTree} needs. The registered engines
-   * ({@link EvolutionaryAlgorithm}, {@link RandomSearch}) share no common supertype exposing
-   * {@code run()}/{@code result()}/{@code observable()}, so they are adapted to this record.
+   * ({@link EvolutionaryAlgorithm}, {@link RandomSearch}, {@link AsynchronousMultiThreadedNSGAII})
+   * share no common supertype exposing {@code run()}/{@code result()}/{@code observable()}, so they
+   * are adapted to this record.
    */
   private record TreeEngine(
       Runnable run,
@@ -619,6 +620,17 @@ public class TrainingRunner {
                 metaSearch.algorithm(), metaProblem, metaSearch);
         yield new TreeEngine(
             algorithm::run, algorithm::result, algorithm::numberOfEvaluations, algorithm.observable());
+      }
+      case ASYNCHRONOUS -> {
+        AsynchronousMultiThreadedNSGAII<DerivationTreeSolution> algorithm =
+            MetaAlgorithmRegistry.resolveTreeAsync(metaSearch.algorithm(), metaProblem, metaSearch);
+        // The asynchronous algorithm has no getter for its evaluations: keep the last one it
+        // published
+        var evaluationsPerformed = new AtomicInteger();
+        algorithm.observable().register((observable, data) ->
+            evaluationsPerformed.set((int) data.get("EVALUATIONS")));
+        yield new TreeEngine(
+            algorithm::run, algorithm::result, evaluationsPerformed::get, algorithm.observable());
       }
       default ->
           throw new JMetalException(

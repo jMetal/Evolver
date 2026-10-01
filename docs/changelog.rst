@@ -20,6 +20,11 @@ Added
   each generation, so the generation in progress is completed (the asynchronous meta-optimizers check
   it after every evaluation, once the initial population is evaluated); ``status.yaml`` gets
   ``maxComputingTimeMinutes`` and ``elapsedMinutes``. See ``docs/proposals/meta-termination-by-time.md``
+- ``AsyncNSGA-II`` supports the tree encoding in ``cli.training`` (``encoding: tree``): jMetal's
+  ``AsynchronousMultiThreadedNSGAII`` on derivation trees, with subtree crossover and tree mutation
+  (``AsyncNSGAIIMetaTree.yaml``; its selection and replacement are fixed by the algorithm), bounded
+  by meta-evaluations or by computing time. Bundled configuration:
+  ``MetaAsyncNSGAIITreeConfiguration.yaml``
 - Bundled example of a training bounded by computing time:
   ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and
   ``nsgaii-re3d-computing-time-request.yaml``

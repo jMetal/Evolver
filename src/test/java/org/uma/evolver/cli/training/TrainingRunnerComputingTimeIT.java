@@ -173,7 +173,8 @@ class TrainingRunnerComputingTimeIT {
       strings = {
         "MetaNSGAIITreeConfiguration.yaml",
         "MetaAGEMOEATreeConfiguration.yaml",
-        "MetaRandomSearchTreeConfiguration.yaml"
+        "MetaRandomSearchTreeConfiguration.yaml",
+        "MetaAsyncNSGAIITreeConfiguration.yaml"
       })
   @DisplayName("Given a tree meta-optimizer, when run with a time limit, then it finishes and records it")
   void givenTreeMetaOptimizerWhenRunWithTimeLimitThenItFinishesAndRecordsIt(

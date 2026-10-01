@@ -1,0 +1,33 @@
+# Parameter space for the meta-level Asynchronous NSGA-II with the derivation tree encoding, used by
+# cli.training's MetaAlgorithmRegistry
+# (org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII on
+# DerivationTreeSolution). Parsed with a TreeParameterFactory.
+#
+# As in AsyncNSGAIIMetaDouble.yaml, the algorithm hardcodes its selection (binary tournament) and
+# replacement (ranking + crowding distance) and only accepts a crossover and a mutation operator, so
+# this space declares only those two top-level parameters. The tree encoding has a single crossover
+# (subtree) and a single mutation (tree), fixed by MetaAlgorithmRegistry, so only their
+# probabilities and the mutation distribution index are left to the meta-optimizer configuration
+# file.
+
+crossover:
+  type: categorical
+  globalSubParameters:
+    crossoverProbability:
+      type: double
+      range: [0.0, 1.0]
+  values:
+    subtree: {}
+
+mutation:
+  type: categorical
+  globalSubParameters:
+    mutationProbability:
+      type: double
+      range: [0.0, 1.0]
+  values:
+    tree:
+      conditionalParameters:
+        mutationDistributionIndex:
+          type: double
+          range: [5.0, 400.0]

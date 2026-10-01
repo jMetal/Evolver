@@ -21,13 +21,17 @@ import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.catalogue.crossoverparameter.CrossoverParameter;
 import org.uma.evolver.parameter.catalogue.crossoverparameter.DoubleCrossoverParameter;
 import org.uma.evolver.parameter.catalogue.mutationparameter.DoubleMutationParameter;
+import org.uma.evolver.parameter.catalogue.mutationparameter.MutationParameter;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.MultiThreadedEvaluation;
+import org.uma.jmetal.component.catalogue.common.termination.Termination;
+import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
@@ -87,10 +91,11 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>For the tree encoding, {@link #resolveTree} builds {@code "NSGA-II"} and {@code "AGE-MOEA"}
  * on {@link TreeNSGAII}/{@link TreeAGEMOEA} ({@code NSGAIIMetaTree.yaml}/{@code
- * AGEMOEAMetaTree.yaml}, with subtree crossover and tree mutation), and {@link
- * #resolveTreeRandomSearch} builds {@code "RandomSearch"}. The remaining engines are flat-only:
- * {@code "SMPSO"} needs a {@code DoubleProblem}, and {@code "SPEA2"}/{@code "AsyncNSGA-II"} are
- * built with {@code DoubleSolution} operators.
+ * AGEMOEAMetaTree.yaml}, with subtree crossover and tree mutation), {@link #resolveTreeAsync}
+ * builds {@code "AsyncNSGA-II"} on {@link AsynchronousMultiThreadedNSGAII} with the same two
+ * operators ({@code AsyncNSGAIIMetaTree.yaml}), and {@link #resolveTreeRandomSearch} builds
+ * {@code "RandomSearch"}. The remaining engines are flat-only: {@code "SMPSO"} needs a {@code
+ * DoubleProblem}, and {@code "SPEA2"} is built with {@code DoubleSolution} operators.
  */
 final class MetaAlgorithmRegistry {
 
@@ -141,7 +146,7 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "AsyncNSGA-II",
               Family.ASYNCHRONOUS,
-              false,
+              true,
               "AsyncNSGAIIMetaDouble.yaml",
               List.of()),
           new MetaAlgorithmDescriptor(
@@ -171,6 +176,17 @@ final class MetaAlgorithmRegistry {
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
+
+  /** Hardcoded, not user-facing — see class javadoc. */
+  private static final String ASYNC_NSGAII_TREE_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaTree.yaml";
+
+  /**
+   * The operator flags of the tree-encoded AsyncNSGA-II: its crossover and mutation are fixed
+   * ({@code subtree}, {@code tree}), and so are its selection and replacement, hardcoded by the
+   * algorithm.
+   */
+  private static final List<String> ASYNC_NSGAII_TREE_OPERATOR_FLAGS =
+      List.of("--crossoverProbability", "--mutationProbability", "--mutationDistributionIndex");
 
   /**
    * Meta population size used when a meta-optimizer configuration omits {@code
@@ -489,6 +505,42 @@ final class MetaAlgorithmRegistry {
     algorithm.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
     applyComputingTimeLimit(algorithm, config);
     return algorithm;
+  }
+
+  static AsynchronousMultiThreadedNSGAII<DerivationTreeSolution> resolveTreeAsync(
+      String algorithmName, TreeMetaOptimizationProblem<?> problem, TreeMetaSearchConfig config) {
+    validateTreeAlgorithm(algorithmName);
+    if (familyOf(algorithmName) != Family.ASYNCHRONOUS) {
+      throw new JMetalException(
+          "Meta-optimizer algorithm " + algorithmName + " is not an AsynchronousMultiThreadedNSGAII");
+    }
+    requireOnlyFlags(algorithmName, config.operatorFlags(), ASYNC_NSGAII_TREE_OPERATOR_FLAGS);
+
+    ParameterSpace parameterSpace =
+        new YAMLParameterSpace(ASYNC_NSGAII_TREE_PARAMETER_SPACE_FILE, new TreeParameterFactory());
+    applyFlags(
+        parameterSpace,
+        concat(new String[] {"--crossover", "subtree", "--mutation", "tree"}, config.operatorFlags()));
+    var crossoverParameter =
+        (CrossoverParameter<DerivationTreeSolution>) parameterSpace.get("crossover");
+    var mutationParameter =
+        (MutationParameter<DerivationTreeSolution>) parameterSpace.get("mutation");
+    mutationParameter.addNonConfigurableSubParameter(
+        "treeSolutionGenerator", problem.solutionGenerator());
+
+    int populationSize = config.metaPopulationSize();
+    Termination termination =
+        config.boundedByComputingTime()
+            ? ComputingTimeLimit.asynchronousTermination(
+                config.metaMaxComputingTimeMinutes(), populationSize)
+            : new TerminationByEvaluations(config.metaMaxEvaluations());
+    return new AsynchronousMultiThreadedNSGAII<>(
+        config.numberOfCores(),
+        problem,
+        populationSize,
+        crossoverParameter.getCrossover(),
+        mutationParameter.getMutation(),
+        termination);
   }
 
   static RandomSearch<DerivationTreeSolution> resolveTreeRandomSearch(

@@ -305,6 +305,38 @@ class MetaAlgorithmRegistryTest {
 
     @Test
     @DisplayName(
+        "given AsyncNSGA-II with a selection operator flag, when resolveTreeAsync is called, then"
+            + " it fails because its selection is fixed by the algorithm")
+    void givenAsyncNsgaIIWithSelectionFlag_whenResolveTreeAsyncCalled_thenItFails() {
+      // Arrange
+      var config =
+          new TreeMetaSearchConfig(
+              "AsyncNSGA-II", 1000, 50, 1, List.of("--selection", "tournament"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class,
+              () -> MetaAlgorithmRegistry.resolveTreeAsync("AsyncNSGA-II", null, config));
+      assertTrue(exception.getMessage().contains("selection"));
+    }
+
+    @Test
+    @DisplayName(
+        "given NSGA-II, when resolveTreeAsync is called, then it fails because it is not"
+            + " asynchronous")
+    void givenNsgaII_whenResolveTreeAsyncCalled_thenItFails() {
+      // Arrange
+      var config = new TreeMetaSearchConfig("NSGA-II", 1000, 50, 1, List.of());
+
+      // Act & Assert
+      assertThrows(
+          JMetalException.class,
+          () -> MetaAlgorithmRegistry.resolveTreeAsync("NSGA-II", null, config));
+    }
+
+    @Test
+    @DisplayName(
         "given RandomSearch with operator flags, when resolveTreeRandomSearch is called, then it"
             + " fails because RandomSearch exposes no operator catalogue")
     void givenRandomSearchWithFlags_whenResolveTreeRandomSearchCalled_thenItFails() {

@@ -1,0 +1,16 @@
+# Meta configuration of Asynchronous NSGA-II with tree (derivation tree) encoding
+#
+# The operator fields below are parsed against AsyncNSGAIIMetaTree.yaml. Crossover (subtree) and
+# mutation (tree) are fixed by MetaAlgorithmRegistry, and the selection (binary tournament) and
+# replacement (ranking + crowding distance) by the algorithm, so there is no selection field.
+
+algorithm: AsyncNSGA-II
+encoding: tree
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8
+
+crossoverProbability: 0.9
+mutationProbability: 1.0
+mutationDistributionIndex: 5.0   # provisional; its value is to be studied (docs/proposals/tree-mutation.md)
