@@ -1,6 +1,10 @@
 # Termination of the meta-optimizers by computing time
 
-**Status:** proposal (2026-10-01), nothing implemented. Open for review before any code.
+**Status:** implemented (2026-10-01) for the builders, the metadata and `cli.training` (steps 1 to 3
+of the plan); pending: the convergence plot with elapsed time as an axis (step 4) and Evolver-Studio
+(step 5). `AsyncNSGA-II` does not support the time limit (it does not publish the computing time and
+has no generation to complete): it is rejected with an error. The proposal below is the original
+text, with the decisions taken in review (minutes, mutually exclusive limits).
 
 ## Motivation
 

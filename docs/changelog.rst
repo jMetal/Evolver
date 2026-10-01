@@ -11,6 +11,17 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- The meta-optimizers can be bounded by computing time, in minutes with decimals, instead of by
+  meta-evaluations (the two limits are mutually exclusive): ``setMaxComputingTimeMinutes`` in
+  ``MetaNSGAIIBuilder``, ``MetaSPEA2Builder``, ``MetaSMPSOBuilder`` and ``MetaRandomSearchBuilder``,
+  and ``metaMaxComputingTimeMinutes`` in the meta-optimizer configuration files of ``cli.training``
+  (flat and tree encodings; not ``AsyncNSGA-II``). The condition is checked at the beginning of each
+  generation, so the generation in progress is completed; ``status.yaml`` gets
+  ``maxComputingTimeMinutes`` and ``elapsedMinutes``. See ``docs/proposals/meta-termination-by-time.md``
+- ``METADATA.txt`` states the stopping condition of the meta-optimizer (``Max Evaluations`` or
+  ``Max Computing Time``, and ``Stopping condition``) and, in its ``Execution`` section, the
+  meta-evaluations performed; the runs of ``cli.training`` now write that section too, with the
+  wall-clock time
 - Add the reference front of MaF08 with three objectives (``MaF08.3D.csv``), the image of its
   Pareto set (a triangle in the decision space), used by the RVEA guide
 - Add the :ref:`algorithm guides <algorithm_guides>`, one per base-level algorithm, with where it

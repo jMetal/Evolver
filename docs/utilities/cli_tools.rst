@@ -97,6 +97,26 @@ fields:
      - When ``true``, also writes the whole population of the meta-optimizer at every checkpoint to
        ``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv``
 
+Bounding the meta-optimizer by time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The meta-optimizer stops after a number of meta-evaluations (``metaMaxEvaluations`` in its
+configuration file) **or** after a computing time, in minutes (``metaMaxComputingTimeMinutes``,
+with decimals allowed, for example ``7.5``). The two keys are mutually exclusive: give exactly one
+of them. For example, a copy of ``MetaNSGAIIFlatConfiguration.yaml`` that runs for an hour and a
+half replaces ``metaMaxEvaluations: 2000`` by:
+
+.. code-block:: yaml
+
+   metaMaxComputingTimeMinutes: 90
+
+The limit is checked at the beginning of each generation, so when it is reached the generation in
+progress is completed before the run stops: the real time exceeds the limit by up to the time of one
+generation (random search works in batches of ``numberOfCores`` evaluations). The initial population
+is always evaluated, even if that takes longer than the limit, in which case no generation is run.
+All the meta-optimizers support it except the asynchronous ``AsyncNSGA-II``, which is rejected with
+an error.
+
 Output
 ~~~~~~
 
@@ -109,6 +129,9 @@ While running, ``status.yaml`` is updated every ``statusFrequency`` evaluations:
    maxEvaluations: 2000
    updatedAt: '2026-09-18T09:49:41.123456'
 
+With a time limit, ``maxEvaluations`` is ``0`` (there is no limit on the evaluations) and the file
+also has ``maxComputingTimeMinutes`` and ``elapsedMinutes``, from which to compute the progress.
+
 On success it ends with ``status: FINISHED``; on failure, ``status: FAILED`` plus an
 ``errorMessage`` field. A ``results.yaml`` file is written next to ``request.yaml``, pointing at
 the output files:
@@ -120,7 +143,9 @@ the output files:
    indicatorsFile: results/nsgaii/ZDT4/INDICATORS.csv
    configurationsFile: results/nsgaii/ZDT4/CONFIGURATIONS.csv
 
-In the output directory, ``METADATA.txt`` has the settings of the run; ``INDICATORS.csv``,
+In the output directory, ``METADATA.txt`` has the settings of the run, including the stopping
+condition (``Max Evaluations`` or ``Max Computing Time``, and ``Stopping condition``) and, in its
+``Execution`` section, the wall-clock time and the meta-evaluations performed; ``INDICATORS.csv``,
 ``CONFIGURATIONS.csv`` and ``VAR_CONF.txt`` have, every ``writeFrequency`` evaluations, the
 **non-dominated** configurations of the meta-optimizer's population, with their indicator values,
 their parameter values and their configuration strings. With ``writePopulation: true``,
