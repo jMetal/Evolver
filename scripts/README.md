@@ -26,7 +26,7 @@ pip install -r scripts/requirements.txt
 | `plot_front.py` | Plots one front (a `FUN.csv`) against its reference front: 2D, 3D, or parallel coordinates for more objectives. Static PNG (matplotlib). |
 | `plot_front_interactive.py` | Same as `plot_front.py`, as an interactive Plotly figure (in the browser, or a self-contained HTML file). |
 | `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
-| `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. |
+| `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. With `--x time`, the x axis is the computing time of the meta-optimizer. |
 | `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. |
 | `critical_difference_plots.py` | Critical difference plots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): average Friedman ranks, with bars joining the algorithms whose differences are not significant (Nemenyi). Needs `pip install SAES`. |
 | `plot_meta_population.py` | Plots the population of the meta-optimizer at several checkpoints of a training run, in the space of two meta-objectives, with its non-dominated configurations highlighted. Needs a training run with `writePopulation: true`. |
@@ -84,10 +84,24 @@ python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV
 
 # several replications: a directory with one training output directory per replication
 python scripts/plot_training_convergence.py path/to/campaign --primary IGD+ --output-dir plots
+
+# the same over the computing time of the meta-optimizer instead of the meta-evaluations
+python scripts/plot_training_convergence.py path/to/campaign --primary IGD+ --x time
 ```
 
-It writes one `convergence_<indicator>.png` per meta-objective and prints the final value of the
-primary indicator and when 95% of its improvement was reached.
+It writes one `convergence_<indicator>.png` (`convergence_<indicator>_time.png` with `--x time`)
+per meta-objective and prints the final value of the primary indicator and when 95% of its
+improvement was reached.
+
+The time comes from the `# Time (min)` line of each checkpoint of `VAR_CONF.txt`, written by
+Evolver 2.2 and later whatever the stopping condition (older runs only support
+`--x evaluations`). The unit is chosen from the longest run: seconds below 2 minutes, minutes below
+2 hours, hours otherwise. One run is plotted at its own checkpoints; replications, whose
+checkpoints fall at different instants, are pooled at 100 common instants, each run contributing
+the front of its last checkpoint up to that instant. `plot_meta_population.py` also adds the time
+of each checkpoint to its panel titles.
+
+`training_time.py` holds the shared code that reads these times; it is not a script.
 
 ### Parameter spaces
 
@@ -99,3 +113,12 @@ python scripts/plot_parameter_space.py src/main/resources/parameterSpaces/NSGAII
 
 `requirements.txt` (and `../environment.yml`): pandas, numpy and matplotlib for every script, plus
 Plotly for `plot_front_interactive.py` and PyYAML for `plot_parameter_space.py`.
+
+## Tests
+
+`tests/` has pytest tests of the time axis of the training plots. From the root of the repository
+(pytest is not in `requirements.txt`; install it with `pip install pytest`):
+
+```bash
+python -m pytest scripts/tests
+```

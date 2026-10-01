@@ -14,6 +14,8 @@ Usage:
 
 --evaluations defaults to the first, the middle and the last checkpoint. Each panel has its own
 axes, since the population usually spans very different ranges early and late in the training.
+Checkpoints are chosen by meta-evaluation; when VAR_CONF.txt records the computing time of each
+checkpoint (Evolver 2.2 or later), each panel shows it too, in the unit of the whole run.
 """
 
 import argparse
@@ -26,6 +28,8 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
+
+from training_time import checkpoint_minutes, format_time  # noqa: E402
 
 POPULATION_COLOR = "#1f77b4"
 FRONT_COLOR = "#d62728"
@@ -59,6 +63,8 @@ def main() -> None:
     population = checkpoints(population_file)
     front = checkpoints(args.training / "INDICATORS.csv")
 
+    times = checkpoint_minutes(args.training / "VAR_CONF.txt")
+    longest = max(times.values()) if times else 0.0
     available = sorted(population)
     if args.evaluations:
         evaluations = [int(e) for e in args.evaluations.split(",")]
@@ -78,7 +84,10 @@ def main() -> None:
             non_dominated = front[evaluation]
             ax.scatter(non_dominated[args.x], non_dominated[args.y], s=40, facecolors="none",
                        edgecolors=FRONT_COLOR, linewidths=1.5, label="non-dominated")
-        ax.set_title(f"After {evaluation} evaluations", fontsize=10)
+        title = f"After {evaluation} evaluations"
+        if evaluation in times:
+            title += f" ({format_time(times[evaluation], longest)})"
+        ax.set_title(title, fontsize=10)
         ax.set_xlabel(args.x)
         ax.set_ylabel(args.y)
         ax.grid(True, linestyle=":", alpha=0.6)

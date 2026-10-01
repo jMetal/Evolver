@@ -25,6 +25,10 @@ Added
 - Each checkpoint of ``VAR_CONF.txt`` has, after ``# Evaluation: <n>``, the line
   ``# Time (min): <minutes>`` with the computing time of the meta-optimizer, whatever the stopping
   condition
+- ``scripts/plot_training_convergence.py --x time`` plots the convergence over the computing time
+  of the meta-optimizer (unit chosen from the length of the run; replications pooled on a common
+  time grid), and ``scripts/plot_meta_population.py`` adds the time of each checkpoint to its
+  panels. The times come from ``VAR_CONF.txt``; ``scripts/tests`` has their pytest tests
 - Add the reference front of MaF08 with three objectives (``MaF08.3D.csv``), the image of its
   Pareto set (a triangle in the decision space), used by the RVEA guide
 - Add the :ref:`algorithm guides <algorithm_guides>`, one per base-level algorithm, with where it
