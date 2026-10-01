@@ -66,6 +66,11 @@ public class RandomRangeEvaluationsStrategy implements EvaluationBudgetStrategy 
    *
    * @return the minimum evaluations
    */
+  @Override
+  public String toString() {
+    return "Random evaluations in [" + minEvaluations + ", " + maxEvaluations + "]";
+  }
+
   public int getMinEvaluations() {
     return minEvaluations;
   }

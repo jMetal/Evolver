@@ -106,8 +106,10 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.newLine();
             writer.write("Algorithm: " + config.metaOptimizerName());
             writer.newLine();
-            writer.write("Max Evaluations: " + config.metaMaxEvaluations());
-            writer.newLine();
+            for (String line : config.stoppingConditionLines()) {
+                writer.write(line);
+                writer.newLine();
+            }
             writer.write("Population Size: " + config.metaPopulationSize());
             writer.newLine();
             writer.write("Cores: " + config.numberOfCores());
@@ -183,6 +185,8 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.newLine();
             writer.write("Wall-clock time: " + formatDuration(elapsedTimeMillis)
                     + " (" + elapsedTimeMillis + " ms)");
+            writer.newLine();
+            writer.write("Meta-evaluations performed: " + evaluations);
             writer.newLine();
         } catch (IOException e) {
             throw new JMetalException("Error writing wall-clock time", e);

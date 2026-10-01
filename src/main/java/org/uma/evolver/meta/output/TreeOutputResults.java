@@ -135,6 +135,8 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writer.write("Wall-clock time: " + formatDuration(elapsedTimeMillis)
           + " (" + elapsedTimeMillis + " ms)");
       writer.newLine();
+      writer.write("Meta-evaluations performed: " + evaluations);
+      writer.newLine();
     } catch (IOException e) {
       throw new JMetalException(e);
     }
@@ -199,8 +201,10 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writer.newLine();
       writer.write("Encoding: Derivation Tree (GGGP)");
       writer.newLine();
-      writer.write("Max Evaluations: " + config.metaMaxEvaluations());
-      writer.newLine();
+      for (String line : config.stoppingConditionLines()) {
+        writer.write(line);
+        writer.newLine();
+      }
       writer.write("Population Size: " + config.metaPopulationSize());
       writer.newLine();
       writer.write("Cores: " + config.numberOfCores());

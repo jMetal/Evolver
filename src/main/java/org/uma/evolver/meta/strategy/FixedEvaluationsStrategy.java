@@ -56,6 +56,11 @@ public class FixedEvaluationsStrategy implements EvaluationBudgetStrategy {
    *
    * @return the list of evaluation counts
    */
+  @Override
+  public String toString() {
+    return "Fixed evaluations " + evaluations;
+  }
+
   public List<Integer> getEvaluations() {
     return Collections.unmodifiableList(evaluations);
   }
