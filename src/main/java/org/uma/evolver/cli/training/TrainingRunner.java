@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
@@ -307,12 +308,16 @@ public class TrainingRunner {
     nsgaii.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
         nsgaii.observable(), frontPlotFrequency, metaSearch.algorithm(), indicators, trainingSet.label());
+    // The asynchronous algorithm has no getter for its evaluations: keep the last one it published
+    var evaluationsPerformed = new AtomicInteger();
+    nsgaii.observable().register((observable, data) ->
+        evaluationsPerformed.set((int) data.get("EVALUATIONS")));
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
     nsgaii.run();
     long elapsedMillis = System.currentTimeMillis() - startMillis;
-    int finalEvaluations = finalEvaluations(metaSearch, metaSearch.metaMaxEvaluations());
+    int finalEvaluations = finalEvaluations(metaSearch, evaluationsPerformed.get());
 
     outputResults.updateEvaluations(finalEvaluations);
     outputResults.updateComputingTime(elapsedMillis);

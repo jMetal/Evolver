@@ -1,7 +1,6 @@
 package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -17,12 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
 /**
  * Integration tests of training jobs whose meta-optimizer is bounded by computing time: real
- * (tiny-budget) runs of every registered meta-optimizer that supports it, checking the output
+ * (tiny-budget) runs of every registered meta-optimizer, checking the output
  * files, the status file and the stopping condition recorded in {@code METADATA.txt}.
  */
 @DisplayName("TrainingRunner with the meta-optimizer bounded by computing time")
@@ -161,7 +159,8 @@ class TrainingRunnerComputingTimeIT {
         "MetaAGEMOEAFlatConfiguration.yaml",
         "MetaSPEA2FlatConfiguration.yaml",
         "MetaSMPSOFlatConfiguration.yaml",
-        "MetaRandomSearchFlatConfiguration.yaml"
+        "MetaRandomSearchFlatConfiguration.yaml",
+        "MetaAsyncNSGAIIFlatConfiguration.yaml"
       })
   @DisplayName("Given a flat meta-optimizer, when run with a time limit, then it finishes and records it")
   void givenFlatMetaOptimizerWhenRunWithTimeLimitThenItFinishesAndRecordsIt(
@@ -180,28 +179,5 @@ class TrainingRunnerComputingTimeIT {
   void givenTreeMetaOptimizerWhenRunWithTimeLimitThenItFinishesAndRecordsIt(
       String configurationFile, @TempDir Path tempDir) throws IOException {
     assertBoundedByTime(treeBoundedByTime(configurationFile), tempDir);
-  }
-
-  @Test
-  @DisplayName("Given a time limit, when running the asynchronous meta-optimizer, then it is rejected")
-  void givenTimeLimitWhenRunningAsyncMetaOptimizerThenItIsRejected(@TempDir Path tempDir) {
-    // Arrange
-    var request =
-        new TrainingRequest(
-            baseLevel(),
-            flatBoundedByTime("MetaAsyncNSGAIIFlatConfiguration.yaml"),
-            tempDir.resolve("output").toString(),
-            5,
-            5,
-            null);
-
-    // Act
-    var exception =
-        assertThrows(
-            JMetalException.class,
-            () -> new TrainingRunner().run(request, tempDir.resolve("status.yaml")));
-
-    // Assert
-    assertTrue(exception.getMessage().contains("cannot be bounded by computing time"));
   }
 }

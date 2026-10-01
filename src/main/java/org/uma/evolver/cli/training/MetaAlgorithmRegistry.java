@@ -314,11 +314,6 @@ final class MetaAlgorithmRegistry {
 
   private static AsynchronousMultiThreadedNSGAII<DoubleSolution> buildAsyncNSGAII(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
-    if (config.boundedByComputingTime()) {
-      throw new JMetalException(
-          "The asynchronous meta-optimizer AsyncNSGA-II cannot be bounded by computing time: use"
-              + " metaMaxEvaluations");
-    }
     ParameterSpace parameterSpace =
         new YAMLParameterSpace(ASYNC_NSGAII_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     applyFlags(parameterSpace, config.operatorFlags().toArray(new String[0]));
@@ -331,13 +326,18 @@ final class MetaAlgorithmRegistry {
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
-    return new MetaAsyncNSGAIIBuilder(problem)
-        .setPopulationSize(populationSize)
-        .setMaxEvaluations(config.metaMaxEvaluations())
-        .setNumberOfCores(config.numberOfCores())
-        .setCrossover(crossoverParameter.getCrossover())
-        .setMutation(mutationParameter.getMutation())
-        .build();
+    var builder =
+        new MetaAsyncNSGAIIBuilder(problem)
+            .setPopulationSize(populationSize)
+            .setNumberOfCores(config.numberOfCores())
+            .setCrossover(crossoverParameter.getCrossover())
+            .setMutation(mutationParameter.getMutation());
+    if (config.boundedByComputingTime()) {
+      builder.setMaxComputingTimeMinutes(config.metaMaxComputingTimeMinutes());
+    } else {
+      builder.setMaxEvaluations(config.metaMaxEvaluations());
+    }
+    return builder.build();
   }
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildSPEA2(
