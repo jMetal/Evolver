@@ -338,6 +338,37 @@ binary crossover ``HUX`` in the continuous space:
 Both are rejected with a message that names the problem. The first one shows that a conditional
 parameter becomes mandatory as soon as its value is chosen.
 
+Fixing a parameter
+------------------
+
+A parameter space can also be a *reduced* version of a bundled one, for example to tune only some
+parameters of an algorithm. Every top-level parameter of the algorithm must stay in the file: the
+algorithm reads all of them when it is built, and if one is missing the construction fails with
+``Parameter not found: <name>``. There are no default values.
+
+To **fix** a top-level parameter, keep it and give it a single value (a categorical parameter
+with one option, or a numeric range ``[a, a]``). The configuration of that parameter is then
+always the same. These two excerpts of a copy of ``NSGAIIDouble.yaml`` always use a population
+as the result and 100 offspring per generation, and leave the rest of the parameters free:
+
+.. code-block:: yaml
+
+   algorithmResult:
+     type: categorical
+     values:
+       population: {}
+
+   offspringPopulationSize:
+     type: categorical
+     values: [100]
+
+The configuration string must keep the fixed values (``--algorithmResult population
+--offspringPopulationSize 100``): ``DoubleNSGAII`` parses and builds with this space as with the
+bundled one, and the space has 31 parameters instead of 34. In the meta-optimization, a
+parameter fixed this way adds nothing to the search; with the flat encoding it is still a
+variable that the mutation changes without effect, whereas the derivation tree encoding never
+selects it.
+
 Running the tutorial
 --------------------
 
