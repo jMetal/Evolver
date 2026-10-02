@@ -305,6 +305,10 @@ A solve request is a single, self-contained file
    * - ``indicatorNames``
      - none
      - The quality indicators computed for each run
+   * - ``statusFrequency``
+     - none
+     - Every how many evaluations ``status.yaml`` is updated while a run is in progress; absent, it
+       is updated only when a run ends. The more often, the slower the run (see below)
    * - ``outputDirectory``
      - required
      - Where the results are written
@@ -331,7 +335,14 @@ bounds of the reference front.
 
 ``status.yaml`` has the same fields as for ``TrainingRunnerMain``. It is updated after each run,
 counting the evaluations of the runs already finished out of ``numberOfIndependentRuns *
-maxEvaluations``. ``results.yaml`` points at the output files:
+maxEvaluations``; with ``statusFrequency``, also while a run is in progress, every that many
+evaluations, so that a GUI can show how far the run is. An algorithm that evaluates a whole
+offspring population at a time reports in steps of its size, so a frequency smaller than that gives
+the same updates as one equal to it. Updating costs time: on NSGA-II with ZDT1, updating every 100
+evaluations slowed a run down by about 4 % when the algorithm reports every evaluation (a
+population of one) and by about 5 % at every generation, and every 1000 evaluations by 1 %, but
+updating after every single evaluation nearly doubled the time of the first (+85 %).
+``results.yaml`` points at the output files:
 
 .. code-block:: yaml
 

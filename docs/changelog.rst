@@ -11,6 +11,11 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Solve requests (``cli.solving``) accept ``statusFrequency``: every that many evaluations
+  ``status.yaml`` is updated while a run is in progress (``SolveProgressObserver``), counting the
+  evaluations of all the independent runs, so that a GUI can show a progress bar. Absent, the status
+  is updated only when a run ends, as before. Updating more often slows the run down: see
+  ``docs/utilities/cli_tools.rst`` for the cost
 - ``Spread`` and ``GeneralizedSpread`` can be used in the ``indicatorNames`` of training and solve
   requests (``IndicatorRegistry``), and are listed in ``DescribeMain``'s manifest. ``Spread``, Deb's
   diversity indicator, is defined only for two objectives: a request that uses it on a problem with

@@ -58,7 +58,9 @@ Next to the request file, as `cli.training` does: `status.yaml` (`RUNNING`/`FINI
 on success, `results.yaml` pointing at the files above. Since a single run usually takes a second
 or less, the status is updated after each run, not every so many evaluations: `evaluationsDone`
 counts the evaluations of the finished runs out of `numberOfIndependentRuns * maxEvaluations`, so
-the same progress bar works for both tools.
+the same progress bar works for both tools. An optional `statusFrequency` (evaluations) also
+updates it while a run is in progress, through an observer on the algorithm
+(`SolveProgressObserver`); the more often, the slower the run, which is why it is opt-in.
 
 ## Design
 
@@ -92,5 +94,5 @@ seed, `FAILED` status) and a `DescribeMainTest` case for the new schema.
 ## Out of scope
 
 - Parallel independent runs.
-- Progress within a run, and live fronts.
+- Live fronts. (Progress within a run was added afterwards: `statusFrequency`.)
 - Registering more algorithms (see above).
