@@ -9,8 +9,11 @@ org.uma.evolver.algorithm.rdemoea
 org.uma.evolver.algorithm.rvea
 org.uma.evolver.algorithm.smsemoa
 org.uma.evolver.algorithm.ssmoea
+org.uma.evolver.cli
+org.uma.evolver.cli.solving
 org.uma.evolver.cli.training
 org.uma.evolver.cli.training.generators
+org.uma.evolver.example.algorithms
 org.uma.evolver.example.baselevel.features
 org.uma.evolver.example.baselevel.standard
 org.uma.evolver.example.baselevel.tuned
