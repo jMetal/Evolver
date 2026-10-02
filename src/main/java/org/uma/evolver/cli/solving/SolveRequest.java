@@ -36,6 +36,12 @@ import org.uma.evolver.cli.ProblemSpec;
  * @param statusFrequency every how many evaluations {@code status.yaml} is updated while a run is
  *     in progress, or null to update it only when a run ends. The more often, the more the run is
  *     slowed down
+ * @param frontFrequency every how many evaluations the non-dominated front of the run in progress
+ *     is written to {@code CURRENT_FRONT.csv} in the output directory (overwriting the previous
+ *     one), or null to write no front while a run is in progress. Counted in the evaluations of
+ *     each run; the more often, the slower the run
+ * @param writePopulation whether that file holds the whole population instead of only its
+ *     non-dominated solutions, each marked as dominated or not; requires {@code frontFrequency}
  * @param outputDirectory where the results are written
  */
 public record SolveRequest(
@@ -53,4 +59,6 @@ public record SolveRequest(
     Long seed,
     List<String> indicatorNames,
     Integer statusFrequency,
+    Integer frontFrequency,
+    boolean writePopulation,
     String outputDirectory) {}

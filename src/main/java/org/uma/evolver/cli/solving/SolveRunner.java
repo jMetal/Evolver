@@ -87,13 +87,22 @@ public class SolveRunner {
         JMetalRandom.getInstance().setSeed(seed);
 
         long startTime = System.currentTimeMillis();
-        Observer<Map<String, Object>> progressObserver =
-            request.statusFrequency() == null
-                ? null
-                : new SolveProgressObserver(
-                    statusWriter, totalEvaluations, evaluationsDone, request.statusFrequency());
+        List<Observer<Map<String, Object>>> observers = new ArrayList<>();
+        if (request.statusFrequency() != null) {
+          observers.add(
+              new SolveProgressObserver(
+                  statusWriter, totalEvaluations, evaluationsDone, request.statusFrequency()));
+        }
+        if (request.frontFrequency() != null) {
+          observers.add(
+              new SolveFrontObserver(
+                  outputDirectory.resolve(SolveFrontObserver.FILE_NAME),
+                  run,
+                  request.frontFrequency(),
+                  request.writePopulation()));
+        }
         List<? extends Solution<?>> result =
-            runOnce(algorithm, problem, request.maxEvaluations(), configuration, progressObserver);
+            runOnce(algorithm, problem, request.maxEvaluations(), configuration, observers);
         long computingTime = System.currentTimeMillis() - startTime;
 
         writeFront(result, outputDirectory.resolve("run-" + run));
@@ -104,6 +113,7 @@ public class SolveRunner {
         statusWriter.write(RunStatusWriter.State.RUNNING, evaluationsDone, totalEvaluations);
       }
       writeIndicators(indicators, indicatorRows, outputDirectory.resolve("INDICATORS.csv"));
+      Files.deleteIfExists(outputDirectory.resolve(SolveFrontObserver.FILE_NAME));
 
       statusWriter.write(RunStatusWriter.State.FINISHED, totalEvaluations, totalEvaluations);
       return outputDirectory;
@@ -125,17 +135,15 @@ public class SolveRunner {
       Problem<?> problem,
       int maxEvaluations,
       String[] configuration,
-      Observer<Map<String, Object>> progressObserver) {
+      List<Observer<Map<String, Object>>> observers) {
     var instance =
         algorithm
             .createInstance((Problem<S>) problem, maxEvaluations)
             .parse(configuration)
             .build();
-    if (progressObserver != null
-        && instance instanceof ObservableEntity<?> observableAlgorithm) {
-      ((ObservableEntity<Map<String, Object>>) observableAlgorithm)
-          .observable()
-          .register(progressObserver);
+    if (instance instanceof ObservableEntity<?> observableAlgorithm) {
+      var observable = ((ObservableEntity<Map<String, Object>>) observableAlgorithm).observable();
+      observers.forEach(observable::register);
     }
     instance.run();
     return instance.result();

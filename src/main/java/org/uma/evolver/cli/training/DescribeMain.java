@@ -140,6 +140,8 @@ public final class DescribeMain {
     solveRequestDefaults.put("seed", null); // absent: drawn at random
     solveRequestDefaults.put("indicatorNames", null);
     solveRequestDefaults.put("statusFrequency", null); // absent: status updated when a run ends
+    solveRequestDefaults.put("frontFrequency", null); // absent: no front while a run is in progress
+    solveRequestDefaults.put("writePopulation", "false"); // only the non-dominated solutions
 
     Map<String, Object> schemas = new LinkedHashMap<>();
     schemas.put(
