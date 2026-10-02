@@ -60,7 +60,9 @@ or less, the status is updated after each run, not every so many evaluations: `e
 counts the evaluations of the finished runs out of `numberOfIndependentRuns * maxEvaluations`, so
 the same progress bar works for both tools. An optional `statusFrequency` (evaluations) also
 updates it while a run is in progress, through an observer on the algorithm
-(`SolveProgressObserver`); the more often, the slower the run, which is why it is opt-in.
+(`SolveProgressObserver`), and an optional `frontFrequency` writes the current front, or with
+`writePopulation` the whole population, to `CURRENT_FRONT.csv` (`SolveFrontObserver`); the more
+often, the slower the run, which is why both are opt-in.
 
 ## Design
 
@@ -94,5 +96,6 @@ seed, `FAILED` status) and a `DescribeMainTest` case for the new schema.
 ## Out of scope
 
 - Parallel independent runs.
-- Live fronts. (Progress within a run was added afterwards: `statusFrequency`.)
+- Live fronts and progress within a run. (Both were added afterwards: `statusFrequency` and
+  `frontFrequency`, with `writePopulation` to include the dominated solutions.)
 - Registering more algorithms (see above).

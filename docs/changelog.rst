@@ -16,6 +16,12 @@ Added
   evaluations of all the independent runs, so that a GUI can show a progress bar. Absent, the status
   is updated only when a run ends, as before. Updating more often slows the run down: see
   ``docs/utilities/cli_tools.rst`` for the cost
+- Solve requests accept ``frontFrequency``: every that many evaluations of a run, the non-dominated
+  solutions of the run in progress are written to ``CURRENT_FRONT.csv`` in the output directory
+  (``SolveFrontObserver``), overwriting the previous ones and removed when the runs end, so that a GUI
+  can plot how the front evolves; with ``writePopulation: true`` the whole population is written
+  instead, each solution marked as non-dominated or not. Written more often than every 100
+  evaluations it slows the run down noticeably: see ``docs/utilities/cli_tools.rst``
 - ``Spread`` and ``GeneralizedSpread`` can be used in the ``indicatorNames`` of training and solve
   requests (``IndicatorRegistry``), and are listed in ``DescribeMain``'s manifest. ``Spread``, Deb's
   diversity indicator, is defined only for two objectives: a request that uses it on a problem with

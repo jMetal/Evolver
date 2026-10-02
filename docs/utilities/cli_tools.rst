@@ -309,6 +309,15 @@ A solve request is a single, self-contained file
      - none
      - Every how many evaluations ``status.yaml`` is updated while a run is in progress; absent, it
        is updated only when a run ends. The more often, the slower the run (see below)
+   * - ``frontFrequency``
+     - none
+     - Every how many evaluations of a run the current front is written to ``CURRENT_FRONT.csv``
+       while the run is in progress (see below); absent, none is written. The more often, the
+       slower the run
+   * - ``writePopulation``
+     - false
+     - With ``frontFrequency``, write the whole population to that file instead of only its
+       non-dominated solutions
    * - ``outputDirectory``
      - required
      - Where the results are written
@@ -342,6 +351,19 @@ the same updates as one equal to it. Updating costs time: on NSGA-II with ZDT1, 
 evaluations slowed a run down by about 4 % when the algorithm reports every evaluation (a
 population of one) and by about 5 % at every generation, and every 1000 evaluations by 1 %, but
 updating after every single evaluation nearly doubled the time of the first (+85 %).
+
+With ``frontFrequency``, ``CURRENT_FRONT.csv`` in the output directory holds the solutions of the
+run in progress, so that a GUI can plot how the front evolves. It is overwritten each time (it is
+written to a temporary file that is moved over it, so it is never read half-written) and removed
+when the runs end. It is a CSV with a row per solution, ``Run,Evaluations,NonDominated,F1,...,Fm``:
+the run and its evaluations so far (repeated in each row), 1 if the solution is non-dominated
+within the current population and 0 if not, and its objectives. By default only the non-dominated
+solutions are written, so ``NonDominated`` is always 1; with ``writePopulation`` the whole
+population is, dominated solutions included. Writing the front costs more than updating the status,
+since the non-dominated solutions have to be found: on NSGA-II with ZDT1, every 1000 evaluations
+slowed a run down by 11 % (generational) or 3 % (population of one), every 100 by 75 % or 12 %, and
+every single evaluation by 76 % or, with a population of one, more than ten times.
+
 ``results.yaml`` points at the output files:
 
 .. code-block:: yaml
