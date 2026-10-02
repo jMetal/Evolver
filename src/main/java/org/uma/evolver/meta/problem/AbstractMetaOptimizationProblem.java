@@ -206,7 +206,10 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
         evalIndicator.setNumberOfEvaluations(evaluations);
         values[i] = evaluations;
       } else {
-        indicator.referenceFront(normalizedReferenceFronts.get(problemId));
+        // A copy of the rows array: the configurations are evaluated in parallel and share the
+        // normalized reference fronts, and some indicators (jMetal's Spread) sort the reference
+        // front in place, which corrupts it for the other threads mid-sort.
+        indicator.referenceFront(normalizedReferenceFronts.get(problemId).clone());
         double value = indicator.compute(normalizedFront);
         values[i] = Double.isFinite(value) ? value
             : (indicator.isTheLowerTheIndicatorValueTheBetter() ? Double.MAX_VALUE : 0.0);
