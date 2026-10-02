@@ -125,6 +125,54 @@ class ConsolidatedOutputResultsTest {
   }
 
   @Nested
+  @DisplayName("When the final front repeats the last checkpoint: ")
+  class RepeatedFinalCheckpointTestCases {
+
+    @Test
+    @DisplayName(
+        "given a final write with the evaluations of the last checkpoint, when written, then the"
+            + " checkpoint is not repeated")
+    void givenFinalWriteWithSameEvaluations_whenWritten_thenCheckpointIsNotRepeated()
+        throws IOException {
+      // Arrange
+      ConsolidatedOutputResults outputResults = outputResults();
+      outputResults.updateEvaluations(50);
+      outputResults.writeResultsToFiles(population);
+
+      // Act
+      outputResults.updateEvaluations(50);
+      outputResults.writeResultsToFiles(population);
+
+      // Assert
+      assertEquals(2, dataRows("INDICATORS.csv"));
+      assertEquals(
+          1,
+          Files.readAllLines(tempDir.resolve("VAR_CONF.txt")).stream()
+              .filter(line -> line.startsWith("# Evaluation: "))
+              .count());
+    }
+
+    @Test
+    @DisplayName(
+        "given a final write with other evaluations than the last checkpoint, when written, then"
+            + " it is written as a new checkpoint")
+    void givenFinalWriteWithOtherEvaluations_whenWritten_thenItIsWrittenAsNewCheckpoint()
+        throws IOException {
+      // Arrange
+      ConsolidatedOutputResults outputResults = outputResults();
+      outputResults.updateEvaluations(50);
+      outputResults.writeResultsToFiles(population);
+
+      // Act
+      outputResults.updateEvaluations(60);
+      outputResults.writeResultsToFiles(population);
+
+      // Assert
+      assertEquals(4, dataRows("INDICATORS.csv"));
+    }
+  }
+
+  @Nested
   @DisplayName("Time of each checkpoint in VAR_CONF.txt")
   class CheckpointTime {
 

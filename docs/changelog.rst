@@ -175,6 +175,10 @@ Changed
 Fixed
 ~~~~~
 
+- The last checkpoint of ``VAR_CONF.txt``, ``INDICATORS.csv`` and ``CONFIGURATIONS.csv`` was written
+  twice when the last meta-evaluation fell on a periodic checkpoint (for instance, 2000
+  meta-evaluations with a write frequency of 50), because the final front is written once more at
+  the end of the run. It is now written once, in both encodings
 - RVEA's external archive (``algorithmResult`` = ``externalArchive``) was filled only with the
   final population, so it could not add any solution to it and the parameter had almost no effect.
   It is now fed with every evaluated solution, as in the other algorithms

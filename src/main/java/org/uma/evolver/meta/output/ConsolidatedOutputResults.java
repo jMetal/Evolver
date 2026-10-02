@@ -40,6 +40,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
     private int evaluations;
+    /** The evaluations of the last checkpoint written, or -1 if none has been written. */
+    private int lastCheckpointEvaluations = -1;
     private final long creationMillis = System.currentTimeMillis();
     private Long computingTimeMillis;
     private final MetaOptimizationProblem<?> configurableAlgorithmProblem;
@@ -226,6 +228,13 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
     @Override
     public void writeResultsToFiles(List<DoubleSolution> solutions) throws IOException {
+        if (evaluations == lastCheckpointEvaluations) {
+            // The final front is written once more at the end of the run: when its last
+            // meta-evaluation falls on a periodic checkpoint, that checkpoint already holds it
+            computingTimeMillis = null;
+            return;
+        }
+        lastCheckpointEvaluations = evaluations;
         if (!headersWritten) {
             writeHeaders("INDICATORS.csv", "CONFIGURATIONS.csv");
             if (writePopulation) {

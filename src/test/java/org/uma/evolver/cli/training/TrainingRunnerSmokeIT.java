@@ -1,11 +1,13 @@
 package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -331,6 +333,80 @@ class TrainingRunnerSmokeIT {
 
       // Act & Assert
       assertRunFinished(request, tempDir);
+    }
+  }
+
+  /**
+   * The checkpoints of a training are the evaluations that are multiples of the write frequency,
+   * and the final front is written once more at the end of the run. When the last meta-evaluation
+   * falls on a checkpoint, VAR_CONF.txt must not repeat it.
+   */
+  @Nested
+  @DisplayName("Given a limit that is a multiple of the write frequency")
+  class FinalCheckpoint {
+
+    private static final int WRITE_FREQUENCY = 5;
+    private static final int LIMIT = 10;
+
+    private List<String> checkpointsOf(TrainingRequest request, Path tempDir) throws IOException {
+      Path outputDirectory = new TrainingRunner().run(request, tempDir.resolve("status.yaml"));
+      return Files.readAllLines(outputDirectory.resolve("VAR_CONF.txt")).stream()
+          .filter(line -> line.startsWith("# Evaluation: "))
+          .toList();
+    }
+
+    @Test
+    @DisplayName("when NSGA-II (flat encoding) is run, then each checkpoint is written once")
+    void whenFlatRun_thenEachCheckpointIsWrittenOnce(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      FlatMetaSearchConfig configured =
+          (FlatMetaSearchConfig)
+              MetaOptimizerConfigurationReader.load("MetaNSGAIIFlatConfiguration.yaml");
+      var metaSearch =
+          new FlatMetaSearchConfig(
+              configured.algorithm(), LIMIT, WRITE_FREQUENCY, SMOKE_NUMBER_OF_CORES, configured.operatorFlags());
+      var request =
+          new TrainingRequest(
+              smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml"),
+              metaSearch,
+              tempDir.resolve("output").toString(),
+              WRITE_FREQUENCY,
+              WRITE_FREQUENCY,
+              null);
+
+      // Act
+      List<String> checkpoints = checkpointsOf(request, tempDir);
+
+      // Assert
+      assertEquals(checkpoints.stream().distinct().toList(), checkpoints);
+      assertEquals("# Evaluation: " + LIMIT, checkpoints.get(checkpoints.size() - 1));
+    }
+
+    @Test
+    @DisplayName("when NSGA-II (tree encoding) is run, then each checkpoint is written once")
+    void whenTreeRun_thenEachCheckpointIsWrittenOnce(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      TreeMetaSearchConfig configured =
+          (TreeMetaSearchConfig)
+              MetaOptimizerConfigurationReader.load("MetaNSGAIITreeConfiguration.yaml");
+      var metaSearch =
+          new TreeMetaSearchConfig(
+              configured.algorithm(), LIMIT, WRITE_FREQUENCY, SMOKE_NUMBER_OF_CORES, configured.operatorFlags());
+      var request =
+          new TrainingRequest(
+              smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml"),
+              metaSearch,
+              tempDir.resolve("output").toString(),
+              WRITE_FREQUENCY,
+              WRITE_FREQUENCY,
+              null);
+
+      // Act
+      List<String> checkpoints = checkpointsOf(request, tempDir);
+
+      // Assert
+      assertEquals(checkpoints.stream().distinct().toList(), checkpoints);
+      assertEquals("# Evaluation: " + LIMIT, checkpoints.get(checkpoints.size() - 1));
     }
   }
 }
