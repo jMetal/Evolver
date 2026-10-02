@@ -132,6 +132,9 @@
         </dependencies>
         <configuration>
           <useModulePath>false</useModulePath>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
+          </systemPropertyVariables>
           <reportFormat>plain</reportFormat>
           <consoleOutputReporter>
             <disable>true</disable>
@@ -200,6 +203,12 @@
         <version>${maven.failsafe.plugin.version}</version>
         <configuration>
           <useModulePath>false</useModulePath>
+          <!-- The integration tests run whole studies and trainings, which print progress: keep it in
+               target/failsafe-reports/*-output.txt instead of the build output. -->
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
+          </systemPropertyVariables>
         </configuration>
         <executions>
           <execution>
