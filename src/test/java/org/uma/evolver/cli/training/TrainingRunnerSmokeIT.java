@@ -2,6 +2,7 @@ package org.uma.evolver.cli.training;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -121,6 +122,48 @@ class TrainingRunnerSmokeIT {
 
       // Act & Assert
       assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given Spread as an indicator and a training set with three objectives")
+  class SpreadOnThreeObjectives {
+
+    @Test
+    @DisplayName("when run, then it is rejected before the meta-optimizer starts")
+    void whenRun_thenItIsRejectedBeforeStarting(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig dtlz = smokeBaseLevel("DTLZ3DNSGAIIBaseLevel.yaml");
+      BaseLevelConfig baseLevel =
+          new BaseLevelConfig(
+              dtlz.algorithmName(),
+              dtlz.encoding(),
+              dtlz.populationSize(),
+              dtlz.numberOfIndependentRuns(),
+              dtlz.yamlParameterSpaceFile(),
+              dtlz.extraConfig(),
+              dtlz.trainingProblemNames(),
+              dtlz.trainingReferenceFrontFileNames(),
+              dtlz.trainingEvaluations(),
+              List.of("Epsilon", "Spread"));
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel,
+              smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml"),
+              tempDir.resolve("output").toString(),
+              5,
+              5,
+              null);
+      Path statusFile = tempDir.resolve("status.yaml");
+
+      // Act
+      RuntimeException exception =
+          assertThrows(
+              RuntimeException.class, () -> new TrainingRunner(false).run(request, statusFile));
+
+      // Assert
+      assertTrue(exception.getMessage().contains("bi-objective"));
+      assertTrue(Files.readString(statusFile).contains("FAILED"));
     }
   }
 

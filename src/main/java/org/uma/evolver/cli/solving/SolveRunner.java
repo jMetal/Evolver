@@ -63,6 +63,9 @@ public class SolveRunner {
       Problem<?> problem = ProblemRegistry.resolve(request.problem());
       List<QualityIndicator> indicators =
           request.indicatorNames().stream().map(IndicatorRegistry::resolve).toList();
+      for (String indicatorName : request.indicatorNames()) {
+        IndicatorRegistry.checkApplicable(indicatorName, problem.numberOfObjectives());
+      }
       double[][] referenceFront =
           request.referenceFrontFileName() == null
               ? null

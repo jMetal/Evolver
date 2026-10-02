@@ -122,5 +122,38 @@ class SolveRunnerTest {
       assertThrows(RuntimeException.class, () -> new SolveRunner().run(request, statusFile));
       assertTrue(Files.readString(statusFile).contains("FAILED"));
     }
+
+    @Test
+    @DisplayName(
+        "given Spread on a problem with three objectives, when run, then it fails before running")
+    void givenSpreadOnThreeObjectives_whenRun_thenStatusIsFailed() throws IOException {
+      // Arrange
+      SolveRequest valid = nsgaiiOnZdt1(1, 1L, tempDir.resolve("output").toString());
+      SolveRequest request =
+          new SolveRequest(
+              valid.algorithmName(),
+              valid.encoding(),
+              valid.populationSize(),
+              valid.yamlParameterSpaceFile(),
+              valid.extraConfig(),
+              valid.configuration(),
+              valid.configurationFile(),
+              new ProblemSpec("DTLZ2"),
+              "resources/referenceFronts/DTLZ2.3D.csv",
+              valid.maxEvaluations(),
+              valid.numberOfIndependentRuns(),
+              valid.seed(),
+              List.of("Spread"),
+              valid.outputDirectory());
+      Path statusFile = tempDir.resolve("status.yaml");
+
+      // Act
+      RuntimeException exception =
+          assertThrows(RuntimeException.class, () -> new SolveRunner().run(request, statusFile));
+
+      // Assert
+      assertTrue(exception.getMessage().contains("bi-objective"));
+      assertTrue(Files.readString(statusFile).contains("FAILED"));
+    }
   }
 }

@@ -95,6 +95,11 @@ public class TrainingRunner {
       ResolvedTrainingSet trainingSet = resolveTrainingSet(baseLevel);
       List<QualityIndicator> indicators =
           baseLevel.indicatorNames().stream().map(IndicatorRegistry::resolve).toList();
+      for (String indicatorName : baseLevel.indicatorNames()) {
+        for (Problem<?> problem : trainingSet.problems()) {
+          IndicatorRegistry.checkApplicable(indicatorName, problem.numberOfObjectives());
+        }
+      }
       var baseLevelParameterSpace =
           BaseAlgorithmRegistry.resolveParameterSpace(
               baseLevel.encoding(), baseLevel.yamlParameterSpaceFile());
