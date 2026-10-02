@@ -8,7 +8,27 @@ All notable changes to Evolver will be documented in this file.
 2.3-SNAPSHOT
 ------------
 
-No changes yet.
+Added
+~~~~~
+
+- ``Spread`` and ``GeneralizedSpread`` can be used in the ``indicatorNames`` of training and solve
+  requests (``IndicatorRegistry``), and are listed in ``DescribeMain``'s manifest. ``Spread``, Deb's
+  diversity indicator, is defined only for two objectives: a request that uses it on a problem with
+  any other number of objectives is rejected before the run starts
+  (``IndicatorRegistry.checkApplicable``), suggesting ``GeneralizedSpread``
+
+Fixed
+~~~~~
+
+- Each indicator gets its own copy of the normalized reference front in
+  ``AbstractMetaOptimizationProblem``: the configurations are evaluated in parallel and share those
+  fronts, and an indicator that sorts the reference front in place (jMetal's ``Spread``) corrupted
+  it for the other threads
+- The output of the tests no longer floods the build log: ``WriteExecutionDataToFilesObserver`` no
+  longer logs ``EVAlS -> n`` at every checkpoint, ``new TrainingRunner(false)`` skips the evaluation
+  progress log (the integration tests use it), the tests log only warnings
+  (``src/test/resources/logging.properties``), and failsafe writes the output of the integration
+  tests to ``target/failsafe-reports/*-output.txt``
 
 2.2 (2026-10-02)
 ----------------

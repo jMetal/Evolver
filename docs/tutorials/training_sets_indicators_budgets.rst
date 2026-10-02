@@ -100,8 +100,11 @@ The indicators
 
 Other choices are possible: IGD+ (``InvertedGenerationalDistancePlus``) instead of NHV, or HV−
 (``HypervolumeMinus``), which only needs a reference point instead of a reference front and is the
-one to use when there is no reference front (tutorial E10). Two objectives are the usual choice: they
-give a front of configurations that is easy to read and to choose from.
+one to use when there is no reference front (tutorial E10). ``Spread`` and ``GeneralizedSpread``
+measure only how evenly the front is spread, not how close it is to the reference front, so they
+are a complement to a convergence indicator rather than a substitute; ``Spread`` is defined only for
+bi-objective problems, and a request that uses it on any other is rejected. Two objectives are the
+usual choice: they give a front of configurations that is easy to read and to choose from.
 
 The budgets
 ~~~~~~~~~~~

@@ -444,9 +444,11 @@ Example output
    # ... every problem ProblemRegistry resolves
    indicators:
    - Epsilon
+   - GeneralizedSpread
    - HypervolumeMinus
    - InvertedGenerationalDistancePlus
    - NormalizedHypervolume
+   - Spread
    resourceDirectories:
      parameterSpaces: [...]
      baseLevelConfigurations: [...]
