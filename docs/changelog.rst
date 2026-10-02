@@ -173,6 +173,11 @@ Changed
 Fixed
 ~~~~~
 
+- RVEA's external archive (``algorithmResult`` = ``externalArchive``) was filled only with the
+  final population, so it could not add any solution to it and the parameter had almost no effect.
+  It is now fed with every evaluated solution, as in the other algorithms
+  (``SequentialEvaluationWithArchive``), and ``DoubleRVEA.build()`` returns an
+  ``EvolutionaryAlgorithm``
 - ``BinarySMSEMOA`` and ``PermutationSMSEMOA`` could not be built from their parameter spaces: the
   algorithm reads the selection as ``gaSelection`` (renamed in ``SMSEMOADouble.yaml``), but
   ``SMSEMOABinary.yaml`` and ``SMSEMOAPermutation.yaml`` still called it ``selection``, and their

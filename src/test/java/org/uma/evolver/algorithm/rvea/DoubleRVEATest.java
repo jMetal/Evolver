@@ -2,10 +2,13 @@ package org.uma.evolver.algorithm.rvea;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,8 +20,10 @@ import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConfigurationFileReader;
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEABuilder;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEAStarBuilder;
+import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluationWithArchive;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
@@ -166,6 +171,54 @@ class DoubleRVEATest {
 
       // Act & Assert
       assertThrows(RuntimeException.class, rvea::build);
+    }
+  }
+
+  @Nested
+  @DisplayName("When choosing the result of the run")
+  class AlgorithmResultTests {
+
+    private static boolean containsObjectives(List<DoubleSolution> solutions, double[] objectives) {
+      return solutions.stream()
+          .anyMatch(solution -> Arrays.equals(solution.objectives(), objectives));
+    }
+
+    @Test
+    @DisplayName("an external archive is fed with every evaluated solution, as in the other algorithms")
+    void givenUnboundedArchive_whenRun_thenTheArchiveHoldsSolutionsOutsideTheFinalPopulation() {
+      // Arrange
+      JMetalRandom.getInstance().setSeed(1);
+      var rvea =
+          smallRVEA(
+              OPERATORS.replace(
+                      "--algorithmResult population",
+                      "--algorithmResult externalArchive --archiveType unboundedArchive")
+                  + "--replacement rvea");
+
+      // Act
+      EvolutionaryAlgorithm<DoubleSolution> algorithm = rvea.build();
+      algorithm.run();
+
+      // Assert
+      assertInstanceOf(SequentialEvaluationWithArchive.class, algorithm.evaluation());
+      assertTrue(
+          algorithm.result().stream()
+              .anyMatch(
+                  solution -> !containsObjectives(algorithm.population(), solution.objectives())));
+    }
+
+    @Test
+    @DisplayName("without an external archive the result is the final population")
+    void givenPopulationResult_whenRun_thenTheResultIsTheFinalPopulation() {
+      // Arrange
+      var rvea = smallRVEA(OPERATORS + "--replacement rvea");
+
+      // Act
+      EvolutionaryAlgorithm<DoubleSolution> algorithm = rvea.build();
+      algorithm.run();
+
+      // Assert
+      assertEquals(algorithm.population(), algorithm.result());
     }
   }
 

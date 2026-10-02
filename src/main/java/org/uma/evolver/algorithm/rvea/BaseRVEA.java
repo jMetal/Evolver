@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
+import org.uma.evolver.algorithm.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
-import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
+import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
+import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluationWithArchive;
 import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCreation;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RVEAReplacement;
@@ -141,8 +143,13 @@ public abstract class BaseRVEA<S extends Solution<?>> implements BaseLevelAlgori
     return parameterSpace;
   }
 
+  /**
+   * Builds the configured variant. With {@code algorithmResult} = {@code externalArchive}, as in
+   * every other algorithm of Evolver, the archive is fed with every evaluated solution (through a
+   * {@link SequentialEvaluationWithArchive}) and is the result of the run.
+   */
   @Override
-  public Algorithm<List<S>> build() {
+  public EvolutionaryAlgorithm<S> build() {
     Check.notNull(problem, "problem");
     Check.that(problem.numberOfConstraints() == 0, "RVEA requires an unconstrained problem");
     Check.that(
@@ -156,53 +163,21 @@ public abstract class BaseRVEA<S extends Solution<?>> implements BaseLevelAlgori
     Selection<S> selection = createSelection(variation.matingPoolSize());
     RVEAEnvironmentalSelection<S> environmentalSelection =
         createEnvironmentalSelection(variation.offspringPopulationSize());
+    Evaluation<S> evaluation =
+        archive == null
+            ? new SequentialEvaluation<>(problem)
+            : new SequentialEvaluationWithArchive<>(problem, archive);
 
-    EvolutionaryAlgorithm<S> rvea =
-        new EvolutionaryAlgorithm<>(
+    return new EvolutionaryAlgorithmBuilder<S>()
+        .build(
             algorithmName(),
             initialSolutions,
-            new SequentialEvaluation<>(problem),
+            evaluation,
             new TerminationByEvaluations(maximumNumberOfEvaluations),
             selection,
             variation,
-            new RVEAReplacement<>(environmentalSelection));
-
-    if (archive == null) {
-      return rvea;
-    }
-    // The archive is populated from the final population after the run, not from every
-    // intermediate evaluation. Using SequentialEvaluationWithArchive would add all evaluated
-    // solutions (including those from early generations on local Pareto fronts) to the archive,
-    // which for multi-modal problems like DTLZ3 produces a large, low-quality archive.
-    // Populating from the final population ensures the archive only reflects solutions that
-    // survived RVEA's APD-based replacement.
-    return new Algorithm<>() {
-      @Override
-      public void run() {
-        rvea.run();
-        rvea.result().forEach(solution -> archive.add(copyOf(solution)));
-      }
-
-      @Override
-      public List<S> result() {
-        return archive.solutions();
-      }
-
-      @Override
-      public String name() {
-        return rvea.name();
-      }
-
-      @Override
-      public String description() {
-        return rvea.description();
-      }
-    };
-  }
-
-  @SuppressWarnings("unchecked")
-  private S copyOf(S solution) {
-    return (S) solution.copy();
+            new RVEAReplacement<>(environmentalSelection),
+            archive);
   }
 
   /** The name of the configured variant: RVEA, RVEA* or iRVEA. */
