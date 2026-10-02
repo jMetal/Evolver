@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.uma.evolver.cli.ProblemSpec;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
@@ -72,7 +73,22 @@ class SolveRequestYamlLoaderTest {
       assertEquals(1, request.numberOfIndependentRuns());
       assertNull(request.seed());
       assertTrue(request.indicatorNames().isEmpty());
+      assertNull(request.statusFrequency());
       assertTrue(request.extraConfig().isEmpty());
+    }
+
+    @Test
+    @DisplayName("given a statusFrequency, when loaded, then the request has it")
+    void givenStatusFrequency_whenLoaded_thenItIsRead() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + "statusFrequency: 500\n");
+
+      // Act
+      SolveRequest request = SolveRequestYamlLoader.load(requestFile);
+
+      // Assert
+      assertEquals(500, request.statusFrequency());
     }
 
     @Test
@@ -168,6 +184,21 @@ class SolveRequestYamlLoaderTest {
       JMetalException exception =
           assertThrows(JMetalException.class, () -> SolveRequestYamlLoader.load(requestFile));
       assertTrue(exception.getMessage().contains("referenceFrontFileName"));
+    }
+
+    @ParameterizedTest(name = "statusFrequency: {0}")
+    @ValueSource(strings = {"0", "-5", "often", "2.5"})
+    @DisplayName("given a statusFrequency that is not a positive integer, when loaded, then it fails")
+    void givenInvalidStatusFrequency_whenLoaded_thenItFails(String value) throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(
+              REQUIRED_FIELDS + INLINE_CONFIGURATION + "statusFrequency: " + value + "\n");
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(JMetalException.class, () -> SolveRequestYamlLoader.load(requestFile));
+      assertTrue(exception.getMessage().contains("statusFrequency"));
     }
 
     @Test

@@ -1,20 +1,25 @@
 package org.uma.evolver.cli.solving;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.cli.ProblemSpec;
 import org.uma.evolver.util.ConfigurationFileReader;
+import org.yaml.snakeyaml.Yaml;
 
 @DisplayName("Unit tests for class SolveRunner")
 class SolveRunnerTest {
@@ -38,6 +43,7 @@ class SolveRunnerTest {
         runs,
         seed,
         List.of("Epsilon", "NormalizedHypervolume"),
+        null,
         outputDirectory);
   }
 
@@ -92,6 +98,68 @@ class SolveRunnerTest {
   }
 
   @Nested
+  @DisplayName("When running with a statusFrequency: ")
+  class ProgressTestCases {
+
+    @Test
+    @DisplayName("given a statusFrequency, when run, then the status shows progress meanwhile")
+    void givenStatusFrequency_whenRun_thenTheStatusShowsProgressMeanwhile() throws Exception {
+      // Arrange: a run long enough to be seen in progress, polled from another thread
+      SolveRequest valid = nsgaiiOnZdt1(1, 1L, tempDir.resolve("output").toString());
+      int totalEvaluations = 40000;
+      SolveRequest request =
+          new SolveRequest(
+              valid.algorithmName(),
+              valid.encoding(),
+              valid.populationSize(),
+              valid.yamlParameterSpaceFile(),
+              valid.extraConfig(),
+              valid.configuration(),
+              valid.configurationFile(),
+              valid.problem(),
+              valid.referenceFrontFileName(),
+              totalEvaluations,
+              valid.numberOfIndependentRuns(),
+              valid.seed(),
+              valid.indicatorNames(),
+              500,
+              valid.outputDirectory());
+      Path statusFile = tempDir.resolve("status.yaml");
+      List<Integer> observed = Collections.synchronizedList(new ArrayList<>());
+      AtomicBoolean finished = new AtomicBoolean(false);
+      Thread poller =
+          new Thread(
+              () -> {
+                while (!finished.get()) {
+                  try {
+                    Object status = new Yaml().load(Files.readString(statusFile));
+                    if (status instanceof Map<?, ?> map && "RUNNING".equals(map.get("status"))) {
+                      observed.add((Integer) map.get("evaluationsDone"));
+                    }
+                  } catch (Exception e) {
+                    // the file does not exist yet, or is being rewritten: poll again
+                  }
+                }
+              });
+
+      // Act
+      poller.start();
+      new SolveRunner().run(request, statusFile);
+      finished.set(true);
+      poller.join();
+
+      // Assert: intermediate values, between the start and the end, never going back
+      List<Integer> inProgress =
+          observed.stream().filter(done -> done > 0 && done < totalEvaluations).toList();
+      assertFalse(inProgress.isEmpty(), "observed: " + observed);
+      for (int i = 1; i < observed.size(); i++) {
+        assertTrue(observed.get(i) >= observed.get(i - 1), "observed: " + observed);
+      }
+      assertTrue(Files.readString(statusFile).contains("FINISHED"));
+    }
+  }
+
+  @Nested
   @DisplayName("When running an invalid request: ")
   class InvalidRequestTestCases {
 
@@ -115,6 +183,7 @@ class SolveRunnerTest {
               valid.numberOfIndependentRuns(),
               valid.seed(),
               valid.indicatorNames(),
+              valid.statusFrequency(),
               valid.outputDirectory());
       Path statusFile = tempDir.resolve("status.yaml");
 
@@ -144,6 +213,7 @@ class SolveRunnerTest {
               valid.numberOfIndependentRuns(),
               valid.seed(),
               List.of("Spread"),
+              valid.statusFrequency(),
               valid.outputDirectory());
       Path statusFile = tempDir.resolve("status.yaml");
 
