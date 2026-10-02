@@ -27,6 +27,8 @@ Added
   ``MetaAsyncNSGAIITreeConfiguration.yaml``
 - ``example.training.dtlz.AsyncNSGAIIOptimizingRVEAForProblemDTLZ3Minus``: the tree-encoded
   AsyncNSGA-II tuning RVEA on DTLZ3Minus for 5 minutes on 12 cores
+- ``example.training.dtlz.AsyncNSGAIIOptimizingRVEAForBenchmarkDTLZMinus``: the same, tuning RVEA on
+  DTLZ1Minus, DTLZ2Minus and DTLZ3Minus (inverted fronts) for 20 minutes on 18 cores
 - Bundled example of a training bounded by computing time:
   ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and
   ``nsgaii-re3d-computing-time-request.yaml``
