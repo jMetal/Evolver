@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
@@ -41,7 +40,6 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
     int evaluations = (int) data.get("EVALUATIONS");
     if ((evaluations % frequency) == 0) {
       try {
-        JMetalLogger.logger.info("EVAlS -> " + evaluations);
         outputResults.updateEvaluations(evaluations);
         if (data.get("COMPUTING_TIME") instanceof Long computingTime) {
           outputResults.updateComputingTime(computingTime);
