@@ -70,8 +70,8 @@ Two tracks: **solving problems** (configure and run algorithms, jMetal-runner st
 | Id | Level | Track | Tutorial | Description | Pairs with | Status |
 |---|---|---|---|---|---|---|
 | S1 | Introductory | Both | A tour of Evolver-Studio | Installation, connecting to an Evolver checkout or jar, and the pages of the app. | E4 | Planned |
-| S2 | Introductory | Both | Exploring a parameter space | The Explore page: the tree view of a parameter space and the catalogue of algorithms and meta-optimizers. | E1 | First version (Tutorials page, `evolver_studio/tutorial_parameter_spaces.py`), in review |
-| S3 | Introductory | Solving | Solving a problem with a configurable algorithm | Pick a problem, an algorithm and its encoding, and a configuration (default or edited in the guided form); run it; inspect the front and the quality indicators; export `VAR`/`FUN`. | E2 | Blocked (see dependencies) |
+| S2 | Introductory | Both | Exploring a parameter space | The Explore pages: a parameter space as a table with its conditions and a filter, the operators of the meta-optimizers and the quality indicators. | E1 | Version 1.1 (Tutorials page, `evolver_studio/tutorial_parameter_spaces.py`), in review |
+| S3 | Introductory | Solving | Solving a problem with a configurable algorithm | The Run algorithm page: pick a problem, an algorithm and its encoding, and a configuration (default, adjusted within its parameter space); run it; inspect the front, the indicators and the solutions; repeat it, and take it to the command line. Double encoding only. | E2 | First version (Tutorials page, `evolver_studio/tutorial_solving.py`), in review |
 | S4 | Introductory | Meta-optimization | Your first guided training | A ready-made scenario (NSGA-II on ZDT4, small budget) with the live front and the resulting files. Show the stopping condition (evaluations or time) from the start, once the training page has the time field. | E3, E17 | Planned |
 | S5 | Intermediate | Solving | Comparing configurations on a problem | Run several configurations (standard, tuned, custom) with several independent runs each, and compare their indicator distributions and fronts. | E5, E9 | Blocked (see dependencies) |
 | S6 | Intermediate | Solving | Using a tuned configuration | Take a configuration found in a training run and use it to solve a new problem. | E8 | Blocked (see dependencies) |
@@ -84,13 +84,18 @@ Two tracks: **solving problems** (configure and run algorithms, jMetal-runner st
 
 ### Dependencies of the solving track
 
-Evolver-Studio currently only launches training runs (through `cli.training`), and its Validation
-page is not implemented. The solving-track tutorials (S3, S5, S6, S10) need first:
+Evolver-Studio launches training runs (through `cli.training`) and, since its Run algorithm page,
+single runs (through `cli.solving`); its Validation page is not implemented. The solving-track
+tutorials (S3, S5, S6, S10) needed first:
 
 - **Evolver:** a CLI entry point to run a single configurable algorithm on a problem, analogous to
   `cli.training`. Done: `cli.solving.SolveRunnerMain`, see `cli-solving.md`.
-- **Evolver-Studio:** a page to configure and run algorithms on problems (jMetal-runner style),
-  reusing the guided parameter form and the live front already used by Training.
+- **Evolver-Studio:** a page to configure and run algorithms on problems (jMetal-runner style).
+  Done: Run algorithm. It starts from the default configuration of the algorithm and adjusts it
+  within its parameter space, and shows the fronts, the indicators and the solutions of the runs.
+  S5 (comparing configurations) and S6 (a configuration found by a training) still need it to
+  compare runs and to load a configuration from a training; S10 needs problems given by class name,
+  which it does not offer yet.
 
 ## Development order
 
