@@ -44,6 +44,8 @@ class SolveRunnerTest {
         seed,
         List.of("Epsilon", "NormalizedHypervolume"),
         null,
+        null,
+        false,
         outputDirectory);
   }
 
@@ -123,6 +125,8 @@ class SolveRunnerTest {
               valid.seed(),
               valid.indicatorNames(),
               500,
+              valid.frontFrequency(),
+              valid.writePopulation(),
               valid.outputDirectory());
       Path statusFile = tempDir.resolve("status.yaml");
       List<Integer> observed = Collections.synchronizedList(new ArrayList<>());
@@ -160,6 +164,63 @@ class SolveRunnerTest {
   }
 
   @Nested
+  @DisplayName("When running with a frontFrequency: ")
+  class FrontTestCases {
+
+    @Test
+    @DisplayName("given a frontFrequency, when run, then the current front is written meanwhile")
+    void givenFrontFrequency_whenRun_thenTheCurrentFrontIsWrittenMeanwhile() throws Exception {
+      // Arrange: a run long enough to be seen in progress, polled from another thread
+      SolveRequest valid = nsgaiiOnZdt1(1, 1L, tempDir.resolve("output").toString());
+      SolveRequest request =
+          new SolveRequest(
+              valid.algorithmName(),
+              valid.encoding(),
+              valid.populationSize(),
+              valid.yamlParameterSpaceFile(),
+              valid.extraConfig(),
+              valid.configuration(),
+              valid.configurationFile(),
+              valid.problem(),
+              valid.referenceFrontFileName(),
+              40000,
+              valid.numberOfIndependentRuns(),
+              valid.seed(),
+              valid.indicatorNames(),
+              valid.statusFrequency(),
+              500,
+              valid.writePopulation(),
+              valid.outputDirectory());
+      Path frontFile = tempDir.resolve("output").resolve("CURRENT_FRONT.csv");
+      List<String> headers = Collections.synchronizedList(new ArrayList<>());
+      AtomicBoolean finished = new AtomicBoolean(false);
+      Thread poller =
+          new Thread(
+              () -> {
+                while (!finished.get()) {
+                  try {
+                    headers.add(Files.readAllLines(frontFile).get(0));
+                  } catch (Exception e) {
+                    // the file does not exist yet: poll again
+                  }
+                }
+              });
+
+      // Act
+      poller.start();
+      new SolveRunner().run(request, tempDir.resolve("status.yaml"));
+      finished.set(true);
+      poller.join();
+
+      // Assert: seen while running, never half-written, and removed when the run is over
+      assertFalse(headers.isEmpty());
+      assertTrue(headers.stream().allMatch("Run,Evaluations,NonDominated,F1,F2"::equals), "read: " + headers);
+      assertFalse(Files.exists(frontFile));
+      assertTrue(Files.exists(tempDir.resolve("output").resolve("run-1").resolve("FUN.csv")));
+    }
+  }
+
+  @Nested
   @DisplayName("When running an invalid request: ")
   class InvalidRequestTestCases {
 
@@ -184,6 +245,8 @@ class SolveRunnerTest {
               valid.seed(),
               valid.indicatorNames(),
               valid.statusFrequency(),
+              valid.frontFrequency(),
+              valid.writePopulation(),
               valid.outputDirectory());
       Path statusFile = tempDir.resolve("status.yaml");
 
@@ -214,6 +277,8 @@ class SolveRunnerTest {
               valid.seed(),
               List.of("Spread"),
               valid.statusFrequency(),
+              valid.frontFrequency(),
+              valid.writePopulation(),
               valid.outputDirectory());
       Path statusFile = tempDir.resolve("status.yaml");
 

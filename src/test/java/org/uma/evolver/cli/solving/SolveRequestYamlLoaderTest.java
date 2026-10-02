@@ -2,6 +2,7 @@ package org.uma.evolver.cli.solving;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,8 +17,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.uma.evolver.cli.ProblemSpec;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
@@ -74,7 +75,40 @@ class SolveRequestYamlLoaderTest {
       assertNull(request.seed());
       assertTrue(request.indicatorNames().isEmpty());
       assertNull(request.statusFrequency());
+      assertNull(request.frontFrequency());
+      assertFalse(request.writePopulation());
       assertTrue(request.extraConfig().isEmpty());
+    }
+
+    @Test
+    @DisplayName("given a frontFrequency, when loaded, then the request has it")
+    void givenFrontFrequency_whenLoaded_thenItIsRead() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + "frontFrequency: 250\n");
+
+      // Act
+      SolveRequest request = SolveRequestYamlLoader.load(requestFile);
+
+      // Assert
+      assertEquals(250, request.frontFrequency());
+    }
+
+    @Test
+    @DisplayName("given writePopulation with a frontFrequency, when loaded, then it is read")
+    void givenWritePopulation_whenLoaded_thenItIsRead() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(
+              REQUIRED_FIELDS
+                  + INLINE_CONFIGURATION
+                  + "frontFrequency: 250\nwritePopulation: true\n");
+
+      // Act
+      SolveRequest request = SolveRequestYamlLoader.load(requestFile);
+
+      // Assert
+      assertTrue(request.writePopulation());
     }
 
     @Test
@@ -186,19 +220,39 @@ class SolveRequestYamlLoaderTest {
       assertTrue(exception.getMessage().contains("referenceFrontFileName"));
     }
 
-    @ParameterizedTest(name = "statusFrequency: {0}")
-    @ValueSource(strings = {"0", "-5", "often", "2.5"})
-    @DisplayName("given a statusFrequency that is not a positive integer, when loaded, then it fails")
-    void givenInvalidStatusFrequency_whenLoaded_thenItFails(String value) throws IOException {
+    @ParameterizedTest(name = "{0}: {1}")
+    @CsvSource({
+      "statusFrequency, 0",
+      "statusFrequency, -5",
+      "statusFrequency, often",
+      "statusFrequency, 2.5",
+      "frontFrequency, 0",
+      "frontFrequency, often"
+    })
+    @DisplayName("given a frequency that is not a positive integer, when loaded, then it fails")
+    void givenInvalidFrequency_whenLoaded_thenItFails(String field, String value)
+        throws IOException {
       // Arrange
       Path requestFile =
-          writeRequestFile(
-              REQUIRED_FIELDS + INLINE_CONFIGURATION + "statusFrequency: " + value + "\n");
+          writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + field + ": " + value + "\n");
 
       // Act & Assert
       JMetalException exception =
           assertThrows(JMetalException.class, () -> SolveRequestYamlLoader.load(requestFile));
-      assertTrue(exception.getMessage().contains("statusFrequency"));
+      assertTrue(exception.getMessage().contains(field));
+    }
+
+    @Test
+    @DisplayName("given writePopulation without a frontFrequency, when loaded, then it fails")
+    void givenWritePopulationWithoutFrontFrequency_whenLoaded_thenItFails() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + "writePopulation: true\n");
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(JMetalException.class, () -> SolveRequestYamlLoader.load(requestFile));
+      assertTrue(exception.getMessage().contains("frontFrequency"));
     }
 
     @Test
