@@ -140,3 +140,14 @@ Follow the structure of `AGEMOEAForZDT1Example.java`:
 ### 9. Verify
 
 Run `mvn test -Dtest=<Name>DoubleTest` and fix any errors before declaring the work done.
+
+### 10. Account for it in the command line and in Evolver-Studio
+
+- Add each new concrete class (`Double<Name>`, ...) to `KNOWN_ALGORITHM_CLASSES` in
+  `src/test/java/org/uma/evolver/cli/BaseAlgorithmRegistryCompletenessTest.java`: either register it
+  in `BaseAlgorithmRegistry` (with its `requiredExtraConfigKeys`) and say so, or give the reason it is
+  not registered yet (`"not yet registered"`). Ask the user which one, unless the request says.
+- Add the entry to `docs/changelog.rst` (current SNAPSHOT section).
+- Evolver-Studio follows stable releases only: it picks the new algorithm up when the next Evolver
+  release is out, with its `/bump-evolver` and `/sync-catalogue` commands. Mention it in the summary;
+  do not edit Evolver-Studio from here.
