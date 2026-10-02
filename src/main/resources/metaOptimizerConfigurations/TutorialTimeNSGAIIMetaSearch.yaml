@@ -1,0 +1,21 @@
+# Meta-optimizer of tutorial E17 (docs/tutorials/budgets.rst): the one of tutorial E3
+# (TutorialNSGAIIMetaSearch.yaml), stopped after 2 minutes of computing time instead of after 2000
+# configurations. metaMaxEvaluations and metaMaxComputingTimeMinutes are mutually exclusive: give
+# exactly one of them.
+algorithm: NSGA-II
+encoding: flat
+
+metaMaxComputingTimeMinutes: 2
+metaPopulationSize: 50
+numberOfCores: 14
+
+crossover: SBX
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutation: polynomial
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2

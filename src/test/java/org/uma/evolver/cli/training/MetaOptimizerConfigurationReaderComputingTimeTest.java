@@ -81,6 +81,21 @@ class MetaOptimizerConfigurationReaderComputingTimeTest {
   }
 
   @Test
+  @DisplayName("Given the request of tutorial E17, when loaded, then its meta-search is bounded by time")
+  void givenRequestOfTutorialE17WhenLoadedThenItsMetaSearchIsBoundedByTime() throws IOException {
+    // Arrange
+    Path requestFile = Path.of("src/main/resources/cli/training/tutorial-e17-request.yaml");
+
+    // Act
+    TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
+
+    // Assert
+    assertTrue(request.metaSearch().boundedByComputingTime());
+    assertEquals(2.0, request.metaSearch().metaMaxComputingTimeMinutes());
+    assertEquals("results/tutorial/E17-cli", request.outputDirectory());
+  }
+
+  @Test
   @DisplayName("Given evaluations only, when loaded, then it is bounded by evaluations")
   void givenEvaluationsOnlyWhenLoadedThenItIsBoundedByEvaluations() {
     // Arrange

@@ -54,9 +54,13 @@ Intermediate
    * - Tutorial
      - What you will learn
    * - :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`
-     - Designing a training run (training set, meta-objectives, training and meta-optimizer
-       budgets, independent runs) and validating its result against other algorithms, on problems
-       seen and not seen during the training.
+     - Designing a training run (training set, meta-objectives, budgets, independent runs) and
+       validating its result against other algorithms, on problems seen and not seen during the
+       training.
+   * - :doc:`E17. Budgets: evaluations or time <budgets>`
+     - The two budgets of a training: the evaluations of each base-level run, and the stopping
+       condition of the meta-optimizer, by number of configurations or by computing time; when to
+       use each and what they change in the results.
    * - :doc:`E8. Analyzing training results <analyzing_training_results>`
      - Reading the output files of a training run, its convergence and the population of the
        meta-optimizer, choosing a configuration from the final front, and validating the choice.
@@ -65,6 +69,7 @@ Intermediate
    :hidden:
 
    training_sets_indicators_budgets
+   budgets
    analyzing_training_results
 
 Advanced

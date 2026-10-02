@@ -29,6 +29,10 @@ Added
   AsyncNSGA-II tuning RVEA on DTLZ3Minus for 5 minutes on 12 cores
 - ``example.training.dtlz.AsyncNSGAIIOptimizingRVEAForBenchmarkDTLZMinus``: the same, tuning RVEA on
   DTLZ1Minus, DTLZ2Minus and DTLZ3Minus (inverted fronts) for 20 minutes on 18 cores
+- Add :doc:`tutorial E17, budgets: evaluations or time <tutorials/budgets>`
+  (``example.tutorial.BudgetsTutorial``, ``tutorial-e17-request.yaml``,
+  ``TutorialTimeNSGAIIMetaSearch.yaml``): the two budgets of a training, and the training of E3
+  stopped after two minutes, with how to read what the output files record about the stop
 - Bundled example of a training bounded by computing time:
   ``MetaNSGAIIFlatComputingTimeConfiguration.yaml`` (60 minutes) and
   ``nsgaii-re3d-computing-time-request.yaml``
