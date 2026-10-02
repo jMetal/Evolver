@@ -35,7 +35,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
  *
  * @author Antonio J. Nebro (ajnebro@uma.es)
  */
-public class NSGAIIOptimizingRVEAForProblemDTLZ3Minus {
+public class AsyncNSGAIIOptimizingRVEAForProblemDTLZ3Minus {
 
   private static final String BASE_LEVEL_YAML =
       """
