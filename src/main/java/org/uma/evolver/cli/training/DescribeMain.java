@@ -139,6 +139,7 @@ public final class DescribeMain {
         String.valueOf(SolveRequestYamlLoader.DEFAULT_NUMBER_OF_INDEPENDENT_RUNS));
     solveRequestDefaults.put("seed", null); // absent: drawn at random
     solveRequestDefaults.put("indicatorNames", null);
+    solveRequestDefaults.put("statusFrequency", null); // absent: status updated when a run ends
 
     Map<String, Object> schemas = new LinkedHashMap<>();
     schemas.put(

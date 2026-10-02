@@ -20,7 +20,8 @@ import org.yaml.snakeyaml.Yaml;
  * <p>The configuration is given either inline ({@code configuration}) or as a file ({@code
  * configurationFile}, e.g. {@code defaultConfigurations/NSGAIIDoubleDefault.txt}, whose first
  * configuration is used), never both. {@code indicatorNames} requires {@code
- * referenceFrontFileName}.
+ * referenceFrontFileName}. {@code statusFrequency}, when present, is a positive number of
+ * evaluations.
  */
 public final class SolveRequestYamlLoader {
 
@@ -70,7 +71,20 @@ public final class SolveRequestYamlLoader {
             : (Integer) data.get("numberOfIndependentRuns"),
         data.get("seed") == null ? null : ((Number) data.get("seed")).longValue(),
         indicatorNames,
+        statusFrequency(data, requestFile),
         stringValue(data, "outputDirectory"));
+  }
+
+  private static Integer statusFrequency(Map<String, Object> data, Path requestFile) {
+    Object value = data.get("statusFrequency");
+    if (value == null) {
+      return null;
+    }
+    if (!(value instanceof Integer frequency) || frequency < 1) {
+      throw new JMetalException(
+          "statusFrequency must be a positive integer in solve request: " + requestFile);
+    }
+    return frequency;
   }
 
   private static String configuration(Map<String, Object> data, String configurationFile) {

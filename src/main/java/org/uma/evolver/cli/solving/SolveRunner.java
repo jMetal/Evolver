@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.cli.BaseAlgorithmRegistry;
@@ -26,6 +27,8 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.observable.ObservableEntity;
+import org.uma.jmetal.util.observer.Observer;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
@@ -84,8 +87,13 @@ public class SolveRunner {
         JMetalRandom.getInstance().setSeed(seed);
 
         long startTime = System.currentTimeMillis();
+        Observer<Map<String, Object>> progressObserver =
+            request.statusFrequency() == null
+                ? null
+                : new SolveProgressObserver(
+                    statusWriter, totalEvaluations, evaluationsDone, request.statusFrequency());
         List<? extends Solution<?>> result =
-            runOnce(algorithm, problem, request.maxEvaluations(), configuration);
+            runOnce(algorithm, problem, request.maxEvaluations(), configuration, progressObserver);
         long computingTime = System.currentTimeMillis() - startTime;
 
         writeFront(result, outputDirectory.resolve("run-" + run));
@@ -116,12 +124,19 @@ public class SolveRunner {
       BaseLevelAlgorithm<S> algorithm,
       Problem<?> problem,
       int maxEvaluations,
-      String[] configuration) {
+      String[] configuration,
+      Observer<Map<String, Object>> progressObserver) {
     var instance =
         algorithm
             .createInstance((Problem<S>) problem, maxEvaluations)
             .parse(configuration)
             .build();
+    if (progressObserver != null
+        && instance instanceof ObservableEntity<?> observableAlgorithm) {
+      ((ObservableEntity<Map<String, Object>>) observableAlgorithm)
+          .observable()
+          .register(progressObserver);
+    }
     instance.run();
     return instance.result();
   }

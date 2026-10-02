@@ -33,6 +33,9 @@ import org.uma.evolver.cli.ProblemSpec;
  * @param seed the seed of the first run (run {@code i} uses {@code seed + i - 1}), or null to draw
  *     one at random
  * @param indicatorNames the quality indicators computed for each run; empty for none
+ * @param statusFrequency every how many evaluations {@code status.yaml} is updated while a run is
+ *     in progress, or null to update it only when a run ends. The more often, the more the run is
+ *     slowed down
  * @param outputDirectory where the results are written
  */
 public record SolveRequest(
@@ -49,4 +52,5 @@ public record SolveRequest(
     int numberOfIndependentRuns,
     Long seed,
     List<String> indicatorNames,
+    Integer statusFrequency,
     String outputDirectory) {}
