@@ -92,7 +92,7 @@ class TrainingRunnerSmokeIT {
     Path statusFile = tempDir.resolve("status.yaml");
 
     Path outputDirectory =
-        assertDoesNotThrow(() -> new TrainingRunner().run(request, statusFile));
+        assertDoesNotThrow(() -> new TrainingRunner(false).run(request, statusFile));
 
     assertTrue(Files.exists(outputDirectory.resolve("METADATA.txt")));
     assertTrue(Files.exists(outputDirectory.resolve("INDICATORS.csv")));
@@ -349,7 +349,7 @@ class TrainingRunnerSmokeIT {
     private static final int LIMIT = 10;
 
     private List<String> checkpointsOf(TrainingRequest request, Path tempDir) throws IOException {
-      Path outputDirectory = new TrainingRunner().run(request, tempDir.resolve("status.yaml"));
+      Path outputDirectory = new TrainingRunner(false).run(request, tempDir.resolve("status.yaml"));
       return Files.readAllLines(outputDirectory.resolve("VAR_CONF.txt")).stream()
           .filter(line -> line.startsWith("# Evaluation: "))
           .toList();

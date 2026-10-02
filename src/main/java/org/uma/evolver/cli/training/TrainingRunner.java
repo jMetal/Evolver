@@ -52,6 +52,24 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
  */
 public class TrainingRunner {
 
+  private final boolean showEvaluationProgress;
+
+  /** Creates a runner that logs the meta-evaluations performed as the run progresses. */
+  public TrainingRunner() {
+    this(true);
+  }
+
+  /**
+   * Creates a runner.
+   *
+   * @param showEvaluationProgress whether to log the meta-evaluations performed every {@link
+   *     TrainingRequest#statusFrequency()} evaluations; the status file is written either way.
+   *     Integration tests turn it off to keep the build output readable
+   */
+  public TrainingRunner(boolean showEvaluationProgress) {
+    this.showEvaluationProgress = showEvaluationProgress;
+  }
+
   private record ResolvedTrainingSet(
       List<Problem<?>> problems,
       List<String> referenceFrontFileNames,
@@ -221,11 +239,10 @@ public class TrainingRunner {
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
-    var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    nsgaii.observable().register(evaluationObserver);
+    registerEvaluationObserver(nsgaii.observable(), statusFrequency);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
     nsgaii.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
@@ -303,11 +320,10 @@ public class TrainingRunner {
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
-    var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    nsgaii.observable().register(evaluationObserver);
+    registerEvaluationObserver(nsgaii.observable(), statusFrequency);
     nsgaii.observable().register(writeExecutionDataToFilesObserver);
     nsgaii.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
@@ -389,11 +405,10 @@ public class TrainingRunner {
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
-    var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    smpso.observable().register(evaluationObserver);
+    registerEvaluationObserver(smpso.observable(), statusFrequency);
     smpso.observable().register(writeExecutionDataToFilesObserver);
     smpso.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
@@ -469,11 +484,10 @@ public class TrainingRunner {
 
     var writeExecutionDataToFilesObserver =
         new WriteExecutionDataToFilesObserver(writeFrequency, outputResults);
-    var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    randomSearch.observable().register(evaluationObserver);
+    registerEvaluationObserver(randomSearch.observable(), statusFrequency);
     randomSearch.observable().register(writeExecutionDataToFilesObserver);
     randomSearch.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
@@ -553,11 +567,10 @@ public class TrainingRunner {
         new TreeOutputResults(
                 metaProblem, trainingSet.label(), indicators, outputDirectory, config, writeFrequency)
             .writePopulation(writePopulation);
-    var evaluationObserver = new EvaluationObserver(statusFrequency);
     var statusFileObserver =
         new StatusFileObserver(statusWriter, metaSearch.metaMaxEvaluations(), statusFrequency);
 
-    engine.observable().register(evaluationObserver);
+    registerEvaluationObserver(engine.observable(), statusFrequency);
     engine.observable().register(outputResults);
     engine.observable().register(statusFileObserver);
     registerFrontPlotObserverIfRequested(
@@ -636,6 +649,14 @@ public class TrainingRunner {
           throw new JMetalException(
               "Meta-optimizer algorithm " + metaSearch.algorithm() + " does not support tree");
     };
+  }
+
+  /** Registers the observer that logs the meta-evaluations, unless this runner is quiet. */
+  private void registerEvaluationObserver(
+      Observable<Map<String, Object>> observable, int statusFrequency) {
+    if (showEvaluationProgress) {
+      observable.register(new EvaluationObserver(statusFrequency));
+    }
   }
 
   /**

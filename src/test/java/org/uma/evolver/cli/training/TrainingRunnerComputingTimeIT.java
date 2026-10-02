@@ -81,7 +81,7 @@ class TrainingRunnerComputingTimeIT {
 
     // Act
     long start = System.currentTimeMillis();
-    Path outputDirectory = new TrainingRunner().run(request, statusFile);
+    Path outputDirectory = new TrainingRunner(false).run(request, statusFile);
     long elapsed = System.currentTimeMillis() - start;
 
     // Assert
@@ -144,7 +144,7 @@ class TrainingRunnerComputingTimeIT {
         new TrainingRequest(baseLevel(), metaSearch, tempDir.resolve("output").toString(), 4, 4, null);
 
     // Act
-    Path outputDirectory = new TrainingRunner().run(request, tempDir.resolve("status.yaml"));
+    Path outputDirectory = new TrainingRunner(false).run(request, tempDir.resolve("status.yaml"));
 
     // Assert
     assertCheckpointsHaveTime(outputDirectory);
