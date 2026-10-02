@@ -206,7 +206,7 @@ MetaSearchConfig metaSearch =
         """
         algorithm: NSGA-II
         encoding: flat
-        metaMaxEvaluations: 2000
+        metaMaxEvaluations: 2000        # or metaMaxComputingTimeMinutes: 20, to stop by time
         metaPopulationSize: 50
         numberOfCores: 8
         crossover: SBX

@@ -4,7 +4,7 @@ E3. Meta-Optimization Workflow
 ==============================
 
 :Level: Introductory
-:Version: 1.0 (2026-09-25)
+:Version: 1.1 (2026-10-02)
 :Time: about 30 minutes, of which the training takes about 4 minutes
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK)
@@ -100,6 +100,13 @@ meta-optimizer's own operators, as in any NSGA-II. In total, the training runs N
    :start-after: // [step-2-start]
    :end-before: // [step-2-end]
    :dedent: 4
+
+**Stopping by evaluations or by time.** This meta-optimizer stops after 2000 configurations
+(``metaMaxEvaluations``). It can also stop after a given computing time: replace that field by, for
+instance, ``metaMaxComputingTimeMinutes: 4`` (the two are mutually exclusive). With evaluations the
+run is the same on any machine; with time it takes the time you decide, whatever the machine and the
+cost of each configuration, but the number of configurations it tries, and so its result, depends on
+the machine. :doc:`E17 <budgets>` explains when to use each.
 
 Step 3: running the training
 ----------------------------
@@ -356,6 +363,8 @@ Try it yourself
 What's next
 -----------
 
+- :doc:`E17 <budgets>` covers the two budgets of a training, and how to stop the meta-optimizer by
+  time instead of by evaluations.
 - :doc:`E7 <training_sets_indicators_budgets>` covers training sets with several problems, the
   choice of indicators and budgets, and the validation of a configuration against other
   algorithms; analyzing the results of a training (E8) and validation studies (E9) come in later

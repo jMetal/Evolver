@@ -103,6 +103,11 @@ in parallel: if your machine has a different number of cores, change ``numberOfC
 ``src/main/resources/metaOptimizerConfigurations/TutorialQuickNSGAIIMetaSearch.yaml`` and build
 again.
 
+The meta-optimizer stops after the 500 configurations of that same file (``metaMaxEvaluations``).
+To bound it by time instead, replace that field by, for instance, ``metaMaxComputingTimeMinutes:
+5``: the budget is then the time you are willing to wait, whatever each configuration costs (see
+:doc:`tutorials/budgets`).
+
 While it runs, ``results/quick-start/status.yaml`` shows its progress. When it finishes:
 
 .. code-block:: none

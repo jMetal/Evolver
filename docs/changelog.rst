@@ -115,6 +115,10 @@ Added
 Changed
 ~~~~~~~
 
+- The time limit of the meta-optimizer (``metaMaxComputingTimeMinutes``) is introduced where
+  ``metaMaxEvaluations`` first appears: the README example, the quick start (E4) and tutorial E3
+  (v1.1). The discussion of the training budget of tutorial E7 moves to the new tutorial E17, and E7
+  keeps the budgets of its case study
 - The live front plot of ``cli.training`` (``frontPlotFrequency``) names the meta-optimizer and the
   base-level algorithm in its title, with the progress against the stopping condition:
   ``NSGA-II optimizing RVEA. Evaluations: 500 of 2000``, or, bounded by computing time,

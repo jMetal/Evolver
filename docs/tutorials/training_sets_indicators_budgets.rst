@@ -4,6 +4,7 @@ E7. Training Sets, Indicators and Budgets
 =========================================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-02)
 :Time: about 1 hour, of which the training takes about 35 minutes and the validation about 15
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
@@ -16,8 +17,8 @@ training run and validates its result, deciding the four things that define a tr
 
 - the **training set**: which problems the algorithm is tuned for;
 - the **quality indicators**: the objectives of the meta-optimizer;
-- the **budgets**: how many evaluations the base-level algorithm gets in each run, and how many
-  configurations the meta-optimizer tries;
+- the **budgets**: how many evaluations the base-level algorithm gets in each run, and how long
+  the meta-optimizer searches (see :doc:`E17 <budgets>`);
 - the **independent runs** of each configuration.
 
 The case study tunes NSGA-II for the DTLZ1-7 problems with three objectives, and then validates the
@@ -99,44 +100,23 @@ The indicators
 
 Other choices are possible: IGD+ (``InvertedGenerationalDistancePlus``) instead of NHV, or HV−
 (``HypervolumeMinus``), which only needs a reference point instead of a reference front and is the
-one to use when there is no reference front (tutorial E10). From Java, the number of evaluations
-can also be an objective (``EvaluationsQualityIndicator``), to look for configurations that
-converge fast. Two objectives are the usual choice: they give a front of configurations that is easy
-to read and to choose from.
+one to use when there is no reference front (tutorial E10). Two objectives are the usual choice: they
+give a front of configurations that is easy to read and to choose from.
 
 The budgets
 ~~~~~~~~~~~
 
-The budget of the **validation** follows the literature: studies with the DTLZ and WFG problems
-with three objectives usually give each algorithm 40000 or 50000 evaluations. The validation
-below uses 50000.
+A training has two budgets, one for each level, and :doc:`tutorial E17 <budgets>` explains how to
+choose them. The case study uses:
 
-The budget of the **training** is a decision of its own, and a key one in real applications.
-Meta-optimizing is expensive: its cost grows linearly with the evaluations of each base-level run.
-The training budget should be small enough for the training to be affordable, but large enough
-for the configurations it finds to be competitive when they are validated with the full budget.
-This case study trains with **10000 evaluations per problem**, a fifth of the validation budget,
-which makes the training five times cheaper than training with 50000.
-
-The risk of a small training budget is that it rewards configurations that converge fast but may
-stall, or lose diversity, when they are given more evaluations. Only the validation with the full
-budget tells whether the compromise worked; if it does not, the training is repeated with a larger
-budget (for instance, 15000 evaluations).
-
-From Java, the training budget can also vary: a ``RandomRangeEvaluationsStrategy`` draws the
-evaluations of each run from a range, which favours configurations that work well for different
-budgets. It is passed to the meta-optimization problem instead of the fixed budget:
-
-.. code-block:: java
-
-    EvaluationBudgetStrategy budget = new RandomRangeEvaluationsStrategy(5000, 15000);
-    var problem =
-        new MetaOptimizationProblem<>(
-            baseAlgorithm, problems, referenceFrontFileNames, indicators, budget, 1);
-
-The meta-optimizer tries 2000 configurations (``metaMaxEvaluations``), with a population of 50. In
-total, the training runs NSGA-II 2000 × 7 = 14000 times, 140 million evaluations of the DTLZ
-problems.
+- a **validation** budget of 50000 evaluations, as the studies with the DTLZ and WFG problems with
+  three objectives in the literature;
+- a **training** budget of **10000 evaluations per problem**, a fifth of the validation budget,
+  which makes the training five times cheaper than training with 50000. The validation below tells
+  whether the compromise worked;
+- a **meta-optimizer** budget of 2000 configurations (``metaMaxEvaluations``), with a population of
+  50. In total, the training runs NSGA-II 2000 × 7 = 14000 times, 140 million evaluations of the
+  DTLZ problems.
 
 The meta-optimizer is the asynchronous version of NSGA-II (``AsyncNSGA-II``): the time it takes to
 evaluate a configuration varies a lot from one configuration to another, and instead of waiting for
