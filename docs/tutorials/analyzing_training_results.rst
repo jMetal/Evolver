@@ -54,6 +54,10 @@ It took about 85 minutes: five runs per problem make each evaluation five times 
 configurations that generate few offspring per generation, like the one finally chosen, are slower
 than the default one.
 
+The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
+if you repeat it, the files, the front of the meta-optimizer and the configurations chosen will
+differ from the ones shown here, although the analysis is the same.
+
 The output files
 ----------------
 

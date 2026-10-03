@@ -4,7 +4,7 @@ E4. Evolver in 10 Minutes
 =========================
 
 :Level: Introductory
-:Version: 1.0 (2026-10-03)
+:Version: 1.1 (2026-10-03)
 :Time: about 10 minutes, of which building takes about 20 seconds and the training about 35 seconds
 :Timings measured on: Apple M5 Pro (18 cores, 8 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Maven 3.9.16
@@ -151,10 +151,15 @@ configuration of NSGA-II, stored in ``src/main/resources/defaultConfigurations/`
     java -cp "$JAR" org.uma.evolver.example.baselevel.features.NSGAIIZDT4WithArchiveExample \
         $(cat src/main/resources/defaultConfigurations/NSGAIIDoubleDefault.txt)
 
-In three runs of each, the configuration found obtained NHV values between 0.0073 and 0.0077, and
-the default one between 0.011 and 0.016. Your values will differ, since the training and the runs
-are random, but the tuned configuration should be clearly better on ZDT4. A proper comparison needs
-more runs and a statistical test, which later tutorials cover.
+In three runs of each, the default configuration obtained NHV values between 0.011 and 0.016. The
+configuration found depends on the training, since it is random: in most trainings it is better than
+the default one (in ours, NHV values around 0.007), but not in all of them. Sometimes it is only as
+good, and sometimes one of its runs gets stuck in a local front of ZDT4, with an NHV above 0.2.
+
+The reason is that this short training runs each configuration only once, so a configuration can
+win thanks to a lucky run. Training with several runs per configuration, on several problems, and
+comparing configurations with many runs and a statistical test avoid it; later tutorials cover them
+(:doc:`tutorials/training_sets_indicators_budgets` and :doc:`tutorials/analyzing_training_results`).
 
 Working from an IDE
 -------------------

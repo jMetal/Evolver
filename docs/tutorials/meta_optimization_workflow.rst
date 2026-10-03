@@ -311,7 +311,10 @@ subject of the validation tutorial (E9); training with several runs per configur
 (``numberOfIndependentRuns``) also makes the training values more reliable, at a higher cost.
 
 The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
-your results will differ from the ones shown here.
+your results will differ from the ones shown here. With one run per configuration they can differ
+much: in some trainings the chosen configuration is no better than the default one, or one of its
+runs gets stuck in a local front of ZDT4 (NHV above 0.2), because it won the training thanks to a
+lucky run.
 
 Running the training from the command line
 ------------------------------------------

@@ -4,7 +4,7 @@ E7. Training Sets, Indicators and Budgets
 =========================================
 
 :Level: Intermediate
-:Version: 1.0 (2026-10-02)
+:Version: 1.1 (2026-10-03)
 :Time: about 1 hour, of which the training takes about 35 minutes and the validation about 15
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
@@ -209,6 +209,10 @@ NHV stalls at about 0.19 between meta-evaluations 800 and 1400, and drops to 0.0
 the meta-optimizer finds a different kind of configuration. With a budget of 1500 configurations,
 this run would have ended on the plateau: the budget of the meta-optimizer matters as much as the
 budget of the base level.
+
+The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
+if you repeat it, the curve, the plateaus and the configuration chosen will differ from the ones
+shown here.
 
 Step 3: choosing the configuration
 ----------------------------------
