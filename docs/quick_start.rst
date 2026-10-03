@@ -4,6 +4,7 @@ E4. Evolver in 10 Minutes
 =========================
 
 :Level: Introductory
+:Version: 1.0 (2026-10-03)
 :Time: about 10 minutes, of which building takes about 20 seconds and the training about 35 seconds
 :Timings measured on: Apple M5 Pro (18 cores, 8 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Maven 3.9.16
