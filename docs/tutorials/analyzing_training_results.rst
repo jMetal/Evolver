@@ -4,6 +4,7 @@ E8. Analyzing Training Results
 ==============================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-03)
 :Time: about 2 hours, of which the training takes about 85 minutes and the validation about 2
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
