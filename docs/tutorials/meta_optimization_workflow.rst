@@ -4,7 +4,7 @@ E3. Meta-Optimization Workflow
 ==============================
 
 :Level: Introductory
-:Version: 1.1 (2026-10-02)
+:Version: 1.1 (2026-10-05)
 :Time: about 30 minutes, of which the training takes about 4 minutes
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK)
@@ -61,6 +61,11 @@ NSGA-II, with a population of 100, is tuned for ZDT4, a problem with many local 
 default NSGA-II struggles. Each configuration is run once (``numberOfIndependentRuns: 1``) with
 12000 evaluations.
 
+One run per configuration is a valid setting in practice, when you want results quickly on a single
+computer. A larger value N gives statistically more reliable values for each configuration, since
+they are computed over N runs, but multiplies the time of the training by N: the 4 minutes of this
+training would become about 4N.
+
 The file also lists, in ``indicatorNames``, the quality indicators computed on the front found by
 each run. They are declared here because they are computed on the fronts of the base-level
 algorithm, but they are the **objectives of the meta-optimizer**, which minimizes them:
@@ -72,6 +77,18 @@ algorithm, but they are the **objectives of the meta-optimizer**, which minimize
 - **EP**, the Epsilon indicator, is a helper objective. Early in the search many configurations
   produce fronts far from the reference point, which all get NHV = 1: EP still tells them apart,
   and guides the meta-optimizer until NHV starts to improve.
+
+Other pairs are possible, for instance:
+
+- **IGD+ and EP** (``InvertedGenerationalDistancePlus`` and ``Epsilon``), with IGD+ as the main
+  objective instead of NHV;
+- **EP and Spread** (``Epsilon`` and ``Spread``): EP measures the convergence of the front and Spread
+  only how evenly it is spread, so each one complements the other. ``Spread`` is defined only for
+  two objectives; ``GeneralizedSpread`` is its version for three or more;
+- **HV− and EP** (``HypervolumeMinus`` and ``Epsilon``): HV− only needs a reference point, so it is
+  the one to use when the problems have no reference front.
+
+:doc:`E7 <training_sets_indicators_budgets>` discusses these choices.
 
 The step loads the file:
 
@@ -196,7 +213,17 @@ NHV, the main objective, using EP only to break ties:
      NHV = 0.0066, EP = 0.0062
 
 In this run, the final front has four configurations, with very close values: the chosen one has
-the lowest NHV. The table compares it with the default configuration of NSGA-II (the one in
+the lowest NHV. Choosing by the main objective is the simplest strategy, but there are others:
+
+- the lowest value of the other indicator, EP, when it matters more (for instance, when the worst
+  case over the front matters more than its coverage);
+- a **knee point** of the front, where improving one objective starts to cost much in the other;
+- running each configuration of the final front again, several times and possibly on more
+  problems, and choosing the best one by those runs. It costs more, but it avoids choosing a
+  configuration that was lucky in the training (see the end of Step 5).
+
+:doc:`E8 <analyzing_training_results>` applies them to a larger training. The table compares the
+chosen configuration with the default configuration of NSGA-II (the one in
 ``defaultConfigurations/NSGAIIDoubleDefault.txt``, used in tutorial E2):
 
 .. list-table:: Default and tuned configurations of NSGA-II (— = parameter not active)
@@ -307,14 +334,19 @@ the diversity of the front, which is what NHV rewards.
 
 These values come from a single run of each configuration, as the training values do. A reliable
 comparison between configurations needs several runs of each and a statistical test, which is the
-subject of the validation tutorial (E9); training with several runs per configuration
-(``numberOfIndependentRuns``) also makes the training values more reliable, at a higher cost.
+subject of the validation tutorial (E9).
 
 The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
 your results will differ from the ones shown here. With one run per configuration they can differ
 much: in some trainings the chosen configuration is no better than the default one, or one of its
 runs gets stuck in a local front of ZDT4 (NHV above 0.2), because it won the training thanks to a
 lucky run.
+
+Several runs per configuration (Step 1) make the values of each configuration more reliable, but
+they do not remove a second source of variation: the meta-optimizer is also a metaheuristic, so a
+training is a single sample of what it can find. A careful study repeats the training M times,
+independently, and compares or combines the configurations found. With N runs per configuration,
+that multiplies the cost of a single training by N × M.
 
 Running the training from the command line
 ------------------------------------------
