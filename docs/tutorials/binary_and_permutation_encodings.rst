@@ -4,6 +4,7 @@ E11. Binary and Permutation Encodings
 =====================================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-05)
 :Time: about 1 hour 15 minutes, of which the two trainings (optional) take about 12 and 26 minutes
    and the validations about 2
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the trainings and the
