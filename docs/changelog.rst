@@ -56,6 +56,19 @@ Removed
 Fixed
 ~~~~~
 
+- Errors explain what went wrong. A configuration that fails during a training names the problem,
+  the cause and the configuration, in the exception and in ``status.yaml``; it used to say only
+  what the failing component said. The operator parameters name the parameter that causes an
+  error: a tournament larger than the population (``selectionTournamentSize``), a probability
+  outside [0, 1] (``crossoverProbability``, ``mutationProbability``), a ``mutationProbabilityFactor``
+  that gives a probability larger than 1 for the number of variables of the problem (with the valid
+  range), an ``offspringPopulationSize`` of 0. Exceptions that wrap another one keep its message
+  and its cause (``JMetalExceptions``): jMetal 7.6 loses them, so they used to be ``null``. See
+  ``docs/proposals/failing-configurations.md`` for tolerating failing configurations instead of
+  aborting the training
+- The binary mutation accepts a ``mutationProbabilityFactor`` of 0 (no mutation), which is in the
+  range of the binary parameter spaces: it was rejected, which aborted a training whenever the
+  meta-optimizer reached the bound of the range
 - Each indicator gets its own copy of the normalized reference front in
   ``AbstractMetaOptimizationProblem``: the configurations are evaluated in parallel and share those
   fronts, and an indicator that sorts the reference front in place (jMetal's ``Spread``) corrupted
