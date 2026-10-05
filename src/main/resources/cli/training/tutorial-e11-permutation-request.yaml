@@ -1,0 +1,10 @@
+# Training request of tutorial E11 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II
+# for permutation problems tuned for two bi-objective TSP instances
+# (TutorialKroTspPermutationBaseLevel.yaml), with the asynchronous NSGA-II of tutorial E7 as
+# meta-optimizer (2000 configurations). Copy it to a working directory before running it, since
+# TrainingRunnerMain writes results.yaml (and, by default, status.yaml) next to the request file.
+baseLevel: TutorialKroTspPermutationBaseLevel.yaml
+metaSearch: TutorialAsyncNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial-e11/permutation/training
+writeFrequency: 100
+statusFrequency: 100

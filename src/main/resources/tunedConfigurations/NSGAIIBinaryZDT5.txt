@@ -1,0 +1,1 @@
+--algorithmResult externalArchive --populationSizeWithArchive 192 --archiveType crowdingDistanceArchive --createInitialSolutions default --offspringPopulationSize 5 --variation crossoverAndMutationVariation --crossover singlePoint --crossoverProbability 0.8945598876034402 --mutation bitFlip --mutationProbabilityFactor 0.6305291086132658 --selection random

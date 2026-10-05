@@ -1,0 +1,1 @@
+--algorithmResult population --createInitialSolutions default --offspringPopulationSize 10 --variation crossoverAndMutationVariation --crossover OXD --crossoverProbability 0.42672305360383617 --mutation inversion --mutationProbability 0.9961019924327374 --selection tournament --selectionTournamentSize 6
