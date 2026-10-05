@@ -173,13 +173,6 @@ of the four indicators for every run are in
 ``results/tutorial-e9/validation/QualityIndicatorSummary.csv``, the input of every analysis below.
 They need the Python environment of ``scripts/README.md`` and SAES (``pip install SAES``).
 
-.. note::
-
-   ``ValidationTutorial`` computes Spread one run at a time: in jMetal 7.6, the version Evolver
-   uses, Spread sorts the reference front in place, and ``ComputeQualityIndicators`` computes the
-   runs of a problem in parallel with the same instance, which fails with "Comparison method
-   violates its general contract!". jMetal 7.7 fixes it.
-
 Step 3: medians and interquartile ranges
 ----------------------------------------
 

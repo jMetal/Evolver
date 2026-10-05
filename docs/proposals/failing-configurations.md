@@ -41,8 +41,8 @@ fixed:
 - The operator parameters name the parameter that causes an error, and say how to fix it
   (`ProbabilityChecks`, the tournament check of `SelectionParameter`, the offspring size of the
   variation parameters).
-- Wrapped exceptions keep their message and their cause (`JMetalExceptions`, needed while Evolver
-  uses jMetal 7.6, whose `JMetalException(String, Exception)` loses both).
+- Wrapped exceptions keep their message and their cause (jMetal 7.7 fixes `JMetalException(String,
+  Exception)`, which lost both).
 
 Tutorial E6 explains the limits, so that a widened space respects them.
 

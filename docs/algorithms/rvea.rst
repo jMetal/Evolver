@@ -171,9 +171,9 @@ a population of 105 instead of 100):
      - a simple bi-objective reference
 
 MaF08 asks to find a small polygon (its Pareto set, a triangle of side 1.7) in a large decision
-space: the MaF test suite defines its two variables in ``[-10000, 10000]``. jMetal's ``MaF08``
-bounds them to ``[0, 1]`` up to version 7.6, which contains only a fifth of the triangle, so
-``RVEAGuide`` sets the bounds of the suite. The reference front with three objectives,
+space: the MaF test suite defines its two variables in ``[-10000, 10000]``, as jMetal's ``MaF08``
+does since version 7.7 (up to 7.6 it bounded them to ``[0, 1]``, which contains only a fifth of the
+triangle). The reference front with three objectives,
 ``resources/referenceFronts/MaF08.3D.csv``, is the image of the whole triangle: 10,011 points
 obtained by evaluating the problem on a lattice of it (all of them nondominated).
 

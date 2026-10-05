@@ -60,6 +60,17 @@ Added
   ``scripts/bayesian_plots.py`` (Bayesian sign test with a ROPE), with the shared
   ``scripts/study_summary.py``
 
+Changed
+~~~~~~~
+
+- jMetal 7.7 instead of 7.6. ``Spread`` and ``GeneralizedSpread`` can be computed in parallel with
+  the same instance and keep the order of the front; ``JMetalException`` keeps the message and the
+  cause of the exception it wraps; the DE variant ``RAND_2_EXP`` is parsed by name, so
+  ``DifferentialEvolutionCrossoverParameter`` no longer handles it apart; and ``MaF08`` has the
+  decision space of the MaF test suite (``[-10000, 10000]``), the one of its reference front
+  ``MaF08.3D.csv``, so ``RVEAGuide`` no longer sets it. Results on MaF08 obtained with earlier
+  versions are not comparable with those of this one
+
 Removed
 ~~~~~~~
 
@@ -80,7 +91,8 @@ Fixed
   outside [0, 1] (``crossoverProbability``, ``mutationProbability``), a ``mutationProbabilityFactor``
   that gives a probability larger than 1 for the number of variables of the problem (with the valid
   range), an ``offspringPopulationSize`` of 0. Exceptions that wrap another one keep its message
-  and its cause (``JMetalExceptions``): jMetal 7.6 loses them, so they used to be ``null``. A failing
+  and its cause (with jMetal 7.7, whose ``JMetalException`` used to lose them, so they were
+  ``null``). A failing
   configuration still makes the training fail: ``docs/proposals/failing-configurations.md`` records
   the decision
 - The binary mutation accepts a ``mutationProbabilityFactor`` of 0 (no mutation), which is in the
