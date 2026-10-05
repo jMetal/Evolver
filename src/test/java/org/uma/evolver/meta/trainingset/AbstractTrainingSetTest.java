@@ -376,12 +376,12 @@ class AbstractTrainingSetTest {
           "Test");
 
       // Act
-      trainingSet.setReferenceFrontDirectory("resources/estimatedReferenceFronts");
+      trainingSet.setReferenceFrontDirectory("resources/extremePointsFronts");
 
       // Assert
       List<String> expected = List.of(
-          "resources/estimatedReferenceFronts/front1.csv",
-          "resources/estimatedReferenceFronts/front2.csv");
+          "resources/extremePointsFronts/front1.csv",
+          "resources/extremePointsFronts/front2.csv");
       assertEquals(expected, trainingSet.referenceFronts());
     }
 
