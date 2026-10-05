@@ -55,7 +55,8 @@ encoding, with its own parameter space and parameter factory:
 NSGA-II, MOEA/D, SMS-EMOA and PAES exist for the three encodings, and RDEMOEA for Double and
 Permutation (see :doc:`../concepts/base_level_metaheuristics`). From the command line, a training
 or solve request chooses the encoding with the ``encoding`` field of its base level (``Double``,
-``Binary`` or ``Permutation``); NSGA-II is registered for the three.
+``Binary`` or ``Permutation``), and all of them can be tuned and run from it
+(:doc:`../utilities/cli_tools` lists them with their encodings).
 
 Step 2: the binary and the permutation parameter spaces
 -------------------------------------------------------
@@ -304,8 +305,9 @@ NSGA-II is 54015, two and a half times the optimum.
 Try it yourself
 ---------------
 
-- Tune MOEA/D for ZDT5 or the TSP (``MOEADBinary.yaml``, ``MOEADPermutation.yaml``): from Java, since
-  only NSGA-II is registered for those encodings in ``cli.training``.
+- Tune MOEA/D for ZDT5 or the TSP (``MOEADBinary.yaml``, ``MOEADPermutation.yaml``): the base level
+  names ``algorithmName: MOEAD`` and needs ``extraConfig: {weightVectorFilesDirectory:
+  resources/weightVectors}``, the weight vectors for two objectives.
 - Write a reduced permutation space with only the inversion mutation (tutorial E6) and train with
   it: is the training faster, and is the configuration as good?
 - Validate the tuned configuration on ``EuclidAB300``, an instance of 300 cities: does a

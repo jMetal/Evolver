@@ -11,6 +11,13 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- ``cli.training`` and ``cli.solving`` build 13 more base-level algorithms: NSGA-III, AGE-MOEA,
+  SSMOEA and RDEMOEA (Double; RDEMOEA also Permutation), SMS-EMOA and PAES (Double, Binary and
+  Permutation) and MOEA/D for binary and permutation problems. They are listed in
+  ``DescribeMain``'s manifest, and ``BaseAlgorithmRegistry`` is one table that builds and lists them
+  (see *Base-level algorithms* in ``docs/utilities/cli_tools.rst``). Each one runs a minimal
+  training, and the ones with a default configuration run it through ``cli.solving``, in the
+  integration tests
 - ``DescribeMain``'s manifest has a ``problemCatalogue``, which describes each problem with its
   family, its encoding, its dimensions and the arguments of its constructor (their names, types and
   defaults), next to ``problems``, which keeps the names. An external tool can filter the problems
@@ -28,6 +35,16 @@ Added
 Fixed
 ~~~~~
 
+- ``SMSEMOABinary.yaml`` offered ``latinHypercubeSampling`` and ``scatterSearch`` as the
+  initialization of a binary problem, which only apply to real variables, so a training failed when
+  the meta-optimizer sampled them: it only offers ``default`` now, as the other spaces of binary and
+  permutation problems
+- The ``angle`` density estimator of RDEMOEA and SSMOEA failed with ``The parameter 'object' is
+  null`` in any configuration whose selection compares the population by density (a tournament, a
+  ranking or a stochastic universal sampling): jMetal 7.7's ``AngleDensityEstimator`` throws for a
+  solution whose density has not been computed, while the other estimators give it 0. Evolver's
+  ``LenientAngleDensityEstimator`` does the same, until Evolver
+  depends on jMetal 7.8, whose estimator gives 0 too
 - A training or solve request whose problems have a different encoding from the algorithm's fails
   before running, with a message that names both encodings and suggests a problem of the right one
   (``Problem ZDT1 is Double-encoded, but the algorithm was configured with the Permutation

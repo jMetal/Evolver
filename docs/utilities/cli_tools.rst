@@ -179,6 +179,56 @@ several checkpoints from them.
    ``AsyncNSGA-II`` engine's worker thread pool does not shut down on its own. This is harmless
    for the other meta-optimizer engines, which already terminate naturally.
 
+Base-level algorithms
+~~~~~~~~~~~~~~~~~~~~~
+
+The ``algorithmName`` and ``encoding`` of a ``baseLevel`` file choose the algorithm that is tuned
+(and the one a solve request runs). These are the ones ``cli.training`` and ``cli.solving`` build,
+and what ``DescribeMain`` lists:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - ``algorithmName``
+     - ``encoding``
+     - Notes
+   * - ``NSGA-II``
+     - Double, Binary, Permutation
+     -
+   * - ``NSGA-III``
+     - Double
+     -
+   * - ``MOEAD``
+     - Double, Binary, Permutation
+     - Needs ``extraConfig: {weightVectorFilesDirectory: ...}``, the directory of its weight vectors
+       (``resources/weightVectors``); the population size must have a file there for the number of
+       objectives of the problem
+   * - ``SMS-EMOA``
+     - Double, Binary, Permutation
+     -
+   * - ``RDEMOEA``
+     - Double, Permutation
+     -
+   * - ``RVEA``
+     - Double
+     - Needs ``weightVectorFilesDirectory``, like MOEA/D
+   * - ``AGE-MOEA``
+     - Double
+     -
+   * - ``SSMOEA``
+     - Double
+     - Steady-state: a run is slower than the one of a generational algorithm with the same budget
+   * - ``PAES``
+     - Double, Binary, Permutation
+     - It has no population: ``populationSize`` is the number of solutions to find (the size of its
+       archive)
+
+The parameter space of each one is ``<Name><Encoding>.yaml`` (``NSGAIIIDouble.yaml``,
+``SMSEMOAPermutation.yaml``, ...), without the hyphens of the name. The problems must have the
+encoding of the algorithm: the runners fail before running otherwise. MOPSO, which has no
+per-encoding classes, is not registered yet.
+
 Bundled examples
 ~~~~~~~~~~~~~~~~
 
@@ -510,8 +560,7 @@ Manifest sections
      - Contents
    * - ``baseAlgorithms``
      - Every ``(algorithmName, encoding)`` pair accepted by ``BaseLevelConfig``'s
-       ``algorithmName``/``encoding`` fields (e.g. NSGA-II is registered for ``Double``, ``Binary``
-       and ``Permutation``), and any ``extraConfig`` keys it requires (e.g. MOEA/D's
+       ``algorithmName``/``encoding`` fields (see *Base-level algorithms* above), and any ``extraConfig`` keys it requires (e.g. MOEA/D's
        ``weightVectorFilesDirectory``)
    * - ``metaAlgorithms``
      - Every meta-optimizer algorithm name accepted by ``metaSearch.algorithm``, its family
