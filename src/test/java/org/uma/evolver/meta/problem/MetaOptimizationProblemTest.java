@@ -451,5 +451,41 @@ class MetaOptimizationProblemTest {
       // Act & Assert
       assertThrows(NullParameterException.class, () -> problem.evaluateConfiguration(null));
     }
+
+    @Test
+    @DisplayName(
+        "Given a configuration that fails, when evaluated, then the error names the problem, the"
+            + " cause and the configuration")
+    void givenAFailingConfiguration_whenEvaluated_thenTheErrorHasItsContext() {
+      // Arrange
+      var problem =
+          new MetaOptimizationProblem<>(
+              baseAlgorithm,
+              singleProblem,
+              singleReferenceFront,
+              singleIndicator,
+              new FixedEvaluationsStrategy(List.of(300)),
+              ONE_RUN);
+      String[] configuration =
+          ("--algorithmResult population --createInitialSolutions default"
+                  + " --variation crossoverAndMutationVariation --offspringPopulationSize 100"
+                  + " --crossover fooCrossover --crossoverProbability 0.9"
+                  + " --crossoverRepairStrategy bounds --mutation polynomial"
+                  + " --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds"
+                  + " --polynomialMutationDistributionIndex 20.0 --selection tournament"
+                  + " --selectionTournamentSize 2")
+              .split("\\s+");
+
+      // Act
+      JMetalException exception =
+          assertThrows(JMetalException.class, () -> problem.evaluateConfiguration(configuration));
+
+      // Assert
+      String message = exception.getMessage();
+      assertTrue(message.contains("A configuration failed on problem ZDT1 (300 evaluations)"), message);
+      assertTrue(message.contains("fooCrossover"), message);
+      assertTrue(message.contains("Configuration: --algorithmResult population"), message);
+      assertNotNull(exception.getCause());
+    }
   }
 }
