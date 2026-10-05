@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.uma.evolver.cli.BaseAlgorithmRegistry;
 import org.uma.evolver.cli.IndicatorRegistry;
+import org.uma.evolver.cli.ProblemDescriptor;
 import org.uma.evolver.cli.ProblemRegistry;
 import org.uma.evolver.cli.solving.SolveRequest;
 import org.uma.evolver.cli.solving.SolveRequestYamlLoader;
@@ -15,7 +16,7 @@ import org.yaml.snakeyaml.Yaml;
 /**
  * Prints a single, machine-readable YAML manifest to stdout describing everything {@code
  * cli.training} can resolve today: registered base algorithms, meta-optimizer algorithms,
- * training problems, indicators, the names available under each reusable resource directory, and
+ * training problems (by name, and described by encoding, dimensions and arguments), indicators, the names available under each reusable resource directory, and
  * the shape of {@code request.yaml}/{@code baseLevel}/{@code metaSearch} themselves — plus the
  * shape of a {@code cli.solving} request ({@code solveRequest}), which uses the same registries.
  *
@@ -49,10 +50,47 @@ public final class DescribeMain {
     manifest.put("baseAlgorithms", baseAlgorithms());
     manifest.put("metaAlgorithms", metaAlgorithms());
     manifest.put("problems", ProblemRegistry.registeredNames().stream().sorted().toList());
+    manifest.put("problemCatalogue", problemCatalogue());
     manifest.put("indicators", IndicatorRegistry.registeredNames().stream().sorted().toList());
     manifest.put("resourceDirectories", resourceDirectories());
     manifest.put("schemas", schemas());
     return manifest;
+  }
+
+  /**
+   * One entry per registered problem, with what {@link ProblemRegistry} knows about it: family,
+   * encoding, dimensions and constructor arguments. The keys whose value is unknown are left out.
+   */
+  private static List<Object> problemCatalogue() {
+    return ProblemRegistry.registeredProblems().stream()
+        .map(
+            problem -> {
+              Map<String, Object> data = new LinkedHashMap<>();
+              data.put("name", problem.name());
+              data.put("family", problem.family());
+              data.put("encoding", problem.encoding());
+              if (problem.numberOfObjectives() != null) {
+                data.put("numberOfObjectives", problem.numberOfObjectives());
+              }
+              if (problem.numberOfVariables() != null) {
+                data.put("numberOfVariables", problem.numberOfVariables());
+              }
+              if (!problem.arguments().isEmpty()) {
+                data.put("arguments", problem.arguments().stream().map(DescribeMain::argument).toList());
+              }
+              return (Object) data;
+            })
+        .toList();
+  }
+
+  private static Map<String, Object> argument(ProblemDescriptor.Argument argument) {
+    Map<String, Object> data = new LinkedHashMap<>();
+    data.put("name", argument.name());
+    data.put("type", argument.type());
+    if (argument.defaultValue() != null) {
+      data.put("default", argument.defaultValue());
+    }
+    return data;
   }
 
   private static List<Object> baseAlgorithms() {

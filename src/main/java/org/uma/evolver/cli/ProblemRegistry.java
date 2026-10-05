@@ -4,7 +4,11 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
+import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.OneZeroMax;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
@@ -30,6 +34,16 @@ import org.uma.jmetal.problem.multiobjective.lz09.LZ09F6;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F7;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F8;
 import org.uma.jmetal.problem.multiobjective.lz09.LZ09F9;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.EuclidAB300;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroABC100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroABCD100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroABD100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAC100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroACD100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroACE100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAD100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAE100TSP;
 import org.uma.jmetal.problem.multiobjective.re.RE21;
 import org.uma.jmetal.problem.multiobjective.re.RE22;
 import org.uma.jmetal.problem.multiobjective.re.RE23;
@@ -66,6 +80,7 @@ import org.uma.jmetal.problem.multiobjective.uf.UF6;
 import org.uma.jmetal.problem.multiobjective.uf.UF7;
 import org.uma.jmetal.problem.multiobjective.uf.UF8;
 import org.uma.jmetal.problem.multiobjective.uf.UF9;
+import org.uma.jmetal.problem.multiobjective.wfg.DefaultWFGSettings;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
@@ -75,6 +90,7 @@ import org.uma.jmetal.problem.multiobjective.wfg.WFG6;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG7;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG8;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG9;
+import org.uma.jmetal.problem.multiobjective.zcat.DefaultZCATSettings;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT10;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT11;
@@ -99,7 +115,9 @@ import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT2;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT4;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT5;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT6;
+import org.uma.jmetal.problem.permutationproblem.PermutationProblem;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
@@ -108,9 +126,10 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>{@link #CURATED} is a discoverable catalogue of short names (surfaced by {@code
  * DescribeMain} so an external tool can list them) covering the full standard benchmark families:
- * ZDT (all but ZDT5, whose binary encoding does not fit {@code Problem<DoubleSolution>}), DTLZ1-7,
- * WFG1-9, RE21-25/31-37/41/42/61/91, RWA1-10, LZ09F1-9, LSMOP1-9, ZCAT1-20, UF1-10 — it is not the
- * only way to name a problem. A {@link ProblemSpec} whose {@code className} is not in {@link
+ * ZDT1-6, DTLZ1-7, WFG1-9, RE21-25/31-37/41/42/61/91, RWA1-10, LZ09F1-9, LSMOP1-9, ZCAT1-20 and
+ * UF1-10 (all continuous), and the problems of the other encodings that need no data of their own:
+ * ZDT5 and OneZeroMax (binary) and the multi-objective TSP instances of jMetal (permutation) — it
+ * is not the only way to name a problem. A {@link ProblemSpec} whose {@code className} is not in {@link
  * #CURATED} is resolved by reflection instead, so <em>any</em> {@code Problem} on the runtime
  * classpath — every other jMetal problem, or a user's own — works by giving its fully-qualified
  * class name, with no change to this class ever required for that. {@link #resolve} matches
@@ -226,13 +245,230 @@ public final class ProblemRegistry {
           Map.entry("UF7", UF7.class),
           Map.entry("UF8", UF8.class),
           Map.entry("UF9", UF9.class),
-          Map.entry("UF10", UF10.class));
+          Map.entry("UF10", UF10.class),
+          // Binary: ZDT5 is the deceptive problem of the ZDT family, OneZeroMax has all its
+          // solutions Pareto optimal
+          Map.entry("ZDT5", ZDT5.class),
+          Map.entry("OneZeroMax", OneZeroMax.class),
+          // Permutation: the multi-objective TSP instances of jMetal. They read their distance
+          // matrices from resources/tspInstances/, relative to the working directory. KroBC100TSP
+          // and KroBD100TSP are left out: jMetal 7.7 points them to kroAC100.tsp and kroAD100.tsp,
+          // which do not exist (they should be kroC100.tsp and kroD100.tsp)
+          Map.entry("EuclidAB300", EuclidAB300.class),
+          Map.entry("KroAB100TSP", KroAB100TSP.class),
+          Map.entry("KroABC100TSP", KroABC100TSP.class),
+          Map.entry("KroABCD100TSP", KroABCD100TSP.class),
+          Map.entry("KroABD100TSP", KroABD100TSP.class),
+          Map.entry("KroAC100TSP", KroAC100TSP.class),
+          Map.entry("KroACD100TSP", KroACD100TSP.class),
+          Map.entry("KroACE100TSP", KroACE100TSP.class),
+          Map.entry("KroAD100TSP", KroAD100TSP.class),
+          Map.entry("KroAE100TSP", KroAE100TSP.class));
+
+  /** An argument of a problem, with how to find its default in the problem built with none. */
+  private record ArgumentSpec(String name, String type, Function<Problem<?>, Object> defaultValue) {
+
+    static ArgumentSpec integer(String name, Function<Problem<?>, Object> defaultValue) {
+      return new ArgumentSpec(name, "integer", defaultValue);
+    }
+
+    static ArgumentSpec number(String name, Function<Problem<?>, Object> defaultValue) {
+      return new ArgumentSpec(name, "number", defaultValue);
+    }
+
+    static ArgumentSpec bool(String name, Function<Problem<?>, Object> defaultValue) {
+      return new ArgumentSpec(name, "boolean", defaultValue);
+    }
+  }
+
+  private static final Function<Problem<?>, Object> VARIABLES = Problem::numberOfVariables;
+  private static final Function<Problem<?>, Object> OBJECTIVES = Problem::numberOfObjectives;
+  private static final Function<Problem<?>, Object> UNKNOWN = problem -> null;
+
+  /**
+   * The arguments of the constructor with arguments of each family, in order, or of a problem that
+   * differs from its family (UF5, UF6 and UF9): the names of the arguments are not available by
+   * reflection (jMetal is not compiled with {@code -parameters}), and what each one means has to be
+   * written down. A request gives all the arguments of a problem or none, since {@link
+   * #instantiate} matches the constructor by arity. A test builds every problem with the defaults
+   * of this table.
+   */
+  private static final Map<String, List<ArgumentSpec>> ARGUMENTS =
+      Map.ofEntries(
+          Map.entry("ZDT", List.of(ArgumentSpec.integer("numberOfVariables", VARIABLES))),
+          Map.entry(
+              "DTLZ",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          Map.entry(
+              "WFG",
+              List.of(
+                  ArgumentSpec.integer("k", problem -> DefaultWFGSettings.numberOfPositionParameters),
+                  ArgumentSpec.integer("l", problem -> DefaultWFGSettings.numberOfDistanceParameters),
+                  ArgumentSpec.integer("m", OBJECTIVES))),
+          Map.entry("UF", List.of(ArgumentSpec.integer("numberOfVariables", VARIABLES))),
+          // UF5 and UF6 also take the number of points of the front and a tolerance, UF9 a tolerance
+          Map.entry(
+              "UF5",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("N", problem -> 10),
+                  ArgumentSpec.number("epsilon", problem -> 0.1))),
+          Map.entry(
+              "UF6",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("N", problem -> 2),
+                  ArgumentSpec.number("epsilon", problem -> 0.1))),
+          Map.entry(
+              "UF9",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.number("epsilon", problem -> 0.1))),
+          // The three types that select the shape of the Pareto set and front, which differ per
+          // problem and are not exposed by jMetal
+          Map.entry(
+              "LZ09F",
+              List.of(
+                  ArgumentSpec.integer("ptype", UNKNOWN),
+                  ArgumentSpec.integer("dtype", UNKNOWN),
+                  ArgumentSpec.integer("ltype", UNKNOWN))),
+          Map.entry(
+              "LSMOP",
+              List.of(
+                  ArgumentSpec.integer("nk", problem -> 5),
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          Map.entry(
+              "ZCAT",
+              List.of(
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES),
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.bool(
+                      "complicatedParetoSet", problem -> DefaultZCATSettings.complicatedParetoSet),
+                  ArgumentSpec.integer("level", problem -> DefaultZCATSettings.level),
+                  ArgumentSpec.bool("bias", problem -> DefaultZCATSettings.bias),
+                  ArgumentSpec.bool("imbalance", problem -> DefaultZCATSettings.imbalance))),
+          Map.entry(
+              "OneZeroMax",
+              List.of(
+                  ArgumentSpec.integer(
+                      "numberOfBits", problem -> ((BinaryProblem) problem).totalNumberOfBits()))));
 
   private ProblemRegistry() {}
 
   /** Names registered in {@link #CURATED}, for {@code DescribeMain}. */
   public static Set<String> registeredNames() {
     return CURATED.keySet();
+  }
+
+  /**
+   * Describes every registered problem, sorted by name.
+   *
+   * <p>Each problem is built with no arguments to read its dimensions: it takes milliseconds for
+   * all of them. A problem that cannot be built (a TSP instance whose files are not in the working
+   * directory) is described without dimensions.
+   *
+   * @return the descriptors, for {@code DescribeMain}
+   */
+  public static List<ProblemDescriptor> registeredProblems() {
+    return CURATED.keySet().stream().sorted().map(ProblemRegistry::describe).toList();
+  }
+
+  private static ProblemDescriptor describe(String name) {
+    Class<?> problemClass = CURATED.get(name);
+    String family = familyOf(name, problemClass);
+    Problem<?> problem = tryInstantiate(problemClass, name);
+    List<ProblemDescriptor.Argument> arguments =
+        ARGUMENTS.getOrDefault(name, ARGUMENTS.getOrDefault(family, List.of())).stream()
+            .map(
+                spec ->
+                    new ProblemDescriptor.Argument(
+                        spec.name(),
+                        spec.type(),
+                        problem == null ? null : spec.defaultValue().apply(problem)))
+            .toList();
+    return new ProblemDescriptor(
+        name,
+        family,
+        encodingOf(problemClass),
+        problem == null ? null : problem.numberOfObjectives(),
+        problem == null ? null : problem.numberOfVariables(),
+        arguments);
+  }
+
+  private static Problem<?> tryInstantiate(Class<?> problemClass, String name) {
+    try {
+      return (Problem<?>) instantiate(problemClass, List.of(), name);
+    } catch (RuntimeException e) {
+      return null;
+    }
+  }
+
+  /** The family of a problem: its name without the trailing number ({@code ZDT1}: {@code ZDT}). */
+  private static String familyOf(String name, Class<?> problemClass) {
+    if (problemClass.getPackageName().endsWith("multiobjectivetsp.instance")) {
+      return "TSP";
+    }
+    return name.replaceAll("\\d+$", "");
+  }
+
+  /**
+   * The encoding of the solutions of a problem class.
+   *
+   * @return {@code "Double"}, {@code "Binary"} or {@code "Permutation"}, or {@code null} for a
+   *     problem that is none of them
+   */
+  public static String encodingOf(Class<?> problemClass) {
+    if (DoubleProblem.class.isAssignableFrom(problemClass)) {
+      return "Double";
+    }
+    if (BinaryProblem.class.isAssignableFrom(problemClass)) {
+      return "Binary";
+    }
+    if (PermutationProblem.class.isAssignableFrom(problemClass)) {
+      return "Permutation";
+    }
+    return null;
+  }
+
+  /**
+   * Checks that a problem has the encoding of the algorithm that will solve it.
+   *
+   * <p>Without it, the mismatch ends in a {@code ClassCastException} deep in the run, whose message
+   * names jMetal classes instead of what to change.
+   *
+   * @param problem the problem
+   * @param algorithmEncoding the encoding of the base-level algorithm ({@code "Double"}, {@code
+   *     "Binary"} or {@code "Permutation"})
+   * @throws JMetalException if the problem's encoding is a different one. A problem that is none of
+   *     the three is not checked
+   */
+  public static void checkEncoding(Problem<?> problem, String algorithmEncoding) {
+    String encoding = encodingOf(problem.getClass());
+    if (encoding == null || encoding.equals(algorithmEncoding)) {
+      return;
+    }
+    String example =
+        CURATED.keySet().stream()
+            .sorted()
+            .filter(name -> algorithmEncoding.equals(encodingOf(CURATED.get(name))))
+            .findFirst()
+            .map(name -> " (for instance " + name + ")")
+            .orElse("");
+    throw new JMetalException(
+        "Problem "
+            + problem.name()
+            + " is "
+            + encoding
+            + "-encoded, but the algorithm was configured with the "
+            + algorithmEncoding
+            + " encoding: use a problem of that encoding"
+            + example
+            + ", or the algorithm for "
+            + encoding
+            + " problems");
   }
 
   public static Problem<?> resolve(ProblemSpec spec) {
