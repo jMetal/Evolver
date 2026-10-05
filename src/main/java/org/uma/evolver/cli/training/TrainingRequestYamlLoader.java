@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
+import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -33,9 +34,9 @@ final class TrainingRequestYamlLoader {
     try (InputStream inputStream = new FileInputStream(requestFile.toFile())) {
       data = new Yaml().load(inputStream);
     } catch (FileNotFoundException e) {
-      throw new JMetalException("Training request file not found: " + requestFile, e);
+      throw JMetalExceptions.withCause("Training request file not found: " + requestFile, e);
     } catch (Exception e) {
-      throw new JMetalException("Error reading training request file: " + requestFile, e);
+      throw JMetalExceptions.withCause("Error reading training request file: " + requestFile, e);
     }
 
     return new TrainingRequest(

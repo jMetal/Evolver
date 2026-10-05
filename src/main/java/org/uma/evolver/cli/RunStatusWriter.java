@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -63,7 +64,7 @@ public final class RunStatusWriter {
     try (FileWriter writer = new FileWriter(statusFile.toFile())) {
       new Yaml().dump(status, writer);
     } catch (IOException e) {
-      throw new JMetalException("Error writing status file: " + statusFile, e);
+      throw JMetalExceptions.withCause("Error writing status file: " + statusFile, e);
     }
   }
 }

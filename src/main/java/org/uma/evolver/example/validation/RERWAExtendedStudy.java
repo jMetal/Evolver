@@ -8,6 +8,7 @@ import org.uma.evolver.algorithm.moead.DoubleMOEAD;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.AGEMOEABuilder;
 import org.uma.jmetal.component.algorithm.multiobjective.RVEABuilder;
@@ -321,7 +322,7 @@ public class RERWAExtendedStudy {
     try {
       weightVectors = VectorUtils.readVectors("resources/weightVectors/W" + numberOfObjectives + "D_100.dat");
     } catch (IOException e) {
-      throw new JMetalException("Error reading weight vectors for " + numberOfObjectives + " objectives", e);
+      throw JMetalExceptions.withCause("Error reading weight vectors for " + numberOfObjectives + " objectives", e);
     }
 
     int populationSize = weightVectors.length;
