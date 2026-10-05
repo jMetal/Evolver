@@ -79,7 +79,7 @@ meta-optimizer towards configurations that work on all of them. Some criteria to
   objectives here.
 - **A reference front for each problem**: ``resources/referenceFronts/`` has them for the
   benchmark families; their names give the number of objectives (``DTLZ1.3D.csv``). Problems
-  without a reference front are the subject of tutorial E10.
+  without a reference front are the subject of :doc:`E10 <problems_without_reference_front>`.
 - **Cost**: every problem added multiplies the cost of the training.
 
 The problems are given as three lists of the same length: the problems (``trainingProblemNames``),
@@ -100,7 +100,7 @@ The indicators
 
 Other choices are possible: IGD+ (``InvertedGenerationalDistancePlus``) instead of NHV, or HV−
 (``HypervolumeMinus``), which only needs a reference point instead of a reference front and is the
-one to use when there is no reference front (tutorial E10). ``Spread`` and ``GeneralizedSpread``
+one to use when there is no reference front (:doc:`E10 <problems_without_reference_front>`). ``Spread`` and ``GeneralizedSpread``
 measure only how evenly the front is spread, not how close it is to the reference front, so they
 are a complement to a convergence indicator rather than a substitute; ``Spread`` is defined only for
 bi-objective problems, and a request that uses it on any other is rejected. Two objectives are the
@@ -467,5 +467,5 @@ What's next
 - :doc:`E8 <analyzing_training_results>` shows how to analyze the results of a training run and
   choose a configuration; designing and interpreting validation studies is the subject of
   :doc:`E9 <validating_a_configuration>`.
-- Tutorial E10 covers problems without a reference front, with HV− as meta-objective.
+- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
 - :doc:`../concepts/meta_optimization_level_metaheuristics` describes the available meta-optimizers.

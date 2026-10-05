@@ -553,7 +553,7 @@ Try it yourself
 What's next
 -----------
 
-- Tutorial E10 covers problems without a reference front, with HV− as meta-objective.
+- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
 - Tutorial E12 compares meta-optimizers.
 - :doc:`E8 <analyzing_training_results>` validates every configuration of a final front, to choose
   among them.

@@ -8,6 +8,15 @@ All notable changes to Evolver will be documented in this file.
 2.4-SNAPSHOT
 ------------
 
+Added
+~~~~~
+
+- Tutorial E10, *Problems without a reference front*
+  (``docs/tutorials/problems_without_reference_front.rst``), which replaces the page on reference
+  fronts (``docs/reference_fronts.rst``): what each indicator needs, estimating extreme points for
+  the hypervolume and what goes wrong with bad ones, training with HV− and EP, and validating with a
+  reference front built from the study, with the bi-objective TSP of tutorial E11
+
 Removed
 ~~~~~~~
 

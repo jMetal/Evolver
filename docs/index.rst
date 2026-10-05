@@ -145,7 +145,6 @@ Evolver currently supports the following base-level and meta-optimization algori
    :caption: ADVANCED TOPICS
    :name: advanced
 
-   reference_fronts
    api_reference
    glossary
 

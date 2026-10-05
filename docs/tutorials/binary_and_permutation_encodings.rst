@@ -4,7 +4,7 @@ E11. Binary and Permutation Encodings
 =====================================
 
 :Level: Intermediate
-:Version: 1.0 (2026-10-05)
+:Version: 1.1 (2026-10-05)
 :Time: about 1 hour 15 minutes, of which the two trainings (optional) take about 12 and 26 minutes
    and the validations about 2
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the trainings and the
@@ -164,7 +164,7 @@ NHV or IGD+, which need a complete reference front. The meta-objectives of the t
   but they still tell apart the configurations whose fronts have no hypervolume at all (HV− = 0),
   which is frequent at the start of a training, and guide the meta-optimizer until HV− improves.
 
-Tutorial E10 explains this approach.
+:doc:`E10 <problems_without_reference_front>` explains this approach.
 
 .. literalinclude:: ../../src/main/resources/baseLevelConfigurations/TutorialKroTspPermutationBaseLevel.yaml
    :language: yaml
@@ -222,10 +222,12 @@ the tuned one, with 25 independent runs each:
 
 The TSP study needs a reference front for the indicators. With only the two extreme points of the
 training, the hypervolume would be the only valid indicator, and here it is not even informative:
-the points are so loose that the hypervolume of both algorithms is between 0.997 and 1.000 on three
-of the four instances. The study builds its own reference front instead, the non-dominated points of all the runs of both algorithms (jMetal's
+on three of the four instances, the lower bounds of the points are far above the routes the
+algorithms find, so their fronts dominate the whole box and the hypervolume of both is between
+0.997 and 1.000. The study builds its own reference front instead, the non-dominated points of all
+the runs of both algorithms (jMetal's
 ``GenerateReferenceParetoFront``, before ``ComputeQualityIndicators``), and computes EP, HV and IGD+
-against it. This is the usual practice when a problem has no known front (tutorial E10). From the
+against it. This is the usual practice when a problem has no known front (:doc:`E10 <problems_without_reference_front>`). From the
 root of the repository:
 
 .. code-block:: bash
@@ -312,6 +314,6 @@ Try it yourself
 What's next
 -----------
 
-- Tutorial E10 covers problems without a reference front: the extreme points, HV−, and reference
+- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front: the extreme points, HV−, and reference
   fronts built from the results.
 - Tutorial E13 compares the tree and the flat encodings of the meta-optimizer.

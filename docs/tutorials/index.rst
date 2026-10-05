@@ -72,6 +72,10 @@ Intermediate
      - Designing a validation study and analyzing it: medians and IQRs, boxplots, the Wilcoxon test,
        effect sizes, the Friedman test with Holm's procedure, critical difference plots and a
        Bayesian test, repeating with Evolver the first study of automatic configuration with jMetal.
+   * - :doc:`E10. Problems without a reference front <problems_without_reference_front>`
+     - What each indicator needs when a problem has no reference front, estimating extreme points
+       for the hypervolume and what goes wrong with bad ones, training with HV− and EP, and
+       validating with a reference front built from the study (the bi-objective TSP).
    * - :doc:`E11. Binary and permutation encodings <binary_and_permutation_encodings>`
      - Tuning NSGA-II for a binary problem (ZDT5) and a permutation one (the bi-objective TSP): the
        parameter spaces and operators of each encoding, and validating without a known front.
@@ -84,6 +88,7 @@ Intermediate
    budgets
    analyzing_training_results
    validating_a_configuration
+   problems_without_reference_front
    binary_and_permutation_encodings
 
 Advanced
