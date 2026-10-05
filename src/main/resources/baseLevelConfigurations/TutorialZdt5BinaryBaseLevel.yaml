@@ -1,15 +1,13 @@
 # Base level of tutorial E11 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II for
 # binary problems (BinaryNSGAII, NSGAIIBinary.yaml), tuned for ZDT5, the binary and deceptive
-# problem of the ZDT family (11 variables of 30 and 5 bits). jMetal's ZDT5 is not in the short
-# names of ProblemRegistry, which are continuous problems: it is named by its class. Each
-# configuration is run three times, since one run on a single problem is a noisy value
-# (tutorial E4).
+# problem of the ZDT family (11 variables of 30 and 5 bits). Each configuration is run three times,
+# since one run on a single problem is a noisy value (tutorial E4).
 algorithmName: NSGA-II
 encoding: Binary
 populationSize: 100
 numberOfIndependentRuns: 3
 yamlParameterSpaceFile: NSGAIIBinary.yaml
-trainingProblemNames: [org.uma.jmetal.problem.multiobjective.zdt.ZDT5]
+trainingProblemNames: [ZDT5]
 trainingReferenceFrontFileNames: [resources/referenceFronts/ZDT5.csv]
 trainingEvaluations: [10000]
 indicatorNames: [Epsilon, NormalizedHypervolume]

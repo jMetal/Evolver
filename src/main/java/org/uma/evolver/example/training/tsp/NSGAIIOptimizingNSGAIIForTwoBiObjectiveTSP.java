@@ -23,10 +23,10 @@ import org.uma.evolver.cli.training.TrainingRunner;
  * 1]^n} encoding of the base-level algorithm's own parameters, regardless of what the base-level
  * algorithm itself operates on.
  *
- * <p>{@code KroAB100TSP}/{@code KroAC100TSP} are not in {@code ProblemRegistry}'s curated
- * catalogue (it only covers {@code Problem<DoubleSolution>} families) — {@code
- * trainingProblemNames} below names them by their fully-qualified class instead, resolved by
- * reflection (see {@code ProblemRegistry}/{@code ProblemSpec}).
+ * <p>{@code KroAB100TSP}/{@code KroAC100TSP} are in {@code ProblemRegistry}'s catalogue, which
+ * describes each problem with its encoding: {@code trainingProblemNames} below names them by their
+ * short names (their fully-qualified class names work too, resolved by reflection; see {@code
+ * ProblemRegistry}/{@code ProblemSpec}).
  *
  * <p>{@code BASE_LEVEL_YAML}/{@code META_SEARCH_YAML} are exactly the same recipe already bundled
  * as standalone files under {@code src/main/resources/baseLevelConfigurations/
@@ -62,8 +62,8 @@ public class NSGAIIOptimizingNSGAIIForTwoBiObjectiveTSP {
       numberOfIndependentRuns: 1
       yamlParameterSpaceFile: NSGAIIPermutation.yaml
       trainingProblemNames:
-        - org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP
-        - org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAC100TSP
+        - KroAB100TSP
+        - KroAC100TSP
       trainingReferenceFrontFileNames:
         - resources/referenceFrontsTSP/KroAB100TSP.csv
         - resources/referenceFrontsTSP/KroAC100TSP.csv
