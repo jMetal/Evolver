@@ -8,6 +8,12 @@ All notable changes to Evolver will be documented in this file.
 2.4-SNAPSHOT
 ------------
 
+Removed
+~~~~~~~
+
+- ``resources/estimatedReferenceFronts``, the estimated bounds of the RE and RWA problems (and of
+  DTLZ1 with three objectives), from a failed experiment; nothing used them
+
 2.3 (2026-10-05)
 ----------------
 
