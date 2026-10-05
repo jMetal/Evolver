@@ -24,7 +24,6 @@ org.uma.evolver.example.training.zdt
 org.uma.evolver.example.tutorial
 org.uma.evolver.example.validation
 org.uma.evolver.irace
-org.uma.evolver.irace.generator
 org.uma.evolver.meta
 org.uma.evolver.meta.algorithm
 org.uma.evolver.meta.builder
