@@ -64,6 +64,7 @@ public class SolveRunner {
                   request.encoding(), request.yamlParameterSpaceFile()),
               request.extraConfig());
       Problem<?> problem = ProblemRegistry.resolve(request.problem());
+      ProblemRegistry.checkEncoding(problem, request.encoding());
       List<QualityIndicator> indicators =
           request.indicatorNames().stream().map(IndicatorRegistry::resolve).toList();
       for (String indicatorName : request.indicatorNames()) {

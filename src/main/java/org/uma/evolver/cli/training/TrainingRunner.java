@@ -95,6 +95,9 @@ public class TrainingRunner {
       ResolvedTrainingSet trainingSet = resolveTrainingSet(baseLevel);
       List<QualityIndicator> indicators =
           baseLevel.indicatorNames().stream().map(IndicatorRegistry::resolve).toList();
+      for (Problem<?> problem : trainingSet.problems()) {
+        ProblemRegistry.checkEncoding(problem, baseLevel.encoding());
+      }
       for (String indicatorName : baseLevel.indicatorNames()) {
         for (Problem<?> problem : trainingSet.problems()) {
           IndicatorRegistry.checkApplicable(indicatorName, problem.numberOfObjectives());
