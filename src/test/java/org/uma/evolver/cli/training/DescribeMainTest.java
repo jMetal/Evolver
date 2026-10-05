@@ -112,6 +112,34 @@ class DescribeMainTest {
   @DisplayName("When building the manifest: ")
   class ManifestTestCases {
 
+    @SuppressWarnings("unchecked")
+    private List<Object> problemNames(Map<String, Object> manifest) {
+      return ((List<Map<String, Object>>) manifest.get("problemCatalogue"))
+          .stream().map(problem -> (Object) problem.get("name")).toList();
+    }
+
+    @Test
+    @DisplayName(
+        "given the problem catalogue, when manifest is built, then each problem has its encoding"
+            + " and the arguments of the ones that take them")
+    @SuppressWarnings("unchecked")
+    void givenProblemCatalogue_whenManifestBuilt_thenProblemsAreDescribed() {
+      // Act
+      Map<String, Object> manifest = DescribeMain.manifest();
+
+      // Assert
+      Map<String, Map<String, Object>> byName = new HashMap<>();
+      for (Map<String, Object> problem :
+          (List<Map<String, Object>>) manifest.get("problemCatalogue")) {
+        byName.put((String) problem.get("name"), problem);
+      }
+      assertEquals("Binary", byName.get("ZDT5").get("encoding"));
+      assertEquals("Permutation", byName.get("KroAB100TSP").get("encoding"));
+      assertEquals(3, byName.get("DTLZ2").get("numberOfObjectives"));
+      assertEquals(2, ((List<?>) byName.get("DTLZ2").get("arguments")).size());
+      assertFalse(byName.get("RE31").containsKey("arguments"));
+    }
+
     @Test
     @DisplayName("given the registries, when manifest is built, then it lists every registry")
     void givenRegistries_whenManifestBuilt_thenItListsEveryRegistry() {
@@ -122,6 +150,7 @@ class DescribeMainTest {
       assertEquals(5, ((List<?>) manifest.get("baseAlgorithms")).size());
       assertEquals(6, ((List<?>) manifest.get("metaAlgorithms")).size());
       assertTrue(((List<?>) manifest.get("problems")).contains("ZDT4"));
+      assertEquals(manifest.get("problems"), problemNames(manifest));
       assertTrue(((List<?>) manifest.get("indicators")).contains("Epsilon"));
       assertTrue(manifest.containsKey("resourceDirectories"));
       assertTrue(manifest.containsKey("schemas"));
