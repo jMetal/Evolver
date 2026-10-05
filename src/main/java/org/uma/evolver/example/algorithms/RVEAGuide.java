@@ -108,7 +108,7 @@ public class RVEAGuide {
             new ExperimentProblem<>(new DTLZ7(), "DTLZ7").setReferenceFront("DTLZ7.3D.csv"),
             new ExperimentProblem<>(new DTLZ2Minus(), "DTLZ2Minus")
                 .setReferenceFront("DTLZ2Minus.3D.csv"),
-            new ExperimentProblem<>(maF08(), "MaF08").setReferenceFront("MaF08.3D.csv"),
+            new ExperimentProblem<>(new MaF08(2, 3), "MaF08").setReferenceFront("MaF08.3D.csv"),
             new ExperimentProblem<>(new ZDT1(), "ZDT1").setReferenceFront("ZDT1.csv"));
 
     String nsgaIIConfiguration =
@@ -163,19 +163,6 @@ public class RVEAGuide {
     new ExecuteAlgorithms<>(experiment).run();
     new ComputeQualityIndicators<>(experiment).run();
     // [step-2-end]
-  }
-
-  /**
-   * MaF08 with three objectives and the decision space of the MaF test suite, {@code [-10000,
-   * 10000]}. jMetal's class bounds the variables to {@code [0, 1]}, which contains only a fifth of
-   * the polygon that is its Pareto set (the vertices are at distance 1 from the origin), so most of
-   * its Pareto front could not be reached. Fixed in jMetal's develop branch after 7.6 (db77a48ff):
-   * remove this method when Evolver depends on the first release that includes the fix.
-   */
-  private static MaF08 maF08() {
-    MaF08 problem = new MaF08(2, 3);
-    problem.variableBounds(List.of(-10000.0, -10000.0), List.of(10000.0, 10000.0));
-    return problem;
   }
 
   private static Algorithm<List<DoubleSolution>> rvea(

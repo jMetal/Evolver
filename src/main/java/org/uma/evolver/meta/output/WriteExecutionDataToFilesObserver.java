@@ -3,7 +3,6 @@ package org.uma.evolver.meta.output;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
@@ -47,7 +46,7 @@ public class WriteExecutionDataToFilesObserver implements Observer<Map<String, O
         }
         outputResults.writeResultsToFiles(population);
       } catch (IOException e) {
-        throw JMetalExceptions.withCause(e);
+        throw new JMetalException(e);
       }
     }
   }

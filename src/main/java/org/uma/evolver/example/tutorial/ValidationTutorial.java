@@ -81,15 +81,15 @@ public class ValidationTutorial {
     // [step-1-start]
     List<ExperimentProblem<DoubleSolution>> problems = new ArrayList<>();
     // Seen during training
-    problems.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG4()).setReferenceFront("WFG4.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG5()).setReferenceFront("WFG5.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG6()).setReferenceFront("WFG6.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.2D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG1(2, 4, 2)).setReferenceFront("WFG1.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG2(2, 4, 2)).setReferenceFront("WFG2.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG3(2, 4, 2)).setReferenceFront("WFG3.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG4(2, 4, 2)).setReferenceFront("WFG4.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG5(2, 4, 2)).setReferenceFront("WFG5.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG6(2, 4, 2)).setReferenceFront("WFG6.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG7(2, 4, 2)).setReferenceFront("WFG7.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG8(2, 4, 2)).setReferenceFront("WFG8.2D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG9(2, 4, 2)).setReferenceFront("WFG9.2D.csv"));
     // Not seen during training
     problems.add(new ExperimentProblem<>(new DTLZ1_2D()).setReferenceFront("DTLZ1.2D.csv"));
     problems.add(new ExperimentProblem<>(new DTLZ2_2D()).setReferenceFront("DTLZ2.2D.csv"));
@@ -138,7 +138,7 @@ public class ValidationTutorial {
             .setIndicatorList(
                 List.of(
                     new Epsilon(),
-                    threadSafeSpread(),
+                    new Spread(),
                     new PISAHypervolume(),
                     new InvertedGenerationalDistancePlus()))
             .setIndependentRuns(independentRuns)
@@ -158,21 +158,6 @@ public class ValidationTutorial {
       int run) {
     return new ExperimentAlgorithm<>(
         baseLevelAlgorithm.parse(configuration.split("\\s+")).build(), tag, problem, run);
-  }
-
-  /**
-   * jMetal's Spread, computed by one thread at a time. In jMetal 7.6, Spread sorts the reference
-   * front in place, and ComputeQualityIndicators computes the runs of each problem in parallel with
-   * the same instance, which corrupts the sort ("Comparison method violates its general
-   * contract!"). Fixed in jMetal 7.7: use {@code new Spread()} when Evolver moves to it.
-   */
-  private static Spread threadSafeSpread() {
-    return new Spread() {
-      @Override
-      public synchronized double compute(double[][] front) {
-        return super.compute(front);
-      }
-    };
   }
 
   private static YAMLParameterSpace nsgaiiSpace() {

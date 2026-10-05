@@ -11,7 +11,6 @@ import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
 import org.uma.evolver.parameter.catalogue.variationparameter.VariationParameter;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.catalogue.common.evaluation.Evaluation;
 import org.uma.jmetal.component.catalogue.common.evaluation.impl.SequentialEvaluation;
@@ -258,7 +257,7 @@ public abstract class BaseRVEA<S extends Solution<?>> implements BaseLevelAlgori
     try {
       return Arrays.asList(VectorUtils.readVectors(fileName));
     } catch (IOException exception) {
-      throw JMetalExceptions.withCause("Error reading the weight vector file " + fileName, exception);
+      throw new JMetalException("Error reading the weight vector file " + fileName, exception);
     }
   }
 

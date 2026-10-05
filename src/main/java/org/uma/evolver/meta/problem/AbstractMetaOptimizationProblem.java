@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
@@ -181,7 +180,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     } catch (RuntimeException exception) {
       // Without this context, the error of a component (for instance, a tournament larger than
       // the population) does not tell which configuration of the training caused it
-      throw JMetalExceptions.withCause(
+      throw new JMetalException(
           String.format(
               "A configuration failed on problem %s (%d evaluations): %s%nConfiguration: %s",
               problems.get(problemId).name(),
@@ -221,8 +220,8 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
         values[i] = evaluations;
       } else {
         // A copy of the rows array: the configurations are evaluated in parallel and share the
-        // normalized reference fronts, and some indicators (jMetal's Spread) sort the reference
-        // front in place, which corrupts it for the other threads mid-sort.
+        // normalized reference fronts, so an indicator that sorted the reference front in place
+        // (as jMetal's Spread did up to 7.6) would corrupt it for the other threads mid-sort.
         indicator.referenceFront(normalizedReferenceFronts.get(problemId).clone());
         double value = indicator.compute(normalizedFront);
         values[i] = Double.isFinite(value) ? value
@@ -245,7 +244,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       try {
         fronts.add(VectorUtils.readVectors(fileName, ","));
       } catch (IOException e) {
-        throw JMetalExceptions.withCause("The file does not exist: " + fileName, e);
+        throw new JMetalException("The file does not exist: " + fileName, e);
       }
     }
     return fronts;

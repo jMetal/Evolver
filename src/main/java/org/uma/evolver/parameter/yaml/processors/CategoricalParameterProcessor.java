@@ -10,7 +10,6 @@ import org.uma.evolver.parameter.type.CategoricalIntegerParameter;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.evolver.parameter.yaml.ParameterProcessor;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
@@ -304,7 +303,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
         parentParam.addConditionalParameter(valueName, subParam);
       }
     } catch (Exception e) {
-      throw JMetalExceptions.withCause(
+      throw new JMetalException(
           "Error processing specific subparameter " + subParamName + ": " + e.getMessage(), e);
     }
   }
@@ -373,7 +372,7 @@ public class CategoricalParameterProcessor implements ParameterProcessor {
             "Cannot add global sub-parameter to non-categorical parameter: " + parameterName);
         ((CategoricalParameter) parentParameter).addGlobalSubParameter(subParameter);
       } catch (Exception e) {
-        throw JMetalExceptions.withCause(
+        throw new JMetalException(
             "Error processing global sub-parameter " + subParamName + ": " + e.getMessage(), e);
       }
     }

@@ -12,7 +12,6 @@ import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.util.archive.Archive;
@@ -99,7 +98,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       try {
         writeResultsToFiles(population);
       } catch (IOException e) {
-        throw JMetalExceptions.withCause(e);
+        throw new JMetalException(e);
       }
     }
   }
@@ -173,7 +172,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writer.write("Meta-evaluations performed: " + evaluations);
       writer.newLine();
     } catch (IOException e) {
-      throw JMetalExceptions.withCause(e);
+      throw new JMetalException(e);
     }
   }
 
@@ -285,7 +284,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
           + indicators.stream().map(QualityIndicator::name).collect(Collectors.joining(", ")));
       writer.newLine();
     } catch (IOException e) {
-      throw JMetalExceptions.withCause("Error writing metadata", e);
+      throw new JMetalException("Error writing metadata", e);
     }
   }
 

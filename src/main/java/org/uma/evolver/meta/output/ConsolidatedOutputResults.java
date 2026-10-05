@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterManagement;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
@@ -157,7 +156,7 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
                     + indicators.stream().map(QualityIndicator::name).collect(Collectors.joining(", ")));
             writer.newLine();
         } catch (IOException e) {
-            throw JMetalExceptions.withCause("Error writing metadata", e);
+            throw new JMetalException("Error writing metadata", e);
         }
     }
 
@@ -215,7 +214,7 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.write("Meta-evaluations performed: " + evaluations);
             writer.newLine();
         } catch (IOException e) {
-            throw JMetalExceptions.withCause("Error writing wall-clock time", e);
+            throw new JMetalException("Error writing wall-clock time", e);
         }
     }
 

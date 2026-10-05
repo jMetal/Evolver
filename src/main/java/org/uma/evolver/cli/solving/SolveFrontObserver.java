@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
@@ -112,7 +111,7 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
           StandardCopyOption.REPLACE_EXISTING,
           StandardCopyOption.ATOMIC_MOVE);
     } catch (IOException e) {
-      throw JMetalExceptions.withCause(e);
+      throw new JMetalException(e);
     }
   }
 
