@@ -320,6 +320,42 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
+  @DisplayName("Given a training set whose problems do not have the encoding of the algorithm")
+  class EncodingMismatch {
+
+    @Test
+    @DisplayName("when run, then it fails before running and says which encodings do not match")
+    void whenRun_thenItFailsBeforeRunning(@TempDir Path tempDir) throws IOException {
+      // Arrange: ZDT4, a Double problem, for a Permutation algorithm
+      BaseLevelConfig doubles = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      BaseLevelConfig baseLevel =
+          new BaseLevelConfig(
+              doubles.algorithmName(),
+              "Permutation",
+              doubles.populationSize(),
+              doubles.numberOfIndependentRuns(),
+              "NSGAIIPermutation.yaml",
+              doubles.extraConfig(),
+              doubles.trainingProblemNames(),
+              doubles.trainingReferenceFrontFileNames(),
+              doubles.trainingEvaluations(),
+              doubles.indicatorNames());
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaRandomSearchFlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+      Path statusFile = tempDir.resolve("status.yaml");
+
+      // Act & Assert
+      assertThrows(RuntimeException.class, () -> new TrainingRunner(false).run(request, statusFile));
+      String status = Files.readString(statusFile);
+      assertTrue(status.contains("FAILED"), status);
+      assertTrue(status.contains("Double-encoded"), status);
+    }
+  }
+
+  @Nested
   @DisplayName("Given AGE-MOEA (tree encoding)")
   class AgemoeaTree {
 

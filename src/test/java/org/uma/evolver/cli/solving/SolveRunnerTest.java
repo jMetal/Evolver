@@ -257,6 +257,42 @@ class SolveRunnerTest {
 
     @Test
     @DisplayName(
+        "given a Double problem and the Permutation encoding, when run, then it fails before"
+            + " running and says which encodings do not match")
+    void givenAnEncodingMismatch_whenRun_thenStatusIsFailedAndSaysWhy() throws IOException {
+      // Arrange
+      SolveRequest valid = nsgaiiOnZdt1(1, 1L, tempDir.resolve("output").toString());
+      SolveRequest request =
+          new SolveRequest(
+              valid.algorithmName(),
+              "Permutation",
+              valid.populationSize(),
+              "NSGAIIPermutation.yaml",
+              valid.extraConfig(),
+              valid.configuration(),
+              valid.configurationFile(),
+              valid.problem(),
+              valid.referenceFrontFileName(),
+              valid.maxEvaluations(),
+              valid.numberOfIndependentRuns(),
+              valid.seed(),
+              valid.indicatorNames(),
+              valid.statusFrequency(),
+              valid.frontFrequency(),
+              valid.writePopulation(),
+              valid.outputDirectory());
+      Path statusFile = tempDir.resolve("status.yaml");
+
+      // Act & Assert
+      assertThrows(RuntimeException.class, () -> new SolveRunner().run(request, statusFile));
+      String status = Files.readString(statusFile);
+      assertTrue(status.contains("FAILED"), status);
+      assertTrue(status.contains("Double-encoded"), status);
+      assertTrue(status.contains("Permutation"), status);
+    }
+
+    @Test
+    @DisplayName(
         "given Spread on a problem with three objectives, when run, then it fails before running")
     void givenSpreadOnThreeObjectives_whenRun_thenStatusIsFailed() throws IOException {
       // Arrange
