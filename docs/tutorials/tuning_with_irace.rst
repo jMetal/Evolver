@@ -4,6 +4,7 @@ E14. Tuning with irace
 ======================
 
 :Level: Advanced
+:Version: 1.0 (2026-10-05)
 :Time: about 1 hour, of which irace takes about 40 minutes
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by irace and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), R 4.6.1, irace 4.4.3
