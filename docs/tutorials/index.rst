@@ -61,10 +61,6 @@ Intermediate
      - Designing a training run (training set, meta-objectives, budgets, independent runs) and
        validating its result against other algorithms, on problems seen and not seen during the
        training.
-   * - :doc:`E17. Budgets: evaluations or time <budgets>`
-     - The two budgets of a training: the evaluations of each base-level run, and the stopping
-       condition of the meta-optimizer, by number of configurations or by computing time; when to
-       use each and what they change in the results.
    * - :doc:`E8. Analyzing training results <analyzing_training_results>`
      - Reading the output files of a training run, its convergence and the population of the
        meta-optimizer, choosing a configuration from the final front, and validating the choice.
@@ -79,17 +75,21 @@ Intermediate
    * - :doc:`E11. Binary and permutation encodings <binary_and_permutation_encodings>`
      - Tuning NSGA-II for a binary problem (ZDT5) and a permutation one (the bi-objective TSP): the
        parameter spaces and operators of each encoding, and validating without a known front.
+   * - :doc:`E17. Budgets: evaluations or time <budgets>`
+     - The two budgets of a training: the evaluations of each base-level run, and the stopping
+       condition of the meta-optimizer, by number of configurations or by computing time; when to
+       use each and what they change in the results.
 
 .. toctree::
    :hidden:
 
    designing_parameter_spaces
    training_sets_indicators_budgets
-   budgets
    analyzing_training_results
    validating_a_configuration
    problems_without_reference_front
    binary_and_permutation_encodings
+   budgets
 
 Advanced
 --------
