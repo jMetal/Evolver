@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter;
 
 import java.util.List;
+import org.uma.evolver.parameter.catalogue.ProbabilityChecks;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.*;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
@@ -71,7 +72,9 @@ public class PermutationCrossoverParameter
 
   @Override
   public CrossoverOperator<PermutationSolution<Integer>> getCrossover() {
-    Double crossoverProbability = (Double) findGlobalSubParameter("crossoverProbability").value();
+    double crossoverProbability =
+        ProbabilityChecks.probability(
+            "crossoverProbability", (Double) findGlobalSubParameter("crossoverProbability").value());
 
     CrossoverOperator<PermutationSolution<Integer>> result;
 

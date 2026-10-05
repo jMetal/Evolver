@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
+import org.uma.evolver.util.JMetalExceptions;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
@@ -170,12 +171,25 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   }
 
   private List<S> runAlgorithm(String[] parameterArray, int problemId, int evaluations) {
-    var algorithm = baseAlgorithm
-        .createInstance(problems.get(problemId), evaluations)
-        .parse(parameterArray)
-        .build();
-    algorithm.run();
-    return algorithm.result();
+    try {
+      var algorithm = baseAlgorithm
+          .createInstance(problems.get(problemId), evaluations)
+          .parse(parameterArray)
+          .build();
+      algorithm.run();
+      return algorithm.result();
+    } catch (RuntimeException exception) {
+      // Without this context, the error of a component (for instance, a tournament larger than
+      // the population) does not tell which configuration of the training caused it
+      throw JMetalExceptions.withCause(
+          String.format(
+              "A configuration failed on problem %s (%d evaluations): %s%nConfiguration: %s",
+              problems.get(problemId).name(),
+              evaluations,
+              exception.getMessage(),
+              String.join(" ", parameterArray)),
+          exception);
+    }
   }
 
   private double[][] extractNonDominatedFront(List<S> solutions) {
@@ -231,7 +245,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       try {
         fronts.add(VectorUtils.readVectors(fileName, ","));
       } catch (IOException e) {
-        throw new JMetalException("The file does not exist: " + fileName, e);
+        throw JMetalExceptions.withCause("The file does not exist: " + fileName, e);
       }
     }
     return fronts;

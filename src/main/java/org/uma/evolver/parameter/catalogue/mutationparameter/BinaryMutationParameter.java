@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.catalogue.mutationparameter;
 
 import java.util.List;
+import org.uma.evolver.parameter.catalogue.ProbabilityChecks;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.*;
 import org.uma.jmetal.solution.binarysolution.BinarySolution;
@@ -82,12 +83,15 @@ public class BinaryMutationParameter extends MutationParameter<BinarySolution> {
     }
     
     Double mutationProbabilityFactor = (Double) findGlobalSubParameter("mutationProbabilityFactor").value();
-    if (mutationProbabilityFactor == null || mutationProbabilityFactor <= 0) {
-      throw new IllegalStateException("mutationProbabilityFactor must be a positive number");
+    if (mutationProbabilityFactor == null) {
+      throw new IllegalStateException("mutationProbabilityFactor is not set");
     }
-    
-    // Calculate actual mutation probability
-    double mutationProbability = mutationProbabilityFactor / numberOfBitsInASolution;
+
+    // Calculate actual mutation probability; a factor of 0 (no mutation) is valid, as in the
+    // ranges of the binary parameter spaces
+    double mutationProbability =
+        ProbabilityChecks.mutationProbability(
+            mutationProbabilityFactor, numberOfBitsInASolution, "bits");
     
     // Create and return the appropriate mutation operator
     if ("bitFlip".equals(value())) {

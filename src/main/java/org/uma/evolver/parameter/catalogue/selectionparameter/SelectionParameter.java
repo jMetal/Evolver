@@ -103,7 +103,9 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
     switch (value()) {
       case "tournament" -> {
         int tournamentSize = (Integer) findConditionalParameter("selectionTournamentSize").value();
-        result = new NaryTournamentSelection<>(tournamentSize, matingPoolSize, comparator);
+        result = checkedTournament(
+            new NaryTournamentSelection<>(tournamentSize, matingPoolSize, comparator),
+            tournamentSize);
       }
       case "random" -> result = new RandomSelection<>(matingPoolSize);
       case "boltzmann" -> {
@@ -146,5 +148,25 @@ public class SelectionParameter<S extends Solution<?>> extends CategoricalParame
   @Override
   public String name() {
     return super.name();
+  }
+
+  /**
+   * The tournament selection, checking that the population it selects from has at least as many
+   * solutions as the tournament. Without the check, jMetal reports a list "less than the number of
+   * requested solutions", which does not name the parameter that caused it.
+   */
+  private Selection<S> checkedTournament(Selection<S> tournament, int tournamentSize) {
+    return population -> {
+      if (population.size() < tournamentSize) {
+        throw new JMetalException(
+            "selectionTournamentSize ("
+                + tournamentSize
+                + ") is larger than the population the selection draws from ("
+                + population.size()
+                + " solutions): it must be at most the population size (populationSize, or"
+                + " populationSizeWithArchive when the algorithm uses an external archive)");
+      }
+      return tournament.select(population);
+    };
   }
 }

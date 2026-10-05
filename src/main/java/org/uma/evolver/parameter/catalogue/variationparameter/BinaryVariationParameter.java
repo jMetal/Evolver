@@ -138,7 +138,8 @@ public class BinaryVariationParameter extends VariationParameter<BinarySolution>
     try {
       Integer size = (Integer) nonConfigurableSubParameters().get("offspringPopulationSize");
       if (size == null || size <= 0) {
-        throw new IllegalStateException("offspringPopulationSize must be a positive integer");
+        throw new IllegalStateException(
+          "offspringPopulationSize must be a positive integer, but it is " + size);
       }
       return size;
     } catch (ClassCastException e) {

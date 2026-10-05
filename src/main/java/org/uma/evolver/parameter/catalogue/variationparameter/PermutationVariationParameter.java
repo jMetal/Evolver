@@ -141,7 +141,7 @@ public class PermutationVariationParameter extends VariationParameter<Permutatio
     Integer size = (Integer) nonConfigurableSubParameters().get("offspringPopulationSize");
     if (size == null || size <= 0) {
       throw new IllegalStateException(
-          "offspringPopulationSize must be a positive integer");
+          "offspringPopulationSize must be a positive integer, but it is " + size);
     }
     return size;
   }

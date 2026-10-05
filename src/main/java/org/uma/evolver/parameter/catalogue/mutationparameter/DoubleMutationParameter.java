@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.catalogue.mutationparameter;
 
 import java.util.List;
+import org.uma.evolver.parameter.catalogue.ProbabilityChecks;
 import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.*;
@@ -107,7 +108,9 @@ public class DoubleMutationParameter extends MutationParameter<DoubleSolution> {
     // Validate and get common parameters
     int numberOfProblemVariables = getNonNegativeIntParameter("numberOfProblemVariables");
     double mutationProbabilityFactor = (Double) findGlobalSubParameter("mutationProbabilityFactor").value();
-    double mutationProbability = mutationProbabilityFactor / numberOfProblemVariables;
+    double mutationProbability =
+        ProbabilityChecks.mutationProbability(
+            mutationProbabilityFactor, numberOfProblemVariables, "variables");
     
     RepairDoubleSolutionStrategyParameter repairDoubleSolution = getRepairStrategy();
     

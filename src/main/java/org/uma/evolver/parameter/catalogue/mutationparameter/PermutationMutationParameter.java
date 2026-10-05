@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.catalogue.mutationparameter;
 
 import java.util.List;
+import org.uma.evolver.parameter.catalogue.ProbabilityChecks;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.*;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
@@ -118,11 +119,10 @@ public class PermutationMutationParameter extends MutationParameter<PermutationS
   private double getMutationProbability() {
     try {
       Double probability = (Double) findGlobalSubParameter("mutationProbability").value();
-      if (probability == null || probability < 0.0 || probability > 1.0) {
-        throw new IllegalStateException(
-            "mutationProbability must be a number between 0.0 and 1.0");
+      if (probability == null) {
+        throw new IllegalStateException("mutationProbability is not set");
       }
-      return probability;
+      return ProbabilityChecks.probability("mutationProbability", probability);
     } catch (ClassCastException e) {
       throw new IllegalStateException("Invalid mutation probability value", e);
     }

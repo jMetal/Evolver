@@ -1,6 +1,7 @@
 package org.uma.evolver.parameter.catalogue.crossoverparameter;
 
 import java.util.List;
+import org.uma.evolver.parameter.catalogue.ProbabilityChecks;
 import org.uma.evolver.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.*;
@@ -81,7 +82,9 @@ public class DoubleCrossoverParameter extends CrossoverParameter<DoubleSolution>
    */
   @Override
   public CrossoverOperator<DoubleSolution> getCrossover() {
-    Double crossoverProbability = (Double) findGlobalSubParameter("crossoverProbability").value();
+    double crossoverProbability =
+        ProbabilityChecks.probability(
+            "crossoverProbability", (Double) findGlobalSubParameter("crossoverProbability").value());
     RepairDoubleSolutionStrategyParameter repairDoubleSolution =
         (RepairDoubleSolutionStrategyParameter) findGlobalSubParameter("crossoverRepairStrategy");
 
