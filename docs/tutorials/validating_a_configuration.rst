@@ -4,6 +4,7 @@ E9. Validating a Configuration
 ==============================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-05)
 :Time: about 1 hour, of which the training (optional) takes about 17 minutes and the validation
    about 5
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
