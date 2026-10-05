@@ -14,8 +14,6 @@ createInitialSolutions:
   type: categorical
   values:
     default: {}
-    latinHypercubeSampling: {}
-    scatterSearch: {}
 
 variation:
   type: categorical

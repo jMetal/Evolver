@@ -4,7 +4,6 @@ import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
-import org.uma.jmetal.util.densityestimator.impl.AngleDensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.KnnDensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.ShiftedDensityEstimator;
@@ -104,9 +103,9 @@ public class DensityEstimatorParameter<S extends Solution<?>> extends Categorica
       case "angle" -> {
         int angleNeighborhoodSize =
             (Integer) findConditionalParameter("angleNeighborhoodSize").value();
-        // Objectives are always normalized: angles are measured from the origin, which only
-        // corresponds to the ideal point in the [0,1] normalized objective space.
-        yield new AngleDensityEstimator<>(null, true, angleNeighborhoodSize);
+        // Objectives are always normalized (see LenientAngleDensityEstimator, which also gives
+        // 0.0 to a solution without density, as the other estimators do)
+        yield new LenientAngleDensityEstimator<>(angleNeighborhoodSize);
       }
       default -> throw new JMetalException("Density estimator does not exist: " + value());
     };
