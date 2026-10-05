@@ -53,6 +53,10 @@ Intermediate
 
    * - Tutorial
      - What you will learn
+   * - :doc:`E6. Designing your own parameter space <designing_parameter_spaces>`
+     - Reducing and extending a YAML parameter space, the limits that the algorithms set, measuring
+       the size of a space, and comparing two spaces by validating the configurations they produce
+       (the space of the 2019 irace study against the full one).
    * - :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`
      - Designing a training run (training set, meta-objectives, budgets, independent runs) and
        validating its result against other algorithms, on problems seen and not seen during the
@@ -72,6 +76,7 @@ Intermediate
 .. toctree::
    :hidden:
 
+   designing_parameter_spaces
    training_sets_indicators_budgets
    budgets
    analyzing_training_results

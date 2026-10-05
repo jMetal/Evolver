@@ -27,7 +27,7 @@ pip install -r scripts/requirements.txt
 | `plot_front_interactive.py` | Same as `plot_front.py`, as an interactive Plotly figure (in the browser, or a self-contained HTML file). |
 | `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
 | `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. With `--x time`, the x axis is the computing time of the meta-optimizer. |
-| `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. |
+| `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. With `--stats`, prints its size: parameters (genes of the flat encoding), structures (combinations of categorical values) and depth. |
 | `critical_difference_plots.py` | Critical difference plots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): average Friedman ranks, with bars joining the algorithms whose differences are not significant (Nemenyi). Needs `pip install SAES`. |
 | `plot_meta_population.py` | Plots the population of the meta-optimizer at several checkpoints of a training run, in the space of two meta-objectives, with its non-dominated configurations highlighted. Needs a training run with `writePopulation: true`. |
 | `plot_median_fronts.py` | For a jMetal validation study, plots the front of the run with the median value of an indicator (HV by default) for each problem and algorithm, over the reference front: one row per problem, one column per algorithm (2D or 3D). |
@@ -127,6 +127,8 @@ statistical scripts.
 
 ```bash
 python scripts/plot_parameter_space.py src/main/resources/parameterSpaces/NSGAIIDouble.yaml --depth 3
+# the size of the space instead of the tree
+python scripts/plot_parameter_space.py src/main/resources/parameterSpaces/NSGAIIDouble.yaml --stats
 ```
 
 ## Dependencies
@@ -137,8 +139,8 @@ tests.
 
 ## Tests
 
-`tests/` has pytest tests of the time axis of the training plots and of the statistics of the
-validation scripts (A12, average ranks, median tables). From the root of the repository:
+`tests/` has pytest tests of the time axis of the training plots, of the statistics of the
+validation scripts (A12, average ranks, median tables) and of the size of a parameter space. From the root of the repository:
 
 ```bash
 python -m pytest scripts/tests

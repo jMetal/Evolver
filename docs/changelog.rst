@@ -37,6 +37,13 @@ Added
   study of Nebro et al. (GECCO 2019 Companion), NSGA-II tuned for the bi-objective WFG problems and
   validated against NSGA-II and SMPSO, to explain each analysis of a validation study. The
   configuration found is bundled in ``src/main/resources/tunedConfigurations/NSGAIIWFG2D.txt``
+- Tutorial E6, *Designing your own parameter space* (``docs/tutorials/designing_parameter_spaces.rst``,
+  ``example.tutorial.ParameterSpaceDesignTutorial``, ``tutorial-e6-request.yaml``): reducing and
+  extending a space, the limits that the algorithms set, and the space of the GECCO 2019 irace study
+  (``NSGAIIDoubleGECCO2019.yaml``, a new bundled parameter space) compared with the full one by
+  validating the configurations found in each
+- ``scripts/plot_parameter_space.py --stats`` prints the size of a parameter space: its parameters
+  (the genes of the flat encoding), its structures (combinations of categorical values) and its depth
 - Analysis scripts for validation studies, all reading jMetal's ``QualityIndicatorSummary.csv``:
   ``scripts/boxplots.py``, ``scripts/effect_size_tables.py`` (Vargha-Delaney A12),
   ``scripts/friedman_holm_tables.py`` (Friedman test and Holm's procedure with a control) and
