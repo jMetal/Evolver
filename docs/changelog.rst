@@ -63,9 +63,9 @@ Fixed
   outside [0, 1] (``crossoverProbability``, ``mutationProbability``), a ``mutationProbabilityFactor``
   that gives a probability larger than 1 for the number of variables of the problem (with the valid
   range), an ``offspringPopulationSize`` of 0. Exceptions that wrap another one keep its message
-  and its cause (``JMetalExceptions``): jMetal 7.6 loses them, so they used to be ``null``. See
-  ``docs/proposals/failing-configurations.md`` for tolerating failing configurations instead of
-  aborting the training
+  and its cause (``JMetalExceptions``): jMetal 7.6 loses them, so they used to be ``null``. A failing
+  configuration still makes the training fail: ``docs/proposals/failing-configurations.md`` records
+  the decision
 - The binary mutation accepts a ``mutationProbabilityFactor`` of 0 (no mutation), which is in the
   range of the binary parameter spaces: it was rejected, which aborted a training whenever the
   meta-optimizer reached the bound of the range
