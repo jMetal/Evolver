@@ -37,6 +37,16 @@ Added
   study of Nebro et al. (GECCO 2019 Companion), NSGA-II tuned for the bi-objective WFG problems and
   validated against NSGA-II and SMPSO, to explain each analysis of a validation study. The
   configuration found is bundled in ``src/main/resources/tunedConfigurations/NSGAIIWFG2D.txt``
+- NSGA-II for binary problems (``BinaryNSGAII``) can be tuned and run from the command line
+  (``encoding: Binary`` in a training or solve request), and is listed in ``DescribeMain``'s
+  manifest. Binary problems, such as ZDT5, are named by their class
+- Default configurations of NSGA-II for binary and permutation problems
+  (``defaultConfigurations/NSGAIIBinaryDefault.txt`` and ``NSGAIIPermutationDefault.txt``, the
+  settings of jMetal's NSGA-II examples), and the exact Pareto front of ZDT5
+  (``resources/referenceFronts/ZDT5.csv``)
+- Tutorial E11, *Binary and permutation encodings*
+  (``docs/tutorials/binary_and_permutation_encodings.rst``, ``example.tutorial.EncodingsTutorial``):
+  NSGA-II tuned for ZDT5 and for the bi-objective TSP, validated against the default configurations
 - Tutorial E6, *Designing your own parameter space* (``docs/tutorials/designing_parameter_spaces.rst``,
   ``example.tutorial.ParameterSpaceDesignTutorial``, ``tutorial-e6-request.yaml``): reducing and
   extending a space, the limits that the algorithms set, and the space of the GECCO 2019 irace study

@@ -202,7 +202,9 @@ as-is:
        meta-evaluations
    * - ``nsgaii-two-biobjective-tsp-request.yaml``
      - NSGA-II tuning a **Permutation**-encoded base-level algorithm (``PermutationNSGAII`` on two
-       bi-objective TSP instances), instead of the Double encoding every other bundled request uses
+       bi-objective TSP instances), instead of the Double encoding of most bundled requests
+   * - ``tutorial-e11-binary-request.yaml``
+     - AsyncNSGA-II tuning a **Binary**-encoded base-level algorithm (``BinaryNSGAII`` on ZDT5)
    * - ``moead-zdt4-request.yaml``
      - NSGA-II tuning MOEA/D, a base algorithm with its own extra config (flat encoding)
    * - ``rvea-zdt1-dtlz2-request.yaml``
@@ -421,6 +423,9 @@ Example output
      encoding: Double
      requiredExtraConfigKeys: []
    - name: NSGA-II
+     encoding: Binary
+     requiredExtraConfigKeys: []
+   - name: NSGA-II
      encoding: Permutation
      requiredExtraConfigKeys: []
    - name: MOEAD
@@ -505,8 +510,8 @@ Manifest sections
      - Contents
    * - ``baseAlgorithms``
      - Every ``(algorithmName, encoding)`` pair accepted by ``BaseLevelConfig``'s
-       ``algorithmName``/``encoding`` fields (e.g. NSGA-II is registered for both ``Double`` and
-       ``Permutation``), and any ``extraConfig`` keys it requires (e.g. MOEA/D's
+       ``algorithmName``/``encoding`` fields (e.g. NSGA-II is registered for ``Double``, ``Binary``
+       and ``Permutation``), and any ``extraConfig`` keys it requires (e.g. MOEA/D's
        ``weightVectorFilesDirectory``)
    * - ``metaAlgorithms``
      - Every meta-optimizer algorithm name accepted by ``metaSearch.algorithm``, its family

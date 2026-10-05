@@ -72,6 +72,9 @@ Intermediate
      - Designing a validation study and analyzing it: medians and IQRs, boxplots, the Wilcoxon test,
        effect sizes, the Friedman test with Holm's procedure, critical difference plots and a
        Bayesian test, repeating with Evolver the first study of automatic configuration with jMetal.
+   * - :doc:`E11. Binary and permutation encodings <binary_and_permutation_encodings>`
+     - Tuning NSGA-II for a binary problem (ZDT5) and a permutation one (the bi-objective TSP): the
+       parameter spaces and operators of each encoding, and validating without a known front.
 
 .. toctree::
    :hidden:
@@ -81,6 +84,7 @@ Intermediate
    budgets
    analyzing_training_results
    validating_a_configuration
+   binary_and_permutation_encodings
 
 Advanced
 --------
