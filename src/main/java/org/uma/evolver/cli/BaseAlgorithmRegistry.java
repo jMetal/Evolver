@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.moead.DoubleMOEAD;
+import org.uma.evolver.algorithm.nsgaii.BinaryNSGAII;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.algorithm.nsgaii.PermutationNSGAII;
 import org.uma.evolver.algorithm.rvea.DoubleRVEA;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.BinaryParameterFactory;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.factory.ParameterFactory;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
@@ -39,8 +41,8 @@ public final class BaseAlgorithmRegistry {
 
   /**
    * @param name the base-level algorithm name, resolved via {@link #resolve}
-   * @param encoding the jMetal solution encoding it is built for ({@code "Double"} or
-   *     {@code "Permutation"})
+   * @param encoding the jMetal solution encoding it is built for ({@code "Double"}, {@code
+   *     "Binary"} or {@code "Permutation"})
    * @param requiredExtraConfigKeys keys {@link #resolve} requires present in {@code extraConfig}
    */
   public record BaseAlgorithmDescriptor(
@@ -49,11 +51,14 @@ public final class BaseAlgorithmRegistry {
   private static final List<BaseAlgorithmDescriptor> ALGORITHMS =
       List.of(
           new BaseAlgorithmDescriptor("NSGA-II", "Double", List.of()),
+          new BaseAlgorithmDescriptor("NSGA-II", "Binary", List.of()),
           new BaseAlgorithmDescriptor("NSGA-II", "Permutation", List.of()),
           new BaseAlgorithmDescriptor(
               "MOEAD", "Double", List.of("weightVectorFilesDirectory")),
           new BaseAlgorithmDescriptor(
               "RVEA", "Double", List.of("weightVectorFilesDirectory")));
+
+  private static final String SUPPORTED_ENCODINGS = "Double, Binary, Permutation";
 
   private BaseAlgorithmRegistry() {}
 
@@ -79,18 +84,20 @@ public final class BaseAlgorithmRegistry {
       Map<String, String> extraConfig) {
     return switch (encoding) {
       case "Double" -> resolveDouble(algorithmName, populationSize, parameterSpace, extraConfig);
+      case "Binary" -> resolveBinary(algorithmName, populationSize, parameterSpace);
       case "Permutation" -> resolvePermutation(algorithmName, populationSize, parameterSpace);
       default -> throw new JMetalException(
-          "Unknown base-level encoding: " + encoding + ". Supported: Double, Permutation");
+          "Unknown base-level encoding: " + encoding + ". Supported: " + SUPPORTED_ENCODINGS);
     };
   }
 
   private static ParameterFactory<?> parameterFactory(String encoding) {
     return switch (encoding) {
       case "Double" -> new DoubleParameterFactory();
+      case "Binary" -> new BinaryParameterFactory();
       case "Permutation" -> new PermutationParameterFactory();
       default -> throw new JMetalException(
-          "Unknown base-level encoding: " + encoding + ". Supported: Double, Permutation");
+          "Unknown base-level encoding: " + encoding + ". Supported: " + SUPPORTED_ENCODINGS);
     };
   }
 
@@ -109,6 +116,17 @@ public final class BaseAlgorithmRegistry {
           "Unknown base-level algorithm: "
               + algorithmName
               + " for encoding Double. Supported: NSGA-II, MOEAD, RVEA");
+    };
+  }
+
+  private static BaseLevelAlgorithm<?> resolveBinary(
+      String algorithmName, int populationSize, ParameterSpace parameterSpace) {
+    return switch (algorithmName) {
+      case "NSGA-II" -> new BinaryNSGAII(populationSize, parameterSpace);
+      default -> throw new JMetalException(
+          "Unknown base-level algorithm: "
+              + algorithmName
+              + " for encoding Binary. Supported: NSGA-II");
     };
   }
 
