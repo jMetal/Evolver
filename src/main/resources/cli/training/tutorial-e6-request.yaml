@@ -1,0 +1,10 @@
+# Training request of tutorial E6 (docs/tutorials/designing_parameter_spaces.rst): the training of
+# tutorial E9 (NSGA-II tuned for the bi-objective WFG problems, 2000 configurations), in the
+# parameter space of Nebro et al. (GECCO 2019 Companion), TutorialWfg2DGECCO2019BaseLevel.yaml.
+# Copy it to a working directory before running it, since TrainingRunnerMain writes results.yaml
+# (and, by default, status.yaml) next to the request file.
+baseLevel: TutorialWfg2DGECCO2019BaseLevel.yaml
+metaSearch: TutorialAsyncNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial-e6/training
+writeFrequency: 100
+statusFrequency: 100
