@@ -5,9 +5,14 @@ Print or plot a parameter-space YAML.
 Default mode outputs a text tree to stdout (ready to paste into a slide or
 document).  Pass --figure to generate a compact matplotlib table instead.
 
+With --stats, it prints the size of the space instead: the number of parameters (the genes of
+the flat encoding of the meta-optimizers), the number of structures (the distinct combinations of
+categorical values, counting each value with the conditional parameters it activates; the numeric
+parameters are not counted) and the depth of the tree (the levels below the top-level parameters).
+
 Usage:
     python scripts/plot_parameter_space.py <yaml_file>
-        [--title TITLE] [--depth N] [--output FILE] [--figure]
+        [--title TITLE] [--depth N] [--output FILE] [--figure] [--stats]
 
 Arguments:
     yaml_file   Path to a parameter-space YAML file
@@ -16,6 +21,7 @@ Arguments:
     --depth     Maximum nesting depth to show  (default: 1)
     --output    Output path; .pdf/.png/.svg imply --figure, otherwise plain text
     --figure    Render a matplotlib table instead of printing text
+    --stats     Print the size of the space instead of the tree
 
 Examples:
     python scripts/plot_parameter_space.py \\
@@ -58,6 +64,80 @@ def _summarise(ptype: str, spec: dict) -> str:
 def _load(path: Path) -> dict:
     with open(path) as f:
         return yaml.safe_load(f)
+
+
+# ── size of the space ─────────────────────────────────────────────────────────
+
+def _children(spec: dict) -> tuple[list[tuple[str, dict]], list[list[tuple[str, dict]]]]:
+    """The global sub-parameters of a categorical parameter, and the conditional parameters of
+    each of its values."""
+    global_children = list((spec.get("globalSubParameters") or {}).items())
+    raw = spec.get("values", {})
+    if not isinstance(raw, dict):
+        return global_children, [[] for _ in raw]
+    per_value = [
+        list(((value_spec or {}).get("conditionalParameters") or {}).items())
+        for value_spec in raw.values()
+    ]
+    return global_children, per_value
+
+
+def _parameter_names(name: str, spec: dict, names: set[str]) -> None:
+    names.add(name)
+    if spec.get("type", "categorical") != "categorical":
+        return
+    global_children, per_value = _children(spec)
+    for child_name, child_spec in global_children + [c for value in per_value for c in value]:
+        _parameter_names(child_name, child_spec, names)
+
+
+def _structures(spec: dict) -> int:
+    """Distinct combinations of categorical values under a parameter (1 for a numeric one)."""
+    if spec.get("type", "categorical") != "categorical":
+        return 1
+    global_children, per_value = _children(spec)
+    total = 0
+    for conditional in per_value:
+        combinations = 1
+        for _, child_spec in conditional:
+            combinations *= _structures(child_spec)
+        total += combinations
+    for _, child_spec in global_children:
+        total *= _structures(child_spec)
+    return total
+
+
+def _depth(spec: dict) -> int:
+    """Levels below a parameter (0 for a parameter without sub-parameters)."""
+    if spec.get("type", "categorical") != "categorical":
+        return 0
+    global_children, per_value = _children(spec)
+    children = global_children + [c for value in per_value for c in value]
+    return 1 + max((_depth(child_spec) for _, child_spec in children), default=-1)
+
+
+def space_statistics(data: dict) -> dict[str, int]:
+    """Size of a parameter space: top-level parameters, parameters (genes of the flat encoding),
+    structures (combinations of categorical values) and depth."""
+    names: set[str] = set()
+    structures = 1
+    for name, spec in data.items():
+        _parameter_names(name, spec, names)
+        structures *= _structures(spec)
+    return {
+        "top-level parameters": len(data),
+        "parameters (genes of the flat encoding)": len(names),
+        "structures (combinations of categorical values)": structures,
+        "depth (levels below the top-level parameters)": max(
+            (_depth(spec) for spec in data.values()), default=0
+        ),
+    }
+
+
+def render_stats(data: dict, title: str) -> None:
+    print(title)
+    for label, value in space_statistics(data).items():
+        print(f"  {label}: {value:,}")
 
 
 # ── text tree ─────────────────────────────────────────────────────────────────
@@ -287,6 +367,8 @@ def main() -> None:
                    help="Output file (.txt for text tree; .pdf/.png/.svg for figure)")
     p.add_argument("--figure", action="store_true",
                    help="Render a matplotlib table instead of printing text")
+    p.add_argument("--stats", action="store_true",
+                   help="Print the size of the space instead of the tree")
     args = p.parse_args()
 
     path = args.yaml_file.expanduser().resolve()
@@ -296,6 +378,10 @@ def main() -> None:
 
     data = _load(path)
     title = args.title or path.stem
+
+    if args.stats:
+        render_stats(data, title=title)
+        return
 
     use_figure = args.figure or (
         args.output is not None and args.output.suffix.lower() in _FIGURE_SUFFIXES
