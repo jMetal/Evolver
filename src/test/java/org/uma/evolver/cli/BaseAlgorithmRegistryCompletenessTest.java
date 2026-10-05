@@ -36,8 +36,8 @@ class BaseAlgorithmRegistryCompletenessTest {
       Map.ofEntries(
           Map.entry("DoubleNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\""),
           Map.entry("DoubleMOEAD", "registered in BaseAlgorithmRegistry as \"MOEAD\""),
-          Map.entry("BinaryNSGAII", "not yet registered"),
-          Map.entry("PermutationNSGAII", "not yet registered"),
+          Map.entry("BinaryNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\" (Binary)"),
+          Map.entry("PermutationNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\" (Permutation)"),
           Map.entry("BinaryMOEAD", "not yet registered"),
           Map.entry("PermutationMOEAD", "not yet registered"),
           Map.entry("DoubleSMSEMOA", "not yet registered"),

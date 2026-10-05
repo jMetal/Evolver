@@ -280,6 +280,26 @@ class TrainingRunnerSmokeIT {
   }
 
   @Nested
+  @DisplayName("Given NSGA-II (Binary base-level encoding)")
+  class BinaryNsgaIIFlat {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("TutorialZdt5BinaryBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaNSGAIIFlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
   @DisplayName("Given NSGA-II (Permutation base-level encoding)")
   class PermutationNsgaIIFlat {
 

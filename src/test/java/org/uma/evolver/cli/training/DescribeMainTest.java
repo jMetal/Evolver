@@ -60,6 +60,7 @@ class DescribeMainTest {
           switch (algorithm.name() + "/" + algorithm.encoding()) {
             case "MOEAD/Double" -> "MOEADDouble.yaml";
             case "RVEA/Double" -> "RVEADouble.yaml";
+            case "NSGA-II/Binary" -> "NSGAIIBinary.yaml";
             case "NSGA-II/Permutation" -> "NSGAIIPermutation.yaml";
             default -> "NSGAIIDouble.yaml";
           };
@@ -118,7 +119,7 @@ class DescribeMainTest {
       Map<String, Object> manifest = DescribeMain.manifest();
 
       // Assert
-      assertEquals(4, ((List<?>) manifest.get("baseAlgorithms")).size());
+      assertEquals(5, ((List<?>) manifest.get("baseAlgorithms")).size());
       assertEquals(6, ((List<?>) manifest.get("metaAlgorithms")).size());
       assertTrue(((List<?>) manifest.get("problems")).contains("ZDT4"));
       assertTrue(((List<?>) manifest.get("indicators")).contains("Epsilon"));
