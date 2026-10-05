@@ -1,6 +1,6 @@
 # Problem catalogue in the introspection manifest (`DescribeMain`)
 
-**Status:** proposed (2026-10-05), for Evolver 2.4. Extends `cli-describe-manifest.md`.
+**Status:** implemented (2026-10-05) for Evolver 2.4, with the decisions below. Extends `cli-describe-manifest.md`.
 
 ## Motivation
 
@@ -128,6 +128,19 @@ problem of the user's.
    `problems`, and a mismatch fails before running with the message above.
 6. Documentation: `docs/utilities/cli_tools.rst` (the manifest), the changelog, and this proposal's
    status.
+
+## Decisions taken
+
+- A new key, `problemCatalogue`, next to `problems`: no client written for 2.3 breaks.
+- ZDT5 and OneZeroMax (binary) and the TSP instances of jMetal (permutation) are registered. Two of
+  them are left out: `KroBC100TSP` and `KroBD100TSP` read `kroAC100.tsp` and `kroAD100.tsp`, files
+  that do not exist (jMetal 7.7 bug: they should be `kroC100.tsp` and `kroD100.tsp`). Knapsack needs
+  data of its own, and OneMax has one objective.
+- The table of arguments covers ZDT, DTLZ, WFG, UF, LZ09, LSMOP, ZCAT and OneZeroMax. Writing the
+  test that builds every problem with the defaults of the table found that UF5, UF6 and UF9 take
+  more arguments than the rest of UF (a number of points and a tolerance): the table also accepts
+  entries by problem name. LZ09's three arguments have no known default (they select the shape of
+  the problem and jMetal does not expose them).
 
 ## Open questions
 

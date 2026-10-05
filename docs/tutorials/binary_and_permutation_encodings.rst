@@ -125,7 +125,9 @@ The training is described by ``TutorialZdt5BinaryBaseLevel.yaml``:
    :language: yaml
    :caption: TutorialZdt5BinaryBaseLevel.yaml
 
-ZDT5 is named by its class: the short names of ``DescribeMain`` are continuous problems. Each
+``ZDT5`` is a short name of the problems that ``DescribeMain`` lists, with the encoding of each one
+(``Binary`` here, as ``Permutation`` for the TSP instances): a training checks that the encoding of
+its problems is the one of the algorithm, and fails before it starts if it is not. Each
 configuration is run three times with 10000 evaluations, and the meta-optimizer is the
 asynchronous NSGA-II of tutorial E7 (2000 configurations). From the root of the repository:
 

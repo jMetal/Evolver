@@ -289,7 +289,7 @@ A solve request is a single, self-contained file
        used, such as those in ``defaultConfigurations/``. Exactly one of the two must be given
    * - ``problem``
      - required
-     - A name listed by ``DescribeMain`` (``ZDT1``), or a fully-qualified class name, optionally
+     - A name listed by ``DescribeMain`` (``ZDT1``, ``ZDT5``, ``KroAB100TSP``), or a fully-qualified class name, optionally
        with constructor arguments: ``{class: org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1,
        args: [7, 3]}``
    * - ``referenceFrontFileName``
@@ -522,6 +522,14 @@ Manifest sections
    * - ``problems``
      - Every training problem name ``ProblemRegistry`` resolves, usable in
        ``trainingProblemNames``
+   * - ``problemCatalogue``
+     - One entry per problem of ``problems``, with its ``family``, its ``encoding`` (``Double``,
+       ``Binary`` or ``Permutation``: the one the base-level algorithm must have), its
+       ``numberOfObjectives`` and ``numberOfVariables`` (left out for a problem that cannot be built,
+       such as a TSP instance whose files are not in the working directory) and, for the problems
+       that take them, the ``arguments`` of the constructor: a ``name``, a ``type`` (``integer``,
+       ``number`` or ``boolean``) and the ``default`` of the problem built with none (left out when
+       unknown). A problem is given all its arguments or none: ``{class: DTLZ2, args: [12, 3]}``
    * - ``indicators``
      - Every quality indicator name ``IndicatorRegistry`` resolves, usable in ``indicatorNames``
    * - ``resourceDirectories``

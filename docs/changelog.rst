@@ -11,11 +11,28 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- ``DescribeMain``'s manifest has a ``problemCatalogue``, which describes each problem with its
+  family, its encoding, its dimensions and the arguments of its constructor (their names, types and
+  defaults), next to ``problems``, which keeps the names. An external tool can filter the problems
+  by the encoding of the algorithm and build the ``args`` of a problem (see
+  ``docs/proposals/cli-problem-catalogue.md``). The binary problems ZDT5 and OneZeroMax and the
+  multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
+  ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
+  registered with short names, and the examples and bundled base levels use them
 - Tutorial E10, *Problems without a reference front*
   (``docs/tutorials/problems_without_reference_front.rst``), which replaces the page on reference
   fronts (``docs/reference_fronts.rst``): what each indicator needs, estimating extreme points for
   the hypervolume and what goes wrong with bad ones, training with HV− and EP, and validating with a
   reference front built from the study, with the bi-objective TSP of tutorial E11
+
+Fixed
+~~~~~
+
+- A training or solve request whose problems have a different encoding from the algorithm's fails
+  before running, with a message that names both encodings and suggests a problem of the right one
+  (``Problem ZDT1 is Double-encoded, but the algorithm was configured with the Permutation
+  encoding``). It used to end in the middle of the run with a ``ClassCastException`` that named
+  jMetal's solution classes
 
 Removed
 ~~~~~~~
