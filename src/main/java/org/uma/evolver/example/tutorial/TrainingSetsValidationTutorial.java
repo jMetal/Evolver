@@ -26,7 +26,6 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
-import org.uma.jmetal.problem.multiobjective.wfg.DefaultWFGSettings;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
@@ -94,16 +93,15 @@ public class TrainingSetsValidationTutorial {
     problems.add(new ExperimentProblem<>(new DTLZ6()).setReferenceFront("DTLZ6.3D.csv"));
     problems.add(new ExperimentProblem<>(new DTLZ7()).setReferenceFront("DTLZ7.3D.csv"));
     // Not seen during training
-    DefaultWFGSettings.numberOfObjectives = 3;
-    problems.add(new ExperimentProblem<>(new WFG1()).setReferenceFront("WFG1.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG2()).setReferenceFront("WFG2.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG3()).setReferenceFront("WFG3.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG4()).setReferenceFront("WFG4.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG5()).setReferenceFront("WFG5.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG6()).setReferenceFront("WFG6.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG7()).setReferenceFront("WFG7.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG8()).setReferenceFront("WFG8.3D.csv"));
-    problems.add(new ExperimentProblem<>(new WFG9()).setReferenceFront("WFG9.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG1(2, 4, 3)).setReferenceFront("WFG1.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG2(2, 4, 3)).setReferenceFront("WFG2.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG3(2, 4, 3)).setReferenceFront("WFG3.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG4(2, 4, 3)).setReferenceFront("WFG4.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG5(2, 4, 3)).setReferenceFront("WFG5.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG6(2, 4, 3)).setReferenceFront("WFG6.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG7(2, 4, 3)).setReferenceFront("WFG7.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG8(2, 4, 3)).setReferenceFront("WFG8.3D.csv"));
+    problems.add(new ExperimentProblem<>(new WFG9(2, 4, 3)).setReferenceFront("WFG9.3D.csv"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithms = new ArrayList<>();
     for (int run = 0; run < independentRuns; run++) {
