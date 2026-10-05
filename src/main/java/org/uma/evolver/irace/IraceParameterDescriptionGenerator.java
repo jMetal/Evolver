@@ -1,11 +1,16 @@
-package org.uma.evolver.irace.generator;
+package org.uma.evolver.irace;
 
 import java.util.List;
 import org.uma.evolver.parameter.ConditionalParameter;
 import org.uma.evolver.parameter.Parameter;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.factory.BinaryParameterFactory;
+import org.uma.evolver.parameter.factory.DoubleParameterFactory;
+import org.uma.evolver.parameter.factory.MOPSOParameterFactory;
+import org.uma.evolver.parameter.factory.ParameterFactory;
+import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.type.*;
-import org.uma.jmetal.solution.Solution;
+import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
@@ -17,18 +22,75 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>Example usage:
  * <pre>{@code
- * IraceParameterDescriptionGenerator<Solution<?>> generator = new IraceParameterDescriptionGenerator<>();
- * ParameterSpace parameterSpace = new MyParameterSpace();
- * generator.generateConfigurationFile(parameterSpace);
+ * var generator = new IraceParameterDescriptionGenerator();
+ * var parameterSpace = new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory());
+ * String description = generator.description(parameterSpace);
  * }</pre>
  *
- * @param <S> The type of solution the parameters are associated with
+ * <p>From the command line, {@link #main} takes two arguments: the YAML file of the parameter space
+ * and the parameter factory that reads it, which depends on the encoding of the algorithm ({@code
+ * Double}, {@code Binary}, {@code Permutation}, or {@code MOPSO} for the parameter spaces of MOPSO).
+ * The YAML file is looked up in the classpath first (the bundled {@code parameterSpaces/}) and then
+ * in the filesystem, so a parameter space of your own works too:
+ * <pre>{@code
+ * java -cp Evolver-*-jar-with-dependencies.jar \
+ *     org.uma.evolver.irace.IraceParameterDescriptionGenerator \
+ *     NSGAIIDouble.yaml Double > parameters-NSGAII.txt
+ * }</pre>
+ *
+ * @see <a href="https://cran.r-project.org/package=irace">irace package</a>
  * @author Antonio J. Nebro
  */
-public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
+public class IraceParameterDescriptionGenerator {
 
   /** Format string for parameter output alignment */
   private static final String FORMAT_STRING = "%-40s %-40s %-7s %-30s %-20s\n";
+
+  /** The parameter factories accepted by {@link #main}. */
+  static final List<String> FACTORY_NAMES = List.of("Double", "Binary", "Permutation", "MOPSO");
+
+  private static final String USAGE =
+      "Usage: IraceParameterDescriptionGenerator <parameterSpace.yaml> <"
+          + String.join("|", FACTORY_NAMES)
+          + ">";
+
+  /**
+   * Prints the irace parameter file of a parameter space to standard output.
+   *
+   * @param args the YAML file of the parameter space and the name of its parameter factory (one of
+   *     {@link #FACTORY_NAMES})
+   */
+  public static void main(String[] args) {
+    if (args.length != 2) {
+      System.err.println(USAGE);
+      System.exit(1);
+    }
+    System.out.println(description(args[0], args[1]));
+  }
+
+  /**
+   * Returns the irace parameter description of the parameter space in a YAML file.
+   *
+   * @param parameterSpaceFile the YAML file of the parameter space
+   * @param factoryName one of {@link #FACTORY_NAMES}
+   * @return the parameter description, in irace's format
+   * @throws JMetalException if the factory name is unknown
+   */
+  static String description(String parameterSpaceFile, String factoryName) {
+    var parameterSpace = new YAMLParameterSpace(parameterSpaceFile, parameterFactory(factoryName));
+    return new IraceParameterDescriptionGenerator().description(parameterSpace);
+  }
+
+  static ParameterFactory<?> parameterFactory(String factoryName) {
+    return switch (factoryName) {
+      case "Double" -> new DoubleParameterFactory();
+      case "Binary" -> new BinaryParameterFactory();
+      case "Permutation" -> new PermutationParameterFactory();
+      case "MOPSO" -> new MOPSOParameterFactory();
+      default -> throw new JMetalException(
+          "Unknown parameter factory: " + factoryName + ". " + USAGE);
+    };
+  }
 
   /**
    * Generates and prints the irace configuration for the given parameter space.
@@ -37,6 +99,17 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
    * @throws NullPointerException if parameterSpace is null
    */
   public void generateConfigurationFile(ParameterSpace parameterSpace) {
+    System.out.println(description(parameterSpace));
+  }
+
+  /**
+   * Returns the irace configuration for the given parameter space.
+   *
+   * @param parameterSpace The parameter space to generate configuration for
+   * @return the parameter description, in irace's format
+   * @throws NullPointerException if parameterSpace is null
+   */
+  public String description(ParameterSpace parameterSpace) {
     List<Parameter<?>> parameterList = parameterSpace.topLevelParameters();
 
     StringBuilder stringBuilder = new StringBuilder();
@@ -46,7 +119,7 @@ public class IraceParameterDescriptionGenerator<S extends Solution<?>> {
       stringBuilder.append("#\n");
     }
 
-    System.out.println(stringBuilder);
+    return stringBuilder.toString();
   }
 
   /**
