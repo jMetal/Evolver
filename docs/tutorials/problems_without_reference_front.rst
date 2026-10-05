@@ -6,6 +6,7 @@ E10. Problems Without a Reference Front
 =======================================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-05)
 :Time: about 30 minutes, plus the optional runs of the examples
 :Prerequisites: :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
    :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`;
@@ -78,7 +79,8 @@ is (160000, 120000).
 The example
 `NSGAIIBiObjectiveWithObserversTSPExample <https://github.com/jMetal/Evolver/blob/develop/src/main/java/org/uma/evolver/example/baselevel/features/NSGAIIBiObjectiveWithObserversTSPExample.java>`_
 checks those points: it runs NSGA-II with observers that plot HV− and the front during the run.
-This is what it shows after 38000 evaluations:
+The first figure shows the evolution of HV− during the first 9000 evaluations, and the second one
+the front after 38000 evaluations, together with the two extreme points:
 
 .. image:: ../figures/HV-.TSP.png
    :width: 400
