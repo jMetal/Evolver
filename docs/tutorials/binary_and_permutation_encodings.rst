@@ -152,9 +152,18 @@ cities: ``KroAB100TSP`` combines the matrices of ``kroA100`` and ``kroB100``, ``
 of ``kroA100`` and ``kroC100``, and so on (the files are in ``resources/tspInstances/``).
 
 These instances have **no reference front**. ``resources/referenceFrontsTSP/`` holds, for each of
-them, two extreme points that bound the objectives, and the training measures the fronts with
-HV−, the hypervolume to be minimized, normalized with those bounds. Tutorial E10 explains this
-approach; here it is enough that it orders the fronts during the training.
+them, only two extreme points that bound the objectives. That is enough for the hypervolume, which
+needs a reference point, but not for the indicators that measure distances to a front, such as EP,
+NHV or IGD+, which need a complete reference front. The meta-objectives of the training are:
+
+- **HV−**, the hypervolume to be minimized, normalized with the extreme points: the main
+  objective, and the only indicator whose values are meaningful here;
+- **EP**, as a **helper objective**, as in tutorial E3. Measured against two points its values have
+  no meaning of their own (they can even be negative, when a front goes beyond the extreme points),
+  but they still tell apart the configurations whose fronts have no hypervolume at all (HV− = 0),
+  which is frequent at the start of a training, and guide the meta-optimizer until HV− improves.
+
+Tutorial E10 explains this approach.
 
 .. literalinclude:: ../../src/main/resources/baseLevelConfigurations/TutorialKroTspPermutationBaseLevel.yaml
    :language: yaml
@@ -188,9 +197,10 @@ generation instead of 100, and a tournament of size 6. The inversion mutation re
 the route, which in a TSP removes two edges and adds two others: it is the classic 2-opt move of
 TSP heuristics, and the meta-optimizer has found it on its own.
 
-The values of EP in ``VAR_CONF.txt`` are negative (about −0.03): with only two extreme points as
-the "reference front", a front that goes beyond them gets a negative distance. This is one of the
-reasons why the validation does not use those points.
+The values of EP in ``VAR_CONF.txt`` are negative (about −0.03), since the fronts go beyond the
+extreme points: as a helper objective, only the order it gives to the configurations matters, not
+its values. For the same reason, the validation cannot report EP or IGD+ against the extreme
+points.
 
 Step 5: the validations
 -----------------------
@@ -209,10 +219,10 @@ the tuned one, with 25 independent runs each:
    :end-before: // [permutation-end]
    :dedent: 4
 
-The TSP study needs a reference front for the indicators. The two extreme points of the training
-are too loose to tell good fronts apart: measured with them, the hypervolume of both algorithms
-is between 0.997 and 1.000 on three of the four instances. The study builds its own reference front
-instead, the non-dominated points of all the runs of both algorithms (jMetal's
+The TSP study needs a reference front for the indicators. With only the two extreme points of the
+training, the hypervolume would be the only valid indicator, and here it is not even informative:
+the points are so loose that the hypervolume of both algorithms is between 0.997 and 1.000 on three
+of the four instances. The study builds its own reference front instead, the non-dominated points of all the runs of both algorithms (jMetal's
 ``GenerateReferenceParetoFront``, before ``ComputeQualityIndicators``), and computes EP, HV and IGD+
 against it. This is the usual practice when a problem has no known front (tutorial E10). From the
 root of the repository:
