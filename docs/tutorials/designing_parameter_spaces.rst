@@ -4,6 +4,7 @@ E6. Designing Your Own Parameter Space
 ======================================
 
 :Level: Intermediate
+:Version: 1.0 (2026-10-05)
 :Time: about 45 minutes, of which the training (optional) takes about 21 minutes and the validation
    about 6
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
