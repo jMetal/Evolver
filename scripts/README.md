@@ -31,6 +31,10 @@ pip install -r scripts/requirements.txt
 | `critical_difference_plots.py` | Critical difference plots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): average Friedman ranks, with bars joining the algorithms whose differences are not significant (Nemenyi). Needs `pip install SAES`. |
 | `plot_meta_population.py` | Plots the population of the meta-optimizer at several checkpoints of a training run, in the space of two meta-objectives, with its non-dominated configurations highlighted. Needs a training run with `writePopulation: true`. |
 | `plot_median_fronts.py` | For a jMetal validation study, plots the front of the run with the median value of an indicator (HV by default) for each problem and algorithm, over the reference front: one row per problem, one column per algorithm (2D or 3D). |
+| `boxplots.py` | Boxplots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): the distribution of the runs of each algorithm, one panel per problem. Needs `pip install SAES`. |
+| `effect_size_tables.py` | Vargha-Delaney A12 effect sizes of a jMetal validation study: the probability that a run of the pivot is better than a run of each other algorithm, per problem, with its magnitude (negligible, small, medium, large). |
+| `friedman_holm_tables.py` | Friedman test over the problems of a jMetal validation study (SciPy), and post-hoc comparison of a control algorithm with the others with Holm's adjusted p-values ([SAES](https://github.com/jMetal/SAES)). Needs `pip install SAES`. |
+| `bayesian_plots.py` | Bayesian sign test of a jMetal validation study ([SAES](https://github.com/jMetal/SAES)): the probabilities that the pivot is better, practically equivalent (within a ROPE) or worse than each other algorithm, and the posterior on a triangle. Needs `pip install SAES`. |
 | `wilcoxon_pivot_tables.py` | Wilcoxon pivot tables of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): median and IQR of each algorithm per problem, with the tuned configuration as pivot in the last column. LaTeX, and optionally PNG. Needs `pip install SAES`. |
 
 Run any script without arguments (or with `--help`) for its full usage.
@@ -69,6 +73,20 @@ python scripts/critical_difference_plots.py results/tutorial-e7/validation/Quali
     --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
 ```
 
+The other analyses of tutorial E9, on the same file:
+
+```bash
+S=results/tutorial-e9/validation/QualityIndicatorSummary.csv
+# boxplots of some problems
+python scripts/boxplots.py $S --problems DTLZ1,DTLZ3,WFG1,WFG8 --indicators HV
+# effect sizes (Vargha-Delaney A12) of the pivot against the others
+python scripts/effect_size_tables.py $S --pivot NSGAIIWFG --indicators HV,IGD+
+# Friedman test and Holm's post-hoc procedure, with a control algorithm
+python scripts/friedman_holm_tables.py $S --control NSGAIIWFG --indicators HV,IGD+
+# Bayesian sign test; the ROPE is in the units of the indicator
+python scripts/bayesian_plots.py $S --pivot NSGAIIWFG --indicators HV --rope 0.001
+```
+
 ### Population of the meta-optimizer
 
 ```bash
@@ -101,7 +119,9 @@ checkpoints fall at different instants, are pooled at 100 common instants, each 
 the front of its last checkpoint up to that instant. `plot_meta_population.py` also adds the time
 of each checkpoint to its panel titles.
 
-`training_time.py` holds the shared code that reads these times; it is not a script.
+`training_time.py` holds the shared code that reads these times; it is not a script, and neither
+is `study_summary.py`, which reads the `QualityIndicatorSummary.csv` of a validation study for the
+statistical scripts.
 
 ### Parameter spaces
 
@@ -117,7 +137,8 @@ tests.
 
 ## Tests
 
-`tests/` has pytest tests of the time axis of the training plots. From the root of the repository:
+`tests/` has pytest tests of the time axis of the training plots and of the statistics of the
+validation scripts (A12, average ranks, median tables). From the root of the repository:
 
 ```bash
 python -m pytest scripts/tests

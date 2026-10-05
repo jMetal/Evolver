@@ -262,5 +262,5 @@ Try it yourself
 What's next
 -----------
 
-- Tutorial E9 covers the design and the statistical analysis of validation studies.
+- :doc:`E9 <validating_a_configuration>` covers the design and the statistical analysis of validation studies.
 - :doc:`../utilities/cli_tools` describes the request files and the output files of a training run.

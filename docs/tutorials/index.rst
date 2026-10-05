@@ -64,6 +64,10 @@ Intermediate
    * - :doc:`E8. Analyzing training results <analyzing_training_results>`
      - Reading the output files of a training run, its convergence and the population of the
        meta-optimizer, choosing a configuration from the final front, and validating the choice.
+   * - :doc:`E9. Validating a configuration <validating_a_configuration>`
+     - Designing a validation study and analyzing it: medians and IQRs, boxplots, the Wilcoxon test,
+       effect sizes, the Friedman test with Holm's procedure, critical difference plots and a
+       Bayesian test, repeating with Evolver the first study of automatic configuration with jMetal.
 
 .. toctree::
    :hidden:
@@ -71,6 +75,7 @@ Intermediate
    training_sets_indicators_budgets
    budgets
    analyzing_training_results
+   validating_a_configuration
 
 Advanced
 --------

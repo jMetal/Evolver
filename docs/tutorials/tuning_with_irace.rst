@@ -244,7 +244,7 @@ configuration is only as good as the training set, the budget and the aggregatio
 make it. Giving ZDT4 more weight (repeating it in the list of instances), a larger budget, or tuning
 for it separately are ways to address it.
 
-This is a check that the configuration works, not a statistical study: tutorial E9 covers how to
+This is a check that the configuration works, not a statistical study: :doc:`E9 <validating_a_configuration>` covers how to
 validate a configuration properly.
 
 Try it yourself
@@ -263,6 +263,6 @@ Try it yourself
 What's next
 -----------
 
-- Tutorial E9 covers the validation of a configuration.
+- :doc:`E9 <validating_a_configuration>` covers the validation of a configuration.
 - :doc:`E3 <meta_optimization_workflow>` and :doc:`E8 <analyzing_training_results>` show Evolver's
   own meta-optimization.

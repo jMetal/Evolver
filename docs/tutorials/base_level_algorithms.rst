@@ -235,7 +235,7 @@ are farthest apart from each other.
 
 On this run, the second configuration obtains better values of both indicators. A single run is not
 enough to conclude that it is better (that needs several runs and a statistical test, see
-tutorial E9), but it shows how much the configuration of an algorithm matters, and why finding good
+:doc:`E9 <validating_a_configuration>`), but it shows how much the configuration of an algorithm matters, and why finding good
 configurations automatically, which is what meta-optimization does, is worthwhile.
 
 Step 4: configurations stored in files

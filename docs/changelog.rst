@@ -32,6 +32,16 @@ Added
   factory that reads it (``Double``, ``Binary``, ``Permutation`` or ``MOPSO``), so it also covers the
   algorithms that had no generator (AGE-MOEA, NSGA-III, PAES, RVEA, SMS-EMOA and SSMOEA). It also
   gains ``description(ParameterSpace)``, which returns the text instead of printing it
+- Tutorial E9, *Validating a configuration* (``docs/tutorials/validating_a_configuration.rst``,
+  ``example.tutorial.ValidationTutorial``, ``tutorial-e9-request.yaml``): repeats with Evolver the
+  study of Nebro et al. (GECCO 2019 Companion), NSGA-II tuned for the bi-objective WFG problems and
+  validated against NSGA-II and SMPSO, to explain each analysis of a validation study. The
+  configuration found is bundled in ``src/main/resources/tunedConfigurations/NSGAIIWFG2D.txt``
+- Analysis scripts for validation studies, all reading jMetal's ``QualityIndicatorSummary.csv``:
+  ``scripts/boxplots.py``, ``scripts/effect_size_tables.py`` (Vargha-Delaney A12),
+  ``scripts/friedman_holm_tables.py`` (Friedman test and Holm's procedure with a control) and
+  ``scripts/bayesian_plots.py`` (Bayesian sign test with a ROPE), with the shared
+  ``scripts/study_summary.py``
 
 Removed
 ~~~~~~~

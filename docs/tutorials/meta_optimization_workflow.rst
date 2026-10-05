@@ -334,7 +334,7 @@ the diversity of the front, which is what NHV rewards.
 
 These values come from a single run of each configuration, as the training values do. A reliable
 comparison between configurations needs several runs of each and a statistical test, which is the
-subject of the validation tutorial (E9).
+subject of the validation tutorial, :doc:`E9 <validating_a_configuration>`.
 
 The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
 your results will differ from the ones shown here. With one run per configuration they can differ
@@ -402,8 +402,8 @@ What's next
   time instead of by evaluations.
 - :doc:`E7 <training_sets_indicators_budgets>` covers training sets with several problems, the
   choice of indicators and budgets, and the validation of a configuration against other
-  algorithms; analyzing the results of a training (E8) and validation studies (E9) come in later
-  tutorials.
+  algorithms; analyzing the results of a training (E8) and validation studies (:doc:`E9 <validating_a_configuration>`) come in
+  later tutorials.
 - :doc:`../concepts/meta_optimization_approach` and
   :doc:`../concepts/meta_optimization_level_metaheuristics` describe the approach and the available
   meta-optimizers in depth.
