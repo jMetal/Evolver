@@ -42,8 +42,9 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  *   <li>Permutation: the bi-objective TSP instances KroAB100 and KroAC100 (seen during training)
  *       and KroAD100 and KroAE100 (not seen), with {@value #PERMUTATION_EVALUATIONS} evaluations.
  *       The instances have no reference front, and the two extreme points of {@code
- *       resources/referenceFrontsTSP/} used in the training are too loose to tell good fronts
- *       apart (the hypervolume saturates). The study builds its own reference front instead, the
+ *       resources/referenceFrontsTSP/} used in the training cannot tell good fronts apart: on
+ *       three instances their lower bounds are far above the routes found, so the fronts dominate
+ *       the whole box and the hypervolume saturates. The study builds its own reference front instead, the
  *       non-dominated points of all the runs of both algorithms ({@code GenerateReferenceParetoFront}
  *       of jMetal), and computes EP, HV and IGD+ against it (tutorial E10).
  * </ul>
