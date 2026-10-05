@@ -7,7 +7,7 @@
 ############################################################################
 
 ## The parameters to tune, generated from NSGAIIDouble.yaml by
-## org.uma.evolver.irace.generator.IraceNSGAIIDoubleParameterDescriptionGenerator.
+## org.uma.evolver.irace.IraceParameterDescriptionGenerator NSGAIIDouble.yaml Double.
 parameterFile = "parameters-NSGAII.txt"
 
 ## Training instances: one line per instance, with the arguments the target runner receives for it.

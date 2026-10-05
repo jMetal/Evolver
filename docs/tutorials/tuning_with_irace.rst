@@ -47,15 +47,17 @@ runners for NSGA-II.
 Step 1: the parameter file
 --------------------------
 
-The generator ``IraceNSGAIIDoubleParameterDescriptionGenerator`` reads ``NSGAIIDouble.yaml`` and
-prints its parameters in irace's format:
+The generator ``IraceParameterDescriptionGenerator`` reads a parameter space and prints its
+parameters in irace's format. It takes two arguments: the YAML file of the parameter space, here
+``NSGAIIDouble.yaml``, and the parameter factory that reads it, which depends on the encoding of the
+algorithm (``Double``, ``Binary``, ``Permutation``, or ``MOPSO`` for the parameter spaces of MOPSO):
 
 .. code-block:: bash
 
     mvn -DskipTests package
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.irace.generator.IraceNSGAIIDoubleParameterDescriptionGenerator \
-        > parameters-NSGAII.txt
+        org.uma.evolver.irace.IraceParameterDescriptionGenerator \
+        NSGAIIDouble.yaml Double > parameters-NSGAII.txt
 
 This is an excerpt of the result (the file bundled in ``src/main/resources/irace/`` is the complete
 one):
@@ -73,8 +75,8 @@ line, its type (``c`` categorical, ``i`` integer, ``r`` real) and its values or 
 conditions after ``|`` translate the relations of the parameter space: ``sbxDistributionIndex`` is
 only active when ``crossover`` is ``SBX``, as in the YAML file. The command-line prefixes are those
 of Evolver's configuration strings, so a configuration sampled by irace is a valid configuration
-string for ``DoubleNSGAII``. Evolver has generators for the other algorithms as well (MOEA/D, MOPSO,
-RDEMOEA and other encodings of NSGA-II) in package ``org.uma.evolver.irace.generator``.
+string for ``DoubleNSGAII``. The same command works for any other parameter space, bundled or of
+your own: for instance, ``MOEADPermutation.yaml Permutation`` or ``MOPSO.yaml MOPSO``.
 
 Step 2: the target runner
 -------------------------
@@ -253,9 +255,9 @@ Try it yourself
   budget: does irace find a configuration that also works on ZDT4?
 - Run irace several times (``./run.sh scenario-NSGAII.txt 2``, ``3``, …): do the replications find
   similar configurations?
-- Tune MOEA/D instead: generate its parameter file with
-  ``IraceMOEADDoubleParameterDescriptionGenerator``, and write its target runner following
-  ``AutoNSGAIIIraceHVEP`` (MOEA/D also needs the directory of its weight vectors).
+- Tune MOEA/D instead: generate its parameter file with ``IraceParameterDescriptionGenerator
+  MOEADDouble.yaml Double``, and write its target runner following ``AutoNSGAIIIraceHVEP`` (MOEA/D
+  also needs the directory of its weight vectors).
 
 What's next
 -----------

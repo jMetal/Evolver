@@ -27,6 +27,21 @@ Added
   diversity indicator, is defined only for two objectives: a request that uses it on a problem with
   any other number of objectives is rejected before the run starts
   (``IndicatorRegistry.checkApplicable``), suggesting ``GeneralizedSpread``
+- ``IraceParameterDescriptionGenerator`` has a ``main`` that generates the irace parameter file of
+  any parameter space: it takes the YAML file (bundled, or a file of your own) and the parameter
+  factory that reads it (``Double``, ``Binary``, ``Permutation`` or ``MOPSO``), so it also covers the
+  algorithms that had no generator (AGE-MOEA, NSGA-III, PAES, RVEA, SMS-EMOA and SSMOEA). It also
+  gains ``description(ParameterSpace)``, which returns the text instead of printing it
+
+Removed
+~~~~~~~
+
+- The package ``irace.generator``: its nine
+  ``Irace<Algorithm><Encoding>ParameterDescriptionGenerator`` classes, one per parameter space, are
+  replaced by the ``main`` of
+  ``IraceParameterDescriptionGenerator`` (for instance, ``IraceParameterDescriptionGenerator
+  NSGAIIDouble.yaml Double`` replaces ``IraceNSGAIIDoubleParameterDescriptionGenerator``), which
+  moves to ``org.uma.evolver.irace`` and no longer has a type parameter, which it did not use
 
 Fixed
 ~~~~~
