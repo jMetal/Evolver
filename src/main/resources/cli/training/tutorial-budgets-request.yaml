@@ -1,9 +1,9 @@
-# Training request of tutorial E17 (docs/tutorials/budgets.rst): the one of tutorial E3, with the
+# Training request of tutorial E11 (docs/tutorials/budgets.rst): the one of tutorial E3, with the
 # meta-optimizer stopped after 2 minutes of computing time instead of after 2000 configurations.
 # Copy it to a working directory before running it, since TrainingRunnerMain writes results.yaml
 # (and, by default, status.yaml) next to the request file.
 baseLevel: TutorialZdt4BaseLevel.yaml
 metaSearch: TutorialTimeNSGAIIMetaSearch.yaml
-outputDirectory: results/tutorial/E17-cli
+outputDirectory: results/tutorial/budgets-cli
 writeFrequency: 50
 statusFrequency: 50

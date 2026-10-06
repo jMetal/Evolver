@@ -1,10 +1,10 @@
-# Training request of tutorial E9 (docs/tutorials/validating_a_configuration.rst): NSGA-II tuned
+# Training request of tutorial E8 (docs/tutorials/validating_a_configuration.rst): NSGA-II tuned
 # for the bi-objective WFG problems (TutorialWfg2DBaseLevel.yaml), with the asynchronous NSGA-II of
-# tutorial E7 as meta-optimizer (2000 configurations). Copy it to a working directory before
+# tutorial E6 as meta-optimizer (2000 configurations). Copy it to a working directory before
 # running it, since TrainingRunnerMain writes results.yaml (and, by default, status.yaml) next to
 # the request file.
 baseLevel: TutorialWfg2DBaseLevel.yaml
 metaSearch: TutorialAsyncNSGAIIMetaSearch.yaml
-outputDirectory: results/tutorial-e9/training
+outputDirectory: results/tutorial-validation/training
 writeFrequency: 100
 statusFrequency: 100
