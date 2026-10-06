@@ -1,0 +1,17 @@
+# Meta-optimizer of tutorial E13 (docs/tutorials/tree_versus_flat_encoding.rst): NSGA-II with the
+# tree (derivation tree) encoding, stopped after 2 minutes of computing time, as the flat one of
+# tutorial E17 (TutorialTimeNSGAIIMetaSearch.yaml), so that the two encodings are compared with the
+# same time. Crossover (subtree) and mutation (tree) are fixed by the tree encoding; the fields
+# below are parsed against NSGAIIMetaTree.yaml.
+algorithm: NSGA-II
+encoding: tree
+
+metaMaxComputingTimeMinutes: 2
+metaPopulationSize: 50
+numberOfCores: 14
+
+crossoverProbability: 0.9
+mutationProbability: 1.0
+mutationDistributionIndex: 5.0   # provisional; its value is to be studied (docs/proposals/tree-mutation.md)
+selection: tournament
+selectionTournamentSize: 2
