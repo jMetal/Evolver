@@ -35,7 +35,7 @@ class ConfigurationVariantsTest {
   }
 
   private static Map<String, String> values(String configuration) {
-    return ConfigurationVariants.parse(configuration);
+    return ConfigurationVariants.parameterValues(configuration);
   }
 
   @Nested

@@ -46,8 +46,8 @@ public final class ConfigurationVariants {
    */
   public static String derive(
       ParameterSpace space, String configuration, Map<String, String> changes, String fallback) {
-    Map<String, String> current = parse(configuration);
-    Map<String, String> defaults = parse(fallback);
+    Map<String, String> current = parameterValues(configuration);
+    Map<String, String> defaults = parameterValues(fallback);
     for (String name : changes.keySet()) {
       if (!space.parameters().containsKey(name)) {
         throw new IllegalArgumentException(
@@ -83,8 +83,14 @@ public final class ConfigurationVariants {
     return result.toString();
   }
 
-  /** Splits a configuration into its {@code --name value} pairs, in order. */
-  static Map<String, String> parse(String configuration) {
+  /**
+   * Splits a configuration into its {@code --name value} pairs.
+   *
+   * @param configuration a configuration, as {@code --name value} pairs; may be null or blank
+   * @return the value of each parameter, by name, in the order of the configuration
+   * @throws IllegalArgumentException if the configuration is not a list of such pairs
+   */
+  public static Map<String, String> parameterValues(String configuration) {
     Map<String, String> values = new LinkedHashMap<>();
     if (configuration == null || configuration.isBlank()) {
       return values;
