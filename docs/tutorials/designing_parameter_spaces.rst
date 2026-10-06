@@ -77,7 +77,7 @@ Two rules apply:
   (tutorial E3), each parameter is a variable in [0, 1], whatever the number of its values. A
   parameter with one value always decodes to that value, so the meta-optimizer wastes a little of
   its effort mutating it. It does no harm, but a space with many fixed parameters is less
-  efficient than its number of parameters suggests. The tree encoding (tutorial E13) does not have
+  efficient than its number of parameters suggests. The tree encoding (:doc:`E13 <tree_versus_flat_encoding>`) does not have
   this problem.
 
 Step 3: extending a parameter space
@@ -331,6 +331,6 @@ What's next
 
 - Tutorial E11 configures and tunes algorithms for binary and permutation problems, with their own
   parameter spaces.
-- Tutorial E13 compares the tree and the flat encodings, which treat the parameters of a space
+- :doc:`E13 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
   differently.
 - Tutorial E16 adds new components to the catalogue, so that they can be used in a parameter space.

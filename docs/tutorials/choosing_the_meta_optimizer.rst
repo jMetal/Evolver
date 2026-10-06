@@ -91,7 +91,7 @@ Three details of the table:
 
 - **SMPSO and SPEA2 are flat-only.** SMPSO needs a continuous (``DoubleProblem``) meta-problem, and
   the tree encoding is not one; SPEA2 is built with ``DoubleSolution`` operators. The other four
-  work with both encodings (tutorial E13, planned, will explain the tree encoding).
+  work with both encodings (:doc:`E13 <tree_versus_flat_encoding>` compares the two encodings).
 - **The asynchronous genetic algorithm** (``MetaAsyncGeneticAlgorithmBuilder``) exists, but only
   from Java: ``cli.training`` does not accept it.
 - **Which operators.** The flat NSGA-II and AGE-MOEA are built on Evolver's own configurable
@@ -214,7 +214,7 @@ of meta-optimization). What follows are reasons for a choice, not results.
        same budget, the budget is too small for it to learn anything, or the parameter space is so
        forgiving that any configuration is good. Either is useful to know
 
-For the tree encoding (E13) the choice is among NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and
+For the tree encoding (:doc:`E13 <tree_versus_flat_encoding>`) the choice is among NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and
 ``RandomSearch``.
 
 What to expect from the choice

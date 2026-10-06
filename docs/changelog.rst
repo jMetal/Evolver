@@ -35,6 +35,10 @@ Added
   failed or a killed run leaves behind, and a batch of requests run in parallel with the new script
   ``scripts/cli_batch.py``, which runs the default configuration of every algorithm of an encoding on
   some problems and tabulates the medians of their indicators
+- Tutorial E13, *Tree versus flat encoding* (``docs/tutorials/tree_versus_flat_encoding.rst``,
+  ``TreeEncodingTutorial``): the grammar of a parameter space, the inactive variables and the neutral
+  mutations of the flat encoding measured on NSGA-II, and the training of tutorial E3 run with each
+  encoding in the same time (``TutorialTimeTreeNSGAIIMetaSearch.yaml``)
 - Tutorial E12, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
   what the six meta-optimizers have in common and what sets them apart (operators, encodings,
   parallel evaluation and idle cores, when each one checks the time limit) and reasons to choose one

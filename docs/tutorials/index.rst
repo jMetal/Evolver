@@ -104,6 +104,9 @@ Advanced
      - What the six meta-optimizers have in common and what sets them apart: operators, flat and tree
        encodings, parallel evaluation and the number of cores, when each one checks the time limit,
        and reasons to choose one.
+   * - :doc:`E13. Tree versus flat encoding <tree_versus_flat_encoding>`
+     - The grammar of a parameter space, the inactive variables and neutral mutations of the flat
+       encoding measured on NSGA-II, and a training with each encoding in the same time.
    * - :doc:`E14. Tuning with irace <tuning_with_irace>`
      - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
        target runner, the scenario, running irace, and applying the configuration it finds.
@@ -118,5 +121,6 @@ More tutorials are planned for the intermediate and advanced levels.
    :hidden:
 
    choosing_the_meta_optimizer
+   tree_versus_flat_encoding
    tuning_with_irace
    automating_with_the_cli

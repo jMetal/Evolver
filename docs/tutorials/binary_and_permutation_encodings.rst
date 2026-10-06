@@ -320,4 +320,4 @@ What's next
 
 - :doc:`E10 <problems_without_reference_front>` covers problems without a reference front: the extreme points, HV−, and reference
   fronts built from the results.
-- Tutorial E13 compares the tree and the flat encodings of the meta-optimizer.
+- :doc:`E13 <tree_versus_flat_encoding>` compares the tree and the flat encodings of the meta-optimizer.
