@@ -27,7 +27,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Code of tutorial E14, "Tuning with irace" (see {@code docs/tutorials/tuning_with_irace.rst}).
+ * Code of tutorial E15, "Tuning with irace" (see {@code docs/tutorials/tuning_with_irace.rst}).
  *
  * <p>It reads the best configuration found by irace from its standard output ({@code
  * irace.stdout.txt}), saves it, and applies it to the ZDT problems it was tuned for, together with
@@ -39,7 +39,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public class IraceTutorial {
 
-  static final String IRACE_DIRECTORY = "results/tutorial-e14";
+  static final String IRACE_DIRECTORY = "results/tutorial-irace";
   static final String IRACE_OUTPUT = IRACE_DIRECTORY + "/execdir-1/irace.stdout.txt";
   static final int INDEPENDENT_RUNS = 15;
   static final int MAX_EVALUATIONS = 15000;

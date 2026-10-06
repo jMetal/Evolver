@@ -10,7 +10,7 @@ over runs), a simple estimate of when the training stops improving.
 Each argument is a training output directory (with INDICATORS.csv, as written by Evolver's
 ConsolidatedOutputResults), or a directory holding one such directory per replication:
 
-    python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV
+    python scripts/plot_training_convergence.py results/tutorial/workflow --primary NHV
     python scripts/plot_training_convergence.py path/to/re3d_15x5 --primary IGD+ --output-dir plots
 
 HVMinus (the minimized form of the hypervolume) is displayed as HV.
@@ -22,7 +22,7 @@ below 2 hours, hours otherwise. A single run is plotted at its own checkpoints; 
 whose checkpoints fall at different instants, each run contributes at each of 100 common instants
 the front of its last checkpoint up to then.
 
-    python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV --x time
+    python scripts/plot_training_convergence.py results/tutorial/workflow --primary NHV --x time
 """
 
 import argparse

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps the validation study of tutorial E9 ("Validating a configuration") from rotting: runs
+ * Keeps the validation study of tutorial E8 ("Validating a configuration") from rotting: runs
  * {@link ValidationTutorial} with minimal budgets, using the bundled tuned configuration.
  */
 @Tag("integration")

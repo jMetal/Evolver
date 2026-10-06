@@ -12,7 +12,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
 /**
  * Runs an asynchronous multi-threaded NSGA-II as meta-optimizer to configure NSGA-II using the
  * DTLZ1-DTLZ7 (three-objective) problems as training set, through {@link TrainingRunner}. It is
- * the training run of tutorial E7 ({@code docs/tutorials/training_sets_indicators_budgets.rst}):
+ * the training run of tutorial E6 ({@code docs/tutorials/training_sets_indicators_budgets.rst}):
  * NHV and EP as meta-objectives, and 10000 evaluations per problem, a fifth of the validation
  * budget (50000). The live plot of the meta-optimizer front
  * ({@code FRONT_PLOT_FREQUENCY}) is on.
@@ -92,7 +92,7 @@ public class AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ {
       """;
   // [step-1-end]
 
-  private static final String OUTPUT_DIRECTORY = "results/tutorial-e7/training";
+  private static final String OUTPUT_DIRECTORY = "results/tutorial-training-sets/training";
   private static final int WRITE_FREQUENCY = 100;
   private static final int STATUS_FREQUENCY = 500;
   private static final int FRONT_PLOT_FREQUENCY = 100;

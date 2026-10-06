@@ -75,7 +75,7 @@ public class MetaOptimizationWorkflowTutorial {
             + " configurations");
     // [step-2-end]
 
-    run(baseLevel, metaSearch, "results/tutorial/E3");
+    run(baseLevel, metaSearch, "results/tutorial/workflow");
   }
 
   /**

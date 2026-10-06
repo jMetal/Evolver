@@ -29,11 +29,11 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Code of tutorial E8, "Analyzing training results" (see {@code
+ * Code of tutorial E7, "Analyzing training results" (see {@code
  * docs/tutorials/analyzing_training_results.rst}).
  *
  * <p>It reads the configurations on the final front of a training run that tuned NSGA-II for the
- * ZDT problems ({@code tutorial-e8-request.yaml}), orders them by their NHV in the training (the
+ * ZDT problems ({@code tutorial-training-analysis-request.yaml}), orders them by their NHV in the training (the
  * first one is the chosen configuration), and validates all of them, together with the standard
  * NSGA-II, on the same problems with a larger budget ({@value #MAX_EVALUATIONS} evaluations,
  * {@value #INDEPENDENT_RUNS} independent runs). The candidates are named {@code NSGAIIZDT1}, {@code
@@ -44,8 +44,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 public class TrainingAnalysisTutorial {
 
-  static final String TRAINING_DIRECTORY = "results/tutorial-e8/training";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e8";
+  static final String TRAINING_DIRECTORY = "results/tutorial-training-analysis/training";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-training-analysis";
   static final int INDEPENDENT_RUNS = 15;
   static final int MAX_EVALUATIONS = 15000;
   static final int NUMBER_OF_CORES = 16;

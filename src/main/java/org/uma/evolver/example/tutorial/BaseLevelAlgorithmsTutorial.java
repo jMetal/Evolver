@@ -42,7 +42,7 @@ public class BaseLevelAlgorithmsTutorial {
   private BaseLevelAlgorithmsTutorial() {}
 
   public static void main(String[] args) throws IOException {
-    run("results/tutorial/E2");
+    run("results/tutorial/base-level");
   }
 
   /**

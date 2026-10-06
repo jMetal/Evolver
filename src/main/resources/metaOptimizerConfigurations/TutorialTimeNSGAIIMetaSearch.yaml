@@ -1,4 +1,4 @@
-# Meta-optimizer of tutorial E17 (docs/tutorials/budgets.rst): the one of tutorial E3
+# Meta-optimizer of tutorial E11 (docs/tutorials/budgets.rst): the one of tutorial E3
 # (TutorialNSGAIIMetaSearch.yaml), stopped after 2 minutes of computing time instead of after 2000
 # configurations. metaMaxEvaluations and metaMaxComputingTimeMinutes are mutually exclusive: give
 # exactly one of them.

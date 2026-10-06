@@ -1,5 +1,5 @@
 ###################################################### -*- mode: r -*- #####
-## irace scenario of tutorial E14 (docs/tutorials/tuning_with_irace.rst): tuning NSGA-II for the
+## irace scenario of tutorial E15 (docs/tutorials/tuning_with_irace.rst): tuning NSGA-II for the
 ## ZDT problems (instances-list-ZDT.txt) with its parameter space (parameters-NSGAII.txt), using
 ## Evolver's AutoNSGAIIIraceHVEP as target runner (it returns -HV + EP of the front found). The
 ## paths are relative to the directory where irace is run from (see run.sh). The full list of

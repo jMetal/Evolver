@@ -12,8 +12,8 @@ algorithm on every problem, and prints it with the magnitude of each value.
 
 Example:
     python scripts/effect_size_tables.py \\
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \\
-        --pivot NSGAIIWFG --indicators HV,IGD+ --output-dir results/tutorial-e9/tables
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \\
+        --pivot NSGAIIWFG --indicators HV,IGD+ --output-dir results/tutorial-validation/tables
 """
 
 import argparse

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps the validation study of tutorial E7 ("Training sets, indicators and budgets") from
+ * Keeps the validation study of tutorial E6 ("Training sets, indicators and budgets") from
  * rotting: runs {@link TrainingSetsValidationTutorial} with minimal budgets, using the default
  * NSGA-II configuration in place of the tuned one.
  */

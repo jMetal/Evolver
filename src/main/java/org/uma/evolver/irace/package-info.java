@@ -12,7 +12,7 @@
  * </ul>
  *
  * <p>The tutorial <a
- * href="https://evolver.readthedocs.io/en/latest/tutorials/tuning_with_irace.html">E14. Tuning with
+ * href="https://evolver.readthedocs.io/en/latest/tutorials/tuning_with_irace.html">E15. Tuning with
  * irace</a> shows the whole process; the files it uses (scenario, instances and run script) are in
  * {@code src/main/resources/irace/}.
  */

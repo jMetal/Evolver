@@ -21,8 +21,8 @@ The test is SAES's ``bayesian_sign_test`` (https://github.com/jMetal/SAES), whic
 
 Example:
     python scripts/bayesian_plots.py \\
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \\
-        --pivot NSGAIIWFG --indicators HV --rope 0.001 --output-dir results/tutorial-e9/tables
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \\
+        --pivot NSGAIIWFG --indicators HV --rope 0.001 --output-dir results/tutorial-validation/tables
 """
 
 import argparse

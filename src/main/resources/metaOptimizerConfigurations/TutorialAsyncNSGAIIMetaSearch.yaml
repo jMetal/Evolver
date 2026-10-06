@@ -1,4 +1,4 @@
-# Meta-optimizer of tutorials E7, E8 and E9: the asynchronous NSGA-II of
+# Meta-optimizer of tutorials E6, E7 and E8: the asynchronous NSGA-II of
 # AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, which evaluates 2000 configurations, 16 at a time.
 # Set numberOfCores to the number of cores of your machine.
 algorithm: AsyncNSGA-II

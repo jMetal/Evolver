@@ -6,8 +6,8 @@ front gets its own panel, side by side with shared axes, so that the differences
 --mode overlay draws all of them on a single panel instead:
 
     python scripts/plot_fronts.py resources/referenceFronts/ZDT4.csv \\
-        --front "Default=results/tutorial/E3/validation/default/FUN.csv" \\
-        --front "Tuned=results/tutorial/E3/validation/tuned/FUN.csv" \\
+        --front "Default=results/tutorial/workflow/validation/default/FUN.csv" \\
+        --front "Tuned=results/tutorial/workflow/validation/tuned/FUN.csv" \\
         --output fronts.png
 
 For a single front, or for three or more objectives, see plot_front.py.

@@ -1,8 +1,8 @@
-# Base level of tutorial E11 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II for
+# Base level of tutorial E10 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II for
 # permutation problems (PermutationNSGAII, NSGAIIPermutation.yaml), tuned for two bi-objective TSP
 # instances of 100 cities (KroAB100TSP and KroAC100TSP). They have no
 # reference front: each file of resources/referenceFrontsTSP/ holds only two extreme points that
-# bound the objectives, enough for HV- (tutorial E10), the main objective. EP is a helper objective:
+# bound the objectives, enough for HV- (tutorial E9), the main objective. EP is a helper objective:
 # against two points its values have no meaning of their own, but they tell apart the configurations
 # whose fronts have no hypervolume. Each run has 25000 evaluations, 20% of the 125000 of the
 # validation, and each configuration is run three times.

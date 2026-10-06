@@ -16,7 +16,7 @@ import org.uma.evolver.cli.training.TrainingRunner;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * Code of tutorial E17, "Budgets: evaluations or time" (see {@code docs/tutorials/budgets.rst}).
+ * Code of tutorial E11, "Budgets: evaluations or time" (see {@code docs/tutorials/budgets.rst}).
  *
  * <p>It runs the training of tutorial E3 (NSGA-II tuned for ZDT4 by NSGA-II) with the meta-optimizer
  * bounded by computing time instead of by meta-evaluations, and reads how it stopped: the status
@@ -52,7 +52,7 @@ public class BudgetsTutorial {
             + " minutes");
     // [step-1-end]
 
-    run(baseLevel, byTime, "results/tutorial/E17");
+    run(baseLevel, byTime, "results/tutorial/budgets");
   }
 
   /**

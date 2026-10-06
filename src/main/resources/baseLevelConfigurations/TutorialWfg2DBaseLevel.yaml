@@ -1,7 +1,7 @@
-# Base level of tutorial E9 (docs/tutorials/validating_a_configuration.rst): NSGA-II tuned for the
+# Base level of tutorial E8 (docs/tutorials/validating_a_configuration.rst): NSGA-II tuned for the
 # bi-objective WFG problems, as in Nebro et al., "Automatic Configuration of NSGA-II with jMetal and
 # irace" (GECCO 2019 Companion). Each run has 10000 evaluations, 40% of the 25000 of the validation:
-# the training budget is a design decision, lower than the validation budget (tutorial E17).
+# the training budget is a design decision, lower than the validation budget (tutorial E11).
 algorithmName: NSGA-II
 populationSize: 100
 numberOfIndependentRuns: 1

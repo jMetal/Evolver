@@ -11,8 +11,8 @@ The plots are produced by SAES (https://github.com/jMetal/SAES), which must be i
 
 Example:
     python scripts/critical_difference_plots.py \\
-        results/tutorial-e7/validation/QualityIndicatorSummary.csv \\
-        --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
+        results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \\
+        --indicators HV,IGD+ --output-dir results/tutorial-training-sets/tables
 """
 
 import argparse

@@ -31,7 +31,7 @@ import org.uma.jmetal.util.bounds.Bounds;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Code of tutorial E13, "Tree versus flat encoding" (see {@code
+ * Code of tutorial E14, "Tree versus flat encoding" (see {@code
  * docs/tutorials/tree_versus_flat_encoding.rst}).
  *
  * <p>It looks at the two encodings of the meta-optimizer on the parameter space of NSGA-II ({@code
@@ -60,10 +60,10 @@ public class TreeEncodingTutorial {
     neutralMutations(space);
 
     if (args.length > 0 && args[0].equals("train")) {
-      train("results/tutorial/E13");
+      train("results/tutorial/tree-vs-flat");
     }
     if (args.length > 0 && (args[0].equals("train") || args[0].equals("summary"))) {
-      summarize("results/tutorial/E13");
+      summarize("results/tutorial/tree-vs-flat");
     }
   }
 

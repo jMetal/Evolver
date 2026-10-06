@@ -15,9 +15,9 @@ and, with ``--png``, also as an image (``WilcoxonPivot_<indicator>.png``), which
 
 Example:
     python scripts/wilcoxon_pivot_tables.py \\
-        results/tutorial-e7/validation/QualityIndicatorSummary.csv \\
+        results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \\
         --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,SMSEMOA,AGEMOEA,NSGAIIDTLZ \\
-        --output-dir results/tutorial-e7/tables --png
+        --output-dir results/tutorial-training-sets/tables --png
 """
 
 import argparse

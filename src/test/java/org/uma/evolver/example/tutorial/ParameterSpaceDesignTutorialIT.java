@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps the validation study of tutorial E6 ("Designing your own parameter space") from rotting:
+ * Keeps the validation study of tutorial E5 ("Designing your own parameter space") from rotting:
  * runs {@link ParameterSpaceDesignTutorial} with minimal budgets, using the bundled configurations.
  */
 @Tag("integration")

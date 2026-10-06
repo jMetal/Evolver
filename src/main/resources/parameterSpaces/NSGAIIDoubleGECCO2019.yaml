@@ -1,5 +1,5 @@
 # Parameter space of NSGA-II in Nebro et al., "Automatic Configuration of NSGA-II with jMetal and
-# irace" (GECCO 2019 Companion), Figure 4, written for Evolver (tutorial E6). Differences with the
+# irace" (GECCO 2019 Companion), Figure 4, written for Evolver (tutorial E5). Differences with the
 # paper: the population size without an archive is not a parameter (it is the populationSize of
 # the algorithm), the archive is always bounded by crowding distance (the paper's only archive),
 # and the mutation probability is given as mutationProbabilityFactor / number of variables, in

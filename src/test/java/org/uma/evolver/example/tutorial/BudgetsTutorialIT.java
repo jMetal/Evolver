@@ -18,7 +18,7 @@ import org.uma.evolver.cli.training.FlatMetaSearchConfig;
 import org.uma.evolver.cli.training.MetaOptimizerConfigurationReader;
 
 /**
- * Keeps tutorial E17 ("Budgets: evaluations or time") from rotting: runs {@link BudgetsTutorial} on
+ * Keeps tutorial E11 ("Budgets: evaluations or time") from rotting: runs {@link BudgetsTutorial} on
  * the tutorial's own configuration files, with minimal budgets.
  */
 @Tag("integration")

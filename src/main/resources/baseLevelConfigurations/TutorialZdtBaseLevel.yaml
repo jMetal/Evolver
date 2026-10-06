@@ -1,4 +1,4 @@
-# Base level of tutorial E8 (docs/tutorials/analyzing_training_results.rst): NSGA-II tuned for the
+# Base level of tutorial E7 (docs/tutorials/analyzing_training_results.rst): NSGA-II tuned for the
 # bi-objective ZDT problems, with 8000 evaluations per problem. Each configuration is run 5 times
 # on each problem, and its indicator values are the medians of those runs, which makes the values
 # of the configurations on the meta-optimizer's front reliable.

@@ -32,9 +32,9 @@ import org.uma.jmetal.solution.binarysolution.BinarySolution;
 import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
 
 /**
- * Validation studies of tutorial E11 (binary and permutation encodings): the standard NSGA-II
- * against NSGA-II with a configuration tuned by {@code tutorial-e11-binary-request.yaml} and by
- * {@code tutorial-e11-permutation-request.yaml}, {@value #INDEPENDENT_RUNS} independent runs each.
+ * Validation studies of tutorial E10 (binary and permutation encodings): the standard NSGA-II
+ * against NSGA-II with a configuration tuned by {@code tutorial-encodings-binary-request.yaml} and by
+ * {@code tutorial-encodings-permutation-request.yaml}, {@value #INDEPENDENT_RUNS} independent runs each.
  *
  * <ul>
  *   <li>Binary: ZDT5, the problem of the training, with {@value #BINARY_EVALUATIONS} evaluations;
@@ -46,7 +46,7 @@ import org.uma.jmetal.solution.permutationsolution.PermutationSolution;
  *       three instances their lower bounds are far above the routes found, so the fronts dominate
  *       the whole box and the hypervolume saturates. The study builds its own reference front instead, the
  *       non-dominated points of all the runs of both algorithms ({@code GenerateReferenceParetoFront}
- *       of jMetal), and computes EP, HV and IGD+ against it (tutorial E10).
+ *       of jMetal), and computes EP, HV and IGD+ against it (tutorial E9).
  * </ul>
  *
  * <p>The tuned configurations are bundled in {@code tunedConfigurations/}; pass two files as
@@ -57,7 +57,7 @@ public class EncodingsTutorial {
   static final String BINARY_CONFIGURATION_FILE = "tunedConfigurations/NSGAIIBinaryZDT5.txt";
   static final String PERMUTATION_CONFIGURATION_FILE =
       "tunedConfigurations/NSGAIIPermutationKroTSP.txt";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e11";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-encodings";
   static final int INDEPENDENT_RUNS = 25;
   static final int BINARY_EVALUATIONS = 25000;
   static final int PERMUTATION_EVALUATIONS = 125000;

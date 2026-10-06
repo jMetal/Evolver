@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps the validation studies of tutorial E11 ("Binary and permutation encodings") from rotting:
+ * Keeps the validation studies of tutorial E10 ("Binary and permutation encodings") from rotting:
  * runs {@link EncodingsTutorial} with minimal budgets, using the default configurations in place
  * of the tuned ones.
  */

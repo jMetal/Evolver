@@ -2,7 +2,7 @@
 # Same recipe as BASE_LEVEL_YAML in
 # org.uma.evolver.example.training.dtlz.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ, kept here as a
 # standalone file so it can be run directly from the CLI (see async-nsgaii-dtlz3d-request.yaml).
-# Used by tutorial E7 (docs/tutorials/training_sets_indicators_budgets.rst): the training budget,
+# Used by tutorial E6 (docs/tutorials/training_sets_indicators_budgets.rst): the training budget,
 # 10000 evaluations, is a fifth of the validation budget used there (50000).
 
 algorithmName: NSGA-II

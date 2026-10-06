@@ -38,14 +38,14 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Validation study of tutorial E6 (designing your own parameter space): compares two configurations
+ * Validation study of tutorial E5 (designing your own parameter space): compares two configurations
  * of NSGA-II tuned for the bi-objective WFG problems with the same training, one found in the full
- * parameter space ({@code NSGAIIDouble.yaml}, the configuration of tutorial E9, {@code NSGAIIWFG})
+ * parameter space ({@code NSGAIIDouble.yaml}, the configuration of tutorial E8, {@code NSGAIIWFG})
  * and one in the much smaller space of Nebro et al., "Automatic Configuration of NSGA-II with jMetal
  * and irace" (GECCO 2019 Companion), {@code NSGAIIDoubleGECCO2019.yaml} ({@code NSGAIIWFGSmall}),
  * together with the standard NSGA-II.
  *
- * <p>The problems, budget, runs and indicators are those of tutorial E9: WFG1-9 (seen during
+ * <p>The problems, budget, runs and indicators are those of tutorial E8: WFG1-9 (seen during
  * training) and DTLZ1-7 (not seen), with two objectives, {@value #MAX_EVALUATIONS} evaluations and
  * {@value #INDEPENDENT_RUNS} independent runs. Both tuned configurations are bundled in {@code
  * tunedConfigurations/}; pass two files as arguments (full space, small space) to validate your own.
@@ -56,7 +56,7 @@ public class ParameterSpaceDesignTutorial {
   static final String FULL_SPACE_CONFIGURATION_FILE = "tunedConfigurations/NSGAIIWFG2D.txt";
   static final String SMALL_SPACE_CONFIGURATION_FILE =
       "tunedConfigurations/NSGAIIWFG2DGECCO2019.txt";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e6";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-parameter-space-design";
   static final int INDEPENDENT_RUNS = 25;
   static final int MAX_EVALUATIONS = 25000;
   static final int NUMBER_OF_CORES = 16;

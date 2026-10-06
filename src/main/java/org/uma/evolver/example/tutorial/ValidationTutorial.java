@@ -40,7 +40,7 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Validation study of tutorial E9 (validating a configuration), which repeats the one of Nebro et
+ * Validation study of tutorial E8 (validating a configuration), which repeats the one of Nebro et
  * al., "Automatic Configuration of NSGA-II with jMetal and irace" (GECCO 2019 Companion) with a
  * configuration found by Evolver instead of irace.
  *
@@ -51,14 +51,14 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  * of the paper: EP, Spread, HV and IGD+.
  *
  * <p>By default the tuned configuration is the one bundled in {@value #TUNED_CONFIGURATION_FILE},
- * found with {@code tutorial-e9-request.yaml}; pass another file as the first argument to validate
- * your own (for instance, {@code results/tutorial-e9/best-configuration.txt}). Run it from the root
+ * found with {@code tutorial-validation-request.yaml}; pass another file as the first argument to validate
+ * your own (for instance, {@code results/tutorial-validation/best-configuration.txt}). Run it from the root
  * of the repository.
  */
 public class ValidationTutorial {
 
   static final String TUNED_CONFIGURATION_FILE = "tunedConfigurations/NSGAIIWFG2D.txt";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e9";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-validation";
   static final int INDEPENDENT_RUNS = 25;
   static final int MAX_EVALUATIONS = 25000;
   static final int NUMBER_OF_CORES = 16;

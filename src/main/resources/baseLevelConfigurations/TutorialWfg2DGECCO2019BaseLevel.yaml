@@ -1,7 +1,7 @@
-# Base level of tutorial E6 (docs/tutorials/designing_parameter_spaces.rst): NSGA-II tuned for the
+# Base level of tutorial E5 (docs/tutorials/designing_parameter_spaces.rst): NSGA-II tuned for the
 # bi-objective WFG problems, as in Nebro et al., "Automatic Configuration of NSGA-II with jMetal and
 # irace" (GECCO 2019 Companion), in the parameter space of that paper (NSGAIIDoubleGECCO2019.yaml)
-# instead of NSGAIIDouble.yaml. Everything else is as in tutorial E9 (TutorialWfg2DBaseLevel.yaml).
+# instead of NSGAIIDouble.yaml. Everything else is as in tutorial E8 (TutorialWfg2DBaseLevel.yaml).
 algorithmName: NSGA-II
 populationSize: 100
 numberOfIndependentRuns: 1

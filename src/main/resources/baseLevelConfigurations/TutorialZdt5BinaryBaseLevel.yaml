@@ -1,4 +1,4 @@
-# Base level of tutorial E11 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II for
+# Base level of tutorial E10 (docs/tutorials/binary_and_permutation_encodings.rst): NSGA-II for
 # binary problems (BinaryNSGAII, NSGAIIBinary.yaml), tuned for ZDT5, the binary and deceptive
 # problem of the ZDT family (11 variables of 30 and 5 bits). Each configuration is run three times,
 # since one run on a single problem is a noisy value (tutorial E4).

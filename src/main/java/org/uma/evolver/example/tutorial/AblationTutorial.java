@@ -39,13 +39,13 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Ablation study of tutorial E5, "Ablation: which components matter" (see {@code
+ * Ablation study of tutorial E12, "Ablation: which components matter" (see {@code
  * docs/tutorials/ablation.rst}).
  *
- * <p>It takes the NSGA-II configuration tuned in tutorial E9 ({@value #TUNED_CONFIGURATION_FILE})
+ * <p>It takes the NSGA-II configuration tuned in tutorial E8 ({@value #TUNED_CONFIGURATION_FILE})
  * and derives, with {@link ConfigurationVariants}, one variant per component in which that
  * component is set back to the value of the default configuration. It then validates the default
- * configuration, the tuned one and the variants together, with the protocol of tutorial E9: WFG1-9
+ * configuration, the tuned one and the variants together, with the protocol of tutorial E8: WFG1-9
  * and DTLZ1-7 with two objectives, {@value #MAX_EVALUATIONS} evaluations and {@value
  * #INDEPENDENT_RUNS} independent runs, with the hypervolume and IGD+.
  *
@@ -57,7 +57,7 @@ public class AblationTutorial {
 
   static final String TUNED_CONFIGURATION_FILE = "tunedConfigurations/NSGAIIWFG2D.txt";
   static final String DEFAULT_CONFIGURATION_FILE = "defaultConfigurations/NSGAIIDoubleDefault.txt";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e5";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-ablation";
   static final int INDEPENDENT_RUNS = 25;
   static final int MAX_EVALUATIONS = 25000;
   static final int NUMBER_OF_CORES = 16;
@@ -160,7 +160,7 @@ public class AblationTutorial {
     // [step-3-end]
   }
 
-  /** The problems of tutorial E9: WFG1-9 (seen during the training) and DTLZ1-7 (not seen). */
+  /** The problems of tutorial E8: WFG1-9 (seen during the training) and DTLZ1-7 (not seen). */
   static List<ExperimentProblem<DoubleSolution>> problems() {
     List<ExperimentProblem<DoubleSolution>> problems = new ArrayList<>();
     problems.add(new ExperimentProblem<>(new WFG1(2, 4, 2)).setReferenceFront("WFG1.2D.csv"));

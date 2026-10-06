@@ -12,9 +12,9 @@ The plots are produced by SAES (https://github.com/jMetal/SAES), which must be i
 (``pip install SAES``).
 
 Example:
-    python scripts/boxplots.py results/tutorial-e9/validation/QualityIndicatorSummary.csv \\
+    python scripts/boxplots.py results/tutorial-validation/validation/QualityIndicatorSummary.csv \\
         --problems DTLZ1,DTLZ3,WFG1,WFG8 --algorithms NSGAII,SMPSO,NSGAIIWFG \\
-        --indicators HV --output-dir results/tutorial-e9/tables
+        --indicators HV --output-dir results/tutorial-validation/tables
 """
 
 import argparse

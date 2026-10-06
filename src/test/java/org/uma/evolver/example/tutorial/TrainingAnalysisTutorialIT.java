@@ -14,7 +14,7 @@ import org.uma.evolver.example.tutorial.MetaOptimizationWorkflowTutorial.TunedCo
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps the validation of tutorial E8 ("Analyzing training results") from rotting: runs {@link
+ * Keeps the validation of tutorial E7 ("Analyzing training results") from rotting: runs {@link
  * TrainingAnalysisTutorial#validate} with two candidates and minimal budgets.
  */
 @Tag("integration")

@@ -41,7 +41,7 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Validation study of tutorial E7 (training sets, indicators and budgets): compares the NSGA-II
+ * Validation study of tutorial E6 (training sets, indicators and budgets): compares the NSGA-II
  * configuration found by {@code AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ}, trained on DTLZ1-7
  * with 10000 evaluations per problem, with the standard NSGA-II, NSGA-III, MOEA/D, SMS-EMOA and
  * AGE-MOEA (their default configurations), with a budget usual for these problems: 50000 evaluations.
@@ -59,8 +59,8 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
  */
 public class TrainingSetsValidationTutorial {
 
-  static final String TUNED_CONFIGURATION_FILE = "results/tutorial-e7/best-configuration.txt";
-  static final String OUTPUT_DIRECTORY = "results/tutorial-e7";
+  static final String TUNED_CONFIGURATION_FILE = "results/tutorial-training-sets/best-configuration.txt";
+  static final String OUTPUT_DIRECTORY = "results/tutorial-training-sets";
   static final int INDEPENDENT_RUNS = 15;
   static final int MAX_EVALUATIONS = 50000;
   static final int NUMBER_OF_CORES = 16;
