@@ -117,8 +117,10 @@ The simplest request runs the default NSGA-II on ZDT1, three times:
     statusFrequency: 20000
     outputDirectory: results/e15/solve
 
-Save it as ``results/e15/solve-request.yaml`` and run it. ``statusFrequency`` asks for an update of
-the status every 20000 evaluations, so that there is something to watch:
+The budget is only for illustration: 200000 evaluations are far more than ZDT1 needs (25000 is the
+usual one, as in the batch of Step 6), but with fewer the run would end in a fraction of a second,
+before there is anything to watch. Save it as ``results/e15/solve-request.yaml`` and run it.
+``statusFrequency`` asks for an update of the status every 20000 evaluations:
 
 .. code-block:: bash
 
