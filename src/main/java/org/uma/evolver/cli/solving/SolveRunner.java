@@ -100,7 +100,8 @@ public class SolveRunner {
                   outputDirectory.resolve(SolveFrontObserver.FILE_NAME),
                   run,
                   request.frontFrequency(),
-                  request.writePopulation()));
+                  request.writePopulation(),
+                  request.frontDelayMillis()));
         }
         List<? extends Solution<?>> result =
             runOnce(algorithm, problem, request.maxEvaluations(), configuration, observers);

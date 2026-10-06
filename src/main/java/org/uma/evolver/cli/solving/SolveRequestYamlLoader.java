@@ -21,7 +21,8 @@ import org.yaml.snakeyaml.Yaml;
  * configurationFile}, e.g. {@code defaultConfigurations/NSGAIIDoubleDefault.txt}, whose first
  * configuration is used), never both. {@code indicatorNames} requires {@code
  * referenceFrontFileName}. {@code statusFrequency} and {@code frontFrequency}, when present, are
- * positive numbers of evaluations, and {@code writePopulation} requires {@code frontFrequency}.
+ * positive numbers of evaluations, and {@code writePopulation} and {@code frontDelayMillis} (a positive number of milliseconds)
+ * require {@code frontFrequency}.
  */
 public final class SolveRequestYamlLoader {
 
@@ -61,6 +62,11 @@ public final class SolveRequestYamlLoader {
       throw new JMetalException(
           "writePopulation requires frontFrequency in solve request: " + requestFile);
     }
+    Integer frontDelayMillis = frequency(data, "frontDelayMillis", requestFile);
+    if (frontDelayMillis != null && frontFrequency == null) {
+      throw new JMetalException(
+          "frontDelayMillis requires frontFrequency in solve request: " + requestFile);
+    }
 
     return new SolveRequest(
         stringValue(data, "algorithmName"),
@@ -81,6 +87,7 @@ public final class SolveRequestYamlLoader {
         frequency(data, "statusFrequency", requestFile),
         frontFrequency,
         writePopulation,
+        frontDelayMillis,
         stringValue(data, "outputDirectory"));
   }
 

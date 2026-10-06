@@ -18,6 +18,10 @@ Added
   (see *Base-level algorithms* in ``docs/utilities/cli_tools.rst``). Each one runs a minimal
   training, and the ones with a default configuration run it through ``cli.solving``, in the
   integration tests
+- Solve requests accept ``frontDelayMillis``: with ``frontFrequency``, the run pauses that long after
+  writing each front, so that a GUI that polls the file sees every front even in a run that lasts a
+  second (a quick algorithm on a small budget would otherwise end before the first poll). It is the
+  display delay of jMetal's chart observers, and it slows the run down by that much for each front
 - ``DescribeMain``'s manifest has a ``problemCatalogue``, which describes each problem with its
   family, its encoding, its dimensions and the arguments of its constructor (their names, types and
   defaults), next to ``problems``, which keeps the names. An external tool can filter the problems

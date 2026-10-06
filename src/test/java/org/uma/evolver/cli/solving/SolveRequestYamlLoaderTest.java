@@ -112,6 +112,23 @@ class SolveRequestYamlLoaderTest {
     }
 
     @Test
+    @DisplayName("given a frontDelayMillis with a frontFrequency, when loaded, then it is read")
+    void givenFrontDelayMillis_whenLoaded_thenItIsRead() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(
+              REQUIRED_FIELDS
+                  + INLINE_CONFIGURATION
+                  + "frontFrequency: 250\nfrontDelayMillis: 300\n");
+
+      // Act
+      SolveRequest request = SolveRequestYamlLoader.load(requestFile);
+
+      // Assert
+      assertEquals(300, request.frontDelayMillis());
+    }
+
+    @Test
     @DisplayName("given a statusFrequency, when loaded, then the request has it")
     void givenStatusFrequency_whenLoaded_thenItIsRead() throws IOException {
       // Arrange
@@ -248,6 +265,19 @@ class SolveRequestYamlLoaderTest {
       // Arrange
       Path requestFile =
           writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + "writePopulation: true\n");
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(JMetalException.class, () -> SolveRequestYamlLoader.load(requestFile));
+      assertTrue(exception.getMessage().contains("frontFrequency"));
+    }
+
+    @Test
+    @DisplayName("given frontDelayMillis without a frontFrequency, when loaded, then it fails")
+    void givenFrontDelayMillisWithoutFrontFrequency_whenLoaded_thenItFails() throws IOException {
+      // Arrange
+      Path requestFile =
+          writeRequestFile(REQUIRED_FIELDS + INLINE_CONFIGURATION + "frontDelayMillis: 300\n");
 
       // Act & Assert
       JMetalException exception =

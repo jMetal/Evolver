@@ -50,7 +50,7 @@ class SolveFrontObserverTest {
   @DisplayName("given fewer evaluations than the frequency, when reported, then nothing is written")
   void givenFewerEvaluationsThanTheFrequency_whenReported_thenNothingIsWritten() {
     // Arrange
-    var observer = new SolveFrontObserver(frontFile(), 1, 500, false);
+    var observer = new SolveFrontObserver(frontFile(), 1, 500, false, null);
 
     // Act
     report(observer, 400, population(new double[] {0.5, 0.5}));
@@ -63,7 +63,7 @@ class SolveFrontObserverTest {
   @DisplayName("given the frequency reached, when reported, then the front is written")
   void givenTheFrequencyReached_whenReported_thenTheFrontIsWritten() throws IOException {
     // Arrange
-    var observer = new SolveFrontObserver(frontFile(), 2, 500, false);
+    var observer = new SolveFrontObserver(frontFile(), 2, 500, false, null);
 
     // Act
     report(observer, 500, population(new double[] {0.0, 1.0}, new double[] {1.0, 0.0}));
@@ -81,7 +81,7 @@ class SolveFrontObserverTest {
   void givenDominatedSolutions_whenReported_thenOnlyTheNonDominatedAreWritten()
       throws IOException {
     // Arrange
-    var observer = new SolveFrontObserver(frontFile(), 1, 100, false);
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, false, null);
 
     // Act: (0.8, 0.8) is dominated by (0.5, 0.5)
     report(
@@ -99,7 +99,7 @@ class SolveFrontObserverTest {
   @DisplayName("given a later report, when written, then the file holds only the latest front")
   void givenALaterReport_whenWritten_thenTheFileHoldsOnlyTheLatestFront() throws IOException {
     // Arrange
-    var observer = new SolveFrontObserver(frontFile(), 1, 100, false);
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, false, null);
     report(observer, 100, population(new double[] {0.9, 0.9}));
 
     // Act
@@ -115,7 +115,7 @@ class SolveFrontObserverTest {
   @DisplayName("given steps that do not divide the frequency, when reported, then it still writes")
   void givenStepsThatDoNotDivideTheFrequency_whenReported_thenItStillWrites() throws IOException {
     // Arrange: an algorithm evaluating 100 solutions at a time, a frequency of 250
-    var observer = new SolveFrontObserver(frontFile(), 1, 250, false);
+    var observer = new SolveFrontObserver(frontFile(), 1, 250, false, null);
 
     // Act
     report(observer, 100, population(new double[] {0.5, 0.5}));
@@ -131,7 +131,7 @@ class SolveFrontObserverTest {
   void givenWholePopulation_whenReported_thenTheDominatedSolutionsAreWrittenToo()
       throws IOException {
     // Arrange
-    var observer = new SolveFrontObserver(frontFile(), 1, 100, true);
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, true, null);
 
     // Act: (0.8, 0.8) is dominated by (0.5, 0.5)
     report(
@@ -145,5 +145,35 @@ class SolveFrontObserverTest {
     assertTrue(lines.contains("1,100,1,0.5,0.5"));
     assertTrue(lines.contains("1,100,1,0.2,0.9"));
     assertTrue(lines.contains("1,100,0,0.8,0.8"));
+  }
+
+  @Test
+  @DisplayName("given a delay, when a front is written, then the run pauses at least that long")
+  void givenADelay_whenAFrontIsWritten_thenTheRunPauses() {
+    // Arrange
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, false, 150);
+
+    // Act
+    long start = System.nanoTime();
+    report(observer, 100, population(new double[] {0.5, 0.5}));
+    long elapsedMillis = (System.nanoTime() - start) / 1_000_000;
+
+    // Assert
+    assertTrue(elapsedMillis >= 140, "paused only " + elapsedMillis + " ms");
+  }
+
+  @Test
+  @DisplayName("given a delay, when fewer evaluations than the frequency are reported, then it does not pause")
+  void givenADelay_whenNothingIsWritten_thenItDoesNotPause() {
+    // Arrange
+    var observer = new SolveFrontObserver(frontFile(), 1, 500, false, 2000);
+
+    // Act
+    long start = System.nanoTime();
+    report(observer, 100, population(new double[] {0.5, 0.5}));
+    long elapsedMillis = (System.nanoTime() - start) / 1_000_000;
+
+    // Assert
+    assertTrue(elapsedMillis < 1000, "paused " + elapsedMillis + " ms");
   }
 }

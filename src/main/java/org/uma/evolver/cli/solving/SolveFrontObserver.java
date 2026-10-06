@@ -30,7 +30,9 @@ import org.uma.jmetal.util.observer.Observer;
  * too.
  *
  * <p>It is written whenever at least {@code frequency} evaluations of the run have passed since the
- * last time.
+ * last time. With a delay, the run then pauses that long after each write, as the display delay of
+ * jMetal's chart observers does: a follower that polls the file sees every front, at the price of a
+ * slower run.
  */
 final class SolveFrontObserver implements Observer<Map<String, Object>> {
 
@@ -41,13 +43,16 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
   private final int run;
   private final int frequency;
   private final boolean wholePopulation;
+  private final Integer delayMillis;
   private int lastReported;
 
-  SolveFrontObserver(Path frontFile, int run, int frequency, boolean wholePopulation) {
+  SolveFrontObserver(
+      Path frontFile, int run, int frequency, boolean wholePopulation, Integer delayMillis) {
     this.frontFile = frontFile;
     this.run = run;
     this.frequency = frequency;
     this.wholePopulation = wholePopulation;
+    this.delayMillis = delayMillis;
   }
 
   @Override
@@ -67,6 +72,18 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
       archive.addAll(population);
       List<Solution<?>> front = archive.solutions();
       write(evaluations, front, new ArrayList<>(front.stream().map(solution -> true).toList()));
+    }
+    pause();
+  }
+
+  private void pause() {
+    if (delayMillis == null) {
+      return;
+    }
+    try {
+      Thread.sleep(delayMillis);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
   }
 

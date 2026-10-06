@@ -42,6 +42,9 @@ import org.uma.evolver.cli.ProblemSpec;
  *     each run; the more often, the slower the run
  * @param writePopulation whether that file holds the whole population instead of only its
  *     non-dominated solutions, each marked as dominated or not; requires {@code frontFrequency}
+ * @param frontDelayMillis how long, in milliseconds, the run pauses after writing each front, so
+ *     that a process that follows it can show every one instead of only the latest; null for no
+ *     pause. It slows the run down by that much for each front; requires {@code frontFrequency}
  * @param outputDirectory where the results are written
  */
 public record SolveRequest(
@@ -61,4 +64,46 @@ public record SolveRequest(
     Integer statusFrequency,
     Integer frontFrequency,
     boolean writePopulation,
-    String outputDirectory) {}
+    Integer frontDelayMillis,
+    String outputDirectory) {
+
+  /** A request that does not pause after writing a front. */
+  public SolveRequest(
+      String algorithmName,
+      String encoding,
+      int populationSize,
+      String yamlParameterSpaceFile,
+      Map<String, String> extraConfig,
+      String configuration,
+      String configurationFile,
+      ProblemSpec problem,
+      String referenceFrontFileName,
+      int maxEvaluations,
+      int numberOfIndependentRuns,
+      Long seed,
+      List<String> indicatorNames,
+      Integer statusFrequency,
+      Integer frontFrequency,
+      boolean writePopulation,
+      String outputDirectory) {
+    this(
+        algorithmName,
+        encoding,
+        populationSize,
+        yamlParameterSpaceFile,
+        extraConfig,
+        configuration,
+        configurationFile,
+        problem,
+        referenceFrontFileName,
+        maxEvaluations,
+        numberOfIndependentRuns,
+        seed,
+        indicatorNames,
+        statusFrequency,
+        frontFrequency,
+        writePopulation,
+        null,
+        outputDirectory);
+  }
+}

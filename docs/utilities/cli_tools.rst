@@ -370,6 +370,12 @@ A solve request is a single, self-contained file
      - false
      - With ``frontFrequency``, write the whole population to that file instead of only its
        non-dominated solutions
+   * - ``frontDelayMillis``
+     - none
+     - With ``frontFrequency``, the milliseconds the run pauses after writing each front, as the
+       display delay of jMetal's chart observers does: a follower that reads the file every
+       second or so then sees every front, instead of only the last one of a run that is over in
+       a second. It slows the run down by that much for each front written
    * - ``outputDirectory``
      - required
      - Where the results are written
