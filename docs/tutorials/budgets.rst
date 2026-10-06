@@ -1,6 +1,6 @@
 .. _tutorial_budgets:
 
-E17. Budgets: Evaluations or Time
+E11. Budgets: Evaluations or Time
 =================================
 
 :Level: Intermediate
@@ -44,7 +44,7 @@ Every factor is a decision. The last one has two values to choose:
 - The budget of the **training** is a decision of its own, and a key one in real applications.
   Its cost grows linearly with the evaluations of each run, so it should be small enough for the
   training to be affordable, but large enough for the configurations it finds to be competitive when
-  they are validated with the full budget. In tutorial :doc:`E7 <training_sets_indicators_budgets>`
+  they are validated with the full budget. In tutorial :doc:`E6 <training_sets_indicators_budgets>`
   the training uses 10000 evaluations per problem, a fifth of the validation budget, which makes it
   five times cheaper than training with 50000.
 
@@ -158,9 +158,9 @@ of Evolver 2.2 or later, whatever stopped it):
 
 .. code-block:: bash
 
-    python scripts/plot_training_convergence.py results/tutorial/E17 --primary NHV --x time
+    python scripts/plot_training_convergence.py results/tutorial/budgets --primary NHV --x time
 
-.. figure:: ../figures/tutorials/e17-convergence-nhv-time.png
+.. figure:: ../figures/tutorials/budgets-convergence-nhv-time.png
    :align: center
    :alt: Convergence of the NHV meta-objective over the computing time of the meta-optimizer
    :figwidth: 75%
@@ -242,9 +242,9 @@ Running it from the command line
 From the command line, the same training is a request file that points to the time-bounded
 meta-optimizer file:
 
-.. literalinclude:: ../../src/main/resources/cli/training/tutorial-e17-request.yaml
+.. literalinclude:: ../../src/main/resources/cli/training/tutorial-budgets-request.yaml
    :language: yaml
-   :caption: tutorial-e17-request.yaml
+   :caption: tutorial-budgets-request.yaml
 
 As in E3, copy it to a working directory first, since ``TrainingRunnerMain`` writes ``results.yaml``
 next to the request:
@@ -252,10 +252,10 @@ next to the request:
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial/E17-cli
-    cp src/main/resources/cli/training/tutorial-e17-request.yaml results/tutorial/E17-cli/request.yaml
+    mkdir -p results/tutorial/budgets-cli
+    cp src/main/resources/cli/training/tutorial-budgets-request.yaml results/tutorial/budgets-cli/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial/E17-cli/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial/budgets-cli/request.yaml
 
 A longer example is bundled too: ``nsgaii-re3d-computing-time-request.yaml`` stops the training
 of NSGA-II on the RE3D problems after 60 minutes. From Java, the builders of the meta-optimizers have
@@ -290,8 +290,8 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E7 <training_sets_indicators_budgets>` designs a training with several problems and
+- :doc:`E6 <training_sets_indicators_budgets>` designs a training with several problems and
   validates its result.
-- :doc:`E8 <analyzing_training_results>` explains the output files of a training run in depth.
+- :doc:`E7 <analyzing_training_results>` explains the output files of a training run in depth.
 - :doc:`../utilities/cli_tools` describes the request files and the fields of the meta-optimizer
   configuration files.

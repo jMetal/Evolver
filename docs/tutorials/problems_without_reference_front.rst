@@ -2,22 +2,22 @@
 
 .. _tutorial_problems_without_reference_front:
 
-E10. Problems Without a Reference Front
+E9. Problems Without a Reference Front
 =======================================
 
 :Level: Intermediate
 :Version: 1.0 (2026-10-05)
 :Time: about 30 minutes, plus the optional runs of the examples
 :Prerequisites: :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
-   :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`;
-   recommended: :doc:`E11. Binary and permutation encodings <binary_and_permutation_encodings>`
+   :doc:`E6. Training sets, indicators and budgets <training_sets_indicators_budgets>`;
+   recommended: :doc:`E10. Binary and permutation encodings <binary_and_permutation_encodings>`
 
 The quality indicators that the meta-optimizer minimizes compare the fronts found by the base-level
 algorithm with a reference front. For the benchmark problems bundled with Evolver (ZDT, DTLZ, WFG,
 ...) that front is known, and it is in ``resources/referenceFronts/``. For real-world problems it is
 usually unknown. This tutorial explains what can be done then, with the bi-objective travelling
 salesman problem (TSP) as example: which indicators still work, how to estimate what they need, how
-to train, and how to validate. It uses the TSP training and validation of tutorial E11.
+to train, and how to validate. It uses the TSP training and validation of tutorial E10.
 
 Step 1: what each indicator needs
 ---------------------------------
@@ -45,13 +45,13 @@ Step 2: three situations
 ------------------------
 
 - **The exact front is known**: the benchmark problems, whose fronts are in
-  ``resources/referenceFronts/`` (ZDT5's, for instance, is computed exactly, tutorial E11).
+  ``resources/referenceFronts/`` (ZDT5's, for instance, is computed exactly, tutorial E10).
 - **A good approximation is known**: the RE problems, real-world engineering problems whose
   reference fronts are the approximations published with the suite (``resources/referenceFronts/``,
   1500 points for each problem with three objectives). ``resources/extremePointsFronts/`` holds,
   for the RE and RWA problems, only the ideal and the nadir points of those fronts.
 - **Nothing is known**: the TSP instances, and most problems of a user. ``resources/referenceFrontsTSP/``
-  holds two extreme points for each of the bi-objective instances used in E11 (KroAB100, KroAC100,
+  holds two extreme points for each of the bi-objective instances used in E10 (KroAB100, KroAC100,
   KroAD100 and KroAE100), and the rest of this tutorial is about that situation.
 
 Step 3: estimating the extreme points
@@ -99,7 +99,7 @@ Step 4: what goes wrong with bad extreme points
 -----------------------------------------------
 
 The points must bound the region where the fronts **can** lie, not only where the first fronts lie.
-The validation of tutorial E11 shows what happens otherwise. The extreme points of the other three
+The validation of tutorial E10 shows what happens otherwise. The extreme points of the other three
 instances are much closer to each other than those of KroAB100:
 
 .. list-table:: Extreme points in ``resources/referenceFrontsTSP/``
@@ -122,7 +122,7 @@ instances are much closer to each other than those of KroAB100:
      - [68316, 119162]
      - [73654, 113805]
 
-The tuned NSGA-II of E11 finds routes of about 25000 for ``kroA100``, far below the lower bound of
+The tuned NSGA-II of E10 finds routes of about 25000 for ``kroA100``, far below the lower bound of
 those boxes, and so does the standard NSGA-II with 125000 evaluations in most runs. Their fronts
 dominate the whole box, and the hypervolume saturates: measured with those points, both algorithms
 had a median HV between 0.997 and 1.000 on KroAC100, KroAD100 and KroAE100, while on KroAB100,
@@ -146,9 +146,9 @@ box, so their HV− is 0, a plateau on which the meta-optimizer cannot tell them
 as a **helper objective**: measured against the two extreme points its values have no meaning of
 their own (they can even be negative, when a front goes beyond the points), but they still order
 the configurations whose HV− is 0, and guide the meta-optimizer until HV− improves. This is the
-role EP plays next to NHV in the trainings of tutorials E3 to E9.
+role EP plays next to NHV in the trainings of tutorials E3 to E8.
 
-The TSP training of tutorial E11 (``TutorialKroTspPermutationBaseLevel.yaml``) is configured that
+The TSP training of tutorial E10 (``TutorialKroTspPermutationBaseLevel.yaml``) is configured that
 way:
 
 .. code-block:: yaml
@@ -173,7 +173,7 @@ A validation has two options:
   hypervolume does not saturate. The values are relative to the study: adding an algorithm changes
   the reference front, and so the values of all the others.
 
-The validation of E11 uses the second option (``EncodingsTutorial.runPermutation``). Against the
+The validation of E10 uses the second option (``EncodingsTutorial.runPermutation``). Against the
 reference front of the study, the tuned NSGA-II has a median HV between 0.72 and 0.75 on the four
 instances and the standard one between 0.52 and 0.55, with significant differences on all of them,
 including the two instances where the hypervolume with the extreme points saturated.
@@ -194,14 +194,14 @@ Try it yourself
 
 - Build better extreme points for KroAC100, KroAD100 and KroAE100, with the TSPLIB optima as the
   ideal point and a margin over a long run of NSGA-II as the nadir point, and validate the
-  configuration of E11 with the hypervolume and those points: does it still saturate?
+  configuration of E10 with the hypervolume and those points: does it still saturate?
 - Run ``NSGAIIBiObjectiveWithObserversTSPExample`` with the extreme points of ``KroAC100TSP.csv``
   instead (and ``KroAC100TSP`` as the problem): when does HV− stop changing?
 - Add a third algorithm to the TSP validation of ``EncodingsTutorial`` (for instance MOEA/D for
-  permutations) and compare the values of NSGA-II with those of E11.
+  permutations) and compare the values of NSGA-II with those of E10.
 
 What's next
 -----------
 
-- :doc:`E11 <binary_and_permutation_encodings>` tunes NSGA-II for the TSP with these indicators.
-- :doc:`E9 <validating_a_configuration>` explains the statistical analysis of a validation.
+- :doc:`E10 <binary_and_permutation_encodings>` tunes NSGA-II for the TSP with these indicators.
+- :doc:`E8 <validating_a_configuration>` explains the statistical analysis of a validation.

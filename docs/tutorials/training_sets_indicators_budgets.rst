@@ -1,6 +1,6 @@
 .. _tutorial_training_sets_indicators_budgets:
 
-E7. Training Sets, Indicators and Budgets
+E6. Training Sets, Indicators and Budgets
 =========================================
 
 :Level: Intermediate
@@ -18,7 +18,7 @@ training run and validates its result, deciding the four things that define a tr
 - the **training set**: which problems the algorithm is tuned for;
 - the **quality indicators**: the objectives of the meta-optimizer;
 - the **budgets**: how many evaluations the base-level algorithm gets in each run, and how long
-  the meta-optimizer searches (see :doc:`E17 <budgets>`);
+  the meta-optimizer searches (see :doc:`E11 <budgets>`);
 - the **independent runs** of each configuration.
 
 The case study tunes NSGA-II for the DTLZ1-7 problems with three objectives, and then validates the
@@ -79,7 +79,7 @@ meta-optimizer towards configurations that work on all of them. Some criteria to
   objectives here.
 - **A reference front for each problem**: ``resources/referenceFronts/`` has them for the
   benchmark families; their names give the number of objectives (``DTLZ1.3D.csv``). Problems
-  without a reference front are the subject of :doc:`E10 <problems_without_reference_front>`.
+  without a reference front are the subject of :doc:`E9 <problems_without_reference_front>`.
 - **Cost**: every problem added multiplies the cost of the training.
 
 The problems are given as three lists of the same length: the problems (``trainingProblemNames``),
@@ -100,7 +100,7 @@ The indicators
 
 Other choices are possible: IGD+ (``InvertedGenerationalDistancePlus``) instead of NHV, or HV−
 (``HypervolumeMinus``), which only needs a reference point instead of a reference front and is the
-one to use when there is no reference front (:doc:`E10 <problems_without_reference_front>`). ``Spread`` and ``GeneralizedSpread``
+one to use when there is no reference front (:doc:`E9 <problems_without_reference_front>`). ``Spread`` and ``GeneralizedSpread``
 measure only how evenly the front is spread, not how close it is to the reference front, so they
 are a complement to a convergence indicator rather than a substitute; ``Spread`` is defined only for
 bi-objective problems, and a request that uses it on any other is rejected. Two objectives are the
@@ -109,7 +109,7 @@ usual choice: they give a front of configurations that is easy to read and to ch
 The budgets
 ~~~~~~~~~~~
 
-A training has two budgets, one for each level, and :doc:`tutorial E17 <budgets>` explains how to
+A training has two budgets, one for each level, and :doc:`tutorial E11 <budgets>` explains how to
 choose them. The case study uses:
 
 - a **validation** budget of 50000 evaluations, as the studies with the DTLZ and WFG problems with
@@ -154,7 +154,7 @@ From the root of the repository:
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
         org.uma.evolver.example.training.dtlz.AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ
 
-The training took about 35 minutes. The results are written to ``results/tutorial-e7/training``,
+The training took about 35 minutes. The results are written to ``results/tutorial-training-sets/training``,
 with the same files as in tutorial E3. Those files keep only the non-dominated configurations of
 each checkpoint; ``WRITE_POPULATION`` also writes the whole population of the meta-optimizer to
 ``POPULATION_INDICATORS.csv`` and ``POPULATION_CONFIGURATIONS.csv`` (``writePopulation: true`` in a
@@ -175,15 +175,15 @@ run (the axes use the decimal separator of the system's language):
 .. list-table::
    :widths: 33 33 33
 
-   * - .. figure:: ../figures/tutorials/e7-meta-front-100.png
+   * - .. figure:: ../figures/tutorials/training-sets-meta-front-100.png
           :alt: Population of the meta-optimizer after 100 evaluations
 
           After 100 evaluations
-     - .. figure:: ../figures/tutorials/e7-meta-front-1000.png
+     - .. figure:: ../figures/tutorials/training-sets-meta-front-1000.png
           :alt: Population of the meta-optimizer after 1000 evaluations
 
           After 1000 evaluations
-     - .. figure:: ../figures/tutorials/e7-meta-front-1900.png
+     - .. figure:: ../figures/tutorials/training-sets-meta-front-1900.png
           :alt: Population of the meta-optimizer after 1900 evaluations
 
           After 1900 evaluations
@@ -197,10 +197,10 @@ The convergence plot of tutorial E3 shows the same from the output files:
 
 .. code-block:: bash
 
-    python scripts/plot_training_convergence.py results/tutorial-e7/training --primary NHV \
+    python scripts/plot_training_convergence.py results/tutorial-training-sets/training --primary NHV \
         --label "NSGA-II on DTLZ1-7 (3 objectives)"
 
-.. figure:: ../figures/tutorials/e7-convergence-nhv.png
+.. figure:: ../figures/tutorials/training-sets-convergence-nhv.png
    :align: center
    :alt: Convergence of the NHV meta-objective during the training
    :figwidth: 75%
@@ -219,14 +219,14 @@ Step 3: choosing the configuration
 
 As in tutorials E3 and E4, the chosen configuration is the one with the lowest NHV on the final
 front of the meta-optimizer, the last block of ``VAR_CONF.txt``. This command saves it to
-``results/tutorial-e7/best-configuration.txt``, where the validation reads it:
+``results/tutorial-training-sets/best-configuration.txt``, where the validation reads it:
 
 .. code-block:: bash
 
     awk '/^# Evaluation/ {block = ""} / \| / {block = block $0 "\n"} END {printf "%s", block}' \
-        results/tutorial-e7/training/VAR_CONF.txt \
+        results/tutorial-training-sets/training/VAR_CONF.txt \
       | sed 's/.*NHV=\([^ ]*\) | \(.*\)/\1 \2/' | sort -g | head -1 | cut -d' ' -f2- \
-      > results/tutorial-e7/best-configuration.txt
+      > results/tutorial-training-sets/best-configuration.txt
 
 In this run it has NHV = 0.085 and EP = 0.065 on the training set:
 
@@ -317,8 +317,8 @@ From the root of the repository:
         org.uma.evolver.example.tutorial.TrainingSetsValidationTutorial
 
 It took about 15 minutes. The fronts of every run are written to
-``results/tutorial-e7/validation/data``, and the values of the indicators (EP, HV and IGD+) of every
-run to ``results/tutorial-e7/validation/QualityIndicatorSummary.csv``.
+``results/tutorial-training-sets/validation/data``, and the values of the indicators (EP, HV and IGD+) of every
+run to ``results/tutorial-training-sets/validation/QualityIndicatorSummary.csv``.
 
 The statistical tables are generated from that file with
 `SAES <https://github.com/jMetal/SAES>`_, a Python library for the statistical analysis of empirical
@@ -327,9 +327,9 @@ studies (``pip install SAES``), with the script ``scripts/wilcoxon_pivot_tables.
 .. code-block:: bash
 
     python scripts/wilcoxon_pivot_tables.py \
-        results/tutorial-e7/validation/QualityIndicatorSummary.csv \
+        results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
-        --output-dir results/tutorial-e7/tables --png
+        --output-dir results/tutorial-training-sets/tables --png
 
 It writes a **Wilcoxon pivot table** per indicator, in LaTeX and as an image. Each cell has the
 median and, as a subscript, the interquartile range of the 15 runs. The tuned configuration is the
@@ -339,14 +339,14 @@ is significantly worse, and ``=`` if the difference is not significant. The best
 medians of each problem are shaded dark and light gray, and the last row counts the ``+``, ``-``
 and ``=`` of each algorithm.
 
-.. figure:: ../figures/tutorials/e7-wilcoxon-hv.png
+.. figure:: ../figures/tutorials/training-sets-wilcoxon-hv.png
    :align: center
    :alt: Wilcoxon pivot table of the hypervolume (HV, to be maximized)
    :figwidth: 100%
 
    Hypervolume (HV, higher is better), 50000 evaluations, 15 runs.
 
-.. figure:: ../figures/tutorials/e7-wilcoxon-igdplus.png
+.. figure:: ../figures/tutorials/training-sets-wilcoxon-igdplus.png
    :align: center
    :alt: Wilcoxon pivot table of IGD+ (to be minimized)
    :figwidth: 100%
@@ -363,17 +363,17 @@ significance level of 0.05), meaning that their differences are not significant.
 .. code-block:: bash
 
     python scripts/critical_difference_plots.py \
-        results/tutorial-e7/validation/QualityIndicatorSummary.csv \
-        --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
+        results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \
+        --indicators HV,IGD+ --output-dir results/tutorial-training-sets/tables
 
 .. list-table::
    :widths: 50 50
 
-   * - .. figure:: ../figures/tutorials/e7-cdplot-hv.png
+   * - .. figure:: ../figures/tutorials/training-sets-cdplot-hv.png
           :alt: Critical difference plot of HV
 
           HV
-     - .. figure:: ../figures/tutorials/e7-cdplot-igdplus.png
+     - .. figure:: ../figures/tutorials/training-sets-cdplot-igdplus.png
           :alt: Critical difference plot of IGD+
 
           IGD+
@@ -421,12 +421,12 @@ the median HV, over the reference front (in gray):
 
 .. code-block:: bash
 
-    python scripts/plot_median_fronts.py results/tutorial-e7/validation \
+    python scripts/plot_median_fronts.py results/tutorial-training-sets/validation \
         --problems DTLZ1,DTLZ3,DTLZ7 --algorithms NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
         --reference-fronts resources/referenceFronts --reference-suffix .3D.csv \
         --output median-fronts.png
 
-.. figure:: ../figures/tutorials/e7-median-fronts.png
+.. figure:: ../figures/tutorials/training-sets-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of each algorithm on DTLZ1, DTLZ3 and DTLZ7
    :figwidth: 100%
@@ -464,8 +464,8 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E8 <analyzing_training_results>` shows how to analyze the results of a training run and
+- :doc:`E7 <analyzing_training_results>` shows how to analyze the results of a training run and
   choose a configuration; designing and interpreting validation studies is the subject of
-  :doc:`E9 <validating_a_configuration>`.
-- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
+  :doc:`E8 <validating_a_configuration>`.
+- :doc:`E9 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
 - :doc:`../concepts/meta_optimization_level_metaheuristics` describes the available meta-optimizers.

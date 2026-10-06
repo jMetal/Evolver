@@ -1,6 +1,6 @@
 .. _tutorial_tree_versus_flat_encoding:
 
-E13. Tree Versus Flat Encoding
+E14. Tree Versus Flat Encoding
 ==============================
 
 :Level: Advanced
@@ -8,9 +8,9 @@ E13. Tree Versus Flat Encoding
 :Time: about 30 minutes, plus the trainings of Step 5 (optional, about 21 minutes)
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the trainings), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11
-:Prerequisites: :doc:`E6. Designing your own parameter space <designing_parameter_spaces>`,
-   :doc:`E12. Choosing the meta-optimizer <choosing_the_meta_optimizer>`,
-   :doc:`E17. Budgets: evaluations or time <budgets>`
+:Prerequisites: :doc:`E5. Designing your own parameter space <designing_parameter_spaces>`,
+   :doc:`E13. Choosing the meta-optimizer <choosing_the_meta_optimizer>`,
+   :doc:`E11. Budgets: evaluations or time <budgets>`
 
 The meta-optimizer searches configurations of the base-level algorithm, and it needs a way to
 represent them. Evolver has two. The **flat encoding** turns every parameter of the space into a
@@ -66,7 +66,7 @@ A configuration is a derivation of this grammar: one production chosen for every
 for every terminal it reaches. With ``SBX`` as the crossover, ``sbxDistributionIndex`` is part of
 the configuration and ``blxAlphaCrossoverAlpha`` is not. The tree encoding stores exactly that
 derivation. The flat encoding stores a number for **every** parameter of the space, the 34 that
-tutorial E6 counted for this space, and decides which ones matter when it decodes the vector.
+tutorial E5 counted for this space, and decides which ones matter when it decodes the vector.
 
 Step 2: inactive variables
 --------------------------
@@ -136,7 +136,7 @@ Step 4: what changes in a training
 ----------------------------------
 
 The base level does not change: the same base-level file serves both encodings. What changes is the
-meta-optimizer configuration. The tree version of the meta-optimizer of E17 is
+meta-optimizer configuration. The tree version of the meta-optimizer of E11 is
 ``TutorialTimeTreeNSGAIIMetaSearch.yaml``:
 
 .. literalinclude:: ../../src/main/resources/metaOptimizerConfigurations/TutorialTimeTreeNSGAIIMetaSearch.yaml
@@ -146,7 +146,7 @@ meta-optimizer configuration. The tree version of the meta-optimizer of E17 is
 ``encoding: tree`` selects it. The crossover is always the subtree crossover and the mutation the tree
 mutation, so the file gives only their probabilities and the distribution index, where the flat
 file names the operators (SBX and polynomial mutation) and their parameters. Not every meta-optimizer
-works with trees (tutorial E12): NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO and
+works with trees (tutorial E13): NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO and
 SPEA2 do not.
 
 The output files are the same: ``INDICATORS.csv``, ``CONFIGURATIONS.csv`` and ``VAR_CONF.txt``, with the
@@ -159,7 +159,7 @@ Step 5: an experiment
 The experiment is the training of tutorial E3 (NSGA-II tuned for ZDT4, 12000 evaluations per
 configuration, NHV and EP as meta-objectives) with NSGA-II as the meta-optimizer, once with each
 encoding, both stopped after **2 minutes** of computing time on 14 cores: the flat one with the
-meta-optimizer of E17 (``TutorialTimeNSGAIIMetaSearch.yaml``), the tree one with the file of Step 4. A
+meta-optimizer of E11 (``TutorialTimeNSGAIIMetaSearch.yaml``), the tree one with the file of Step 4. A
 training is a stochastic search, so each one is repeated **5 times**, alternating the encodings so
 that both get the same conditions of the machine:
 
@@ -187,15 +187,15 @@ The ten trainings took 21 minutes. For each one, the program reads the meta-eval
      - 0.0068; 0.0064 to 0.0077
 
 The convergence of the NHV of the front over time, with the 5 trainings of each encoding pooled
-(``scripts/plot_training_convergence.py results/tutorial/E13/flat --primary NHV --x time``, and the
+(``scripts/plot_training_convergence.py results/tutorial/tree-vs-flat/flat --primary NHV --x time``, and the
 same for ``tree``):
 
-.. image:: ../figures/tutorials/e13-convergence-flat.png
+.. image:: ../figures/tutorials/tree-vs-flat-convergence-flat.png
    :width: 600
    :align: center
    :alt: Convergence of NHV over time of the 5 flat trainings: median and best-worst range
 
-.. image:: ../figures/tutorials/e13-convergence-tree.png
+.. image:: ../figures/tutorials/tree-vs-flat-convergence-tree.png
    :width: 600
    :align: center
    :alt: Convergence of NHV over time of the 5 tree trainings: median and best-worst range
@@ -273,6 +273,6 @@ What's next
 -----------
 
 - :doc:`../concepts/solution_encoding` is the reference on both encodings and their operators.
-- :doc:`E12 <choosing_the_meta_optimizer>` lists the meta-optimizers that support each encoding.
-- :doc:`E9 <validating_a_configuration>` explains how to validate the configurations a training
+- :doc:`E13 <choosing_the_meta_optimizer>` lists the meta-optimizers that support each encoding.
+- :doc:`E8 <validating_a_configuration>` explains how to validate the configurations a training
   finds, which is what would tell whether the configurations of each encoding generalize.

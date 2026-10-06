@@ -1,6 +1,6 @@
 .. _tutorial_binary_and_permutation_encodings:
 
-E11. Binary and Permutation Encodings
+E10. Binary and Permutation Encodings
 =====================================
 
 :Level: Intermediate
@@ -11,7 +11,7 @@ E11. Binary and Permutation Encodings
    validations), 64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11, SAES 1.5.0
 :Prerequisites: :doc:`E2. Base-level algorithms <base_level_algorithms>`,
    :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
-   :doc:`E6. Designing your own parameter space <designing_parameter_spaces>`
+   :doc:`E5. Designing your own parameter space <designing_parameter_spaces>`
 
 The previous tutorials tune algorithms for continuous problems. Evolver's algorithms also come in
 versions for **binary** problems, whose solutions are bit strings, and **permutation** problems,
@@ -73,7 +73,7 @@ encoding:
   inversion and displacement). Here ``mutationProbability`` is the probability of mutating a
   solution, not a factor: a permutation cannot be mutated position by position independently.
 
-Both are much smaller than the continuous space (tutorial E6):
+Both are much smaller than the continuous space (tutorial E5):
 
 .. code-block:: bash
 
@@ -130,16 +130,16 @@ The training is described by ``TutorialZdt5BinaryBaseLevel.yaml``:
 (``Binary`` here, as ``Permutation`` for the TSP instances): a training checks that the encoding of
 its problems is the one of the algorithm, and fails before it starts if it is not. Each
 configuration is run three times with 10000 evaluations, and the meta-optimizer is the
-asynchronous NSGA-II of tutorial E7 (2000 configurations). From the root of the repository:
+asynchronous NSGA-II of tutorial E6 (2000 configurations). From the root of the repository:
 
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial-e11/binary
-    cp src/main/resources/cli/training/tutorial-e11-binary-request.yaml \
-        results/tutorial-e11/binary/request.yaml
+    mkdir -p results/tutorial-encodings/binary
+    cp src/main/resources/cli/training/tutorial-encodings-binary-request.yaml \
+        results/tutorial-encodings/binary/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-e11/binary/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-encodings/binary/request.yaml
 
 It took about 12 minutes. The configuration with the lowest NHV (0.012), bundled in
 ``tunedConfigurations/NSGAIIBinaryZDT5.txt``, keeps the single-point crossover of the default one
@@ -167,7 +167,7 @@ NHV or IGD+, which need a complete reference front. The meta-objectives of the t
   but they still tell apart the configurations whose fronts have no hypervolume at all (HV− = 0),
   which is frequent at the start of a training, and guide the meta-optimizer until HV− improves.
 
-:doc:`E10 <problems_without_reference_front>` explains this approach.
+:doc:`E9 <problems_without_reference_front>` explains this approach.
 
 .. literalinclude:: ../../src/main/resources/baseLevelConfigurations/TutorialKroTspPermutationBaseLevel.yaml
    :language: yaml
@@ -178,12 +178,12 @@ validation (the budget of jMetal's NSGA-II example for the TSP):
 
 .. code-block:: bash
 
-    mkdir -p results/tutorial-e11/permutation
-    cp src/main/resources/cli/training/tutorial-e11-permutation-request.yaml \
-        results/tutorial-e11/permutation/request.yaml
+    mkdir -p results/tutorial-encodings/permutation
+    cp src/main/resources/cli/training/tutorial-encodings-permutation-request.yaml \
+        results/tutorial-encodings/permutation/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
         org.uma.evolver.cli.training.TrainingRunnerMain \
-        results/tutorial-e11/permutation/request.yaml
+        results/tutorial-encodings/permutation/request.yaml
 
 It took about 26 minutes. The meta-objectives are HV− and EP, so the command of tutorial E3 that
 chooses the configuration with the lowest NHV becomes:
@@ -191,7 +191,7 @@ chooses the configuration with the lowest NHV becomes:
 .. code-block:: bash
 
     awk '/^# Evaluation/ {block = ""} / \| / {block = block $0 "\n"} END {printf "%s", block}' \
-        results/tutorial-e11/permutation/training/VAR_CONF.txt \
+        results/tutorial-encodings/permutation/training/VAR_CONF.txt \
       | sed 's/.*HVMinus=\([^ ]*\) .*| \(.*\)/\1 \2/' | sort -g | head -1 | cut -d' ' -f2-
 
 The configuration found (HV− = −0.717, bundled in ``tunedConfigurations/NSGAIIPermutationKroTSP.txt``)
@@ -230,7 +230,7 @@ algorithms find, so their fronts dominate the whole box and the hypervolume of b
 0.997 and 1.000. The study builds its own reference front instead, the non-dominated points of all
 the runs of both algorithms (jMetal's
 ``GenerateReferenceParetoFront``, before ``ComputeQualityIndicators``), and computes EP, HV and IGD+
-against it. This is the usual practice when a problem has no known front (:doc:`E10 <problems_without_reference_front>`). From the
+against it. This is the usual practice when a problem has no known front (:doc:`E9 <problems_without_reference_front>`). From the
 root of the repository:
 
 .. code-block:: bash
@@ -262,7 +262,7 @@ the Wilcoxon test finds the three differences significant:
 
 The median fronts show what the numbers mean on a deceptive problem:
 
-.. figure:: ../figures/tutorials/e11-zdt5-median-fronts.png
+.. figure:: ../figures/tutorials/encodings-zdt5-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of the default and the tuned NSGA-II on ZDT5
    :figwidth: 90%
@@ -276,7 +276,7 @@ gets closer.
 
 **Permutation.** The difference is much larger:
 
-.. figure:: ../figures/tutorials/e11-wilcoxon-tsp-hv.png
+.. figure:: ../figures/tutorials/encodings-wilcoxon-tsp-hv.png
    :align: center
    :alt: Wilcoxon pivot table of HV on the four TSP instances
    :figwidth: 60%
@@ -289,7 +289,7 @@ to 0.55 of the default one, and is significantly better on all of them, includin
 not trained on; its IGD+ is between 0.024 and 0.039, against 0.12 to 0.16. Most of the reference
 front comes from its runs (on KroAD100, all its 137 points). The fronts show the difference:
 
-.. figure:: ../figures/tutorials/e11-tsp-median-fronts.png
+.. figure:: ../figures/tutorials/encodings-tsp-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of the default and the tuned NSGA-II on KroAB100 and KroAD100
    :figwidth: 90%
@@ -308,7 +308,7 @@ Try it yourself
 - Tune MOEA/D for ZDT5 or the TSP (``MOEADBinary.yaml``, ``MOEADPermutation.yaml``): the base level
   names ``algorithmName: MOEAD`` and needs ``extraConfig: {weightVectorFilesDirectory:
   resources/weightVectors}``, the weight vectors for two objectives.
-- Write a reduced permutation space with only the inversion mutation (tutorial E6) and train with
+- Write a reduced permutation space with only the inversion mutation (tutorial E5) and train with
   it: is the training faster, and is the configuration as good?
 - Validate the tuned configuration on ``EuclidAB300``, an instance of 300 cities: does a
   configuration tuned with 100 cities scale?
@@ -318,6 +318,6 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front: the extreme points, HV−, and reference
+- :doc:`E9 <problems_without_reference_front>` covers problems without a reference front: the extreme points, HV−, and reference
   fronts built from the results.
-- :doc:`E13 <tree_versus_flat_encoding>` compares the tree and the flat encodings of the meta-optimizer.
+- :doc:`E14 <tree_versus_flat_encoding>` compares the tree and the flat encodings of the meta-optimizer.

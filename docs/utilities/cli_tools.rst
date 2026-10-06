@@ -253,7 +253,7 @@ as-is:
    * - ``nsgaii-two-biobjective-tsp-request.yaml``
      - NSGA-II tuning a **Permutation**-encoded base-level algorithm (``PermutationNSGAII`` on two
        bi-objective TSP instances), instead of the Double encoding of most bundled requests
-   * - ``tutorial-e11-binary-request.yaml``
+   * - ``tutorial-encodings-binary-request.yaml``
      - AsyncNSGA-II tuning a **Binary**-encoded base-level algorithm (``BinaryNSGAII`` on ZDT5)
    * - ``moead-zdt4-request.yaml``
      - NSGA-II tuning MOEA/D, a base algorithm with its own extra config (flat encoding)

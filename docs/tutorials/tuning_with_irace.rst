@@ -1,6 +1,6 @@
 .. _irace_integration:
 
-E14. Tuning with irace
+E15. Tuning with irace
 ======================
 
 :Level: Advanced
@@ -16,7 +16,7 @@ configuration. This tutorial shows how to use it to tune one of Evolver's config
 NSGA-II, for the ZDT problems: from the generation of the files irace needs to the use of the
 configuration it finds.
 
-Evolver has its own way of tuning its algorithms, the meta-optimization of tutorials E3, E7 and E8.
+Evolver has its own way of tuning its algorithms, the meta-optimization of tutorials E3, E6 and E7.
 This tutorial does not compare the two approaches: it only shows how to use irace with Evolver.
 How they compare is an open question.
 
@@ -148,12 +148,12 @@ to the reference fronts, and run it from there. From the root of the repository:
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial-e14
-    cp src/main/resources/irace/* results/tutorial-e14/
+    mkdir -p results/tutorial-irace
+    cp src/main/resources/irace/* results/tutorial-irace/
     ln -s "$(pwd)"/target/Evolver-*-jar-with-dependencies.jar \
-        results/tutorial-e14/Evolver-jar-with-dependencies.jar
-    ln -s "$(pwd)"/resources results/tutorial-e14/resources
-    cd results/tutorial-e14
+        results/tutorial-irace/Evolver-jar-with-dependencies.jar
+    ln -s "$(pwd)"/resources results/tutorial-irace/resources
+    cd results/tutorial-irace
     N_CPUS=16 ./run.sh scenario-NSGAII.txt 1
 
 The second argument of ``run.sh`` is the number of the run: it sets irace's seed and the execution
@@ -213,14 +213,14 @@ From the root of the repository:
 
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
         org.uma.evolver.example.tutorial.IraceTutorial
-    python scripts/plot_median_fronts.py results/tutorial-e14/validation \
+    python scripts/plot_median_fronts.py results/tutorial-irace/validation \
         --problems ZDT1,ZDT2,ZDT3,ZDT4,ZDT6 --algorithms NSGAII,NSGAIIIrace \
         --reference-fronts resources/referenceFronts --output median-fronts.png
 
 The figure shows, for each problem, the front of the run with the median HV of each configuration,
 over the reference front (in gray):
 
-.. figure:: ../figures/tutorials/e14-median-fronts.png
+.. figure:: ../figures/tutorials/irace-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of the standard NSGA-II and the configuration found by irace
    :figwidth: 75%
@@ -244,7 +244,7 @@ configuration is only as good as the training set, the budget and the aggregatio
 make it. Giving ZDT4 more weight (repeating it in the list of instances), a larger budget, or tuning
 for it separately are ways to address it.
 
-This is a check that the configuration works, not a statistical study: :doc:`E9 <validating_a_configuration>` covers how to
+This is a check that the configuration works, not a statistical study: :doc:`E8 <validating_a_configuration>` covers how to
 validate a configuration properly.
 
 Try it yourself
@@ -263,6 +263,6 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E9 <validating_a_configuration>` covers the validation of a configuration.
-- :doc:`E3 <meta_optimization_workflow>` and :doc:`E8 <analyzing_training_results>` show Evolver's
+- :doc:`E8 <validating_a_configuration>` covers the validation of a configuration.
+- :doc:`E3 <meta_optimization_workflow>` and :doc:`E7 <analyzing_training_results>` show Evolver's
   own meta-optimization.

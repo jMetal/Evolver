@@ -88,7 +88,7 @@ Other pairs are possible, for instance:
 - **HV− and EP** (``HypervolumeMinus`` and ``Epsilon``): HV− only needs a reference point, so it is
   the one to use when the problems have no reference front.
 
-:doc:`E7 <training_sets_indicators_budgets>` discusses these choices.
+:doc:`E6 <training_sets_indicators_budgets>` discusses these choices.
 
 The step loads the file:
 
@@ -123,7 +123,7 @@ meta-optimizer's own operators, as in any NSGA-II. In total, the training runs N
 instance, ``metaMaxComputingTimeMinutes: 4`` (the two are mutually exclusive). With evaluations the
 run is the same on any machine; with time it takes the time you decide, whatever the machine and the
 cost of each configuration, but the number of configurations it tries, and so its result, depends on
-the machine. :doc:`E17 <budgets>` explains when to use each.
+the machine. :doc:`E11 <budgets>` explains when to use each.
 
 Step 3: running the training
 ----------------------------
@@ -142,7 +142,7 @@ reported. ``TrainingRunner`` runs it:
 
    Base level: NSGA-II on [ProblemSpec[className=ZDT4, args=[]]] with [12000] evaluations, indicators [Epsilon, NormalizedHypervolume]
    Meta-optimizer: NSGA-II, 2000 configurations
-   Training finished in 250 s; results in results/tutorial/E3
+   Training finished in 250 s; results in results/tutorial/workflow
 
 The output directory holds:
 
@@ -177,10 +177,10 @@ improvement of the main objective was reached:
 
 .. code-block:: bash
 
-    python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV \
+    python scripts/plot_training_convergence.py results/tutorial/workflow --primary NHV \
         --label "NSGA-II on ZDT4"
 
-.. figure:: ../figures/tutorials/e3-convergence-nhv.png
+.. figure:: ../figures/tutorials/workflow-convergence-nhv.png
    :align: center
    :alt: Convergence of the NHV meta-objective during the training
    :figwidth: 75%
@@ -222,7 +222,7 @@ the lowest NHV. Choosing by the main objective is the simplest strategy, but the
   problems, and choosing the best one by those runs. It costs more, but it avoids choosing a
   configuration that was lucky in the training (see the end of Step 5).
 
-:doc:`E8 <analyzing_training_results>` applies them to a larger training. The table compares the
+:doc:`E7 <analyzing_training_results>` applies them to a larger training. The table compares the
 chosen configuration with the default configuration of NSGA-II (the one in
 ``defaultConfigurations/NSGAIIDoubleDefault.txt``, used in tutorial E2):
 
@@ -298,7 +298,7 @@ Step 5: comparing it with the default configuration
 
 The last step runs NSGA-II on ZDT4 with the default configuration and with the chosen one, with a
 larger budget than in the training (20000 evaluations, ``VALIDATION_EVALUATIONS``), and writes both
-fronts to ``results/tutorial/E3/validation``:
+fronts to ``results/tutorial/workflow/validation``:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/MetaOptimizationWorkflowTutorial.java
    :language: java
@@ -317,11 +317,11 @@ of ZDT4 (the thin line), with the same axes in both panels:
 .. code-block:: bash
 
     python scripts/plot_fronts.py resources/referenceFronts/ZDT4.csv \
-        --front "Default configuration=results/tutorial/E3/validation/default/FUN.csv" \
-        --front "Tuned configuration=results/tutorial/E3/validation/tuned/FUN.csv" \
+        --front "Default configuration=results/tutorial/workflow/validation/default/FUN.csv" \
+        --front "Tuned configuration=results/tutorial/workflow/validation/tuned/FUN.csv" \
         --title "NSGA-II on ZDT4 (20000 evaluations)" --output fronts.png
 
-.. figure:: ../figures/tutorials/e3-fronts.png
+.. figure:: ../figures/tutorials/workflow-fronts.png
    :align: center
    :alt: Fronts of the default and tuned configurations of NSGA-II on ZDT4
    :figwidth: 100%
@@ -334,7 +334,7 @@ the diversity of the front, which is what NHV rewards.
 
 These values come from a single run of each configuration, as the training values do. A reliable
 comparison between configurations needs several runs of each and a statistical test, which is the
-subject of the validation tutorial, :doc:`E9 <validating_a_configuration>`.
+subject of the validation tutorial, :doc:`E8 <validating_a_configuration>`.
 
 The meta-optimizer runs its evaluations in parallel, so a training run cannot be reproduced exactly:
 your results will differ from the ones shown here. With one run per configuration they can differ
@@ -354,9 +354,9 @@ Running the training from the command line
 The same training can be run without writing Java code, with ``TrainingRunnerMain`` and a request
 file that joins both configuration files:
 
-.. literalinclude:: ../../src/main/resources/cli/training/tutorial-e3-request.yaml
+.. literalinclude:: ../../src/main/resources/cli/training/tutorial-workflow-request.yaml
    :language: yaml
-   :caption: tutorial-e3-request.yaml
+   :caption: tutorial-workflow-request.yaml
 
 ``TrainingRunnerMain`` writes ``results.yaml`` (and, unless told otherwise, ``status.yaml``) next to
 the request file, so copy it to a working directory of its own first. From the root of the Evolver
@@ -365,10 +365,10 @@ repository:
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial/E3-cli
-    cp src/main/resources/cli/training/tutorial-e3-request.yaml results/tutorial/E3-cli/request.yaml
+    mkdir -p results/tutorial/workflow-cli
+    cp src/main/resources/cli/training/tutorial-workflow-request.yaml results/tutorial/workflow-cli/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial/E3-cli/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial/workflow-cli/request.yaml
 
 While it runs, ``status.yaml`` shows its progress; when it finishes, ``results.yaml`` points to the
 output files. See :doc:`../utilities/cli_tools` for the details of the request files.
@@ -398,11 +398,11 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E17 <budgets>` covers the two budgets of a training, and how to stop the meta-optimizer by
+- :doc:`E11 <budgets>` covers the two budgets of a training, and how to stop the meta-optimizer by
   time instead of by evaluations.
-- :doc:`E7 <training_sets_indicators_budgets>` covers training sets with several problems, the
+- :doc:`E6 <training_sets_indicators_budgets>` covers training sets with several problems, the
   choice of indicators and budgets, and the validation of a configuration against other
-  algorithms; analyzing the results of a training (E8) and validation studies (:doc:`E9 <validating_a_configuration>`) come in
+  algorithms; analyzing the results of a training (E7) and validation studies (:doc:`E8 <validating_a_configuration>`) come in
   later tutorials.
 - :doc:`../concepts/meta_optimization_approach` and
   :doc:`../concepts/meta_optimization_level_metaheuristics` describe the approach and the available

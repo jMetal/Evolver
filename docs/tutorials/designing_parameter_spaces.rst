@@ -1,6 +1,6 @@
 .. _tutorial_designing_parameter_spaces:
 
-E6. Designing Your Own Parameter Space
+E5. Designing Your Own Parameter Space
 ======================================
 
 :Level: Intermediate
@@ -11,7 +11,7 @@ E6. Designing Your Own Parameter Space
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11, SAES 1.5.0
 :Prerequisites: :doc:`E1. Parameter spaces <parameter_spaces>`,
    :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`; recommended:
-   :doc:`E9. Validating a configuration <validating_a_configuration>`
+   :doc:`E8. Validating a configuration <validating_a_configuration>`
 
 The parameter space is part of the design of a training, like the training set or the budget: it
 decides which configurations the meta-optimizer can find. The spaces bundled with Evolver are
@@ -21,7 +21,7 @@ to reduce and extend a parameter space, what the implementation of the algorithm
 how to measure the size of a space, and, with a case study, why a smaller space is not necessarily
 a better one.
 
-The case study continues tutorial E9. There, Evolver tuned NSGA-II in its full parameter space
+The case study continues tutorial E8. There, Evolver tuned NSGA-II in its full parameter space
 (``NSGAIIDouble.yaml``) and found a configuration similar to the one irace found in Nebro et al.,
 *Automatic Configuration of NSGA-II with jMetal and irace* (GECCO 2019 Companion,
 `doi:10.1145/3319619.3326832 <https://doi.org/10.1145/3319619.3326832>`_), in a much smaller
@@ -77,7 +77,7 @@ Two rules apply:
   (tutorial E3), each parameter is a variable in [0, 1], whatever the number of its values. A
   parameter with one value always decodes to that value, so the meta-optimizer wastes a little of
   its effort mutating it. It does no harm, but a space with many fixed parameters is less
-  efficient than its number of parameters suggests. The tree encoding (:doc:`E13 <tree_versus_flat_encoding>`) does not have
+  efficient than its number of parameters suggests. The tree encoding (:doc:`E14 <tree_versus_flat_encoding>`) does not have
   this problem.
 
 Step 3: extending a parameter space
@@ -93,7 +93,7 @@ valid names:
    Supported names are: [SBX, blxAlpha, wholeArithmetic, arithmetic, fuzzyRecombination, laplace,
    blxAlphaBeta, PCX, UNDC, SDX]
 
-Adding a new operator to the catalogue is the subject of tutorial E16. A parameter that the
+Adding a new operator to the catalogue is the subject of tutorial E17. A parameter that the
 algorithm does not use cannot be added either: the space loads, but every configuration must then
 give it a value, and the algorithm ignores it.
 
@@ -196,24 +196,24 @@ It has two crossovers (SBX and BLX-alpha) and two mutations (polynomial and unif
 with an archive is ordinal, as in the paper (a categorical parameter with numbers), and so is the
 offspring population size. The comments of the file list the differences with the paper.
 
-The training is the one of tutorial E9, with this space instead of the full one: NSGA-II tuned for
+The training is the one of tutorial E8, with this space instead of the full one: NSGA-II tuned for
 WFG1-9 with two objectives, 10000 evaluations per run, NHV and EP as meta-objectives and 2000
 configurations. From the root of the repository:
 
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial-e6
-    cp src/main/resources/cli/training/tutorial-e6-request.yaml results/tutorial-e6/request.yaml
+    mkdir -p results/tutorial-parameter-space-design
+    cp src/main/resources/cli/training/tutorial-parameter-space-design-request.yaml results/tutorial-parameter-space-design/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-e6/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-parameter-space-design/request.yaml
 
 It took about 21 minutes, against 17 for the full space: the configurations it ended up exploring
 generate one offspring per generation, which is slower. The chosen configuration is bundled in
 ``src/main/resources/tunedConfigurations/NSGAIIWFG2DGECCO2019.txt``. The best NHV of each training
 over the meta-evaluations:
 
-.. figure:: ../figures/tutorials/e6-convergence-both-spaces.png
+.. figure:: ../figures/tutorials/parameter-space-design-convergence-both-spaces.png
    :align: center
    :alt: Best NHV during the training in the full and in the small parameter space
    :figwidth: 75%
@@ -227,13 +227,13 @@ full space (an external archive of 197 solutions, five offspring per generation,
 crossover and Lévy flight mutation).
 
 Which space is better? The training values cannot tell: they come from one run per configuration,
-with the training budget, and each training is a single sample (tutorial E9). The validation can.
+with the training budget, and each training is a single sample (tutorial E8). The validation can.
 
 Step 6: comparing the two spaces by validation
 ----------------------------------------------
 
 ``ParameterSpaceDesignTutorial`` validates both configurations, together with the standard NSGA-II,
-with the design of tutorial E9: WFG1-9 and DTLZ1-7 with two objectives, 25000 evaluations, 25
+with the design of tutorial E8: WFG1-9 and DTLZ1-7 with two objectives, 25000 evaluations, 25
 independent runs and the indicators EP, Spread, HV and IGD+:
 
 .. code-block:: bash
@@ -248,11 +248,11 @@ small space as the pivot:
 .. code-block:: bash
 
     python scripts/wilcoxon_pivot_tables.py \
-        results/tutorial-e6/validation/QualityIndicatorSummary.csv \
+        results/tutorial-parameter-space-design/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIWFGSmall --order NSGAII,NSGAIIWFG,NSGAIIWFGSmall --indicators HV,IGD+ \
-        --output-dir results/tutorial-e6/tables --png
+        --output-dir results/tutorial-parameter-space-design/tables --png
 
-.. figure:: ../figures/tutorials/e6-wilcoxon-hv.png
+.. figure:: ../figures/tutorials/parameter-space-design-wilcoxon-hv.png
    :align: center
    :alt: Wilcoxon pivot table of HV with the configuration of the small space as the pivot
    :figwidth: 90%
@@ -266,16 +266,16 @@ space is a little better. Three problems stand out:
 
 - On **DTLZ1**, the configuration of the small space solves the problem (median HV 0.474), where
   the one of the full space fails (0): with its steady-state replacement it escapes the local
-  fronts of this multimodal problem, which tutorial E9 identified as the weak point of the tuned
+  fronts of this multimodal problem, which tutorial E8 identified as the weak point of the tuned
   configuration.
 - On **DTLZ7**, whose front has disconnected regions, it is worse than both (0.311 against 0.335
   and 0.334).
 - On **WFG6**, it is worse than both too (0.196 against 0.210 and 0.200).
 
 Over all the problems, the critical difference plot and the Friedman test with Holm's procedure
-(tutorial E9) agree:
+(tutorial E8) agree:
 
-.. figure:: ../figures/tutorials/e6-cdplot-hv.png
+.. figure:: ../figures/tutorials/parameter-space-design-cdplot-hv.png
    :align: center
    :alt: Critical difference plot of HV for the three algorithms
    :figwidth: 75%
@@ -303,7 +303,7 @@ Step 7: using a parameter space of your own
   ``TutorialWfg2DGECCO2019BaseLevel.yaml`` does.
 - **From Java**, load it with ``new YAMLParameterSpace(file, new DoubleParameterFactory())``, with
   the factory of its encoding, and pass it to the algorithm.
-- **With irace** (tutorial :doc:`E14 <tuning_with_irace>`), generate its parameter file with
+- **With irace** (tutorial :doc:`E15 <tuning_with_irace>`), generate its parameter file with
   ``IraceParameterDescriptionGenerator``:
 
   .. code-block:: bash
@@ -329,8 +329,8 @@ Try it yourself
 What's next
 -----------
 
-- Tutorial E11 configures and tunes algorithms for binary and permutation problems, with their own
+- Tutorial E10 configures and tunes algorithms for binary and permutation problems, with their own
   parameter spaces.
-- :doc:`E13 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
+- :doc:`E14 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
   differently.
-- Tutorial E16 adds new components to the catalogue, so that they can be used in a parameter space.
+- Tutorial E17 adds new components to the catalogue, so that they can be used in a parameter space.

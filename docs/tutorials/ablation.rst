@@ -1,17 +1,17 @@
 .. _tutorial_ablation:
 
-E5. Ablation: Which Components Matter
-=====================================
+E12. Ablation: Which Components Matter
+======================================
 
 :Level: Advanced
 :Version: 1.0 (2026-10-06)
 :Time: about 30 minutes, plus the ablation study (about 17 minutes)
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the study), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11, SAES 1.5.0
-:Prerequisites: :doc:`E9. Validating a configuration <validating_a_configuration>`
+:Prerequisites: :doc:`E8. Validating a configuration <validating_a_configuration>`
 
 A training gives a configuration that is better than the default one, and that differs from it in
-many parameters at once. The configuration of NSGA-II that tutorial E9 found for the bi-objective
+many parameters at once. The configuration of NSGA-II that tutorial E8 found for the bi-objective
 WFG problems has an external archive, five offspring per generation instead of a hundred, another
 initialization, another crossover, another mutation and a larger tournament. Which of those changes
 explain the improvement? Answering it is an **ablation study**: take the tuned configuration, set
@@ -19,7 +19,7 @@ some of its components back to their default values, one at a time, and see how 
 loses. Ablation studies are common in papers that present a tuned or a new algorithm, since they
 justify each part of it.
 
-This tutorial makes the ablation of the configuration of E9, with the validation protocol of E9.
+This tutorial makes the ablation of the configuration of E8, with the validation protocol of E8.
 The code is the class
 `AblationTutorial <https://github.com/jMetal/Evolver/blob/develop/src/main/java/org/uma/evolver/example/tutorial/AblationTutorial.java>`_
 (package ``org.uma.evolver.example.tutorial``).
@@ -107,9 +107,9 @@ Step 3: running the study
 -------------------------
 
 The eight configurations (the default, the six variants and the tuned one) run on the problems of
-E9: WFG1-9, seen during the training, and DTLZ1-7, not seen, all with two objectives, with 25000
+E8: WFG1-9, seen during the training, and DTLZ1-7, not seen, all with two objectives, with 25000
 evaluations and 25 independent runs, and the hypervolume and IGD+ as indicators. The study is the
-validation of E9 with more configurations:
+validation of E8 with more configurations:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/AblationTutorial.java
    :language: java
@@ -122,18 +122,18 @@ The study took 17 minutes on 16 cores (3200 runs).
 Step 4: what each component contributes
 ---------------------------------------
 
-The Wilcoxon pivot table of E9, with the tuned configuration as the pivot, gives for each variant
+The Wilcoxon pivot table of E8, with the tuned configuration as the pivot, gives for each variant
 whether the tuned configuration is significantly better (``+``), worse (``-``) or not different
 (``=``) on each problem:
 
 .. code-block:: bash
 
-    python scripts/wilcoxon_pivot_tables.py results/tutorial-e5/ablation/QualityIndicatorSummary.csv \
+    python scripts/wilcoxon_pivot_tables.py results/tutorial-ablation/ablation/QualityIndicatorSummary.csv \
         --pivot Tuned \
         --order Default,NoArchive,DefaultOffspring,DefaultInitialization,DefaultCrossover,DefaultMutation,DefaultSelection,Tuned \
-        --output-dir results/tutorial-e5/tables --png
+        --output-dir results/tutorial-ablation/tables --png
 
-.. figure:: ../figures/tutorials/e5-wilcoxon-hv.png
+.. figure:: ../figures/tutorials/ablation-wilcoxon-hv.png
    :width: 100%
    :align: center
    :alt: Wilcoxon pivot table of the hypervolume, with the tuned configuration as the pivot
@@ -213,15 +213,15 @@ The two views together are the answer of the ablation:
   any value would have done: they are the parameters a meta-optimizer leaves wherever its search
   happened to put them.
 
-**Over all the problems.** The critical difference plot of E9 ranks the eight configurations by their
+**Over all the problems.** The critical difference plot of E8 ranks the eight configurations by their
 average rank on the 16 problems:
 
 .. code-block:: bash
 
-    python scripts/critical_difference_plots.py results/tutorial-e5/ablation/QualityIndicatorSummary.csv \
-        --indicators HV --output-dir results/tutorial-e5/tables
+    python scripts/critical_difference_plots.py results/tutorial-ablation/ablation/QualityIndicatorSummary.csv \
+        --indicators HV --output-dir results/tutorial-ablation/tables
 
-.. figure:: ../figures/tutorials/e5-cd-hv.png
+.. figure:: ../figures/tutorials/ablation-cd-hv.png
    :width: 90%
    :align: center
    :alt: Critical difference plot of the hypervolume of the eight configurations
@@ -242,7 +242,7 @@ Two results show that the components do not act independently:
   configuration** (HV 0.361 against 0.436). SBX works well with the rest of the default
   configuration, and badly with the rest of the tuned one: the effect of a component depends on the
   others.
-- On **DTLZ1 and DTLZ3** every variant of the tuned configuration fails (hypervolume 0, as in E9),
+- On **DTLZ1 and DTLZ3** every variant of the tuned configuration fails (hypervolume 0, as in E8),
   except the one with the default crossover, which gets a median hypervolume of 0.386 on DTLZ1. The
   crossover found by the training on WFG is also the main reason why the tuned configuration fails
   on these two multimodal problems, which were not in the training set.
@@ -287,12 +287,12 @@ Try it yourself
   sum of the two losses of the study?
 - Make the reverse study: the default configuration with **one** component of the tuned one (only the
   archive, only five offspring). Which component improves the default the most on its own?
-- Ablate the configuration that you found in E9, if you trained one.
+- Ablate the configuration that you found in E8, if you trained one.
 
 What's next
 -----------
 
-- :doc:`E9 <validating_a_configuration>` explains the statistical tests used here.
-- :doc:`E6 <designing_parameter_spaces>` uses what an ablation reveals to design a space: a
+- :doc:`E8 <validating_a_configuration>` explains the statistical tests used here.
+- :doc:`E5 <designing_parameter_spaces>` uses what an ablation reveals to design a space: a
   component that never matters can be fixed, and one that matters can be given more options.
 - The algorithm guides (:ref:`algorithm_guides`) describe each component of each algorithm.

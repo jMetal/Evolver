@@ -1,6 +1,6 @@
 .. _tutorial_automating_with_the_cli:
 
-E15. Automating Evolver with the CLI
+E16. Automating Evolver with the CLI
 ====================================
 
 :Level: Advanced
@@ -70,7 +70,7 @@ a *manifest* in YAML and runs nothing else:
         org.uma.evolver.cli.training.DescribeMain > manifest.yaml
 
 Its top-level keys are ``baseAlgorithms`` (18 pairs of algorithm and encoding),
-``metaAlgorithms`` (the 6 meta-optimizers of E12), ``problems`` and ``problemCatalogue`` (107 problems,
+``metaAlgorithms`` (the 6 meta-optimizers of E13), ``problems`` and ``problemCatalogue`` (107 problems,
 with the encoding, the number of objectives and variables and the arguments of each one),
 ``indicators``, ``resourceDirectories`` (the files that exist under ``parameterSpaces/``,
 ``defaultConfigurations/``, ...) and ``schemas`` (the fields of each kind of request, with their
@@ -168,7 +168,7 @@ Step 4: a training request by hand
 ----------------------------------
 
 A training request is shorter, because the work is in the two files it names, resolved against the
-recipes under ``src/main/resources/``. The request of tutorial E17, with the output directory
+recipes under ``src/main/resources/``. The request of tutorial E11, with the output directory
 changed:
 
 .. code-block:: yaml
@@ -192,7 +192,7 @@ and the time elapsed, which is what a program needs to compute the progress:
 
 (``maxEvaluations: 0`` means that there is no limit on evaluations.) The run took 2 minutes and 6
 seconds in all, and its ``METADATA.txt`` records the 1050 meta-evaluations it performed and why it
-stopped, as tutorial E17 explains.
+stopped, as tutorial E11 explains.
 
 **Stopping a run.** Evolver has no command to cancel: you kill the process. We did it 15 seconds
 into another training, and this is what was left:
@@ -214,7 +214,7 @@ Two details make a request a thing to reuse instead of copy:
 
 - ``baseLevel`` and ``metaSearch`` are *names* of recipes bundled with Evolver (the lists are
   ``resourceDirectories`` in the manifest), or paths to files of your own. A set of experiments
-  can share one base-level file and vary the meta-optimizer, as the exercises of E12 do.
+  can share one base-level file and vary the meta-optimizer, as the exercises of E13 do.
 - ``outputDirectory`` is relative to the directory the process runs in. Give every run its own: a
   request, a status and an output directory per experiment, side by side, is what makes a batch
   easy to inspect and to repeat.
@@ -290,7 +290,7 @@ requests, of 10 runs of 25000 evaluations each. The batch took **15 seconds** wi
 
 ``TimeMs`` is the median computing time of a run in milliseconds. These are medians of 10 runs of
 configurations that nobody tuned, and the table is not a comparison to draw conclusions from: that
-needs the statistical tests of tutorial :doc:`E9 <validating_a_configuration>`. What the table shows
+needs the statistical tests of tutorial :doc:`E8 <validating_a_configuration>`. What the table shows
 is what the batch gives you for 15 seconds of work: a table of every algorithm that you can change
 by editing the command, the base of a study or a regression check after a change to Evolver.
 
@@ -310,7 +310,7 @@ scheduler can write the request and read the files. A few ideas:
 - **A shell script**: ``yq`` reads and writes the YAML of requests and status files
   (``yq .status results/e15/status.yaml``), and ``xargs -P`` runs requests in parallel.
 - **A notebook**: ``pandas.read_csv`` on ``INDICATORS.csv`` or ``CONFIGURATIONS.csv`` is the
-  quickest way to look at a training, with the plots of tutorial E8 as a starting point.
+  quickest way to look at a training, with the plots of tutorial E7 as a starting point.
 - **A graphical interface**: Evolver-Studio is a client of this contract. It writes the request, starts the
   runner, polls the status and reads the results; its selectors come from ``DescribeMain``. If you
   want a tool for your own group, the same pieces are available to you.
@@ -322,17 +322,17 @@ What the CLI does not do yet
 ----------------------------
 
 - There is **no runner for validation studies**: those are written in Java with jMetal's
-  ``ExperimentBuilder`` (tutorials E7 and E9), and their results are read with the scripts of
+  ``ExperimentBuilder`` (tutorials E6 and E8), and their results are read with the scripts of
   ``scripts/``.
 - The asynchronous genetic algorithm (``MetaAsyncGeneticAlgorithmBuilder``) can only be used from
-  Java, and MOPSO is not among the algorithms that the CLI builds (E12 and the manifest list what is).
+  Java, and MOPSO is not among the algorithms that the CLI builds (E13 and the manifest list what is).
 - There is no cancel or pause: a run ends, fails or is killed.
 
 Try it yourself
 ---------------
 
 - Run the batch with ``--encoding Permutation`` and ``--problems KroAB100TSP,KroAC100TSP`` (use
-  ``--indicators HypervolumeMinus``, since the Permutation fronts have the extreme points of E10).
+  ``--indicators HypervolumeMinus``, since the Permutation fronts have the extreme points of E9).
   Which algorithms have a default configuration for that encoding?
 - Run only NSGA-II, SMS-EMOA and AGE-MOEA on ZDT1 with ``--algorithms``, and then ask for one
   that has no default configuration for the encoding (RDEMOEA, say): what does the script say?
@@ -350,7 +350,7 @@ What's next
 
 - :doc:`../utilities/cli_tools` is the reference of every field of the requests, the status and the
   results.
-- :doc:`E12 <choosing_the_meta_optimizer>` explains how many cores a training uses, which matters when
+- :doc:`E13 <choosing_the_meta_optimizer>` explains how many cores a training uses, which matters when
   you run several processes at once.
-- :doc:`E9 <validating_a_configuration>` explains how to analyze a study properly, once your batch has
+- :doc:`E8 <validating_a_configuration>` explains how to analyze a study properly, once your batch has
   produced the runs.

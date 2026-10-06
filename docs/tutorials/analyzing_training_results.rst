@@ -1,6 +1,6 @@
 .. _tutorial_analyzing_training_results:
 
-E8. Analyzing Training Results
+E7. Analyzing Training Results
 ==============================
 
 :Level: Intermediate
@@ -9,14 +9,14 @@ E8. Analyzing Training Results
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK)
 :Prerequisites: :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
-   :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`
+   :doc:`E6. Training sets, indicators and budgets <training_sets_indicators_budgets>`
 
 A training run ends with a set of files and a front of configurations. This tutorial shows how to
 read those files to understand how the search went, how to choose a configuration from the front,
 and how to check the choice with a validation. It also shows why the values of the configurations
 must be reliable before choosing among them.
 
-The example is simpler than the one of tutorial E7: NSGA-II is tuned for the bi-objective ZDT
+The example is simpler than the one of tutorial E6: NSGA-II is tuned for the bi-objective ZDT
 problems, and each configuration is run five times on each problem, so that its indicator values
 are medians of five runs instead of the values of a single run.
 
@@ -29,9 +29,9 @@ The training run
 
 The training is run from the command line with a bundled request:
 
-.. literalinclude:: ../../src/main/resources/cli/training/tutorial-e8-request.yaml
+.. literalinclude:: ../../src/main/resources/cli/training/tutorial-training-analysis-request.yaml
    :language: yaml
-   :caption: tutorial-e8-request.yaml
+   :caption: tutorial-training-analysis-request.yaml
 
 .. literalinclude:: ../../src/main/resources/baseLevelConfigurations/TutorialZdtBaseLevel.yaml
    :language: yaml
@@ -39,17 +39,17 @@ The training is run from the command line with a bundled request:
 
 NSGA-II is tuned for ZDT1, ZDT2, ZDT3, ZDT4 and ZDT6 with 8000 evaluations per run, and each
 configuration is run five times on each problem (``numberOfIndependentRuns: 5``). The
-meta-optimizer is the asynchronous NSGA-II of tutorial E7, with 2000 configurations and 16 cores
+meta-optimizer is the asynchronous NSGA-II of tutorial E6, with 2000 configurations and 16 cores
 (``TutorialAsyncNSGAIIMetaSearch.yaml``). ``writePopulation: true`` also writes the whole population
 of the meta-optimizer at every checkpoint. From the root of the repository:
 
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial-e8
-    cp src/main/resources/cli/training/tutorial-e8-request.yaml results/tutorial-e8/request.yaml
+    mkdir -p results/tutorial-training-analysis
+    cp src/main/resources/cli/training/tutorial-training-analysis-request.yaml results/tutorial-training-analysis/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-e8/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-training-analysis/request.yaml
 
 It took about 85 minutes: five runs per problem make each evaluation five times more expensive, and
 configurations that generate few offspring per generation, like the one finally chosen, are slower
@@ -62,7 +62,7 @@ differ from the ones shown here, although the analysis is the same.
 The output files
 ----------------
 
-The output directory, ``results/tutorial-e8/training``, holds:
+The output directory, ``results/tutorial-training-analysis/training``, holds:
 
 .. list-table::
    :header-rows: 1
@@ -103,10 +103,10 @@ configurations on the meta-optimizer's front at each checkpoint:
 
 .. code-block:: bash
 
-    python scripts/plot_training_convergence.py results/tutorial-e8/training --primary NHV \
+    python scripts/plot_training_convergence.py results/tutorial-training-analysis/training --primary NHV \
         --label "NSGA-II on ZDT1-6"
 
-.. figure:: ../figures/tutorials/e8-convergence-nhv.png
+.. figure:: ../figures/tutorials/training-analysis-convergence-nhv.png
    :align: center
    :alt: Convergence of the NHV meta-objective during the training
    :figwidth: 75%
@@ -127,10 +127,10 @@ checkpoints, with its non-dominated configurations circled:
 
 .. code-block:: bash
 
-    python scripts/plot_meta_population.py results/tutorial-e8/training \
+    python scripts/plot_meta_population.py results/tutorial-training-analysis/training \
         --evaluations 100,500,1000,2000 --output meta-population.png
 
-.. figure:: ../figures/tutorials/e8-meta-population.png
+.. figure:: ../figures/tutorials/training-analysis-meta-population.png
    :align: center
    :alt: Population of the meta-optimizer at four checkpoints
    :figwidth: 100%
@@ -156,7 +156,7 @@ The final front of this run has four configurations:
 They are a trade-off between the two meta-objectives: the lower the NHV, the higher the EP. The
 usual criteria to choose one are:
 
-- the **lowest value of the main objective**, NHV, as in tutorials E3, E4 and E7;
+- the **lowest value of the main objective**, NHV, as in tutorials E3, E4 and E6;
 - a **knee point**, where improving one objective starts to cost much in the other; here the front
   is very flat in EP (0.018 to 0.020), so NHV decides;
 - a **preference** for one indicator, for instance EP when the worst case over the front matters
@@ -178,7 +178,7 @@ Reliable values: independent runs
 
 Choosing by the values of the front only makes sense if those values are reliable. With a single
 run per configuration (``numberOfIndependentRuns: 1``), the value of a configuration can be a lucky
-one. In a training like the one of tutorial E7, with one run per configuration, the front ended with
+one. In a training like the one of tutorial E6, with one run per configuration, the front ended with
 a single configuration whose NHV was 0.176; evaluated again with five runs per problem, its NHV was
 0.213, the same as the rest of the population. That configuration stayed alone on the front from
 meta-evaluation 800 to the end, and the convergence plot showed a flat line that looked like
@@ -206,16 +206,16 @@ From the root of the repository:
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
         org.uma.evolver.example.tutorial.TrainingAnalysisTutorial
     python scripts/wilcoxon_pivot_tables.py \
-        results/tutorial-e8/validation/QualityIndicatorSummary.csv \
+        results/tutorial-training-analysis/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIZDT1 --order NSGAII,NSGAIIZDT2,NSGAIIZDT3,NSGAIIZDT4,NSGAIIZDT1 \
-        --indicators HV,IGD+ --output-dir results/tutorial-e8/tables --png
+        --indicators HV,IGD+ --output-dir results/tutorial-training-analysis/tables --png
 
-The validation took about 90 seconds. As in tutorial E7, the Wilcoxon pivot table has the chosen
+The validation took about 90 seconds. As in tutorial E6, the Wilcoxon pivot table has the chosen
 configuration (``NSGAIIZDT1``) in the last column, and marks every other cell with ``+`` if the
 chosen one is significantly better, ``-`` if it is worse and ``=`` if the difference is not
 significant:
 
-.. figure:: ../figures/tutorials/e8-wilcoxon-hv.png
+.. figure:: ../figures/tutorials/training-analysis-wilcoxon-hv.png
    :align: center
    :alt: Wilcoxon pivot table of HV for the candidates and the standard NSGA-II
    :figwidth: 100%
@@ -234,11 +234,11 @@ a problem with many local fronts, and ZDT6, with a biased search space, the diff
 
 .. code-block:: bash
 
-    python scripts/plot_median_fronts.py results/tutorial-e8/validation \
+    python scripts/plot_median_fronts.py results/tutorial-training-analysis/validation \
         --problems ZDT4,ZDT6 --algorithms NSGAII,NSGAIIZDT1 \
         --reference-fronts resources/referenceFronts --output median-fronts.png
 
-.. figure:: ../figures/tutorials/e8-median-fronts.png
+.. figure:: ../figures/tutorials/training-analysis-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of the standard and the tuned NSGA-II on ZDT4 and ZDT6
    :figwidth: 75%
@@ -262,5 +262,5 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E9 <validating_a_configuration>` covers the design and the statistical analysis of validation studies.
+- :doc:`E8 <validating_a_configuration>` covers the design and the statistical analysis of validation studies.
 - :doc:`../utilities/cli_tools` describes the request files and the output files of a training run.

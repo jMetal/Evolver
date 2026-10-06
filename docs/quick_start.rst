@@ -96,7 +96,7 @@ since the run writes its status and results next to it, and run it:
 .. code-block:: bash
 
     mkdir -p results/quick-start
-    cp src/main/resources/cli/training/tutorial-e4-request.yaml results/quick-start/request.yaml
+    cp src/main/resources/cli/training/tutorial-quick-start-request.yaml results/quick-start/request.yaml
     java -cp "$JAR" org.uma.evolver.cli.training.TrainingRunnerMain results/quick-start/request.yaml
 
 It takes about 35 seconds with 8 cores. The meta-optimizer uses 8 cores to evaluate configurations

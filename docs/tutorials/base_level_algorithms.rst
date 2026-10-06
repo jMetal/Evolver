@@ -165,7 +165,7 @@ evaluates them with two quality indicators:
    :dedent: 4
 
 ``VAR.csv`` holds the variables of each solution and ``FUN.csv`` its objective values, one solution
-per line; they are written to ``results/tutorial/E2``.
+per line; they are written to ``results/tutorial/base-level``.
 
 The method ``indicators`` of the tutorial class compares the front found with the reference front
 of the problem (``resources/referenceFronts/ZDT1.csv``) using two indicators, both to be
@@ -213,18 +213,18 @@ Among other things, this configuration:
    Standard configuration on ZDT1: EP = 0.0103, NHV = 0.0098
    Other configuration on ZDT1:    EP = 0.0056, NHV = 0.0062
 
-The step also writes the front it finds to ``results/tutorial/E2/other``. The script
+The step also writes the front it finds to ``results/tutorial/base-level/other``. The script
 ``scripts/plot_fronts.py`` draws both fronts, each in its own panel, against the reference front of
 ZDT1 (the thin line):
 
 .. code-block:: bash
 
     python scripts/plot_fronts.py resources/referenceFronts/ZDT1.csv \
-        --front "Standard configuration=results/tutorial/E2/FUN.csv" \
-        --front "Other configuration=results/tutorial/E2/other/FUN.csv" \
+        --front "Standard configuration=results/tutorial/base-level/FUN.csv" \
+        --front "Other configuration=results/tutorial/base-level/other/FUN.csv" \
         --title "NSGA-II on ZDT1 (25000 evaluations)" --output fronts.png
 
-.. figure:: ../figures/tutorials/e2-fronts.png
+.. figure:: ../figures/tutorials/base-level-fronts.png
    :align: center
    :alt: Fronts of the standard and the other configuration of NSGA-II on ZDT1
    :figwidth: 100%
@@ -235,7 +235,7 @@ are farthest apart from each other.
 
 On this run, the second configuration obtains better values of both indicators. A single run is not
 enough to conclude that it is better (that needs several runs and a statistical test, see
-:doc:`E9 <validating_a_configuration>`), but it shows how much the configuration of an algorithm matters, and why finding good
+:doc:`E8 <validating_a_configuration>`), but it shows how much the configuration of an algorithm matters, and why finding good
 configurations automatically, which is what meta-optimization does, is worthwhile.
 
 Step 4: configurations stored in files

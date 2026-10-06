@@ -1,6 +1,6 @@
 .. _tutorial_validating_a_configuration:
 
-E9. Validating a Configuration
+E8. Validating a Configuration
 ==============================
 
 :Level: Intermediate
@@ -10,13 +10,13 @@ E9. Validating a Configuration
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the training and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11, SAES 1.5.0, SciPy 1.17
 :Prerequisites: :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
-   :doc:`E7. Training sets, indicators and budgets <training_sets_indicators_budgets>`,
-   :doc:`E17. Budgets: evaluations or time <budgets>`
+   :doc:`E6. Training sets, indicators and budgets <training_sets_indicators_budgets>`,
+   :doc:`E11. Budgets: evaluations or time <budgets>`
 
 A training run ends with a configuration that was good on the training problems, in the runs of
 the training. Whether it is good, and where, is the question of a **validation study**: new runs of
 the configuration and of other algorithms, with the budget used in the literature, on problems seen
-and not seen during the training, analyzed with statistical tests. Tutorials E7 and E8 ran
+and not seen during the training, analyzed with statistical tests. Tutorials E6 and E7 ran
 validation studies and showed their tables; this one explains how to design one, and what each
 analysis tells and does not tell.
 
@@ -43,7 +43,7 @@ The values a training reports cannot support a claim about the configuration it 
   effect can be large: in tutorial :doc:`E4 <../quick_start>`, some trainings chose a configuration
   that was no better than the default one.
 - **They use the training budget**, which is smaller than the usual one (tutorial
-  :doc:`E17 <budgets>`).
+  :doc:`E11 <budgets>`).
 - **They only cover the training problems.**
 
 A validation runs the configuration again, with new random seeds and the usual budget, on the
@@ -63,12 +63,12 @@ followed without running the training. It was found by this request:
    :caption: TutorialWfg2DBaseLevel.yaml
 
 NSGA-II is tuned for WFG1-9 with two objectives, as in the paper, with NHV and EP as meta-objectives
-and the asynchronous NSGA-II of tutorial E7 as meta-optimizer (2000 configurations,
+and the asynchronous NSGA-II of tutorial E6 as meta-optimizer (2000 configurations,
 ``TutorialAsyncNSGAIIMetaSearch.yaml``). Two differences with the paper are deliberate:
 
 - **The training budget is smaller than the validation budget**: 10000 evaluations per run, 40% of
   the 25000 of the validation. The paper trained with 25000, the budget it validated with; as
-  explained in E17, the training budget is a design decision, and a smaller one makes the training
+  explained in E11, the training budget is a design decision, and a smaller one makes the training
   cheaper. The validation checks whether a configuration tuned with fewer evaluations is still good
   with more.
 - **The training is much shorter.** irace ran for "a few hours" on 24 cores, with 25000
@@ -80,15 +80,15 @@ From the root of the repository:
 .. code-block:: bash
 
     mvn -DskipTests package
-    mkdir -p results/tutorial-e9
-    cp src/main/resources/cli/training/tutorial-e9-request.yaml results/tutorial-e9/request.yaml
+    mkdir -p results/tutorial-validation
+    cp src/main/resources/cli/training/tutorial-validation-request.yaml results/tutorial-validation/request.yaml
     java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-e9/request.yaml
+        org.uma.evolver.cli.training.TrainingRunnerMain results/tutorial-validation/request.yaml
 
 It took about 17 minutes. NHV improves quickly in the first 400 configurations and reaches its
 final value, 0.060, at meta-evaluation 1000:
 
-.. figure:: ../figures/tutorials/e9-convergence-nhv.png
+.. figure:: ../figures/tutorials/validation-convergence-nhv.png
    :align: center
    :alt: Convergence of the NHV meta-objective during the training
    :figwidth: 75%
@@ -127,7 +127,7 @@ resemble those of AutoNSGAII, found by irace in a different and smaller paramete
 
 Both keep an external archive, use a BLX crossover and a large tournament; they differ in the sizes
 of the population and of the offspring, and in the mutation. If you run the training, save the
-chosen configuration as in tutorial E7, and pass it to the validation (next step).
+chosen configuration as in tutorial E6, and pass it to the validation (next step).
 
 Step 2: designing the study
 ---------------------------
@@ -152,7 +152,7 @@ algorithm, on the problems it was trained for and on others?*
   paper. The training only used NHV and EP; validating with other indicators checks that the
   configuration is good, not only good at what it was tuned for.
 
-``ValidationTutorial`` runs the study with jMetal's ``ExperimentBuilder``, as in tutorial E7:
+``ValidationTutorial`` runs the study with jMetal's ``ExperimentBuilder``, as in tutorial E6:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/ValidationTutorial.java
    :language: java
@@ -170,7 +170,7 @@ validate it instead of the bundled one):
 
 It took less than 5 minutes: 3 algorithms, 16 problems and 25 runs, 1200 runs in total. The values
 of the four indicators for every run are in
-``results/tutorial-e9/validation/QualityIndicatorSummary.csv``, the input of every analysis below.
+``results/tutorial-validation/validation/QualityIndicatorSummary.csv``, the input of every analysis below.
 They need the Python environment of ``scripts/README.md`` and SAES (``pip install SAES``).
 
 Step 3: medians and interquartile ranges
@@ -188,11 +188,11 @@ move the mean far from the typical run, while the median is not affected by them
 .. code-block:: bash
 
     python scripts/wilcoxon_pivot_tables.py \
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIWFG --order NSGAII,SMPSO,NSGAIIWFG \
-        --output-dir results/tutorial-e9/tables --png
+        --output-dir results/tutorial-validation/tables --png
 
-.. figure:: ../figures/tutorials/e9-wilcoxon-hv.png
+.. figure:: ../figures/tutorials/validation-wilcoxon-hv.png
    :align: center
    :alt: Wilcoxon pivot table of the hypervolume (HV, to be maximized)
    :figwidth: 90%
@@ -218,7 +218,7 @@ DTLZ1 and DTLZ3 are multimodal: they have many local fronts. The WFG problems ar
 the training rewarded the ability to escape from a local front. The table of IGD+ tells the same
 story:
 
-.. figure:: ../figures/tutorials/e9-wilcoxon-igdplus.png
+.. figure:: ../figures/tutorials/validation-wilcoxon-igdplus.png
    :align: center
    :alt: Wilcoxon pivot table of IGD+ (to be minimized)
    :figwidth: 90%
@@ -235,11 +235,11 @@ them for the problems of interest:
 
 .. code-block:: bash
 
-    python scripts/boxplots.py results/tutorial-e9/validation/QualityIndicatorSummary.csv \
+    python scripts/boxplots.py results/tutorial-validation/validation/QualityIndicatorSummary.csv \
         --problems DTLZ1,DTLZ3,WFG1,WFG8 --algorithms NSGAII,SMPSO,NSGAIIWFG \
-        --indicators HV --output-dir results/tutorial-e9/tables
+        --indicators HV --output-dir results/tutorial-validation/tables
 
-.. figure:: ../figures/tutorials/e9-boxplot-hv.png
+.. figure:: ../figures/tutorials/validation-boxplot-hv.png
    :align: center
    :alt: Boxplots of HV on WFG1, WFG8, DTLZ1 and DTLZ3
    :figwidth: 100%
@@ -326,9 +326,9 @@ computes it:
 .. code-block:: bash
 
     python scripts/effect_size_tables.py \
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIWFG --algorithms NSGAII,SMPSO,NSGAIIWFG --indicators HV,IGD+ \
-        --output-dir results/tutorial-e9/tables
+        --output-dir results/tutorial-validation/tables
 
 .. code-block:: none
 
@@ -376,9 +376,9 @@ both:
 .. code-block:: bash
 
     python scripts/friedman_holm_tables.py \
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \
         --control NSGAIIWFG --algorithms NSGAII,SMPSO,NSGAIIWFG --indicators HV,IGD+ \
-        --output-dir results/tutorial-e9/tables
+        --output-dir results/tutorial-validation/tables
 
 .. code-block:: none
 
@@ -414,17 +414,17 @@ draws it:
 .. code-block:: bash
 
     python scripts/critical_difference_plots.py \
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \
-        --indicators HV,IGD+ --output-dir results/tutorial-e9/tables
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \
+        --indicators HV,IGD+ --output-dir results/tutorial-validation/tables
 
 .. list-table::
    :widths: 50 50
 
-   * - .. figure:: ../figures/tutorials/e9-cdplot-hv.png
+   * - .. figure:: ../figures/tutorials/validation-cdplot-hv.png
           :alt: Critical difference plot of HV
 
           HV
-     - .. figure:: ../figures/tutorials/e9-cdplot-igdplus.png
+     - .. figure:: ../figures/tutorials/validation-cdplot-igdplus.png
           :alt: Critical difference plot of IGD+
 
           IGD+
@@ -438,7 +438,7 @@ The two analyses disagree on SMPSO because they answer different questions. Neme
 conservative; Holm's procedure with a control only makes the comparisons with the tuned
 configuration, which is the question of this study, and so detects smaller differences. The plot is
 the best summary of a study with many algorithms; when the question is about one of them, the
-control-based procedure is the more powerful one. In tutorial E7, with six algorithms, the CD was
+control-based procedure is the more powerful one. In tutorial E6, with six algorithms, the CD was
 2.149, and most differences were not significant in the plot.
 
 Step 9: a Bayesian analysis
@@ -457,11 +457,11 @@ results. ``scripts/bayesian_plots.py`` runs the test on the medians of the 16 pr
 .. code-block:: bash
 
     python scripts/bayesian_plots.py \
-        results/tutorial-e9/validation/QualityIndicatorSummary.csv \
+        results/tutorial-validation/validation/QualityIndicatorSummary.csv \
         --pivot NSGAIIWFG --algorithms NSGAII,SMPSO,NSGAIIWFG --indicators HV --rope 0.001 \
-        --output-dir results/tutorial-e9/tables
+        --output-dir results/tutorial-validation/tables
 
-.. figure:: ../figures/tutorials/e9-bayesian-hv.png
+.. figure:: ../figures/tutorials/validation-bayesian-hv.png
    :align: center
    :alt: Posterior distributions of the Bayesian sign test for HV
    :figwidth: 100%
@@ -501,12 +501,12 @@ runs stay in a local front. The median fronts show it:
 
 .. code-block:: bash
 
-    python scripts/plot_median_fronts.py results/tutorial-e9/validation \
+    python scripts/plot_median_fronts.py results/tutorial-validation/validation \
         --problems WFG1,WFG8,DTLZ1,DTLZ3 --algorithms NSGAII,SMPSO,NSGAIIWFG \
         --reference-fronts resources/referenceFronts --reference-suffix .2D.csv \
         --output median-fronts.png
 
-.. figure:: ../figures/tutorials/e9-median-fronts.png
+.. figure:: ../figures/tutorials/validation-median-fronts.png
    :align: center
    :alt: Fronts with the median HV of each algorithm on WFG1, WFG8, DTLZ1 and DTLZ3
    :figwidth: 100%
@@ -553,7 +553,7 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E10 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
-- Tutorial E12 compares meta-optimizers.
-- :doc:`E8 <analyzing_training_results>` validates every configuration of a final front, to choose
+- :doc:`E9 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
+- Tutorial E13 compares meta-optimizers.
+- :doc:`E7 <analyzing_training_results>` validates every configuration of a final front, to choose
   among them.

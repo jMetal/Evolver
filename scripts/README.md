@@ -60,9 +60,9 @@ convention (`DTLZ1.3D.csv` vs `RE31.csv`), so the file name is not guessed from 
 
 ```bash
 # needs SAES (pip install SAES); --png also needs pdflatex and pdftoppm
-python scripts/wilcoxon_pivot_tables.py results/tutorial-e7/validation/QualityIndicatorSummary.csv \
+python scripts/wilcoxon_pivot_tables.py results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \
     --pivot NSGAIIDTLZ --order NSGAII,NSGAIII,MOEAD,SMSEMOA,AGEMOEA,NSGAIIDTLZ \
-    --output-dir results/tutorial-e7/tables --png
+    --output-dir results/tutorial-training-sets/tables --png
 ```
 
 In each cell, `+` means that the pivot (last column) is significantly better than that algorithm,
@@ -70,14 +70,14 @@ In each cell, `+` means that the pivot (last column) is significantly better tha
 
 ```bash
 # critical difference plots (average Friedman ranks, Nemenyi test), with SAES as well
-python scripts/critical_difference_plots.py results/tutorial-e7/validation/QualityIndicatorSummary.csv \
-    --indicators HV,IGD+ --output-dir results/tutorial-e7/tables
+python scripts/critical_difference_plots.py results/tutorial-training-sets/validation/QualityIndicatorSummary.csv \
+    --indicators HV,IGD+ --output-dir results/tutorial-training-sets/tables
 ```
 
-The other analyses of tutorial E9, on the same file:
+The other analyses of tutorial E8, on the same file:
 
 ```bash
-S=results/tutorial-e9/validation/QualityIndicatorSummary.csv
+S=results/tutorial-validation/validation/QualityIndicatorSummary.csv
 # boxplots of some problems
 python scripts/boxplots.py $S --problems DTLZ1,DTLZ3,WFG1,WFG8 --indicators HV
 # effect sizes (Vargha-Delaney A12) of the pivot against the others
@@ -92,14 +92,14 @@ python scripts/bayesian_plots.py $S --pivot NSGAIIWFG --indicators HV --rope 0.0
 
 ```bash
 # needs a training run with writePopulation: true; default checkpoints: first, middle and last
-python scripts/plot_meta_population.py results/tutorial-e7/training --evaluations 100,1000,2000
+python scripts/plot_meta_population.py results/tutorial-training-sets/training --evaluations 100,1000,2000
 ```
 
 ### Training convergence
 
 ```bash
 # one training run (the output directory of a training, with INDICATORS.csv)
-python scripts/plot_training_convergence.py results/tutorial/E3 --primary NHV
+python scripts/plot_training_convergence.py results/tutorial/workflow --primary NHV
 
 # several replications: a directory with one training output directory per replication
 python scripts/plot_training_convergence.py path/to/campaign --primary IGD+ --output-dir plots

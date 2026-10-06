@@ -144,7 +144,7 @@ repository:
 ```bash
 JAR=$(ls target/Evolver-*-jar-with-dependencies.jar)
 mkdir -p results/quick-start
-cp src/main/resources/cli/training/tutorial-e4-request.yaml results/quick-start/request.yaml
+cp src/main/resources/cli/training/tutorial-quick-start-request.yaml results/quick-start/request.yaml
 java -cp "$JAR" org.uma.evolver.cli.training.TrainingRunnerMain results/quick-start/request.yaml
 ```
 
@@ -268,7 +268,7 @@ Full documentation is available at <https://evolver.readthedocs.io>, including:
 - Examples
 - Concepts (parameter spaces, evaluation strategies, base-level and meta-level metaheuristics)
 - API reference
-- Tuning with irace (tutorial E14)
+- Tuning with irace (tutorial E15)
 - FAQ and glossary
 
 ## Citation
