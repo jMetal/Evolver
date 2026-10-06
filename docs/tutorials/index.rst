@@ -100,6 +100,10 @@ Advanced
 
    * - Tutorial
      - What you will learn
+   * - :doc:`E5. Ablation: which components matter <ablation>`
+     - Which of the components that a training changed explain the improvement: choosing the
+       components, deriving valid variants of a configuration with ``ConfigurationVariants``,
+       validating them together, and reading significance, magnitude and interactions.
    * - :doc:`E12. Choosing the meta-optimizer <choosing_the_meta_optimizer>`
      - What the six meta-optimizers have in common and what sets them apart: operators, flat and tree
        encodings, parallel evaluation and the number of cores, when each one checks the time limit,
@@ -120,6 +124,7 @@ More tutorials are planned for the intermediate and advanced levels.
 .. toctree::
    :hidden:
 
+   ablation
    choosing_the_meta_optimizer
    tree_versus_flat_encoding
    tuning_with_irace

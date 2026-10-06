@@ -39,6 +39,14 @@ Added
   ``TreeEncodingTutorial``): the grammar of a parameter space, the inactive variables and the neutral
   mutations of the flat encoding measured on NSGA-II, and the training of tutorial E3 run with each
   encoding in the same time (``TutorialTimeTreeNSGAIIMetaSearch.yaml``)
+- ``ConfigurationVariants`` (``org.uma.evolver.parameter``) derives a variant of a configuration by
+  fixing some of its parameters, and keeps it valid for its parameter space: the parameters that the
+  change deactivates are dropped, and those it activates take their value from a fallback
+  configuration (usually the default one). It is the tool of an ablation study
+- Tutorial E5, *Ablation: which components matter* (``docs/tutorials/ablation.rst``,
+  ``AblationTutorial``): the ablation of the NSGA-II configuration tuned in tutorial E9, with a
+  variant per component set back to its default value, validated with the protocol of E9. It replaces
+  the planned tutorial on configurable components
 - Tutorial E12, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
   what the six meta-optimizers have in common and what sets them apart (operators, encodings,
   parallel evaluation and idle cores, when each one checks the time limit) and reasons to choose one
