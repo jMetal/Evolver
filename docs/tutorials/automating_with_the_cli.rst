@@ -253,9 +253,12 @@ It runs as:
         --problems ZDT1,ZDT4,ZDT6 --evaluations 25000 --runs 10 --processes 14 \
         --output-dir results/e15-batch
 
-The eight algorithms of the Double encoding that have a default configuration (NSGA-II, NSGA-III,
-MOEA/D, SMS-EMOA, RVEA, AGE-MOEA, SSMOEA and PAES) on the three problems are 24 requests, of 10 runs
-of 25000 evaluations each. The batch took **15 seconds** with 14 processes, and printed:
+By default it uses every algorithm of the encoding that has a default configuration; ``--algorithms``
+chooses them, in the same way as ``--problems`` chooses the problems (for instance
+``--algorithms NSGA-II,MOEAD,SMS-EMOA``), and the script refuses a name that has no default
+configuration, listing the ones that do. Without it, the eight algorithms of the Double encoding
+(NSGA-II, NSGA-III, MOEA/D, SMS-EMOA, RVEA, AGE-MOEA, SSMOEA and PAES) on the three problems are 24
+requests, of 10 runs of 25000 evaluations each. The batch took **15 seconds** with 14 processes, and printed:
 
 .. code-block:: none
 
@@ -331,6 +334,8 @@ Try it yourself
 - Run the batch with ``--encoding Permutation`` and ``--problems KroAB100TSP,KroAC100TSP`` (use
   ``--indicators HypervolumeMinus``, since the Permutation fronts have the extreme points of E10).
   Which algorithms have a default configuration for that encoding?
+- Run only NSGA-II, SMS-EMOA and AGE-MOEA on ZDT1 with ``--algorithms``, and then ask for one
+  that has no default configuration for the encoding (RDEMOEA, say): what does the script say?
 - Add a column with the evaluations of each request, or write the table with ``to_markdown`` for your
   own report.
 - Start two copies of the training of Step 4 at the same time, each with its own directory. How many
