@@ -23,6 +23,7 @@ pip install -r scripts/requirements.txt
 
 | Script | What it does |
 |---|---|
+| `cli_batch.py` | Runs the default configuration of every algorithm of an encoding on some problems, as a batch of `SolveRunnerMain` requests in parallel, and tabulates the median of each indicator per algorithm and problem (`medians.csv`). It reads what Evolver can run from `DescribeMain`; needs a jar built with `mvn -DskipTests package`. |
 | `plot_front.py` | Plots one front (a `FUN.csv`) against its reference front: 2D, 3D, or parallel coordinates for more objectives. Static PNG (matplotlib). |
 | `plot_front_interactive.py` | Same as `plot_front.py`, as an interactive Plotly figure (in the browser, or a self-contained HTML file). |
 | `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
