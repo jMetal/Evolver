@@ -30,6 +30,9 @@ Added
   multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
   ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
   registered with short names, and the examples and bundled base levels use them
+- Tutorial E12, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
+  what the six meta-optimizers have in common and what sets them apart (operators, encodings,
+  parallel evaluation and idle cores, when each one checks the time limit) and reasons to choose one
 - Tutorial E10, *Problems without a reference front*
   (``docs/tutorials/problems_without_reference_front.rst``), which replaces the page on reference
   fronts (``docs/reference_fronts.rst``): what each indicator needs, estimating extreme points for

@@ -100,6 +100,10 @@ Advanced
 
    * - Tutorial
      - What you will learn
+   * - :doc:`E12. Choosing the meta-optimizer <choosing_the_meta_optimizer>`
+     - What the six meta-optimizers have in common and what sets them apart: operators, flat and tree
+       encodings, parallel evaluation and the number of cores, when each one checks the time limit,
+       and reasons to choose one.
    * - :doc:`E14. Tuning with irace <tuning_with_irace>`
      - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
        target runner, the scenario, running irace, and applying the configuration it finds.
@@ -109,4 +113,5 @@ More tutorials are planned for the intermediate and advanced levels.
 .. toctree::
    :hidden:
 
+   choosing_the_meta_optimizer
    tuning_with_irace
