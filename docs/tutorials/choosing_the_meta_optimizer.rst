@@ -31,8 +31,8 @@ problem of the training set. That is why the meta-optimizers of Evolver are requ
 - **Generate as many offspring as the population has.** The offspring population size is always the
   meta population size, and it is not configurable, so that each generation is evaluated in
   parallel as a whole. The default population is 50 (``metaPopulationSize``).
-- **Return the final population, with no external archive.** The fronts of the meta level hold very
-  few solutions, so an archive would add nothing.
+- **Return the final population, with no external archive.** The fronts of the meta level
+  usually hold few solutions, so an archive would add little.
 - **Expose their population to observers**, which write the configurations and their indicator
   values (the files of tutorial E8).
 

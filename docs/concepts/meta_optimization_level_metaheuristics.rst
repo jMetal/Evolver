@@ -12,7 +12,7 @@ Evaluating a single solution of the meta-optimization problem requires one or mo
 
 - **Evaluate whole populations in parallel.** Only generational algorithms qualify; steady-state ones such as MOEA/D or SMS-EMOA are excluded, since they produce a single solution per iteration.
 - **Generate as many offspring as the population size.** The offspring population size always equals the meta population size, so that each generation can be evaluated in parallel as a whole. It is not configurable.
-- **Return the final population.** Meta-level fronts usually hold very few solutions, so meta-optimizers never use an external archive.
+- **Return the final population.** Meta-level fronts usually hold few solutions, so meta-optimizers never use an external archive.
 - **Expose their population to observers**, which store the configurations and their indicator values at each generation (see :doc:`meta_optimization_approach`).
 
 The default meta population size is 50.
