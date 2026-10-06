@@ -30,6 +30,11 @@ Added
   multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
   ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
   registered with short names, and the examples and bundled base levels use them
+- Tutorial E15, *Automating Evolver with the CLI* (``docs/tutorials/automating_with_the_cli.rst``): the
+  request, status and results files of ``cli.training`` and ``cli.solving``, ``DescribeMain``, what a
+  failed or a killed run leaves behind, and a batch of requests run in parallel with the new script
+  ``scripts/cli_batch.py``, which runs the default configuration of every algorithm of an encoding on
+  some problems and tabulates the medians of their indicators
 - Tutorial E12, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
   what the six meta-optimizers have in common and what sets them apart (operators, encodings,
   parallel evaluation and idle cores, when each one checks the time limit) and reasons to choose one

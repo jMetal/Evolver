@@ -107,6 +107,10 @@ Advanced
    * - :doc:`E14. Tuning with irace <tuning_with_irace>`
      - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
        target runner, the scenario, running irace, and applying the configuration it finds.
+   * - :doc:`E15. Automating Evolver with the CLI <automating_with_the_cli>`
+     - The request, status and results files of ``cli.training`` and ``cli.solving``: asking
+       ``DescribeMain`` what Evolver can run, writing and running requests by hand, what a failed or
+       killed run leaves behind, and a batch of requests run in parallel and gathered in one table.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -115,3 +119,4 @@ More tutorials are planned for the intermediate and advanced levels.
 
    choosing_the_meta_optimizer
    tuning_with_irace
+   automating_with_the_cli
