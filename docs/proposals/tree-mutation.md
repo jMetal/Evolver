@@ -47,7 +47,7 @@ Proposed study: `TreeNSGAII` tuning NSGA-II on ZDT1-6 (8000 evaluations per prob
 configuration), η = 20 versus η = 5 (and possibly η = 1 or a Gaussian), several replications each,
 comparing the convergence of the meta-objectives (`scripts/plot_training_convergence.py`) and the
 final fronts. Estimated cost with 2000 meta-evaluations and 16 cores: about 17 minutes per training
-(extrapolated from tutorial E8), so about 3 hours for 5 replications of two values; 1000
+(extrapolated from tutorial E7), so about 3 hours for 5 replications of two values; 1000
 meta-evaluations and 3 replications, about 50 minutes.
 
 ### 2. Integer nodes with small ranges often did not change (fixed)
@@ -130,7 +130,7 @@ without effect: it always decodes to the same value (`floor(v * 1) = 0`). The mu
 the re-evaluation of the identical configuration are wasted, and part of the per-gene probability
 1/n is spent on it. The tree encoding does not have the problem: `TreeMutation` never selects a
 categorical node with a single value. Nobody has counted how many such parameters the YAML
-spaces of `parameterSpaces/` have; the effect grows with the reduced spaces of tutorial E6.
+spaces of `parameterSpaces/` have; the effect grows with the reduced spaces of tutorial E5.
 
 Alternatives considered, none applied:
 

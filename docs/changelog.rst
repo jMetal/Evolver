@@ -8,6 +8,17 @@ All notable changes to Evolver will be documented in this file.
 2.4-SNAPSHOT
 ------------
 
+Changed
+~~~~~~~
+
+- The tutorials are renumbered, consecutive and without gaps in the order of the index (Introductory,
+  Intermediate, Advanced): the old E6 to E11 are E5 to E10, E17 is E11, E5 is E12 and E12 to E15 are
+  E13 to E16 (the table is in ``docs/proposals/tutorials.md``). The files and directories that carried
+  a number are named after the topic: ``tutorial-validation-request.yaml`` instead of
+  ``tutorial-e9-request.yaml``, ``results/tutorial-validation`` instead of ``results/tutorial-e9``,
+  and the figures of ``docs/figures/tutorials/`` (``validation-*.png``, ...). The entries of earlier
+  versions below keep the numbers and names of their time
+
 Added
 ~~~~~
 
@@ -30,12 +41,12 @@ Added
   multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
   ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
   registered with short names, and the examples and bundled base levels use them
-- Tutorial E15, *Automating Evolver with the CLI* (``docs/tutorials/automating_with_the_cli.rst``): the
+- Tutorial E16, *Automating Evolver with the CLI* (``docs/tutorials/automating_with_the_cli.rst``): the
   request, status and results files of ``cli.training`` and ``cli.solving``, ``DescribeMain``, what a
   failed or a killed run leaves behind, and a batch of requests run in parallel with the new script
   ``scripts/cli_batch.py``, which runs the default configuration of every algorithm of an encoding on
   some problems and tabulates the medians of their indicators
-- Tutorial E13, *Tree versus flat encoding* (``docs/tutorials/tree_versus_flat_encoding.rst``,
+- Tutorial E14, *Tree versus flat encoding* (``docs/tutorials/tree_versus_flat_encoding.rst``,
   ``TreeEncodingTutorial``): the grammar of a parameter space, the inactive variables and the neutral
   mutations of the flat encoding measured on NSGA-II, and the training of tutorial E3 run with each
   encoding in the same time (``TutorialTimeTreeNSGAIIMetaSearch.yaml``)
@@ -43,18 +54,18 @@ Added
   fixing some of its parameters, and keeps it valid for its parameter space: the parameters that the
   change deactivates are dropped, and those it activates take their value from a fallback
   configuration (usually the default one). It is the tool of an ablation study
-- Tutorial E5, *Ablation: which components matter* (``docs/tutorials/ablation.rst``,
-  ``AblationTutorial``): the ablation of the NSGA-II configuration tuned in tutorial E9, with a
-  variant per component set back to its default value, validated with the protocol of E9. It replaces
+- Tutorial E12, *Ablation: which components matter* (``docs/tutorials/ablation.rst``,
+  ``AblationTutorial``): the ablation of the NSGA-II configuration tuned in tutorial E8, with a
+  variant per component set back to its default value, validated with the protocol of E8. It replaces
   the planned tutorial on configurable components
-- Tutorial E12, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
+- Tutorial E13, *Choosing the meta-optimizer* (``docs/tutorials/choosing_the_meta_optimizer.rst``):
   what the six meta-optimizers have in common and what sets them apart (operators, encodings,
   parallel evaluation and idle cores, when each one checks the time limit) and reasons to choose one
-- Tutorial E10, *Problems without a reference front*
+- Tutorial E9, *Problems without a reference front*
   (``docs/tutorials/problems_without_reference_front.rst``), which replaces the page on reference
   fronts (``docs/reference_fronts.rst``): what each indicator needs, estimating extreme points for
   the hypervolume and what goes wrong with bad ones, training with HV− and EP, and validating with a
-  reference front built from the study, with the bi-objective TSP of tutorial E11
+  reference front built from the study, with the bi-objective TSP of tutorial E10
 
 Fixed
 ~~~~~

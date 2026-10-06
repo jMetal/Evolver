@@ -8,7 +8,7 @@ that explains what went wrong. Tolerating failing configurations is not planned 
 
 A configuration can be valid for the parameter space and still fail when the base-level algorithm
 is built or run, because the operators have limits that the space does not express. Found while
-preparing tutorial E6 (designing your own parameter space), with NSGA-II:
+preparing tutorial E5 (designing your own parameter space), with NSGA-II:
 
 - `selectionTournamentSize` larger than the population the selection draws from (`populationSize`,
   or `populationSizeWithArchive` with an external archive);
@@ -44,7 +44,7 @@ fixed:
 - Wrapped exceptions keep their message and their cause (jMetal 7.7 fixes `JMetalException(String,
   Exception)`, which lost both).
 
-Tutorial E6 explains the limits, so that a widened space respects them.
+Tutorial E5 explains the limits, so that a widened space respects them.
 
 ## Alternative considered: tolerating failing configurations
 
