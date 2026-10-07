@@ -94,6 +94,7 @@ public final class EvaluationServer {
   private final AtomicLong done = new AtomicLong();
   private final AtomicLong failed = new AtomicLong();
   private final AtomicLong inProgress = new AtomicLong();
+  private final AtomicLong waiting = new AtomicLong();
   private final CountDownLatch stopped = new CountDownLatch(1);
   private final PrintWriter log;
   private volatile boolean accepting = true;
@@ -296,23 +297,30 @@ public final class EvaluationServer {
     String tool = body.path("tool").asText("");
     String seed = body.path("seed").isMissingNode() ? "" : body.path("seed").asText();
 
-    inProgress.incrementAndGet();
-    Future<Evaluation> future = evaluations.submit(() -> evaluate(configuration, problem));
+    waiting.incrementAndGet();
+    Future<Evaluation> future =
+        evaluations.submit(
+            () -> {
+              waiting.decrementAndGet();
+              inProgress.incrementAndGet();
+              try {
+                return evaluate(configuration, problem);
+              } finally {
+                inProgress.decrementAndGet();
+              }
+            });
     Evaluation evaluation;
     try {
       evaluation = future.get();
     } catch (ExecutionException e) {
       failed.incrementAndGet();
-      inProgress.decrementAndGet();
       send(exchange, 422, "text/plain", String.valueOf(e.getCause().getMessage()));
       return;
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      inProgress.decrementAndGet();
       send(exchange, 503, "text/plain", "Interrupted");
       return;
     }
-    inProgress.decrementAndGet();
     long index = done.incrementAndGet();
     logEvaluation(index, tool, seed, evaluation, configuration);
 
@@ -366,6 +374,7 @@ public final class EvaluationServer {
     status.put("evaluationsDone", done.get());
     status.put("evaluationsFailed", failed.get());
     status.put("evaluationsInProgress", inProgress.get());
+    status.put("evaluationsWaiting", waiting.get());
     status.put("baseLevel", baseLevelFile);
     status.put("algorithm", baseLevel.algorithmName());
     status.put("encoding", baseLevel.encoding());

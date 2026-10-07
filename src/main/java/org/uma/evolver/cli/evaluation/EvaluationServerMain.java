@@ -44,12 +44,14 @@ import java.util.Optional;
  *       foreground (what {@code start} launches), until it is stopped.
  * </ul>
  *
- * <p>The defaults: port 8765, as many threads as processors, the state directory {@code
+ * <p>The defaults: port 8765, 12 threads (the evaluations that run at the same time; a client that
+ * sends more requests than that has them wait), the state directory {@code
  * results/evaluation-server} and the log {@code evaluations-<port>.csv} in it.
  */
 public final class EvaluationServerMain {
 
   static final int DEFAULT_PORT = 8765;
+  static final int DEFAULT_THREADS = 12;
   static final String DEFAULT_STATE_DIR = "results/evaluation-server";
   private static final Duration START_TIMEOUT = Duration.ofSeconds(120);
   private static final ObjectMapper JSON = new ObjectMapper();
@@ -96,7 +98,7 @@ public final class EvaluationServerMain {
     static Options parse(String[] args) {
       String baseLevel = null;
       int port = DEFAULT_PORT;
-      int threads = Runtime.getRuntime().availableProcessors();
+      int threads = DEFAULT_THREADS;
       Path log = null;
       Path stateDir = Path.of(DEFAULT_STATE_DIR);
       boolean force = false;

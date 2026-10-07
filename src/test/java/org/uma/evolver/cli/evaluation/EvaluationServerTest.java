@@ -12,7 +12,9 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -169,6 +171,48 @@ class EvaluationServerTest {
   }
 
   @Test
+  @DisplayName(
+      "given more concurrent requests than threads, when they run, then no more evaluations run at"
+          + " the same time than the threads and all of them finish")
+  void givenMoreRequestsThanThreads_whenTheyRun_thenTheThreadsAreNotExceeded() throws Exception {
+    // Arrange: a server with 2 threads and 6 concurrent requests
+    server.stop(Duration.ofSeconds(5));
+    server = new EvaluationServer(tempDir.resolve("base-level.yaml").toString(), 0, 2, log);
+    server.start();
+    List<CompletableFuture<HttpResponse<String>>> responses = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+      responses.add(
+          CompletableFuture.supplyAsync(
+              () -> {
+                try {
+                  return post("/evaluate", request("ZDT4"));
+                } catch (Exception e) {
+                  throw new IllegalStateException(e);
+                }
+              }));
+    }
+
+    // Act: watch the status while they run
+    long maxInProgress = 0;
+    while (!responses.stream().allMatch(CompletableFuture::isDone)) {
+      maxInProgress =
+          Math.max(
+              maxInProgress,
+              JSON.readTree(get("/status").body()).get("evaluationsInProgress").asLong());
+    }
+
+    // Assert
+    assertTrue(maxInProgress <= 2, "evaluations in progress: " + maxInProgress);
+    for (var response : responses) {
+      assertEquals(200, response.get().statusCode());
+    }
+    JsonNode status = JSON.readTree(get("/status").body());
+    assertEquals(6, status.get("evaluationsDone").asInt());
+    assertEquals(0, status.get("evaluationsInProgress").asInt());
+    assertEquals(0, status.get("evaluationsWaiting").asInt());
+  }
+
+  @Test
   @DisplayName("given a running server, when asked for its status, then it describes itself")
   void givenARunningServer_whenAskedForItsStatus_thenItDescribesItself() throws Exception {
     // Act
@@ -178,6 +222,7 @@ class EvaluationServerTest {
     assertEquals("running", status.get("status").asText());
     assertEquals(server.port(), status.get("port").asInt());
     assertEquals(1, status.get("threads").asInt());
+    assertEquals(0, status.get("evaluationsWaiting").asInt());
     assertEquals("[\"ZDT1\",\"ZDT4\"]", status.get("problems").toString());
     assertEquals("NSGA-II", status.get("algorithm").asText());
     assertEquals("Double", status.get("encoding").asText());
