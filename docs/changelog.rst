@@ -18,6 +18,11 @@ Changed
   ``tutorial-e9-request.yaml``, ``results/tutorial-validation`` instead of ``results/tutorial-e9``,
   and the figures of ``docs/figures/tutorials/`` (``validation-*.png``, ...). The entries of earlier
   versions below keep the numbers and names of their time
+- The documentation uses the PyData Sphinx theme instead of the Read the Docs one: a top menu, the
+  tutorials listed in order in the side navigation, the table of contents of the page on the right,
+  a light and a dark mode, a wider reading column on wide screens, and a button to copy the code
+  blocks. The requirements of the documentation (``docs/requirements-docs.txt``) pin the versions
+  of Sphinx and of the theme; it builds with Python 3.11, as Read the Docs does
 
 Added
 ~~~~~

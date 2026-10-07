@@ -1,0 +1,9 @@
+/* A wider page and reading column than the default of the PyData theme, on wide screens: the
+   tutorials have wide tables and figures (the validation studies). */
+.bd-page-width {
+  max-width: 104rem;
+}
+
+.bd-main .bd-content .bd-article-container {
+  max-width: 80em;
+}

@@ -17,6 +17,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.graphviz',
+    'sphinx_copybutton',
+    'sphinx_design',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -29,14 +31,25 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
+html_theme_options = {
+    # The logo of each mode: the dark one for the dark theme.
+    'logo': {
+        'image_light': 'figures/logo/evolver-logo.svg',
+        'image_dark': 'figures/logo/evolver-logo-dark.svg',
+    },
+    'github_url': 'https://github.com/jMetal/Evolver',
+    'show_toc_level': 2,
+    # Only the table of contents of the page: not the "Show source" block.
+    'secondary_sidebar_items': ['page-toc'],
+}
+html_show_sourcelink = False
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-# The sidebar header of sphinx_rtd_theme is dark, hence the dark-background variant of the logo.
-html_logo = 'figures/logo/evolver-logo-dark.svg'
+html_css_files = ['custom.css']
 html_favicon = 'figures/logo/evolver-icon-tile.svg'
 
 # -- Extension configuration -------------------------------------------------
