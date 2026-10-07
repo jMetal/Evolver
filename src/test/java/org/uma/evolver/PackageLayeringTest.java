@@ -17,7 +17,8 @@ import org.junit.jupiter.api.Test;
  * Guards the split between Evolver's configurable core and its meta level: the core packages
  * ({@code algorithm}, {@code parameter}, {@code util}) can be used on their own to configure and
  * run algorithms, so they must never reference the meta level ({@code meta}), the command-line
- * tools ({@code cli}), the irace integration ({@code irace}) or the examples ({@code example}).
+ * tools ({@code cli}), the irace and SMAC3 integrations ({@code irace}, {@code smac}) or the
+ * examples ({@code example}).
  * The dependency only goes the other way.
  */
 @DisplayName("Package layering between the configurable core and the meta level")
@@ -28,7 +29,7 @@ class PackageLayeringTest {
   private static final List<String> CORE_PACKAGES = List.of("algorithm", "parameter", "util");
 
   private static final Pattern FORBIDDEN_REFERENCE =
-      Pattern.compile("org\\.uma\\.evolver\\.(meta|cli|irace|example)\\b[\\w.]*");
+      Pattern.compile("org\\.uma\\.evolver\\.(meta|cli|irace|smac|example)\\b[\\w.]*");
 
   @Test
   @DisplayName(
