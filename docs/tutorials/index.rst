@@ -118,6 +118,10 @@ Advanced
      - The request, status and results files of ``cli.training`` and ``cli.solving``: asking
        ``DescribeMain`` what Evolver can run, writing and running requests by hand, what a failed or
        killed run leaves behind, and a batch of requests run in parallel and gathered in one table.
+   * - :doc:`E17. Extending Evolver: your own problem and operator <extending_evolver>`
+     - Using a problem of your own, given by its class name, from a request and in a training, and
+       adding an operator to the catalogue (a Gaussian mutation, as an example that is not part of
+       Evolver): the class, the three changes, the test and a patch.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -129,3 +133,4 @@ More tutorials are planned for the intermediate and advanced levels.
    tree_versus_flat_encoding
    tuning_with_irace
    automating_with_the_cli
+   extending_evolver

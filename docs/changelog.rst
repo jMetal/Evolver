@@ -47,6 +47,11 @@ Added
   multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
   ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
   registered with short names, and the examples and bundled base levels use them
+- Tutorial E17, *Extending Evolver: your own problem and operator*
+  (``docs/tutorials/extending_evolver.rst``, ``ExtendingTutorial``, ``BiSphere``): a problem of the
+  user given by its class name, in a solve request and in a training, and how to add an operator to
+  the catalogue, with a Gaussian mutation as an example that is not part of Evolver (its code, a test
+  and a patch are in ``docs/tutorials/extending_evolver/``)
 - Tutorial E16, *Automating Evolver with the CLI* (``docs/tutorials/automating_with_the_cli.rst``): the
   request, status and results files of ``cli.training`` and ``cli.solving``, ``DescribeMain``, what a
   failed or a killed run leaves behind, and a batch of requests run in parallel with the new script
