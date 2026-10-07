@@ -17,8 +17,7 @@ import org.uma.evolver.cli.BaseAlgorithmRegistry;
  * Coherence test for {@link DescribeMain}'s manifest: every name the registries claim to support
  * must actually resolve, so the metadata tables added for introspection ({@link
  * BaseAlgorithmRegistry#registeredAlgorithms()}, {@link MetaAlgorithmRegistry#registeredAlgorithms()})
- * cannot drift from the {@code switch}-based resolution logic they sit alongside — see {@code
- * docs/proposals/cli-describe-manifest.md}.
+ * cannot drift from the {@code switch}-based resolution logic they sit alongside.
  */
 @DisplayName("Unit tests for class DescribeMain")
 class DescribeMainTest {

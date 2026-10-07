@@ -15,8 +15,6 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByC
  * initial population is always evaluated, even if that takes longer than the limit. The asynchronous
  * meta-optimizers have no generations: they use {@link #asynchronousTermination}, checked after every
  * evaluation.
- *
- * @see <a href="../../../../../../../../docs/proposals/meta-termination-by-time.md">proposal</a>
  */
 public final class ComputingTimeLimit {
 

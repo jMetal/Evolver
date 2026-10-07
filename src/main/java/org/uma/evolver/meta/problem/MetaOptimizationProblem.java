@@ -22,8 +22,7 @@ import org.uma.jmetal.util.bounds.Bounds;
  * relevant parameters at evaluation time.
  *
  * <p>A parameter with a single possible value is still a variable, and the meta-optimizer's
- * mutation changes it without effect, because it always decodes to the same value (see
- * {@code docs/proposals/tree-mutation.md}, open question 5).
+ * mutation changes it without effect, because it always decodes to the same value.
  *
  * <p>Implements {@link DoubleProblem} (not just {@code Problem<DoubleSolution>}) because some
  * meta-optimizer builders (e.g. {@code MetaSMPSOBuilder}) require it via an

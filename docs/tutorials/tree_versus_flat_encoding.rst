@@ -129,8 +129,8 @@ Two remarks put the figure in context. In a training the flat meta-optimizer als
 crossover, with probability 0.9, which usually changes several variables at once, so the share of
 offspring identical to a parent is much smaller than 82 %; the measure is of the mutation alone. And
 an offspring that changes the configuration is not necessarily a better one: the step sizes of
-the two mutations are different, and the tree's distribution index (5) is provisional
-(``docs/proposals/tree-mutation.md``).
+the two mutations are different, and the tree's distribution index (5) is provisional,
+and its value is still to be studied.
 
 Step 4: what changes in a training
 ----------------------------------

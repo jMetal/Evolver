@@ -135,8 +135,8 @@ configuration makes the whole training fail, and the error says why:
 
 This message, from a training on a space with ranges widened on purpose, failed in the initial
 population of the meta-optimizer: such a space fails quickly, which is better than failing after
-an hour. ``docs/proposals/failing-configurations.md`` explains why a failing configuration stops
-the training instead of being skipped.
+an hour. A failing configuration stops the training instead of being skipped: penalizing it would
+need constraints, which the meta-optimizers do not have.
 
 Step 4: measuring the size of a space
 -------------------------------------

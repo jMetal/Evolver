@@ -13,7 +13,7 @@ Changed
 
 - The tutorials are renumbered, consecutive and without gaps in the order of the index (Introductory,
   Intermediate, Advanced): the old E6 to E11 are E5 to E10, E17 is E11, E5 is E12 and E12 to E15 are
-  E13 to E16 (the table is in ``docs/proposals/tutorials.md``). The files and directories that carried
+  E13 to E16. The files and directories that carried
   a number are named after the topic: ``tutorial-validation-request.yaml`` instead of
   ``tutorial-e9-request.yaml``, ``results/tutorial-validation`` instead of ``results/tutorial-e9``,
   and the figures of ``docs/figures/tutorials/`` (``validation-*.png``, ...). The entries of earlier
@@ -42,8 +42,7 @@ Added
 - ``DescribeMain``'s manifest has a ``problemCatalogue``, which describes each problem with its
   family, its encoding, its dimensions and the arguments of its constructor (their names, types and
   defaults), next to ``problems``, which keeps the names. An external tool can filter the problems
-  by the encoding of the algorithm and build the ``args`` of a problem (see
-  ``docs/proposals/cli-problem-catalogue.md``). The binary problems ZDT5 and OneZeroMax and the
+  by the encoding of the algorithm and build the ``args`` of a problem. The binary problems ZDT5 and OneZeroMax and the
   multi-objective TSP instances (``EuclidAB300``, ``KroAB100TSP``, ``KroAC100TSP``, ...; not
   ``KroBC100TSP`` and ``KroBD100TSP``, which jMetal 7.7 points to files that do not exist) are
   registered with short names, and the examples and bundled base levels use them
@@ -191,8 +190,7 @@ Fixed
   range), an ``offspringPopulationSize`` of 0. Exceptions that wrap another one keep its message
   and its cause (with jMetal 7.7, whose ``JMetalException`` used to lose them, so they were
   ``null``). A failing
-  configuration still makes the training fail: ``docs/proposals/failing-configurations.md`` records
-  the decision
+  configuration still makes the training fail, by design
 - The binary mutation accepts a ``mutationProbabilityFactor`` of 0 (no mutation), which is in the
   range of the binary parameter spaces: it was rejected, which aborted a training whenever the
   meta-optimizer reached the bound of the range
@@ -220,7 +218,7 @@ Added
   (flat and tree encodings, all the meta-optimizers). The condition is checked at the beginning of
   each generation, so the generation in progress is completed (the asynchronous meta-optimizers check
   it after every evaluation, once the initial population is evaluated); ``status.yaml`` gets
-  ``maxComputingTimeMinutes`` and ``elapsedMinutes``. See ``docs/proposals/meta-termination-by-time.md``
+  ``maxComputingTimeMinutes`` and ``elapsedMinutes``
 - ``AsyncNSGA-II`` supports the tree encoding in ``cli.training`` (``encoding: tree``): jMetal's
   ``AsynchronousMultiThreadedNSGAII`` on derivation trees, with subtree crossover and tree mutation
   (``AsyncNSGAIIMetaTree.yaml``; its selection and replacement are fixed by the algorithm), bounded
@@ -252,8 +250,8 @@ Added
   Pareto set (a triangle in the decision space), used by the RVEA guide
 - Add the :ref:`algorithm guides <algorithm_guides>`, one per base-level algorithm, with where it
   works well and where it works poorly backed by an experiment; the first is the guide of
-  :doc:`RVEA, RVEA* and iRVEA <algorithms/rvea>` (``example.algorithms.RVEAGuide``), and
-  ``docs/proposals/algorithm-guides.md`` tracks the rest
+  :doc:`RVEA, RVEA* and iRVEA <algorithms/rvea>` (``example.algorithms.RVEAGuide``); the
+  rest are planned
 - Add the :doc:`NSGA-II guide <algorithms/nsgaii>` (``example.algorithms.NSGAIIGuide``): the
   standard version against the steady-state one on ZDT1, a crowding distance archive on ZDT4 and an
   unbounded archive on DTLZ2, with the spread of the fronts measured by the generalized spread
@@ -271,10 +269,10 @@ Added
   former irace page: generating irace's parameter file from a YAML parameter space, the target
   runner, the scenario, running irace, and applying the configuration it finds to the ZDT problems
   (``example.tutorial.IraceTutorial``)
-- Add ``docs/proposals/tree-mutation.md``, an analysis of ``TreeMutation`` with its open questions
+- Add an analysis of ``TreeMutation`` with its open questions
   (distribution index, integer parameters with small ranges, ordinal parameters, mutation strength)
-- Add ``docs/proposals/irace-vs-evolver.md``, which describes the comparison of irace with Evolver's
-  meta-optimization as an open research line
+- Add a note that describes the comparison of irace with Evolver's meta-optimization as an open
+  research line
 - Add :doc:`tutorial E8, analyzing training results <tutorials/analyzing_training_results>`:
   the output files, convergence and population of a training run that tunes NSGA-II for ZDT1-6
   with five runs per configuration, choosing a configuration from its final front, and validating
@@ -353,7 +351,6 @@ Changed
   ``MetaAGEMOEATreeConfiguration.yaml``) and ``TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D`` use a
   distribution index of 5 instead of 20 in ``TreeMutation``, for larger steps in the mutation of
   numeric parameters; the value is provisional and still to be studied
-  (``docs/proposals/tree-mutation.md``)
 - The irace resources (``src/main/resources/irace``) are updated: irace 4.4.3 instead of 4.2.0,
   ``parameters-NSGAII.txt`` regenerated from the current ``NSGAIIDouble.yaml``, a scenario that
   runs ``org.uma.evolver.irace.AutoNSGAIIIraceHVEP`` (it referred to a class that no longer exists)

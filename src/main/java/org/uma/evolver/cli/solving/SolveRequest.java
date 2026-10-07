@@ -8,7 +8,7 @@ import org.uma.evolver.cli.ProblemSpec;
 
 /**
  * Describes a solve run: a configurable algorithm, with a given configuration, run on a problem
- * one or more times — see {@code docs/proposals/cli-solving.md}.
+ * one or more times.
  *
  * <p>The algorithm fields ({@code algorithmName}, {@code encoding}, {@code populationSize}, {@code
  * yamlParameterSpaceFile}, {@code extraConfig}) have the same names and meaning as in a training

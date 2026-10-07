@@ -41,8 +41,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *
  * <p>Registered algorithms live in one table, {@link #ENTRIES}: each entry has its name, its
  * encoding, its required extra-config keys and how it is built, so that {@code DescribeMain} lists
- * the same algorithms that {@link #resolve} builds, with no second copy that could diverge — see
- * {@code docs/proposals/cli-describe-manifest.md}.
+ * the same algorithms that {@link #resolve} builds, with no second copy that could diverge.
  *
  * <p>{@link #resolve} returns {@code BaseLevelAlgorithm<?>}: the concrete solution type it is
  * built for depends on {@code encoding} and is only known at runtime, the same trust model

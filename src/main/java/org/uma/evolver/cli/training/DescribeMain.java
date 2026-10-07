@@ -22,8 +22,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * <p>Not a run: takes no arguments, writes no {@code status.yaml}/{@code results.yaml}, and exits
  * as soon as the manifest is written. Exists so an external tool (e.g. Evolver-Studio) can
- * discover what is runnable without reading this package's Java source — see {@code
- * docs/proposals/cli-describe-manifest.md} for the design rationale (the data behind this comes
+ * discover what is runnable without reading this package's Java source (the data behind this comes
  * from the registries' own {@code registeredAlgorithms()}/{@code registeredNames()} and from
  * reflection over the request records, not a second hand-maintained copy).
  *

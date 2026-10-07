@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Describes the shape of a {@code request.yaml}/{@code baseLevel}/{@code metaSearch} record by
  * reflecting over its {@link RecordComponent}s, instead of a second, hand-maintained copy of the
- * same fields — see {@code docs/proposals/cli-describe-manifest.md}. Reflection alone cannot tell
+ * same fields. Reflection alone cannot tell
  * which components are optional or what their default is (that information lives in the loader
  * that applies it, not in the record itself), so callers pass it in explicitly as {@code
  * defaultValues}.
