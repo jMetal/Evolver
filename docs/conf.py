@@ -42,7 +42,11 @@ html_theme_options = {
     'show_toc_level': 2,
     # Only the table of contents of the page: not the "Show source" block.
     'secondary_sidebar_items': ['page-toc'],
+    # The menu of the site is in the left sidebar, not in the header.
+    'navbar_center': [],
 }
+# The whole table of contents of the site, with its sections, in the left sidebar of every page.
+html_sidebars = {'**': ['sidebar-global-nav']}
 html_show_sourcelink = False
 
 # Add any paths that contain custom static files (such as style sheets) here,

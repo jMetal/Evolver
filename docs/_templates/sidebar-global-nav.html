@@ -1,0 +1,7 @@
+{# The whole table of contents of the site, with the captions of its sections, in the primary
+   sidebar of every page. #}
+<nav class="bd-docs-nav bd-links" aria-label="{{ _('Site navigation') }}">
+  <div class="bd-toc-item navbar-nav">
+    {{ toctree(collapse=True, maxdepth=2, titles_only=True, includehidden=True) }}
+  </div>
+</nav>
