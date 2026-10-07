@@ -1,0 +1,22 @@
+# Solve request of tutorial E17 (docs/tutorials/extending_evolver.rst): NSGA-II, with its default
+# configuration, on BiSphere, a problem of the user that is not registered in Evolver and is given by
+# its class name, with 20 variables. 10 independent runs of 25000 evaluations.
+# The reference front is written by ExtendingTutorial (java -cp ... ExtendingTutorial reference).
+# Run from the root of the Evolver repository, with the jar (which contains BiSphere) on the
+# classpath; for a problem of your own, add the jar or the directory that has its class:
+#   java -cp target/Evolver-*-jar-with-dependencies.jar:<your classes> \
+#       org.uma.evolver.cli.solving.SolveRunnerMain <copy of this file>
+algorithmName: NSGA-II
+encoding: Double
+populationSize: 100
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+configurationFile: defaultConfigurations/NSGAIIDoubleDefault.txt
+problem:
+  class: org.uma.evolver.example.tutorial.BiSphere
+  args: [20]
+referenceFrontFileName: results/tutorial-extending/BiSphere.csv
+maxEvaluations: 25000
+numberOfIndependentRuns: 10
+seed: 1
+indicatorNames: [Epsilon, NormalizedHypervolume]
+outputDirectory: results/tutorial-extending/sbx

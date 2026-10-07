@@ -1,0 +1,15 @@
+# Base level of tutorial E17 (docs/tutorials/extending_evolver.rst): NSGA-II, with the parameter space
+# that offers the n-point crossover (NSGAIIDouble.yaml), to be tuned for BiSphere, a problem of the
+# user given by its class name, with 20 variables. Each configuration is run once, with 10000
+# evaluations; the objectives of the meta-optimizer are the Epsilon and normalized hypervolume
+# indicators of the front it finds. The reference front is written by ExtendingTutorial.
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames:
+  - class: org.uma.evolver.example.tutorial.BiSphere
+    args: [20]
+trainingReferenceFrontFileNames: [results/tutorial-extending/BiSphere.csv]
+trainingEvaluations: [10000]
+indicatorNames: [Epsilon, NormalizedHypervolume]

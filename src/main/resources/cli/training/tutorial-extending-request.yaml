@@ -1,0 +1,11 @@
+# Training request of tutorial E17 (docs/tutorials/extending_evolver.rst): NSGA-II tuned for BiSphere,
+# a problem of the user, in a space that offers the n-point crossover, stopped after 2 minutes. Copy it
+# to a working directory before running it, since TrainingRunnerMain writes results.yaml (and, by
+# default, status.yaml) next to the request file. Write the reference front first:
+#   java -cp target/Evolver-*-jar-with-dependencies.jar \
+#       org.uma.evolver.example.tutorial.ExtendingTutorial reference
+baseLevel: TutorialBiSphereBaseLevel.yaml
+metaSearch: TutorialTimeNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial-extending/training
+writeFrequency: 50
+statusFrequency: 50
