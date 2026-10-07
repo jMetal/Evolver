@@ -11,7 +11,7 @@ repository (the reference fronts and the weight vectors are read from ``resource
 built by ``mvn -DskipTests package``.
 
 Example:
-    python scripts/cli_batch.py target/Evolver-2.4-SNAPSHOT-jar-with-dependencies.jar \\
+    python scripts/cli_batch.py target/Evolver-<version>-jar-with-dependencies.jar \\
         --problems ZDT1,ZDT4,DTLZ2 --evaluations 25000 --runs 10 --processes 8 \\
         --output-dir results/batch
 """
