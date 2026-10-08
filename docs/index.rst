@@ -4,8 +4,10 @@ Evolver Documentation
 
 *Author: Antonio J. Nebro* <ajnebro@uma.es>
 
-Evolver is a software tool designed for the automatic configuration of multi-objective metaheuristics. 
+Evolver is **research software for multi-objective meta-optimization**: a tool for the automatic configuration of multi-objective metaheuristics, and a platform for studying how to do it.
 Its core approach is meta-optimization, where the process of tuning the parameters of a base-level metaheuristic is framed as a multi-objective problem which is solvable by a multi-objective optimizer (i.e., the meta-optimization algorithm). In this problem, the variable encoding represents a particular configuration of the base-level algorithm and  evaluating a solution involves a run of the metaheuristic under that configuration; the resulting solution front is evaluated against a combination of quality indicators, which are the objective functions of the resulting multi-objective problem.
+
+As research software, Evolver is meant for experimental studies of meta-optimization as much as for its use: the training sets, the quality indicators used as meta-objectives, the encodings of the configurations, the meta-optimizers and the budgets are all choices to experiment with, and the tools support such studies (independent replications of a training, validation protocols, statistical analysis). It evolves with that research, so its interfaces may change between versions; :doc:`changelog` records every change.
 
 The current stable version is 2.4 (https://github.com/jMetal/Evolver). The working version in GitHub is 2.5-SNAPSHOT.
 

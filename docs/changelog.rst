@@ -32,6 +32,13 @@ Added
   for the replications of any training request (one task per replication; resubmitting runs only
   the missing ones)
 
+Changed
+~~~~~~~
+
+- The README and the home page of the documentation present Evolver as research software for
+  multi-objective meta-optimization: meant for experimental studies of meta-optimization as much as
+  for its use, and evolving with that research
+
 2.4 (2026-10-07)
 ----------------
 

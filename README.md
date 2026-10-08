@@ -15,11 +15,18 @@
 
 Full documentation is available at [evolver.readthedocs.io](https://evolver.readthedocs.io).
 
-Evolver is a Java framework that formulates the automatic configuration of multi-objective
-metaheuristics as a multi-objective optimization problem and solves it using the same class of
-algorithms — a *meta-optimization* approach. It relies on the
-[jMetal](https://github.com/jMetal/jMetal) framework for optimization problems, algorithms, and
-quality indicators.
+Evolver is **research software for multi-objective meta-optimization**. It is a Java framework that
+formulates the automatic configuration of multi-objective metaheuristics as a multi-objective
+optimization problem and solves it using the same class of algorithms — a *meta-optimization*
+approach. It relies on the [jMetal](https://github.com/jMetal/jMetal) framework for optimization
+problems, algorithms, and quality indicators.
+
+As research software, Evolver is meant for studying meta-optimization as much as for using it: the
+training sets, the quality indicators used as meta-objectives, the encodings of the configurations,
+the meta-optimizers and the budgets are all choices to experiment with, and the tools are built for
+experimental studies (independent replications, validation protocols, statistical analysis). It
+evolves with that research, so its interfaces may change between versions; the
+[changelog](https://evolver.readthedocs.io/en/latest/changelog.html) records every change.
 
 ## How it works
 
