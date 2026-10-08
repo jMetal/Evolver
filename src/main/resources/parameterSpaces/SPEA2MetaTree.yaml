@@ -1,0 +1,89 @@
+# Parameter space for the meta-level SPEA2 (org.uma.evolver.meta.algorithm.TreeSPEA2) used by
+# cli.training's MetaAlgorithmRegistry with the derivation tree encoding. Parsed with a
+# TreeParameterFactory. SPEA2 is expressed as an RDEMOEA configuration, as in SPEA2MetaDouble.yaml
+# (strength ranking, k-nearest-neighbour density estimator, tournament selection and sequential
+# replacement, all fixed by MetaAlgorithmRegistry), with the variation of NSGAIIMetaTree.yaml: the
+# tree encoding has a single crossover (subtree) and a single mutation (tree), so only their
+# probabilities and the mutation distribution index are left to the meta-optimizer configuration
+# file. algorithmResult (always population), createInitialSolutions and offspringPopulationSize
+# (always the meta population size, so that each generation is evaluated in parallel as a whole)
+# are fixed too.
+
+algorithmResult:
+  type: categorical
+  values:
+    population: {}
+
+createInitialSolutions:
+  type: categorical
+  values:
+    default: {}
+
+offspringPopulationSize:
+  type: integer
+  range: [1, 100000]
+
+densityEstimator:
+  type: categorical
+  values:
+    knn:
+      conditionalParameters:
+        knnNeighborhoodSize:
+          type: integer
+          range: [1, 5]
+        knnNormalizeObjectives:
+          type: categorical
+          values:
+            "true":
+            "false":
+
+ranking:
+  type: categorical
+  values:
+    strengthRanking:
+
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            subtree: {}
+
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbability:
+              type: double
+              range: [0.0, 1.0]
+          values:
+            tree:
+              conditionalParameters:
+                mutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+
+selection:
+  type: categorical
+  values:
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+
+replacement:
+  type: categorical
+  values:
+    rankingAndDensityEstimator:
+      conditionalParameters:
+        removalPolicy:
+          type: categorical
+          values:
+            sequential:

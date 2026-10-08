@@ -1,0 +1,16 @@
+# Meta configuration of SPEA2 with tree (derivation tree) encoding
+#
+# The operator fields below are parsed against SPEA2MetaTree.yaml. Crossover (subtree), mutation
+# (tree), the offspring population size (always metaPopulationSize) and the result (always the
+# final population) are fixed by MetaAlgorithmRegistry.
+
+algorithm: SPEA2
+encoding: tree
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8
+
+crossoverProbability: 0.9
+mutationProbability: 1.0
+mutationDistributionIndex: 5.0   # provisional; its value is still to be studied

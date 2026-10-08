@@ -146,8 +146,8 @@ meta-optimizer configuration. The tree version of the meta-optimizer of E11 is
 ``encoding: tree`` selects it. The crossover is always the subtree crossover and the mutation the tree
 mutation, so the file gives only their probabilities and the distribution index, where the flat
 file names the operators (SBX and polynomial mutation) and their parameters. Not every meta-optimizer
-works with trees (tutorial E13): NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO and
-SPEA2 do not.
+works with trees (tutorial E13): NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO
+does not.
 
 The output files are the same: ``INDICATORS.csv``, ``CONFIGURATIONS.csv`` and ``VAR_CONF.txt``, with the
 configuration strings of the front. ``METADATA.txt`` says ``Encoding: Derivation Tree (GGGP)`` and
@@ -229,7 +229,7 @@ Step 6: when to use each
 
 With the measures of Steps 2 and 3 and the experiment above:
 
-- **The flat encoding** works with every meta-optimizer (SMPSO and SPEA2 only work with it), its
+- **The flat encoding** works with every meta-optimizer (SMPSO only works with it), its
   operators are the standard ones of continuous optimization, and it is the one used by most of the
   tutorials and examples. It is a reasonable default.
 - **The tree encoding** never spends a mutation on an inactive parameter or on a value that decodes

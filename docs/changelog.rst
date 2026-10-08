@@ -8,10 +8,15 @@ All notable changes to Evolver will be documented in this file.
 2.5-SNAPSHOT
 ------------
 
-Changed
-~~~~~~~
+Added
+~~~~~
 
-- (nothing yet)
+- SPEA2 as a meta-optimizer with the tree encoding (``TreeSPEA2``, an RDEMOEA with strength ranking,
+  k-nearest-neighbour density and sequential replacement, as the flat one), configured from
+  ``SPEA2MetaTree.yaml``: ``algorithm: SPEA2`` with ``encoding: tree`` in the meta-optimizer
+  configuration file (``MetaSPEA2TreeConfiguration.yaml``) takes the probabilities and the
+  distribution index of the tree operators, as NSGA-II does. ``DescribeMain`` reports
+  ``supportsTree: true`` for it. Only SMPSO remains flat-only
 
 2.4 (2026-10-07)
 ----------------

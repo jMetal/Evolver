@@ -48,7 +48,7 @@ Meta level:
 
 - ``org.uma.evolver.meta``: Meta-optimization
 
-    - ``org.uma.evolver.meta.algorithm``: Meta-only algorithms: ``RandomSearch``, ``TreeNSGAII``, ``TreeAGEMOEA``
+    - ``org.uma.evolver.meta.algorithm``: Meta-only algorithms: ``RandomSearch``, ``TreeNSGAII``, ``TreeAGEMOEA``, ``TreeSPEA2``
     - ``org.uma.evolver.meta.builder``: Meta-optimizer builders (``MetaNSGAIIBuilder``, ``MetaSPEA2Builder``, …)
     - ``org.uma.evolver.meta.problem``: ``AbstractMetaOptimizationProblem`` (shared evaluation pipeline), ``MetaOptimizationProblem`` (flat double encoding), ``TreeMetaOptimizationProblem`` (tree encoding)
     - ``org.uma.evolver.meta.strategy``: ``FixedEvaluationsStrategy``, ``RandomRangeEvaluationsStrategy``

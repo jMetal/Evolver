@@ -8,6 +8,7 @@ import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.algorithm.TreeAGEMOEA;
 import org.uma.evolver.meta.algorithm.TreeNSGAII;
+import org.uma.evolver.meta.algorithm.TreeSPEA2;
 import org.uma.evolver.meta.builder.ComputingTimeLimit;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -89,13 +90,14 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       evaluations/cores, so {@code operatorFlags} must be empty, same as SMPSO).
  * </ul>
  *
- * <p>For the tree encoding, {@link #resolveTree} builds {@code "NSGA-II"} and {@code "AGE-MOEA"}
- * on {@link TreeNSGAII}/{@link TreeAGEMOEA} ({@code NSGAIIMetaTree.yaml}/{@code
- * AGEMOEAMetaTree.yaml}, with subtree crossover and tree mutation), {@link #resolveTreeAsync}
+ * <p>For the tree encoding, {@link #resolveTree} builds {@code "NSGA-II"}, {@code "AGE-MOEA"} and
+ * {@code "SPEA2"} on {@link TreeNSGAII}/{@link TreeAGEMOEA}/{@link TreeSPEA2} ({@code
+ * NSGAIIMetaTree.yaml}/{@code AGEMOEAMetaTree.yaml}/{@code SPEA2MetaTree.yaml}, with subtree
+ * crossover and tree mutation; SPEA2 is an RDEMOEA with strength ranking, k-nearest-neighbour
+ * density and sequential replacement), {@link #resolveTreeAsync}
  * builds {@code "AsyncNSGA-II"} on {@link AsynchronousMultiThreadedNSGAII} with the same two
  * operators ({@code AsyncNSGAIIMetaTree.yaml}), and {@link #resolveTreeRandomSearch} builds
- * {@code "RandomSearch"}. The remaining engines are flat-only: {@code "SMPSO"} needs a {@code
- * DoubleProblem}, and {@code "SPEA2"} is built with {@code DoubleSolution} operators.
+ * {@code "RandomSearch"}. {@code "SMPSO"} is flat-only: it needs a {@code DoubleProblem}.
  */
 final class MetaAlgorithmRegistry {
 
@@ -140,7 +142,7 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "SPEA2",
               Family.EVOLUTIONARY,
-              false,
+              true,
               null,
               List.of(new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
           new MetaAlgorithmDescriptor(
@@ -173,6 +175,26 @@ final class MetaAlgorithmRegistry {
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String AGEMOEA_TREE_PARAMETER_SPACE_FILE = "AGEMOEAMetaTree.yaml";
+
+  /** The parameter space of the tree-encoded SPEA2: an RDEMOEA configured as SPEA2. */
+  private static final String SPEA2_TREE_PARAMETER_SPACE_FILE = "SPEA2MetaTree.yaml";
+
+  /**
+   * What makes an RDEMOEA a SPEA2, fixed as in {@link MetaSPEA2Builder}: strength ranking,
+   * k-nearest-neighbour density estimator (k = 1, no normalization), binary tournament selection
+   * and sequential replacement. Only the probabilities and the mutation distribution index of the
+   * tree operators are left to the request.
+   */
+  private static final List<String> SPEA2_TREE_FIXED_FLAGS =
+      List.of(
+          "--ranking", "strengthRanking",
+          "--densityEstimator", "knn",
+          "--knnNeighborhoodSize", "1",
+          "--knnNormalizeObjectives", "false",
+          "--selection", "tournament",
+          "--selectionTournamentSize", "2",
+          "--replacement", "rankingAndDensityEstimator",
+          "--removalPolicy", "sequential");
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
@@ -480,28 +502,44 @@ final class MetaAlgorithmRegistry {
           "Meta-optimizer algorithm " + algorithmName + " is not an EvolutionaryAlgorithm");
     }
 
-    boolean agemoea = "AGE-MOEA".equals(algorithmName);
     ParameterSpace parameterSpace =
         new YAMLParameterSpace(
-            agemoea ? AGEMOEA_TREE_PARAMETER_SPACE_FILE : NSGAII_TREE_PARAMETER_SPACE_FILE,
+            switch (algorithmName) {
+              case "AGE-MOEA" -> AGEMOEA_TREE_PARAMETER_SPACE_FILE;
+              case "SPEA2" -> SPEA2_TREE_PARAMETER_SPACE_FILE;
+              default -> NSGAII_TREE_PARAMETER_SPACE_FILE;
+            },
             new TreeParameterFactory());
     int populationSize = config.metaPopulationSize();
     String[] fixedFlags = fixedTreeFlags(populationSize);
+    if ("SPEA2".equals(algorithmName)) {
+      fixedFlags = concat(fixedFlags, SPEA2_TREE_FIXED_FLAGS);
+    }
     requireNoFixedFlags(algorithmName, config.operatorFlags(), fixedFlags);
 
     String[] flags = concat(fixedFlags, config.operatorFlags());
-    EvolutionaryAlgorithm<DerivationTreeSolution> algorithm;
-    if (agemoea) {
-      var treeAGEMOEA =
-          new TreeAGEMOEA(problem, populationSize, nominalEvaluations(config), parameterSpace);
-      treeAGEMOEA.parse(flags);
-      algorithm = treeAGEMOEA.build();
-    } else {
-      var treeNSGAII =
-          new TreeNSGAII(problem, populationSize, nominalEvaluations(config), parameterSpace);
-      treeNSGAII.parse(flags);
-      algorithm = treeNSGAII.build();
-    }
+    int nominalEvaluations = nominalEvaluations(config);
+    EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
+        switch (algorithmName) {
+          case "AGE-MOEA" -> {
+            var treeAGEMOEA =
+                new TreeAGEMOEA(problem, populationSize, nominalEvaluations, parameterSpace);
+            treeAGEMOEA.parse(flags);
+            yield treeAGEMOEA.build();
+          }
+          case "SPEA2" -> {
+            var treeSPEA2 =
+                new TreeSPEA2(problem, populationSize, nominalEvaluations, parameterSpace);
+            treeSPEA2.parse(flags);
+            yield treeSPEA2.build();
+          }
+          default -> {
+            var treeNSGAII =
+                new TreeNSGAII(problem, populationSize, nominalEvaluations, parameterSpace);
+            treeNSGAII.parse(flags);
+            yield treeNSGAII.build();
+          }
+        };
     algorithm.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
     applyComputingTimeLimit(algorithm, config);
     return algorithm;

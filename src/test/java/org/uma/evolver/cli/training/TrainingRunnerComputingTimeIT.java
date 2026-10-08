@@ -173,6 +173,7 @@ class TrainingRunnerComputingTimeIT {
       strings = {
         "MetaNSGAIITreeConfiguration.yaml",
         "MetaAGEMOEATreeConfiguration.yaml",
+        "MetaSPEA2TreeConfiguration.yaml",
         "MetaRandomSearchTreeConfiguration.yaml",
         "MetaAsyncNSGAIITreeConfiguration.yaml"
       })

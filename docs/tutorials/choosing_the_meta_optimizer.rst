@@ -66,9 +66,10 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
      - Synchronous
    * - ``SPEA2``
      - yes
-     - no
-     - Only ``mutationProbabilityFactor``: the rest (SBX, polynomial mutation, strength ranking,
-       k-nearest-neighbours density, tournament) is fixed
+     - yes
+     - Flat: only ``mutationProbabilityFactor``; the rest (SBX, polynomial mutation, strength
+       ranking, k-nearest-neighbours density, tournament) is fixed. Tree: the probabilities and the
+       distribution index of the tree operators, as in NSGA-II (``SPEA2MetaTree.yaml``)
      - Synchronous
    * - ``SMPSO``
      - yes
@@ -89,9 +90,8 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
 
 Three details of the table:
 
-- **SMPSO and SPEA2 are flat-only.** SMPSO needs a continuous (``DoubleProblem``) meta-problem, and
-  the tree encoding is not one; SPEA2 is built with ``DoubleSolution`` operators. The other four
-  work with both encodings (:doc:`E14 <tree_versus_flat_encoding>` compares the two encodings).
+- **SMPSO is flat-only.** It needs a continuous (``DoubleProblem``) meta-problem, and the tree
+  encoding is not one. The other five work with both encodings (:doc:`E14 <tree_versus_flat_encoding>` compares the two encodings).
 - **The asynchronous genetic algorithm** (``MetaAsyncGeneticAlgorithmBuilder``) exists, but only
   from Java: ``cli.training`` does not accept it.
 - **Which operators.** The flat NSGA-II and AGE-MOEA are built on Evolver's own configurable
@@ -207,14 +207,14 @@ of meta-optimization). What follows are reasons for a choice, not results.
        to try when NSGA-II stalls, or to check that a result does not depend on the meta-optimizer.
       
    * - ``SPEA2``, ``SMPSO``
-     - Other families (strength ranking, swarm), with fixed operators, to compare against NSGA-II
-       with the flat encoding. They offer less to tune and neither supports the tree encoding
+     - Other families (strength ranking, swarm), with fixed components, to compare against NSGA-II.
+       They offer less to tune, and SMPSO does not support the tree encoding
    * - ``RandomSearch``
      - **A baseline, and worth running.** If a meta-optimizer does not beat random search with the
        same budget, the budget is too small for it to learn anything, or the parameter space is so
        forgiving that any configuration is good. Either is useful to know
 
-For the tree encoding (:doc:`E14 <tree_versus_flat_encoding>`) the choice is among NSGA-II, AGE-MOEA, ``AsyncNSGA-II`` and
+For the tree encoding (:doc:`E14 <tree_versus_flat_encoding>`) the choice is among NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and
 ``RandomSearch``.
 
 What to expect from the choice

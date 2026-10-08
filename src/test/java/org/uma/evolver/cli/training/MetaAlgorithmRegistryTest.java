@@ -289,6 +289,22 @@ class MetaAlgorithmRegistryTest {
 
     @Test
     @DisplayName(
+        "given SPEA2 with a ranking operator flag, when resolveTree is called, then it fails"
+            + " because the ranking is fixed by SPEA2")
+    void givenSpea2WithRankingFlag_whenResolveTreeCalled_thenItFails() {
+      // Arrange
+      var config = new TreeMetaSearchConfig("SPEA2", 1000, 50, 1, List.of("--ranking", "crowding"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class,
+              () -> MetaAlgorithmRegistry.resolveTree("SPEA2", null, config));
+      assertTrue(exception.getMessage().contains("ranking"));
+    }
+
+    @Test
+    @DisplayName(
         "given SMPSO, when resolveTree is called, then it fails listing the tree-supporting"
             + " algorithms")
     void givenSmpso_whenResolveTreeCalled_thenItFails() {
@@ -388,13 +404,10 @@ class MetaAlgorithmRegistryTest {
     }
 
     @Test
-    @DisplayName(
-        "given SPEA2, when validateTreeAlgorithm is called, then it fails because it is built with"
-            + " DoubleSolution operators")
-    void givenSpea2_whenValidateTreeAlgorithmCalled_thenItFails() {
+    @DisplayName("given SPEA2, when validateTreeAlgorithm is called, then it does not fail")
+    void givenSpea2_whenValidateTreeAlgorithmCalled_thenItDoesNotFail() {
       // Arrange & Act & Assert
-      assertThrows(
-          JMetalException.class, () -> MetaAlgorithmRegistry.validateTreeAlgorithm("SPEA2"));
+      assertDoesNotThrow(() -> MetaAlgorithmRegistry.validateTreeAlgorithm("SPEA2"));
     }
 
     @Test
