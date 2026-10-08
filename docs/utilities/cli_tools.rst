@@ -27,10 +27,17 @@ Usage
 .. code-block:: bash
 
    java -cp target/Evolver-<version>-jar-with-dependencies.jar \
-       org.uma.evolver.cli.training.TrainingRunnerMain <request.yaml> [status.yaml]
+       org.uma.evolver.cli.training.TrainingRunnerMain <request.yaml> [status.yaml] [--output-dir dir]
 
 ``status.yaml`` is optional; when omitted, it defaults to a file named ``status.yaml`` next to
 ``request.yaml``.
+
+``--output-dir`` (optional) writes the results to that directory instead of the request's
+``outputDirectory``, and puts ``status.yaml`` (unless given) and ``results.yaml`` there too. The
+independent replications of a training then share one request file, each with its own directory
+(``results/<study>/run01``, ``run02``, ...), the layout that ``scripts/plot_training_convergence.py``
+and ``scripts/training_replicas.py`` read. :doc:`Tutorial E18 <../tutorials/independent_replications>`
+runs them by hand and with a slurm job array (``scripts/slurm/``).
 
 Example
 ~~~~~~~

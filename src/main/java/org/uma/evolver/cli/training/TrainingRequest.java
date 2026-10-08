@@ -70,4 +70,22 @@ public record TrainingRequest(
         frontPlotFrequency,
         false);
   }
+
+  /**
+   * The same request writing to another directory: what {@code TrainingRunnerMain --output-dir}
+   * uses so that the independent replications of a training share one request file.
+   *
+   * @param outputDirectory where the results of the training are written
+   * @return a copy of this request with that output directory
+   */
+  public TrainingRequest withOutputDirectory(String outputDirectory) {
+    return new TrainingRequest(
+        baseLevel,
+        metaSearch,
+        outputDirectory,
+        writeFrequency,
+        statusFrequency,
+        frontPlotFrequency,
+        writePopulation);
+  }
 }

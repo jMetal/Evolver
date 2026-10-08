@@ -1,0 +1,9 @@
+# Training request of tutorial E18 (docs/tutorials/independent_replications.rst): the short training
+# of tutorial E4 (NSGA-II tuned for ZDT4, NSGA-II as meta-optimizer, 500 configurations), run once
+# per replication with TrainingRunnerMain --output-dir results/tutorial-replications/nsgaii/runNN.
+# The outputDirectory below is used only without --output-dir.
+baseLevel: TutorialZdt4BaseLevel.yaml
+metaSearch: TutorialQuickNSGAIIMetaSearch.yaml
+outputDirectory: results/tutorial-replications/nsgaii/run01
+writeFrequency: 50
+statusFrequency: 50

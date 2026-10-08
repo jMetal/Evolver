@@ -1,0 +1,8 @@
+# Random search with the budget of TutorialQuickNSGAIIMetaSearch.yaml (tutorial E18,
+# docs/tutorials/independent_replications.rst): 500 configurations sampled uniformly, 8 at a time.
+# The baseline against which the replications of the NSGA-II meta-optimizer are compared.
+algorithm: RandomSearch
+encoding: flat
+
+metaMaxEvaluations: 500
+numberOfCores: 8

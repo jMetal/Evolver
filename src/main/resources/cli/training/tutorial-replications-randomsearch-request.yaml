@@ -1,0 +1,8 @@
+# Training request of tutorial E18 (docs/tutorials/independent_replications.rst): the same base level
+# as tutorial-replications-request.yaml, with random search (500 configurations) as meta-optimizer,
+# run once per replication with --output-dir results/tutorial-replications/randomsearch/runNN.
+baseLevel: TutorialZdt4BaseLevel.yaml
+metaSearch: TutorialQuickRandomSearchMetaSearch.yaml
+outputDirectory: results/tutorial-replications/randomsearch/run01
+writeFrequency: 50
+statusFrequency: 50

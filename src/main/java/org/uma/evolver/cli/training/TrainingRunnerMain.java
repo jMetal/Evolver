@@ -2,6 +2,7 @@ package org.uma.evolver.cli.training;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,32 +13,82 @@ import org.yaml.snakeyaml.Yaml;
  * {@link TrainingRequest} YAML file) replaces the ad hoc, hardcoded {@code main(String[] args)}
  * pattern used by the other {@code org.uma.evolver.example.training} classes.
  *
- * <p>Usage: {@code TrainingRunnerMain <request.yaml> [status.yaml]}
+ * <p>Usage: {@code TrainingRunnerMain <request.yaml> [status.yaml] [--output-dir dir]}
+ *
+ * <p>By default the results go to the request's {@code outputDirectory}, and {@code status.yaml}
+ * and {@code results.yaml} next to the request file. With {@code --output-dir}, the results go to
+ * that directory instead, and so do {@code status.yaml} (unless given) and {@code results.yaml}:
+ * the independent replications of a training then share one request file, each with its own
+ * directory ({@code results/<study>/run01}, {@code run02}, ...).
  *
  * <p>Study prototype — see {@link TrainingRunner} for scope notes.
  */
 public class TrainingRunnerMain {
 
+  static final String USAGE = "Usage: TrainingRunnerMain <request.yaml> [status.yaml] [--output-dir dir]";
+
   public static void main(String[] args) throws IOException {
-    if (args.length < 1) {
-      System.err.println("Usage: TrainingRunnerMain <request.yaml> [status.yaml]");
+    Path outputDirectory;
+    try {
+      outputDirectory = execute(args);
+    } catch (IllegalArgumentException e) {
+      System.err.println(e.getMessage());
       System.exit(1);
+      return;
     }
-
-    Path requestFile = Path.of(args[0]);
-    Path statusFile = args.length > 1 ? Path.of(args[1]) : requestFile.resolveSibling("status.yaml");
-
-    TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
-    Path outputDirectory = new TrainingRunner().run(request, statusFile);
-
-    writeResultsPointer(
-        requestFile.resolveSibling("results.yaml"), outputDirectory, request.writePopulation());
 
     // AsynchronousMultiThreadedNSGAII (metaSearch.algorithm: AsyncNSGA-II) leaves its
     // master/worker thread pool running after run() returns, so the JVM never exits on its own
     // — same reason org.uma.evolver.example.training's async examples end with System.exit(0).
     // Harmless for the other meta-optimizer algorithms, which already terminate naturally.
-    System.exit(0);
+    System.exit(outputDirectory == null ? 1 : 0);
+  }
+
+  /**
+   * Runs the training of the arguments and returns its output directory.
+   *
+   * @throws IllegalArgumentException if the arguments do not follow {@link #USAGE}
+   */
+  static Path execute(String[] args) throws IOException {
+    String requestArgument = null;
+    String statusArgument = null;
+    String outputDirectoryArgument = null;
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equals("--output-dir")) {
+        if (i + 1 >= args.length) {
+          throw new IllegalArgumentException("--output-dir needs a directory\n" + USAGE);
+        }
+        outputDirectoryArgument = args[++i];
+      } else if (args[i].startsWith("--")) {
+        throw new IllegalArgumentException("Unknown option: " + args[i] + "\n" + USAGE);
+      } else if (requestArgument == null) {
+        requestArgument = args[i];
+      } else if (statusArgument == null) {
+        statusArgument = args[i];
+      } else {
+        throw new IllegalArgumentException("Too many arguments\n" + USAGE);
+      }
+    }
+    if (requestArgument == null) {
+      throw new IllegalArgumentException(USAGE);
+    }
+
+    Path requestFile = Path.of(requestArgument);
+    TrainingRequest request = TrainingRequestYamlLoader.load(requestFile);
+    Path pointerDirectory = requestFile.toAbsolutePath().getParent();
+    if (outputDirectoryArgument != null) {
+      request = request.withOutputDirectory(outputDirectoryArgument);
+      pointerDirectory = Path.of(outputDirectoryArgument);
+      Files.createDirectories(pointerDirectory);
+    }
+    Path statusFile =
+        statusArgument != null ? Path.of(statusArgument) : pointerDirectory.resolve("status.yaml");
+
+    Path outputDirectory = new TrainingRunner().run(request, statusFile);
+
+    writeResultsPointer(
+        pointerDirectory.resolve("results.yaml"), outputDirectory, request.writePopulation());
+    return outputDirectory;
   }
 
   private static void writeResultsPointer(

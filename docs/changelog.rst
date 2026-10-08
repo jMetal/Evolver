@@ -18,6 +18,19 @@ Added
   ranking, k-nearest-neighbour density) and sets the rest as for NSGA-II (the tree operators and
   the selection), plus the neighbourhood size of the density estimator (1 by default). ``DescribeMain`` reports
   ``supportsTree: true`` for it. Only SMPSO remains flat-only
+- Tutorial E18, independent replications of a training: why a study needs 10, 15 or 30 replications
+  of the meta-optimizer, running them by hand or on a slurm cluster, and analyzing them (convergence
+  over replications, the best values of each one, the configuration to validate, and comparing two
+  setups with the Wilcoxon test over their replications)
+- ``TrainingRunnerMain --output-dir <dir>``: writes the results, ``status.yaml`` and
+  ``results.yaml`` to that directory instead of the request's ``outputDirectory``, so that the
+  replications of a training share one request file (``results/<study>/run01``, ``run02``, ...)
+- ``scripts/training_replicas.py``: the best values and the chosen configuration of each replication
+  of a study (``replicas.csv``, ``configurations/``), and a ``QualityIndicatorSummary.csv`` to
+  compare studies with ``wilcoxon_pivot_tables.py`` and ``boxplots.py``
+- ``scripts/slurm/``: ``submit_replicas.sh`` and ``train_replicas.sbatch``, a generic slurm job array
+  for the replications of any training request (one task per replication; resubmitting runs only
+  the missing ones)
 
 2.4 (2026-10-07)
 ----------------

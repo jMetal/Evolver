@@ -122,6 +122,11 @@ Advanced
      - Using a problem of your own, given by its class name, from a request and in a training, and
        adding an operator to the catalogue (a Gaussian mutation, as an example that is not part of
        Evolver): the class, the three changes, the test and a patch.
+   * - :doc:`E18. Independent replications of a training <independent_replications>`
+     - Why a study of the training needs 10, 15 or 30 replications of the meta-optimizer and what
+       that costs, running them by hand or as a slurm job array, and analyzing them: convergence over
+       the replications, the best value of each one, comparing two settings with the Wilcoxon test,
+       and which configuration to validate.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -134,3 +139,4 @@ More tutorials are planned for the intermediate and advanced levels.
    tuning_with_irace
    automating_with_the_cli
    extending_evolver
+   independent_replications

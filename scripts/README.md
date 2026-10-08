@@ -28,6 +28,8 @@ pip install -r scripts/requirements.txt
 | `plot_front_interactive.py` | Same as `plot_front.py`, as an interactive Plotly figure (in the browser, or a self-contained HTML file). |
 | `plot_fronts.py` | Plots several labelled bi-objective fronts against a reference front, e.g. the fronts of different configurations of an algorithm on the same problem: one panel per front with shared axes (default), or all of them on a single panel (`--mode overlay`). |
 | `plot_training_convergence.py` | Plots how each meta-objective of a training run converges over the meta-evaluations: median and best–worst band of the configurations on the meta-optimizer's front at each checkpoint, pooled over replications, and the meta-evaluation at which 95% of the improvement is reached. With `--x time`, the x axis is the computing time of the meta-optimizer. |
+| `training_replicas.py` | Summarizes the independent replications of a training (a directory with one training output directory per replication, `run01`, `run02`, ...): the best value of each meta-objective on the final front of each replication (`replicas.csv`, median and IQR printed), the configuration with the best value of the primary meta-objective in each one (`configurations/<study>/runNN.txt`, ready for validation), and the same values as a `QualityIndicatorSummary.csv`, so that two studies are compared with `wilcoxon_pivot_tables.py` and `boxplots.py` over their replications. |
+| `slurm/` | `submit_replicas.sh` and `train_replicas.sbatch`: the replications of a training as a slurm job array, one task per replication (`TrainingRunnerMain --output-dir <study>/runNN`), with the parts that depend on the cluster marked at the top. The same `.sbatch` runs one replication by hand without slurm (`TASK=3 bash ...`). Tutorial E18. |
 | `plot_parameter_space.py` | Prints a parameter space YAML file as a text tree, or draws it as a compact figure. With `--stats`, prints its size: parameters (genes of the flat encoding), structures (combinations of categorical values) and depth. |
 | `critical_difference_plots.py` | Critical difference plots of a jMetal validation study (`QualityIndicatorSummary.csv`), generated with [SAES](https://github.com/jMetal/SAES): average Friedman ranks, with bars joining the algorithms whose differences are not significant (Nemenyi). Needs `pip install SAES`. |
 | `plot_meta_population.py` | Plots the population of the meta-optimizer at several checkpoints of a training run, in the space of two meta-objectives, with its non-dominated configurations highlighted. Needs a training run with `writePopulation: true`. |
@@ -123,6 +125,24 @@ of each checkpoint to its panel titles.
 `training_time.py` holds the shared code that reads these times; it is not a script, and neither
 is `study_summary.py`, which reads the `QualityIndicatorSummary.csv` of a validation study for the
 statistical scripts.
+
+### Replications of a training
+
+```bash
+# one study: a directory with run01, run02, ... (TrainingRunnerMain --output-dir)
+python scripts/training_replicas.py results/tutorial-replications/nsgaii --primary NHV
+
+# two studies, compared over their replications with the validation scripts
+python scripts/training_replicas.py results/tutorial-replications/nsgaii \
+    results/tutorial-replications/randomsearch --primary NHV \
+    --output-dir results/tutorial-replications/analysis
+python scripts/wilcoxon_pivot_tables.py \
+    results/tutorial-replications/analysis/QualityIndicatorSummary.csv --pivot nsgaii
+
+# the replications on a slurm cluster: 15 tasks of 40 cores each (see scripts/slurm/)
+scripts/slurm/submit_replicas.sh Evolver-<version>-jar-with-dependencies.jar \
+    request.yaml results/my-study 15 40
+```
 
 ### Parameter spaces
 
