@@ -35,7 +35,7 @@ Added
 Changed
 ~~~~~~~
 
-- The README and the home page of the documentation present Evolver as research software for
+- The README, the home page and the introduction of the documentation present Evolver as research software for
   multi-objective meta-optimization: meant for experimental studies of meta-optimization as much as
   for its use, and evolving with that research
 

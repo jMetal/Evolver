@@ -14,6 +14,8 @@ using predefined quality measures. The search process employs learning strategie
 
 In this context, we have developed Evolver, a Java-based package for the automatic configuration of multi-objective metaheuristics. Evolver formulates the tuning process itself as a multi-objective optimization problem, which is then solved using another metaheuristic. It is built upon the jMetal multi-objective optimization framework, which provides a diverse collection of metaheuristic algorithms, benchmark problems, and quality indicators. As a result, Evolver becomes a versatile tool for meta-optimization and a valuable research platform in this field.
 
+Evolver is, above all, **research software for multi-objective meta-optimization**. Each element of the approach described below (the parameter space, the encoding of the configurations, the training set, the quality indicators used as meta-objectives, the meta-optimizer and the budgets) is a design choice whose effect is itself a research question, and Evolver is built to study those choices experimentally: independent replications of a training, validation protocols and statistical analysis are part of its tools (see the :doc:`tutorials <tutorials/index>`). It evolves with that research, so its interfaces may change between versions, as recorded in the :doc:`changelog`.
+
 Meta-Optimization Approach
 --------------------------
 
