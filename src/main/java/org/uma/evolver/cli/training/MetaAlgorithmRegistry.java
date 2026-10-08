@@ -180,21 +180,22 @@ final class MetaAlgorithmRegistry {
   private static final String SPEA2_TREE_PARAMETER_SPACE_FILE = "SPEA2MetaTree.yaml";
 
   /**
-   * What makes an RDEMOEA a SPEA2, fixed as in {@link MetaSPEA2Builder}: strength ranking,
-   * k-nearest-neighbour density estimator (k = 1, no normalization), binary tournament selection
-   * and sequential replacement. Only the probabilities and the mutation distribution index of the
-   * tree operators are left to the request.
+   * What makes an RDEMOEA a SPEA2, fixed by the registry: strength ranking, the k-nearest-neighbour
+   * density estimator and the replacement by ranking and density (the only one SPEA2 has). The rest
+   * is configurable as in NSGA-II: the tree operators and the selection, plus the neighbourhood size
+   * of the density estimator and whether it normalizes the objectives, which default to {@link
+   * #SPEA2_TREE_DEFAULT_FLAGS}.
    */
   private static final List<String> SPEA2_TREE_FIXED_FLAGS =
       List.of(
           "--ranking", "strengthRanking",
           "--densityEstimator", "knn",
-          "--knnNeighborhoodSize", "1",
-          "--knnNormalizeObjectives", "false",
-          "--selection", "tournament",
-          "--selectionTournamentSize", "2",
           "--replacement", "rankingAndDensityEstimator",
           "--removalPolicy", "sequential");
+
+  /** The values of SPEA2's density estimator when the request does not set them (as in SPEA2). */
+  private static final List<String> SPEA2_TREE_DEFAULT_FLAGS =
+      List.of("--knnNeighborhoodSize", "1", "--knnNormalizeObjectives", "false");
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
@@ -518,6 +519,13 @@ final class MetaAlgorithmRegistry {
     requireNoFixedFlags(algorithmName, config.operatorFlags(), fixedFlags);
 
     String[] flags = concat(fixedFlags, config.operatorFlags());
+    if ("SPEA2".equals(algorithmName)) {
+      for (int i = 0; i < SPEA2_TREE_DEFAULT_FLAGS.size(); i += 2) {
+        if (!config.operatorFlags().contains(SPEA2_TREE_DEFAULT_FLAGS.get(i))) {
+          flags = concat(flags, SPEA2_TREE_DEFAULT_FLAGS.subList(i, i + 2));
+        }
+      }
+    }
     int nominalEvaluations = nominalEvaluations(config);
     EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
         switch (algorithmName) {

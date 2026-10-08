@@ -68,8 +68,9 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
      - yes
      - yes
      - Flat: only ``mutationProbabilityFactor``; the rest (SBX, polynomial mutation, strength
-       ranking, k-nearest-neighbours density, tournament) is fixed. Tree: the probabilities and the
-       distribution index of the tree operators, as in NSGA-II (``SPEA2MetaTree.yaml``)
+       ranking, k-nearest-neighbours density, tournament) is fixed. Tree: strength ranking and the
+       k-nearest-neighbours density are fixed, and the rest is set as in NSGA-II (tree operators,
+       selection), plus the neighbourhood size (1 by default) (``SPEA2MetaTree.yaml``)
      - Synchronous
    * - ``SMPSO``
      - yes

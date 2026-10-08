@@ -1,8 +1,9 @@
 # Meta configuration of SPEA2 with tree (derivation tree) encoding
 #
-# The operator fields below are parsed against SPEA2MetaTree.yaml. Crossover (subtree), mutation
-# (tree), the offspring population size (always metaPopulationSize) and the result (always the
-# final population) are fixed by MetaAlgorithmRegistry.
+# The operator fields below are parsed against SPEA2MetaTree.yaml. What defines SPEA2 (strength
+# ranking, k-nearest-neighbour density estimator), crossover (subtree), mutation (tree), the
+# offspring population size (always metaPopulationSize) and the result (always the final
+# population) are fixed by MetaAlgorithmRegistry.
 
 algorithm: SPEA2
 encoding: tree
@@ -14,3 +15,7 @@ numberOfCores: 8
 crossoverProbability: 0.9
 mutationProbability: 1.0
 mutationDistributionIndex: 5.0   # provisional; its value is still to be studied
+selection: tournament
+selectionTournamentSize: 2
+# knnNeighborhoodSize: 1           # optional; defaults to 1
+# knnNormalizeObjectives: false    # optional; defaults to false

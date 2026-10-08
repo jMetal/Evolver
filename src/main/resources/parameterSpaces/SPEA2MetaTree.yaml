@@ -1,11 +1,12 @@
 # Parameter space for the meta-level SPEA2 (org.uma.evolver.meta.algorithm.TreeSPEA2) used by
 # cli.training's MetaAlgorithmRegistry with the derivation tree encoding. Parsed with a
 # TreeParameterFactory. SPEA2 is expressed as an RDEMOEA configuration, as in SPEA2MetaDouble.yaml
-# (strength ranking, k-nearest-neighbour density estimator, tournament selection and sequential
-# replacement, all fixed by MetaAlgorithmRegistry), with the variation of NSGAIIMetaTree.yaml: the
-# tree encoding has a single crossover (subtree) and a single mutation (tree), so only their
-# probabilities and the mutation distribution index are left to the meta-optimizer configuration
-# file. algorithmResult (always population), createInitialSolutions and offspringPopulationSize
+# (strength ranking and the k-nearest-neighbour density estimator, which define SPEA2, and the
+# sequential replacement, are fixed by MetaAlgorithmRegistry), with the variation of
+# NSGAIIMetaTree.yaml: the tree encoding has a single crossover (subtree) and a single mutation
+# (tree), so only their probabilities and the mutation distribution index are left to the
+# meta-optimizer configuration file, as are the selection and the neighbourhood size of the density
+# estimator (knnNeighborhoodSize, 1 by default, and knnNormalizeObjectives, false by default). algorithmResult (always population), createInitialSolutions and offspringPopulationSize
 # (always the meta population size, so that each generation is evaluated in parallel as a whole)
 # are fixed too.
 

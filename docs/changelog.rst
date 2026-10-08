@@ -14,8 +14,9 @@ Added
 - SPEA2 as a meta-optimizer with the tree encoding (``TreeSPEA2``, an RDEMOEA with strength ranking,
   k-nearest-neighbour density and sequential replacement, as the flat one), configured from
   ``SPEA2MetaTree.yaml``: ``algorithm: SPEA2`` with ``encoding: tree`` in the meta-optimizer
-  configuration file (``MetaSPEA2TreeConfiguration.yaml``) takes the probabilities and the
-  distribution index of the tree operators, as NSGA-II does. ``DescribeMain`` reports
+  configuration file (``MetaSPEA2TreeConfiguration.yaml``) fixes what defines SPEA2 (strength
+  ranking, k-nearest-neighbour density) and sets the rest as for NSGA-II (the tree operators and
+  the selection), plus the neighbourhood size of the density estimator (1 by default). ``DescribeMain`` reports
   ``supportsTree: true`` for it. Only SMPSO remains flat-only
 
 2.4 (2026-10-07)
