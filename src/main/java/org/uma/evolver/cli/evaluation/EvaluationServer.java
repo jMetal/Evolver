@@ -77,7 +77,18 @@ import org.uma.jmetal.solution.Solution;
 public final class EvaluationServer {
 
   /** The result of an evaluation: the values of the indicators, in the order of their names. */
-  public record Evaluation(String problem, List<String> indicators, double[] values, long timeMs) {}
+  public record Evaluation(String problem, List<String> indicators, double[] values, long timeMs) {
+
+    public Evaluation {
+      indicators = List.copyOf(indicators);
+      values = values.clone();
+    }
+
+    @Override
+    public double[] values() {
+      return values.clone();
+    }
+  }
 
   private static final ObjectMapper JSON = new ObjectMapper();
 
@@ -116,8 +127,9 @@ public final class EvaluationServer {
     buildProblems(baseLevel);
     this.evaluations = Executors.newFixedThreadPool(threads);
 
-    if (logFile.getParent() != null) {
-      Files.createDirectories(logFile.getParent());
+    Path logDirectory = logFile.getParent();
+    if (logDirectory != null) {
+      Files.createDirectories(logDirectory);
     }
     boolean newLog = !Files.exists(logFile) || Files.size(logFile) == 0;
     this.log =
