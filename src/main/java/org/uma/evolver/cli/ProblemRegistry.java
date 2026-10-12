@@ -44,6 +44,8 @@ import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroACD10
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroACE100TSP;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAD100TSP;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAE100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroBC100TSP;
+import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroBD100TSP;
 import org.uma.jmetal.problem.multiobjective.re.RE21;
 import org.uma.jmetal.problem.multiobjective.re.RE22;
 import org.uma.jmetal.problem.multiobjective.re.RE23;
@@ -251,9 +253,7 @@ public final class ProblemRegistry {
           Map.entry("ZDT5", ZDT5.class),
           Map.entry("OneZeroMax", OneZeroMax.class),
           // Permutation: the multi-objective TSP instances of jMetal. They read their distance
-          // matrices from resources/tspInstances/, relative to the working directory. KroBC100TSP
-          // and KroBD100TSP are left out: jMetal 7.7 points them to kroAC100.tsp and kroAD100.tsp,
-          // which do not exist (they should be kroC100.tsp and kroD100.tsp)
+          // matrices from resources/tspInstances/, relative to the working directory
           Map.entry("EuclidAB300", EuclidAB300.class),
           Map.entry("KroAB100TSP", KroAB100TSP.class),
           Map.entry("KroABC100TSP", KroABC100TSP.class),
@@ -263,7 +263,9 @@ public final class ProblemRegistry {
           Map.entry("KroACD100TSP", KroACD100TSP.class),
           Map.entry("KroACE100TSP", KroACE100TSP.class),
           Map.entry("KroAD100TSP", KroAD100TSP.class),
-          Map.entry("KroAE100TSP", KroAE100TSP.class));
+          Map.entry("KroAE100TSP", KroAE100TSP.class),
+          Map.entry("KroBC100TSP", KroBC100TSP.class),
+          Map.entry("KroBD100TSP", KroBD100TSP.class));
 
   /** An argument of a problem, with how to find its default in the problem built with none. */
   private record ArgumentSpec(String name, String type, Function<Problem<?>, Object> defaultValue) {
