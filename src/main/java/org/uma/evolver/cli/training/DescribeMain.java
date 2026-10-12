@@ -10,6 +10,7 @@ import org.uma.evolver.cli.ProblemDescriptor;
 import org.uma.evolver.cli.ProblemRegistry;
 import org.uma.evolver.cli.solving.SolveRequest;
 import org.uma.evolver.cli.solving.SolveRequestYamlLoader;
+import org.uma.evolver.util.EvolverVersion;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -46,6 +47,7 @@ public final class DescribeMain {
   /** Package-private for {@link DescribeMainTest}; {@link #main} is the only real entry point. */
   static Map<String, Object> manifest() {
     Map<String, Object> manifest = new LinkedHashMap<>();
+    manifest.put("evolverVersion", EvolverVersion.get());
     manifest.put("baseAlgorithms", baseAlgorithms());
     manifest.put("metaAlgorithms", metaAlgorithms());
     manifest.put("problems", ProblemRegistry.registeredNames().stream().sorted().toList());

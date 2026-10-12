@@ -29,20 +29,9 @@ package org.uma.evolver.cli.training;
  * POPULATION_INDICATORS.csv} and {@code POPULATION_CONFIGURATIONS.csv}, so that its diversity can
  * be analyzed afterwards. It is false by default.
  *
- * <p>Scope note: this is a study prototype for {@link TrainingRunner}, exercised against seven
- * reference examples to avoid overfitting to a single case:
- * {@code NSGAIIOptimizingNSGAIIForProblemZDT4} (single problem, flat encoding), {@code
- * NSGAIIOptimizingNSGAIIForBenchmarkRE3D} (named multi-problem training set, flat encoding),
- * {@code NSGAIIOptimizingMOEADForProblemZDT4} (a base-level algorithm other than NSGA-II, flat
- * encoding), {@code TreeNSGAIIOptimizingNSGAIIForBenchmarkRE3D} (tree encoding), {@code
- * AsyncNSGAIIOptimizingNSGAIIForBenchmarkDTLZ} (a meta-optimizer engine other than {@code
- * NSGA-II}, asynchronous), {@code SMPSOOptimizingNSGAIIForProblemRE31} (a meta-optimizer
- * engine with no {@code EvolutionaryAlgorithm}/{@code AsynchronousMultiThreadedNSGAII} shape) and
- * {@code SPEA2OptimizingNSGAIIForProblemDTLZ3} (a second evolutionary meta-optimizer engine, with
- * its own hardcoded operators). The meta-optimizer algorithm is selected explicitly via
- * {@link MetaSearchConfig#algorithm()}, resolved by {@link MetaAlgorithmRegistry};
- * {@code "NSGA-II"}, {@code "SPEA2"}, {@code "AsyncNSGA-II"} and {@code "SMPSO"} are
- * registered so far.
+ * <p>The meta-optimizer is selected by {@link MetaSearchConfig#algorithm()} and resolved by {@link
+ * MetaAlgorithmRegistry}. The request file is part of the command-line contract of Evolver, stable
+ * since 3.0 (see {@code docs/utilities/cli_tools.rst}): within 3.x it only gains optional fields.
  */
 public record TrainingRequest(
     BaseLevelConfig baseLevel,

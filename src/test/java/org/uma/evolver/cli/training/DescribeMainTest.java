@@ -135,6 +135,21 @@ class DescribeMainTest {
     }
 
     @Test
+    @DisplayName(
+        "given a build by Maven, when manifest is built, then it starts with the version of Evolver"
+            + " of the pom")
+    void givenMavenBuild_whenManifestBuilt_thenItHasTheVersionOfEvolver() {
+      // Arrange & Act
+      Map<String, Object> manifest = DescribeMain.manifest();
+
+      // Assert
+      assertEquals("evolverVersion", manifest.keySet().iterator().next());
+      assertTrue(
+          ((String) manifest.get("evolverVersion")).matches("\\d+\\.\\d+(\\.\\d+)?(-SNAPSHOT)?"),
+          "evolverVersion: " + manifest.get("evolverVersion"));
+    }
+
+    @Test
     @DisplayName("given the registries, when manifest is built, then it lists every registry")
     void givenRegistries_whenManifestBuilt_thenItListsEveryRegistry() {
       // Arrange & Act

@@ -21,7 +21,8 @@ import org.yaml.snakeyaml.Yaml;
  * the independent replications of a training then share one request file, each with its own
  * directory ({@code results/<study>/run01}, {@code run02}, ...).
  *
- * <p>Study prototype — see {@link TrainingRunner} for scope notes.
+ * <p>The request, status and results files are the command-line contract of Evolver, stable since
+ * 3.0: within 3.x they only gain optional fields (see {@code docs/utilities/cli_tools.rst}).
  */
 public class TrainingRunnerMain {
 

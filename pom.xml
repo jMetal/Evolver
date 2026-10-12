@@ -63,6 +63,11 @@
       <resource>
         <directory>src/main/resources</directory>
       </resource>
+      <!-- Files with Maven properties (the version of Evolver, for DescribeMain's manifest) -->
+      <resource>
+        <directory>src/main/resources-filtered</directory>
+        <filtering>true</filtering>
+      </resource>
     </resources>
 
     <plugins>
