@@ -11,6 +11,26 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Reference fronts of the MaF problems with 3 objectives (``resources/referenceFronts/MaFxx.3D.csv``;
+  only MaF08's existed): ``scripts/maf_reference_fronts.py`` writes them with the method of PlatEMO
+  for this benchmark, and ``MaFReferenceFrontsIT`` checks them against the problems of jMetal
+- ``KroBC100TSP`` and ``KroBD100TSP`` are registered (cli), now that jMetal reads their distance
+  files
+- ``initialConfigurations`` in a meta-optimizer configuration file: the initial population of
+  NSGA-II, AGE-MOEA and SPEA2 (flat and tree encodings) starts from the configurations of one or
+  more files (such as ``defaultConfigurations/NSGAIIDoubleDefault.txt``), and random ones up to its
+  size. ``ConfigurationEncoding`` encodes a configuration as a flat or a tree solution, the inverse
+  of their decoding. ``METADATA.txt`` records the files
+- The evaluation server, ``org.uma.evolver.cli.evaluation`` (``EvaluationServerMain
+  start|status|stop|run``): a process that evaluates configurations of a base-level algorithm sent
+  through a local HTTP API, as Evolver's training does, so that external configurators such as irace
+  run their experiments without starting a Java virtual machine each. Tutorial E15's irace scenario
+  can use it (``scenario-NSGAII-server.txt``, ``target-runner-server``; ``run.sh`` starts and stops
+  the server when ``EVOLVER_SERVER`` names a base-level file)
+- A stable command-line contract: the request, status and results files of ``cli.training`` and
+  ``cli.solving`` and the manifest of ``DescribeMain`` only gain optional fields within 3.x (see the
+  Stability section of the CLI tools). The manifest starts with ``evolverVersion``, the version of
+  the jar, so that clients such as Evolver-Studio check it without parsing the name of the file
 - SPEA2 as a meta-optimizer with the tree encoding (``TreeSPEA2``, an RDEMOEA with strength ranking,
   k-nearest-neighbour density and sequential replacement, as the flat one), configured from
   ``SPEA2MetaTree.yaml``: ``algorithm: SPEA2`` with ``encoding: tree`` in the meta-optimizer
@@ -35,6 +55,15 @@ Added
 Changed
 ~~~~~~~
 
+- Evolver depends on jMetal 7.8. The angle density estimator of RDEMOEA and SSMOEA is jMetal's again
+  (it gives 0.0 to a solution without density since 7.8), instead of Evolver's own lenient copy
+- The flat SPEA2 meta-optimizer is configurable as NSGA-II is, like the tree one: strength ranking
+  and the k-nearest-neighbour density estimator, which define SPEA2, are fixed, and the crossover,
+  the mutation and the selection are set in the meta-optimizer configuration file
+  (``SPEA2MetaDouble.yaml``, an RDEMOEA). Files without operators keep working: the registry gives
+  them the operators of SPEA2 used until now (SBX, polynomial mutation, binary tournament).
+  ``DescribeMain`` reports ``operatorParameterSpaceFile: SPEA2MetaDouble.yaml`` and no hardcoded
+  flags for it
 - The README, the home page and the introduction of the documentation present Evolver as research software for
   multi-objective meta-optimization: meant for experimental studies of meta-optimization as much as
   for its use, and evolving with that research

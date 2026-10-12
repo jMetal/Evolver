@@ -67,10 +67,10 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
    * - ``SPEA2``
      - yes
      - yes
-     - Flat: only ``mutationProbabilityFactor``; the rest (SBX, polynomial mutation, strength
-       ranking, k-nearest-neighbours density, tournament) is fixed. Tree: strength ranking and the
-       k-nearest-neighbours density are fixed, and the rest is set as in NSGA-II (tree operators,
-       selection), plus the neighbourhood size (1 by default) (``SPEA2MetaTree.yaml``)
+     - Strength ranking and the k-nearest-neighbours density, which define SPEA2, are fixed; the
+       rest is set as in NSGA-II (crossover, mutation, selection), plus the neighbourhood size (1 by
+       default) (flat: ``SPEA2MetaDouble.yaml``, with SPEA2's usual operators when they are left
+       out; tree: ``SPEA2MetaTree.yaml``)
      - Synchronous
    * - ``SMPSO``
      - yes
@@ -95,8 +95,8 @@ Three details of the table:
   encoding is not one. The other five work with both encodings (:doc:`E14 <tree_versus_flat_encoding>` compares the two encodings).
 - **The asynchronous genetic algorithm** (``MetaAsyncGeneticAlgorithmBuilder``) exists, but only
   from Java: ``cli.training`` does not accept it.
-- **Which operators.** The flat NSGA-II and AGE-MOEA are built on Evolver's own configurable
-  algorithms, so their operators come from a parameter space, like those of any base-level
+- **Which operators.** The flat NSGA-II, AGE-MOEA and SPEA2 (an RDEMOEA configured as SPEA2) are
+  built on Evolver's own configurable algorithms, so their operators come from a parameter space, like those of any base-level
   algorithm. What the configuration file may contain is checked against it (``DescribeMain`` lists
   the fields, see :doc:`../utilities/cli_tools`).
 
@@ -208,8 +208,9 @@ of meta-optimization). What follows are reasons for a choice, not results.
        to try when NSGA-II stalls, or to check that a result does not depend on the meta-optimizer.
       
    * - ``SPEA2``, ``SMPSO``
-     - Other families (strength ranking, swarm), with fixed components, to compare against NSGA-II.
-       They offer less to tune, and SMPSO does not support the tree encoding
+     - Other families (strength ranking, swarm), to compare against NSGA-II. SPEA2 has the same
+       operators as NSGA-II and differs in how it ranks and keeps the population; SMPSO has nothing
+       to tune and does not support the tree encoding
    * - ``RandomSearch``
      - **A baseline, and worth running.** If a meta-optimizer does not beat random search with the
        same budget, the budget is too small for it to learn anything, or the parameter space is so
@@ -245,8 +246,9 @@ stopped by time) and set ``numberOfCores`` to your machine's value.
 - **A baseline.** Run ``RandomSearch`` (``MetaRandomSearchFlatConfiguration.yaml``) for the same
   time and compare its final front, in the space of the two indicators, with NSGA-II's (the plots of
   E7). How much better is the search than sampling?
-- **Fixed operators.** Run ``SPEA2`` and ``SMPSO`` (``MetaSPEA2FlatConfiguration.yaml``,
-  ``MetaSMPSOFlatConfiguration.yaml``) and read their configuration files: what can you set?
+- **Other families.** Run ``SPEA2`` and ``SMPSO`` (``MetaSPEA2FlatConfiguration.yaml``,
+  ``MetaSMPSOFlatConfiguration.yaml``) and read their configuration files: what can you set, and
+  what does each one fix?
 - **A tiny limit.** With ``metaMaxComputingTimeMinutes: 0.001``, which meta-optimizer finishes the
   soonest, and why? (Think about what each one evaluates before it checks the limit.)
 

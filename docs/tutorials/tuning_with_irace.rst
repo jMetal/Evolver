@@ -4,8 +4,8 @@ E15. Tuning with irace
 ======================
 
 :Level: Advanced
-:Version: 1.0 (2026-10-05)
-:Time: about 1 hour, of which irace takes about 40 minutes
+:Version: 1.1 (2026-10-12)
+:Time: about 1 hour, of which irace takes about 26 minutes (11 with the evaluation server of Step 7)
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by irace and the validation),
    64 GB of RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), R 4.6.1, irace 4.4.3
 :Prerequisites: :doc:`E1. Parameter spaces <parameter_spaces>`,
@@ -159,7 +159,7 @@ to the reference fronts, and run it from there. From the root of the repository:
 The second argument of ``run.sh`` is the number of the run: it sets irace's seed and the execution
 directory, ``execdir-1``. ``N_CPUS`` is the number of experiments run in parallel (8 by default).
 Each experiment starts a Java virtual machine and takes a fraction of a second, and irace took about
-40 minutes. It writes its progress and results to ``execdir-1/irace.stdout.txt``.
+26 minutes. It writes its progress and results to ``execdir-1/irace.stdout.txt``.
 
 Step 5: the best configuration
 ------------------------------
@@ -246,6 +246,63 @@ for it separately are ways to address it.
 
 This is a check that the configuration works, not a statistical study: :doc:`E8 <validating_a_configuration>` covers how to
 validate a configuration properly.
+
+Step 7: without a Java virtual machine per experiment
+-----------------------------------------------------
+
+Each of the 10000 experiments of Step 4 starts a Java virtual machine, which loads Evolver and jMetal
+and compiles their code again before running NSGA-II for a fraction of a second. Evolver's
+**evaluation server** (:doc:`../utilities/cli_tools`, ``EvaluationServerMain``) avoids it: a single
+Java virtual machine evaluates every experiment that irace sends it through a local HTTP API, as a
+training of Evolver evaluates its configurations. The scenario ``scenario-NSGAII-server.txt`` is the
+one of Step 3 with another target runner, ``target-runner-server``, a script that sends the
+experiment to the server with ``curl`` and prints the value it returns. The server reads the problems
+and the budget from a base-level file, ``TutorialIraceZdtBaseLevel.yaml``: the five ZDT problems, a
+population of 100 and 8000 evaluations, as in ``instances-list-ZDT.txt``.
+
+``run.sh`` starts the server when ``EVOLVER_SERVER`` names the base-level file, with as many threads
+as ``N_CPUS``, the experiments that irace runs in parallel (with more requests than threads some
+would wait; with fewer, some threads would be idle), and stops it when irace ends. In the working
+directory of Step 4:
+
+.. code-block:: bash
+
+    EVOLVER_SERVER=TutorialIraceZdtBaseLevel.yaml N_CPUS=16 ./run.sh scenario-NSGAII-server.txt 1
+
+One difference: the server returns EP + NHV, the two indicators of Evolver's training, instead of
+the -HV + EP of ``AutoNSGAIIIraceHVEP``. Both reward the same fronts, but they are different numbers,
+so irace follows a different path and finds other configurations.
+
+The two ways, with the same scenario, the same 16 cores and the same seed, one after the other on
+this computer (a full run of 10000 experiments and a short one of 4000 of each):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 22 22 22
+
+   * - Experiments
+     - A virtual machine each
+     - Evaluation server
+     - Speed-up
+   * - 10000
+     - 1581 s (158 ms each)
+     - 663 s (66 ms each)
+     - 2.4
+   * - 4000
+     - 502 s (126 ms each)
+     - 270 s (68 ms each)
+     - 1.9
+
+The log of the server has the time of each run of NSGA-II: they took 477 s of the 663 on the 16
+cores in the full run, and 127 s of the 270 in the short one. The rest, 19 to 36 ms per experiment,
+is irace itself (R, its statistical tests, and starting the target runner). Without the server, the
+same runs cost about another 100 ms per experiment: starting the virtual machine and compiling the
+code again, every time; irace reported 20563 s of processor time in the full run, two seconds per
+experiment for runs of less than one.
+
+So the server pays off when the runs are cheap, as here: the time of a run is comparable with the
+start of a virtual machine. When a run takes minutes, the start of the virtual machine is negligible
+and both ways take about the same time.
 
 Try it yourself
 ---------------

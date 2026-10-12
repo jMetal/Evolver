@@ -14,6 +14,16 @@ All the tools are built with the rest of the project:
    mvn clean package
    # produces target/Evolver-<version>-jar-with-dependencies.jar
 
+Stability
+---------
+
+The files of these tools (the request, ``status.yaml`` and ``results.yaml`` of ``cli.training``
+and ``cli.solving``, and the manifest of ``DescribeMain``) are the command-line contract of
+Evolver, and they are stable since Evolver 3.0: within 3.x, a new version may add optional fields
+or new values (another algorithm, problem or indicator), but it does not remove or rename fields,
+nor change what an existing one means. A client written for 3.0 keeps working with any 3.x, and
+can read ``evolverVersion`` from the manifest to use what a later version adds.
+
 TrainingRunnerMain
 -------------------
 
@@ -131,6 +141,31 @@ All the meta-optimizers support it. The asynchronous ``AsyncNSGA-II`` has no gen
 the limit after every evaluation, once the initial population has been evaluated, so it exceeds the
 limit by up to the time of one evaluation, and the evaluations in progress when it stops are
 discarded.
+
+Starting from known configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default the initial population of the meta-optimizer is random. With ``initialConfigurations``
+in its configuration file (a file, or a list of files, with one configuration of the base-level
+algorithm per line, as the files of ``defaultConfigurations/`` and ``tunedConfigurations/``), the
+initial population contains those configurations, and random ones up to its size:
+
+.. code-block:: yaml
+
+   initialConfigurations: defaultConfigurations/NSGAIIDoubleDefault.txt
+   # or several files:
+   # initialConfigurations: [defaultConfigurations/NSGAIIDoubleDefault.txt, my-configurations.txt]
+
+A file is a path, a file of ``src/main/resources/``, or a resource of the jar (the bundled
+configurations work from any directory). Each configuration must be valid in the parameter space of
+the base level, and there cannot be more of them than the population of the meta-optimizer. They
+are accepted by the generational meta-optimizers, NSGA-II, AGE-MOEA and SPEA2, with either encoding:
+``AsyncNSGA-II``, SMPSO and ``RandomSearch`` build their first solutions on their own and reject the
+field. ``METADATA.txt`` records the files (``Initial Configurations:``).
+
+Starting from good configurations can save part of the training, but it also biases the search
+towards them and reduces the diversity of the first generations: how much it helps is a question to
+study, not a recommendation.
 
 Output
 ~~~~~~
@@ -481,6 +516,7 @@ Example output
 
 .. code-block:: yaml
 
+   evolverVersion: '3.0'
    baseAlgorithms:
    - name: NSGA-II
      encoding: Double
@@ -515,12 +551,9 @@ Example output
    - name: SPEA2
      family: EVOLUTIONARY
      supportsFlat: true
-     supportsTree: false
-     operatorParameterSpaceFile: null
-     hardcodedOperatorFlags:
-     - name: mutationProbabilityFactor
-       type: double
-       required: false
+     supportsTree: true
+     operatorParameterSpaceFile: SPEA2MetaDouble.yaml
+     hardcodedOperatorFlags: []
    - name: AsyncNSGA-II
      family: ASYNCHRONOUS
      supportsFlat: true
@@ -594,6 +627,9 @@ Manifest sections
        unknown). A problem is given all its arguments or none: ``{class: DTLZ2, args: [12, 3]}``
    * - ``indicators``
      - Every quality indicator name ``IndicatorRegistry`` resolves, usable in ``indicatorNames``
+   * - ``evolverVersion``
+     - The version of the jar (``3.0``, ``3.1-SNAPSHOT``...), so that a client checks what it can
+       use without parsing the name of the file
    * - ``resourceDirectories``
      - The file names actually present under each reusable resource directory
        (``parameterSpaces``, ``baseLevelConfigurations``, ``metaOptimizerConfigurations``,
@@ -608,3 +644,60 @@ resolve a request (``BaseAlgorithmRegistry``, ``MetaAlgorithmRegistry``, ``Probl
 ``IndicatorRegistry``), plus reflection over the ``BaseLevelConfig``/``FlatMetaSearchConfig``/
 ``TreeMetaSearchConfig``/``TrainingRequest``/``SolveRequest`` records — not a second, hand-maintained copy that
 could drift from the actual resolution logic.
+
+EvaluationServerMain
+--------------------
+
+Starts, inspects and stops an **evaluation server**: a process that evaluates configurations of a
+base-level algorithm sent through an HTTP API, as a training of Evolver evaluates them. External
+configurators (irace, as in :doc:`tutorial E15 <../tutorials/tuning_with_irace>`) can then run
+their experiments in one Java virtual machine instead of starting one per experiment.
+
+The server is configured by a **base-level file**, the ``baseLevel`` of a training request: it gives
+the algorithm, its parameter space, the problems with their reference fronts and evaluations, the
+number of runs and the quality indicators, so an evaluation of the server is the same as one of a
+training on that problem (the indicators of the non-dominated front, normalized with the reference
+front, the median over the runs).
+
+Usage
+~~~~~
+
+.. code-block:: bash
+
+   java -cp target/Evolver-<version>-jar-with-dependencies.jar \
+       org.uma.evolver.cli.evaluation.EvaluationServerMain start TutorialIraceZdtBaseLevel.yaml --threads 16
+   java -cp ... org.uma.evolver.cli.evaluation.EvaluationServerMain status
+   java -cp ... org.uma.evolver.cli.evaluation.EvaluationServerMain stop
+
+- ``start <baseLevel.yaml> [--port 8765] [--threads 12] [--log file] [--state-dir dir]`` starts the
+  server as a background process, waits until it answers and writes a state file
+  (``server-<port>.yaml``: process, port, start time, base-level file, log) in the state directory
+  (``results/evaluation-server`` by default);
+- ``status [--port 8765] [--state-dir dir]`` prints what the server is doing (evaluations done,
+  failed, in progress and waiting), or that it is not running, with exit code 1;
+- ``stop [--port 8765] [--force] [--state-dir dir]`` asks the server to stop after the evaluations
+  in progress; ``--force`` kills its process if it does not answer;
+- ``run <baseLevel.yaml> ...`` runs the server in the foreground (what ``start`` launches).
+
+``--threads`` is the number of evaluations that run at the same time. Each evaluation is a run of
+the base-level algorithm in one thread, so it should be the number of cores to use, and the same
+as the number of requests the client sends at once (irace's ``--parallel``): with more requests
+than threads some wait (``status`` shows them as waiting), with fewer some threads are idle.
+
+API
+~~~
+
+The server listens on the loopback interface only (``127.0.0.1``):
+
+- ``POST /evaluate`` with ``{"configuration": "--name value ...", "problem": "ZDT4", "tool":
+  "irace", "seed": 7}`` (``tool`` and ``seed`` are optional) returns the indicators of the
+  configuration on the problem, ``{"problem": "ZDT4", "EP": ..., "NHV": ..., "timeMs": ...}``; with
+  ``?cost=sum``, their sum as plain text, for configurators that minimize one value. A
+  configuration that fails gets status 422 and the error.
+- ``GET /status`` returns what the server is doing; ``GET /health`` returns ``ok``;
+  ``POST /shutdown`` stops it after the evaluations in progress.
+
+Every evaluation is appended to a CSV log (``evaluations-<port>.csv`` in the state directory by
+default), with its index, the milliseconds since the start, the tool, the problem, the seed, the
+indicators, the time of the run and the configuration. jMetal's random generator is shared by the
+threads, so the seed that a client sends is recorded but does not make an evaluation reproducible.
