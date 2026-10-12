@@ -40,12 +40,12 @@ class EvaluationServerMainIT {
     assertEquals(
         0,
         EvaluationServerMain.execute(
-            join("start", "ComparisonZdtBaseLevel.yaml", "--threads", "2", common)));
+            join("start", "TutorialIraceZdtBaseLevel.yaml", "--threads", "2", common)));
     assertTrue(Files.exists(stateFile));
     assertTrue(Files.readString(stateFile).contains("port: " + port));
     assertEquals(0, EvaluationServerMain.execute(join("status", common)));
     assertEquals(
-        1, EvaluationServerMain.execute(join("start", "ComparisonZdtBaseLevel.yaml", common)));
+        1, EvaluationServerMain.execute(join("start", "TutorialIraceZdtBaseLevel.yaml", common)));
     assertEquals(0, EvaluationServerMain.execute(join("stop", common)));
     assertFalse(Files.exists(stateFile));
     assertEquals(1, EvaluationServerMain.execute(join("status", common)));

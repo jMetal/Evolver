@@ -24,7 +24,7 @@ import java.util.Optional;
  * <pre>{@code
  * java -cp Evolver-*-jar-with-dependencies.jar \
  *     org.uma.evolver.cli.evaluation.EvaluationServerMain \
- *     start TutorialZdtBaseLevel.yaml --threads 12
+ *     start TutorialIraceZdtBaseLevel.yaml --threads 12
  * java -cp ... EvaluationServerMain status
  * java -cp ... EvaluationServerMain stop
  * }</pre>

@@ -1,0 +1,34 @@
+###################################################### -*- mode: r -*- #####
+## irace scenario of tutorial E15 (docs/tutorials/tuning_with_irace.rst) with Evolver's evaluation
+## server: the same as scenario-NSGAII.txt, except that each experiment is sent to the server
+## (target-runner-server) instead of starting a Java virtual machine, and that the cost is the
+## EP + NHV of Evolver's trainings. The server must be running with TutorialIraceZdtBaseLevel.yaml
+## (run.sh starts it when EVOLVER_SERVER is set). The
+## paths are relative to the directory where irace is run from (see run.sh). The full list of
+## options is in irace's user guide.
+############################################################################
+
+## The parameters to tune, generated from NSGAIIDouble.yaml by
+## org.uma.evolver.irace.IraceParameterDescriptionGenerator NSGAIIDouble.yaml Double.
+parameterFile = "parameters-NSGAII.txt"
+
+## Training instances: one line per instance, with the arguments the target runner receives for it.
+trainInstancesDir = ""
+trainInstancesFile = "instances-list-ZDT-server.txt"
+
+## The target runner: a script that sends the experiment to the server and prints the cost.
+targetRunner = "./target-runner-server"
+
+## Budget: the maximum number of experiments. irace needs at least 3640 with this parameter space
+## and these settings, and stops with an "Insufficient budget" error below that.
+maxExperiments = 10000
+
+## Use the instances in the order of the file, in blocks of 5 (the five ZDT problems), so that
+## configurations are always compared after running on whole passes over the training set. With
+## irace's default firstTest (5 blocks) and eachTest (1 block), the first statistical test comes
+## after 25 experiments per configuration, and a new one after each block.
+sampleInstances = 0
+blockSize = 5
+
+## END of scenario file
+############################################################################

@@ -1,0 +1,26 @@
+#!/bin/bash
+## Target runner of irace that evaluates on Evolver's evaluation server (tutorial E15): an experiment
+## (a configuration of NSGA-II on a problem) is sent to the server, which runs it in its own Java
+## virtual machine, so that no virtual machine is started per experiment. Start the server first
+## (run.sh does it when EVOLVER_SERVER is set):
+##     java -cp Evolver-jar-with-dependencies.jar org.uma.evolver.cli.evaluation.EvaluationServerMain \
+##         start TutorialIraceZdtBaseLevel.yaml --threads <the --parallel of irace>
+## irace calls it as: target-runner-server <configuration id> <instance id> <seed> <instance>
+## <parameters...>, where the instance is the name of a problem of the base-level file and the
+## parameters are "--name value" pairs. It prints the cost that irace minimizes, EP + NHV, and exits
+## with an error if the evaluation fails. The port is EVOLVER_SERVER_PORT (8765 by default).
+
+SEED=$3
+INSTANCE=$4
+shift 4
+PORT=${EVOLVER_SERVER_PORT:-8765}
+
+RESPONSE=$(curl --silent --show-error --fail-with-body --max-time 600 \
+    --request POST "http://127.0.0.1:${PORT}/evaluate?cost=sum" \
+    --data "{\"configuration\": \"$*\", \"problem\": \"${INSTANCE}\", \"tool\": \"irace\", \"seed\": ${SEED}}")
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+    echo "target-runner-server: the evaluation failed: ${RESPONSE}" >&2
+    exit 1
+fi
+echo "${RESPONSE}"

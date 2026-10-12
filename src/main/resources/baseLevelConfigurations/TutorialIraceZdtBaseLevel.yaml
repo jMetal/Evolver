@@ -1,0 +1,18 @@
+# Base level of the irace scenario of tutorial E15 (docs/tutorials/tuning_with_irace.rst) for the
+# evaluation server (org.uma.evolver.cli.evaluation.EvaluationServerMain): NSGA-II, population 100,
+# 8000 evaluations on each bi-objective ZDT problem, one run per experiment, as the target runner
+# AutoNSGAIIIraceHVEP does. The server computes the indicators of Evolver's trainings (EP and NHV),
+# and returns their sum to irace.
+algorithmName: NSGA-II
+populationSize: 100
+numberOfIndependentRuns: 1
+yamlParameterSpaceFile: NSGAIIDouble.yaml
+trainingProblemNames: [ZDT1, ZDT2, ZDT3, ZDT4, ZDT6]
+trainingReferenceFrontFileNames:
+  - resources/referenceFronts/ZDT1.csv
+  - resources/referenceFronts/ZDT2.csv
+  - resources/referenceFronts/ZDT3.csv
+  - resources/referenceFronts/ZDT4.csv
+  - resources/referenceFronts/ZDT6.csv
+trainingEvaluations: [8000, 8000, 8000, 8000, 8000]
+indicatorNames: [Epsilon, NormalizedHypervolume]
