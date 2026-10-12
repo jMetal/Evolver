@@ -1,0 +1,8 @@
+# A flat SPEA2 meta-optimizer file without operators, as the files before Evolver 3.0 were: the
+# registry gives SPEA2 its usual operators (SBX, polynomial mutation, binary tournament).
+algorithm: SPEA2
+encoding: flat
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8

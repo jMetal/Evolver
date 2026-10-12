@@ -187,7 +187,7 @@ class MetaAlgorithmRegistryTest {
     @Test
     @DisplayName(
         "given SPEA2 with an offspringPopulationSize operator flag, when resolveFlat is called,"
-            + " then it fails listing the allowed fields")
+            + " then it fails because the offspring population size is fixed")
     void givenSpea2WithOffspringFlag_whenResolveFlatCalled_thenItFails() {
       // Arrange
       var config =
@@ -198,7 +198,22 @@ class MetaAlgorithmRegistryTest {
           assertThrows(
               JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("SPEA2", null, config));
       assertTrue(exception.getMessage().contains("offspringPopulationSize"));
-      assertTrue(exception.getMessage().contains("mutationProbabilityFactor"));
+    }
+
+    @Test
+    @DisplayName(
+        "given SPEA2 with a densityEstimator operator flag, when resolveFlat is called, then it"
+            + " fails because the density estimator is fixed by SPEA2")
+    void givenSpea2WithDensityEstimatorFlag_whenResolveFlatCalled_thenItFails() {
+      // Arrange
+      var config =
+          new FlatMetaSearchConfig("SPEA2", 1000, 50, 1, List.of("--densityEstimator", "crowding"));
+
+      // Act & Assert
+      JMetalException exception =
+          assertThrows(
+              JMetalException.class, () -> MetaAlgorithmRegistry.resolveFlat("SPEA2", null, config));
+      assertTrue(exception.getMessage().contains("densityEstimator"));
     }
   }
 

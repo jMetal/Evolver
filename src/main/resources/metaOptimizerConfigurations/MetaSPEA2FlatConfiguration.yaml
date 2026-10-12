@@ -1,11 +1,10 @@
 # Meta configuration of SPEA2 (flat encoding)
 #
-# MetaSPEA2Builder hardcodes its own operators (SBX crossover, polynomial mutation, strength
-# ranking, KNN density estimator, tournament selection) — only populationSize/maxEvaluations/
-# numberOfCores below and, optionally, mutationProbabilityFactor are configurable. The offspring
-# population size always equals metaPopulationSize. Same recipe as
-# org.uma.evolver.example.training.dtlz.SPEA2OptimizingNSGAIIForProblemDTLZ3, except for the meta
-# population size (the default 50 here, 100 in that example).
+# The operator fields below are parsed against SPEA2MetaDouble.yaml. What defines SPEA2 (strength
+# ranking, k-nearest-neighbour density estimator and its sequential replacement), the offspring
+# population size (always metaPopulationSize) and the result (always the final population) are fixed
+# by MetaAlgorithmRegistry. The operators are set as for NSGA-II; the values below are SPEA2's usual
+# ones, which the registry also uses for any of them that is left out.
 
 algorithm: SPEA2
 encoding: flat
@@ -14,4 +13,15 @@ metaMaxEvaluations: 2000
 metaPopulationSize: 50
 numberOfCores: 8
 
-# mutationProbabilityFactor: 1.0   # optional; defaults to 1.0
+crossover: SBX
+crossoverProbability: 0.9
+crossoverRepairStrategy: bounds
+sbxDistributionIndex: 20.0
+mutation: polynomial
+mutationProbabilityFactor: 1.0
+mutationRepairStrategy: bounds
+polynomialMutationDistributionIndex: 20.0
+selection: tournament
+selectionTournamentSize: 2
+# knnNeighborhoodSize: 1           # optional; defaults to 1
+# knnNormalizeObjectives: false    # optional; defaults to false

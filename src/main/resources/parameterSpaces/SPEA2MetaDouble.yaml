@@ -1,10 +1,11 @@
-# Parameter space for the meta-level SPEA2 built by org.uma.evolver.meta.builder.MetaSPEA2Builder
-# (flat [0,1]^n encoding). SPEA2 is expressed as a DoubleRDEMOEA configuration, so this space keeps
-# the top-level parameter names org.uma.evolver.algorithm.rdemoea.BaseRDEMOEA#build() requires, but
-# narrows each one to the single choice MetaSPEA2Builder hardcodes (SBX crossover, polynomial
-# mutation, strength ranking, KNN density estimator, tournament selection, sequential removal).
-# Only the numeric values those choices carry are left open, and MetaSPEA2Builder fixes them too,
-# except for mutationProbabilityFactor.
+# Parameter space for the meta-level SPEA2 with the flat [0,1]^n encoding, used by cli.training's
+# MetaAlgorithmRegistry and by org.uma.evolver.meta.builder.MetaSPEA2Builder. SPEA2 is expressed as
+# a DoubleRDEMOEA configuration: what defines it, strength ranking and the k-nearest-neighbour density
+# estimator (with its sequential replacement), has a single value here, and the registry fixes it;
+# the variation and the selection are those of NSGAIIMetaDouble.yaml, set in the meta-optimizer
+# configuration file as for NSGA-II (the registry gives them SPEA2's usual values when they are
+# absent: SBX, polynomial mutation, binary tournament), and so are knnNeighborhoodSize (1 by
+# default) and knnNormalizeObjectives (false by default).
 #
 # A meta-optimizer never uses an external archive (algorithmResult is always population), and its
 # offspring population size always equals its population size, so that each generation's offspring
@@ -65,6 +66,12 @@ variation:
                 sbxDistributionIndex:
                   type: double
                   range: [5.0, 400.0]
+            blxAlpha:
+              conditionalParameters:
+                blxAlphaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            wholeArithmetic: {}
 
         mutation:
           type: categorical
@@ -79,6 +86,11 @@ variation:
                 round: {}
                 bounds: {}
           values:
+            uniform:
+              conditionalParameters:
+                uniformMutationPerturbation:
+                  type: double
+                  range: [0.0, 1.0]
             polynomial:
               conditionalParameters:
                 polynomialMutationDistributionIndex:

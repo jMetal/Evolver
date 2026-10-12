@@ -1,10 +1,10 @@
 package org.uma.evolver.cli.training;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.uma.evolver.algorithm.agemoea.DoubleAGEMOEA;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.algorithm.rdemoea.DoubleRDEMOEA;
 import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.algorithm.TreeAGEMOEA;
 import org.uma.evolver.meta.algorithm.TreeNSGAII;
@@ -72,10 +72,10 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       a full {@code BaseLevelAlgorithm} with its own operator
  *       catalogue exposed via {@code operatorFlags}. {@code "AGE-MOEA"} is built the same way,
  *       directly on {@link DoubleAGEMOEA}, with the same operator catalogue plus its
- *       environmental selection variant ({@code agemoeaVariant}). {@code "SPEA2"} is built via
- *       {@link MetaSPEA2Builder}, which hardcodes its own operators (SBX crossover, polynomial
- *       mutation, strength ranking, KNN density estimator, tournament selection) and exposes only
- *       {@code mutationProbabilityFactor} as an optional {@code operatorFlags} entry.
+ *       environmental selection variant ({@code agemoeaVariant}). {@code "SPEA2"} is built the same way too,
+ *       on {@link DoubleRDEMOEA} configured as SPEA2: strength ranking and the k-nearest-neighbour
+ *       density estimator are fixed, and the operators are those of NSGA-II, with SPEA2's usual
+ *       values (SBX, polynomial mutation, binary tournament) when the request omits them.
  *   <li>{@link Family#ASYNCHRONOUS}: built via {@link #resolveFlatAsync}, returns an
  *       {@link AsynchronousMultiThreadedNSGAII} (currently {@code "AsyncNSGA-II"}; it hardcodes
  *       its own selection/replacement, so only its crossover/mutation operators are configurable,
@@ -110,8 +110,8 @@ final class MetaAlgorithmRegistry {
 
   /**
    * An operator flag {@link #resolveFlat}/{@link #resolveFlatPso} accept outside the algorithm's
-   * own {@code operatorParameterSpaceFile} (null for both here) — see {@link #buildSPEA2}, the
-   * only registered algorithm with any.
+   * own {@code operatorParameterSpaceFile}; no registered algorithm has any today, the field is
+   * kept for the manifest of {@link DescribeMain}.
    */
   record OperatorFlagDescriptor(String name, String type, boolean required) {}
 
@@ -121,10 +121,10 @@ final class MetaAlgorithmRegistry {
    * @param operatorParameterSpaceFile the {@code ParameterSpace} YAML file backing this
    *     algorithm's operator catalogue (same format as a base-level algorithm's own
    *     {@code yamlParameterSpaceFile}), or null when the algorithm hardcodes its operators
-   *     instead ({@code SPEA2}, {@code SMPSO})
+   *     instead ({@code SMPSO})
    * @param hardcodedOperatorFlags the operator flags accepted despite there being no {@code
    *     operatorParameterSpaceFile} — empty unless {@code operatorParameterSpaceFile} is null and
-   *     the algorithm still exposes something (only {@code SPEA2} today)
+   *     the algorithm still exposes something (none today)
    */
   record MetaAlgorithmDescriptor(
       String name,
@@ -140,11 +140,7 @@ final class MetaAlgorithmRegistry {
           new MetaAlgorithmDescriptor(
               "AGE-MOEA", Family.EVOLUTIONARY, true, "AGEMOEAMetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
-              "SPEA2",
-              Family.EVOLUTIONARY,
-              true,
-              null,
-              List.of(new OperatorFlagDescriptor("mutationProbabilityFactor", "double", false))),
+              "SPEA2", Family.EVOLUTIONARY, true, "SPEA2MetaDouble.yaml", List.of()),
           new MetaAlgorithmDescriptor(
               "AsyncNSGA-II",
               Family.ASYNCHRONOUS,
@@ -176,7 +172,9 @@ final class MetaAlgorithmRegistry {
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String AGEMOEA_TREE_PARAMETER_SPACE_FILE = "AGEMOEAMetaTree.yaml";
 
-  /** The parameter space of the tree-encoded SPEA2: an RDEMOEA configured as SPEA2. */
+  /** The parameter spaces of SPEA2, flat and tree: an RDEMOEA configured as SPEA2. */
+  private static final String SPEA2_PARAMETER_SPACE_FILE = "SPEA2MetaDouble.yaml";
+
   private static final String SPEA2_TREE_PARAMETER_SPACE_FILE = "SPEA2MetaTree.yaml";
 
   /**
@@ -184,18 +182,39 @@ final class MetaAlgorithmRegistry {
    * density estimator and the replacement by ranking and density (the only one SPEA2 has). The rest
    * is configurable as in NSGA-II: the tree operators and the selection, plus the neighbourhood size
    * of the density estimator and whether it normalizes the objectives, which default to {@link
-   * #SPEA2_TREE_DEFAULT_FLAGS}.
+   * #SPEA2_DEFAULT_FLAGS}.
    */
-  private static final List<String> SPEA2_TREE_FIXED_FLAGS =
+  private static final List<String> SPEA2_FIXED_FLAGS =
       List.of(
           "--ranking", "strengthRanking",
           "--densityEstimator", "knn",
           "--replacement", "rankingAndDensityEstimator",
           "--removalPolicy", "sequential");
 
-  /** The values of SPEA2's density estimator when the request does not set them (as in SPEA2). */
-  private static final List<String> SPEA2_TREE_DEFAULT_FLAGS =
+  /**
+   * The values of SPEA2's density estimator when the request does not set them (as in SPEA2), for
+   * both encodings.
+   */
+  private static final List<String> SPEA2_DEFAULT_FLAGS =
       List.of("--knnNeighborhoodSize", "1", "--knnNormalizeObjectives", "false");
+
+  /**
+   * The operators of the flat SPEA2 when the request does not set them: those that {@link
+   * MetaSPEA2Builder} uses, so that a meta-optimizer file without operators keeps working. Each
+   * flag is added only when the request does not give it.
+   */
+  private static final List<String> SPEA2_FLAT_DEFAULT_FLAGS =
+      List.of(
+          "--crossover", "SBX",
+          "--crossoverProbability", "0.9",
+          "--crossoverRepairStrategy", "bounds",
+          "--sbxDistributionIndex", "20.0",
+          "--mutation", "polynomial",
+          "--mutationProbabilityFactor", "1.0",
+          "--mutationRepairStrategy", "bounds",
+          "--polynomialMutationDistributionIndex", "20.0",
+          "--selection", "tournament",
+          "--selectionTournamentSize", "2");
 
   /** Hardcoded, not user-facing — see class javadoc. */
   private static final String ASYNC_NSGAII_PARAMETER_SPACE_FILE = "AsyncNSGAIIMetaDouble.yaml";
@@ -381,23 +400,39 @@ final class MetaAlgorithmRegistry {
 
   private static EvolutionaryAlgorithm<DoubleSolution> buildSPEA2(
       MetaOptimizationProblem<?> problem, FlatMetaSearchConfig config) {
+    ParameterSpace parameterSpace =
+        new YAMLParameterSpace(SPEA2_PARAMETER_SPACE_FILE, new DoubleParameterFactory());
     int populationSize =
         config.metaPopulationSize() == null ? DEFAULT_POPULATION_SIZE : config.metaPopulationSize();
 
-    requireOnlyFlags("SPEA2", config.operatorFlags(), List.of("--mutationProbabilityFactor"));
+    String[] fixedFlags = concat(fixedFlags(populationSize), SPEA2_FIXED_FLAGS);
+    requireNoFixedFlags("SPEA2", config.operatorFlags(), fixedFlags);
+    String[] flags = concat(fixedFlags, config.operatorFlags());
+    flags = withDefaults(flags, config.operatorFlags(), SPEA2_DEFAULT_FLAGS);
+    flags = withDefaults(flags, config.operatorFlags(), SPEA2_FLAT_DEFAULT_FLAGS);
 
-    var builder =
-        new MetaSPEA2Builder(problem)
-            .setPopulationSize(populationSize)
-            .setNumberOfCores(config.numberOfCores());
-    if (config.boundedByComputingTime()) {
-      builder.setMaxComputingTimeMinutes(config.metaMaxComputingTimeMinutes());
-    } else {
-      builder.setMaxEvaluations(config.metaMaxEvaluations());
+    DoubleRDEMOEA metaSPEA2 =
+        new DoubleRDEMOEA(problem, populationSize, nominalEvaluations(config), parameterSpace);
+    metaSPEA2.parse(flags);
+
+    EvolutionaryAlgorithm<DoubleSolution> spea2 = metaSPEA2.build();
+    spea2.evaluation(new MultiThreadedEvaluation<>(config.numberOfCores(), problem));
+    applyComputingTimeLimit(spea2, config);
+    return spea2;
+  }
+
+  /**
+   * {@code flags} plus each pair of {@code defaults} whose flag the request does not give.
+   */
+  private static String[] withDefaults(
+      String[] flags, List<String> requestFlags, List<String> defaults) {
+    String[] result = flags;
+    for (int i = 0; i < defaults.size(); i += 2) {
+      if (!requestFlags.contains(defaults.get(i))) {
+        result = concat(result, defaults.subList(i, i + 2));
+      }
     }
-    optionalDoubleFlag(config.operatorFlags(), "--mutationProbabilityFactor")
-        .ifPresent(builder::setMutationProbabilityFactor);
-    return builder.build();
+    return result;
   }
 
   private static ParticleSwarmOptimizationAlgorithm buildSMPSO(
@@ -467,15 +502,6 @@ final class MetaAlgorithmRegistry {
     }
   }
 
-  private static Optional<Double> optionalDoubleFlag(List<String> flags, String flagName) {
-    return optionalFlagValue(flags, flagName).map(Double::parseDouble);
-  }
-
-  private static Optional<String> optionalFlagValue(List<String> flags, String flagName) {
-    int index = flags.indexOf(flagName);
-    return index < 0 ? Optional.empty() : Optional.of(flags.get(index + 1));
-  }
-
   /**
    * Fails unless {@code algorithmName} is registered with {@code supportsTree}, listing the
    * algorithms that are.
@@ -514,17 +540,13 @@ final class MetaAlgorithmRegistry {
     int populationSize = config.metaPopulationSize();
     String[] fixedFlags = fixedTreeFlags(populationSize);
     if ("SPEA2".equals(algorithmName)) {
-      fixedFlags = concat(fixedFlags, SPEA2_TREE_FIXED_FLAGS);
+      fixedFlags = concat(fixedFlags, SPEA2_FIXED_FLAGS);
     }
     requireNoFixedFlags(algorithmName, config.operatorFlags(), fixedFlags);
 
     String[] flags = concat(fixedFlags, config.operatorFlags());
     if ("SPEA2".equals(algorithmName)) {
-      for (int i = 0; i < SPEA2_TREE_DEFAULT_FLAGS.size(); i += 2) {
-        if (!config.operatorFlags().contains(SPEA2_TREE_DEFAULT_FLAGS.get(i))) {
-          flags = concat(flags, SPEA2_TREE_DEFAULT_FLAGS.subList(i, i + 2));
-        }
-      }
+      flags = withDefaults(flags, config.operatorFlags(), SPEA2_DEFAULT_FLAGS);
     }
     int nominalEvaluations = nominalEvaluations(config);
     EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
