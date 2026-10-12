@@ -5,7 +5,7 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
-2.5-SNAPSHOT
+3.0-SNAPSHOT
 ------------
 
 Added
