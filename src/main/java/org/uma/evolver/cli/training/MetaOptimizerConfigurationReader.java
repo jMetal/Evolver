@@ -43,7 +43,8 @@ public final class MetaOptimizerConfigurationReader {
           "metaMaxEvaluations",
           "metaMaxComputingTimeMinutes",
           "metaPopulationSize",
-          "numberOfCores");
+          "numberOfCores",
+          "initialConfigurations");
 
   private MetaOptimizerConfigurationReader() {}
 
@@ -65,7 +66,8 @@ public final class MetaOptimizerConfigurationReader {
               metaMaxComputingTimeMinutes(data, label),
               optionalIntValue(data, "metaPopulationSize"),
               intValue(data, label, "numberOfCores"),
-              operatorFlags(data));
+              operatorFlags(data),
+              initialConfigurations(data, label));
       case "tree" -> {
         rejectOffspringSize(data, label);
         yield new TreeMetaSearchConfig(
@@ -74,7 +76,8 @@ public final class MetaOptimizerConfigurationReader {
               metaMaxComputingTimeMinutes(data, label),
             intValue(data, "metaPopulationSize", MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE),
             intValue(data, label, "numberOfCores"),
-            operatorFlags(data));
+            operatorFlags(data),
+            initialConfigurations(data, label));
       }
       default ->
           throw new JMetalException(
@@ -140,6 +143,27 @@ public final class MetaOptimizerConfigurationReader {
               + "': metaOffspringSize. The offspring population size always equals"
               + " metaPopulationSize");
     }
+  }
+
+  /**
+   * The optional {@code initialConfigurations}: a file name, or a list of them (each a file of
+   * configurations, one per line, read with {@code ConfigurationFileReader}).
+   */
+  private static List<String> initialConfigurations(Map<String, Object> data, String label) {
+    Object value = data.get("initialConfigurations");
+    if (value == null) {
+      return List.of();
+    }
+    if (value instanceof String file) {
+      return List.of(file);
+    }
+    if (value instanceof List<?> files && files.stream().allMatch(String.class::isInstance)) {
+      return files.stream().map(String.class::cast).toList();
+    }
+    throw new JMetalException(
+        "initialConfigurations in meta-optimizer configuration '"
+            + label
+            + "' must be a file name or a list of file names");
   }
 
   private static List<String> operatorFlags(Map<String, Object> data) {

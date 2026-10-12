@@ -1,5 +1,7 @@
 package org.uma.evolver.cli.training;
 
+import java.util.List;
+
 /**
  * How the meta-optimizer searches the base-level algorithm's parameter space — the part of a
  * {@link TrainingRequest} that depends on the meta-level encoding, loaded from a named,
@@ -42,4 +44,11 @@ public sealed interface MetaSearchConfig permits FlatMetaSearchConfig, TreeMetaS
   }
 
   int numberOfCores();
+
+  /**
+   * The files of configurations that the initial population of the meta-optimizer starts from
+   * (empty: it starts at random). Only the generational meta-optimizers (NSGA-II, AGE-MOEA, SPEA2)
+   * accept them.
+   */
+  List<String> initialConfigurations();
 }

@@ -73,9 +73,11 @@ class TrainingRunnerSmokeIT {
     return new FlatMetaSearchConfig(
         metaSearch.algorithm(),
         SMOKE_META_MAX_EVALUATIONS,
+        0.0,
         SMOKE_META_POPULATION_SIZE,
         SMOKE_NUMBER_OF_CORES,
-        metaSearch.operatorFlags());
+        metaSearch.operatorFlags(),
+        metaSearch.initialConfigurations());
   }
 
   private static TreeMetaSearchConfig smokeTreeMetaSearch(String fileName) {
@@ -84,9 +86,11 @@ class TrainingRunnerSmokeIT {
     return new TreeMetaSearchConfig(
         metaSearch.algorithm(),
         SMOKE_META_MAX_EVALUATIONS,
+        0.0,
         SMOKE_META_POPULATION_SIZE,
         SMOKE_NUMBER_OF_CORES,
-        metaSearch.operatorFlags());
+        metaSearch.operatorFlags(),
+        metaSearch.initialConfigurations());
   }
 
   private static void assertRunFinished(TrainingRequest request, Path tempDir) throws IOException {
@@ -231,6 +235,26 @@ class TrainingRunnerSmokeIT {
       // Arrange
       BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
       FlatMetaSearchConfig metaSearch = smokeFlatMetaSearch("MetaSPEA2FlatConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given SPEA2 (flat encoding) without operators")
+  class Spea2FlatDefaultOperators {
+
+    @Test
+    @DisplayName("when run, then it finishes and writes output files")
+    void whenRun_thenItFinishesAndWritesOutputFiles(@TempDir Path tempDir) throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaSPEA2FlatDefaultOperatorsConfiguration.yaml");
       TrainingRequest request =
           new TrainingRequest(
               baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
@@ -392,6 +416,74 @@ class TrainingRunnerSmokeIT {
 
       // Act & Assert
       assertRunFinished(request, tempDir);
+    }
+  }
+
+  @Nested
+  @DisplayName("Given initial configurations")
+  class InitialConfigurations {
+
+    @Test
+    @DisplayName(
+        "when NSGA-II (flat encoding) starts from the default configuration, then it finishes and"
+            + " METADATA.txt records it")
+    void whenFlatNsgaIIStartsFromTheDefault_thenItFinishes(@TempDir Path tempDir)
+        throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          smokeFlatMetaSearch("MetaNSGAIIFlatSeededConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+      assertTrue(
+          Files.readString(tempDir.resolve("output/METADATA.txt"))
+              .contains("Initial Configurations: defaultConfigurations/NSGAIIDoubleDefault.txt"));
+    }
+
+    @Test
+    @DisplayName("when NSGA-II (tree encoding) starts from the default configuration, then it finishes")
+    void whenTreeNsgaIIStartsFromTheDefault_thenItFinishes(@TempDir Path tempDir)
+        throws IOException {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      TreeMetaSearchConfig metaSearch =
+          smokeTreeMetaSearch("MetaNSGAIITreeSeededConfiguration.yaml");
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      assertRunFinished(request, tempDir);
+    }
+
+    @Test
+    @DisplayName("when RandomSearch is given initial configurations, then the training fails")
+    void whenRandomSearchIsGivenInitialConfigurations_thenTheTrainingFails(@TempDir Path tempDir) {
+      // Arrange
+      BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
+      FlatMetaSearchConfig metaSearch =
+          new FlatMetaSearchConfig(
+              "RandomSearch",
+              SMOKE_META_MAX_EVALUATIONS,
+              0.0,
+              null,
+              SMOKE_NUMBER_OF_CORES,
+              List.of(),
+              List.of("defaultConfigurations/NSGAIIDoubleDefault.txt"));
+      TrainingRequest request =
+          new TrainingRequest(
+              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+
+      // Act & Assert
+      var exception =
+          assertThrows(
+              RuntimeException.class,
+              () -> new TrainingRunner(false).run(request, tempDir.resolve("status.yaml")));
+      assertTrue(exception.getMessage().contains("initialConfigurations"));
     }
   }
 

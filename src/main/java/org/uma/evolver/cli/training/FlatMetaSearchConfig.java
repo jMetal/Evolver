@@ -20,6 +20,9 @@ import java.util.List;
  *     against an internal, per-algorithm parameter space that {@link MetaAlgorithmRegistry} owns
  *     — not user-facing, since a meta-optimizer's legal operator catalogue does not vary between
  *     requests.
+ * @param initialConfigurations the files of configurations of the base-level algorithm (one per
+ *     line, in the format of {@code ConfigurationFileReader}) that the initial population of the
+ *     meta-optimizer starts from; empty to start at random
  */
 public record FlatMetaSearchConfig(
     String algorithm,
@@ -27,8 +30,31 @@ public record FlatMetaSearchConfig(
     double metaMaxComputingTimeMinutes,
     Integer metaPopulationSize,
     int numberOfCores,
-    List<String> operatorFlags)
+    List<String> operatorFlags,
+    List<String> initialConfigurations)
     implements MetaSearchConfig {
+
+  public FlatMetaSearchConfig {
+    initialConfigurations = List.copyOf(initialConfigurations);
+  }
+
+  /** A configuration without initial configurations (the meta-optimizer starts at random). */
+  public FlatMetaSearchConfig(
+      String algorithm,
+      int metaMaxEvaluations,
+      double metaMaxComputingTimeMinutes,
+      Integer metaPopulationSize,
+      int numberOfCores,
+      List<String> operatorFlags) {
+    this(
+        algorithm,
+        metaMaxEvaluations,
+        metaMaxComputingTimeMinutes,
+        metaPopulationSize,
+        numberOfCores,
+        operatorFlags,
+        List.of());
+  }
 
   /** A configuration bounded by evaluations. */
   public FlatMetaSearchConfig(

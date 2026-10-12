@@ -23,7 +23,41 @@ public record MetaOptimizerConfig(
     String evaluationBudgetStrategy,
 
     // Parameter space
-    String yamlParameterSpaceFile) {
+    String yamlParameterSpaceFile,
+
+    // Files of configurations that the initial population starts from (empty: random)
+    List<String> initialConfigurations) {
+
+    public MetaOptimizerConfig {
+        initialConfigurations = List.copyOf(initialConfigurations);
+    }
+
+    /** A configuration whose initial population is random. */
+    public MetaOptimizerConfig(
+        String metaOptimizerName,
+        int metaMaxEvaluations,
+        double metaMaxComputingTimeMinutes,
+        int metaPopulationSize,
+        int numberOfCores,
+        String baseLevelAlgorithmName,
+        int baseLevelPopulationSize,
+        int baseLevelMaxEvaluations,
+        String evaluationBudgetStrategy,
+        String yamlParameterSpaceFile) {
+        this(metaOptimizerName, metaMaxEvaluations, metaMaxComputingTimeMinutes, metaPopulationSize,
+            numberOfCores, baseLevelAlgorithmName, baseLevelPopulationSize, baseLevelMaxEvaluations,
+            evaluationBudgetStrategy, yamlParameterSpaceFile, List.of());
+    }
+
+    /**
+     * The line of METADATA.txt that tells where the initial population comes from: the files of
+     * configurations it starts from, or nothing when it is random.
+     */
+    public List<String> initialConfigurationLines() {
+        return initialConfigurations.isEmpty()
+            ? List.of()
+            : List.of("Initial Configurations: " + String.join(", ", initialConfigurations));
+    }
 
     /**
      * Whether the meta-optimizer is bounded by computing time (and not by evaluations).
@@ -80,6 +114,7 @@ public record MetaOptimizerConfig(
         private int baseLevelMaxEvaluations = 0;
         private String evaluationBudgetStrategy = "Unknown";
         private String yamlParameterSpaceFile = "Unknown";
+        private List<String> initialConfigurations = List.of();
 
         public Builder metaOptimizerName(String name) {
             this.metaOptimizerName = name;
@@ -135,6 +170,11 @@ public record MetaOptimizerConfig(
             return this;
         }
 
+        public Builder initialConfigurations(List<String> files) {
+            this.initialConfigurations = List.copyOf(files);
+            return this;
+        }
+
         public MetaOptimizerConfig build() {
             if (metaMaxComputingTimeMinutes != 0.0) {
                 ComputingTimeLimit.checkMinutes(metaMaxComputingTimeMinutes);
@@ -150,7 +190,8 @@ public record MetaOptimizerConfig(
                 baseLevelPopulationSize,
                 baseLevelMaxEvaluations,
                 evaluationBudgetStrategy,
-                yamlParameterSpaceFile);
+                yamlParameterSpaceFile,
+                initialConfigurations);
         }
     }
 }

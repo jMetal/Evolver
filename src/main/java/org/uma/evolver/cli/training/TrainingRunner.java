@@ -1,7 +1,10 @@
 package org.uma.evolver.cli.training;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +18,8 @@ import org.uma.evolver.cli.ProblemSpec;
 import org.uma.evolver.cli.RunStatusWriter;
 import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
+import org.uma.evolver.meta.encoding.util.ConfigurationEncoding;
+import org.uma.evolver.meta.encoding.util.SeededSolutionsCreation;
 import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.output.ConsolidatedOutputResults;
 import org.uma.evolver.meta.output.MetaOptimizerConfig;
@@ -25,6 +30,7 @@ import org.uma.evolver.meta.problem.TreeMetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConfigurationFileReader;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.ParticleSwarmOptimizationAlgorithm;
 import org.uma.jmetal.parallel.asynchronous.algorithm.impl.AsynchronousMultiThreadedNSGAII;
@@ -42,8 +48,8 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
  * the {@code org.uma.evolver.example.training} reference examples — one pipeline per meta-level
  * encoding (see {@link FlatMetaSearchConfig}, {@link TreeMetaSearchConfig}).
  *
- * <p>Study prototype for uniformizing Evolver's training runners: this class replaces hardcoded
- * Java constants and an ad hoc {@code main(String[] args)} with a single structured input
+ * <p>It replaces the hardcoded Java constants and the ad hoc {@code main(String[] args)} of the
+ * training examples with a single structured input
  * ({@link TrainingRequest}) and a polled YAML status file, so it can be driven by an external
  * process (e.g. a GUI) without recompiling. It runs headless by default — a live
  * {@link TrainingFrontPlotObserver} is registered only when
@@ -115,6 +121,7 @@ public class TrainingRunner {
               baseLevel.extraConfig());
       EvaluationBudgetStrategy evaluationBudgetStrategy =
           new FixedEvaluationsStrategy(trainingSet.evaluationsToOptimize());
+      List<String[]> seeds = initialConfigurations(metaSearch, baseLevelParameterSpace);
 
       return switch (metaSearch) {
         case FlatMetaSearchConfig flat ->
@@ -127,6 +134,7 @@ public class TrainingRunner {
                       baseAlgorithm,
                       evaluationBudgetStrategy,
                       flat,
+                      seeds,
                       statusWriter,
                       request.outputDirectory(),
                       request.writeFrequency(),
@@ -185,6 +193,7 @@ public class TrainingRunner {
                 baseLevelParameterSpace,
                 evaluationBudgetStrategy,
                 tree,
+                seeds,
                 statusWriter,
                 request.outputDirectory(),
                 request.writeFrequency(),
@@ -205,6 +214,7 @@ public class TrainingRunner {
       BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
+      List<String[]> seeds,
       RunStatusWriter statusWriter,
       String outputDirectory,
       int writeFrequency,
@@ -223,6 +233,28 @@ public class TrainingRunner {
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         MetaAlgorithmRegistry.resolveFlat(metaSearch.algorithm(), metaOptimizationProblem, metaSearch);
+    int metaPopulationSize =
+        metaSearch.metaPopulationSize() == null
+            ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
+            : metaSearch.metaPopulationSize();
+    if (!seeds.isEmpty()) {
+      List<DoubleSolution> encoded =
+          seeds.stream()
+              .map(
+                  configuration -> {
+                    DoubleSolution solution = metaOptimizationProblem.createSolution();
+                    List<Double> variables =
+                        ConfigurationEncoding.toFlat(
+                            configuration, metaOptimizationProblem.parameters());
+                    for (int i = 0; i < variables.size(); i++) {
+                      solution.variables().set(i, variables.get(i));
+                    }
+                    return solution;
+                  })
+              .toList();
+      nsgaii.createInitialPopulation(
+          new SeededSolutionsCreation<>(metaOptimizationProblem, metaPopulationSize, encoded));
+    }
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
@@ -238,6 +270,7 @@ public class TrainingRunner {
             .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .initialConfigurations(metaSearch.initialConfigurations())
             .build();
 
     var outputResults =
@@ -319,6 +352,7 @@ public class TrainingRunner {
             .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .initialConfigurations(metaSearch.initialConfigurations())
             .build();
 
     var outputResults =
@@ -404,6 +438,7 @@ public class TrainingRunner {
             .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .initialConfigurations(metaSearch.initialConfigurations())
             .build();
 
     var outputResults =
@@ -483,6 +518,7 @@ public class TrainingRunner {
             .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .initialConfigurations(metaSearch.initialConfigurations())
             .build();
 
     var outputResults =
@@ -531,6 +567,7 @@ public class TrainingRunner {
       YAMLParameterSpace baseLevelParameterSpace,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       TreeMetaSearchConfig metaSearch,
+      List<String[]> seeds,
       RunStatusWriter statusWriter,
       String outputDirectory,
       int writeFrequency,
@@ -551,7 +588,14 @@ public class TrainingRunner {
             baseLevel.numberOfIndependentRuns(),
             treeSolutionGenerator);
 
-    TreeEngine engine = resolveTreeEngine(metaSearch, metaProblem);
+    List<DerivationTreeSolution> encoded =
+        seeds.stream()
+            .map(
+                configuration ->
+                    ConfigurationEncoding.toTree(
+                        configuration, baseLevelParameterSpace, metaProblem.numberOfObjectives()))
+            .toList();
+    TreeEngine engine = resolveTreeEngine(metaSearch, metaProblem, encoded);
     boolean randomSearch =
         MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
             == MetaAlgorithmRegistry.Family.RANDOM_SEARCH;
@@ -569,6 +613,7 @@ public class TrainingRunner {
             .baseLevelMaxEvaluations(trainingSet.evaluationsToOptimize().get(0))
             .evaluationBudgetStrategy(evaluationBudgetStrategy.toString())
             .yamlParameterSpaceFile(baseLevel.yamlParameterSpaceFile())
+            .initialConfigurations(metaSearch.initialConfigurations())
             .build();
 
     var outputResults =
@@ -617,6 +662,66 @@ public class TrainingRunner {
       Observable<Map<String, Object>> observable) {}
 
   /**
+   * The configurations of the {@code initialConfigurations} files of the meta-optimizer, each
+   * checked against the parameter space of the base-level algorithm. Only the generational
+   * meta-optimizers accept them: the others build their first solutions on their own.
+   */
+  private static List<String[]> initialConfigurations(
+      MetaSearchConfig metaSearch, YAMLParameterSpace baseLevelParameterSpace) throws IOException {
+    if (metaSearch.initialConfigurations().isEmpty()) {
+      return List.of();
+    }
+    if (MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
+        != MetaAlgorithmRegistry.Family.EVOLUTIONARY) {
+      throw new JMetalException(
+          "initialConfigurations is only accepted by the generational meta-optimizers (NSGA-II,"
+              + " AGE-MOEA, SPEA2), not by "
+              + metaSearch.algorithm());
+    }
+    List<String[]> configurations = new ArrayList<>();
+    for (String file : metaSearch.initialConfigurations()) {
+      for (String line : configurationLines(file)) {
+        String[] configuration = line.trim().split("\\s+");
+        try {
+          var parameterSpace = baseLevelParameterSpace.createInstance();
+          parameterSpace.topLevelParameters().forEach(parameter -> parameter.parse(configuration));
+        } catch (RuntimeException e) {
+          throw new JMetalException(
+              "An initial configuration of "
+                  + file
+                  + " is not valid in the parameter space of the base level: "
+                  + e.getMessage());
+        }
+        configurations.add(configuration);
+      }
+    }
+    return configurations;
+  }
+
+  /**
+   * The configurations of a file, one per line: a path, a file of {@code src/main/resources}
+   * (through {@link ConfigurationFileReader}), or a resource of the jar such as {@code
+   * defaultConfigurations/NSGAIIDoubleDefault.txt}, so that the bundled files also work outside the
+   * repository.
+   */
+  private static List<String> configurationLines(String file) throws IOException {
+    try {
+      return new ConfigurationFileReader(file).getAllConfigurations();
+    } catch (IOException notOnDisk) {
+      try (InputStream stream = TrainingRunner.class.getClassLoader().getResourceAsStream(file)) {
+        if (stream == null) {
+          throw notOnDisk;
+        }
+        return new String(stream.readAllBytes(), StandardCharsets.UTF_8)
+            .lines()
+            .map(String::trim)
+            .filter(line -> !line.isEmpty())
+            .toList();
+      }
+    }
+  }
+
+  /**
    * The meta-evaluations to report at the end of a run: the limit when the meta-optimizer is
    * bounded by evaluations, and those actually performed when it is bounded by computing time.
    */
@@ -627,11 +732,17 @@ public class TrainingRunner {
   }
 
   private static TreeEngine resolveTreeEngine(
-      TreeMetaSearchConfig metaSearch, TreeMetaOptimizationProblem<?> metaProblem) {
+      TreeMetaSearchConfig metaSearch,
+      TreeMetaOptimizationProblem<?> metaProblem,
+      List<DerivationTreeSolution> seeds) {
     return switch (MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())) {
       case EVOLUTIONARY -> {
         EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
             MetaAlgorithmRegistry.resolveTree(metaSearch.algorithm(), metaProblem, metaSearch);
+        if (!seeds.isEmpty()) {
+          algorithm.createInitialPopulation(
+              new SeededSolutionsCreation<>(metaProblem, metaSearch.metaPopulationSize(), seeds));
+        }
         yield new TreeEngine(
             algorithm::run, algorithm::result, algorithm::numberOfEvaluations, algorithm.observable());
       }

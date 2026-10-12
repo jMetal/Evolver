@@ -251,6 +251,10 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writer.newLine();
       writer.write("Cores: " + config.numberOfCores());
       writer.newLine();
+      for (String line : config.initialConfigurationLines()) {
+        writer.write(line);
+        writer.newLine();
+      }
       writer.newLine();
 
       writer.write("--- Base-Level Algorithm ---");

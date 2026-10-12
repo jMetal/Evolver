@@ -1,0 +1,19 @@
+# NSGA-II (tree encoding) seeded with the default configuration of NSGA-II (smoke test of initialConfigurations).
+#
+# The operator fields below are parsed against NSGAIIMetaTree.yaml. Crossover (subtree), mutation
+# (tree), the offspring population size (always metaPopulationSize) and the result (always the
+# final population) are fixed by MetaAlgorithmRegistry.
+
+algorithm: NSGA-II
+encoding: tree
+
+metaMaxEvaluations: 2000
+metaPopulationSize: 50
+numberOfCores: 8
+
+crossoverProbability: 0.9
+mutationProbability: 1.0
+mutationDistributionIndex: 5.0   # provisional; its value is still to be studied
+selection: tournament
+selectionTournamentSize: 2
+initialConfigurations: [defaultConfigurations/NSGAIIDoubleDefault.txt]

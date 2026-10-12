@@ -22,6 +22,9 @@ import java.util.List;
  *     ...]} pairs taken directly from the meta-optimizer configuration file — same convention as
  *     {@link FlatMetaSearchConfig#operatorFlags()}, parsed against a tree-specific parameter space
  *     that {@link MetaAlgorithmRegistry} owns
+ * @param initialConfigurations the files of configurations of the base-level algorithm (one per
+ *     line, in the format of {@code ConfigurationFileReader}) that the initial population of the
+ *     meta-optimizer starts from; empty to start at random
  */
 public record TreeMetaSearchConfig(
     String algorithm,
@@ -29,8 +32,31 @@ public record TreeMetaSearchConfig(
     double metaMaxComputingTimeMinutes,
     int metaPopulationSize,
     int numberOfCores,
-    List<String> operatorFlags)
+    List<String> operatorFlags,
+    List<String> initialConfigurations)
     implements MetaSearchConfig {
+
+  public TreeMetaSearchConfig {
+    initialConfigurations = List.copyOf(initialConfigurations);
+  }
+
+  /** A configuration without initial configurations (the meta-optimizer starts at random). */
+  public TreeMetaSearchConfig(
+      String algorithm,
+      int metaMaxEvaluations,
+      double metaMaxComputingTimeMinutes,
+      int metaPopulationSize,
+      int numberOfCores,
+      List<String> operatorFlags) {
+    this(
+        algorithm,
+        metaMaxEvaluations,
+        metaMaxComputingTimeMinutes,
+        metaPopulationSize,
+        numberOfCores,
+        operatorFlags,
+        List.of());
+  }
 
   /** A configuration bounded by evaluations. */
   public TreeMetaSearchConfig(

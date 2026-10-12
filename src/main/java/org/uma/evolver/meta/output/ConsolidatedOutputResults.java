@@ -118,6 +118,10 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
             writer.newLine();
             writer.write("Cores: " + config.numberOfCores());
             writer.newLine();
+            for (String line : config.initialConfigurationLines()) {
+              writer.write(line);
+              writer.newLine();
+            }
             writer.newLine();
 
             // Base-Level Algorithm Section
