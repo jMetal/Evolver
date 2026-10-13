@@ -297,7 +297,8 @@ training never saw), all with three objectives:
 - the standard NSGA-II, first, and the tuned NSGA-II (``NSGAIIDTLZ``), last;
 - NSGA-III, MOEA/D, SMS-EMOA and AGE-MOEA, four algorithms designed for or commonly used with
   three or more objectives, with their default configurations
-  (``src/main/resources/defaultConfigurations/``); MOEA/D reads its weight vectors from
+  (``src/main/resources/defaultConfigurations/``; AGE-MOEA is its second version, AGE-MOEA-II,
+  ``AGEMOEAIIDoubleDefault.txt``); MOEA/D reads its weight vectors from
   ``resources/weightVectors/W3D_100.dat``.
 
 Each algorithm is run 15 times on each problem. This is enough for a tutorial; a real study should

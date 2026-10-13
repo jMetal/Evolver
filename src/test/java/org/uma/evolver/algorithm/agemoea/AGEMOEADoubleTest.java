@@ -1,13 +1,18 @@
 package org.uma.evolver.algorithm.agemoea;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConfigurationFileReader;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 
 @DisplayName("Unit tests for class DoubleAGEMOEA")
@@ -186,6 +191,30 @@ class AGEMOEADoubleTest {
           "unboundedArchive",
           parameterSpace.get("archiveType").value(),
           "External archive should be 'unboundedArchive'");
+    }
+  }
+
+  @Nested
+  @DisplayName("When using the default configurations")
+  class DefaultConfigurationTests {
+
+    @ParameterizedTest(name = "{0} selects {1}")
+    @CsvSource({"AGEMOEADoubleDefault.txt, agemoea", "AGEMOEAIIDoubleDefault.txt, agemoea2"})
+    @DisplayName("each default configuration file selects its variant")
+    void givenDefaultConfigurationFile_whenParsed_thenItsVariantIsSelected(
+        String fileName, String expectedVariant) throws IOException {
+      // Arrange
+      String[] configuration =
+          new ConfigurationFileReader("defaultConfigurations/" + fileName)
+              .getConfiguration(1)
+              .split("\\s+");
+
+      // Act
+      agemoeaDouble.parse(configuration);
+
+      // Assert
+      assertEquals(expectedVariant, agemoeaDouble.parameterSpace().get("agemoeaVariant").value());
+      assertDoesNotThrow(() -> agemoeaDouble.build());
     }
   }
 }

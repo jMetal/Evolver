@@ -322,8 +322,9 @@ Try it yourself
 - Plot the front of step 2 against the reference front of ZDT1 with
   ``python scripts/plot_front.py`` (see ``scripts/README.md``).
 - Run AGE-MOEA instead of NSGA-II: ``DoubleAGEMOEA`` has the same constructor, its parameter space is
-  ``AGEMOEADouble.yaml``, and ``AGEMOEADoubleDefault.txt`` has a configuration for it. Note the extra
-  top-level parameter, ``agemoeaVariant``.
+  ``AGEMOEADouble.yaml``, and ``AGEMOEADoubleDefault.txt`` (AGE-MOEA) and
+  ``AGEMOEAIIDoubleDefault.txt`` (AGE-MOEA-II) have configurations for it. Note the extra
+  top-level parameter, ``agemoeaVariant``, which is what they differ in.
 - Change the seed, or remove the line that sets it, and run step 3 several times. Is the second
   configuration always better?
 - Register a jMetal observer on the algorithm of step 1 before running it, for instance

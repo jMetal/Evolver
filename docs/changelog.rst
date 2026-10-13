@@ -55,6 +55,10 @@ Added
 Changed
 ~~~~~~~
 
+- The default configurations of AGE-MOEA follow those of the variants of RVEA:
+  ``AGEMOEADoubleDefault.txt`` is now the original AGE-MOEA (``--agemoeaVariant agemoea``), and the
+  new ``AGEMOEAIIDoubleDefault.txt`` is AGE-MOEA-II (``agemoea2``), which the former held until now.
+  Tutorial E6 uses the latter, so its results do not change
 - Evolver depends on jMetal 7.8. The angle density estimator of RDEMOEA and SSMOEA is jMetal's again
   (it gives 0.0 to a solution without density since 7.8), instead of Evolver's own lenient copy
 - The flat SPEA2 meta-optimizer is configurable as NSGA-II is, like the tree one: strength ranking

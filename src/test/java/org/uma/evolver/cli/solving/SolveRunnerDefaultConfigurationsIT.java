@@ -38,6 +38,7 @@ class SolveRunnerDefaultConfigurationsIT {
         Arguments.of("SMS-EMOA", "Double", "SMSEMOADoubleDefault.txt"),
         Arguments.of("RVEA", "Double", "RVEADoubleDefault.txt"),
         Arguments.of("AGE-MOEA", "Double", "AGEMOEADoubleDefault.txt"),
+        Arguments.of("AGE-MOEA", "Double", "AGEMOEAIIDoubleDefault.txt"),
         Arguments.of("SSMOEA", "Double", "SSMOEADoubleDefault.txt"),
         Arguments.of("PAES", "Double", "PAESDoubleDefault.txt"),
         Arguments.of("PAES", "Binary", "PAESBinaryDefault.txt"),

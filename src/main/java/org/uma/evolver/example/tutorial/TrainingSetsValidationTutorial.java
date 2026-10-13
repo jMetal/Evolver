@@ -143,7 +143,7 @@ public class TrainingSetsValidationTutorial {
         algorithms.add(
             algorithm(
                 new DoubleAGEMOEA(p, POPULATION_SIZE, maxEvaluations, space("AGEMOEADouble.yaml")),
-                defaultConfiguration("AGEMOEADoubleDefault.txt"),
+                defaultConfiguration("AGEMOEAIIDoubleDefault.txt"),
                 "AGEMOEA",
                 problem,
                 run));
