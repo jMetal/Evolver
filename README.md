@@ -11,7 +11,7 @@
 [![Integration Tests](https://github.com/jMetal/Evolver/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/integration-tests.yml)
 [![Build](https://github.com/jMetal/Evolver/actions/workflows/build.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/build.yml)
 [![Docs](https://github.com/jMetal/Evolver/actions/workflows/docs.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/docs.yml)
-[![ReadTheDocs](https://readthedocs.org/projects/Evolver/badge/?version=latest)](https://Evolver.readthedocs.io/?badge=latest)
+[![Documentation Status](https://app.readthedocs.org/projects/evolver/badge/?version=latest)](https://evolver.readthedocs.io/?badge=latest)
 
 Full documentation is available at [evolver.readthedocs.io](https://evolver.readthedocs.io).
 
