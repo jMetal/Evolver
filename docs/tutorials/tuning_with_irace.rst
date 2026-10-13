@@ -273,6 +273,22 @@ One difference: the server returns EP + NHV, the two indicators of Evolver's tra
 the -HV + EP of ``AutoNSGAIIIraceHVEP``. Both reward the same fronts, but they are different numbers,
 so irace follows a different path and finds other configurations.
 
+``run.sh`` is a convenience: the server can also be started and stopped by hand, for instance to
+leave it running between several runs of irace, or to send it experiments from another tool. From
+the same directory:
+
+.. code-block:: bash
+
+    SERVER="java -cp Evolver-jar-with-dependencies.jar org.uma.evolver.cli.evaluation.EvaluationServerMain"
+    $SERVER start TutorialIraceZdtBaseLevel.yaml --threads 16   # in the background
+    $SERVER status                                              # evaluations done, in progress, waiting
+    N_CPUS=16 ./run.sh scenario-NSGAII-server.txt 1             # without EVOLVER_SERVER: uses it
+    $SERVER stop
+
+``status`` shows the evaluations that wait for a thread: if there are many, irace sends more
+experiments at once than the server has threads. The options of the server (port, log, state
+directory) are in :doc:`../utilities/cli_tools`.
+
 The two ways, with the same scenario, the same 16 cores and the same seed, one after the other on
 this computer (a full run of 10000 experiments and a short one of 4000 of each):
 
