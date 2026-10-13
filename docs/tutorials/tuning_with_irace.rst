@@ -269,9 +269,20 @@ directory of Step 4:
 
     EVOLVER_SERVER=TutorialIraceZdtBaseLevel.yaml N_CPUS=16 ./run.sh scenario-NSGAII-server.txt 1
 
-One difference: the server returns EP + NHV, the two indicators of Evolver's training, instead of
-the -HV + EP of ``AutoNSGAIIIraceHVEP``. Both reward the same fronts, but they are different numbers,
-so irace follows a different path and finds other configurations.
+One difference: the cost is not the same. ``AutoNSGAIIIraceHVEP`` returns -HV + EP, with the
+hypervolume of the normalized front as it is. The server returns the sum of the indicators of the
+base-level file (``indicatorNames``), computed as a training of Evolver computes them: here EP + NHV,
+with ``NHV = 1 - HV / HV(reference front)``. Both reward the same fronts, but they weigh HV and EP
+differently in each problem, so irace follows a different path and finds other configurations.
+**To compare irace with Evolver, use the server**: the cost is then exactly the meta-objectives of
+Evolver's training on the same problems.
+
+The indicators are those of the base-level file, so they can be changed there. NHV needs a reference
+front whose hypervolume is not zero: when the reference front has only the extreme points of each
+objective (:doc:`E9 <problems_without_reference_front>`), its hypervolume is zero, NHV fails, and the
+hypervolume has to be used as it is, minimized: ``HypervolumeMinus`` (HV-) in ``indicatorNames``.
+As E9 explains, with such a reference front the hypervolume is also the only indicator whose values
+are meaningful.
 
 ``run.sh`` is a convenience: the server can also be started and stopped by hand, for instance to
 leave it running between several runs of irace, or to send it experiments from another tool. From
