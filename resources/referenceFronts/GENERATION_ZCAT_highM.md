@@ -1,7 +1,7 @@
 # ZCAT reference fronts for M ∈ {5, 7, 8, 10}
 
-`ZCATn.{5D,7D,8D,10D}.csv` (n = 1..20, 1000 points each) were generated for the EMO2027 program
-(Paper C's objective-scaling study and future many-objective work). The pre-existing
+`ZCATn.{5D,7D,8D,10D}.csv` (n = 1..20, 1000 points each) were generated for studies with many
+objectives. The pre-existing
 `ZCATn.{2D,3D,4D,6D}.csv` are unchanged.
 
 ## Method

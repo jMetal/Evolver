@@ -38,8 +38,8 @@ Available Meta-Optimizers
      - Built on Evolver's configurable AGE-MOEA (``DoubleAGEMOEA`` or ``TreeAGEMOEA``); same operators as NSGA-II plus its environmental selection variant
    * - SPEA2
      - Yes
-     - No
-     - ``MetaSPEA2Builder``: an RDEMOEA configured as SPEA2 with fixed operators; only the mutation probability factor is configurable
+     - Yes
+     - An RDEMOEA configured as SPEA2 (``DoubleRDEMOEA`` or ``TreeSPEA2``): strength ranking and the k-nearest-neighbour density estimator are fixed, and the operators are set as in NSGA-II
    * - SMPSO
      - Yes
      - No
