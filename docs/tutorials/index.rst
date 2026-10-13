@@ -114,15 +114,19 @@ Advanced
    * - :doc:`E15. Tuning with irace <tuning_with_irace>`
      - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
        target runner, the scenario, running irace, and applying the configuration it finds.
-   * - :doc:`E16. Automating Evolver with the CLI <automating_with_the_cli>`
+   * - :doc:`E16. Tuning with SMAC3 <tuning_with_smac3>`
+     - Tuning an Evolver algorithm with SMAC3: its configuration space written from a YAML space,
+       the evaluation server, the SMAC3 client with two objectives, the configurations it finds,
+       and why its running time grows with the trials.
+   * - :doc:`E17. Automating Evolver with the CLI <automating_with_the_cli>`
      - The request, status and results files of ``cli.training`` and ``cli.solving``: asking
        ``DescribeMain`` what Evolver can run, writing and running requests by hand, what a failed or
        killed run leaves behind, and a batch of requests run in parallel and gathered in one table.
-   * - :doc:`E17. Extending Evolver: your own problem and operator <extending_evolver>`
+   * - :doc:`E18. Extending Evolver: your own problem and operator <extending_evolver>`
      - Using a problem of your own, given by its class name, from a request and in a training, and
        adding an operator to the catalogue (a Gaussian mutation, as an example that is not part of
        Evolver): the class, the three changes, the test and a patch.
-   * - :doc:`E18. Independent replications of a training <independent_replications>`
+   * - :doc:`E19. Independent replications of a training <independent_replications>`
      - Why a study of the training needs 10, 15 or 30 replications of the meta-optimizer and what
        that costs, running them by hand or as a slurm job array, and analyzing them: convergence over
        the replications, the best value of each one, comparing two settings with the Wilcoxon test,
@@ -137,6 +141,7 @@ More tutorials are planned for the intermediate and advanced levels.
    choosing_the_meta_optimizer
    tree_versus_flat_encoding
    tuning_with_irace
+   tuning_with_smac3
    automating_with_the_cli
    extending_evolver
    independent_replications

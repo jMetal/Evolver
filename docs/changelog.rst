@@ -11,6 +11,14 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- SMAC3 as a configurator of Evolver's algorithms: ``org.uma.evolver.smac.ConfigSpaceGenerator``
+  writes a parameter space as a configuration space of ConfigSpace (conditions included, and the
+  defaults of a default configuration if one is given), as ``IraceParameterDescriptionGenerator``
+  does for irace, and ``scripts/smac/evolver_smac.py`` runs SMAC3 (two objectives with ParEGO) on the
+  evaluation server, which gives it the parameter space, the problems and the indicators of its
+  base-level file; ``--retrain-after`` sets how often SMAC3 refits its model. Tutorial E16, "Tuning
+  with SMAC3", with its measured running time: SMAC3's sequential optimizer takes most of it when the
+  runs are cheap, and Evolver documents it rather than changing it
 - Reference fronts of the MaF problems with 3 objectives (``resources/referenceFronts/MaFxx.3D.csv``;
   only MaF08's existed): ``scripts/maf_reference_fronts.py`` writes them with the method of PlatEMO
   for this benchmark, and ``MaFReferenceFrontsIT`` checks them against the problems of jMetal
@@ -39,7 +47,7 @@ Added
   ranking, k-nearest-neighbour density) and sets the rest as for NSGA-II (the tree operators and
   the selection), plus the neighbourhood size of the density estimator (1 by default). ``DescribeMain`` reports
   ``supportsTree: true`` for it. Only SMPSO remains flat-only
-- Tutorial E18, independent replications of a training: why a study needs 10, 15 or 30 replications
+- Tutorial E19, independent replications of a training: why a study needs 10, 15 or 30 replications
   of the meta-optimizer, running them by hand or on a slurm cluster, and analyzing them (convergence
   over replications, the best values of each one, the configuration to validate, and comparing two
   setups with the Wilcoxon test over their replications)
@@ -56,6 +64,8 @@ Added
 Changed
 ~~~~~~~
 
+- The advanced tutorials after E15 are renumbered to make room for E16, "Tuning with SMAC3": E16
+  (CLI) is now E17, E17 (extending Evolver) is E18 and E18 (independent replications) is E19
 - The default configurations of AGE-MOEA follow those of the variants of RVEA:
   ``AGEMOEADoubleDefault.txt`` is now the original AGE-MOEA (``--agemoeaVariant agemoea``), and the
   new ``AGEMOEAIIDoubleDefault.txt`` is AGE-MOEA-II (``agemoea2``), which the former held until now.
