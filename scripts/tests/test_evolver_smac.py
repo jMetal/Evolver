@@ -39,6 +39,15 @@ class StubServer:
                 self.end_headers()
                 self.wfile.write(payload)
 
+            def do_GET(self):
+                payload = json.dumps({"parameterSpace": "NSGAIIDouble.yaml", "encoding": "Double",
+                                      "problems": ["ZDT1", "ZDT2"],
+                                      "indicators": ["EP", "NHV"]}).encode()
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
             def log_message(self, *args):
                 pass
 
@@ -114,3 +123,39 @@ class TestOptimize:
         assert {r["problem"] for r in stub.requests} <= set(problems)
         assert all(r["tool"] == "smac" for r in stub.requests)
         assert len(smac.intensifier.get_incumbents()) >= 1
+
+
+class TestServerStatus:
+    def test_should_read_the_space_the_problems_and_the_indicators_of_the_server(self, stub):
+        # Act
+        status = client.server_status(stub.url)
+
+        # Assert
+        assert status["parameterSpace"] == "NSGAIIDouble.yaml"
+        assert status["problems"] == ["ZDT1", "ZDT2"]
+        assert status["indicators"] == ["EP", "NHV"]
+
+    def test_should_return_the_objectives_given_to_the_target(self, stub):
+        # Arrange
+        target = client.EvaluationServerTarget(stub.url, objectives=["NHV"])
+
+        # Act
+        result = target.evaluate("--a 1", "ZDT1")
+
+        # Assert
+        assert result == {"NHV": 0.5}
+
+
+class TestRetrainAfter:
+    def test_should_give_smac3_the_number_of_trials_between_two_fits(self, stub, tmp_path):
+        # Arrange
+        space = ConfigurationSpace({"p": Float("p", (0.0, 1.0))}, seed=1)
+        target = client.EvaluationServerTarget(stub.url)
+
+        # Act
+        smac = client.optimize(space, target, ["ZDT1", "ZDT2"], trials=12, workers=1, seed=1,
+                               output_dir=tmp_path, initial_configurations=5, retrain_after=50)
+
+        # Assert
+        assert smac._config_selector._retrain_after == 50
+

@@ -1,0 +1,8 @@
+# Environment of the SMAC3 client of Evolver's evaluation server (scripts/smac/evolver_smac.py),
+# separate from the one of scripts/requirements.txt. Tested with Python 3.11 and these versions;
+# SMAC3 needs swig to be installed first (e.g. conda install swig).
+smac==2.4.1
+ConfigSpace==1.2.2
+dask==2026.8.0
+distributed==2026.8.0
+pytest
