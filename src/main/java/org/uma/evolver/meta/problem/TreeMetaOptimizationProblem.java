@@ -67,7 +67,8 @@ public class TreeMetaOptimizationProblem<S extends Solution<?>>
 
   @Override
   public DerivationTreeSolution createSolution() {
-    return solutionGenerator.generate(numberOfObjectives());
+    DerivationTreeSolution initial = nextInitialSolution();
+    return initial != null ? initial : solutionGenerator.generate(numberOfObjectives());
   }
 
   @Override

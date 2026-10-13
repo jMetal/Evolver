@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
@@ -47,6 +49,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   protected final int numberOfIndependentRuns;
   protected final List<double[][]> referenceFronts;
   protected final List<double[][]> normalizedReferenceFronts;
+  private final Queue<META> initialSolutions = new ConcurrentLinkedQueue<>();
 
   protected AbstractMetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
@@ -135,6 +138,29 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       objectives[i] = sum / problems.size();
     }
     return objectives;
+  }
+
+  /**
+   * Makes the next calls to {@link #createSolution()} return these solutions (known
+   * configurations, encoded with {@code ConfigurationEncoding}) before random ones. Every
+   * meta-optimizer creates its first solutions with {@code createSolution()}, so they start its
+   * initial population (or, for random search, its first samples).
+   *
+   * @param solutions the solutions to return first, in order
+   */
+  public void initialSolutions(List<META> solutions) {
+    initialSolutions.addAll(solutions);
+  }
+
+  /**
+   * The next solution given to {@link #initialSolutions}, or null when there are no more.
+   *
+   * @return a copy of the next initial solution, or null
+   */
+  @SuppressWarnings("unchecked")
+  protected META nextInitialSolution() {
+    META solution = initialSolutions.poll();
+    return solution == null ? null : (META) solution.copy();
   }
 
   protected abstract String[] toParameterArray(META solution);

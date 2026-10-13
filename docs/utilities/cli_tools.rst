@@ -158,14 +158,15 @@ initial population contains those configurations, and random ones up to its size
 
 A file is a path, a file of ``src/main/resources/``, or a resource of the jar (the bundled
 configurations work from any directory). Each configuration must be valid in the parameter space of
-the base level, and there cannot be more of them than the population of the meta-optimizer. They
-are accepted by the generational meta-optimizers, NSGA-II, AGE-MOEA and SPEA2, with either encoding:
-``AsyncNSGA-II``, SMPSO and ``RandomSearch`` build their first solutions on their own and reject the
-field. ``METADATA.txt`` records the files (``Initial Configurations:``).
+the base level, and there cannot be more of them than the population of the meta-optimizer. The
+configurations are encoded as solutions of the meta-optimization problem (flat or tree), which gives
+them to the meta-optimizer as its first solutions, so every meta-optimizer accepts them, with either
+encoding (for ``RandomSearch``, which has no population, they are its first samples).
+``METADATA.txt`` records the files (``Initial Configurations:``).
 
-Starting from good configurations can save part of the training, but it also biases the search
-towards them and reduces the diversity of the first generations: how much it helps is a question to
-study, not a recommendation.
+This option is **experimental**: starting from good configurations can save part of the training,
+but it also biases the search towards them and reduces the diversity of the first generations, and
+its effect has not been studied yet.
 
 Output
 ~~~~~~

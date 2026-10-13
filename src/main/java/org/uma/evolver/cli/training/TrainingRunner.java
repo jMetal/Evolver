@@ -19,7 +19,6 @@ import org.uma.evolver.cli.RunStatusWriter;
 import org.uma.evolver.meta.algorithm.RandomSearch;
 import org.uma.evolver.meta.encoding.solution.DerivationTreeSolution;
 import org.uma.evolver.meta.encoding.util.ConfigurationEncoding;
-import org.uma.evolver.meta.encoding.util.SeededSolutionsCreation;
 import org.uma.evolver.meta.encoding.util.TreeSolutionGenerator;
 import org.uma.evolver.meta.output.ConsolidatedOutputResults;
 import org.uma.evolver.meta.output.MetaOptimizerConfig;
@@ -38,6 +37,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
+import org.uma.jmetal.solution.doublesolution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
@@ -149,6 +149,7 @@ public class TrainingRunner {
                       baseAlgorithm,
                       evaluationBudgetStrategy,
                       flat,
+                      seeds,
                       statusWriter,
                       request.outputDirectory(),
                       request.writeFrequency(),
@@ -163,6 +164,7 @@ public class TrainingRunner {
                       baseAlgorithm,
                       evaluationBudgetStrategy,
                       flat,
+                      seeds,
                       statusWriter,
                       request.outputDirectory(),
                       request.writeFrequency(),
@@ -177,6 +179,7 @@ public class TrainingRunner {
                       baseAlgorithm,
                       evaluationBudgetStrategy,
                       flat,
+                      seeds,
                       statusWriter,
                       request.outputDirectory(),
                       request.writeFrequency(),
@@ -230,31 +233,10 @@ public class TrainingRunner {
             indicators,
             evaluationBudgetStrategy,
             baseLevel.numberOfIndependentRuns());
+    metaOptimizationProblem.initialSolutions(encodeFlat(seeds, metaOptimizationProblem));
 
     EvolutionaryAlgorithm<DoubleSolution> nsgaii =
         MetaAlgorithmRegistry.resolveFlat(metaSearch.algorithm(), metaOptimizationProblem, metaSearch);
-    int metaPopulationSize =
-        metaSearch.metaPopulationSize() == null
-            ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
-            : metaSearch.metaPopulationSize();
-    if (!seeds.isEmpty()) {
-      List<DoubleSolution> encoded =
-          seeds.stream()
-              .map(
-                  configuration -> {
-                    DoubleSolution solution = metaOptimizationProblem.createSolution();
-                    List<Double> variables =
-                        ConfigurationEncoding.toFlat(
-                            configuration, metaOptimizationProblem.parameters());
-                    for (int i = 0; i < variables.size(); i++) {
-                      solution.variables().set(i, variables.get(i));
-                    }
-                    return solution;
-                  })
-              .toList();
-      nsgaii.createInitialPopulation(
-          new SeededSolutionsCreation<>(metaOptimizationProblem, metaPopulationSize, encoded));
-    }
 
     MetaOptimizerConfig config =
         MetaOptimizerConfig.builder()
@@ -318,6 +300,7 @@ public class TrainingRunner {
       BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
+      List<String[]> seeds,
       RunStatusWriter statusWriter,
       String outputDirectory,
       int writeFrequency,
@@ -333,6 +316,7 @@ public class TrainingRunner {
             indicators,
             evaluationBudgetStrategy,
             baseLevel.numberOfIndependentRuns());
+    metaOptimizationProblem.initialSolutions(encodeFlat(seeds, metaOptimizationProblem));
 
     AsynchronousMultiThreadedNSGAII<DoubleSolution> nsgaii =
         MetaAlgorithmRegistry.resolveFlatAsync(
@@ -404,6 +388,7 @@ public class TrainingRunner {
       BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
+      List<String[]> seeds,
       RunStatusWriter statusWriter,
       String outputDirectory,
       int writeFrequency,
@@ -419,6 +404,7 @@ public class TrainingRunner {
             indicators,
             evaluationBudgetStrategy,
             baseLevel.numberOfIndependentRuns());
+    metaOptimizationProblem.initialSolutions(encodeFlat(seeds, metaOptimizationProblem));
 
     ParticleSwarmOptimizationAlgorithm smpso =
         MetaAlgorithmRegistry.resolveFlatPso(
@@ -486,6 +472,7 @@ public class TrainingRunner {
       BaseLevelAlgorithm<S> baseAlgorithm,
       EvaluationBudgetStrategy evaluationBudgetStrategy,
       FlatMetaSearchConfig metaSearch,
+      List<String[]> seeds,
       RunStatusWriter statusWriter,
       String outputDirectory,
       int writeFrequency,
@@ -501,6 +488,7 @@ public class TrainingRunner {
             indicators,
             evaluationBudgetStrategy,
             baseLevel.numberOfIndependentRuns());
+    metaOptimizationProblem.initialSolutions(encodeFlat(seeds, metaOptimizationProblem));
 
     RandomSearch<DoubleSolution> randomSearch =
         MetaAlgorithmRegistry.resolveFlatRandomSearch(
@@ -588,14 +576,14 @@ public class TrainingRunner {
             baseLevel.numberOfIndependentRuns(),
             treeSolutionGenerator);
 
-    List<DerivationTreeSolution> encoded =
+    metaProblem.initialSolutions(
         seeds.stream()
             .map(
                 configuration ->
                     ConfigurationEncoding.toTree(
                         configuration, baseLevelParameterSpace, metaProblem.numberOfObjectives()))
-            .toList();
-    TreeEngine engine = resolveTreeEngine(metaSearch, metaProblem, encoded);
+            .toList());
+    TreeEngine engine = resolveTreeEngine(metaSearch, metaProblem);
     boolean randomSearch =
         MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
             == MetaAlgorithmRegistry.Family.RANDOM_SEARCH;
@@ -663,20 +651,14 @@ public class TrainingRunner {
 
   /**
    * The configurations of the {@code initialConfigurations} files of the meta-optimizer, each
-   * checked against the parameter space of the base-level algorithm. Only the generational
-   * meta-optimizers accept them: the others build their first solutions on their own.
+   * checked against the parameter space of the base-level algorithm; there cannot be more of them
+   * than the population of the meta-optimizer (random search has none: they are its first
+   * samples).
    */
   private static List<String[]> initialConfigurations(
       MetaSearchConfig metaSearch, YAMLParameterSpace baseLevelParameterSpace) throws IOException {
     if (metaSearch.initialConfigurations().isEmpty()) {
       return List.of();
-    }
-    if (MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
-        != MetaAlgorithmRegistry.Family.EVOLUTIONARY) {
-      throw new JMetalException(
-          "initialConfigurations is only accepted by the generational meta-optimizers (NSGA-II,"
-              + " AGE-MOEA, SPEA2), not by "
-              + metaSearch.algorithm());
     }
     List<String[]> configurations = new ArrayList<>();
     for (String file : metaSearch.initialConfigurations()) {
@@ -695,7 +677,45 @@ public class TrainingRunner {
         configurations.add(configuration);
       }
     }
+    Integer populationSize =
+        switch (metaSearch) {
+          case FlatMetaSearchConfig flat ->
+              flat.metaPopulationSize() == null
+                  ? MetaAlgorithmRegistry.DEFAULT_POPULATION_SIZE
+                  : flat.metaPopulationSize();
+          case TreeMetaSearchConfig tree -> tree.metaPopulationSize();
+        };
+    boolean randomSearch =
+        MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())
+            == MetaAlgorithmRegistry.Family.RANDOM_SEARCH;
+    if (!randomSearch && configurations.size() > populationSize) {
+      throw new JMetalException(
+          "There are "
+              + configurations.size()
+              + " initial configurations, more than the population of the meta-optimizer ("
+              + populationSize
+              + ")");
+    }
     return configurations;
+  }
+
+  /** The flat encoding of the initial configurations, for the problem of the meta-optimizer. */
+  private static List<DoubleSolution> encodeFlat(
+      List<String[]> configurations, MetaOptimizationProblem<?> problem) {
+    return configurations.stream()
+        .map(
+            configuration -> {
+              DoubleSolution solution =
+                  new DefaultDoubleSolution(
+                      problem.variableBounds(), problem.numberOfObjectives(), 0);
+              List<Double> variables =
+                  ConfigurationEncoding.toFlat(configuration, problem.parameters());
+              for (int i = 0; i < variables.size(); i++) {
+                solution.variables().set(i, variables.get(i));
+              }
+              return solution;
+            })
+        .toList();
   }
 
   /**
@@ -732,17 +752,11 @@ public class TrainingRunner {
   }
 
   private static TreeEngine resolveTreeEngine(
-      TreeMetaSearchConfig metaSearch,
-      TreeMetaOptimizationProblem<?> metaProblem,
-      List<DerivationTreeSolution> seeds) {
+      TreeMetaSearchConfig metaSearch, TreeMetaOptimizationProblem<?> metaProblem) {
     return switch (MetaAlgorithmRegistry.familyOf(metaSearch.algorithm())) {
       case EVOLUTIONARY -> {
         EvolutionaryAlgorithm<DerivationTreeSolution> algorithm =
             MetaAlgorithmRegistry.resolveTree(metaSearch.algorithm(), metaProblem, metaSearch);
-        if (!seeds.isEmpty()) {
-          algorithm.createInitialPopulation(
-              new SeededSolutionsCreation<>(metaProblem, metaSearch.metaPopulationSize(), seeds));
-        }
         yield new TreeEngine(
             algorithm::run, algorithm::result, algorithm::numberOfEvaluations, algorithm.observable());
       }

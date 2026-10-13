@@ -461,29 +461,37 @@ class TrainingRunnerSmokeIT {
     }
 
     @Test
-    @DisplayName("when RandomSearch is given initial configurations, then the training fails")
-    void whenRandomSearchIsGivenInitialConfigurations_thenTheTrainingFails(@TempDir Path tempDir) {
+    @DisplayName(
+        "when AsyncNSGA-II and RandomSearch (flat encoding) start from the default configuration,"
+            + " then they finish")
+    void whenOtherMetaOptimizersStartFromTheDefault_thenTheyFinish(@TempDir Path tempDir)
+        throws IOException {
       // Arrange
       BaseLevelConfig baseLevel = smokeBaseLevel("Zdt4NSGAIIBaseLevel.yaml");
-      FlatMetaSearchConfig metaSearch =
-          new FlatMetaSearchConfig(
-              "RandomSearch",
-              SMOKE_META_MAX_EVALUATIONS,
-              0.0,
-              null,
-              SMOKE_NUMBER_OF_CORES,
-              List.of(),
-              List.of("defaultConfigurations/NSGAIIDoubleDefault.txt"));
-      TrainingRequest request =
-          new TrainingRequest(
-              baseLevel, metaSearch, tempDir.resolve("output").toString(), 5, 5, null);
+      List<String> seeds = List.of("defaultConfigurations/NSGAIIDoubleDefault.txt");
+      FlatMetaSearchConfig async =
+          smokeFlatMetaSearch("MetaAsyncNSGAIIFlatConfiguration.yaml");
+      FlatMetaSearchConfig randomSearch =
+          smokeFlatMetaSearch("MetaRandomSearchFlatConfiguration.yaml");
 
       // Act & Assert
-      var exception =
-          assertThrows(
-              RuntimeException.class,
-              () -> new TrainingRunner(false).run(request, tempDir.resolve("status.yaml")));
-      assertTrue(exception.getMessage().contains("initialConfigurations"));
+      for (FlatMetaSearchConfig metaSearch : List.of(async, randomSearch)) {
+        Path directory = tempDir.resolve(metaSearch.algorithm());
+        var seeded =
+            new FlatMetaSearchConfig(
+                metaSearch.algorithm(),
+                metaSearch.metaMaxEvaluations(),
+                0.0,
+                metaSearch.metaPopulationSize(),
+                metaSearch.numberOfCores(),
+                metaSearch.operatorFlags(),
+                seeds);
+        TrainingRequest request =
+            new TrainingRequest(
+                baseLevel, seeded, directory.resolve("output").toString(), 5, 5, null);
+        Files.createDirectories(directory);
+        assertRunFinished(request, directory);
+      }
     }
   }
 

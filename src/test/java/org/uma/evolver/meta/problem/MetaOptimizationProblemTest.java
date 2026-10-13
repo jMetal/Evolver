@@ -3,7 +3,9 @@ package org.uma.evolver.meta.problem;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -486,6 +488,34 @@ class MetaOptimizationProblemTest {
       assertTrue(message.contains("fooCrossover"), message);
       assertTrue(message.contains("Configuration: --algorithmResult population"), message);
       assertNotNull(exception.getCause());
+    }
+  }
+
+  @Nested
+  @DisplayName("When initial solutions are given")
+  class InitialSolutionsTests {
+
+    @Test
+    @DisplayName(
+        "given two initial solutions, when solutions are created, then the first two are copies of"
+            + " them and the next one is random")
+    void givenInitialSolutions_whenSolutionsAreCreated_thenTheyComeFirst() {
+      // Arrange
+      var problem = createValidInstance();
+      DoubleSolution first = problem.createSolution();
+      DoubleSolution second = problem.createSolution();
+      problem.initialSolutions(List.of(first, second));
+
+      // Act
+      DoubleSolution created1 = problem.createSolution();
+      DoubleSolution created2 = problem.createSolution();
+      DoubleSolution created3 = problem.createSolution();
+
+      // Assert
+      assertEquals(first.variables(), created1.variables());
+      assertEquals(second.variables(), created2.variables());
+      assertNotSame(first, created1);
+      assertNotEquals(first.variables(), created3.variables());
     }
   }
 }

@@ -16,11 +16,12 @@ Added
   for this benchmark, and ``MaFReferenceFrontsIT`` checks them against the problems of jMetal
 - ``KroBC100TSP`` and ``KroBD100TSP`` are registered (cli), now that jMetal reads their distance
   files
-- ``initialConfigurations`` in a meta-optimizer configuration file: the initial population of
-  NSGA-II, AGE-MOEA and SPEA2 (flat and tree encodings) starts from the configurations of one or
-  more files (such as ``defaultConfigurations/NSGAIIDoubleDefault.txt``), and random ones up to its
-  size. ``ConfigurationEncoding`` encodes a configuration as a flat or a tree solution, the inverse
-  of their decoding. ``METADATA.txt`` records the files
+- ``initialConfigurations`` in a meta-optimizer configuration file (experimental): the initial
+  population of the meta-optimizer starts from the configurations of one or more files (such as
+  ``defaultConfigurations/NSGAIIDoubleDefault.txt``), and random ones up to its size. It works with
+  every meta-optimizer and both encodings: ``ConfigurationEncoding`` encodes each configuration as a
+  flat or a tree solution (the inverse of their decoding), and the meta-optimization problem returns
+  them as its first solutions. ``METADATA.txt`` records the files
 - The evaluation server, ``org.uma.evolver.cli.evaluation`` (``EvaluationServerMain
   start|status|stop|run``): a process that evaluates configurations of a base-level algorithm sent
   through a local HTTP API, as Evolver's training does, so that external configurators such as irace

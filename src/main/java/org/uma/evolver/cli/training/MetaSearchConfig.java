@@ -47,8 +47,8 @@ public sealed interface MetaSearchConfig permits FlatMetaSearchConfig, TreeMetaS
 
   /**
    * The files of configurations that the initial population of the meta-optimizer starts from
-   * (empty: it starts at random). Only the generational meta-optimizers (NSGA-II, AGE-MOEA, SPEA2)
-   * accept them.
+   * (empty: it starts at random); experimental. The meta-optimization problem returns them as its
+   * first solutions, so every meta-optimizer accepts them.
    */
   List<String> initialConfigurations();
 }

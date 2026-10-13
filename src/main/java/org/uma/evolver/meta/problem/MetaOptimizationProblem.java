@@ -66,7 +66,10 @@ public class MetaOptimizationProblem<S extends Solution<?>>
 
   @Override
   public DoubleSolution createSolution() {
-    return new DefaultDoubleSolution(variableBounds(), numberOfObjectives(), 0);
+    DoubleSolution initial = nextInitialSolution();
+    return initial != null
+        ? initial
+        : new DefaultDoubleSolution(variableBounds(), numberOfObjectives(), 0);
   }
 
   @Override
