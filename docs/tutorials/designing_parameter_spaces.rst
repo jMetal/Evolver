@@ -93,7 +93,7 @@ valid names:
    Supported names are: [SBX, blxAlpha, wholeArithmetic, arithmetic, fuzzyRecombination, laplace,
    blxAlphaBeta, PCX, UNDC, SDX]
 
-Adding a new operator to the catalogue is the subject of tutorial E17. A parameter that the
+Adding a new operator to the catalogue is the subject of tutorial E18. A parameter that the
 algorithm does not use cannot be added either: the space loads, but every configuration must then
 give it a value, and the algorithm ignores it.
 
@@ -333,4 +333,4 @@ What's next
   parameter spaces.
 - :doc:`E14 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
   differently.
-- Tutorial E17 adds new components to the catalogue, so that they can be used in a parameter space.
+- Tutorial E18 adds new components to the catalogue, so that they can be used in a parameter space.

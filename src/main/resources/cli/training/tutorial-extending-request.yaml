@@ -1,4 +1,4 @@
-# Training request of tutorial E17 (docs/tutorials/extending_evolver.rst): NSGA-II tuned for BiSphere,
+# Training request of tutorial E18 (docs/tutorials/extending_evolver.rst): NSGA-II tuned for BiSphere,
 # a problem of the user, in a space that offers the n-point crossover, stopped after 2 minutes. Copy it
 # to a working directory before running it, since TrainingRunnerMain writes results.yaml (and, by
 # default, status.yaml) next to the request file. Write the reference front first:

@@ -1,6 +1,6 @@
 .. _tutorial_independent_replications:
 
-E18. Independent Replications of a Training
+E19. Independent Replications of a Training
 ===========================================
 
 :Level: Advanced
@@ -10,7 +10,7 @@ E18. Independent Replications of a Training
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.10, SAES 1.5.0
 :Prerequisites: :doc:`E7. Analyzing training results <analyzing_training_results>`,
    :doc:`E8. Validating a configuration <validating_a_configuration>`,
-   :doc:`E16. Automating Evolver with the CLI <automating_with_the_cli>`
+   :doc:`E17. Automating Evolver with the CLI <automating_with_the_cli>`
 
 Every tutorial so far runs **one** training per experiment. That is enough to learn how Evolver
 works, and often enough to get a good configuration, but not to make claims about the training

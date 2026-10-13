@@ -15,7 +15,7 @@ import org.uma.evolver.cli.training.TrainingRequest;
 import org.uma.evolver.cli.training.TrainingRunner;
 
 /**
- * Code of tutorial E17, "Extending Evolver" (see {@code docs/tutorials/extending_evolver.rst}): a
+ * Code of tutorial E18, "Extending Evolver" (see {@code docs/tutorials/extending_evolver.rst}): a
  * problem of the user, {@link BiSphere}, that Evolver does not know and that its requests refer to
  * by class name.
  *

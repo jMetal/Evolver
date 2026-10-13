@@ -1,4 +1,4 @@
-# Base level of tutorial E17 (docs/tutorials/extending_evolver.rst): NSGA-II, with the parameter space
+# Base level of tutorial E18 (docs/tutorials/extending_evolver.rst): NSGA-II, with the parameter space
 # that offers the n-point crossover (NSGAIIDouble.yaml), to be tuned for BiSphere, a problem of the
 # user given by its class name, with 20 variables. Each configuration is run once, with 10000
 # evaluations; the objectives of the meta-optimizer are the Epsilon and normalized hypervolume

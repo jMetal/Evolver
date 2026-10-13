@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # One independent replication of an Evolver training, as a task of a slurm job array (tutorial
-# E18, docs/tutorials/independent_replications.rst). Task i runs
+# E19, docs/tutorials/independent_replications.rst). Task i runs
 #
 #   java -cp <jar> org.uma.evolver.cli.training.TrainingRunnerMain <request.yaml> \
 #       --output-dir <study-dir>/runNN          (NN = i with two digits: run01, run02, ...)

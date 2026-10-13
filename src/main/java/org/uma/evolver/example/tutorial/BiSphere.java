@@ -6,7 +6,7 @@ import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * A bi-objective problem of the user, as in tutorial E17, "Extending Evolver" (see {@code
+ * A bi-objective problem of the user, as in tutorial E18, "Extending Evolver" (see {@code
  * docs/tutorials/extending_evolver.rst}): minimize the squared distance to the origin and to the
  * point (2, ..., 2).
  *

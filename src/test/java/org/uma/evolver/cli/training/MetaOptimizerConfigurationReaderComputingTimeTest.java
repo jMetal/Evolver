@@ -82,7 +82,7 @@ class MetaOptimizerConfigurationReaderComputingTimeTest {
 
   @Test
   @DisplayName("Given the request of tutorial E11, when loaded, then its meta-search is bounded by time")
-  void givenRequestOfTutorialE17WhenLoadedThenItsMetaSearchIsBoundedByTime() throws IOException {
+  void givenRequestOfTutorialE11WhenLoadedThenItsMetaSearchIsBoundedByTime() throws IOException {
     // Arrange
     Path requestFile = Path.of("src/main/resources/cli/training/tutorial-budgets-request.yaml");
 

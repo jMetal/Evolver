@@ -310,7 +310,7 @@ index 00000000..ab1b9627
 +import org.uma.jmetal.util.errorchecking.JMetalException;
 +import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 +
-+@DisplayName("Unit tests for the Gaussian mutation of tutorial E17")
++@DisplayName("Unit tests for the Gaussian mutation of tutorial E18")
 +class GaussianMutationTest {
 +
 +  @Test

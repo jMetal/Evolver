@@ -1,7 +1,7 @@
 """Summary of the independent replications of a training, and the input to compare two studies.
 
 A study is a directory with one training output directory per replication (``run01``, ``run02``,
-..., as written by ``TrainingRunnerMain --output-dir``, tutorial E18). For each replication, the
+..., as written by ``TrainingRunnerMain --output-dir``, tutorial E19). For each replication, the
 script reads the front of the last checkpoint of its VAR_CONF.txt (the configurations the training
 returns, with their meta-objectives) and keeps:
 

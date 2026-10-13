@@ -1,6 +1,6 @@
 .. _tutorial_automating_with_the_cli:
 
-E16. Automating Evolver with the CLI
+E17. Automating Evolver with the CLI
 ====================================
 
 :Level: Advanced
