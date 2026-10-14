@@ -11,6 +11,14 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
+- Language models (experimental), to open the research line of their use in automatic algorithm
+  configuration and design: ``org.uma.evolver.meta.llm`` with ``LlmClient`` and two clients,
+  ``OllamaClient`` (a local Ollama) and ``OpenAiCompatibleClient`` (any server of the OpenAI chat
+  API), chosen with a YAML settings file whose API key comes from an environment variable;
+  ``ConfigurationProposer``, which asks a model for configurations of a parameter space, validates
+  them, retries the invalid ones once and logs every call (``LLM_CALLS.csv``); and
+  ``ProposeConfigurationsMain``, which writes them to a file usable as ``initialConfigurations``.
+  Tutorial E20, "Language models in Evolver", with a simple case study and research directions
 - SMAC3 as a configurator of Evolver's algorithms: ``org.uma.evolver.smac.ConfigSpaceGenerator``
   writes a parameter space as a configuration space of ConfigSpace (conditions included, and the
   defaults of a default configuration if one is given), as ``IraceParameterDescriptionGenerator``

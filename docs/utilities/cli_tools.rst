@@ -703,3 +703,32 @@ Every evaluation is appended to a CSV log (``evaluations-<port>.csv`` in the sta
 default), with its index, the milliseconds since the start, the tool, the problem, the seed, the
 indicators, the time of the run and the configuration. jMetal's random generator is shared by the
 threads, so the seed that a client sends is recorded but does not make an evaluation reproducible.
+
+ProposeConfigurationsMain
+-------------------------
+
+**Experimental.** Asks a language model for configurations of a parameter space and writes the
+valid ones to a file, one per line, that a meta-optimizer can start from (``initialConfigurations``)
+or that can be validated (:doc:`tutorial E20 <../tutorials/llms_in_evolver>`).
+
+.. code-block:: bash
+
+   java -cp target/Evolver-<version>-jar-with-dependencies.jar \
+       org.uma.evolver.cli.llm.ProposeConfigurationsMain \
+       --settings llm.yaml --space NSGAIIDouble.yaml --encoding Double \
+       --task "NSGA-II for ZDT4, population 100, 12000 evaluations" --count 10 \
+       --output results/llm/configurations.txt
+
+- ``--settings``: the model, a YAML file with ``provider`` (``ollama`` or ``openai``, for any
+  server of the OpenAI chat API), ``baseUrl``, ``model``, ``apiKeyEnv`` (the environment variable
+  with the key, never the key itself), ``temperature``, ``timeoutSeconds`` and ``options`` (more
+  fields of the request, as they are); examples in ``src/main/resources/llm/``;
+- ``--space`` and ``--encoding``: the parameter space, bundled or a path;
+- ``--task`` or ``--task-file``: what the configurations are for;
+- ``--examples``: a file of example configurations (optional);
+- ``--count`` (10), ``--output``, and ``--log`` (``LLM_CALLS.csv`` next to the output by default).
+
+Each proposal is checked against the space and rewritten with exactly the parameters it activates;
+the invalid ones are sent back once with their errors. The log has a line per proposal: time,
+model, call, tokens, milliseconds, validity, configuration, error and the model's rationale.
+

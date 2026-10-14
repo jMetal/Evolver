@@ -131,6 +131,10 @@ Advanced
        that costs, running them by hand or as a slurm job array, and analyzing them: convergence over
        the replications, the best value of each one, comparing two settings with the Wilcoxon test,
        and which configuration to validate.
+   * - :doc:`E20. Language models in Evolver <llms_in_evolver>`
+     - Using a language model, local or external, from Evolver: the settings of the model, asking it
+       for configurations of a parameter space that Evolver validates and logs, seeding a training
+       with them, and the research directions and cautions of this experimental line.
 
 More tutorials are planned for the intermediate and advanced levels.
 
@@ -145,3 +149,4 @@ More tutorials are planned for the intermediate and advanced levels.
    automating_with_the_cli
    extending_evolver
    independent_replications
+   llms_in_evolver

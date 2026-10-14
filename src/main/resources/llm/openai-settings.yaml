@@ -1,0 +1,10 @@
+# Settings of a model behind the OpenAI chat API (tutorial E20): OpenAI itself, or any compatible
+# server (vLLM, LM Studio, llama.cpp, OpenRouter, Ollama's http://localhost:11434/v1). The key is
+# read from the environment variable named in apiKeyEnv, never written here; remove apiKeyEnv for
+# servers that need no key.
+provider: openai
+baseUrl: https://api.openai.com/v1
+model: gpt-4.1-mini
+apiKeyEnv: OPENAI_API_KEY
+temperature: 0.7
+timeoutSeconds: 300

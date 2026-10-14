@@ -1,0 +1,8 @@
+# Training request of tutorial E20 (docs/tutorials/llms_in_evolver.rst): the short training of
+# tutorial E4 (NSGA-II tuned for ZDT4, 500 configurations), seeded with the configurations proposed
+# by a language model (results/tutorial-llm/configurations.txt).
+baseLevel: TutorialZdt4BaseLevel.yaml
+metaSearch: TutorialQuickNSGAIISeededMetaSearch.yaml
+outputDirectory: results/tutorial-llm/seeded
+writeFrequency: 50
+statusFrequency: 50
