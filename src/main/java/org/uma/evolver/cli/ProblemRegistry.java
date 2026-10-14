@@ -306,9 +306,13 @@ public final class ProblemRegistry {
           Map.entry(
               "WFG",
               List.of(
-                  ArgumentSpec.integer("k", problem -> DefaultWFGSettings.numberOfPositionParameters),
-                  ArgumentSpec.integer("l", problem -> DefaultWFGSettings.numberOfDistanceParameters),
-                  ArgumentSpec.integer("m", OBJECTIVES))),
+                  ArgumentSpec.integer(
+                      "numberOfPositionParameters",
+                      problem -> DefaultWFGSettings.numberOfPositionParameters),
+                  ArgumentSpec.integer(
+                      "numberOfDistanceParameters",
+                      problem -> DefaultWFGSettings.numberOfDistanceParameters),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
           Map.entry("UF", List.of(ArgumentSpec.integer("numberOfVariables", VARIABLES))),
           // UF5 and UF6 also take the number of points of the front and a tolerance, UF9 a tolerance
           Map.entry(

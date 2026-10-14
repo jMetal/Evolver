@@ -78,6 +78,11 @@ Changed
   ``AGEMOEADoubleDefault.txt`` is now the original AGE-MOEA (``--agemoeaVariant agemoea``), and the
   new ``AGEMOEAIIDoubleDefault.txt`` is AGE-MOEA-II (``agemoea2``), which the former held until now.
   Tutorial E6 uses the latter, so its results do not change
+- The arguments of the WFG problems are described in the manifest as ``numberOfPositionParameters``,
+  ``numberOfDistanceParameters`` and ``numberOfObjectives`` (they were ``k``, ``l`` and ``m``), as
+  the number of objectives of the other configurable families is named; arguments are still given by
+  position, so requests do not change, and Evolver-Studio now recognizes the number of objectives
+  of a WFG problem
 - Evolver depends on jMetal 7.8. The angle density estimator of RDEMOEA and SSMOEA is jMetal's again
   (it gives 0.0 to a solution without density since 7.8), instead of Evolver's own lenient copy
 - The flat SPEA2 meta-optimizer is configurable as NSGA-II is, like the tree one: strength ranking

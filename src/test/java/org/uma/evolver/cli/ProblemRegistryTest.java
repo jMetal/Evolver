@@ -267,6 +267,21 @@ class ProblemRegistryTest {
     }
 
     @Test
+    @DisplayName(
+        "given WFG1, when described, then its arguments are the position and distance parameters"
+            + " and the objectives")
+    void givenWfg1_whenDescribed_thenItsArgumentsArePositionDistanceAndObjectives() {
+      // Act
+      ProblemDescriptor descriptor = descriptor("WFG1");
+
+      // Assert
+      assertEquals(
+          List.of("numberOfPositionParameters", "numberOfDistanceParameters", "numberOfObjectives"),
+          names(descriptor));
+      assertEquals(2, descriptor.arguments().get(2).defaultValue());
+    }
+
+    @Test
     @DisplayName("given a problem with no arguments, when described, then it lists none")
     void givenAProblemWithNoArguments_whenDescribed_thenItListsNone() {
       assertTrue(descriptor("RE31").arguments().isEmpty());
