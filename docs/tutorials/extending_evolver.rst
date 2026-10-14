@@ -45,6 +45,16 @@ Its Pareto set is the segment between the two points, so its Pareto front is kno
 ``n`` variables and ``t`` in [0, 1], ``f1 = 4 n t²`` and ``f2 = 4 n (1 − t)²``. The class has a method
 that returns the points of that front.
 
+.. note::
+
+   Writing the class of a problem by hand is not the only way. Today, generating it with a
+   generative AI tool from a description of the problem, for instance its definition in LaTeX, is
+   a very viable alternative. Giving the tool a similar problem of jMetal as an example (``ZDT1``
+   or ``Fonseca`` for ``BiSphere``) makes the code follow the current API of jMetal. The generated
+   code must be checked all the same: evaluating it on a few points computed by hand from the
+   description (for ``BiSphere``, the origin gives (0, 4n) and (2, ..., 2) gives (4n, 0)) catches
+   errors such as a wrong index or bound.
+
 Step 2: the reference front
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
