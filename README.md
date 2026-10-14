@@ -13,6 +13,11 @@
 [![Docs](https://github.com/jMetal/Evolver/actions/workflows/docs.yml/badge.svg)](https://github.com/jMetal/Evolver/actions/workflows/docs.yml)
 [![Documentation Status](https://app.readthedocs.org/projects/evolver/badge/?version=latest)](https://evolver.readthedocs.io/?badge=latest)
 
+[![Maven Central](https://img.shields.io/maven-central/v/org.uma.jmetal/Evolver)](https://central.sonatype.com/artifact/org.uma.jmetal/Evolver)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
+[![Java 21+](https://img.shields.io/badge/Java-21%2B-orange)](#requirements)
+[![Evolver-Studio](https://img.shields.io/badge/Evolver--Studio-GUI-1f4e79)](https://github.com/jMetal/Evolver-Studio)
+
 Full documentation is available at [evolver.readthedocs.io](https://evolver.readthedocs.io).
 
 Evolver is **research software for multi-objective meta-optimization**. It is a Java framework that
