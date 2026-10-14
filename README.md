@@ -59,8 +59,8 @@ The flow is:
   inactive-variable problem of flat encodings. Includes typed subtree crossover (STGP) and a tree
   mutation operator.
 - **irace integration** — base-level configuration search can also be performed with irace.
-- **Usable on its own** — the configurable algorithms (`org.uma.evolver.algorithm`,
-  `org.uma.evolver.parameter`) do not depend on the meta level, so Evolver can also be used as an
+- **Usable on its own** — the configurable algorithms ([`org.uma.evolver.algorithm`](src/main/java/org/uma/evolver/algorithm/),
+  [`org.uma.evolver.parameter`](src/main/java/org/uma/evolver/parameter/)) do not depend on the meta level, so Evolver can also be used as an
   alternative to jMetal to configure and run algorithms from a parameter space and a
   configuration string.
 
@@ -86,7 +86,7 @@ Configurable parameters per algorithm and encoding, shown as **total (top-level)
 The figure is the number of configurable parameters (flattened, including conditional
 sub-parameters — i.e. the search-space dimensionality); the value in parentheses is the number of
 top-level parameters. `—` means the encoding is not available. Counts are derived from the YAML
-parameter spaces in `src/main/resources/parameterSpaces/` (as of version 2.4): `python
+parameter spaces in [`src/main/resources/parameterSpaces/`](src/main/resources/parameterSpaces/) (as of version 2.4): `python
 scripts/plot_parameter_space.py <space>.yaml --stats` gives them for any space.
 
 ### Meta-level algorithms
@@ -161,7 +161,8 @@ show.
 ### Configuring and running an algorithm
 
 The configurable algorithms can be used on their own. The following example runs NSGA-II on ZDT1
-with a configuration chosen from the `NSGAIIDouble.yaml` parameter space:
+with a configuration chosen from the
+[`NSGAIIDouble.yaml`](src/main/resources/parameterSpaces/NSGAIIDouble.yaml) parameter space:
 
 ```java
 String[] configuration =
@@ -181,8 +182,8 @@ EvolutionaryAlgorithm<DoubleSolution> algorithm = nsgaii.build();
 algorithm.run();
 ```
 
-See `org.uma.evolver.example.baselevel` for more examples, including configurations found by
-meta-optimization (`example.baselevel.tuned`).
+See [`org.uma.evolver.example.baselevel`](src/main/java/org/uma/evolver/example/baselevel/) for more examples, including
+configurations found by meta-optimization ([`example.baselevel.tuned`](src/main/java/org/uma/evolver/example/baselevel/tuned/)).
 
 ### Meta-optimizing an algorithm
 
@@ -237,20 +238,21 @@ new TrainingRunner().run(request, Path.of(outputDirectory, "status.yaml"));
 After running, the output folder holds, for the non-dominated configurations found at every
 checkpoint: `METADATA.txt` (the settings of the run), `INDICATORS.csv` (their indicator values),
 `CONFIGURATIONS.csv` (their parameter values) and `VAR_CONF.txt` (their configuration strings,
-ready to be used). The examples in `org.uma.evolver.example.training` follow this pattern, and the
+ready to be used). The examples in [`org.uma.evolver.example.training`](src/main/java/org/uma/evolver/example/training/) follow this pattern, and the
 tutorials of the documentation explain each part.
 
 ## Parameter spaces
 
 Algorithm parameter spaces are defined in YAML files under
-`src/main/resources/parameterSpaces/` (e.g., `NSGAIIDouble.yaml`).
+[`src/main/resources/parameterSpaces/`](src/main/resources/parameterSpaces/) (e.g.,
+[`NSGAIIDouble.yaml`](src/main/resources/parameterSpaces/NSGAIIDouble.yaml)).
 Pre-tuned default configurations live in
-`src/main/resources/defaultConfigurations/`.
+[`src/main/resources/defaultConfigurations/`](src/main/resources/defaultConfigurations/).
 
 ## Analysis and reports (optional)
 
 The Java side writes results as CSV files (e.g., `FUN.csv` from the validation runners in
-`org.uma.evolver.example.validation`). Turning those into figures and HTML reports uses the Python
+[`org.uma.evolver.example.validation`](src/main/java/org/uma/evolver/example/validation/)). Turning those into figures and HTML reports uses the Python
 scripts in [`scripts/`](scripts/):
 
 ```bash
