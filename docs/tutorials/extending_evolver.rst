@@ -35,21 +35,34 @@ Step 1: the problem
 A problem for Evolver is a problem for jMetal: a class that implements ``DoubleProblem`` (or the
 interface of another encoding, see tutorial :doc:`E10 <binary_and_permutation_encodings>`). The one of
 this tutorial, ``BiSphere``, has two objectives, the squared distance to the origin and the squared
-distance to the point (2, ..., 2), with the variables in [-5, 5]:
+distance to the point (2, ..., 2):
+
+.. math::
+
+   \begin{aligned}
+   \min \quad & f_1(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 \\
+   \min \quad & f_2(\mathbf{x}) = \sum_{i=1}^{n} (x_i - 2)^2 \\
+   \text{s.t.} \quad & x_i \in [-5, 5], \quad i = 1, \dots, n
+   \end{aligned}
+
+Its Pareto set is the segment between the two points, :math:`x_i = 2t` for all :math:`i` with
+:math:`t \in [0, 1]`, so its Pareto front is known exactly:
+
+.. math::
+
+   f_1 = 4 n t^2, \qquad f_2 = 4 n (1 - t)^2, \qquad t \in [0, 1]
+
+This is the class, with a method that returns the points of that front:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/BiSphere.java
    :language: java
    :start-at: public class BiSphere
 
-Its Pareto set is the segment between the two points, so its Pareto front is known exactly: with
-``n`` variables and ``t`` in [0, 1], ``f1 = 4 n t²`` and ``f2 = 4 n (1 − t)²``. The class has a method
-that returns the points of that front.
-
 .. note::
 
    Writing the class of a problem by hand is not the only way. Today, generating it with a
-   generative AI tool from a description of the problem, for instance its definition in LaTeX, is
-   a very viable alternative. Giving the tool a similar problem of jMetal as an example (``ZDT1``
+   generative AI tool from a description of the problem, for instance its definition in LaTeX as
+   the one above, is a very viable alternative. Giving the tool a similar problem of jMetal as an example (``ZDT1``
    or ``Fonseca`` for ``BiSphere``) makes the code follow the current API of jMetal. The generated
    code must be checked all the same: evaluating it on a few points computed by hand from the
    description (for ``BiSphere``, the origin gives (0, 4n) and (2, ..., 2) gives (4n, 0)) catches

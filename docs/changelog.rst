@@ -95,9 +95,10 @@ Changed
 - The README, the home page and the introduction of the documentation present Evolver as research software for
   multi-objective meta-optimization: meant for experimental studies of meta-optimization as much as
   for its use, and evolving with that research
-- Tutorial E18 notes that the class of a problem can also be generated with a generative AI tool
-  from a description of the problem (for instance in LaTeX), with a similar problem of jMetal as an
-  example, and that the generated code must be checked on a few points computed by hand
+- Tutorial E18 gives the formulation of ``BiSphere`` and of its Pareto front as formulas, and notes
+  that the class of a problem can also be generated with a generative AI tool from a description of
+  the problem (for instance in LaTeX), with a similar problem of jMetal as an example, and that the
+  generated code must be checked on a few points computed by hand
 
 2.4 (2026-10-07)
 ----------------
