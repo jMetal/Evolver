@@ -62,7 +62,7 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
    * - ``AGE-MOEA``
      - yes
      - yes
-     - The same as NSGA-II, plus its environmental selection variant (``agemoeaVariant``)
+     - The same as NSGA-II, plus its environmental selection variant (``replacement``: ``agemoea`` or ``agemoeaII``)
      - Synchronous
    * - ``SPEA2``
      - yes

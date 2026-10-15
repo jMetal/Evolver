@@ -47,7 +47,8 @@ The following algorithms are currently available as configurable base-level meta
      - Reference-vector-guided EA; its replacement selects the variant: RVEA, RVEA* or iRVEA
    * - AGE-MOEA
      - Double
-     - Adaptive geometry estimation-based MOEA
+     - Adaptive geometry estimation-based MOEA; its replacement selects the variant: AGE-MOEA or
+       AGE-MOEA-II
    * - SSMOEA
      - Double
      - Steady-state MOEA (offspring population size fixed at 1); see :ref:`ssmoea` below

@@ -75,9 +75,17 @@ Changed
 - The advanced tutorials after E15 are renumbered to make room for E16, "Tuning with SMAC3": E16
   (CLI) is now E17, E17 (extending Evolver) is E18 and E18 (independent replications) is E19
 - The default configurations of AGE-MOEA follow those of the variants of RVEA:
-  ``AGEMOEADoubleDefault.txt`` is now the original AGE-MOEA (``--agemoeaVariant agemoea``), and the
-  new ``AGEMOEAIIDoubleDefault.txt`` is AGE-MOEA-II (``agemoea2``), which the former held until now.
+  ``AGEMOEADoubleDefault.txt`` is now the original AGE-MOEA (``--replacement agemoea``), and the
+  new ``AGEMOEAIIDoubleDefault.txt`` is AGE-MOEA-II (``agemoeaII``), which the former held until now.
   Tutorial E6 uses the latter, so its results do not change
+- AGE-MOEA and AGE-MOEA-II are told apart as the variants of RVEA are: the parameter that selects
+  the variant is ``replacement`` (it was ``agemoeaVariant``), its values are ``agemoea`` and
+  ``agemoeaII`` (it was ``agemoea2``), in ``AGEMOEADouble.yaml`` and in the parameter spaces and
+  configuration files of AGE-MOEA as meta-optimizer (``replacement: agemoea``), and the algorithm is
+  named after its variant (``AGE-MOEA`` or ``AGE-MOEA-II``). Configurations written for 2.x must
+  rename the flag; an unknown value is now an error instead of falling back to AGE-MOEA. The
+  examples ``AGEMOEA2ForDTLZ3Example`` and ``AGEMOEAZDT4Example``, which run AGE-MOEA-II, are now
+  ``AGEMOEAIIForDTLZ3Example`` and ``AGEMOEAIIForZDT4Example``
 - The arguments of the WFG problems are described in the manifest as ``numberOfPositionParameters``,
   ``numberOfDistanceParameters`` and ``numberOfObjectives`` (they were ``k``, ``l`` and ``m``), as
   the number of objectives of the other configurable families is named; arguments are still given by

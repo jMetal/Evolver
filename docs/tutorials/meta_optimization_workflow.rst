@@ -391,7 +391,7 @@ Try it yourself
 - Use IGD+ as the main objective instead of NHV
   (``indicatorNames: [Epsilon, InvertedGenerationalDistancePlus]``), and choose by it in step 4.
 - Use AGE-MOEA as meta-optimizer: ``algorithm: AGE-MOEA`` in the meta-search file, plus
-  ``agemoeaVariant: agemoea`` among its operators.
+  ``replacement: agemoea`` (or ``agemoeaII``) among its operators.
 - Tune another algorithm: change ``algorithmName`` and ``yamlParameterSpaceFile``, for instance to
   MOEA/D (see ``MoeadZdt4BaseLevel.yaml``, which also sets the weight vectors it needs).
 

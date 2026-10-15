@@ -35,7 +35,7 @@ Available Meta-Optimizers
    * - AGE-MOEA
      - Yes
      - Yes
-     - Built on Evolver's configurable AGE-MOEA (``DoubleAGEMOEA`` or ``TreeAGEMOEA``); same operators as NSGA-II plus its environmental selection variant
+     - Built on Evolver's configurable AGE-MOEA (``DoubleAGEMOEA`` or ``TreeAGEMOEA``); same operators as NSGA-II plus its environmental selection variant (``replacement``: ``agemoea`` or ``agemoeaII``)
    * - SPEA2
      - Yes
      - Yes

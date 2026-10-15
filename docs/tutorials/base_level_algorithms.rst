@@ -324,7 +324,8 @@ Try it yourself
 - Run AGE-MOEA instead of NSGA-II: ``DoubleAGEMOEA`` has the same constructor, its parameter space is
   ``AGEMOEADouble.yaml``, and ``AGEMOEADoubleDefault.txt`` (AGE-MOEA) and
   ``AGEMOEAIIDoubleDefault.txt`` (AGE-MOEA-II) have configurations for it. Note the extra
-  top-level parameter, ``agemoeaVariant``, which is what they differ in.
+  top-level parameter, ``replacement`` (``agemoea`` or ``agemoeaII``), which is what they differ
+  in, as the variants of RVEA.
 - Change the seed, or remove the line that sets it, and run step 3 several times. Is the second
   configuration always better?
 - Register a jMetal observer on the algorithm of step 1 before running it, for instance
