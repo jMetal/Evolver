@@ -1,8 +1,10 @@
-agemoeaVariant:
+# The variant of the AGE-MOEA family, as the replacement of RVEADouble.yaml: AGE-MOEA or
+# AGE-MOEA-II (their environmental selections differ in how they estimate the geometry of the front).
+replacement:
   type: categorical
   values:
     agemoea: {}
-    agemoea2: {}
+    agemoeaII: {}
 
 algorithmResult:
   type: categorical

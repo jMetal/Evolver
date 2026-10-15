@@ -1,7 +1,7 @@
 # Meta configuration of AGE-MOEA with flat encoding
 #
 # Same operator catalogue as MetaNSGAIIFlatConfiguration.yaml, plus AGE-MOEA's environmental
-# selection variant (agemoea or agemoea2). As for every meta-optimizer, the offspring population
+# selection variant (agemoea or agemoeaII). As for every meta-optimizer, the offspring population
 # size always equals metaPopulationSize and the result is the final population.
 
 algorithm: AGE-MOEA
@@ -11,7 +11,7 @@ metaMaxEvaluations: 2000
 metaPopulationSize: 50
 numberOfCores: 8
 
-agemoeaVariant: agemoea
+replacement: agemoea
 crossover: SBX
 mutation: polynomial
 crossoverProbability: 0.9

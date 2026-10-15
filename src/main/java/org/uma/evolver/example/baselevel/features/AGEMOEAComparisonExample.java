@@ -59,7 +59,7 @@ public class AGEMOEAComparisonExample {
                 "resources/referenceFronts/DTLZ7.3D.csv",
                 25000));
 
-    List<String> variants = List.of("agemoea", "agemoea2");
+    List<String> variants = List.of("agemoea", "agemoeaII");
 
     int populationSize = 100;
 
@@ -68,7 +68,7 @@ public class AGEMOEAComparisonExample {
 
       for (String variant : variants) {
         String[] parameters =
-            ("--agemoeaVariant " + variant + " "
+            ("--replacement " + variant + " "
                     + "--algorithmResult population "
                     + "--createInitialSolutions default "
                     + "--offspringPopulationSize 100 "
@@ -97,8 +97,7 @@ public class AGEMOEAComparisonExample {
         algorithm.run();
 
         JMetalLogger.logger.info("==================================================");
-        JMetalLogger.logger.info(
-            "Algorithm : " + (variant.equals("agemoea2") ? "AGE-MOEA-II" : "AGE-MOEA"));
+        JMetalLogger.logger.info("Algorithm : " + algorithm.name());
         JMetalLogger.logger.info("Problem   : " + problem.name());
         JMetalLogger.logger.info("Time (ms) : " + algorithm.totalComputingTime());
         JMetalLogger.logger.info("Evaluations: " + algorithm.numberOfEvaluations());

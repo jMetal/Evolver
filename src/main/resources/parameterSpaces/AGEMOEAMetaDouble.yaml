@@ -11,11 +11,11 @@
 # It is declared as an integer range (rather than a categorical list) only so that any meta
 # population size is accepted.
 
-agemoeaVariant:
+replacement:
   type: categorical
   values:
     agemoea: {}
-    agemoea2: {}
+    agemoeaII: {}
 
 algorithmResult:
   type: categorical

@@ -72,7 +72,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       a full {@code BaseLevelAlgorithm} with its own operator
  *       catalogue exposed via {@code operatorFlags}. {@code "AGE-MOEA"} is built the same way,
  *       directly on {@link DoubleAGEMOEA}, with the same operator catalogue plus its
- *       environmental selection variant ({@code agemoeaVariant}). {@code "SPEA2"} is built the same way too,
+ *       environmental selection variant ({@code replacement}). {@code "SPEA2"} is built the same way too,
  *       on {@link DoubleRDEMOEA} configured as SPEA2: strength ranking and the k-nearest-neighbour
  *       density estimator are fixed, and the operators are those of NSGA-II, with SPEA2's usual
  *       values (SBX, polynomial mutation, binary tournament) when the request omits them.

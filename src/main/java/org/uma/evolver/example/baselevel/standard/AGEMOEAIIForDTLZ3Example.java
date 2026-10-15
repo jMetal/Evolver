@@ -22,7 +22,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * <p>Runs AGE-MOEA-II on DTLZ3 with SBX(p=0.9, di=30), Polynomial(p=1/n, di=20), pop=100, 40000
  * evaluations.
  */
-public class AGEMOEA2ForDTLZ3Example {
+public class AGEMOEAIIForDTLZ3Example {
 
   public static void main(String[] args) throws IOException {
     DoubleProblem problem = new DTLZ3();
@@ -34,7 +34,7 @@ public class AGEMOEA2ForDTLZ3Example {
 
     String[] parameters =
         """
-        --agemoeaVariant agemoea2
+        --replacement agemoeaII
         --algorithmResult population
         --createInitialSolutions default
         --offspringPopulationSize 100
@@ -60,13 +60,13 @@ public class AGEMOEA2ForDTLZ3Example {
             new YAMLParameterSpace(yamlParameterSpaceFile, new DoubleParameterFactory()));
 
     baseAGEMOEA.parse(parameters);
-    EvolutionaryAlgorithm<DoubleSolution> agemoea2 = baseAGEMOEA.build();
-    agemoea2.run();
+    EvolutionaryAlgorithm<DoubleSolution> agemoeaII = baseAGEMOEA.build();
+    agemoeaII.run();
 
-    JMetalLogger.logger.info("Total execution time : " + agemoea2.totalComputingTime() + "ms");
-    JMetalLogger.logger.info("Number of evaluations: " + agemoea2.numberOfEvaluations());
+    JMetalLogger.logger.info("Total execution time : " + agemoeaII.totalComputingTime() + "ms");
+    JMetalLogger.logger.info("Number of evaluations: " + agemoeaII.numberOfEvaluations());
 
-    new SolutionListOutput(agemoea2.result())
+    new SolutionListOutput(agemoeaII.result())
         .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
         .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
         .print();
@@ -74,7 +74,7 @@ public class AGEMOEA2ForDTLZ3Example {
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
 
     QualityIndicatorUtils.printQualityIndicators(
-        SolutionListUtils.getMatrixWithObjectiveValues(agemoea2.result()),
+        SolutionListUtils.getMatrixWithObjectiveValues(agemoeaII.result()),
         VectorUtils.readVectors(referenceFrontFileName, ","));
   }
 }

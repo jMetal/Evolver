@@ -36,7 +36,7 @@ public class AGEMOEAForZDT1Example {
 
     String[] parameters =
         """
-        --agemoeaVariant agemoea
+        --replacement agemoea
         --algorithmResult population
         --createInitialSolutions default
         --offspringPopulationSize 100

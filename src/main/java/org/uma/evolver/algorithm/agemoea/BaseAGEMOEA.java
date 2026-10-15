@@ -25,24 +25,31 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.errorchecking.Check;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * Abstract base class for configurable AGE-MOEA (Adaptive GEometry-based Many-Objective
- * Evolutionary Algorithm) implementations.
+ * Evolutionary Algorithm) implementations, covering AGE-MOEA and AGE-MOEA-II.
  *
  * <p>This class provides a flexible foundation for building AGE-MOEA variants for different
  * solution types. It manages the configuration and assembly of the main algorithmic components
  * (selection, variation, replacement, evaluation, termination, etc.) through a parameter space
  * abstraction. AGE-MOEA selects survivors using an adaptive geometry that approximates the Pareto
- * front in normalized objective space; the variant of the geometry computation (original or
- * AGE-MOEA-II) is chosen at runtime via the {@code agemoeaVariant} parameter.
+ * front in normalized objective space. The {@code replacement} parameter selects the variant, as
+ * in {@link org.uma.evolver.algorithm.rvea.BaseRVEA}: {@code agemoea}, which estimates the
+ * curvature {@code p} of the front in closed form from its central point and measures diversity
+ * with the Minkowski distance of order {@code p}, or {@code agemoeaII}, which estimates {@code p}
+ * with Newton-Raphson from the point closest to the ideal point and approximates geodesic
+ * distances on the front. The implementation of both is jMetal's.
  *
  * <p>Subclasses must implement {@link #setNonConfigurableParameters()} to set any parameters
  * derived from the problem instance.
  *
  * @param <S> the solution type handled by this algorithm
  * @see <a href="https://doi.org/10.1145/3321707.3321839">Pareto Front Estimation through Geometry
- *     and Adaptive Mating</a>
+ *     and Adaptive Mating (AGE-MOEA)</a>
+ * @see <a href="https://doi.org/10.1145/3512290.3528732">An Improved Pareto Front Modeling
+ *     Algorithm for Large-scale Many-Objective Optimization (AGE-MOEA-II)</a>
  */
 public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlgorithm<S> {
   protected final ParameterSpace parameterSpace;
@@ -92,7 +99,7 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
 
     return new EvolutionaryAlgorithmBuilder<S>()
         .build(
-            "AGE-MOEA",
+            algorithmName(),
             initialSolutionsCreation,
             evaluation,
             termination,
@@ -157,19 +164,34 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
         .getCreateInitialSolutionsStrategy(problem, populationSize);
   }
 
+  /** The name of the configured variant: AGE-MOEA or AGE-MOEA-II. */
+  protected String algorithmName() {
+    return switch (replacementVariant()) {
+      case "agemoea" -> "AGE-MOEA";
+      case "agemoeaII" -> "AGE-MOEA-II";
+      default -> throw new JMetalException("AGE-MOEA replacement unknown: " + replacementVariant());
+    };
+  }
+
+  private String replacementVariant() {
+    return (String) parameterSpace.get("replacement").value();
+  }
+
   /**
-   * Builds the AGE-MOEA replacement strategy. The {@code agemoeaVariant} categorical parameter
-   * determines which environmental selection is used: {@code agemoea} for the original analytical
-   * hyperplane fitting and {@code agemoea2} for the AGE-MOEA-II Newton-Raphson based variant.
+   * Builds the replacement of the configured variant: the environmental selection of AGE-MOEA
+   * ({@code agemoea}) or that of AGE-MOEA-II ({@code agemoeaII}).
    *
    * @return the replacement strategy configured with the requested environmental selection
    */
   protected Replacement<S> createReplacement() {
-    String variant = (String) parameterSpace.get("agemoeaVariant").value();
+    int numberOfObjectives = problem.numberOfObjectives();
     AGEMOEAEnvironmentalSelection<S> environmentalSelection =
-        variant.equals("agemoea2")
-            ? new AGEMOEA2EnvironmentalSelection<>(problem.numberOfObjectives())
-            : new AGEMOEAEnvironmentalSelection<>(problem.numberOfObjectives());
+        switch (replacementVariant()) {
+          case "agemoea" -> new AGEMOEAEnvironmentalSelection<>(numberOfObjectives);
+          case "agemoeaII" -> new AGEMOEA2EnvironmentalSelection<>(numberOfObjectives);
+          default ->
+              throw new JMetalException("AGE-MOEA replacement unknown: " + replacementVariant());
+        };
     return new AGEMOEAReplacement<>(environmentalSelection);
   }
 }

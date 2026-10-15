@@ -1,7 +1,7 @@
 # Meta configuration of AGE-MOEA with tree (derivation tree) encoding
 #
 # Same operator fields as MetaNSGAIITreeConfiguration.yaml, plus AGE-MOEA's environmental
-# selection variant (agemoea or agemoea2), parsed against AGEMOEAMetaTree.yaml.
+# selection variant (agemoea or agemoeaII), parsed against AGEMOEAMetaTree.yaml.
 
 algorithm: AGE-MOEA
 encoding: tree
@@ -10,7 +10,7 @@ metaMaxEvaluations: 2000
 metaPopulationSize: 50
 numberOfCores: 8
 
-agemoeaVariant: agemoea
+replacement: agemoea
 crossoverProbability: 0.9
 mutationProbability: 1.0
 mutationDistributionIndex: 5.0   # provisional; its value is still to be studied

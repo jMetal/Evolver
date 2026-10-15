@@ -18,13 +18,13 @@ import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Example: running AGE-MOEA (AGE-MOEA-II variant by default) on the ZDT4 problem.
+ * Example: running AGE-MOEA-II on the ZDT4 problem.
  *
- * <p>The {@code agemoeaVariant} parameter selects between the original AGE-MOEA and AGE-MOEA-II.
- * Results are saved to {@code VAR.csv} and {@code FUN.csv}; a real-time chart shows the evolution
- * of the Pareto front.
+ * <p>The {@code replacement} parameter selects the variant: {@code agemoeaII} here, {@code agemoea}
+ * for the original AGE-MOEA. Results are saved to {@code VAR.csv} and {@code FUN.csv}; a real-time
+ * chart shows the evolution of the Pareto front.
  */
-public class AGEMOEAZDT4Example {
+public class AGEMOEAIIForZDT4Example {
 
   public static void main(String[] args) throws IOException {
     DoubleProblem problem = new ZDT4();
@@ -40,7 +40,7 @@ public class AGEMOEAZDT4Example {
     } else {
       parameters =
           """
-          --agemoeaVariant agemoea2
+          --replacement agemoeaII
           --algorithmResult population
           --createInitialSolutions default
           --offspringPopulationSize 100
