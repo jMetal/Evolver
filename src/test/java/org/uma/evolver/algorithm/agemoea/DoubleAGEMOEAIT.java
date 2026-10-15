@@ -15,13 +15,13 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
 
 @DisplayName("Integration tests for class DoubleAGEMOEA")
-class AGEMOEADoubleIT {
+class DoubleAGEMOEAIT {
 
   @Tag("integration")
   @Test
-  @DisplayName("DoubleAGEMOEA (agemoea2) should reach a minimum hypervolume on ZDT1 with standard settings")
+  @DisplayName("DoubleAGEMOEA (agemoeaII) should reach a minimum hypervolume on ZDT1 with standard settings")
   void shouldTheHypervolumeHaveAMinimumValueWhenSolvingZDT1WithAgeMoea2() {
-    double hv = runAgeMoeaOnZdt1("agemoea2");
+    double hv = runAgeMoeaOnZdt1("agemoeaII");
     double expectedHypervolume = 0.62;
     assertTrue(hv > expectedHypervolume, "Expected HV > " + expectedHypervolume + " but got " + hv);
   }
@@ -48,7 +48,7 @@ class AGEMOEADoubleIT {
             new YAMLParameterSpace("AGEMOEADouble.yaml", new DoubleParameterFactory()));
 
     var parameters =
-        ("--agemoeaVariant " + variant + " "
+        ("--replacement " + variant + " "
                 + "--algorithmResult population "
                 + "--createInitialSolutions default "
                 + "--variation crossoverAndMutationVariation "

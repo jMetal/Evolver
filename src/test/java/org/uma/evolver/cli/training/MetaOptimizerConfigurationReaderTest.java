@@ -96,7 +96,7 @@ class MetaOptimizerConfigurationReaderTest {
       FlatMetaSearchConfig flat = (FlatMetaSearchConfig) config;
       assertEquals("AGE-MOEA", flat.algorithm());
       assertEquals(50, flat.metaPopulationSize());
-      assertTrue(flat.operatorFlags().containsAll(java.util.List.of("--agemoeaVariant", "agemoea")));
+      assertTrue(flat.operatorFlags().containsAll(java.util.List.of("--replacement", "agemoea")));
     }
 
     @Test
