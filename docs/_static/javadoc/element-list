@@ -10,6 +10,8 @@ org.uma.evolver.algorithm.rvea
 org.uma.evolver.algorithm.smsemoa
 org.uma.evolver.algorithm.ssmoea
 org.uma.evolver.cli
+org.uma.evolver.cli.evaluation
+org.uma.evolver.cli.llm
 org.uma.evolver.cli.solving
 org.uma.evolver.cli.training
 org.uma.evolver.cli.training.generators
@@ -31,6 +33,7 @@ org.uma.evolver.meta.encoding.operator
 org.uma.evolver.meta.encoding.parameter
 org.uma.evolver.meta.encoding.solution
 org.uma.evolver.meta.encoding.util
+org.uma.evolver.meta.llm
 org.uma.evolver.meta.output
 org.uma.evolver.meta.problem
 org.uma.evolver.meta.strategy
@@ -46,4 +49,5 @@ org.uma.evolver.parameter.factory
 org.uma.evolver.parameter.type
 org.uma.evolver.parameter.yaml
 org.uma.evolver.parameter.yaml.processors
+org.uma.evolver.smac
 org.uma.evolver.util
