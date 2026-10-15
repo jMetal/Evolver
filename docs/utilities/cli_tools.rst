@@ -19,10 +19,11 @@ Stability
 
 The files of these tools (the request, ``status.yaml`` and ``results.yaml`` of ``cli.training``
 and ``cli.solving``, and the manifest of ``DescribeMain``) are the command-line contract of
-Evolver, and they are stable since Evolver 3.0: within 3.x, a new version may add optional fields
-or new values (another algorithm, problem or indicator), but it does not remove or rename fields,
-nor change what an existing one means. A client written for 3.0 keeps working with any 3.x, and
-can read ``evolverVersion`` from the manifest to use what a later version adds.
+Evolver, and they are stable since Evolver 2.5: from 2.5 on, through every 3.x, a new version may
+add optional fields or new values (another algorithm, problem or indicator), but it does not remove
+or rename fields, nor change what an existing one means. A client written for 2.5 keeps working with
+any later version up to 3.x, and can read ``evolverVersion`` from the manifest to use what a later
+version adds.
 
 TrainingRunnerMain
 -------------------

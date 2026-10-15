@@ -22,7 +22,8 @@ import org.yaml.snakeyaml.Yaml;
  * directory ({@code results/<study>/run01}, {@code run02}, ...).
  *
  * <p>The request, status and results files are the command-line contract of Evolver, stable since
- * 3.0: within 3.x they only gain optional fields (see {@code docs/utilities/cli_tools.rst}).
+ * 2.5: from 2.5 through 3.x they only gain optional fields (see {@code
+ * docs/utilities/cli_tools.rst}).
  */
 public class TrainingRunnerMain {
 

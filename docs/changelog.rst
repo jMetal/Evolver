@@ -45,9 +45,10 @@ Added
   can use it (``scenario-NSGAII-server.txt``, ``target-runner-server``; ``run.sh`` starts and stops
   the server when ``EVOLVER_SERVER`` names a base-level file)
 - A stable command-line contract: the request, status and results files of ``cli.training`` and
-  ``cli.solving`` and the manifest of ``DescribeMain`` only gain optional fields within 3.x (see the
-  Stability section of the CLI tools). The manifest starts with ``evolverVersion``, the version of
-  the jar, so that clients such as Evolver-Studio check it without parsing the name of the file
+  ``cli.solving`` and the manifest of ``DescribeMain`` only gain optional fields from 2.5 through
+  3.x (see the Stability section of the CLI tools). The manifest starts with ``evolverVersion``,
+  the version of the jar, so that clients such as Evolver-Studio check it without parsing the name
+  of the file
 - SPEA2 as a meta-optimizer with the tree encoding (``TreeSPEA2``, an RDEMOEA with strength ranking,
   k-nearest-neighbour density and sequential replacement, as the flat one), configured from
   ``SPEA2MetaTree.yaml``: ``algorithm: SPEA2`` with ``encoding: tree`` in the meta-optimizer

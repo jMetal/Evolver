@@ -31,7 +31,8 @@ package org.uma.evolver.cli.training;
  *
  * <p>The meta-optimizer is selected by {@link MetaSearchConfig#algorithm()} and resolved by {@link
  * MetaAlgorithmRegistry}. The request file is part of the command-line contract of Evolver, stable
- * since 3.0 (see {@code docs/utilities/cli_tools.rst}): within 3.x it only gains optional fields.
+ * since 2.5 (see {@code docs/utilities/cli_tools.rst}): from 2.5 through 3.x it only gains optional
+ * fields.
  */
 public record TrainingRequest(
     BaseLevelConfig baseLevel,
