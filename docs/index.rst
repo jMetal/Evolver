@@ -9,7 +9,7 @@ Its core approach is meta-optimization, where the process of tuning the paramete
 
 As research software, Evolver is meant for experimental studies of meta-optimization as much as for its use: the training sets, the quality indicators used as meta-objectives, the encodings of the configurations, the meta-optimizers and the budgets are all choices to experiment with, and the tools support such studies (independent replications of a training, validation protocols, statistical analysis). It evolves with that research, so its interfaces may change between versions; :doc:`changelog` records every change.
 
-The current stable version is 2.4 (https://github.com/jMetal/Evolver). The working version in GitHub is 3.0-SNAPSHOT.
+The current stable version is 2.5 (https://github.com/jMetal/Evolver). The working version in GitHub is 3.0-SNAPSHOT.
 
 Evolver 2.0 is a full re-implementation of the original Evolver framework, which is described in the following paper: `Evolver: Meta-optimizing multi-objective metaheuristics <https://doi.org/10.1016/j.softx.2023.101551>`_.
 
