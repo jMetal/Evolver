@@ -1,6 +1,10 @@
 package org.uma.evolver.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +16,11 @@ import java.util.List;
  * Utility class for reading and accessing configurations from a text file containing a
  * configuration of a base-level metaheuristic per line. Each line in the file represents a single
  * configuration.
+ *
+ * <p>An absolute path is read as it is. A relative one, such as {@code
+ * defaultConfigurations/NSGAIIDoubleDefault.txt}, is looked up in {@code src/main/resources}, then
+ * in the working directory and then on the classpath, so the bundled configurations are also found
+ * when Evolver runs from a jar, outside the project directory.
  *
  * @author Antonio J. Nebro
  */
@@ -35,27 +44,53 @@ public class ConfigurationFileReader {
     loadConfigurations();
   }
 
+  /** The lines of a classpath resource, or null if there is none with that name. */
+  private static List<String> readFromClasspath(String name) throws IOException {
+    String resource = name.replace('\\', '/');
+    try (InputStream stream =
+        ConfigurationFileReader.class.getClassLoader().getResourceAsStream(resource)) {
+      if (stream == null) {
+        return null;
+      }
+      try (BufferedReader reader =
+          new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+        return reader.lines().toList();
+      }
+    }
+  }
+
   /**
    * Loads configurations from the file into memory.
    *
    * @throws IOException if an I/O error occurs reading the file
    */
   private void loadConfigurations() throws IOException {
-    // First try to load from src/main/resources
-    Path resourcePath = Paths.get("src/main/resources", filePath);
-    Path path;
-    
-    if (Files.exists(resourcePath)) {
-      path = resourcePath;
-    } else {
-      // Fall back to the original path if not found in resources
-      path = Paths.get(filePath);
-      if (!Files.exists(path)) {
-        throw new IOException("Configuration file not found in src/main/resources/" + filePath + " or at " + filePath);
+    Path path = Paths.get(filePath);
+    // A relative path is looked up first in src/main/resources. An absolute one is used as it is:
+    // joined to another path, a Windows one ("C:\...") is not even a valid path.
+    if (!path.isAbsolute()) {
+      Path resourcePath = Paths.get("src", "main", "resources").resolve(path);
+      if (Files.exists(resourcePath)) {
+        path = resourcePath;
       }
     }
 
-    configurations.addAll(Files.readAllLines(path));
+    if (Files.exists(path)) {
+      configurations.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+    } else {
+      // Outside the project directory (from a jar, for instance) the bundled files are on the
+      // classpath
+      List<String> lines = path.isAbsolute() ? null : readFromClasspath(filePath);
+      if (lines == null) {
+        throw new IOException(
+            "Configuration file not found in src/main/resources/"
+                + filePath
+                + ", at "
+                + filePath
+                + " or on the classpath");
+      }
+      configurations.addAll(lines);
+    }
     // Remove any empty lines and trim whitespace
     configurations.removeIf(line -> line.trim().isEmpty());
     // Trim whitespace from each line
