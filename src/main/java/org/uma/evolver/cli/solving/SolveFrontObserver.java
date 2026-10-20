@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
+import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithConstraintsComparator;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
@@ -89,7 +89,8 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
 
   /** Whether each solution of a population is dominated by none of the others. */
   private static List<Boolean> nonDominatedFlags(List<Solution<?>> population) {
-    var comparator = new DefaultDominanceComparator<Solution<?>>();
+    // Deb's constrained-domination principle: a feasible solution dominates every infeasible one
+    var comparator = new DominanceWithConstraintsComparator<Solution<?>>();
     List<Boolean> flags = new ArrayList<>();
     for (Solution<?> solution : population) {
       boolean dominated = false;
