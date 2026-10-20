@@ -77,6 +77,28 @@ class SolveFrontObserverTest {
   }
 
   @Test
+  @DisplayName(
+      "given a reader holding the front file open, when a front is written, then the run goes on"
+          + " and no temporary file is left")
+  void givenAReaderHoldingTheFrontFileOpen_whenAFrontIsWritten_thenTheRunGoesOn()
+      throws IOException {
+    // Arrange: on Windows, replacing a file that is open fails; on Linux and macOS it does not
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, false, null);
+    report(observer, 100, population(new double[] {0.0, 1.0}));
+
+    // Act
+    try (var reader = Files.newInputStream(frontFile())) {
+      report(observer, 200, population(new double[] {1.0, 0.0}));
+    }
+
+    // Assert: the front is either the new one or, if it was skipped, the previous one
+    List<String> lines = Files.readAllLines(frontFile());
+    assertEquals(2, lines.size());
+    assertTrue(lines.get(1).equals("1,200,1,1.0,0.0") || lines.get(1).equals("1,100,1,0.0,1.0"));
+    assertFalse(Files.exists(frontFile().resolveSibling(SolveFrontObserver.FILE_NAME + ".tmp")));
+  }
+
+  @Test
   @DisplayName("given dominated solutions, when reported, then only the non-dominated are written")
   void givenDominatedSolutions_whenReported_thenOnlyTheNonDominatedAreWritten()
       throws IOException {
