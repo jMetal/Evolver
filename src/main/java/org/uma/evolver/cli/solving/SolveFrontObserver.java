@@ -2,6 +2,7 @@ package org.uma.evolver.cli.solving;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -38,6 +39,11 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
 
   /** The name of the file, in the output directory. */
   static final String FILE_NAME = "CURRENT_FRONT.csv";
+
+  /** How many times the front file is replaced before skipping a front, and the wait between. */
+  private static final int MOVE_ATTEMPTS = 20;
+
+  private static final long MOVE_RETRY_MILLIS = 5;
 
   private final Path frontFile;
   private final int run;
@@ -123,13 +129,40 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
           writer.println(row);
         }
       }
-      Files.move(
-          temporaryFile,
-          frontFile,
-          StandardCopyOption.REPLACE_EXISTING,
-          StandardCopyOption.ATOMIC_MOVE);
+      replaceFrontFile(temporaryFile);
     } catch (IOException e) {
       throw new JMetalException(e);
+    }
+  }
+
+  /**
+   * Moves the temporary file over the front file. On Windows the replacement fails with an {@link
+   * AccessDeniedException} while a reader has the front file open, as the process that follows the
+   * run does when it polls it; the move is retried for a while and, if the file is still in use,
+   * this front is skipped: the next one replaces it. On Linux and macOS the first attempt succeeds.
+   */
+  private void replaceFrontFile(Path temporaryFile) throws IOException {
+    for (int attempt = 1; ; attempt++) {
+      try {
+        Files.move(
+            temporaryFile,
+            frontFile,
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.ATOMIC_MOVE);
+        return;
+      } catch (AccessDeniedException e) {
+        if (attempt == MOVE_ATTEMPTS) {
+          Files.deleteIfExists(temporaryFile);
+          return;
+        }
+        try {
+          Thread.sleep(MOVE_RETRY_MILLIS);
+        } catch (InterruptedException interrupted) {
+          Thread.currentThread().interrupt();
+          Files.deleteIfExists(temporaryFile);
+          return;
+        }
+      }
     }
   }
 
