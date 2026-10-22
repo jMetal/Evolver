@@ -181,8 +181,10 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       int evaluations = evaluationBudgetStrategy.getEvaluations(problemId);
       List<S> results = runAlgorithm(parameterArray, problemId, evaluations);
       double[][] front = extractNonDominatedFront(results);
-      double[][] normalizedFront = normalizeFront(front, problemId);
-      double[] runIndicators = computeIndicatorValuesForRun(normalizedFront, problemId, evaluations);
+      double[] runIndicators =
+          front.length == 0
+              ? worstIndicatorValues(evaluations)
+              : computeIndicatorValuesForRun(normalizeFront(front, problemId), problemId, evaluations);
       for (int i = 0; i < indicators.size(); i++) {
         indicatorValues[i][runId] = runIndicators[i];
       }
@@ -217,10 +219,38 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     }
   }
 
+  /**
+   * The objective values of the non-dominated solutions with finite objectives, or an empty matrix if
+   * there are none. A solution with an infinite or NaN objective cannot be normalized (jMetal rejects
+   * it), and it would not contribute to the hypervolume anyway, so it is left out.
+   */
   private double[][] extractNonDominatedFront(List<S> solutions) {
     NonDominatedSolutionListArchive<S> archive = new NonDominatedSolutionListArchive<>();
-    archive.addAll(solutions);
-    return getMatrixWithObjectiveValues(archive.solutions());
+    archive.addAll(
+        solutions.stream()
+            .filter(s -> Arrays.stream(s.objectives()).allMatch(Double::isFinite))
+            .toList());
+    return archive.solutions().isEmpty()
+        ? new double[0][]
+        : getMatrixWithObjectiveValues(archive.solutions());
+  }
+
+  /**
+   * The worst value of each indicator, for a run whose front has no solution with finite objectives:
+   * {@code Double.MAX_VALUE} for the indicators that are better when lower and 0 for the others, as
+   * for an indicator value that is not finite.
+   */
+  private double[] worstIndicatorValues(int evaluations) {
+    double[] values = new double[indicators.size()];
+    for (int i = 0; i < indicators.size(); i++) {
+      QualityIndicator indicator = indicators.get(i);
+      if (indicator instanceof EvaluationsQualityIndicator) {
+        values[i] = evaluations;
+      } else {
+        values[i] = indicator.isTheLowerTheIndicatorValueTheBetter() ? Double.MAX_VALUE : 0.0;
+      }
+    }
+    return values;
   }
 
   private double[][] normalizeFront(double[][] front, int problemId) {
