@@ -8,6 +8,19 @@ All notable changes to Evolver will be documented in this file.
 3.0-SNAPSHOT
 ------------
 
+Added
+~~~~~
+
+- A constrained variant of NSGA-II for problems with constraints, ``ConstrainedDoubleNSGAII``, with
+  its parameter space ``NSGAIIDoubleConstrained.yaml`` (``NSGAIIDouble.yaml`` plus the
+  ``constraintHandling`` parameter) and default configuration. The parameter takes one of the
+  constraint-handling techniques of jMetal (``cdp``, ``violatedConstraints``,
+  ``epsilonConstrained``, ``stochasticRanking``, ``pushPull``, ``selfAdaptivePenalty``), which
+  ranks the population and is updated with the progress of the run; the bounded external archives
+  compare solutions with the constrained-domination principle. ``DoubleNSGAII`` does not change.
+  The example ``ConstrainedNSGAIILIRCMOP2Example`` compares both variants on LIR-CMOP2. Base level
+  only: the variant is not registered in the command-line tools yet
+
 Changed
 ~~~~~~~
 
