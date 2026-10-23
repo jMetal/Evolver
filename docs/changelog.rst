@@ -25,7 +25,10 @@ Changed
 ~~~~~~~
 
 - Evolver depends on jMetal 7.9, which brings constraint-handling techniques
-  (``org.uma.jmetal.util.constrainthandling``) and the components that apply them
+  (``org.uma.jmetal.util.constrainthandling``) and the components that apply them. Its NHV fails
+  when the hypervolume of the reference front is not positive, as with the two-point fronts of the
+  TSP instances, instead of giving the worst value to every configuration: with those fronts, use
+  HV- (tutorial E9)
 
 2.5 (2026-10-15)
 ----------------

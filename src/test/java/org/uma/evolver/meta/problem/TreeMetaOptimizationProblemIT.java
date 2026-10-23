@@ -20,6 +20,7 @@ import org.uma.evolver.meta.strategy.RandomRangeEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.factory.PermutationParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAB100TSP;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
@@ -278,7 +279,9 @@ class TreeMetaOptimizationProblemIT {
       // Arrange
       List<Problem<PermutationSolution<Integer>>> problems = List.of(new KroAB100TSP());
       List<String> fronts = List.of("resources/referenceFrontsTSP/KroAB100TSP.csv");
-      List<QualityIndicator> indicators = List.of(new Epsilon(), new NormalizedHypervolume());
+      // The reference front of KroAB100TSP has only two points, so the hypervolume (HV-) is the
+      // indicator whose values are meaningful besides EP; NHV is not defined (see tutorial E9)
+      List<QualityIndicator> indicators = List.of(new Epsilon(), new HypervolumeMinus());
       EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(1000));
 
       var metaProblem = new TreeMetaOptimizationProblem<>(
@@ -292,7 +295,7 @@ class TreeMetaOptimizationProblemIT {
       // Assert
       assertEquals(2, metaProblem.numberOfObjectives());
       assertTrue(solution.objectives()[0] >= 0.0, "Epsilon should be non-negative");
-      assertTrue(Double.isFinite(solution.objectives()[1]), "NormalizedHypervolume should be a finite number");
+      assertTrue(Double.isFinite(solution.objectives()[1]), "HV- should be a finite number");
     }
   }
 }
