@@ -35,6 +35,9 @@ class BaseAlgorithmRegistryCompletenessTest {
   private static final Map<String, String> KNOWN_ALGORITHM_CLASSES =
       Map.ofEntries(
           Map.entry("DoubleNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\""),
+          Map.entry(
+              "ConstrainedDoubleNSGAII",
+              "not yet registered (constrained variant, base level only; the meta level is to come)"),
           Map.entry("DoubleMOEAD", "registered in BaseAlgorithmRegistry as \"MOEAD\""),
           Map.entry("BinaryNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\" (Binary)"),
           Map.entry("PermutationNSGAII", "registered in BaseAlgorithmRegistry as \"NSGA-II\" (Permutation)"),
