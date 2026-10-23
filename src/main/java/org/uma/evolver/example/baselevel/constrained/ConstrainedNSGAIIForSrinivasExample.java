@@ -1,7 +1,7 @@
 package org.uma.evolver.example.baselevel.constrained;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.nsgaii.ConstrainedDoubleNSGAII;
+import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -18,15 +18,16 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Example of running the constrained variant of NSGA-II on Srinivas, a problem with two
+ * Example of running NSGA-II with a constraint-handling technique on Srinivas, a problem with two
  * constraints, with its default configuration.
  *
  * <p>The default configuration of NSGA-II (SBX crossover, polynomial mutation, binary tournament)
- * plus the constraint-handling technique of the default configuration of the constrained variant:
- * Deb's constrained-domination principle ({@code --constraintHandling cdp}). The parameter space
- * is loaded from {@code NSGAIIDoubleConstrained.yaml}. The result is written to {@code
- * VAR.csv}/{@code FUN.csv}, and the number of feasible solutions and the quality indicators of the
- * feasible ones against the Srinivas reference front are printed at the end of the run.
+ * plus the constraint-handling technique of its default configuration for problems with constraints
+ * ({@code NSGAIIDoubleConstrainedDefault.txt}): Deb's constrained-domination principle ({@code
+ * --constraintHandling cdp}). The parameter space is loaded from {@code
+ * NSGAIIDoubleConstrained.yaml}. The result is written to {@code VAR.csv}/{@code FUN.csv}, and the
+ * number of feasible solutions and the quality indicators of the feasible ones against the Srinivas
+ * reference front are printed at the end of the run.
  */
 public class ConstrainedNSGAIIForSrinivasExample {
 
@@ -65,7 +66,7 @@ public class ConstrainedNSGAIIForSrinivasExample {
             .split("\\s+");
 
     var baseNSGAII =
-        new ConstrainedDoubleNSGAII(
+        new DoubleNSGAII(
             problem,
             populationSize,
             maximumNumberOfEvaluations,

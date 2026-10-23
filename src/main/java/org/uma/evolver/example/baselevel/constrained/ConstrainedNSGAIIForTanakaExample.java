@@ -1,7 +1,7 @@
 package org.uma.evolver.example.baselevel.constrained;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.nsgaii.ConstrainedDoubleNSGAII;
+import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -18,8 +18,8 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Example of running the constrained variant of NSGA-II on Tanaka with the epsilon-constrained
- * method.
+ * Example of running NSGA-II with a constraint-handling technique on Tanaka with the
+ * epsilon-constrained method.
  *
  * <p>The feasible region of Tanaka is non-convex and disconnected, and its Pareto front lies on the
  * boundary of that region. The epsilon-constrained method ({@code --constraintHandling
@@ -71,7 +71,7 @@ public class ConstrainedNSGAIIForTanakaExample {
             .split("\\s+");
 
     var baseNSGAII =
-        new ConstrainedDoubleNSGAII(
+        new DoubleNSGAII(
             problem,
             populationSize,
             maximumNumberOfEvaluations,

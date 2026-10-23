@@ -20,8 +20,9 @@ Clarify (or derive from the request / repository):
   - `standard/` — the algorithm's typical/canonical configuration.
   - `tuned/` — a meta-optimized configuration (from a training run).
   - `features/` — demonstrates a specific capability (external archive, observers, …).
-  - `constrained/` — a constrained variant of an algorithm (`ConstrainedDoubleNSGAII`, …) on a
-    problem with constraints.
+  - `constrained/` — an algorithm with a constraint-handling technique (its `*Constrained.yaml`
+    space, e.g. `NSGAIIDoubleConstrained.yaml`, with `--constraintHandling`) on a problem with
+    constraints.
 - Population size and evaluation budget (defaults: 100 / 20000).
 
 ### 2. Create the runner

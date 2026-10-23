@@ -14,13 +14,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.evolver.util.ConfigurationFileReader;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.ConstraintHandling;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-@DisplayName("Unit tests for the constrained variant of NSGA-II")
-class ConstrainedDoubleNSGAIITest {
+@DisplayName("Unit tests for NSGA-II with a constraint-handling technique")
+class NSGAIIDoubleConstrainedTest {
 
   private static final String SPACE = "NSGAIIDoubleConstrained.yaml";
   private static final String DEFAULT_CONFIGURATION =
@@ -28,8 +30,8 @@ class ConstrainedDoubleNSGAIITest {
   private static final int POPULATION_SIZE = 50;
   private static final int EVALUATIONS = 5000;
 
-  private static ConstrainedDoubleNSGAII algorithm() {
-    return new ConstrainedDoubleNSGAII(
+  private static DoubleNSGAII algorithm() {
+    return new DoubleNSGAII(
         new Srinivas(),
         POPULATION_SIZE,
         EVALUATIONS,
@@ -45,7 +47,7 @@ class ConstrainedDoubleNSGAIITest {
         .split("\\s+");
   }
 
-  private static List<DoubleSolution> run(ConstrainedDoubleNSGAII nsgaII, String[] configuration) {
+  private static List<DoubleSolution> run(DoubleNSGAII nsgaII, String[] configuration) {
     JMetalRandom.getInstance().setSeed(1);
     nsgaII.parse(configuration);
     var evolutionaryAlgorithm = nsgaII.build();
@@ -74,7 +76,7 @@ class ConstrainedDoubleNSGAIITest {
     void givenATechnique_whenRun_thenTheResultHasFeasibleSolutions(String technique)
         throws IOException {
       // Arrange
-      ConstrainedDoubleNSGAII nsgaII = algorithm();
+      DoubleNSGAII nsgaII = algorithm();
 
       // Act
       List<DoubleSolution> result =
@@ -89,7 +91,7 @@ class ConstrainedDoubleNSGAIITest {
     @DisplayName("a bounded external archive keeps only feasible solutions")
     void givenABoundedArchive_whenRun_thenItsSolutionsAreFeasible() throws IOException {
       // Arrange
-      ConstrainedDoubleNSGAII nsgaII = algorithm();
+      DoubleNSGAII nsgaII = algorithm();
       String[] configuration =
           defaultConfigurationWith(
               "--algorithmResult population",
@@ -105,16 +107,44 @@ class ConstrainedDoubleNSGAIITest {
     }
   }
 
-  @Test
-  @DisplayName("createInstance gives the constrained variant")
-  void givenTheAlgorithm_whenAnInstanceIsCreated_thenItIsTheConstrainedVariant() {
-    // Arrange
-    ConstrainedDoubleNSGAII nsgaII = algorithm();
+  @Nested
+  @DisplayName("When the parameter space decides whether the constraints are handled")
+  class ParameterSpaceDecides {
 
-    // Act
-    var instance = nsgaII.createInstance(new Srinivas(), EVALUATIONS);
+    @Test
+    @DisplayName("with constraintHandling, the replacement updates the technique")
+    void givenTheConstrainedSpace_whenBuilt_thenTheReplacementHandlesTheConstraints()
+        throws IOException {
+      // Arrange
+      DoubleNSGAII nsgaII = algorithm();
+      nsgaII.parse(defaultConfigurationWith("cdp", "cdp"));
 
-    // Assert
-    assertInstanceOf(ConstrainedDoubleNSGAII.class, instance);
+      // Act
+      var evolutionaryAlgorithm = nsgaII.build();
+
+      // Assert
+      assertInstanceOf(ConstraintHandlingReplacement.class, evolutionaryAlgorithm.replacement());
+    }
+
+    @Test
+    @DisplayName("without constraintHandling, the replacement is the one of NSGA-II")
+    void givenTheUnconstrainedSpace_whenBuilt_thenTheReplacementIsTheUsualOne() throws IOException {
+      // Arrange
+      DoubleNSGAII nsgaII =
+          new DoubleNSGAII(
+              new Srinivas(),
+              POPULATION_SIZE,
+              EVALUATIONS,
+              new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory()));
+      // The default configuration without the constraintHandling parameter
+      nsgaII.parse(defaultConfigurationWith("--constraintHandling cdp ", ""));
+
+      // Act
+      var evolutionaryAlgorithm = nsgaII.build();
+
+      // Assert
+      assertInstanceOf(
+          RankingAndDensityEstimatorReplacement.class, evolutionaryAlgorithm.replacement());
+    }
   }
 }

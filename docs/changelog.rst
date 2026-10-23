@@ -11,17 +11,19 @@ All notable changes to Evolver will be documented in this file.
 Added
 ~~~~~
 
-- A constrained variant of NSGA-II for problems with constraints, ``ConstrainedDoubleNSGAII``, with
-  its parameter space ``NSGAIIDoubleConstrained.yaml`` (``NSGAIIDouble.yaml`` plus the
-  ``constraintHandling`` parameter) and default configuration. The parameter takes one of the
-  constraint-handling techniques of jMetal (``cdp``, ``violatedConstraints``,
-  ``epsilonConstrained``, ``stochasticRanking``, ``pushPull``, ``selfAdaptivePenalty``), which
-  ranks the population and is updated with the progress of the run; the bounded external archives
-  compare solutions with the constrained-domination principle. ``DoubleNSGAII`` does not change.
-  The new package ``example.baselevel.constrained`` has its examples: Srinivas with the default
-  technique (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``,
-  and ``ConstrainedNSGAIILIRCMOP2Example``, which compares both variants on LIR-CMOP2. Base level
-  only: the variant is not registered in the command-line tools yet
+- NSGA-II handles problems with constraints when its parameter space has the new
+  ``constraintHandling`` parameter: ``NSGAIIDoubleConstrained.yaml`` (``NSGAIIDouble.yaml`` plus
+  that parameter), with its default configuration ``NSGAIIDoubleConstrainedDefault.txt``. The
+  parameter takes one of the constraint-handling techniques of jMetal (``cdp``,
+  ``violatedConstraints``, ``epsilonConstrained``, ``stochasticRanking``, ``pushPull``,
+  ``selfAdaptivePenalty``), which ranks the population and is updated with the progress of the run;
+  the bounded external archives then compare solutions with the constrained-domination principle
+  (``ExternalArchiveParameter.getConstrainedExternalArchive``). Without the parameter NSGA-II does
+  not change: with the same seed it gives the same fronts as before. The new package
+  ``example.baselevel.constrained`` has its examples: Srinivas with the default technique
+  (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``, and
+  ``ConstrainedNSGAIILIRCMOP2Example``, which runs NSGA-II with both parameter spaces on
+  LIR-CMOP2. Base level only: the meta level does not treat infeasible solutions yet
 
 Changed
 ~~~~~~~

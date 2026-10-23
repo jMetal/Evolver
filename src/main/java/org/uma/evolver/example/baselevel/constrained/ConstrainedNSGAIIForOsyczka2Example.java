@@ -1,7 +1,7 @@
 package org.uma.evolver.example.baselevel.constrained;
 
 import java.io.IOException;
-import org.uma.evolver.algorithm.nsgaii.ConstrainedDoubleNSGAII;
+import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
@@ -18,7 +18,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * Example of running the constrained variant of NSGA-II on Osyczka2, a problem with six
+ * Example of running NSGA-II with a constraint-handling technique on Osyczka2, a problem with six
  * constraints, comparing infeasible solutions by their number of violated constraints.
  *
  * <p>With {@code --constraintHandling violatedConstraints} a feasible solution is preferred to an
@@ -66,7 +66,7 @@ public class ConstrainedNSGAIIForOsyczka2Example {
             .split("\\s+");
 
     var baseNSGAII =
-        new ConstrainedDoubleNSGAII(
+        new DoubleNSGAII(
             problem,
             populationSize,
             maximumNumberOfEvaluations,

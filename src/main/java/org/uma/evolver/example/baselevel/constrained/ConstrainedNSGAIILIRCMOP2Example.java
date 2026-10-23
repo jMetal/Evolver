@@ -2,7 +2,6 @@ package org.uma.evolver.example.baselevel.constrained;
 
 import java.io.IOException;
 import java.util.List;
-import org.uma.evolver.algorithm.nsgaii.ConstrainedDoubleNSGAII;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -18,10 +17,11 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
- * The two variants of NSGA-II on LIR-CMOP2, a problem with constraints: {@link DoubleNSGAII}, for
- * problems without constraints, which ignores them, and {@link ConstrainedDoubleNSGAII} with two
- * constraint-handling techniques of jMetal, the constrained-domination principle and the
- * epsilon-constrained method. All use the default configuration of NSGA-II and the same seed.
+ * NSGA-II on LIR-CMOP2, a problem with constraints, with its two parameter spaces: {@code
+ * NSGAIIDouble.yaml}, for problems without constraints, which ignores them, and {@code
+ * NSGAIIDoubleConstrained.yaml} with two constraint-handling techniques of jMetal, the
+ * constrained-domination principle and the epsilon-constrained method. All use the default
+ * configuration of NSGA-II and the same seed.
  *
  * <p>For each run it prints how many solutions of the result are feasible and, when there are
  * some, the quality indicators of the feasible ones with respect to the reference front.
@@ -51,13 +51,13 @@ public class ConstrainedNSGAIILIRCMOP2Example {
         new DoubleNSGAII(new LIRCMOP2(), POPULATION_SIZE, EVALUATIONS, space("NSGAIIDouble.yaml")),
         unconstrainedDefault);
     run(
-        "Constrained NSGA-II, cdp",
-        new ConstrainedDoubleNSGAII(
+        "NSGA-II with cdp",
+        new DoubleNSGAII(
             new LIRCMOP2(), POPULATION_SIZE, EVALUATIONS, space("NSGAIIDoubleConstrained.yaml")),
         constrainedDefault);
     run(
-        "Constrained NSGA-II, epsilonConstrained",
-        new ConstrainedDoubleNSGAII(
+        "NSGA-II with epsilonConstrained",
+        new DoubleNSGAII(
             new LIRCMOP2(), POPULATION_SIZE, EVALUATIONS, space("NSGAIIDoubleConstrained.yaml")),
         constrainedDefault.replace(
             "--constraintHandling cdp",

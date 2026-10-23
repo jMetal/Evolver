@@ -1,8 +1,8 @@
-# NSGAIIDouble.yaml plus the constraint-handling technique, for the constrained variant of NSGA-II
-# (ConstrainedDoubleNSGAII). Ignoring the constraints is not offered: it would hardly ever find
-# feasible solutions; epsilonConstrained with a large initial epsilon, and the push stage of
-# pushPull, ignore them for a while instead. The sub-parameters are scale-free, so that they can
-# transfer between problems.
+# NSGAIIDouble.yaml plus the constraint-handling technique, for problems with constraints: with
+# this space, NSGA-II (BaseNSGAII) handles the constraints with the technique it selects. Ignoring
+# the constraints is not offered: it would hardly ever find feasible solutions; epsilonConstrained
+# with a large initial epsilon, and the push stage of pushPull, ignore them for a while instead.
+# The sub-parameters are scale-free, so that they can transfer between problems.
 constraintHandling:
   type: categorical
   values:
