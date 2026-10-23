@@ -1,0 +1,43 @@
+# Only the constraint-handling technique, to test ConstraintHandlingParameter on its own
+constraintHandling:
+  type: categorical
+  values:
+    cdp: {}
+    violatedConstraints: {}
+    epsilonConstrained:
+      conditionalParameters:
+        epsilonInitialQuantile:
+          type: double
+          range: [0.05, 0.95]
+        epsilonExponent:
+          type: double
+          range: [1.0, 10.0]
+        epsilonDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+    stochasticRanking:
+      conditionalParameters:
+        stochasticRankingProbability:
+          type: double
+          range: [0.0, 0.5]
+    pushPull:
+      conditionalParameters:
+        pushPullChangeThreshold:
+          type: double
+          range: [0.0001, 0.05]
+        pushPullWindowFraction:
+          type: double
+          range: [0.01, 0.1]
+        pushPullDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+        pushPullExponent:
+          type: double
+          range: [1.0, 10.0]
+        pushPullFeasibilityThreshold:
+          type: double
+          range: [0.5, 1.0]
+        pushPullReductionRate:
+          type: double
+          range: [0.01, 0.5]
+    selfAdaptivePenalty: {}
