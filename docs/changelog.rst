@@ -11,7 +11,8 @@ All notable changes to Evolver will be documented in this file.
 Changed
 ~~~~~~~
 
-- (nothing yet)
+- Evolver depends on jMetal 7.9, which brings constraint-handling techniques
+  (``org.uma.jmetal.util.constrainthandling``) and the components that apply them
 
 2.5 (2026-10-15)
 ----------------
