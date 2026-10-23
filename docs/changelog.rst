@@ -18,8 +18,9 @@ Added
   ``epsilonConstrained``, ``stochasticRanking``, ``pushPull``, ``selfAdaptivePenalty``), which
   ranks the population and is updated with the progress of the run; the bounded external archives
   compare solutions with the constrained-domination principle. ``DoubleNSGAII`` does not change.
-  The example ``ConstrainedNSGAIILIRCMOP2Example``, in the new package
-  ``example.baselevel.constrained``, compares both variants on LIR-CMOP2. Base level
+  The new package ``example.baselevel.constrained`` has its examples: Srinivas with the default
+  technique (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``,
+  and ``ConstrainedNSGAIILIRCMOP2Example``, which compares both variants on LIR-CMOP2. Base level
   only: the variant is not registered in the command-line tools yet
 
 Changed
