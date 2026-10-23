@@ -19,14 +19,14 @@ import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 
 /**
  * The variant of {@link DoubleNSGAII} for problems with constraints: NSGA-II with a
- * constraint-handling technique of jMetal, chosen by the {@code constraintHandling} parameter of its
- * parameter space ({@code NSGAIIDoubleConstrained.yaml}).
+ * constraint-handling technique of jMetal, chosen by the {@code constraintHandling} parameter of
+ * its parameter space ({@code NSGAIIDoubleConstrained.yaml}).
  *
  * <p>The technique gives the ranking that the replacement and the mating selection sort the
  * population with, and is updated once per generation with the progress of the run (jMetal's
- * {@link ConstraintHandlingReplacement} and {@link RunProgress}), so that the techniques that change
- * during the run (epsilonConstrained, pushPull) follow it. The bounded external archives compare
- * solutions with the constrained-domination principle, whatever the technique (see {@link
+ * {@link ConstraintHandlingReplacement} and {@link RunProgress}), so that the techniques that
+ * change during the run (epsilonConstrained, pushPull) follow it. The bounded external archives
+ * compare solutions with the constrained-domination principle, whatever the technique (see {@link
  * ConstrainedBoundedArchives}).
  *
  * <p>{@link DoubleNSGAII}, for problems without constraints, does not change: it ignores the
