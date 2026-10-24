@@ -8,7 +8,108 @@ import java.util.function.Function;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.binaryproblem.BinaryProblem;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.Binh2;
+import org.uma.jmetal.problem.multiobjective.CarSideImpact;
+import org.uma.jmetal.problem.multiobjective.ConstrEx;
+import org.uma.jmetal.problem.multiobjective.ElectricMotor;
+import org.uma.jmetal.problem.multiobjective.GAA;
+import org.uma.jmetal.problem.multiobjective.Golinski;
 import org.uma.jmetal.problem.multiobjective.OneZeroMax;
+import org.uma.jmetal.problem.multiobjective.Osyczka2;
+import org.uma.jmetal.problem.multiobjective.Srinivas;
+import org.uma.jmetal.problem.multiobjective.Tanaka;
+import org.uma.jmetal.problem.multiobjective.Viennet4;
+import org.uma.jmetal.problem.multiobjective.Water;
+import org.uma.jmetal.problem.multiobjective.cdtlz.C1_DTLZ1;
+import org.uma.jmetal.problem.multiobjective.cdtlz.C1_DTLZ3;
+import org.uma.jmetal.problem.multiobjective.cdtlz.C2_DTLZ2;
+import org.uma.jmetal.problem.multiobjective.cdtlz.C3_DTLZ1;
+import org.uma.jmetal.problem.multiobjective.cdtlz.C3_DTLZ4;
+import org.uma.jmetal.problem.multiobjective.cdtlz.ConvexC2_DTLZ2;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM01;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM02;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM03;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM04;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM05;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM06;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM07;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM08;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM09;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM10;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM11;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM12;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM13;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM14;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM15;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM16;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM17;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM18;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM19;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM20;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM21;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM22;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM23;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM24;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM25;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM26;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM27;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM28;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM29;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM30;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM31;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM32;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM33;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM34;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM35;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM36;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM37;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM38;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM39;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM40;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM41;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM42;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM43;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM44;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM45;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM46;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM47;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM48;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM49;
+import org.uma.jmetal.problem.multiobjective.cec2021.RCM50;
+import org.uma.jmetal.problem.multiobjective.cf.CF10;
+import org.uma.jmetal.problem.multiobjective.cf.CF11;
+import org.uma.jmetal.problem.multiobjective.cf.CF12;
+import org.uma.jmetal.problem.multiobjective.cf.CF13;
+import org.uma.jmetal.problem.multiobjective.cf.CF14;
+import org.uma.jmetal.problem.multiobjective.cf.CF15;
+import org.uma.jmetal.problem.multiobjective.cf.CF16;
+import org.uma.jmetal.problem.multiobjective.cf.CF1;
+import org.uma.jmetal.problem.multiobjective.cf.CF2;
+import org.uma.jmetal.problem.multiobjective.cf.CF3;
+import org.uma.jmetal.problem.multiobjective.cf.CF4;
+import org.uma.jmetal.problem.multiobjective.cf.CF5;
+import org.uma.jmetal.problem.multiobjective.cf.CF6;
+import org.uma.jmetal.problem.multiobjective.cf.CF7;
+import org.uma.jmetal.problem.multiobjective.cf.CF8;
+import org.uma.jmetal.problem.multiobjective.cf.CF9;
+import org.uma.jmetal.problem.multiobjective.cre.CRE21;
+import org.uma.jmetal.problem.multiobjective.cre.CRE22;
+import org.uma.jmetal.problem.multiobjective.cre.CRE23;
+import org.uma.jmetal.problem.multiobjective.cre.CRE24;
+import org.uma.jmetal.problem.multiobjective.cre.CRE25;
+import org.uma.jmetal.problem.multiobjective.cre.CRE31;
+import org.uma.jmetal.problem.multiobjective.cre.CRE32;
+import org.uma.jmetal.problem.multiobjective.cre.CRE51;
+import org.uma.jmetal.problem.multiobjective.dascmop.AbstractDASCMOP;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP1;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP2;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP3;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP4;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP5;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP6;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP7;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP8;
+import org.uma.jmetal.problem.multiobjective.dascmop.DASCMOP9;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
@@ -16,6 +117,20 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP10;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP11;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP12;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP13;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP14;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP1;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP2;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP3;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP4;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP5;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP6;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP7;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP8;
+import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP9;
 import org.uma.jmetal.problem.multiobjective.lsmop.LSMOP1;
 import org.uma.jmetal.problem.multiobjective.lsmop.LSMOP2;
 import org.uma.jmetal.problem.multiobjective.lsmop.LSMOP3;
@@ -46,6 +161,20 @@ import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAD100
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroAE100TSP;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroBC100TSP;
 import org.uma.jmetal.problem.multiobjective.multiobjectivetsp.instance.KroBD100TSP;
+import org.uma.jmetal.problem.multiobjective.mw.MW10;
+import org.uma.jmetal.problem.multiobjective.mw.MW11;
+import org.uma.jmetal.problem.multiobjective.mw.MW12;
+import org.uma.jmetal.problem.multiobjective.mw.MW13;
+import org.uma.jmetal.problem.multiobjective.mw.MW14;
+import org.uma.jmetal.problem.multiobjective.mw.MW1;
+import org.uma.jmetal.problem.multiobjective.mw.MW2;
+import org.uma.jmetal.problem.multiobjective.mw.MW3;
+import org.uma.jmetal.problem.multiobjective.mw.MW4;
+import org.uma.jmetal.problem.multiobjective.mw.MW5;
+import org.uma.jmetal.problem.multiobjective.mw.MW6;
+import org.uma.jmetal.problem.multiobjective.mw.MW7;
+import org.uma.jmetal.problem.multiobjective.mw.MW8;
+import org.uma.jmetal.problem.multiobjective.mw.MW9;
 import org.uma.jmetal.problem.multiobjective.re.RE21;
 import org.uma.jmetal.problem.multiobjective.re.RE22;
 import org.uma.jmetal.problem.multiobjective.re.RE23;
@@ -62,8 +191,8 @@ import org.uma.jmetal.problem.multiobjective.re.RE41;
 import org.uma.jmetal.problem.multiobjective.re.RE42;
 import org.uma.jmetal.problem.multiobjective.re.RE61;
 import org.uma.jmetal.problem.multiobjective.re.RE91;
-import org.uma.jmetal.problem.multiobjective.rwa.RWA1;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA10;
+import org.uma.jmetal.problem.multiobjective.rwa.RWA1;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA2;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA3;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA4;
@@ -72,8 +201,8 @@ import org.uma.jmetal.problem.multiobjective.rwa.RWA6;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA7;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA8;
 import org.uma.jmetal.problem.multiobjective.rwa.RWA9;
-import org.uma.jmetal.problem.multiobjective.uf.UF1;
 import org.uma.jmetal.problem.multiobjective.uf.UF10;
+import org.uma.jmetal.problem.multiobjective.uf.UF1;
 import org.uma.jmetal.problem.multiobjective.uf.UF2;
 import org.uma.jmetal.problem.multiobjective.uf.UF3;
 import org.uma.jmetal.problem.multiobjective.uf.UF4;
@@ -93,7 +222,6 @@ import org.uma.jmetal.problem.multiobjective.wfg.WFG7;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG8;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG9;
 import org.uma.jmetal.problem.multiobjective.zcat.DefaultZCATSettings;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT10;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT11;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT12;
@@ -104,8 +232,9 @@ import org.uma.jmetal.problem.multiobjective.zcat.ZCAT16;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT17;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT18;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT19;
-import org.uma.jmetal.problem.multiobjective.zcat.ZCAT2;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT1;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT20;
+import org.uma.jmetal.problem.multiobjective.zcat.ZCAT2;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT3;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT4;
 import org.uma.jmetal.problem.multiobjective.zcat.ZCAT5;
@@ -129,7 +258,12 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <p>{@link #CURATED} is a discoverable catalogue of short names (surfaced by {@code
  * DescribeMain} so an external tool can list them) covering the full standard benchmark families:
  * ZDT1-6, DTLZ1-7, WFG1-9, RE21-25/31-37/41/42/61/91, RWA1-10, LZ09F1-9, LSMOP1-9, ZCAT1-20 and
- * UF1-10 (all continuous), and the problems of the other encodings that need no data of their own:
+ * UF1-10 (all continuous); the problems with constraints of jMetal (see its page "Constrained
+ * benchmarks and reference fronts"): LIR-CMOP1-14, CF1-16, C-DTLZ, DAS-CMOP1-9, MW1-14, the
+ * real-world suites CRE21-51 and RCM01-50 (CEC 2021), eight classical problems (family {@code
+ * Classical}) and three engineering problems (family {@code Engineering}), all with the reference
+ * fronts of jMetal 7.9 in {@code resources/referenceFronts} except Viennet4 and RCM17; and the
+ * problems of the other encodings that need no data of their own:
  * ZDT5 and OneZeroMax (binary) and the multi-objective TSP instances of jMetal (permutation) — it
  * is not the only way to name a problem. A {@link ProblemSpec} whose {@code className} is not in {@link
  * #CURATED} is resolved by reflection instead, so <em>any</em> {@code Problem} on the runtime
@@ -185,6 +319,149 @@ public final class ProblemRegistry {
           Map.entry("RE42", RE42.class),
           Map.entry("RE61", RE61.class),
           Map.entry("RE91", RE91.class),
+          // LIR-CMOP1-14 (Fan et al., Soft Computing 2019; constrained, 2 or 3 objectives)
+          Map.entry("LIRCMOP1", LIRCMOP1.class),
+          Map.entry("LIRCMOP2", LIRCMOP2.class),
+          Map.entry("LIRCMOP3", LIRCMOP3.class),
+          Map.entry("LIRCMOP4", LIRCMOP4.class),
+          Map.entry("LIRCMOP5", LIRCMOP5.class),
+          Map.entry("LIRCMOP6", LIRCMOP6.class),
+          Map.entry("LIRCMOP7", LIRCMOP7.class),
+          Map.entry("LIRCMOP8", LIRCMOP8.class),
+          Map.entry("LIRCMOP9", LIRCMOP9.class),
+          Map.entry("LIRCMOP10", LIRCMOP10.class),
+          Map.entry("LIRCMOP11", LIRCMOP11.class),
+          Map.entry("LIRCMOP12", LIRCMOP12.class),
+          Map.entry("LIRCMOP13", LIRCMOP13.class),
+          Map.entry("LIRCMOP14", LIRCMOP14.class),
+          // Classical constrained problems (family Classical; Viennet4 has no reference front)
+          Map.entry("Binh2", Binh2.class),
+          Map.entry("ConstrEx", ConstrEx.class),
+          Map.entry("Golinski", Golinski.class),
+          Map.entry("Osyczka2", Osyczka2.class),
+          Map.entry("Srinivas", Srinivas.class),
+          Map.entry("Tanaka", Tanaka.class),
+          Map.entry("Viennet4", Viennet4.class),
+          Map.entry("Water", Water.class),
+          // Constrained engineering problems (family Engineering): CarSideImpact (3 objectives),
+          // GAA (the general aviation aircraft, 10 objectives) and ElectricMotor (20 objectives)
+          Map.entry("CarSideImpact", CarSideImpact.class),
+          Map.entry("GAA", GAA.class),
+          Map.entry("ElectricMotor", ElectricMotor.class),
+          // CF1-16 (Xiang et al., IEEE TEVC 2021; constrained, 3 objectives by default)
+          Map.entry("CF1", CF1.class),
+          Map.entry("CF2", CF2.class),
+          Map.entry("CF3", CF3.class),
+          Map.entry("CF4", CF4.class),
+          Map.entry("CF5", CF5.class),
+          Map.entry("CF6", CF6.class),
+          Map.entry("CF7", CF7.class),
+          Map.entry("CF8", CF8.class),
+          Map.entry("CF9", CF9.class),
+          Map.entry("CF10", CF10.class),
+          Map.entry("CF11", CF11.class),
+          Map.entry("CF12", CF12.class),
+          Map.entry("CF13", CF13.class),
+          Map.entry("CF14", CF14.class),
+          Map.entry("CF15", CF15.class),
+          Map.entry("CF16", CF16.class),
+          // C-DTLZ (Jain and Deb, IEEE TEVC 2014; constrained, 3 objectives by default)
+          Map.entry("C1_DTLZ1", C1_DTLZ1.class),
+          Map.entry("C1_DTLZ3", C1_DTLZ3.class),
+          Map.entry("C2_DTLZ2", C2_DTLZ2.class),
+          Map.entry("ConvexC2_DTLZ2", ConvexC2_DTLZ2.class),
+          Map.entry("C3_DTLZ1", C3_DTLZ1.class),
+          Map.entry("C3_DTLZ4", C3_DTLZ4.class),
+          // DAS-CMOP1-9 (Fan et al., Evolutionary Computation 2020; constrained, 2 or 3
+          // objectives; the difficulty triplet (eta, zeta, gamma) is an argument)
+          Map.entry("DASCMOP1", DASCMOP1.class),
+          Map.entry("DASCMOP2", DASCMOP2.class),
+          Map.entry("DASCMOP3", DASCMOP3.class),
+          Map.entry("DASCMOP4", DASCMOP4.class),
+          Map.entry("DASCMOP5", DASCMOP5.class),
+          Map.entry("DASCMOP6", DASCMOP6.class),
+          Map.entry("DASCMOP7", DASCMOP7.class),
+          Map.entry("DASCMOP8", DASCMOP8.class),
+          Map.entry("DASCMOP9", DASCMOP9.class),
+          // MW1-14 (Ma and Wang, IEEE TEVC 2019; constrained, 2 objectives, or 3 for the
+          // scalable MW4, MW8 and MW14)
+          Map.entry("MW1", MW1.class),
+          Map.entry("MW2", MW2.class),
+          Map.entry("MW3", MW3.class),
+          Map.entry("MW4", MW4.class),
+          Map.entry("MW5", MW5.class),
+          Map.entry("MW6", MW6.class),
+          Map.entry("MW7", MW7.class),
+          Map.entry("MW8", MW8.class),
+          Map.entry("MW9", MW9.class),
+          Map.entry("MW10", MW10.class),
+          Map.entry("MW11", MW11.class),
+          Map.entry("MW12", MW12.class),
+          Map.entry("MW13", MW13.class),
+          Map.entry("MW14", MW14.class),
+          // CRE (constrained real-world engineering problems; Tanabe and Ishibuchi, Applied Soft
+          // Computing 2020; estimated fronts)
+          Map.entry("CRE21", CRE21.class),
+          Map.entry("CRE22", CRE22.class),
+          Map.entry("CRE23", CRE23.class),
+          Map.entry("CRE24", CRE24.class),
+          Map.entry("CRE25", CRE25.class),
+          Map.entry("CRE31", CRE31.class),
+          Map.entry("CRE32", CRE32.class),
+          Map.entry("CRE51", CRE51.class),
+          // RCM01-50 (constrained real-world problems of the CEC 2021 competition; Kumar et al.,
+          // Swarm and Evolutionary Computation 2021; estimated fronts, except RCM17, whose first
+          // objective is unbounded; RCM09 has no constraints)
+          Map.entry("RCM01", RCM01.class),
+          Map.entry("RCM02", RCM02.class),
+          Map.entry("RCM03", RCM03.class),
+          Map.entry("RCM04", RCM04.class),
+          Map.entry("RCM05", RCM05.class),
+          Map.entry("RCM06", RCM06.class),
+          Map.entry("RCM07", RCM07.class),
+          Map.entry("RCM08", RCM08.class),
+          Map.entry("RCM09", RCM09.class),
+          Map.entry("RCM10", RCM10.class),
+          Map.entry("RCM11", RCM11.class),
+          Map.entry("RCM12", RCM12.class),
+          Map.entry("RCM13", RCM13.class),
+          Map.entry("RCM14", RCM14.class),
+          Map.entry("RCM15", RCM15.class),
+          Map.entry("RCM16", RCM16.class),
+          Map.entry("RCM17", RCM17.class),
+          Map.entry("RCM18", RCM18.class),
+          Map.entry("RCM19", RCM19.class),
+          Map.entry("RCM20", RCM20.class),
+          Map.entry("RCM21", RCM21.class),
+          Map.entry("RCM22", RCM22.class),
+          Map.entry("RCM23", RCM23.class),
+          Map.entry("RCM24", RCM24.class),
+          Map.entry("RCM25", RCM25.class),
+          Map.entry("RCM26", RCM26.class),
+          Map.entry("RCM27", RCM27.class),
+          Map.entry("RCM28", RCM28.class),
+          Map.entry("RCM29", RCM29.class),
+          Map.entry("RCM30", RCM30.class),
+          Map.entry("RCM31", RCM31.class),
+          Map.entry("RCM32", RCM32.class),
+          Map.entry("RCM33", RCM33.class),
+          Map.entry("RCM34", RCM34.class),
+          Map.entry("RCM35", RCM35.class),
+          Map.entry("RCM36", RCM36.class),
+          Map.entry("RCM37", RCM37.class),
+          Map.entry("RCM38", RCM38.class),
+          Map.entry("RCM39", RCM39.class),
+          Map.entry("RCM40", RCM40.class),
+          Map.entry("RCM41", RCM41.class),
+          Map.entry("RCM42", RCM42.class),
+          Map.entry("RCM43", RCM43.class),
+          Map.entry("RCM44", RCM44.class),
+          Map.entry("RCM45", RCM45.class),
+          Map.entry("RCM46", RCM46.class),
+          Map.entry("RCM47", RCM47.class),
+          Map.entry("RCM48", RCM48.class),
+          Map.entry("RCM49", RCM49.class),
+          Map.entry("RCM50", RCM50.class),
           // RWA (real-world application problems)
           Map.entry("RWA1", RWA1.class),
           Map.entry("RWA2", RWA2.class),
@@ -314,6 +591,55 @@ public final class ProblemRegistry {
                       problem -> DefaultWFGSettings.numberOfDistanceParameters),
                   ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
           Map.entry("UF", List.of(ArgumentSpec.integer("numberOfVariables", VARIABLES))),
+          Map.entry("MW", List.of(ArgumentSpec.integer("numberOfVariables", VARIABLES))),
+          // MW4, MW8 and MW14 also take their number of objectives
+          Map.entry(
+              "MW4",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          Map.entry(
+              "MW8",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          Map.entry(
+              "MW14",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          // DAS-CMOP1-9 also take their difficulty triplet
+          Map.entry(
+              "DASCMOP",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.number("eta", problem -> ((AbstractDASCMOP) problem).eta()),
+                  ArgumentSpec.number("zeta", problem -> ((AbstractDASCMOP) problem).zeta()),
+                  ArgumentSpec.number(
+                      "gamma", problem -> ((AbstractDASCMOP) problem).gamma()))),
+          Map.entry(
+              "CF",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          Map.entry(
+              "C-DTLZ",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES))),
+          // C3-DTLZ1 and C3-DTLZ4 also take their number of constraints, one per objective
+          Map.entry(
+              "C3_DTLZ1",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES),
+                  ArgumentSpec.integer("numberOfConstraints", Problem::numberOfConstraints))),
+          Map.entry(
+              "C3_DTLZ4",
+              List.of(
+                  ArgumentSpec.integer("numberOfVariables", VARIABLES),
+                  ArgumentSpec.integer("numberOfObjectives", OBJECTIVES),
+                  ArgumentSpec.integer("numberOfConstraints", Problem::numberOfConstraints))),
           // UF5 and UF6 also take the number of points of the front and a tolerance, UF9 a tolerance
           Map.entry(
               "UF5",
@@ -401,6 +727,7 @@ public final class ProblemRegistry {
         encodingOf(problemClass),
         problem == null ? null : problem.numberOfObjectives(),
         problem == null ? null : problem.numberOfVariables(),
+        problem == null ? null : problem.numberOfConstraints(),
         arguments);
   }
 
@@ -412,10 +739,31 @@ public final class ProblemRegistry {
     }
   }
 
-  /** The family of a problem: its name without the trailing number ({@code ZDT1}: {@code ZDT}). */
+  /** The classical problems with constraints, which share the family Classical. */
+  private static final Set<String> CLASSICAL_CONSTRAINED =
+      Set.of("Binh2", "ConstrEx", "Golinski", "Osyczka2", "Srinivas", "Tanaka", "Viennet4", "Water");
+
+  /** The engineering problems with constraints, which share the family Engineering. */
+  private static final Set<String> ENGINEERING_CONSTRAINED =
+      Set.of("CarSideImpact", "GAA", "ElectricMotor");
+
+  /**
+   * The family of a problem: its name without the trailing number ({@code ZDT1}: {@code ZDT}),
+   * except the TSP instances, the C-DTLZ problems and the classical and engineering problems with
+   * constraints, grouped as in jMetal's page of constrained benchmarks.
+   */
   private static String familyOf(String name, Class<?> problemClass) {
     if (problemClass.getPackageName().endsWith("multiobjectivetsp.instance")) {
       return "TSP";
+    }
+    if (problemClass.getPackageName().endsWith(".cdtlz")) {
+      return "C-DTLZ";
+    }
+    if (CLASSICAL_CONSTRAINED.contains(name)) {
+      return "Classical";
+    }
+    if (ENGINEERING_CONSTRAINED.contains(name)) {
+      return "Engineering";
     }
     return name.replaceAll("\\d+$", "");
   }

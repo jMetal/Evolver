@@ -136,6 +136,26 @@ class DescribeMainTest {
 
     @Test
     @DisplayName(
+        "given the problem catalogue, when manifest is built, then each problem has its number of"
+            + " constraints, 0 for the unconstrained ones")
+    @SuppressWarnings("unchecked")
+    void givenProblemCatalogue_whenManifestBuilt_thenProblemsHaveTheirNumberOfConstraints() {
+      // Act
+      Map<String, Object> manifest = DescribeMain.manifest();
+
+      // Assert
+      Map<String, Map<String, Object>> byName = new HashMap<>();
+      for (Map<String, Object> problem :
+          (List<Map<String, Object>>) manifest.get("problemCatalogue")) {
+        byName.put((String) problem.get("name"), problem);
+      }
+      assertEquals(0, byName.get("DTLZ2").get("numberOfConstraints"));
+      assertEquals(2, byName.get("LIRCMOP1").get("numberOfConstraints"));
+      assertEquals(3, byName.get("C3_DTLZ4").get("numberOfConstraints"));
+    }
+
+    @Test
+    @DisplayName(
         "given a build by Maven, when manifest is built, then it starts with the version of Evolver"
             + " of the pom")
     void givenMavenBuild_whenManifestBuilt_thenItHasTheVersionOfEvolver() {

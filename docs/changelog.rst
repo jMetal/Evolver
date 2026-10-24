@@ -25,6 +25,15 @@ Added
   ``ConstrainedNSGAIILIRCMOP2Example``, which runs NSGA-II with both parameter spaces on
   LIR-CMOP2. Base level only: the meta level does not treat infeasible solutions yet
 
+- The problems with constraints of jMetal 7.9 are registered with short names, and their reference
+  fronts are in ``resources/referenceFronts``, named after the problem as Evolver-Studio expects:
+  LIR-CMOP1-14, CF1-16, C-DTLZ (C1_DTLZ1, C1_DTLZ3, C2_DTLZ2, ConvexC2_DTLZ2, C3_DTLZ1, C3_DTLZ4),
+  DAS-CMOP1-9, MW1-14, CRE21-25/31/32/51, RCM01-50 (CEC 2021) and the classical (Binh2, ConstrEx,
+  Golinski, Osyczka2, Srinivas, Tanaka, Viennet4, Water) and engineering (CarSideImpact, GAA,
+  ElectricMotor) problems, with the families ``Classical`` and ``Engineering``. Viennet4 and RCM17
+  have no reference front. ``DescribeMain``'s ``problemCatalogue`` gives the ``numberOfConstraints``
+  of every problem (0 for the problems without constraints)
+
 Changed
 ~~~~~~~
 
