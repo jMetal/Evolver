@@ -28,6 +28,8 @@ Added
 Changed
 ~~~~~~~
 
+- ``Srinivas.csv`` has no trailing comma in its lines, which made a reader that splits the lines by
+  commas, such as Evolver-Studio, count three objectives instead of two
 - Evolver depends on jMetal 7.9, which brings constraint-handling techniques
   (``org.uma.jmetal.util.constrainthandling``) and the components that apply them. Its NHV fails
   when the hypervolume of the reference front is not positive, as with the two-point fronts of the
