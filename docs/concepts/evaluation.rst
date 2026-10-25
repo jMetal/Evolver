@@ -18,3 +18,38 @@ The evaluation of a solution is as follows:
 4. The mean value of the medians of each problem (i.e., the mean of the :math:`P` values) is the resulting objective value.
 
 The parameter :math:`N` is a parameter of the meta-optimization problem and it must be set carefully to avoid an excessive running time. By default, :math:`N` is set to 1.
+
+Problems with constraints
+-------------------------
+
+If a problem of the training set has constraints, a run may end without any feasible solution, and
+the indicators of its infeasible solutions, which often lie beyond the Pareto front, would look
+better than those of a feasible front. The evaluation then follows the two-phase indicator of
+Vodopija, Tušar and Filipič (IEEE Transactions on Evolutionary Computation 29(1), 2025), extended
+to several runs and problems (class ``ConstrainedIndicatorValue``):
+
+1. The indicators of a run are computed on its feasible solutions only, and capped at a threshold
+   :math:`\tau^*`, their worst sensible value on normalized fronts: 1 for NHV, EP, IGD+, Spread and
+   GeneralizedSpread, 0 for HV-.
+
+2. A run without feasible solutions is a *failed run*. Its violation is that of its least violated
+   solution, divided by a scale of the problem (the power of ten above the median violation of 100
+   random solutions, as in that paper) and mapped to :math:`[0, 1)` with :math:`x / (1 + x)`.
+
+3. The value of each indicator over the :math:`N \times P` runs is
+
+   .. math::
+
+      4k + 2\bar{v} + Q
+
+   where :math:`k` is the number of failed runs, :math:`\bar{v}` the mean scaled violation of those
+   runs, and :math:`Q` the mean over the problems of the median of the indicator over their feasible
+   runs (:math:`\tau^*` for a problem without them).
+
+Each failed run adds more than the other two terms can, so configurations are ordered as in the
+competitions on constrained optimization: fewer failed runs first, then less violation, then
+better quality. No failed run is hidden by the aggregation, whatever its problem. Since :math:`k`
+and :math:`\bar{v}` are the same for every indicator, a configuration with fewer failed runs is
+better in all the objectives. Every configurator gets these values (the meta-optimizers of Evolver,
+and irace and SMAC3 through the evaluation server). Without constraints in the training set, the
+evaluation is the one described above.

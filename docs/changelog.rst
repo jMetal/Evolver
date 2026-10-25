@@ -23,8 +23,16 @@ Added
   ``example.baselevel.constrained`` has its examples: Srinivas with the default technique
   (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``, and
   ``ConstrainedNSGAIILIRCMOP2Example``, which runs NSGA-II with both parameter spaces on
-  LIR-CMOP2. Base level only: the meta level does not treat infeasible solutions yet
+  LIR-CMOP2
 
+- Meta-optimization on problems with constraints: when the training set has a problem with
+  constraints, the indicators of a run are computed on its feasible solutions, capped at a
+  threshold, and the value of a configuration is ``4k + 2v + Q`` (``ConstrainedIndicatorValue``,
+  after the two-phase indicator of Vodopija, Tušar and Filipič, IEEE TEVC 2025): ``k`` runs without
+  feasible solutions, their mean scaled violation ``v``, and the mean quality ``Q``, so that fewer
+  failed runs, then less violation, then better quality win. Until now the indicators of a run
+  without feasible solutions were computed on its infeasible solutions. Without constraints the
+  evaluation does not change (same values for a fixed seed)
 - The problems with constraints of jMetal 7.9 are registered with short names, and their reference
   fronts are in ``resources/referenceFronts``, named after the problem as Evolver-Studio expects:
   LIR-CMOP1-14, CF1-16, C-DTLZ (C1_DTLZ1, C1_DTLZ3, C2_DTLZ2, ConvexC2_DTLZ2, C3_DTLZ1, C3_DTLZ4),
