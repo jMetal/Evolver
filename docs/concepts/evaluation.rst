@@ -65,3 +65,36 @@ least violation plus :math:`\tau^*` for a front without them. Unlike NHV, it sti
 while a feasible front does not dominate the nadir point. As an indicator of a training, its value
 on the feasible solutions of each run is the quality of the scheme above. ``SolveRunnerMain`` gives
 it the violations of the solutions, so its values there are those of the paper.
+
+Choosing the indicators
+~~~~~~~~~~~~~~~~~~~~~~~
+
+What is essential in ICMOP is its structure in two phases: the quality of the feasible solutions
+capped at a threshold, and otherwise the least violation above it, so that any feasible front is
+better than any infeasible one. The quality it uses, minus the hypervolume or the distance to the
+region of interest, comes from the indicator of the bi-objective suites of the COCO platform, which
+the paper extends; the hypervolume is the only strictly Pareto-compliant indicator and needs only a
+reference point. The same structure works with any indicator that is minimized and can be capped,
+such as EP or IGD+ (weakly Pareto-compliant, and in need of a reference front, which Evolver always
+has); they need no distance to fall back on, since they do not stay at zero while the front does not
+dominate the nadir point. The paper studies only its own version: other indicators are a
+generalization, which is what the scheme above does for every indicator of a training.
+
+Hence, in a training on problems with constraints:
+
+* Feasibility is handled by the scheme, through :math:`k` and :math:`\bar{v}`, whatever the
+  indicators. The infeasible phase of ICMOP is therefore not used there; ICMOP contributes its
+  feasible phase, whose distance to the region of interest still guides the search when NHV is
+  stuck at 1 (a feasible front that does not dominate the reference point).
+* ICMOP should not be used alone: once every run is feasible, which is the usual situation as the
+  search progresses, it is a single objective (minus the hypervolume), and the front of
+  configurations is lost. Combine it with an indicator that measures something else.
+* Recommended: **ICMOP + EP**. While some runs fail, both objectives move together, led by
+  :math:`k` and :math:`\bar{v}`, and the search is guided towards feasibility; once every run is
+  feasible, each objective measures its own aspect of the front again.
+* NHV + EP also works, without the guidance of the distance while the front does not dominate the
+  reference point. ICMOP + NHV is little useful: both measure the hypervolume and are strongly
+  correlated.
+
+Outside a training (``SolveRunnerMain``, validation studies), ICMOP alone is the indicator of the
+paper and measures both the quality of the front and the feasibility.
