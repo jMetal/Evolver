@@ -13,6 +13,7 @@ import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP2;
@@ -80,10 +81,37 @@ class MetaOptimizationProblemConstrainedTest {
     // Act
     double[] values = meta.evaluateConfiguration(configuration("NSGAIIDoubleDefault.txt"));
 
-    // Assert: two failed runs (8), their violation (below 2) and the thresholds (1)
+    // Assert: two failed runs (12), their violation (below 2) and the thresholds (1)
     for (double value : values) {
-      assertTrue(value >= 8.0 + 1.0 && value < 8.0 + 2.0 + 1.0, "value " + value);
+      assertTrue(value >= 12.0 + 1.0 && value < 12.0 + 2.0 + 1.0, "value " + value);
     }
+  }
+
+  @Test
+  @DisplayName("ICMOP of a configuration that finds feasible solutions is in [-1, 1]")
+  void givenIcmop_whenAFeasibleConfigurationIsEvaluated_thenItsValueIsAtMostTheThreshold()
+      throws IOException {
+    // Arrange
+    JMetalRandom.getInstance().setSeed(5);
+    var meta =
+        new MetaOptimizationProblem<>(
+            new DoubleNSGAII(
+                100,
+                new YAMLParameterSpace(
+                    "NSGAIIDoubleConstrained.yaml", new DoubleParameterFactory())),
+            List.<Problem<DoubleSolution>>of(new Srinivas()),
+            List.of("resources/referenceFronts/Srinivas.csv"),
+            List.<QualityIndicator>of(new ConstrainedMultiobjectiveIndicator()),
+            new FixedEvaluationsStrategy(List.of(5000)),
+            2);
+
+    // Act
+    double value =
+        meta.evaluateConfiguration(configuration("NSGAIIDoubleConstrainedDefault.txt"))[0];
+
+    // Assert: minus a hypervolume close to that of the reference front
+    assertTrue(value >= -1.0 && value <= 1.0, "ICMOP " + value);
+    assertTrue(value < 0.0, "ICMOP " + value);
   }
 
   @Test

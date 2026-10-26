@@ -300,7 +300,8 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
 
   /**
    * Runs a configuration on a problem of a training set with constraints. The indicators are
-   * computed on the feasible solutions of each run and capped at their threshold; a run without
+   * computed on the feasible solutions of each run and bounded (see {@link
+   * ConstrainedIndicatorValue#bounded}); a run without
    * feasible solutions counts as failed, with the scaled violation of its least violated solution.
    * The value of each indicator is its median over the feasible runs, or its threshold if there
    * are none (the evaluations, their median over all the runs).
@@ -332,8 +333,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
         double[] runValues = computeIndicatorValuesForRun(normalizedFront, problemId, evaluations);
         for (int i = 0; i < indicators.size(); i++) {
           if (!(indicators.get(i) instanceof EvaluationsQualityIndicator)) {
-            runValues[i] =
-                Math.min(runValues[i], ConstrainedIndicatorValue.threshold(indicators.get(i)));
+            runValues[i] = ConstrainedIndicatorValue.bounded(runValues[i], indicators.get(i));
           }
         }
         feasibleRunValues.add(runValues);

@@ -18,9 +18,11 @@ import org.uma.evolver.cli.BaseAlgorithmRegistry;
 import org.uma.evolver.cli.IndicatorRegistry;
 import org.uma.evolver.cli.ProblemRegistry;
 import org.uma.evolver.cli.RunStatusWriter;
+import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.ConstraintHandling;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
@@ -173,7 +175,8 @@ public class SolveRunner {
     if (indicators.isEmpty()) {
       return row.toString();
     }
-    double[][] front = nonDominatedFront(result);
+    List<? extends Solution<?>> nonDominated = nonDominatedSolutions(result);
+    double[][] front = getMatrixWithObjectiveValues(nonDominated);
     if (front[0].length != referenceFront[0].length) {
       throw new JMetalException(
           "Front dimension "
@@ -188,16 +191,33 @@ public class SolveRunner {
     for (QualityIndicator indicator : indicators) {
       QualityIndicator instance = indicator.newInstance();
       instance.referenceFront(normalizedReferenceFront);
-      row.append(',').append(instance.compute(normalizedFront));
+      // ICMOP measures the constraints too, so it also takes the violations of the solutions
+      double value =
+          instance instanceof ConstrainedMultiobjectiveIndicator icmop
+              ? icmop.compute(normalizedFront, violations(nonDominated))
+              : instance.compute(normalizedFront);
+      row.append(',').append(value);
     }
     return row.toString();
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private static double[][] nonDominatedFront(List<? extends Solution<?>> result) {
+  private static List<? extends Solution<?>> nonDominatedSolutions(
+      List<? extends Solution<?>> result) {
     NonDominatedSolutionListArchive archive = new NonDominatedSolutionListArchive<>();
     archive.addAll((List) result);
-    return getMatrixWithObjectiveValues(archive.solutions());
+    return archive.solutions();
+  }
+
+  /** The overall constraint violation of each solution: 0 if feasible, positive otherwise. */
+  private static double[] violations(List<? extends Solution<?>> solutions) {
+    return solutions.stream()
+        .mapToDouble(
+            solution ->
+                ConstraintHandling.isFeasible(solution)
+                    ? 0.0
+                    : Math.abs(ConstraintHandling.overallConstraintViolationDegree(solution)))
+        .toArray();
   }
 
   private static void writeIndicators(

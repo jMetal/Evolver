@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
@@ -29,6 +30,26 @@ class ConstrainedIndicatorValueTest {
       assertEquals(1.0, ConstrainedIndicatorValue.threshold(new Epsilon()));
       assertEquals(1.0, ConstrainedIndicatorValue.threshold(new InvertedGenerationalDistancePlus()));
       assertEquals(0.0, ConstrainedIndicatorValue.threshold(new HypervolumeMinus()));
+    }
+
+    @Test
+    @DisplayName("ICMOP has its own threshold")
+    void givenIcmop_whenAsked_thenItIsItsThreshold() {
+      // Act and Assert
+      assertEquals(
+          1.0, ConstrainedIndicatorValue.threshold(new ConstrainedMultiobjectiveIndicator()));
+      assertEquals(
+          2.0, ConstrainedIndicatorValue.threshold(new ConstrainedMultiobjectiveIndicator(2.0)));
+    }
+
+    @Test
+    @DisplayName("the values of a feasible run are kept in [threshold - 2, threshold]")
+    void givenValues_whenBounded_thenTheyAreKeptBelowAndAboveTheThreshold() {
+      // Act and Assert
+      var nhv = new NormalizedHypervolume();
+      assertEquals(1.0, ConstrainedIndicatorValue.bounded(3.0, nhv));
+      assertEquals(0.4, ConstrainedIndicatorValue.bounded(0.4, nhv));
+      assertEquals(-1.0, ConstrainedIndicatorValue.bounded(-5.0, nhv));
     }
 
     @Test
@@ -100,8 +121,9 @@ class ConstrainedIndicatorValueTest {
     void givenNoFailedRuns_whenCompared_thenTheQualityDecides() {
       // Act and Assert
       assertEquals(0.3, ConstrainedIndicatorValue.value(0, 0.0, 0.3));
-      assertTrue(
-          ConstrainedIndicatorValue.value(0, 0.0, 0.3) < ConstrainedIndicatorValue.value(0, 0.0, 0.4));
+      double better = ConstrainedIndicatorValue.value(0, 0.0, 0.3);
+      double worse = ConstrainedIndicatorValue.value(0, 0.0, 0.4);
+      assertTrue(better < worse);
     }
   }
 }

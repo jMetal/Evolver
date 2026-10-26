@@ -25,12 +25,20 @@ Added
   ``ConstrainedNSGAIILIRCMOP2Example``, which runs NSGA-II with both parameter spaces on
   LIR-CMOP2
 
+- ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
+  optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
+  minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
+  to the region of interest, capped at a threshold, and the least violation plus the threshold when
+  there are no feasible solutions. ``SolveRunnerMain`` gives it the violations of the solutions. It
+  is a temporary copy of jMetal's, which is in jMetal's development version, to be removed when
+  Evolver depends on a release that has it
 - Meta-optimization on problems with constraints: when the training set has a problem with
   constraints, the indicators of a run are computed on its feasible solutions, capped at a
-  threshold, and the value of a configuration is ``4k + 2v + Q`` (``ConstrainedIndicatorValue``,
-  after the two-phase indicator of Vodopija, Tušar and Filipič, IEEE TEVC 2025): ``k`` runs without
-  feasible solutions, their mean scaled violation ``v``, and the mean quality ``Q``, so that fewer
-  failed runs, then less violation, then better quality win. Until now the indicators of a run
+  threshold, and the value of a configuration is ``6k + 2v + Q`` (``ConstrainedIndicatorValue``, a
+  scheme of Evolver that takes the threshold of the indicator of Vodopija, Tušar and Filipič, IEEE
+  TEVC 2025, to several runs and problems): ``k`` runs without feasible solutions, their mean scaled
+  violation ``v``, and the mean quality ``Q``, so that fewer failed runs, then less violation, then
+  better quality win. Until now the indicators of a run
   without feasible solutions were computed on its infeasible solutions. Without constraints the
   evaluation does not change (same values for a fixed seed)
 - The problems with constraints of jMetal 7.9 are registered with short names, and their reference

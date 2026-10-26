@@ -579,6 +579,7 @@ Example output
    - DTLZ2
    # ... every problem ProblemRegistry resolves
    indicators:
+   - ConstrainedMultiobjectiveIndicator
    - Epsilon
    - GeneralizedSpread
    - HypervolumeMinus

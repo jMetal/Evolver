@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GeneralizedSpread;
@@ -28,7 +29,8 @@ public final class IndicatorRegistry {
           "InvertedGenerationalDistancePlus", InvertedGenerationalDistancePlus::new,
           "HypervolumeMinus", HypervolumeMinus::new,
           "Spread", Spread::new,
-          "GeneralizedSpread", GeneralizedSpread::new);
+          "GeneralizedSpread", GeneralizedSpread::new,
+          "ConstrainedMultiobjectiveIndicator", ConstrainedMultiobjectiveIndicator::new);
 
   /** Indicators defined only for bi-objective problems; see {@link #checkApplicable}. */
   private static final Set<String> BI_OBJECTIVE_ONLY = Set.of("Spread");

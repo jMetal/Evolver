@@ -82,6 +82,46 @@ class SolveRunnerTest {
     }
 
     @Test
+    @DisplayName(
+        "given ICMOP on a problem with constraints, when the result has no feasible solution, then"
+            + " its value is above the threshold")
+    void givenIcmopOnAConstrainedProblem_whenNoFeasibleSolution_thenTheValueIsAboveTheThreshold()
+        throws IOException {
+      // Arrange: NSGA-II without a constraint-handling technique does not reach the feasible region
+      // of LIR-CMOP2
+      Path outputDirectory = tempDir.resolve("icmop");
+      SolveRequest request =
+          new SolveRequest(
+              "NSGA-II",
+              "Double",
+              20,
+              "NSGAIIDouble.yaml",
+              Map.of(),
+              new ConfigurationFileReader("defaultConfigurations/NSGAIIDoubleDefault.txt")
+                  .getConfiguration(1),
+              null,
+              new ProblemSpec("LIRCMOP2"),
+              "resources/referenceFronts/LIRCMOP2.csv",
+              1000,
+              1,
+              1L,
+              List.of("ConstrainedMultiobjectiveIndicator"),
+              null,
+              null,
+              false,
+              outputDirectory.toString());
+
+      // Act
+      new SolveRunner().run(request, tempDir.resolve("icmop-status.yaml"));
+
+      // Assert
+      List<String> rows = Files.readAllLines(outputDirectory.resolve("INDICATORS.csv"));
+      assertEquals("Run,Seed,TimeMs,ICMOP", rows.get(0));
+      double value = Double.parseDouble(rows.get(1).split(",")[3]);
+      assertTrue(value > 1.0, "ICMOP " + value);
+    }
+
+    @Test
     @DisplayName("given the same seed, when run twice, then the fronts are identical")
     void givenSameSeed_whenRunTwice_thenFrontsAreIdentical() throws IOException {
       // Arrange

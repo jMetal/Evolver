@@ -24,13 +24,15 @@ Problems with constraints
 
 If a problem of the training set has constraints, a run may end without any feasible solution, and
 the indicators of its infeasible solutions, which often lie beyond the Pareto front, would look
-better than those of a feasible front. The evaluation then follows the two-phase indicator of
-Vodopija, Tušar and Filipič (IEEE Transactions on Evolutionary Computation 29(1), 2025), extended
-to several runs and problems (class ``ConstrainedIndicatorValue``):
+better than those of a feasible front. The evaluation then puts feasibility first, with a scheme of
+Evolver (class ``ConstrainedIndicatorValue``) that takes the idea of the indicator of Vodopija,
+Tušar and Filipič (IEEE Transactions on Evolutionary Computation 29(1), 2025), a threshold that
+separates feasible from infeasible results, to several runs and problems:
 
-1. The indicators of a run are computed on its feasible solutions only, and capped at a threshold
-   :math:`\tau^*`, their worst sensible value on normalized fronts: 1 for NHV, EP, IGD+, Spread and
-   GeneralizedSpread, 0 for HV-.
+1. The indicators of a run are computed on its feasible solutions only, and kept between
+   :math:`\tau^* - 2` and a threshold :math:`\tau^*`, their worst sensible value on normalized
+   fronts: 1 for NHV, EP, IGD+, Spread and GeneralizedSpread, 0 for HV-, and the threshold of
+   ``ConstrainedMultiobjectiveIndicator`` (1 by default).
 
 2. A run without feasible solutions is a *failed run*. Its violation is that of its least violated
    solution, divided by a scale of the problem (the power of ten above the median violation of 100
@@ -40,7 +42,7 @@ to several runs and problems (class ``ConstrainedIndicatorValue``):
 
    .. math::
 
-      4k + 2\bar{v} + Q
+      6k + 2\bar{v} + Q
 
    where :math:`k` is the number of failed runs, :math:`\bar{v}` the mean scaled violation of those
    runs, and :math:`Q` the mean over the problems of the median of the indicator over their feasible
@@ -53,3 +55,13 @@ and :math:`\bar{v}` are the same for every indicator, a configuration with fewer
 better in all the objectives. Every configurator gets these values (the meta-optimizers of Evolver,
 and irace and SMAC3 through the evaluation server). Without constraints in the training set, the
 evaluation is the one described above.
+
+The indicator of that paper itself, ICMOP, is available as ``ConstrainedMultiobjectiveIndicator``
+(a copy of jMetal's, which is in its development version). With the objectives normalized with the
+ideal and nadir points of the reference front, it is :math:`\min(I_{MOP}, \tau^*)` for a front with
+feasible solutions, where :math:`I_{MOP}` is minus the hypervolume of the solutions that dominate the
+nadir point or, if none does, their distance to the region of interest :math:`[0, 1]^M`, and the
+least violation plus :math:`\tau^*` for a front without them. Unlike NHV, it still guides the search
+while a feasible front does not dominate the nadir point. As an indicator of a training, its value
+on the feasible solutions of each run is the quality of the scheme above. ``SolveRunnerMain`` gives
+it the violations of the solutions, so its values there are those of the paper.
