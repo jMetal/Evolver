@@ -9,8 +9,12 @@ on:
 
 jobs:
   unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
+    name: Unit Tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +27,12 @@ jobs:
           cache: maven
 
       - name: Run unit tests
-        run: mvn test
+        run: mvn -B test
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-reports
+          name: unit-test-reports-${{ matrix.os }}
           path: target/surefire-reports/
           retention-days: 7
