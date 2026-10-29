@@ -45,6 +45,14 @@ Added
   distance do not change. Without the parameter NSGA-III does not change: with the same seed it
   gives the same fronts as before
 
+- SSMOEA handles problems with constraints as NSGA-II does: ``SSMOEADoubleConstrained.yaml``
+  (``SSMOEADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``SSMOEADoubleConstrainedDefault.txt`` (``cdp``). Its ``ranking`` parameter takes the ranking of the
+  technique (``dominanceRanking``) or the strength ranking with its comparator (``strengthRanking``),
+  ``singleSolutionReplacement`` compares with the technique, and the technique is updated once per
+  offspring. Without the parameter SSMOEA does not change: with the same seed it gives the same
+  fronts as before
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance

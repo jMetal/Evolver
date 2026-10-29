@@ -5,6 +5,7 @@ import java.util.Comparator;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.catalogue.ConstraintHandlingParameter;
 import org.uma.evolver.parameter.catalogue.DensityEstimatorParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.RankingParameter;
@@ -21,13 +22,16 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
@@ -46,6 +50,17 @@ import org.uma.jmetal.util.sequencegenerator.impl.RandomPermutationCycle;
  * configurable sequence generator shared with the replacement when
  * {@code singleSolutionReplacement} is active.
  *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code SSMOEADoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the {@code ranking} parameter
+ * takes the ranking of the technique, or the strength ranking with its comparator ({@link
+ * RankingParameter#getRanking(ConstraintHandlingTechnique)}), the one-to-one comparison of {@code
+ * singleSolutionReplacement} uses its comparator, the technique is updated with the progress of the
+ * run once per offspring, since SSMOEA is steady-state ({@link ConstraintHandlingReplacement},
+ * {@link RunProgress}), and the bounded external archives compare solutions with the
+ * constrained-domination principle. Without the parameter (e.g. {@code SSMOEADouble.yaml}) none of
+ * this happens, and the constraints are ignored.
+ *
  * @param <S> the solution type
  */
 @SuppressWarnings("unchecked")
@@ -60,6 +75,15 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
   protected Problem<S> problem;
   protected int populationSize;
   protected int maximumNumberOfEvaluations;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
 
   protected BaseSSMOEA(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
@@ -90,6 +114,7 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
 
   @Override
   public EvolutionaryAlgorithm<S> build() {
+    configureConstraintHandling();
     setRankingAndDensityEstimator();
     setNonConfigurableParameters();
 
@@ -120,21 +145,31 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
     Replacement<S> replacement = createReplacement(usingDE, deSequenceGenerator);
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>().build(
-        "SSMOEA",
-        initialSolutionsCreation,
-        evaluation,
-        termination,
-        selection,
-        variation,
-        replacement,
-        archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                "SSMOEA",
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   protected abstract void setNonConfigurableParameters();
 
   private void setRankingAndDensityEstimator() {
-    ranking = ((RankingParameter<S>) parameterSpace.get("ranking")).getRanking();
+    var rankingParameter = (RankingParameter<S>) parameterSpace.get("ranking");
+    ranking =
+        usingConstraintHandling()
+            ? rankingParameter.getRanking(constraintHandlingTechnique)
+            : rankingParameter.getRanking();
     densityEstimator =
         ((DensityEstimatorParameter<S>) parameterSpace.get("densityEstimator")).getDensityEstimator();
     rankingAndCrowdingComparator = new MultiComparator<>(
@@ -151,7 +186,9 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
     ExternalArchiveParameter<S> externalArchiveParameter =
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
     externalArchiveParameter.setSize(populationSize);
-    return externalArchiveParameter.getExternalArchive();
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   private void updatePopulationSize(Archive<S> archive) {
@@ -210,8 +247,12 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
     replacementParameter.setDensityEstimator(densityEstimator);
 
     if (SINGLE_SOLUTION_REPLACEMENT.equals(replacementParameter.value())) {
-      // Dominance comparator for DEMO-style one-to-one comparison (no pre-computed ranking needed)
-      replacementParameter.setComparator(new DefaultDominanceComparator<>());
+      // Dominance comparator for DEMO-style one-to-one comparison (no pre-computed ranking
+      // needed): the one of the constraint-handling technique, if there is one
+      replacementParameter.setComparator(
+          usingConstraintHandling()
+              ? constraintHandlingTechnique.comparator()
+              : new DefaultDominanceComparator<>());
       if (usingDE) {
         // Share the DE sequence generator so replacement competes offspring against the same
         // population index used by variation and selection.
@@ -220,6 +261,33 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
         replacementParameter.setSequenceGenerator(new RandomPermutationCycle(populationSize));
       }
     }
-    return replacementParameter.getReplacement();
+    Replacement<S> replacement = replacementParameter.getReplacement();
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter. Without the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }
