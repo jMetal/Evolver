@@ -38,6 +38,13 @@ Added
   compares its ranks. Without the parameter AGE-MOEA does not change: with the same seed it gives the
   same fronts as before
 
+- NSGA-III handles problems with constraints as NSGA-II does: ``NSGAIIIDoubleConstrained.yaml``
+  (``NSGAIIIDouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``NSGAIIIDoubleConstrainedDefault.txt`` (``cdp``). The ranking of the technique replaces the
+  non-dominated sorting in the replacement and the tournament; the reference points and the niche
+  distance do not change. Without the parameter NSGA-III does not change: with the same seed it
+  gives the same fronts as before
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance

@@ -5,6 +5,7 @@ import java.util.List;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.EvolutionaryAlgorithmBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.catalogue.ConstraintHandlingParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.createinitialsolutionsparameter.CreateInitialSolutionsParameter;
 import org.uma.evolver.parameter.catalogue.selectionparameter.SelectionParameter;
@@ -17,13 +18,16 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.NSGAIIIReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.densityestimator.impl.ReferencePointNicheDistanceEstimator;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
@@ -50,6 +54,16 @@ import org.uma.jmetal.util.referencepoint.ReferencePointGenerator;
  * in a comparison, rather than the closest Das-Dennis lattice size (which need not match the
  * requested population size exactly).
  *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code NSGAIIIDoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the ranking of the technique
+ * replaces the non-dominated sorting in the replacement and in the tournament, the technique is
+ * updated once per generation with the progress of the run ({@link ConstraintHandlingReplacement},
+ * {@link RunProgress}), and the bounded external archives compare solutions with the
+ * constrained-domination principle; the reference points and the niche distance do not change.
+ * Without the parameter (e.g. {@code NSGAIIIDouble.yaml}) none of this happens, and the
+ * constraints are ignored.
+ *
  * <p>Subclasses must implement {@link #setNonConfigurableParameters()} to set any parameters
  * derived from the problem instance.
  *
@@ -68,6 +82,15 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
   protected Archive<S> externalArchive;
 
   protected Ranking<S> ranking;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
   protected List<double[]> referencePoints;
   protected final List<double[]> explicitReferencePoints;
   protected ReferencePointNicheDistanceEstimator<S> densityEstimator;
@@ -116,6 +139,7 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
   @Override
   public EvolutionaryAlgorithm<S> build() {
     setNonConfigurableParameters();
+    configureConstraintHandling();
     Archive<S> archive = null;
     if (usingExternalArchive()) {
       archive = createExternalArchive();
@@ -123,6 +147,9 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
       Check.notNull(archive);
     }
     configureReferencePointComponents();
+    if (usingConstraintHandling()) {
+      ranking = constraintHandlingTechnique.ranking();
+    }
     SolutionsCreation<S> initialSolutionsCreation = createInitialSolutions();
     Variation<S> variation = createVariation();
     Selection<S> selection = createSelection(variation);
@@ -130,16 +157,21 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>()
-        .build(
-            "NSGA-III",
-            initialSolutionsCreation,
-            evaluation,
-            termination,
-            selection,
-            variation,
-            replacement,
-            archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                "NSGA-III",
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   protected abstract void setNonConfigurableParameters();
@@ -189,7 +221,9 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    return externalArchiveParameter.getExternalArchive();
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   private boolean usingExternalArchive() {
@@ -251,7 +285,35 @@ public abstract class BaseNSGAIII<S extends Solution<?>> implements BaseLevelAlg
    * niching on the critical front.
    */
   protected Replacement<S> createReplacement() {
-    return new NSGAIIIReplacement<>(
-        ranking, referencePoints, problem.numberOfObjectives(), populationSize);
+    Replacement<S> replacement =
+        new NSGAIIIReplacement<>(
+            ranking, referencePoints, problem.numberOfObjectives(), populationSize);
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter. Without the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }
