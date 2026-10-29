@@ -16,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -583,6 +584,57 @@ class MetaOptimizationProblemTest {
       // Assert
       assertInstanceOf(
           ThreadLocalRandomGenerator.class, JMetalRandom.getInstance().getRandomGenerator());
+    }
+  }
+
+  @Nested
+  @DisplayName("When the indicators are given their reference fronts")
+  class IndicatorReuseTests {
+
+    /** An epsilon indicator that counts how many times its instances get a reference front. */
+    private static final class CountingEpsilon extends Epsilon {
+      private final AtomicInteger referenceFronts;
+
+      CountingEpsilon(AtomicInteger referenceFronts) {
+        this.referenceFronts = referenceFronts;
+      }
+
+      @Override
+      public void referenceFront(double[][] referenceFront) {
+        referenceFronts.incrementAndGet();
+        super.referenceFront(referenceFront);
+      }
+
+      @Override
+      public QualityIndicator newInstance() {
+        return new CountingEpsilon(referenceFronts);
+      }
+    }
+
+    @Test
+    @DisplayName(
+        "Given several evaluations of several runs, when evaluated, then each problem gives its"
+            + " reference front to an indicator once")
+    void givenSeveralEvaluations_whenEvaluated_thenEachProblemGivesItsReferenceFrontOnce() {
+      // Arrange
+      var referenceFronts = new AtomicInteger();
+      var problem =
+          new MetaOptimizationProblem<>(
+              baseAlgorithm,
+              List.of(new ZDT1(), new ZDT4()),
+              List.of("resources/referenceFronts/ZDT1.csv", "resources/referenceFronts/ZDT4.csv"),
+              List.of(new CountingEpsilon(referenceFronts)),
+              new FixedEvaluationsStrategy(List.of(1000, 1000)),
+              2);
+      int givenWhenCreated = referenceFronts.get();
+
+      // Act
+      problem.evaluateConfiguration(RandomGeneratorTests.CONFIGURATION);
+      problem.evaluateConfiguration(RandomGeneratorTests.CONFIGURATION);
+
+      // Assert
+      assertEquals(2, givenWhenCreated);
+      assertEquals(2, referenceFronts.get());
     }
   }
 
