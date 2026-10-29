@@ -3,6 +3,7 @@ package org.uma.evolver.parameter.catalogue;
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
@@ -59,6 +60,24 @@ public class RankingParameter<S extends Solution<?>> extends CategoricalParamete
     return switch (value()) {
       case "dominanceRanking" -> new FastNonDominatedSortRanking<>();
       case "strengthRanking" -> new StrengthRanking<>();
+      default -> throw new JMetalException("Ranking does not exist: " + name());
+    };
+  }
+
+  /**
+   * Creates the ranking of the current value with a constraint-handling technique: for
+   * dominanceRanking, the ranking of the technique; for strengthRanking, the strength ranking with
+   * the comparator of the technique (stochastic ranking, which is a ranking rather than a
+   * comparator, then compares with the constrained-domination principle).
+   *
+   * @param technique the constraint-handling technique
+   * @return the ranking
+   * @throws JMetalException if the current value does not match any known ranking strategy
+   */
+  public Ranking<S> getRanking(ConstraintHandlingTechnique<S> technique) {
+    return switch (value()) {
+      case "dominanceRanking" -> technique.ranking();
+      case "strengthRanking" -> new StrengthRanking<>(technique.comparator());
       default -> throw new JMetalException("Ranking does not exist: " + name());
     };
   }
