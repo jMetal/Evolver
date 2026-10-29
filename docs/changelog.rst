@@ -66,6 +66,11 @@ Changed
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
   now 1.3 s. A single thread of evaluations draws from the shared generator as before
 - The unit tests run on Linux, macOS and Windows in the CI
+- A training no longer writes to an output directory that already has the results of another one
+  (``METADATA.txt``, ``INDICATORS.csv``, ``CONFIGURATIONS.csv``, ``VAR_CONF.txt`` or the
+  ``POPULATION_*`` files): it stops at the start with a message that names them. Until now the new
+  results were appended to the old ones in the same files, and ``METADATA.txt`` kept describing the
+  first run. Other files, such as ``status.yaml`` or ``request.yaml``, are allowed
 
 Fixed
 ~~~~~

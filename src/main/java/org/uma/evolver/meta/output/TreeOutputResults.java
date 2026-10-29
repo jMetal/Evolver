@@ -80,7 +80,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     this.config = config;
     this.writeFrequency = writeFrequency;
 
-    createOutputDirectory();
+    TrainingOutputDirectory.prepare(outputDirectoryName);
     writeMetadata();
   }
 
@@ -214,22 +214,8 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     computingTimeMillis = null;
   }
 
-  private void createOutputDirectory() {
-    File outputDirectory = new File(outputDirectoryName);
-    if (!outputDirectory.exists()) {
-      boolean result = outputDirectory.mkdirs();
-      if (!result) {
-        throw new JMetalException("Error creating directory " + outputDirectoryName);
-      }
-    }
-  }
-
   private void writeMetadata() {
     File metadataFile = new File(outputDirectoryName, "METADATA.txt");
-    if (metadataFile.exists()) {
-      return;
-    }
-
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile))) {
       writer.write("=== Meta-Optimization Experiment (Tree Encoding) ===");
       writer.newLine();

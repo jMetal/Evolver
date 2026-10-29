@@ -77,26 +77,12 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         this.outputDirectoryName = outputDirectoryName;
         this.config = config;
 
-        createOutputDirectory();
+        TrainingOutputDirectory.prepare(outputDirectoryName);
         writeMetadata();
-    }
-
-    private void createOutputDirectory() {
-        File outputDirectory = new File(outputDirectoryName);
-        if (!outputDirectory.exists()) {
-            boolean result = new File(outputDirectoryName).mkdirs();
-            if (!result) {
-                throw new JMetalException("Error creating directory " + outputDirectoryName);
-            }
-        }
     }
 
     private void writeMetadata() {
         File metadataFile = new File(outputDirectoryName, "METADATA.txt");
-        if (metadataFile.exists()) {
-            return;
-        }
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile))) {
             // Header
             writer.write("=== Meta-Optimization Experiment ===");
