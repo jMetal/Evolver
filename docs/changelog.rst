@@ -73,6 +73,10 @@ Changed
   when the hypervolume of the reference front is not positive, as with the two-point fronts of the
   TSP instances, instead of giving the worst value to every configuration: with those fronts, use
   HV- (tutorial E9)
+- Known issue of jMetal 7.9: its ``selfAdaptivePenalty`` inverts the penalty on CF9-CF16, whose
+  constraint values are positive when violated, so that the most violated solutions are the least
+  penalized. It is fixed in jMetal's development version, and Evolver will get the fix with the next
+  release of jMetal; until then, do not use that technique on those problems
 - Configurations evaluated in parallel threads (parallel meta-optimizers, the evaluation server
   with concurrent requests) no longer contend for jMetal's single random generator: each thread gets
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
