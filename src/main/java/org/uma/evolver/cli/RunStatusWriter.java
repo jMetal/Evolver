@@ -2,6 +2,7 @@ package org.uma.evolver.cli;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -60,6 +61,16 @@ public final class RunStatusWriter {
       status.put("errorMessage", errorMessage);
     }
 
+    // The directory may not exist yet, as when a request fails before the run creates its output
+    // directory: without it, the FAILED status could not be written and would hide the error
+    try {
+      Path directory = statusFile.toAbsolutePath().getParent();
+      if (directory != null) {
+        Files.createDirectories(directory);
+      }
+    } catch (IOException e) {
+      throw new JMetalException("Error creating the directory of the status file: " + statusFile, e);
+    }
     try (FileWriter writer = new FileWriter(statusFile.toFile())) {
       new Yaml().dump(status, writer);
     } catch (IOException e) {

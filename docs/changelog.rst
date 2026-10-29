@@ -83,6 +83,9 @@ Fixed
 - A solve run no longer aborts on Windows when another process, such as Evolver-Studio, is reading
   ``CURRENT_FRONT.csv`` while it is replaced; the current front also marks infeasible solutions as
   dominated by the feasible ones
+- A training or solve request that fails before its output directory exists, for instance because
+  of a missing parameter, reports its error in ``status.yaml`` again: writing that file failed and
+  the new exception hid the original one
 
 2.5 (2026-10-15)
 ----------------
