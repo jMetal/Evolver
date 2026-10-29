@@ -82,6 +82,14 @@ Changed
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
   now 1.3 s. A single thread of evaluations draws from the shared generator as before
 - The unit tests run on Linux, macOS and Windows in the CI
+- The meta-optimization problems build the indicators of each training problem once, with its
+  reference front, and share them among all the evaluations, instead of building them for every
+  run: setting the reference front of the normalized hypervolume computes its hypervolume, which
+  took 3 to 7 s for the fronts of 10^4 points with three objectives (C3_DTLZ4, DASCMOP8) in every
+  run. The evaluation of a configuration with 3 runs on ZDT1 and DTLZ2 (NHV, EP, IGD+, Spread) went
+  from 12.6 s to 0.4 s, with the same values; the cost is now paid once, when the problem is
+  created. An indicator must therefore be computable from several threads at once, as the ones
+  that Evolver offers are
 - The tutorials from E12 on are renumbered by one (E12, "Ablation", is now E13, and so on up to E21,
   "Language models in Evolver"), to make room for a new intermediate tutorial; their pages keep
   their names, so the links do not change. The entries of earlier versions in this changelog keep

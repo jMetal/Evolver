@@ -36,6 +36,13 @@ import org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator;
  * ConstrainedIndicatorValue}): runs without feasible solutions count before their violation, and
  * that before the quality. Without constraints the evaluation is the usual one.
  *
+ * <p>The indicators of each problem are built once, with its reference front, when the problem is
+ * created, and are shared by every evaluation: setting the reference front of the normalized
+ * hypervolume computes its hypervolume, which takes seconds for a front of 10^4 points with three
+ * objectives. Parallel meta-optimizers and the evaluation server evaluate configurations in several
+ * threads at once, so an indicator must be computable from several threads at the same time, that
+ * is, its {@code compute} must not change its state, as with the indicators that Evolver offers.
+ *
  * <p>Subclasses implement three encoding-specific hooks:
  * <ul>
  *   <li>{@link #numberOfVariables()} — variable count for the chosen encoding</li>
@@ -60,6 +67,12 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   protected final int numberOfIndependentRuns;
   protected final List<double[][]> referenceFronts;
   protected final List<double[][]> normalizedReferenceFronts;
+
+  /**
+   * The indicators of each problem, with its normalized reference front (null for {@link
+   * EvaluationsQualityIndicator}, whose value is the number of evaluations).
+   */
+  private final QualityIndicator[][] indicatorsOfProblems;
   private final Queue<META> initialSolutions = new ConcurrentLinkedQueue<>();
 
   /** The number of random solutions whose violation sets the scale of a problem's violations. */
@@ -105,6 +118,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     this.normalizedReferenceFronts = this.referenceFronts.stream()
         .map(NormalizeUtils::normalize)
         .toList();
+    this.indicatorsOfProblems = indicatorsOfProblems(this.indicators, normalizedReferenceFronts);
 
     this.constrained =
         this.problems.stream().anyMatch(problem -> problem.numberOfConstraints() > 0);
@@ -122,6 +136,23 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
         }
       }
     }
+  }
+
+  private static QualityIndicator[][] indicatorsOfProblems(
+      List<QualityIndicator> indicators, List<double[][]> normalizedReferenceFronts) {
+    QualityIndicator[][] built =
+        new QualityIndicator[normalizedReferenceFronts.size()][indicators.size()];
+    for (int p = 0; p < normalizedReferenceFronts.size(); p++) {
+      for (int i = 0; i < indicators.size(); i++) {
+        if (!(indicators.get(i) instanceof EvaluationsQualityIndicator)) {
+          QualityIndicator indicator = indicators.get(i).newInstance();
+          // A copy of the rows array, so that no indicator can change the shared reference front
+          indicator.referenceFront(normalizedReferenceFronts.get(p).clone());
+          built[p][i] = indicator;
+        }
+      }
+    }
+    return built;
   }
 
   /** The scale of a problem's violations, from those of a sample of random solutions. */
@@ -397,15 +428,10 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       double[][] normalizedFront, int problemId, int evaluations) {
     double[] values = new double[indicators.size()];
     for (int i = 0; i < indicators.size(); i++) {
-      QualityIndicator indicator = indicators.get(i).newInstance();
-      if (indicator instanceof EvaluationsQualityIndicator evalIndicator) {
-        evalIndicator.setNumberOfEvaluations(evaluations);
+      QualityIndicator indicator = indicatorsOfProblems[problemId][i];
+      if (indicator == null) {
         values[i] = evaluations;
       } else {
-        // A copy of the rows array: the configurations are evaluated in parallel and share the
-        // normalized reference fronts, so an indicator that sorted the reference front in place
-        // (as jMetal's Spread did up to 7.6) would corrupt it for the other threads mid-sort.
-        indicator.referenceFront(normalizedReferenceFronts.get(problemId).clone());
         double value = indicator.compute(normalizedFront);
         values[i] = Double.isFinite(value) ? value
             : (indicator.isTheLowerTheIndicatorValueTheBetter() ? Double.MAX_VALUE : 0.0);
