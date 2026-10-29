@@ -31,6 +31,13 @@ Added
   parameter SMS-EMOA does not change: with the same seed it gives the same fronts as before, with the
   Double, Binary and Permutation encodings
 
+- AGE-MOEA and AGE-MOEA-II handle problems with constraints as NSGA-II does:
+  ``AGEMOEADoubleConstrained.yaml`` (``AGEMOEADouble.yaml`` plus the ``constraintHandling``
+  parameter) and its default configuration ``AGEMOEADoubleConstrainedDefault.txt`` (``cdp``). The
+  environmental selection sorts the population with the ranking of the technique and the tournament
+  compares its ranks. Without the parameter AGE-MOEA does not change: with the same seed it gives the
+  same fronts as before
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
