@@ -53,6 +53,10 @@ Added
   algorithm with the feasible solutions in black and the infeasible ones in red, and the number of
   feasible solutions in its title; optionally, the reference front in gray and a pause after each
   update. The examples of ``example.baselevel.constrained`` use it
+- ``example.training.constrained`` with ``AsyncNSGAIIOptimizingNSGAIIForProblemDASCMOP5``, the
+  asynchronous NSGA-II tuning NSGA-II, constraint-handling technique included, for DASCMOP5 with
+  ICMOP and EP, with the live plot of the meta-optimizer's front and the whole population written
+  (``writePopulation``) to follow the configurations without feasible solutions
 
 Changed
 ~~~~~~~
