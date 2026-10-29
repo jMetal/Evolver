@@ -51,9 +51,10 @@ import org.uma.jmetal.solution.Solution;
  * the quality indicators. Each problem gets a {@link MetaOptimizationProblem} of its own, whose
  * {@code evaluateConfiguration} computes the indicators exactly as a training does (the median over
  * the runs of the indicators of the non-dominated front, normalized with the reference front). The
- * evaluations run in a pool of threads, as Evolver's parallel meta-optimizers run them; jMetal's
- * random generator is shared by the threads, so the seed that a client sends is recorded but does
- * not make an evaluation reproducible.
+ * evaluations run in a pool of threads, as Evolver's parallel meta-optimizers run them, and draw
+ * from jMetal's random generator (one per thread while several evaluations run at once, see {@link
+ * org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator}); the seed that a client sends
+ * does not set it: it is recorded, but does not make an evaluation reproducible.
  *
  * <p>The API, on the loopback interface only:
  *

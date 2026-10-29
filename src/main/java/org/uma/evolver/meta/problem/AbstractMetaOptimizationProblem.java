@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
@@ -20,6 +21,7 @@ import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator;
 
 /**
  * Base class for meta-optimization problems, independent of the solution encoding used by the
@@ -47,6 +49,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, META extends Solution<?>>
     implements Problem<META> {
+
+  /** The configurations being evaluated at this moment, by any meta-optimization problem. */
+  private static final AtomicInteger EVALUATIONS_IN_PROGRESS = new AtomicInteger();
 
   protected final BaseLevelAlgorithm<S> baseAlgorithm;
   protected final List<Problem<S>> problems;
@@ -181,6 +186,21 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
    */
   public double[] evaluateConfiguration(String[] parameterArray) {
     Check.notNull(parameterArray);
+    // Configurations evaluated by several threads at once (parallel meta-optimizers, the evaluation
+    // server) would contend for jMetal's single random generator, so from then on each thread has
+    // its own. A single thread of evaluations keeps drawing from the generator it shares with the
+    // rest of the program, as before
+    if (EVALUATIONS_IN_PROGRESS.incrementAndGet() > 1) {
+      ThreadLocalRandomGenerator.install();
+    }
+    try {
+      return computeConfigurationValues(parameterArray);
+    } finally {
+      EVALUATIONS_IN_PROGRESS.decrementAndGet();
+    }
+  }
+
+  private double[] computeConfigurationValues(String[] parameterArray) {
     if (constrained) {
       return evaluateConfigurationWithConstraints(parameterArray);
     }
