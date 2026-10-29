@@ -79,6 +79,11 @@ Intermediate
      - The two budgets of a training: the evaluations of each base-level run, and the stopping
        condition of the meta-optimizer, by number of configurations or by computing time; when to
        use each and what they change in the results.
+   * - :doc:`E12. Problems with constraints <problems_with_constraints>`
+     - Solving problems with constraints with a constraint-handling technique, measuring the runs
+       with feasibility and ICMOP, how Evolver evaluates a configuration on them, and tuning
+       NSGA-II, technique included, while following how the search reaches the feasible
+       configurations (DAS-CMOP).
 
 .. toctree::
    :hidden:
@@ -90,6 +95,7 @@ Intermediate
    problems_without_reference_front
    binary_and_permutation_encodings
    budgets
+   problems_with_constraints
 
 Advanced
 --------

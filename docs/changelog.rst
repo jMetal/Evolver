@@ -57,6 +57,11 @@ Added
   asynchronous NSGA-II tuning NSGA-II, constraint-handling technique included, for DASCMOP5 with
   ICMOP and EP, with the live plot of the meta-optimizer's front and the whole population written
   (``writePopulation``) to follow the configurations without feasible solutions
+- Tutorial E12, "Problems with constraints" (intermediate level, ``ProblemsWithConstraintsTutorial``):
+  NSGA-II with and without a constraint-handling technique on DASCMOP2 and DASCMOP5, measuring the
+  runs with feasibility and ICMOP, how a configuration is evaluated on problems with constraints,
+  and tuning NSGA-II, technique included, for DASCMOP5 while following the configurations without
+  feasible solutions in the population of the meta-optimizer
 
 Changed
 ~~~~~~~
