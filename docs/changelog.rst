@@ -22,8 +22,7 @@ Added
   not change: with the same seed it gives the same fronts as before. The new package
   ``example.baselevel.constrained`` has its examples: Srinivas with the default technique
   (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``, and
-  ``ConstrainedNSGAIILIRCMOP2Example``, which runs NSGA-II with both parameter spaces on
-  LIR-CMOP2
+  ``ConstrainedNSGAIIForLIRCMOP2Example``, on a problem whose feasible region is small
 
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:

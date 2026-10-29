@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConstrainedFrontPlotObserver;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
@@ -30,6 +31,8 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * reference front are printed at the end of the run.
  */
 public class ConstrainedNSGAIIForSrinivasExample {
+
+  private static final long PLOT_DELAY_MILLIS = 100;
 
   /**
    * Runs the example.
@@ -74,6 +77,15 @@ public class ConstrainedNSGAIIForSrinivasExample {
 
     baseNSGAII.parse(parameters);
     EvolutionaryAlgorithm<DoubleSolution> nsgaii = baseNSGAII.build();
+
+    // Live plot of the population: feasible solutions in black, infeasible ones in red
+    var plot =
+        new ConstrainedFrontPlotObserver<DoubleSolution>(
+            "NSGA-II with cdp, Srinivas", "f1", "f2", 500);
+    plot.setReferenceFront(VectorUtils.readVectors(referenceFrontFileName, ","));
+    plot.delay(PLOT_DELAY_MILLIS);
+    nsgaii.observable().register(plot);
+
     nsgaii.run();
 
     JMetalLogger.logger.info("Total execution time : " + nsgaii.totalComputingTime() + "ms");
