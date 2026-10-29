@@ -50,6 +50,10 @@ Added
   have no reference front. ``DescribeMain``'s ``problemCatalogue`` gives the ``numberOfConstraints``
   of every problem (0 for the problems without constraints)
 - The reference front of RCM09, the only problem of the RCM suite without constraints
+- ``ConstrainedFrontPlotObserver`` (``org.uma.evolver.util``), a live plot of the population of an
+  algorithm with the feasible solutions in black and the infeasible ones in red, and the number of
+  feasible solutions in its title; optionally, the reference front in gray and a pause after each
+  update. The examples of ``example.baselevel.constrained`` use it
 
 Changed
 ~~~~~~~
