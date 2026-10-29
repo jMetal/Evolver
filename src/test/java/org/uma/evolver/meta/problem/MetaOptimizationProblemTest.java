@@ -3,13 +3,20 @@ package org.uma.evolver.meta.problem;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +37,10 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.errorchecking.exception.InvalidConditionException;
 import org.uma.jmetal.util.errorchecking.exception.NullParameterException;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.util.pseudorandom.PseudoRandomGenerator;
+import org.uma.jmetal.util.pseudorandom.impl.JavaRandomGenerator;
+import org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator;
 
 /**
  * Unit tests for {@link MetaOptimizationProblem}.
@@ -488,6 +499,90 @@ class MetaOptimizationProblemTest {
       assertTrue(message.contains("fooCrossover"), message);
       assertTrue(message.contains("Configuration: --algorithmResult population"), message);
       assertNotNull(exception.getCause());
+    }
+  }
+
+  @Nested
+  @DisplayName("When configurations are evaluated by one or several threads")
+  class RandomGeneratorTests {
+
+    private static final String[] CONFIGURATION =
+        ("--algorithmResult population --createInitialSolutions default"
+                + " --variation crossoverAndMutationVariation --offspringPopulationSize 100"
+                + " --crossover SBX --crossoverProbability 0.9 --crossoverRepairStrategy bounds"
+                + " --sbxDistributionIndex 20.0 --mutation polynomial"
+                + " --mutationProbabilityFactor 1.0 --mutationRepairStrategy bounds"
+                + " --polynomialMutationDistributionIndex 20.0 --selection tournament"
+                + " --selectionTournamentSize 2")
+            .split("\\s+");
+
+    private PseudoRandomGenerator previous;
+
+    @BeforeEach
+    void setUpGenerator() {
+      previous = JMetalRandom.getInstance().getRandomGenerator();
+      JMetalRandom.getInstance().setRandomGenerator(new JavaRandomGenerator(1));
+    }
+
+    @AfterEach
+    void restoreGenerator() {
+      JMetalRandom.getInstance().setRandomGenerator(previous);
+    }
+
+    private MetaOptimizationProblem<DoubleSolution> problem() {
+      return new MetaOptimizationProblem<>(
+          baseAlgorithm, singleProblem, singleReferenceFront, singleIndicator,
+          new FixedEvaluationsStrategy(List.of(2000)), ONE_RUN);
+    }
+
+    @Test
+    @DisplayName("Given one thread, when it evaluates, then jMetal's generator is still shared")
+    void givenOneThread_whenItEvaluates_thenTheGeneratorIsStillShared() {
+      // Arrange
+      var problem = problem();
+
+      // Act
+      problem.evaluateConfiguration(CONFIGURATION);
+      problem.evaluateConfiguration(CONFIGURATION);
+
+      // Assert
+      assertInstanceOf(JavaRandomGenerator.class, JMetalRandom.getInstance().getRandomGenerator());
+    }
+
+    @Test
+    @DisplayName(
+        "Given several threads, when they evaluate at once, then each thread gets a generator of"
+            + " its own")
+    void givenSeveralThreads_whenTheyEvaluateAtOnce_thenEachThreadGetsItsOwnGenerator()
+        throws Exception {
+      // Arrange
+      var problem = problem();
+      int threads = 4;
+      ExecutorService executor = Executors.newFixedThreadPool(threads);
+      CountDownLatch start = new CountDownLatch(1);
+      List<Future<double[]>> evaluations = new ArrayList<>();
+      for (int i = 0; i < threads; i++) {
+        evaluations.add(
+            executor.submit(
+                () -> {
+                  start.await();
+                  return problem.evaluateConfiguration(CONFIGURATION);
+                }));
+      }
+
+      // Act
+      start.countDown();
+      try {
+        for (Future<double[]> evaluation : evaluations) {
+          evaluation.get();
+        }
+      } finally {
+        executor.shutdown();
+      }
+
+      // Assert
+      assertInstanceOf(
+          ThreadLocalRandomGenerator.class, JMetalRandom.getInstance().getRandomGenerator());
     }
   }
 
