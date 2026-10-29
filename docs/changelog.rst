@@ -49,6 +49,7 @@ Added
   ElectricMotor) problems, with the families ``Classical`` and ``Engineering``. Viennet4 and RCM17
   have no reference front. ``DescribeMain``'s ``problemCatalogue`` gives the ``numberOfConstraints``
   of every problem (0 for the problems without constraints)
+- The reference front of RCM09, the only problem of the RCM suite without constraints
 
 Changed
 ~~~~~~~
@@ -60,6 +61,23 @@ Changed
   when the hypervolume of the reference front is not positive, as with the two-point fronts of the
   TSP instances, instead of giving the worst value to every configuration: with those fronts, use
   HV- (tutorial E9)
+- Configurations evaluated in parallel threads (parallel meta-optimizers, the evaluation server
+  with concurrent requests) no longer contend for jMetal's single random generator: each thread gets
+  its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
+  now 1.3 s. A single thread of evaluations draws from the shared generator as before
+- The unit tests run on Linux, macOS and Windows in the CI
+
+Fixed
+~~~~~
+
+- The power-law mutation exponent of ``MOPSO.yaml`` and ``SMSEMOADouble.yaml`` starts at 0.1:
+  jMetal's ``PowerLawMutation`` rejects 0
+- ``ConfigurationFileReader`` reads absolute Windows paths, which made it throw
+  ``InvalidPathException``, and finds the bundled configurations (``defaultConfigurations/*.txt``)
+  on the classpath when Evolver runs from a jar outside the project directory
+- A solve run no longer aborts on Windows when another process, such as Evolver-Studio, is reading
+  ``CURRENT_FRONT.csv`` while it is replaced; the current front also marks infeasible solutions as
+  dominated by the feasible ones
 
 2.5 (2026-10-15)
 ----------------
