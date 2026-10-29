@@ -47,7 +47,7 @@ Usage
 ``outputDirectory``, and puts ``status.yaml`` (unless given) and ``results.yaml`` there too. The
 independent replications of a training then share one request file, each with its own directory
 (``results/<study>/run01``, ``run02``, ...), the layout that ``scripts/plot_training_convergence.py``
-and ``scripts/training_replicas.py`` read. :doc:`Tutorial E19 <../tutorials/independent_replications>`
+and ``scripts/training_replicas.py`` read. :doc:`Tutorial E20 <../tutorials/independent_replications>`
 runs them by hand and with a slurm job array (``scripts/slurm/``).
 
 Example
@@ -654,8 +654,8 @@ EvaluationServerMain
 
 Starts, inspects and stops an **evaluation server**: a process that evaluates configurations of a
 base-level algorithm sent through an HTTP API, as a training of Evolver evaluates them. External
-configurators (irace and SMAC3, as in tutorials :doc:`E15 <../tutorials/tuning_with_irace>` and
-:doc:`E16 <../tutorials/tuning_with_smac3>`) can then run
+configurators (irace and SMAC3, as in tutorials :doc:`E16 <../tutorials/tuning_with_irace>` and
+:doc:`E17 <../tutorials/tuning_with_smac3>`) can then run
 their experiments in one Java virtual machine instead of starting one per experiment.
 
 The server is configured by a **base-level file**, the ``baseLevel`` of a training request: it gives
@@ -712,7 +712,7 @@ ProposeConfigurationsMain
 
 **Experimental.** Asks a language model for configurations of a parameter space and writes the
 valid ones to a file, one per line, that a meta-optimizer can start from (``initialConfigurations``)
-or that can be validated (:doc:`tutorial E20 <../tutorials/llms_in_evolver>`).
+or that can be validated (:doc:`tutorial E21 <../tutorials/llms_in_evolver>`).
 
 .. code-block:: bash
 

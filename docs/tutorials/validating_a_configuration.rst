@@ -554,6 +554,6 @@ What's next
 -----------
 
 - :doc:`E9 <problems_without_reference_front>` covers problems without a reference front, with HV− as meta-objective.
-- Tutorial E13 compares meta-optimizers.
+- Tutorial E14 compares meta-optimizers.
 - :doc:`E7 <analyzing_training_results>` validates every configuration of a final front, to choose
   among them.

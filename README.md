@@ -282,7 +282,7 @@ Full documentation is available at <https://evolver.readthedocs.io>, including:
 - Examples
 - Concepts (parameter spaces, evaluation strategies, base-level and meta-level metaheuristics)
 - API reference
-- Tuning with irace (tutorial E15)
+- Tuning with irace (tutorial E16)
 - FAQ and glossary
 
 ## Citation

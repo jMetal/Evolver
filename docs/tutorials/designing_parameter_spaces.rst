@@ -77,7 +77,7 @@ Two rules apply:
   (tutorial E3), each parameter is a variable in [0, 1], whatever the number of its values. A
   parameter with one value always decodes to that value, so the meta-optimizer wastes a little of
   its effort mutating it. It does no harm, but a space with many fixed parameters is less
-  efficient than its number of parameters suggests. The tree encoding (:doc:`E14 <tree_versus_flat_encoding>`) does not have
+  efficient than its number of parameters suggests. The tree encoding (:doc:`E15 <tree_versus_flat_encoding>`) does not have
   this problem.
 
 Step 3: extending a parameter space
@@ -93,7 +93,7 @@ valid names:
    Supported names are: [SBX, blxAlpha, wholeArithmetic, arithmetic, fuzzyRecombination, laplace,
    blxAlphaBeta, PCX, UNDC, SDX]
 
-Adding a new operator to the catalogue is the subject of tutorial E18. A parameter that the
+Adding a new operator to the catalogue is the subject of tutorial E19. A parameter that the
 algorithm does not use cannot be added either: the space loads, but every configuration must then
 give it a value, and the algorithm ignores it.
 
@@ -303,7 +303,7 @@ Step 7: using a parameter space of your own
   ``TutorialWfg2DGECCO2019BaseLevel.yaml`` does.
 - **From Java**, load it with ``new YAMLParameterSpace(file, new DoubleParameterFactory())``, with
   the factory of its encoding, and pass it to the algorithm.
-- **With irace** (tutorial :doc:`E15 <tuning_with_irace>`), generate its parameter file with
+- **With irace** (tutorial :doc:`E16 <tuning_with_irace>`), generate its parameter file with
   ``IraceParameterDescriptionGenerator``:
 
   .. code-block:: bash
@@ -331,6 +331,6 @@ What's next
 
 - Tutorial E10 configures and tunes algorithms for binary and permutation problems, with their own
   parameter spaces.
-- :doc:`E14 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
+- :doc:`E15 <tree_versus_flat_encoding>` compares the tree and the flat encodings, which treat the parameters of a space
   differently.
-- Tutorial E18 adds new components to the catalogue, so that they can be used in a parameter space.
+- Tutorial E19 adds new components to the catalogue, so that they can be used in a parameter space.

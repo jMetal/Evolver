@@ -39,7 +39,7 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 /**
- * Ablation study of tutorial E12, "Ablation: which components matter" (see {@code
+ * Ablation study of tutorial E13, "Ablation: which components matter" (see {@code
  * docs/tutorials/ablation.rst}).
  *
  * <p>It takes the NSGA-II configuration tuned in tutorial E8 ({@value #TUNED_CONFIGURATION_FILE})

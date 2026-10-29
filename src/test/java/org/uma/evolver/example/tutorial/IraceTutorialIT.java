@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.util.ConfigurationFileReader;
 
 /**
- * Keeps tutorial E15 ("Tuning with irace") from rotting: applies a configuration with {@link
+ * Keeps tutorial E16 ("Tuning with irace") from rotting: applies a configuration with {@link
  * IraceTutorial#apply} with minimal budgets.
  */
 @Tag("integration")

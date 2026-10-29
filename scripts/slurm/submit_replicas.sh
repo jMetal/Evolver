@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Submits the independent replications of an Evolver training as a slurm job array of
-# train_replicas.sbatch (tutorial E19): one task per replication, each with <cpus> cores.
+# train_replicas.sbatch (tutorial E20): one task per replication, each with <cpus> cores.
 #
 #   scripts/slurm/submit_replicas.sh <jar> <request.yaml> <study-dir> <replications> <cpus> \
 #       [more sbatch options]

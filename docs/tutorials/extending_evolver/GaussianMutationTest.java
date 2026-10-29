@@ -17,7 +17,7 @@ import org.uma.jmetal.solution.doublesolution.repairsolution.impl.RepairDoubleSo
 import org.uma.jmetal.util.errorchecking.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-@DisplayName("Unit tests for the Gaussian mutation of tutorial E18")
+@DisplayName("Unit tests for the Gaussian mutation of tutorial E19")
 class GaussianMutationTest {
 
   @Test

@@ -100,38 +100,38 @@ Advanced
 
    * - Tutorial
      - What you will learn
-   * - :doc:`E12. Ablation: which components matter <ablation>`
+   * - :doc:`E13. Ablation: which components matter <ablation>`
      - Which of the components that a training changed explain the improvement: choosing the
        components, deriving valid variants of a configuration with ``ConfigurationVariants``,
        validating them together, and reading significance, magnitude and interactions.
-   * - :doc:`E13. Choosing the meta-optimizer <choosing_the_meta_optimizer>`
+   * - :doc:`E14. Choosing the meta-optimizer <choosing_the_meta_optimizer>`
      - What the six meta-optimizers have in common and what sets them apart: operators, flat and tree
        encodings, parallel evaluation and the number of cores, when each one checks the time limit,
        and reasons to choose one.
-   * - :doc:`E14. Tree versus flat encoding <tree_versus_flat_encoding>`
+   * - :doc:`E15. Tree versus flat encoding <tree_versus_flat_encoding>`
      - The grammar of a parameter space, the inactive variables and neutral mutations of the flat
        encoding measured on NSGA-II, and a training with each encoding in the same time.
-   * - :doc:`E15. Tuning with irace <tuning_with_irace>`
+   * - :doc:`E16. Tuning with irace <tuning_with_irace>`
      - Tuning an Evolver algorithm with irace: generating the parameter file from a YAML space, the
        target runner, the scenario, running irace, and applying the configuration it finds.
-   * - :doc:`E16. Tuning with SMAC3 <tuning_with_smac3>`
+   * - :doc:`E17. Tuning with SMAC3 <tuning_with_smac3>`
      - Tuning an Evolver algorithm with SMAC3: its configuration space written from a YAML space,
        the evaluation server, the SMAC3 client with two objectives, the configurations it finds,
        and why its running time grows with the trials.
-   * - :doc:`E17. Automating Evolver with the CLI <automating_with_the_cli>`
+   * - :doc:`E18. Automating Evolver with the CLI <automating_with_the_cli>`
      - The request, status and results files of ``cli.training`` and ``cli.solving``: asking
        ``DescribeMain`` what Evolver can run, writing and running requests by hand, what a failed or
        killed run leaves behind, and a batch of requests run in parallel and gathered in one table.
-   * - :doc:`E18. Extending Evolver: your own problem and operator <extending_evolver>`
+   * - :doc:`E19. Extending Evolver: your own problem and operator <extending_evolver>`
      - Using a problem of your own, given by its class name, from a request and in a training, and
        adding an operator to the catalogue (a Gaussian mutation, as an example that is not part of
        Evolver): the class, the three changes, the test and a patch.
-   * - :doc:`E19. Independent replications of a training <independent_replications>`
+   * - :doc:`E20. Independent replications of a training <independent_replications>`
      - Why a study of the training needs 10, 15 or 30 replications of the meta-optimizer and what
        that costs, running them by hand or as a slurm job array, and analyzing them: convergence over
        the replications, the best value of each one, comparing two settings with the Wilcoxon test,
        and which configuration to validate.
-   * - :doc:`E20. Language models in Evolver <llms_in_evolver>`
+   * - :doc:`E21. Language models in Evolver <llms_in_evolver>`
      - Using a language model, local or external, from Evolver: the settings of the model, asking it
        for configurations of a parameter space that Evolver validates and logs, seeding a training
        with them, and the research directions and cautions of this experimental line.

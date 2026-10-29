@@ -1,6 +1,6 @@
 .. _tutorial_independent_replications:
 
-E19. Independent Replications of a Training
+E20. Independent Replications of a Training
 ===========================================
 
 :Level: Advanced
@@ -10,7 +10,7 @@ E19. Independent Replications of a Training
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.10, SAES 1.5.0
 :Prerequisites: :doc:`E7. Analyzing training results <analyzing_training_results>`,
    :doc:`E8. Validating a configuration <validating_a_configuration>`,
-   :doc:`E17. Automating Evolver with the CLI <automating_with_the_cli>`
+   :doc:`E18. Automating Evolver with the CLI <automating_with_the_cli>`
 
 Every tutorial so far runs **one** training per experiment. That is enough to learn how Evolver
 works, and often enough to get a good configuration, but not to make claims about the training
@@ -121,7 +121,7 @@ the replications are independent: they share neither the random generator nor an
 
 The example of this tutorial compares two meta-optimizers on the short training of tutorial E4
 (NSGA-II tuned for ZDT4, 500 configurations, 8 cores): NSGA-II, and random search with the same
-budget, the baseline that every meta-optimizer should beat (tutorial E13). Ten replications of each,
+budget, the baseline that every meta-optimizer should beat (tutorial E14). Ten replications of each,
 one after the other, from the root of the repository:
 
 .. code-block:: bash
@@ -315,14 +315,14 @@ best NHV is between run03 (0.0082) and run08 (0.0085), so the configuration to v
 ``ValidationTutorial`` validates on the problems of tutorial E8; for a training of your own, use the
 same protocol with its problems. If the configurations of the replications are very different and all of them
 are good, that is also a result: the parameter space has many good regions, and the ablation of
-tutorial E12 can tell which of their components matter.
+tutorial E13 can tell which of their components matter.
 
 What you can try
 ----------------
 
 - Run the comparison with 3, 5 and 10 replications and see from how many the Wilcoxon test detects
   the difference.
-- Compare the flat and the tree encodings (tutorial E14) with 10 replications each and the same time
+- Compare the flat and the tree encodings (tutorial E15) with 10 replications each and the same time
   limit.
 - Adapt ``train_replicas.sbatch`` to a cluster you have access to, and run the replications of the
   training of tutorial E8.

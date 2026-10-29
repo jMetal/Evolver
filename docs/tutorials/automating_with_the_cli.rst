@@ -1,6 +1,6 @@
 .. _tutorial_automating_with_the_cli:
 
-E17. Automating Evolver with the CLI
+E18. Automating Evolver with the CLI
 ====================================
 
 :Level: Advanced
@@ -70,7 +70,7 @@ a *manifest* in YAML and runs nothing else:
         org.uma.evolver.cli.training.DescribeMain > manifest.yaml
 
 Its top-level keys are ``baseAlgorithms`` (18 pairs of algorithm and encoding),
-``metaAlgorithms`` (the 6 meta-optimizers of E13), ``problems`` and ``problemCatalogue`` (107 problems,
+``metaAlgorithms`` (the 6 meta-optimizers of E14), ``problems`` and ``problemCatalogue`` (107 problems,
 with the encoding, the number of objectives and variables and the arguments of each one),
 ``indicators``, ``resourceDirectories`` (the files that exist under ``parameterSpaces/``,
 ``defaultConfigurations/``, ...) and ``schemas`` (the fields of each kind of request, with their
@@ -214,7 +214,7 @@ Two details make a request a thing to reuse instead of copy:
 
 - ``baseLevel`` and ``metaSearch`` are *names* of recipes bundled with Evolver (the lists are
   ``resourceDirectories`` in the manifest), or paths to files of your own. A set of experiments
-  can share one base-level file and vary the meta-optimizer, as the exercises of E13 do.
+  can share one base-level file and vary the meta-optimizer, as the exercises of E14 do.
 - ``outputDirectory`` is relative to the directory the process runs in. Give every run its own: a
   request, a status and an output directory per experiment, side by side, is what makes a batch
   easy to inspect and to repeat.
@@ -325,7 +325,7 @@ What the CLI does not do yet
   ``ExperimentBuilder`` (tutorials E6 and E8), and their results are read with the scripts of
   ``scripts/``.
 - The asynchronous genetic algorithm (``MetaAsyncGeneticAlgorithmBuilder``) can only be used from
-  Java, and MOPSO is not among the algorithms that the CLI builds (E13 and the manifest list what is).
+  Java, and MOPSO is not among the algorithms that the CLI builds (E14 and the manifest list what is).
 - There is no cancel or pause: a run ends, fails or is killed.
 
 Try it yourself
@@ -350,7 +350,7 @@ What's next
 
 - :doc:`../utilities/cli_tools` is the reference of every field of the requests, the status and the
   results.
-- :doc:`E13 <choosing_the_meta_optimizer>` explains how many cores a training uses, which matters when
+- :doc:`E14 <choosing_the_meta_optimizer>` explains how many cores a training uses, which matters when
   you run several processes at once.
 - :doc:`E8 <validating_a_configuration>` explains how to analyze a study properly, once your batch has
   produced the runs.

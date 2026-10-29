@@ -73,6 +73,10 @@ Changed
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
   now 1.3 s. A single thread of evaluations draws from the shared generator as before
 - The unit tests run on Linux, macOS and Windows in the CI
+- The tutorials from E12 on are renumbered by one (E12, "Ablation", is now E13, and so on up to E21,
+  "Language models in Evolver"), to make room for a new intermediate tutorial; their pages keep
+  their names, so the links do not change. The entries of earlier versions in this changelog keep
+  the old numbers
 - A training no longer writes to an output directory that already has the results of another one
   (``METADATA.txt``, ``INDICATORS.csv``, ``CONFIGURATIONS.csv``, ``VAR_CONF.txt`` or the
   ``POPULATION_*`` files): it stops at the start with a message that names them. Until now the new

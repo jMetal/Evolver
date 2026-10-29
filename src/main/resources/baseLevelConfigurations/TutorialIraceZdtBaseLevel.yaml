@@ -1,4 +1,4 @@
-# Base level of the irace scenario of tutorial E15 (docs/tutorials/tuning_with_irace.rst) for the
+# Base level of the irace scenario of tutorial E16 (docs/tutorials/tuning_with_irace.rst) for the
 # evaluation server (org.uma.evolver.cli.evaluation.EvaluationServerMain): NSGA-II, population 100,
 # 8000 evaluations on each bi-objective ZDT problem, one run per experiment, as the target runner
 # AutoNSGAIIIraceHVEP does. The server computes the indicators of Evolver's trainings (EP and NHV),

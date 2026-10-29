@@ -1,6 +1,6 @@
 .. _tutorial_choosing_the_meta_optimizer:
 
-E13. Choosing the Meta-Optimizer
+E14. Choosing the Meta-Optimizer
 ================================
 
 :Level: Advanced
@@ -92,7 +92,7 @@ The name is the value of ``algorithm`` in the meta-optimizer configuration file 
 Three details of the table:
 
 - **SMPSO is flat-only.** It needs a continuous (``DoubleProblem``) meta-problem, and the tree
-  encoding is not one. The other five work with both encodings (:doc:`E14 <tree_versus_flat_encoding>` compares the two encodings).
+  encoding is not one. The other five work with both encodings (:doc:`E15 <tree_versus_flat_encoding>` compares the two encodings).
 - **The asynchronous genetic algorithm** (``MetaAsyncGeneticAlgorithmBuilder``) exists, but only
   from Java: ``cli.training`` does not accept it.
 - **Which operators.** The flat NSGA-II, AGE-MOEA and SPEA2 (an RDEMOEA configured as SPEA2) are
@@ -216,7 +216,7 @@ of meta-optimization). What follows are reasons for a choice, not results.
        same budget, the budget is too small for it to learn anything, or the parameter space is so
        forgiving that any configuration is good. Either is useful to know
 
-For the tree encoding (:doc:`E14 <tree_versus_flat_encoding>`) the choice is among NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and
+For the tree encoding (:doc:`E15 <tree_versus_flat_encoding>`) the choice is among NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and
 ``RandomSearch``.
 
 What to expect from the choice

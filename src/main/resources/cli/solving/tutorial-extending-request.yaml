@@ -1,4 +1,4 @@
-# Solve request of tutorial E18 (docs/tutorials/extending_evolver.rst): NSGA-II, with its default
+# Solve request of tutorial E19 (docs/tutorials/extending_evolver.rst): NSGA-II, with its default
 # configuration, on BiSphere, a problem of the user that is not registered in Evolver and is given by
 # its class name, with 20 variables. 10 independent runs of 25000 evaluations.
 # The reference front is written by ExtendingTutorial (java -cp ... ExtendingTutorial reference).

@@ -1,4 +1,4 @@
-# Settings of a language model served by Ollama on this computer (tutorial E20,
+# Settings of a language model served by Ollama on this computer (tutorial E21,
 # docs/tutorials/llms_in_evolver.rst). think: false turns the reasoning of the model off, which
 # makes each call much faster; keep_alive keeps the model in memory between calls.
 provider: ollama
