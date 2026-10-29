@@ -86,7 +86,7 @@ perturbation:
               conditionalParameters:
                 powerLawMutationDelta:
                   type: double
-                  range: [0.0, 10.0]
+                  range: [0.1, 10.0]
 #
 inertiaWeightComputingStrategy:
   type: categorical
