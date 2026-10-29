@@ -24,6 +24,13 @@ Added
   (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``, and
   ``ConstrainedNSGAIIForLIRCMOP2Example``, on a problem whose feasible region is small
 
+- SMS-EMOA handles problems with constraints as NSGA-II does: ``SMSEMOADoubleConstrained.yaml``
+  (``SMSEMOADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``SMSEMOADoubleConstrainedDefault.txt`` (``cdp``). The technique ranks the population in the
+  replacement and is updated once per offspring, since SMS-EMOA is steady-state. Without the
+  parameter SMS-EMOA does not change: with the same seed it gives the same fronts as before, with the
+  Double, Binary and Permutation encodings
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance

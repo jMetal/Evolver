@@ -15,14 +15,17 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.SMSEMOAReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.ranking.Ranking;
 import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
@@ -45,6 +48,15 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  *   <li>Flexible termination conditions</li>
  *   <li>Parameter space for easy configuration</li>
  * </ul>
+ *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code SMSEMOADoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the technique ranks the
+ * population in the replacement, it is updated with the progress of the run once per offspring,
+ * since SMS-EMOA is steady-state ({@link ConstraintHandlingReplacement}, {@link RunProgress}), and
+ * the bounded external archives compare solutions with the constrained-domination principle.
+ * Without the parameter (e.g. {@code SMSEMOADouble.yaml}) none of this happens, and the constraints
+ * are ignored.
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
  * parameters that are fixed or derived from the problem instance.
@@ -72,6 +84,15 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
   protected final ParameterSpace parameterSpace;
 
   protected Ranking<S> ranking;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
 
   protected Problem<S> problem;
   protected int populationSize;
@@ -135,6 +156,7 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
   @Override
   public EvolutionaryAlgorithm<S> build() {
     setNonConfigurableParameters();
+    configureConstraintHandling();
     Archive<S> archive = null;
     if (usingExternalArchive()) {
       archive = createExternalArchive();
@@ -161,15 +183,21 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>().build(
-        "SMS-EMOA",
-        initialSolutionsCreation,
-        evaluation,
-        termination,
-        selection,
-        variation,
-        replacement,
-        archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                "SMS-EMOA",
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   /**
@@ -192,8 +220,9 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    Archive<S> archive = externalArchiveParameter.getExternalArchive();
-    return archive;
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   /**
@@ -303,7 +332,36 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
    * @return the replacement operator
    */
   protected Replacement<S> createReplacement() {
-    return new SMSEMOAReplacement<S>(ranking, new PISAHypervolume());
+    Replacement<S> replacement = new SMSEMOAReplacement<S>(ranking, new PISAHypervolume());
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter: its ranking replaces the default one in the replacement. Without
+   * the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+    ranking = constraintHandlingTechnique.ranking();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }
 
