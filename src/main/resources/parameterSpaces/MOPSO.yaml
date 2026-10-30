@@ -17,7 +17,7 @@ algorithmResult:
         swarmSizeWithArchive:
           type: integer
           range: [10, 200]
-        archiveType:
+        externalArchiveType:
           type: categorical
           values:
             crowdingDistanceArchive: {}

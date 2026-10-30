@@ -148,6 +148,9 @@ Changed
 Fixed
 ~~~~~
 
+- MOPSO with ``MOPSO.yaml`` can return an external archive: the space named the type of that archive
+  ``archiveType``, while ``BaseMOPSO`` (and ``MOPSOReduced.yaml``) call it ``externalArchiveType``,
+  so ``--algorithmResult externalArchive`` failed with "Parameter not found"
 - The power-law mutation exponent of ``MOPSO.yaml`` and ``SMSEMOADouble.yaml`` starts at 0.1:
   jMetal's ``PowerLawMutation`` rejects 0
 - ``ConfigurationFileReader`` reads absolute Windows paths, which made it throw
