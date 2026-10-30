@@ -2,6 +2,7 @@ package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
+import org.uma.evolver.util.constrainthandling.ConstrainedBoundedArchives;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.AngleArchive;
@@ -41,6 +42,29 @@ public class PAESArchiveParameter<S extends Solution<?>> extends CategoricalPara
         yield new KNNDistanceArchive<>(size, k);
       }
       case "angleArchive" -> new AngleArchive<>(size, true);
+      default -> throw new JMetalException("Unknown PAES archive type: " + value());
+    };
+  }
+
+  /**
+   * The archive of the current value, comparing solutions with the constrained-domination
+   * principle (see {@link ConstrainedBoundedArchives}), for PAES with a constraint-handling
+   * technique: the archive is the result of PAES, so it must not keep an infeasible solution that
+   * dominates a feasible one.
+   *
+   * @return the archive
+   */
+  public BoundedArchive<S> getConstrainedBoundedArchive() {
+    return switch (value()) {
+      case "crowdingDistanceArchive" -> ConstrainedBoundedArchives.crowdingDistance(size);
+      case "hypervolumeArchive" -> ConstrainedBoundedArchives.hypervolume(size);
+      case "spatialSpreadDeviationArchive" ->
+          ConstrainedBoundedArchives.spatialSpreadDeviation(size);
+      case "knnDistanceArchive" -> {
+        int k = (Integer) findConditionalParameter("knnDistanceArchiveK").value();
+        yield ConstrainedBoundedArchives.knnDistance(size, k);
+      }
+      case "angleArchive" -> ConstrainedBoundedArchives.angle(size, true);
       default -> throw new JMetalException("Unknown PAES archive type: " + value());
     };
   }

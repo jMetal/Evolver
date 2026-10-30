@@ -60,6 +60,15 @@ Added
   with its comparator. Without the parameter RDEMOEA does not change: with the same seed it gives the
   same fronts as before, with the Double and Permutation encodings
 
+- PAES handles problems with constraints: ``PAESDoubleConstrained.yaml`` (``PAESDouble.yaml`` plus
+  the ``constraintHandling`` parameter, with the techniques that compare pairs of solutions:
+  ``cdp``, ``violatedConstraints``, ``epsilonConstrained`` and ``pushPull``) and its default
+  configuration ``PAESDoubleConstrainedDefault.txt`` (``cdp``). The technique compares the mutant
+  with the current solution, as jMetal's ``PAESBuilder`` does with one, and the PAES archive keeps
+  the constrained-domination principle (``PAESArchiveParameter.getConstrainedBoundedArchive``).
+  Without the parameter PAES does not change: with the same seed it gives the same fronts as
+  before, with the Double, Binary and Permutation encodings
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
