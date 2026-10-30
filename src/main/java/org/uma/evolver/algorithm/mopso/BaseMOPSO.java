@@ -3,6 +3,7 @@ package org.uma.evolver.algorithm.mopso;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.algorithm.ParticleSwarmOptimizationBuilder;
 import org.uma.evolver.parameter.ParameterSpace;
+import org.uma.evolver.parameter.catalogue.ConstraintHandlingParameter;
 import org.uma.evolver.parameter.catalogue.ExternalArchiveParameter;
 import org.uma.evolver.parameter.catalogue.GlobalBestInitializationParameter;
 import org.uma.evolver.parameter.catalogue.GlobalBestSelectionParameter;
@@ -30,6 +31,8 @@ import org.uma.jmetal.component.catalogue.pso.globalbestupdate.GlobalBestUpdate;
 import org.uma.jmetal.component.catalogue.pso.inertiaweightcomputingstrategy.InertiaWeightComputingStrategy;
 import org.uma.jmetal.component.catalogue.pso.localbestinitialization.LocalBestInitialization;
 import org.uma.jmetal.component.catalogue.pso.localbestupdate.LocalBestUpdate;
+import org.uma.jmetal.component.catalogue.pso.localbestupdate.impl.ConstraintHandlingLocalBestUpdate;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.component.catalogue.pso.perturbation.Perturbation;
 import org.uma.jmetal.component.catalogue.pso.positionupdate.PositionUpdate;
 import org.uma.jmetal.component.catalogue.pso.velocityinitialization.VelocityInitialization;
@@ -40,6 +43,9 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceComparator;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
+import org.uma.jmetal.util.constrainthandling.PairwiseConstraintHandlingTechnique;
+import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
  * Base class for Multi-Objective Particle Swarm Optimization (MOPSO) algorithms.
@@ -57,6 +63,16 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DefaultDominanceC
  *   <li>Customizable perturbation operators</li>
  *   <li>Extensible architecture for different MOPSO variants</li>
  * </ul>
+ *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code MOPSOConstrained.yaml}), the constraint-handling technique of jMetal that it selects (see
+ * {@link ConstraintHandlingParameter}) decides whether a particle replaces its local best, and it
+ * is updated with the swarm and the progress of the run once per iteration ({@link
+ * ConstraintHandlingLocalBestUpdate}, {@link RunProgress}); the leader archive and the external
+ * archive compare solutions with the constrained-domination principle. The technique must compare
+ * pairs of solutions ({@code cdp}, {@code violatedConstraints}, {@code epsilonConstrained} or
+ * {@code pushPull}). Without the parameter (e.g. {@code MOPSO.yaml}) none of this happens, and the
+ * constraints are ignored.
  *
  * <p><b>Example usage:</b>
  * <pre>{@code
@@ -101,6 +117,15 @@ public class BaseMOPSO implements BaseLevelAlgorithm<DoubleSolution> {
 
   /** Archive storing the best solutions found (leaders). */
   protected BoundedArchive<DoubleSolution> leaderArchive;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected PairwiseConstraintHandlingTechnique<DoubleSolution> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
   
   /** Optional external archive for storing additional solutions. */
   protected Archive<DoubleSolution> externalArchive;
@@ -172,6 +197,7 @@ public class BaseMOPSO implements BaseLevelAlgorithm<DoubleSolution> {
    */
   @Override
   public ParticleSwarmOptimizationAlgorithm build() {
+    configureConstraintHandling();
     setNonConfigurableParameters();
 
     if (usingExternalArchive()) {
@@ -192,24 +218,29 @@ public class BaseMOPSO implements BaseLevelAlgorithm<DoubleSolution> {
     var localBestUpdate = createLocalBestUpdate();
     var globalBestSelection = createGlobalBestSelection();
 
-    return new ParticleSwarmOptimizationBuilder()
-        .build(
-            "MOPSO",
-            swarmInitialization,
-            evaluation,
-            termination,
-            velocityInitialization,
-            localBestInitialization,
-            globalBestInitialization,
-            inertiaWeightStrategy,
-            velocityUpdate,
-            positionUpdate,
-            perturbation,
-            globalBestUpdate,
-            localBestUpdate,
-            globalBestSelection,
-            leaderArchive,
-            externalArchive);
+    ParticleSwarmOptimizationAlgorithm algorithm =
+        new ParticleSwarmOptimizationBuilder()
+            .build(
+                "MOPSO",
+                swarmInitialization,
+                evaluation,
+                termination,
+                velocityInitialization,
+                localBestInitialization,
+                globalBestInitialization,
+                inertiaWeightStrategy,
+                velocityUpdate,
+                positionUpdate,
+                perturbation,
+                globalBestUpdate,
+                localBestUpdate,
+                globalBestSelection,
+                leaderArchive,
+                externalArchive);
+    if (usingConstraintHandling()) {
+      progress.bind(() -> termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   /**
@@ -235,7 +266,13 @@ public class BaseMOPSO implements BaseLevelAlgorithm<DoubleSolution> {
     var leaderArchiveParameter =
         (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get("leaderArchive");
     leaderArchiveParameter.setSize(leaderArchiveSize);
-    leaderArchive = (BoundedArchive<DoubleSolution>) leaderArchiveParameter.getExternalArchive();
+    // With a constraint-handling technique, the global leaders are compared with the
+    // constrained-domination principle, whatever the technique
+    leaderArchive =
+        (BoundedArchive<DoubleSolution>)
+            (usingConstraintHandling()
+                ? leaderArchiveParameter.getConstrainedExternalArchive()
+                : leaderArchiveParameter.getExternalArchive());
 
     var velocityUpdateParameter =
         ((VelocityUpdateParameter) parameterSpace.get("velocityUpdate"));
@@ -307,9 +344,9 @@ public class BaseMOPSO implements BaseLevelAlgorithm<DoubleSolution> {
         (ExternalArchiveParameter<DoubleSolution>) parameterSpace.get("externalArchiveType");
   
     externalArchiveParameter.setSize(leaderArchiveSize);
-    Archive<DoubleSolution> archive = externalArchiveParameter.getExternalArchive();
-
-    return archive;
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   /**
@@ -462,8 +499,48 @@ return ((CreateInitialSolutionsParameter<DoubleSolution>)
    * @return the local best update strategy
    */
   protected LocalBestUpdate createLocalBestUpdate() {
+    // With a constraint-handling technique, it decides whether a particle replaces its local best,
+    // and it is updated with the swarm once per iteration (the localBestUpdate parameter has only
+    // the default update)
+    if (usingConstraintHandling()) {
+      return new ConstraintHandlingLocalBestUpdate(constraintHandlingTechnique, progress);
+    }
     return ((LocalBestUpdateParameter) parameterSpace.get("localBestUpdate"))
         .getLocalBestUpdate(new DefaultDominanceComparator<>());
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter. Without the parameter it does nothing.
+   *
+   * @throws JMetalException if the technique does not compare pairs of solutions
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    ConstraintHandlingTechnique<DoubleSolution> technique =
+        ConstraintHandlingParameter.technique(parameterSpace);
+    if (!(technique instanceof PairwiseConstraintHandlingTechnique<DoubleSolution> pairwise)) {
+      throw new JMetalException(
+          "MOPSO compares pairs of solutions, so it needs a technique that compares pairs (cdp,"
+              + " violatedConstraints, epsilonConstrained or pushPull), not "
+              + parameterSpace.get(ConstraintHandlingParameter.DEFAULT_NAME).value());
+    }
+    constraintHandlingTechnique = pairwise;
+    progress = new RunProgress();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 
   /**

@@ -69,6 +69,13 @@ Added
   Without the parameter PAES does not change: with the same seed it gives the same fronts as
   before, with the Double, Binary and Permutation encodings
 
+- MOPSO handles problems with constraints: ``MOPSOConstrained.yaml`` (``MOPSO.yaml`` plus the
+  ``constraintHandling`` parameter, with the techniques that compare pairs of solutions) and its
+  default configuration ``MOPSOConstrainedDefault.txt`` (``cdp``). The technique decides whether a
+  particle replaces its local best (jMetal's ``ConstraintHandlingLocalBestUpdate``), and the leader
+  and external archives keep the constrained-domination principle. Without the parameter MOPSO does
+  not change: with the same seed it gives the same fronts as before
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
