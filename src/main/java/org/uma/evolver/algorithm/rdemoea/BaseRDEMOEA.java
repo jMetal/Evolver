@@ -16,12 +16,15 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.ranking.Ranking;
@@ -35,6 +38,16 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * different solution types. It manages the configuration and assembly of the main algorithmic
  * components (selection, variation, replacement, evaluation, termination, etc.) using a parameter
  * space abstraction.
+ *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code RDEMOEADoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the {@code ranking} parameter
+ * takes the ranking of the technique, or the strength ranking with its comparator ({@link
+ * RankingParameter#getRanking(ConstraintHandlingTechnique)}), which the tournament and the
+ * replacement share, the technique is updated once per generation with the progress of the run
+ * ({@link ConstraintHandlingReplacement}, {@link RunProgress}), and the bounded external archives
+ * compare solutions with the constrained-domination principle. Without the parameter (e.g. {@code
+ * RDEMOEADouble.yaml}) none of this happens, and the constraints are ignored.
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
  * parameters that are fixed or derived from the problem instance.
@@ -68,6 +81,15 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
   protected Problem<S> problem;
   protected int populationSize;
   protected int maximumNumberOfEvaluations;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
 
   /**
    * Constructs an AbstractNSGAII with the given population size and parameter space. This
@@ -132,6 +154,7 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
    */
   @Override
   public EvolutionaryAlgorithm<S> build() {
+    configureConstraintHandling();
     setRankingAndDensityEstimator();
     setNonConfigurableParameters();
     Archive<S> archive = null;
@@ -146,19 +169,29 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>().build(
-        "RDEMOEA",
-        initialSolutionsCreation,
-        evaluation,
-        termination,
-        selection,
-        variation,
-        replacement,
-        archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                "RDEMOEA",
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   private void setRankingAndDensityEstimator() {
-    ranking = ((RankingParameter<S>) parameterSpace().get("ranking")).getRanking();
+    var rankingParameter = (RankingParameter<S>) parameterSpace().get("ranking");
+    ranking =
+        usingConstraintHandling()
+            ? rankingParameter.getRanking(constraintHandlingTechnique)
+            : rankingParameter.getRanking();
     densityEstimator =
         ((DensityEstimatorParameter<S>) parameterSpace().get("densityEstimator")).getDensityEstimator();
     rankingAndCrowdingComparator =
@@ -188,9 +221,9 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    Archive<S> archive = externalArchiveParameter.getExternalArchive();
-
-    return archive;
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   /**
@@ -297,11 +330,38 @@ public abstract class BaseRDEMOEA<S extends Solution<?>> implements BaseLevelAlg
     replacementParameter.setRanking(ranking);
     replacementParameter.setDensityEstimator(densityEstimator);
 
-    return replacementParameter.getReplacement();
-    
+    Replacement<S> replacement = replacementParameter.getReplacement();
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+
     //RankingAndDensityEstimatorPreference<S> preferenceForReplacement =
     //    new RankingAndDensityEstimatorPreference<>(ranking, densityEstimator);
     //return new RankingAndDensityEstimatorReplacement<>(
         //preferenceForReplacement, replacementParameter.getRemovalPolicy());
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter. Without the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }

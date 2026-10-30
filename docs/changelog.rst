@@ -53,6 +53,13 @@ Added
   offspring. Without the parameter SSMOEA does not change: with the same seed it gives the same
   fronts as before
 
+- RDEMOEA handles problems with constraints as NSGA-II does: ``RDEMOEADoubleConstrained.yaml``
+  (``RDEMOEADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``RDEMOEADoubleConstrainedDefault.txt`` (``cdp``, with the operators of the default configuration
+  of NSGA-II). Its ``ranking`` parameter takes the ranking of the technique or the strength ranking
+  with its comparator. Without the parameter RDEMOEA does not change: with the same seed it gives the
+  same fronts as before, with the Double and Permutation encodings
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
