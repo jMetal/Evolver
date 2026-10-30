@@ -76,6 +76,14 @@ Added
   and external archives keep the constrained-domination principle. Without the parameter MOPSO does
   not change: with the same seed it gives the same fronts as before
 
+- RVEA handles problems with constraints with ``RVEADoubleConstrained.yaml`` (``RVEADouble.yaml``
+  with the ``rvea`` variant only, plus the ``constraintHandling`` parameter with the techniques that
+  judge the violation of a single solution: ``cdp``, ``violatedConstraints``, ``epsilonConstrained``
+  and ``pushPull``) and its default configuration ``RVEADoubleConstrainedDefault.txt`` (``cdp``). The
+  selection of C-RVEA of jMetal judges feasibility and violation as the technique does
+  (``EffectiveViolation``): ``cdp`` is C-RVEA itself. Without the parameter RVEA does not change and
+  still rejects problems with constraints
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
