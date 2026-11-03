@@ -20,7 +20,9 @@ final class TrainingOutputDirectory {
           "CONFIGURATIONS.csv",
           "VAR_CONF.txt",
           "POPULATION_INDICATORS.csv",
-          "POPULATION_CONFIGURATIONS.csv");
+          "POPULATION_CONFIGURATIONS.csv",
+          FeasibilityOutput.FEASIBILITY_FILE,
+          FeasibilityOutput.POPULATION_FEASIBILITY_FILE);
 
   private TrainingOutputDirectory() {}
 
