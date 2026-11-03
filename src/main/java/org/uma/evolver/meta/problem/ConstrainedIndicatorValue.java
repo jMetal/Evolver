@@ -44,6 +44,25 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  */
 public final class ConstrainedIndicatorValue {
 
+  /**
+   * The attribute of an evaluated configuration with its number of runs without feasible solutions,
+   * {@code k} (an {@link Integer}); set only when a training problem has constraints.
+   */
+  public static final String FAILED_RUNS = "FailedRuns";
+
+  /**
+   * The attribute of an evaluated configuration with its number of runs, over all the training
+   * problems (an {@link Integer}); set only when a training problem has constraints.
+   */
+  public static final String RUNS = "Runs";
+
+  /**
+   * The attribute of an evaluated configuration with the mean scaled violation of its runs without
+   * feasible solutions, {@code v} (a {@link Double}, 0 without such runs); set only when a training
+   * problem has constraints.
+   */
+  public static final String MEAN_SCALED_VIOLATION = "MeanScaledViolation";
+
   /** The width of the interval [τ* - 2, τ*] that the quality is kept in. */
   static final double QUALITY_RANGE = 2.0;
 

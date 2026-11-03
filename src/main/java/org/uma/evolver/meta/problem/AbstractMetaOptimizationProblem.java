@@ -87,6 +87,9 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   /** What the runs of a configuration on a problem with constraints give. */
   private record ProblemSummary(double[] values, int failedRuns, double sumOfScaledViolations) {}
 
+  /** What the evaluation of a configuration gives: its objectives and, with constraints, more. */
+  private record Evaluation(double[] objectives, int failedRuns, double sumOfScaledViolations) {}
+
   protected AbstractMetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
       List<Problem<S>> problems,
@@ -197,9 +200,32 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   @Override
   public META evaluate(META solution) {
     Check.notNull(solution);
-    double[] objectives = evaluateConfiguration(toParameterArray(solution));
+    Evaluation evaluation = evaluated(toParameterArray(solution));
+    double[] objectives = evaluation.objectives();
     System.arraycopy(objectives, 0, solution.objectives(), 0, objectives.length);
+    if (constrained) {
+      // The diagnosis of feasibility, for the outputs of a training (see ConstrainedIndicatorValue)
+      int failedRuns = evaluation.failedRuns();
+      solution.attributes().put(ConstrainedIndicatorValue.FAILED_RUNS, failedRuns);
+      solution.attributes().put(
+          ConstrainedIndicatorValue.RUNS, problems.size() * numberOfIndependentRuns);
+      solution.attributes().put(
+          ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION,
+          failedRuns == 0 ? 0.0 : evaluation.sumOfScaledViolations() / failedRuns);
+    }
     return solution;
+  }
+
+  /**
+   * Whether some training problem has constraints, so that configurations are evaluated as {@link
+   * ConstrainedIndicatorValue} describes and carry its attributes ({@link
+   * ConstrainedIndicatorValue#FAILED_RUNS}, {@link ConstrainedIndicatorValue#RUNS} and {@link
+   * ConstrainedIndicatorValue#MEAN_SCALED_VIOLATION}).
+   *
+   * @return {@code true} if some training problem has constraints
+   */
+  public boolean constrained() {
+    return constrained;
   }
 
   /**
@@ -217,6 +243,10 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
    */
   public double[] evaluateConfiguration(String[] parameterArray) {
     Check.notNull(parameterArray);
+    return evaluated(parameterArray).objectives();
+  }
+
+  private Evaluation evaluated(String[] parameterArray) {
     // Configurations evaluated by several threads at once (parallel meta-optimizers, the evaluation
     // server) would contend for jMetal's single random generator, so from then on each thread has
     // its own. A single thread of evaluations keeps drawing from the generator it shares with the
@@ -231,7 +261,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     }
   }
 
-  private double[] computeConfigurationValues(String[] parameterArray) {
+  private Evaluation computeConfigurationValues(String[] parameterArray) {
     if (constrained) {
       return evaluateConfigurationWithConstraints(parameterArray);
     }
@@ -244,7 +274,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       }
       objectives[i] = sum / problems.size();
     }
-    return objectives;
+    return new Evaluation(objectives, 0, 0.0);
   }
 
   /**
@@ -324,7 +354,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     }
   }
 
-  private double[] evaluateConfigurationWithConstraints(String[] parameterArray) {
+  private Evaluation evaluateConfigurationWithConstraints(String[] parameterArray) {
     ProblemSummary[] summaries = new ProblemSummary[problems.size()];
     IntStream.range(0, problems.size())
         .forEach(id -> summaries[id] = computeIndependentRunsWithConstraints(parameterArray, id));
@@ -346,7 +376,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
               ? mean
               : ConstrainedIndicatorValue.value(failedRuns, sumOfScaledViolations, mean);
     }
-    return objectives;
+    return new Evaluation(objectives, failedRuns, sumOfScaledViolations);
   }
 
   /**
