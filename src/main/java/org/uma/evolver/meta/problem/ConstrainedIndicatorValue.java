@@ -1,9 +1,9 @@
 package org.uma.evolver.meta.problem;
 
 import java.util.Arrays;
-import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
+import org.uma.jmetal.qualityindicator.impl.ConstrainedMultiobjectiveIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GeneralizedSpread;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
