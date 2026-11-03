@@ -94,6 +94,14 @@ Added
   constrained-domination principle. Without the parameter MOEA/D does not change: with the same
   seed it gives the same fronts as before, with the Double, Binary and Permutation encodings
 
+- The diagnosis of feasibility of a training on problems with constraints: each evaluated
+  configuration carries its runs without feasible solutions, its runs and their mean scaled
+  violation (``ConstrainedIndicatorValue.FAILED_RUNS``, ``RUNS`` and ``MEAN_SCALED_VIOLATION``), which
+  the training writes to ``FEASIBILITY.csv`` and, with ``writePopulation``,
+  ``POPULATION_FEASIBILITY.csv``, with the rows of the indicator files; and its live plot draws the
+  configurations with failed runs in red (``FeasibilityScatterPlot``, shared with
+  ``ConstrainedFrontPlotObserver``). A training without constraints writes the same files as before
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance

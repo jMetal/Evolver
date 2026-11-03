@@ -217,6 +217,16 @@ diversity, and ``results.yaml`` also points at them (``populationIndicatorsFile`
 ``populationConfigurationsFile``). ``scripts/plot_meta_population.py`` plots the population at
 several checkpoints from them.
 
+When a training problem has constraints, ``FEASIBILITY.csv`` (and, with ``writePopulation: true``,
+``POPULATION_FEASIBILITY.csv``) give the diagnosis of feasibility of the same configurations, with
+the same ``Evaluation`` and ``SolutionId`` as the indicator files:
+``Evaluation,SolutionId,FailedRuns,Runs,FeasibleRunRate,MeanScaledViolation``, the runs without
+feasible solutions, all the runs, the fraction of the runs with feasible solutions, and the mean
+scaled violation of the runs without them (see :ref:`evaluation`). The diagnosis is in a file of its
+own so that the indicator files keep one column per indicator. These files are optional: a
+training without constraints does not write them. The live plot of ``frontPlotFrequency`` then draws
+the configurations with failed runs in red.
+
 .. note::
 
    ``TrainingRunnerMain`` always calls ``System.exit(0)`` after the run finishes, since the
