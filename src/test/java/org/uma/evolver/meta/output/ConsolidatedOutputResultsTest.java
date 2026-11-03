@@ -14,10 +14,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
+import org.uma.evolver.meta.problem.ConstrainedIndicatorValue;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -91,6 +93,7 @@ class ConsolidatedOutputResultsTest {
       assertEquals(2, dataRows("CONFIGURATIONS.csv"));
       assertFalse(Files.exists(tempDir.resolve("POPULATION_INDICATORS.csv")));
       assertFalse(Files.exists(tempDir.resolve("POPULATION_CONFIGURATIONS.csv")));
+      assertFalse(Files.exists(tempDir.resolve("FEASIBILITY.csv")));
     }
 
     @Test
@@ -121,6 +124,75 @@ class ConsolidatedOutputResultsTest {
       assertEquals(
           Files.readAllLines(tempDir.resolve("CONFIGURATIONS.csv")).get(0),
           Files.readAllLines(tempDir.resolve("POPULATION_CONFIGURATIONS.csv")).get(0));
+    }
+  }
+
+  @Nested
+  @DisplayName("When a training problem has constraints")
+  class FeasibilityTestCases {
+
+    private MetaOptimizationProblem<DoubleSolution> constrainedProblem;
+
+    @BeforeEach
+    void setUpConstrainedProblem() {
+      constrainedProblem =
+          new MetaOptimizationProblem<>(
+              new DoubleNSGAII(
+                  100,
+                  new YAMLParameterSpace(
+                      "NSGAIIDoubleConstrained.yaml", new DoubleParameterFactory())),
+              List.of(new Srinivas()),
+              List.of("resources/referenceFronts/Srinivas.csv"),
+              indicators,
+              new FixedEvaluationsStrategy(List.of(1000)),
+              2);
+    }
+
+    /** A configuration with its values and the diagnosis that the meta-problem would give it. */
+    private DoubleSolution configuration(double ep, double nhv, int failedRuns, double violation) {
+      DoubleSolution solution = constrainedProblem.createSolution();
+      solution.objectives()[0] = ep;
+      solution.objectives()[1] = nhv;
+      solution.attributes().put(ConstrainedIndicatorValue.FAILED_RUNS, failedRuns);
+      solution.attributes().put(ConstrainedIndicatorValue.RUNS, 2);
+      solution.attributes().put(ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION, violation);
+      return solution;
+    }
+
+    @Test
+    @DisplayName(
+        "given writePopulation, when a checkpoint is written, then the feasibility files have the"
+            + " rows of the indicator files with the diagnosis of each configuration")
+    void givenAProblemWithConstraints_whenWritten_thenTheFeasibilityFilesAreWritten()
+        throws IOException {
+      // Arrange: two non-dominated configurations and a third one, with failed runs, dominated
+      var configurations =
+          List.of(
+              configuration(0.1, 0.5, 0, 0.0),
+              configuration(0.5, 0.1, 0, 0.0),
+              configuration(6.4, 6.4, 1, 0.2));
+      var outputResults =
+          new ConsolidatedOutputResults(
+                  constrainedProblem,
+                  "Srinivas",
+                  indicators,
+                  tempDir.toString(),
+                  MetaOptimizerConfig.builder().baseLevelAlgorithmName("NSGA-II").build())
+              .writePopulation(true);
+      outputResults.updateEvaluations(50);
+
+      // Act
+      outputResults.writeResultsToFiles(configurations);
+
+      // Assert
+      List<String> front = Files.readAllLines(tempDir.resolve("FEASIBILITY.csv"));
+      assertEquals(
+          "Evaluation,SolutionId,FailedRuns,Runs,FeasibleRunRate,MeanScaledViolation",
+          front.get(0));
+      assertEquals(List.of("50,0,0,2,1.0,0.0", "50,1,0,2,1.0,0.0"), front.subList(1, 3));
+      List<String> population = Files.readAllLines(tempDir.resolve("POPULATION_FEASIBILITY.csv"));
+      assertEquals(4, population.size());
+      assertEquals("50,2,1,2,0.5,0.2", population.get(3));
     }
   }
 
