@@ -274,7 +274,8 @@ public class TrainingRunner {
         metaSearch,
         baseLevel.algorithmName(),
         indicators,
-        trainingSet.label());
+        trainingSet.label(),
+        metaOptimizationProblem.constrained());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -358,7 +359,8 @@ public class TrainingRunner {
         metaSearch,
         baseLevel.algorithmName(),
         indicators,
-        trainingSet.label());
+        trainingSet.label(),
+        metaOptimizationProblem.constrained());
     // The asynchronous algorithm has no getter for its evaluations: keep the last one it published
     var evaluationsPerformed = new AtomicInteger();
     nsgaii.observable().register((observable, data) ->
@@ -446,7 +448,8 @@ public class TrainingRunner {
         metaSearch,
         baseLevel.algorithmName(),
         indicators,
-        trainingSet.label());
+        trainingSet.label(),
+        metaOptimizationProblem.constrained());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -528,7 +531,8 @@ public class TrainingRunner {
         metaSearch,
         baseLevel.algorithmName(),
         indicators,
-        trainingSet.label());
+        trainingSet.label(),
+        metaOptimizationProblem.constrained());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -620,7 +624,8 @@ public class TrainingRunner {
         metaSearch,
         baseLevel.algorithmName(),
         indicators,
-        trainingSet.label());
+        trainingSet.label(),
+        metaProblem.constrained());
 
     statusWriter.write(RunStatusWriter.State.RUNNING, 0, metaSearch.metaMaxEvaluations());
     long startMillis = System.currentTimeMillis();
@@ -805,7 +810,8 @@ public class TrainingRunner {
       MetaSearchConfig metaSearch,
       String baseLevelAlgorithmName,
       List<QualityIndicator> indicators,
-      String legend) {
+      String legend,
+      boolean constrained) {
     if (frontPlotFrequency != null) {
       observable.register(
           new TrainingFrontPlotObserver(
@@ -814,7 +820,8 @@ public class TrainingRunner {
               indicators.get(0).name(),
               indicators.get(1).name(),
               legend,
-              frontPlotFrequency));
+              frontPlotFrequency,
+              constrained));
     }
   }
 

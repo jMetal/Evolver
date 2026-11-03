@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.uma.evolver.meta.problem.ConstrainedIndicatorValue;
+import org.uma.evolver.util.FeasibilityScatterPlot;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observer.Observer;
@@ -18,10 +20,15 @@ import org.uma.jmetal.util.plot.FrontScatterPlot;
  *
  * <p>The time is the {@code COMPUTING_TIME} published by the meta-optimizer or, if it publishes
  * none, the time since this observer was created.
+ *
+ * <p>When a training problem has constraints, the configurations with some run that found no
+ * feasible solution ({@link ConstrainedIndicatorValue#FAILED_RUNS} above 0) are drawn in red and
+ * the others in black ({@link FeasibilityScatterPlot}); otherwise, all of them in black, as before.
  */
 final class TrainingFrontPlotObserver implements Observer<Map<String, Object>> {
 
   private final FrontScatterPlot chart;
+  private final FeasibilityScatterPlot feasibilityChart;
   private final String algorithms;
   private final MetaSearchConfig metaSearch;
   private final int frequency;
@@ -34,13 +41,30 @@ final class TrainingFrontPlotObserver implements Observer<Map<String, Object>> {
       String yAxisTitle,
       String legend,
       int frequency) {
+    this(metaSearch, baseLevelAlgorithmName, xAxisTitle, yAxisTitle, legend, frequency, false);
+  }
+
+  TrainingFrontPlotObserver(
+      MetaSearchConfig metaSearch,
+      String baseLevelAlgorithmName,
+      String xAxisTitle,
+      String yAxisTitle,
+      String legend,
+      int frequency,
+      boolean constrained) {
     if (frequency < 1) {
       throw new IllegalArgumentException("Update frequency must be at least 1");
     }
     this.algorithms = metaSearch.algorithm() + " optimizing " + baseLevelAlgorithmName;
     this.metaSearch = metaSearch;
     this.frequency = frequency;
-    this.chart = new FrontScatterPlot(algorithms, xAxisTitle, yAxisTitle, legend);
+    this.chart =
+        constrained ? null : new FrontScatterPlot(algorithms, xAxisTitle, yAxisTitle, legend);
+    this.feasibilityChart =
+        constrained
+            ? new FeasibilityScatterPlot(
+                algorithms, xAxisTitle, yAxisTitle, "Without failed runs", "With failed runs")
+            : null;
   }
 
   @Override
@@ -56,10 +80,28 @@ final class TrainingFrontPlotObserver implements Observer<Map<String, Object>> {
             ? time
             : System.currentTimeMillis() - creationMillis;
 
-    chart.chartTitle(title(algorithms, metaSearch, evaluations, computingMillis));
+    String title = title(algorithms, metaSearch, evaluations, computingMillis);
+    if (feasibilityChart != null) {
+      feasibilityChart.plot(population, TrainingFrontPlotObserver::withoutFailedRuns, title);
+      feasibilityChart.display();
+      return;
+    }
+    chart.chartTitle(title);
     chart.updateChart(
         population.stream().map(solution -> solution.objectives()[0]).toList(),
         population.stream().map(solution -> solution.objectives()[1]).toList());
+  }
+
+  /** Whether a configuration had no run without feasible solutions (or carries no diagnosis). */
+  static boolean withoutFailedRuns(Solution<?> configuration) {
+    return !(configuration.attributes().get(ConstrainedIndicatorValue.FAILED_RUNS)
+            instanceof Integer failedRuns)
+        || failedRuns == 0;
+  }
+
+  /** The chart of a training with constraints, or {@code null} without them (for the tests). */
+  FeasibilityScatterPlot feasibilityChart() {
+    return feasibilityChart;
   }
 
   /**
