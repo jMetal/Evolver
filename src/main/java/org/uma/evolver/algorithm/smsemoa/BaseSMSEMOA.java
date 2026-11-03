@@ -22,7 +22,6 @@ import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutio
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.PISAHypervolume;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
@@ -332,7 +331,7 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
    * @return the replacement operator
    */
   protected Replacement<S> createReplacement() {
-    Replacement<S> replacement = new SMSEMOAReplacement<S>(ranking, new PISAHypervolume());
+    Replacement<S> replacement = new SMSEMOAReplacement<S>(ranking);
     return usingConstraintHandling()
         ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
         : replacement;
