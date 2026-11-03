@@ -17,6 +17,7 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.MOEADReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.subproblemupdate.SubproblemUpdateCriterion;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.PopulationAndNeighborhoodSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
@@ -67,6 +68,15 @@ import org.uma.jmetal.util.sequencegenerator.SequenceGenerator;
  * // Get results
  * List<DoubleSolution> population = algorithm.result();
  * }</pre>
+ *
+ * <p>Problems with constraints: MOEA/D does not rank its population, so it handles constraints
+ * where a new solution competes with the solution of a subproblem. If the parameter space has the
+ * {@code subproblemUpdateCriterion} parameter ({@code MOEADDoubleConstrained.yaml}), the criterion
+ * of jMetal that it selects decides that replacement (see {@link
+ * SubproblemUpdateCriterionParameter}): Deb's feasibility rules, the improved epsilon method or the
+ * adaptive violation threshold, and the external archives compare solutions with the
+ * constrained-domination principle. Without the parameter (e.g. {@code MOEADDouble.yaml}) none of
+ * this happens: the aggregation function values alone decide, and the constraints are ignored.
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
  * parameters that are fixed or derived from the problem instance. If no such parameters exist, the
@@ -273,13 +283,52 @@ public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgor
    * @return the replacement operator
    */
   protected Replacement<S> createReplacement(Selection<S> selection) {
+    if (!usingSubproblemUpdateCriterion()) {
+      return new MOEADReplacement<S>(
+          (PopulationAndNeighborhoodSelection<S>) selection,
+          (WeightVectorNeighborhood<S>) neighborhood,
+          aggregationFunction,
+          subProblemIdGenerator,
+          maximumNumberOfReplacedSolutions,
+          normalizedObjectives);
+    }
     return new MOEADReplacement<S>(
         (PopulationAndNeighborhoodSelection<S>) selection,
         (WeightVectorNeighborhood<S>) neighborhood,
         aggregationFunction,
         subProblemIdGenerator,
         maximumNumberOfReplacedSolutions,
-        normalizedObjectives);
+        normalizedObjectives,
+        createSubproblemUpdateCriterion());
+  }
+
+  /**
+   * Creates the criterion of the {@code subproblemUpdateCriterion} parameter, which decides whether
+   * a new solution replaces the solution of a subproblem; the improved epsilon method takes the
+   * number of generations of the run.
+   *
+   * @return the subproblem update criterion
+   */
+  @SuppressWarnings("unchecked")
+  protected SubproblemUpdateCriterion<S> createSubproblemUpdateCriterion() {
+    var criterionParameter =
+        (SubproblemUpdateCriterionParameter<S>)
+            parameterSpace.get(SubproblemUpdateCriterionParameter.DEFAULT_NAME);
+    criterionParameter.addNonConfigurableSubParameter(
+        "numberOfGenerations", Math.max(1, maximumNumberOfEvaluations / populationSize));
+    return criterionParameter.getSubproblemUpdateCriterion();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code subproblemUpdateCriterion} parameter.
+   *
+   * @return {@code true} if a subproblem update criterion decides the replacement
+   */
+  protected boolean usingSubproblemUpdateCriterion() {
+    return parameterSpace
+        .parameters()
+        .containsKey(SubproblemUpdateCriterionParameter.DEFAULT_NAME);
   }
 
   /**
@@ -405,7 +454,9 @@ public abstract class BaseMOEAD<S extends Solution<?>> implements BaseLevelAlgor
     ExternalArchiveParameter<S> externalArchiveParameter =
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
     externalArchiveParameter.setSize(populationSize);
-    return externalArchiveParameter.getExternalArchive();
+    return usingSubproblemUpdateCriterion()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   /**

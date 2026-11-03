@@ -84,6 +84,16 @@ Added
   (``EffectiveViolation``): ``cdp`` is C-RVEA itself. Without the parameter RVEA does not change and
   still rejects problems with constraints
 
+- MOEA/D handles problems with constraints: MOEA/D does not rank its population, so the new
+  ``subproblemUpdateCriterion`` parameter (``SubproblemUpdateCriterionParameter``) selects how a new
+  solution replaces the solution of a subproblem, with the criteria of jMetal: ``feasibilityRules``
+  (Deb's feasibility rules), ``improvedEpsilon`` (the improved epsilon method of Fan et al., 2019)
+  and ``violationThreshold`` (the adaptive violation threshold). ``MOEADDoubleConstrained.yaml`` is
+  ``MOEADDouble.yaml`` plus that parameter, with the default configuration
+  ``MOEADDoubleConstrainedDefault.txt`` (``feasibilityRules``); the external archives then keep the
+  constrained-domination principle. Without the parameter MOEA/D does not change: with the same
+  seed it gives the same fronts as before, with the Double, Binary and Permutation encodings
+
 - ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
   optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
