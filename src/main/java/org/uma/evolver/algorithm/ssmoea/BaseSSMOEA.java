@@ -23,6 +23,7 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.SequenceAdvancingReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
@@ -130,7 +131,8 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
         parameterSpace.get("variation").value());
 
     // Shared sequence generator: drives DE variation, DE selection, and single-solution replacement
-    // in lockstep (getValue() reads without advancing; generateNext() is called by one component).
+    // in lockstep (getValue() reads without advancing; the replacement calls generateNext() once
+    // per step).
     SequenceGenerator<Integer> deSequenceGenerator = null;
     if (usingDE) {
       SequenceGeneratorParameter seqGenParam =
@@ -262,6 +264,11 @@ public abstract class BaseSSMOEA<S extends Solution<?>> implements BaseLevelAlgo
       }
     }
     Replacement<S> replacement = replacementParameter.getReplacement();
+    if (usingDE && !SINGLE_SOLUTION_REPLACEMENT.equals(replacementParameter.value())) {
+      // The single-solution replacement advances the DE sequence itself; any other one does not,
+      // so the sequence would stay at the first solution of the population
+      replacement = new SequenceAdvancingReplacement<>(replacement, deSequenceGenerator);
+    }
     return usingConstraintHandling()
         ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
         : replacement;

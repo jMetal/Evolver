@@ -17,6 +17,7 @@ import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByE
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.SMSEMOAReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.SequenceAdvancingReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.selection.impl.DifferentialEvolutionSelection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
@@ -167,7 +168,7 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
         parameterSpace.get("variation").value());
 
     // Shared sequence generator: drives both DE variation and DE selection in lockstep
-    // (getValue() reads without advancing; generateNext() is called by one component).
+    // (getValue() reads without advancing; the replacement calls generateNext() once per step).
     SequenceGenerator<Integer> deSequenceGenerator = null;
     if (usingDE) {
       SequenceGeneratorParameter seqGenParam =
@@ -180,6 +181,9 @@ public abstract class BaseSMSEMOA<S extends Solution<?>> implements BaseLevelAlg
     Selection<S> selection = createSelection(variation, usingDE, deSequenceGenerator);
     Evaluation<S> evaluation = createEvaluation(archive);
     Replacement<S> replacement = createReplacement();
+    if (usingDE) {
+      replacement = new SequenceAdvancingReplacement<>(replacement, deSequenceGenerator);
+    }
     Termination termination = createTermination();
 
     EvolutionaryAlgorithm<S> algorithm =
