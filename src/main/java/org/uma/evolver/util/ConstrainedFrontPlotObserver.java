@@ -1,17 +1,9 @@
 package org.uma.evolver.util;
 
-import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.XYSeries;
-import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
-import org.knowm.xchart.style.Styler.LegendPosition;
-import org.knowm.xchart.style.markers.SeriesMarkers;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.ConstraintHandling;
 import org.uma.jmetal.util.errorchecking.Check;
@@ -44,13 +36,12 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
 
   static final String FEASIBLE = "Feasible";
   static final String INFEASIBLE = "Infeasible";
-  static final String REFERENCE_FRONT = "Reference front";
+  static final String REFERENCE_FRONT = FeasibilityScatterPlot.REFERENCE_FRONT;
 
-  private final XYChart chart;
+  private final FeasibilityScatterPlot plot;
   private final String title;
   private final int plotUpdateFrequency;
   private long delayMillis;
-  private SwingWrapper<XYChart> swingWrapper;
 
   /**
    * Creates the observer; its window opens at the first update.
@@ -65,17 +56,7 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
     Check.that(plotUpdateFrequency >= 1, "The update frequency must be at least 1");
     this.title = title;
     this.plotUpdateFrequency = plotUpdateFrequency;
-    chart =
-        new XYChartBuilder()
-            .width(800)
-            .height(600)
-            .title(title)
-            .xAxisTitle(xAxisTitle)
-            .yAxisTitle(yAxisTitle)
-            .build();
-    chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
-    chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
-    chart.getStyler().setMarkerSize(6);
+    plot = new FeasibilityScatterPlot(title, xAxisTitle, yAxisTitle, FEASIBLE, INFEASIBLE);
   }
 
   /**
@@ -84,17 +65,7 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
    * @param referenceFront the points of the front, with at least two objectives
    */
   public void setReferenceFront(double[][] referenceFront) {
-    Check.notNull(referenceFront);
-    Check.that(referenceFront.length > 0, "The reference front is empty");
-    double[] x = new double[referenceFront.length];
-    double[] y = new double[referenceFront.length];
-    for (int i = 0; i < referenceFront.length; i++) {
-      x[i] = referenceFront[i][0];
-      y[i] = referenceFront[i][1];
-    }
-    XYSeries series = chart.addSeries(REFERENCE_FRONT, x, y);
-    series.setMarker(SeriesMarkers.CIRCLE);
-    series.setMarkerColor(Color.LIGHT_GRAY);
+    plot.setReferenceFront(referenceFront);
   }
 
   /**
@@ -117,12 +88,7 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
       return;
     }
     plot(population, evaluations);
-    if (swingWrapper == null) {
-      swingWrapper = new SwingWrapper<>(chart);
-      swingWrapper.displayChart();
-    } else {
-      swingWrapper.repaintChart();
-    }
+    plot.display();
     if (delayMillis > 0) {
       try {
         Thread.sleep(delayMillis);
@@ -139,35 +105,20 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
    * @param evaluations the evaluations done so far
    */
   void plot(List<S> population, int evaluations) {
-    List<S> feasible = new ArrayList<>();
-    List<S> infeasible = new ArrayList<>();
+    int feasible = 0;
     for (S solution : population) {
-      (ConstraintHandling.isFeasible(solution) ? feasible : infeasible).add(solution);
+      feasible += ConstraintHandling.isFeasible(solution) ? 1 : 0;
     }
-    updateSeries(FEASIBLE, feasible, Color.BLACK);
-    updateSeries(INFEASIBLE, infeasible, Color.RED);
-    chart.setTitle(
+    plot.plot(
+        population,
+        ConstraintHandling::isFeasible,
         String.format(
             Locale.ROOT,
             "%s. Evaluations: %d. Feasible: %d of %d",
             title,
             evaluations,
-            feasible.size(),
+            feasible,
             population.size()));
-  }
-
-  // XChart cannot create a series without points, but can empty one: each series is created the
-  // first time it has points
-  private void updateSeries(String name, List<S> solutions, Color color) {
-    List<Double> x = solutions.stream().map(solution -> solution.objectives()[0]).toList();
-    List<Double> y = solutions.stream().map(solution -> solution.objectives()[1]).toList();
-    if (chart.getSeriesMap().containsKey(name)) {
-      chart.updateXYSeries(name, x, y, null);
-    } else if (!solutions.isEmpty()) {
-      XYSeries series = chart.addSeries(name, x, y);
-      series.setMarker(SeriesMarkers.CIRCLE);
-      series.setMarkerColor(color);
-    }
   }
 
   /**
@@ -176,7 +127,7 @@ public class ConstrainedFrontPlotObserver<S extends Solution<?>>
    * @return the chart
    */
   public XYChart chart() {
-    return chart;
+    return plot.chart();
   }
 
   @Override
