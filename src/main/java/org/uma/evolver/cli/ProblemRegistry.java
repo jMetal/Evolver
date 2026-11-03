@@ -262,7 +262,7 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * benchmarks and reference fronts"): LIR-CMOP1-14, CF1-16, C-DTLZ, DAS-CMOP1-9, MW1-14, the
  * real-world suites CRE21-51 and RCM01-50 (CEC 2021), eight classical problems (family {@code
  * Classical}) and three engineering problems (family {@code Engineering}), all with the reference
- * fronts of jMetal 7.9 in {@code resources/referenceFronts} except Viennet4 and RCM17; and the
+ * fronts of jMetal 7.10 in {@code resources/referenceFronts} except Viennet4 and RCM17; and the
  * problems of the other encodings that need no data of their own:
  * ZDT5 and OneZeroMax (binary) and the multi-objective TSP instances of jMetal (permutation) — it
  * is not the only way to name a problem. A {@link ProblemSpec} whose {@code className} is not in {@link
