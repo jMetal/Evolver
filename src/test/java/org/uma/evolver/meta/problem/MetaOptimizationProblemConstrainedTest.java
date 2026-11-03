@@ -1,5 +1,8 @@
 package org.uma.evolver.meta.problem;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,6 +20,7 @@ import org.uma.evolver.util.ConstrainedMultiobjectiveIndicator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP2;
+import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
@@ -131,5 +135,56 @@ class MetaOptimizationProblemConstrainedTest {
                 List.<QualityIndicator>of(new GenerationalDistance()),
                 new FixedEvaluationsStrategy(List.of(1000)),
                 1));
+  }
+
+  @Test
+  @DisplayName(
+      "an evaluated configuration carries its failed runs, its runs and its mean scaled violation,"
+          + " consistent with its values")
+  void givenAProblemWithConstraints_whenAConfigurationIsEvaluated_thenItCarriesItsDiagnosis() {
+    // Arrange: a random configuration, run twice on Srinivas
+    JMetalRandom.getInstance().setSeed(7);
+    var meta =
+        metaProblem(
+            "NSGAIIDoubleConstrained.yaml",
+            new Srinivas(),
+            "resources/referenceFronts/Srinivas.csv",
+            1000);
+    DoubleSolution configuration = meta.createSolution();
+
+    // Act
+    meta.evaluate(configuration);
+
+    // Assert
+    var failedRuns =
+        assertInstanceOf(
+            Integer.class,
+            configuration.attributes().get(ConstrainedIndicatorValue.FAILED_RUNS));
+    assertEquals(2, configuration.attributes().get(ConstrainedIndicatorValue.RUNS));
+    var violation =
+        assertInstanceOf(
+            Double.class,
+            configuration.attributes().get(ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION));
+    assertTrue(failedRuns >= 0 && failedRuns <= 2);
+    assertTrue(violation >= 0.0 && violation < 1.0);
+    // 6k + 2v + Q with Q in [-1, 1]: at most 1 without failed runs, at least 5 with them
+    assertEquals(failedRuns > 0, configuration.objectives()[0] > 1.0);
+  }
+
+  @Test
+  @DisplayName("without constraints, an evaluated configuration carries no diagnosis")
+  void givenAProblemWithoutConstraints_whenAConfigurationIsEvaluated_thenItCarriesNoDiagnosis() {
+    // Arrange
+    JMetalRandom.getInstance().setSeed(7);
+    var meta =
+        metaProblem("NSGAIIDouble.yaml", new ZDT1(), "resources/referenceFronts/ZDT1.csv", 1000);
+    DoubleSolution configuration = meta.createSolution();
+
+    // Act
+    meta.evaluate(configuration);
+
+    // Assert
+    assertFalse(meta.constrained());
+    assertFalse(configuration.attributes().containsKey(ConstrainedIndicatorValue.FAILED_RUNS));
   }
 }
