@@ -107,8 +107,7 @@ Added
   minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
   to the region of interest, capped at a threshold, and the least violation plus the threshold when
   there are no feasible solutions. ``SolveRunnerMain`` gives it the violations of the solutions. It
-  is a temporary copy of jMetal's, which is in jMetal's development version, to be removed when
-  Evolver depends on a release that has it
+  is jMetal's (``org.uma.jmetal.qualityindicator.impl``), released in jMetal 7.10
 - Meta-optimization on problems with constraints: when the training set has a problem with
   constraints, the indicators of a run are computed on its feasible solutions, capped at a
   threshold, and the value of a configuration is ``6k + 2v + Q`` (``ConstrainedIndicatorValue``, a
@@ -119,7 +118,7 @@ Added
   without feasible solutions were computed on its infeasible solutions. Without constraints the
   evaluation does not change (same values for a fixed seed)
 - The problems with constraints of jMetal 7.9 are registered with short names, and their reference
-  fronts are in ``resources/referenceFronts``, named after the problem as Evolver-Studio expects:
+  fronts (those of LIR-CMOP1-14 from jMetal 7.10) are in ``resources/referenceFronts``, named after the problem as Evolver-Studio expects:
   LIR-CMOP1-14, CF1-16, C-DTLZ (C1_DTLZ1, C1_DTLZ3, C2_DTLZ2, ConvexC2_DTLZ2, C3_DTLZ1, C3_DTLZ4),
   DAS-CMOP1-9, MW1-14, CRE21-25/31/32/51, RCM01-50 (CEC 2021) and the classical (Binh2, ConstrEx,
   Golinski, Osyczka2, Srinivas, Tanaka, Viennet4, Water) and engineering (CarSideImpact, GAA,
@@ -151,10 +150,18 @@ Changed
   when the hypervolume of the reference front is not positive, as with the two-point fronts of the
   TSP instances, instead of giving the worst value to every configuration: with those fronts, use
   HV- (tutorial E9)
-- Known issue of jMetal 7.9: its ``selfAdaptivePenalty`` inverts the penalty on CF9-CF16, whose
-  constraint values are positive when violated, so that the most violated solutions are the least
-  penalized. It is fixed in jMetal's development version, and Evolver will get the fix with the next
-  release of jMetal; until then, do not use that technique on those problems
+- Evolver depends on jMetal 7.10, whose fixes change the results of some configurations, so they
+  are not comparable with those obtained with earlier versions of Evolver: the asynchronous
+  NSGA-II as meta-optimizer (its tournament compared ranks that nobody computed, it evaluated the
+  initial population twice and its ranking was wrong with ties); the ``hypervolumeArchive`` of the
+  external archives and of PAES when configurations are evaluated in parallel threads (the
+  hypervolume kept its state in static fields, so concurrent runs corrupted each other or failed);
+  MOPSO with a linear inertia weight (``linearDecreasingValue``, ``linearIncreasingValue``), which
+  did not follow the iterations; the ``CURRENT_TO_RAND_1_BIN`` and ``CURRENT_TO_RAND_1_EXP``
+  variants of the DE crossover, which had no mutation; the ``boltzmann`` selection, which
+  overflowed with low temperatures; the ``scatterSearch`` initial solutions; the
+  ``selfAdaptivePenalty`` technique on CF9-CF16, which penalized the most violated solutions the
+  least; and the problems LIR-CMOP1-14 and CF10, whose definitions are fixed
 - Configurations evaluated in parallel threads (parallel meta-optimizers, the evaluation server
   with concurrent requests) no longer contend for jMetal's single random generator: each thread gets
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
@@ -181,6 +188,12 @@ Changed
 Fixed
 ~~~~~
 
+- SMS-EMOA, and SSMOEA with a replacement other than ``singleSolutionReplacement``, applied the
+  differential evolution variation always to the solution at the first position of the population:
+  nothing advanced the sequence that gives its index. The replacement now advances it, as jMetal 7.10
+  does in NSGA-II-DE and SMS-EMOA-DE, so their results with that variation change
+- The reference fronts of LIR-CMOP1-14 are the exact ones of jMetal 7.10: those of jMetal 7.9 do not
+  correspond to the fixed definitions of these problems
 - MOPSO with ``MOPSO.yaml`` can return an external archive: the space named the type of that archive
   ``archiveType``, while ``BaseMOPSO`` (and ``MOPSOReduced.yaml``) call it ``externalArchiveType``,
   so ``--algorithmResult externalArchive`` failed with "Parameter not found"

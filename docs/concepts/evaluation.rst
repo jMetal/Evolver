@@ -57,7 +57,7 @@ and irace and SMAC3 through the evaluation server). Without constraints in the t
 evaluation is the one described above.
 
 The indicator of that paper itself, ICMOP, is available as ``ConstrainedMultiobjectiveIndicator``
-(a copy of jMetal's, which is in its development version). With the objectives normalized with the
+(jMetal's, released in jMetal 7.10). With the objectives normalized with the
 ideal and nadir points of the reference front, it is :math:`\min(I_{MOP}, \tau^*)` for a front with
 feasible solutions, where :math:`I_{MOP}` is minus the hypervolume of the solutions that dominate the
 nadir point or, if none does, their distance to the region of interest :math:`[0, 1]^M`, and the
