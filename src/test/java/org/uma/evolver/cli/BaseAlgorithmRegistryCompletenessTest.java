@@ -47,6 +47,9 @@ class BaseAlgorithmRegistryCompletenessTest {
           Map.entry("PermutationRDEMOEA", "registered in BaseAlgorithmRegistry as \"RDEMOEA\" (Permutation)"),
           Map.entry("DoubleAGEMOEA", "registered in BaseAlgorithmRegistry as \"AGE-MOEA\" (Double)"),
           Map.entry("DoubleRVEA", "registered in BaseAlgorithmRegistry as \"RVEA\""),
+          Map.entry(
+              "EffectiveViolationReplacement",
+              "not an algorithm: the replacement through which RVEA applies its technique"),
           Map.entry("BaseMOPSO", "not yet registered (particle swarm, no per-encoding subclasses)"),
           Map.entry("DoubleNSGAIII", "registered in BaseAlgorithmRegistry as \"NSGA-III\" (Double)"),
           Map.entry("DoubleSSMOEA", "registered in BaseAlgorithmRegistry as \"SSMOEA\" (Double)"),

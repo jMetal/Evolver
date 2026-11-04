@@ -39,8 +39,8 @@ class IraceParameterDescriptionGeneratorTest {
       String description =
           IraceParameterDescriptionGenerator.description("NSGAIIDouble.yaml", "Double");
 
-      // Assert
-      assertEquals(expected.strip(), description.strip());
+      // Assert: the generator writes \n, and a Windows checkout may give the bundled file \r\n
+      assertEquals(expected.replace("\r\n", "\n").strip(), description.strip());
     }
 
     @ParameterizedTest(name = "{0} with the {1} factory")

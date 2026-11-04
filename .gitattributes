@@ -1,0 +1,5 @@
+# Scripts run by bash keep LF line endings on every platform: from a Windows checkout with
+# core.autocrlf they would get CRLF, which bash on Linux and macOS (and Git Bash) cannot run.
+*.sh text eol=lf
+*.sbatch text eol=lf
+src/main/resources/irace/target-runner* text eol=lf

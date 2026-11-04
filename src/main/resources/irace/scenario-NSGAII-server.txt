@@ -1,5 +1,5 @@
 ###################################################### -*- mode: r -*- #####
-## irace scenario of tutorial E15 (docs/tutorials/tuning_with_irace.rst) with Evolver's evaluation
+## irace scenario of tutorial E16 (docs/tutorials/tuning_with_irace.rst) with Evolver's evaluation
 ## server: the same as scenario-NSGAII.txt, except that each experiment is sent to the server
 ## (target-runner-server) instead of starting a Java virtual machine, and that the cost is the
 ## EP + NHV of Evolver's trainings. The server must be running with TutorialIraceZdtBaseLevel.yaml

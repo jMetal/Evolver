@@ -131,6 +131,14 @@ public class DoubleParameterFactory implements ParameterFactory<DoubleSolution> 
     // Ranking and selection
     register("ranking", values -> new RankingParameter<DoubleSolution>("ranking", values));
 
+    // Constraint handling
+    register(
+        "constraintHandling",
+        values -> new ConstraintHandlingParameter<DoubleSolution>("constraintHandling", values));
+    register(
+        "subproblemUpdateCriterion",
+        values -> new SubproblemUpdateCriterionParameter<DoubleSolution>(values));
+
     // Replacement strategies
     register("replacement", values -> new ReplacementParameter<DoubleSolution>(values));
 

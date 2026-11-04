@@ -16,14 +16,17 @@ import org.uma.jmetal.component.catalogue.common.solutionscreation.SolutionsCrea
 import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.RankingAndDensityEstimatorReplacement;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
 import org.uma.jmetal.component.util.RankingAndDensityEstimatorPreference;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.MultiComparator;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.densityestimator.DensityEstimator;
 import org.uma.jmetal.util.densityestimator.impl.CrowdingDistanceDensityEstimator;
 import org.uma.jmetal.util.errorchecking.Check;
@@ -49,6 +52,15 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  *   <li>Support for external archives
  *   <li>Flexible termination conditions
  * </ul>
+ *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code NSGAIIDoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the technique ranks the
+ * population in the replacement and the mating selection, it is updated once per generation with
+ * the progress of the run ({@link ConstraintHandlingReplacement}, {@link RunProgress}), and the
+ * bounded external archives compare solutions with the constrained-domination principle. Without
+ * the parameter (e.g. {@code NSGAIIDouble.yaml}) none of this happens, and the constraints are
+ * ignored.
  *
  * <p>Subclasses must implement the {@link #setNonConfigurableParameters()} method to set any
  * parameters that are fixed or derived from the problem instance.
@@ -134,6 +146,15 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   protected Archive<S> externalArchive;
 
   /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
+
+  /**
    * Constructs a fully configured BaseNSGAII instance ready for execution.
    *
    * @param problem the optimization problem to be solved. Must not be null.
@@ -207,6 +228,7 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   @Override
   public EvolutionaryAlgorithm<S> build() {
     setNonConfigurableParameters();
+    configureConstraintHandling();
     Archive<S> archive = null;
     if (usingExternalArchive()) {
       archive = createExternalArchive();
@@ -220,16 +242,21 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>()
-        .build(
-            "NSGAII",
-            initialSolutionsCreation,
-            evaluation,
-            termination,
-            selection,
-            variation,
-            replacement,
-            archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                "NSGAII",
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   /**
@@ -252,7 +279,9 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    return externalArchiveParameter.getExternalArchive();
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   /**
@@ -351,7 +380,42 @@ public abstract class BaseNSGAII<S extends Solution<?>> implements BaseLevelAlgo
   protected Replacement<S> createReplacement() {
     RankingAndDensityEstimatorPreference<S> preferenceForReplacement =
         new RankingAndDensityEstimatorPreference<>(ranking, densityEstimator);
-    return new RankingAndDensityEstimatorReplacement<>(
-        preferenceForReplacement, RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT);
+    Replacement<S> replacement =
+        new RankingAndDensityEstimatorReplacement<>(
+            preferenceForReplacement, RankingAndDensityEstimatorReplacement.RemovalPolicy.ONE_SHOT);
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter: its ranking replaces the default one in the replacement and the
+   * mating selection. Without the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+    ranking = constraintHandlingTechnique.ranking();
+    rankingAndCrowdingComparator =
+        new MultiComparator<>(
+            Arrays.asList(
+                Comparator.comparing(ranking::getRank),
+                Comparator.comparing(densityEstimator::value).reversed()));
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }

@@ -32,6 +32,9 @@ import org.uma.jmetal.util.observer.Observer;
  *   <li>POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv, only with
  *       {@link #writePopulation(boolean)}: the same as INDICATORS.csv and CONFIGURATIONS.csv for
  *       the whole population, not only its non-dominated solutions</li>
+ *   <li>FEASIBILITY.csv and POPULATION_FEASIBILITY.csv, only when a training problem has
+ *       constraints: the diagnosis of feasibility of the same configurations (see {@link
+ *       FeasibilityOutput})</li>
  * </ul>
  *
  * <p>Also implements {@link Observer} so it can be registered directly on the meta-optimizer's
@@ -80,7 +83,7 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     this.config = config;
     this.writeFrequency = writeFrequency;
 
-    createOutputDirectory();
+    TrainingOutputDirectory.prepare(outputDirectoryName);
     writeMetadata();
   }
 
@@ -211,25 +214,26 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
       writeIndicators(solutions, "POPULATION_INDICATORS.csv");
       writeConfigurations(solutions, "POPULATION_CONFIGURATIONS.csv");
     }
-    computingTimeMillis = null;
-  }
-
-  private void createOutputDirectory() {
-    File outputDirectory = new File(outputDirectoryName);
-    if (!outputDirectory.exists()) {
-      boolean result = outputDirectory.mkdirs();
-      if (!result) {
-        throw new JMetalException("Error creating directory " + outputDirectoryName);
+    // The diagnosis of feasibility, only when a training problem has constraints
+    if (problem.constrained()) {
+      FeasibilityOutput.write(
+          outputDirectoryName,
+          FeasibilityOutput.FEASIBILITY_FILE,
+          evaluations,
+          nonDominatedSolutions);
+      if (writePopulation) {
+        FeasibilityOutput.write(
+            outputDirectoryName,
+            FeasibilityOutput.POPULATION_FEASIBILITY_FILE,
+            evaluations,
+            solutions);
       }
     }
+    computingTimeMillis = null;
   }
 
   private void writeMetadata() {
     File metadataFile = new File(outputDirectoryName, "METADATA.txt");
-    if (metadataFile.exists()) {
-      return;
-    }
-
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(metadataFile))) {
       writer.write("=== Meta-Optimization Experiment (Tree Encoding) ===");
       writer.newLine();

@@ -1,0 +1,203 @@
+# RVEADouble.yaml plus the constraint-handling technique, for problems with constraints, with the
+# rvea variant only: with this space, RVEA (BaseRVEA) judges feasibility and violation in the
+# selection of C-RVEA as the technique it selects does. RVEA* does not handle constraints and iRVEA
+# keeps a fixed rule of its own, so they are not offered; stochasticRanking and selfAdaptivePenalty
+# rank whole populations, so they are not offered either. The sub-parameters are scale-free, so that
+# they can transfer between problems.
+constraintHandling:
+  type: categorical
+  values:
+    cdp: {}
+    violatedConstraints: {}
+    epsilonConstrained:
+      conditionalParameters:
+        epsilonInitialQuantile:
+          type: double
+          range: [0.05, 0.95]
+        epsilonExponent:
+          type: double
+          range: [1.0, 10.0]
+        epsilonDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+    pushPull:
+      conditionalParameters:
+        pushPullChangeThreshold:
+          type: double
+          range: [0.0001, 0.05]
+        pushPullWindowFraction:
+          type: double
+          range: [0.01, 0.1]
+        pushPullDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+        pushPullExponent:
+          type: double
+          range: [1.0, 10.0]
+        pushPullFeasibilityThreshold:
+          type: double
+          range: [0.5, 1.0]
+        pushPullReductionRate:
+          type: double
+          range: [0.01, 0.5]
+
+algorithmResult:
+  type: categorical
+  values:
+    population: {}
+    externalArchive:
+      conditionalParameters:
+        archiveType:
+          type: categorical
+          values:
+            crowdingDistanceArchive: {}
+            unboundedArchive: {}
+
+createInitialSolutions:
+  type: categorical
+  values:
+    default: {}
+    latinHypercubeSampling: {}
+    scatterSearch: {}
+    sobol: {}
+    cauchy: {}
+    oppositionBased: {}
+
+# The values of jMetal's AutoRVEA: below 10 the running time grows (the selection cost per
+# generation hardly depends on the offspring size) without better results, and above 200 the
+# results degrade.
+offspringPopulationSize:
+  type: categorical
+  values: [10, 20, 50, 100, 150, 200]
+
+selection:
+  type: categorical
+  values:
+    random: {}
+    tournament:
+      conditionalParameters:
+        selectionTournamentSize:
+          type: integer
+          range: [2, 10]
+
+# The variant of the RVEA family: only RVEA, whose selection (that of C-RVEA) takes the technique.
+replacement:
+  type: categorical
+  globalSubParameters:
+    alpha:
+      type: double
+      range: [0.5, 10.0]
+    fr:
+      type: double
+      range: [0.01, 1.0]
+  values:
+    rvea: {}
+
+variation:
+  type: categorical
+  values:
+    crossoverAndMutationVariation:
+      conditionalParameters:
+        crossover:
+          type: categorical
+          globalSubParameters:
+            crossoverProbability:
+              type: double
+              range: [0.0, 1.0]
+            crossoverRepairStrategy:
+              type: categorical
+              values: [random, round, bounds]
+          values:
+            SBX:
+              conditionalParameters:
+                sbxDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+            blxAlpha:
+              conditionalParameters:
+                blxAlphaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            wholeArithmetic: {}
+            blxAlphaBeta:
+              conditionalParameters:
+                blxAlphaBetaCrossoverBeta:
+                  type: double
+                  range: [0.0, 1.0]
+                blxAlphaBetaCrossoverAlpha:
+                  type: double
+                  range: [0.0, 1.0]
+            arithmetic: {}
+            laplace:
+              conditionalParameters:
+                laplaceCrossoverScale:
+                  type: double
+                  range: [0.1, 0.5]
+            fuzzyRecombination:
+              conditionalParameters:
+                fuzzyRecombinationCrossoverAlpha:
+                  type: double
+                  range: [0.0001, 1.0]
+            PCX:
+              conditionalParameters:
+                pcxCrossoverZeta:
+                  type: double
+                  range: [0.0, 1.0]
+                pcxCrossoverEta:
+                  type: double
+                  range: [0.0, 1.0]
+            UNDC:
+              conditionalParameters:
+                undcCrossoverZeta:
+                  type: double
+                  range: [0.1, 1.0]
+                undcCrossoverEta:
+                  type: double
+                  range: [0.1, 0.5]
+
+        mutation:
+          type: categorical
+          globalSubParameters:
+            mutationProbabilityFactor:
+              type: double
+              range: [0.0, 2.0]
+            mutationRepairStrategy:
+              type: categorical
+              values:
+                random: {}
+                round: {}
+                bounds: {}
+          values:
+            uniform:
+              conditionalParameters:
+                uniformMutationPerturbation:
+                  type: double
+                  range: [0.0, 1.0]
+            polynomial:
+              conditionalParameters:
+                polynomialMutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+            linkedPolynomial:
+              conditionalParameters:
+                linkedPolynomialMutationDistributionIndex:
+                  type: double
+                  range: [5.0, 400.0]
+            nonUniform:
+              conditionalParameters:
+                nonUniformMutationPerturbation:
+                  type: double
+                  range: [0.0, 1.0]
+            levyFlight:
+              conditionalParameters:
+                levyFlightMutationBeta:
+                  type: double
+                  range: [1.0001, 2.0]
+                levyFlightMutationStepSize:
+                  type: double
+                  range: [0.01, 1.0]
+            powerLaw:
+              conditionalParameters:
+                powerLawMutationDelta:
+                  type: double
+                  range: [0.1, 10.0]

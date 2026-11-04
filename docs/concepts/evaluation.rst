@@ -18,3 +18,122 @@ The evaluation of a solution is as follows:
 4. The mean value of the medians of each problem (i.e., the mean of the :math:`P` values) is the resulting objective value.
 
 The parameter :math:`N` is a parameter of the meta-optimization problem and it must be set carefully to avoid an excessive running time. By default, :math:`N` is set to 1.
+
+Problems with constraints
+-------------------------
+
+If a problem of the training set has constraints, a run may end without any feasible solution, and
+the indicators of its infeasible solutions, which often lie beyond the Pareto front, would look
+better than those of a feasible front. The evaluation then puts feasibility first, with a scheme of
+Evolver (class ``ConstrainedIndicatorValue``) that takes the idea of the indicator of Vodopija,
+Tušar and Filipič (IEEE Transactions on Evolutionary Computation 29(1), 2025), a threshold that
+separates feasible from infeasible results, to several runs and problems:
+
+1. The indicators of a run are computed on its feasible solutions only, and kept between
+   :math:`\tau^* - 2` and a threshold :math:`\tau^*`, their worst sensible value on normalized
+   fronts: 1 for NHV, EP, IGD+, Spread and GeneralizedSpread, 0 for HV-, and the threshold of
+   ``ConstrainedMultiobjectiveIndicator`` (1 by default).
+
+2. A run without feasible solutions is a *failed run*. Its violation is that of its least violated
+   solution, divided by a scale of the problem (the power of ten above the median violation of 100
+   random solutions, as in that paper) and mapped to :math:`[0, 1)` with :math:`x / (1 + x)`.
+
+3. The value of each indicator over the :math:`N \times P` runs is
+
+   .. math::
+
+      6k + 2\bar{v} + Q
+
+   where :math:`k` is the number of failed runs, :math:`\bar{v}` the mean scaled violation of those
+   runs, and :math:`Q` the mean over the problems of the median of the indicator over their feasible
+   runs (:math:`\tau^*` for a problem without them).
+
+Each failed run adds more than the other two terms can, so configurations are ordered as in the
+competitions on constrained optimization: fewer failed runs first, then less violation, then
+better quality. No failed run is hidden by the aggregation, whatever its problem. Since :math:`k`
+and :math:`\bar{v}` are the same for every indicator, a configuration with fewer failed runs is
+better in all the objectives.
+
+In other words, a training does not use an indicator :math:`I` as it is, but its version with
+constraints, :math:`C(I)`: the value above, in which only :math:`Q` depends on :math:`I`. The same
+transformation applies to every indicator (NHV, EP, IGD+, HV-, Spread, GeneralizedSpread and ICMOP);
+none of them handles the constraints by itself. Every configurator gets these values (the meta-optimizers of Evolver,
+and irace and SMAC3 through the evaluation server). Without constraints in the training set, the
+evaluation is the one described above.
+
+The indicator of that paper itself, ICMOP, is available as ``ConstrainedMultiobjectiveIndicator``
+(jMetal's, released in jMetal 7.10). With the objectives normalized with the
+ideal and nadir points of the reference front, it is :math:`\min(I_{MOP}, \tau^*)` for a front with
+feasible solutions, where :math:`I_{MOP}` is minus the hypervolume of the solutions that dominate the
+nadir point or, if none does, their distance to the region of interest :math:`[0, 1]^M`, and the
+least violation plus :math:`\tau^*` for a front without them. Unlike NHV, it still guides the search
+while a feasible front does not dominate the nadir point. In a training, ICMOP is
+:math:`C(I_{MOP})`, like any other indicator: it is computed on the feasible solutions of each run,
+so only its feasible phase, :math:`I_{MOP}`, takes part, and its infeasible phase (the least
+violation plus :math:`\tau^*`) never does, since the failed runs are already counted by :math:`k`
+and :math:`\bar{v}`. ``SolveRunnerMain`` gives
+it the violations of the solutions, so its values there are those of the paper.
+
+Choosing the indicators
+~~~~~~~~~~~~~~~~~~~~~~~
+
+What is essential in ICMOP is its structure in two phases: the quality of the feasible solutions
+capped at a threshold, and otherwise the least violation above it, so that any feasible front is
+better than any infeasible one. The quality it uses, minus the hypervolume or the distance to the
+region of interest, comes from the indicator of the bi-objective suites of the COCO platform, which
+the paper extends; the hypervolume is the only strictly Pareto-compliant indicator and needs only a
+reference point. The same structure works with any indicator that is minimized and can be capped,
+such as EP or IGD+ (weakly Pareto-compliant, and in need of a reference front, which Evolver always
+has); they need no distance to fall back on, since they do not stay at zero while the front does not
+dominate the nadir point. The paper studies only its own version: other indicators are a
+generalization, which is what the scheme above does for every indicator of a training.
+
+Hence, in a training on problems with constraints:
+
+* Feasibility is handled by the scheme, through :math:`k` and :math:`\bar{v}`, whatever the
+  indicators. The infeasible phase of ICMOP is therefore not used there; ICMOP contributes its
+  feasible phase, whose distance to the region of interest still guides the search when NHV is
+  stuck at 1 (a feasible front that does not dominate the reference point).
+* ICMOP should not be used alone: once every run is feasible, which is the usual situation as the
+  search progresses, it is a single objective (minus the hypervolume), and the front of
+  configurations is lost. Combine it with an indicator that measures something else.
+* EP needs nothing of its own: as a meta-objective on problems with constraints it is
+  :math:`C(EP)`, which differs from :math:`C(I_{MOP})` (ICMOP) only in the quality of the feasible
+  runs, :math:`Q`. When every run fails, both are :math:`6k + 2\bar{v} + 1`, since both have
+  :math:`\tau^* = 1`, and they only part when feasible runs appear.
+* Recommended: **ICMOP + EP**, that is, the same scheme with two qualities of the feasible fronts
+  that measure different things: :math:`I_{MOP}` (the hypervolume, with the distance to the region
+  of interest as a fallback) and EP. While some runs fail, both objectives move together, led by
+  :math:`k` and :math:`\bar{v}`, and the search is guided towards feasibility; once every run is
+  feasible, each objective measures its own aspect of the front again.
+* NHV + EP also works, without the guidance of the distance while the front does not dominate the
+  reference point. ICMOP + NHV is little useful: both measure the hypervolume and are strongly
+  correlated.
+
+An example with one problem and three runs (the medians of two values are their means):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+
+   * - Configuration
+     - ICMOP
+     - EP
+   * - A: three failed runs, :math:`\bar{v} = 0.4`
+     - 18 + 0.8 + 1 = 19.8
+     - 18 + 0.8 + 1 = 19.8
+   * - B: one failed run (violation 0.2) and two feasible ones (ICMOP −0.50 and −0.60; EP 0.10 and
+       0.12)
+     - 6 + 0.4 − 0.55 = 5.85
+     - 6 + 0.4 + 0.11 = 6.51
+   * - C: three feasible runs (median ICMOP −0.60; median EP 0.08)
+     - −0.60
+     - 0.08
+
+Outside a training (``SolveRunnerMain``, validation studies), ICMOP alone is the indicator of the
+paper and measures both the quality of the front and the feasibility. It is also the only indicator
+that takes the constraints into account there: ``SolveRunnerMain`` computes every indicator on the
+non-dominated solutions of the result under constrained dominance, which are the feasible ones if
+there are any, but for a result without feasible solutions EP, NHV and IGD+ measure its least
+infeasible solutions as if they were feasible, while ICMOP gives them the least violation plus
+:math:`\tau^*`.

@@ -14,8 +14,12 @@ concurrency:
 
 jobs:
   unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-24.04
+    name: Unit Tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v7
@@ -35,6 +39,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: unit-test-reports
+          name: unit-test-reports-${{ matrix.os }}
           path: target/surefire-reports/
           retention-days: 7

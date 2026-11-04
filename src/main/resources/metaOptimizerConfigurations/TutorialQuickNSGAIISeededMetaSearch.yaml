@@ -1,5 +1,5 @@
 # The meta-optimizer of tutorial E4 (TutorialQuickNSGAIIMetaSearch.yaml) starting from the
-# configurations that a language model proposed in tutorial E20 (docs/tutorials/llms_in_evolver.rst):
+# configurations that a language model proposed in tutorial E21 (docs/tutorials/llms_in_evolver.rst):
 # they are the first solutions of its initial population, and the rest are random. Experimental.
 algorithm: NSGA-II
 encoding: flat

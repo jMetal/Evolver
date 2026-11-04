@@ -279,8 +279,8 @@ class TreeMetaOptimizationProblemIT {
       // Arrange
       List<Problem<PermutationSolution<Integer>>> problems = List.of(new KroAB100TSP());
       List<String> fronts = List.of("resources/referenceFrontsTSP/KroAB100TSP.csv");
-      // The reference front of KroAB100TSP has only its two extreme points, whose normalized
-      // hypervolume is zero, so the normalized hypervolume is not defined; HV- is
+      // The reference front of KroAB100TSP has only two points, so the hypervolume (HV-) is the
+      // indicator whose values are meaningful besides EP; NHV is not defined (see tutorial E9)
       List<QualityIndicator> indicators = List.of(new Epsilon(), new HypervolumeMinus());
       EvaluationBudgetStrategy strategy = new FixedEvaluationsStrategy(List.of(1000));
 

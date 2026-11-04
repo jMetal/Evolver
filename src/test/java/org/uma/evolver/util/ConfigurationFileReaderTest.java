@@ -73,6 +73,23 @@ class ConfigurationFileReaderTest {
     }
 
     @Test
+    @DisplayName("given a relative path found only on the classpath, when constructing, then the file is loaded from the classpath")
+    void givenRelativePathOnTheClasspath_whenConstructing_thenFileIsLoadedFromTheClasspath()
+        throws IOException {
+      // Arrange: a test resource, neither in src/main/resources nor in the working directory, as
+      // the bundled configurations when Evolver runs from a jar
+      String classpathOnly = "configurationFileReader/classpathOnly.txt";
+
+      // Act
+      ConfigurationFileReader reader = new ConfigurationFileReader(classpathOnly);
+
+      // Assert
+      assertFalse(Files.exists(Path.of(classpathOnly)));
+      assertEquals(1, reader.getNumberOfConfigurations());
+      assertTrue(reader.getConfiguration(1).startsWith("--populationSize 100"));
+    }
+
+    @Test
     @DisplayName("given a non-existent path, when constructing, then an IOException is thrown mentioning both locations")
     void givenNonExistentPath_whenConstructing_thenIOExceptionIsThrown() {
       // Arrange

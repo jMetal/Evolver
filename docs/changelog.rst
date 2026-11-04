@@ -5,6 +5,210 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
+3.0-SNAPSHOT
+------------
+
+Added
+~~~~~
+
+- NSGA-II handles problems with constraints when its parameter space has the new
+  ``constraintHandling`` parameter: ``NSGAIIDoubleConstrained.yaml`` (``NSGAIIDouble.yaml`` plus
+  that parameter), with its default configuration ``NSGAIIDoubleConstrainedDefault.txt``. The
+  parameter takes one of the constraint-handling techniques of jMetal (``cdp``,
+  ``violatedConstraints``, ``epsilonConstrained``, ``stochasticRanking``, ``pushPull``,
+  ``selfAdaptivePenalty``), which ranks the population and is updated with the progress of the run;
+  the bounded external archives then compare solutions with the constrained-domination principle
+  (``ExternalArchiveParameter.getConstrainedExternalArchive``). Without the parameter NSGA-II does
+  not change: with the same seed it gives the same fronts as before. The new package
+  ``example.baselevel.constrained`` has its examples: Srinivas with the default technique
+  (``cdp``), Tanaka with ``epsilonConstrained``, Osyczka2 with ``violatedConstraints``, and
+  ``ConstrainedNSGAIIForLIRCMOP2Example``, on a problem whose feasible region is small
+
+- SMS-EMOA handles problems with constraints as NSGA-II does: ``SMSEMOADoubleConstrained.yaml``
+  (``SMSEMOADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``SMSEMOADoubleConstrainedDefault.txt`` (``cdp``). The technique ranks the population in the
+  replacement and is updated once per offspring, since SMS-EMOA is steady-state. Without the
+  parameter SMS-EMOA does not change: with the same seed it gives the same fronts as before, with the
+  Double, Binary and Permutation encodings
+
+- AGE-MOEA and AGE-MOEA-II handle problems with constraints as NSGA-II does:
+  ``AGEMOEADoubleConstrained.yaml`` (``AGEMOEADouble.yaml`` plus the ``constraintHandling``
+  parameter) and its default configuration ``AGEMOEADoubleConstrainedDefault.txt`` (``cdp``). The
+  environmental selection sorts the population with the ranking of the technique and the tournament
+  compares its ranks. Without the parameter AGE-MOEA does not change: with the same seed it gives the
+  same fronts as before
+
+- NSGA-III handles problems with constraints as NSGA-II does: ``NSGAIIIDoubleConstrained.yaml``
+  (``NSGAIIIDouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``NSGAIIIDoubleConstrainedDefault.txt`` (``cdp``). The ranking of the technique replaces the
+  non-dominated sorting in the replacement and the tournament; the reference points and the niche
+  distance do not change. Without the parameter NSGA-III does not change: with the same seed it
+  gives the same fronts as before
+
+- SSMOEA handles problems with constraints as NSGA-II does: ``SSMOEADoubleConstrained.yaml``
+  (``SSMOEADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``SSMOEADoubleConstrainedDefault.txt`` (``cdp``). Its ``ranking`` parameter takes the ranking of the
+  technique (``dominanceRanking``) or the strength ranking with its comparator (``strengthRanking``),
+  ``singleSolutionReplacement`` compares with the technique, and the technique is updated once per
+  offspring. Without the parameter SSMOEA does not change: with the same seed it gives the same
+  fronts as before
+
+- RDEMOEA handles problems with constraints as NSGA-II does: ``RDEMOEADoubleConstrained.yaml``
+  (``RDEMOEADouble.yaml`` plus the ``constraintHandling`` parameter) and its default configuration
+  ``RDEMOEADoubleConstrainedDefault.txt`` (``cdp``, with the operators of the default configuration
+  of NSGA-II). Its ``ranking`` parameter takes the ranking of the technique or the strength ranking
+  with its comparator. Without the parameter RDEMOEA does not change: with the same seed it gives the
+  same fronts as before, with the Double and Permutation encodings
+
+- PAES handles problems with constraints: ``PAESDoubleConstrained.yaml`` (``PAESDouble.yaml`` plus
+  the ``constraintHandling`` parameter, with the techniques that compare pairs of solutions:
+  ``cdp``, ``violatedConstraints``, ``epsilonConstrained`` and ``pushPull``) and its default
+  configuration ``PAESDoubleConstrainedDefault.txt`` (``cdp``). The technique compares the mutant
+  with the current solution, as jMetal's ``PAESBuilder`` does with one, and the PAES archive keeps
+  the constrained-domination principle (``PAESArchiveParameter.getConstrainedBoundedArchive``).
+  Without the parameter PAES does not change: with the same seed it gives the same fronts as
+  before, with the Double, Binary and Permutation encodings
+
+- MOPSO handles problems with constraints: ``MOPSOConstrained.yaml`` (``MOPSO.yaml`` plus the
+  ``constraintHandling`` parameter, with the techniques that compare pairs of solutions) and its
+  default configuration ``MOPSOConstrainedDefault.txt`` (``cdp``). The technique decides whether a
+  particle replaces its local best (jMetal's ``ConstraintHandlingLocalBestUpdate``), and the leader
+  and external archives keep the constrained-domination principle. Without the parameter MOPSO does
+  not change: with the same seed it gives the same fronts as before
+
+- RVEA handles problems with constraints with ``RVEADoubleConstrained.yaml`` (``RVEADouble.yaml``
+  with the ``rvea`` variant only, plus the ``constraintHandling`` parameter with the techniques that
+  judge the violation of a single solution: ``cdp``, ``violatedConstraints``, ``epsilonConstrained``
+  and ``pushPull``) and its default configuration ``RVEADoubleConstrainedDefault.txt`` (``cdp``). The
+  selection of C-RVEA of jMetal judges feasibility and violation as the technique does
+  (``EffectiveViolation``): ``cdp`` is C-RVEA itself. Without the parameter RVEA does not change and
+  still rejects problems with constraints
+
+- MOEA/D handles problems with constraints: MOEA/D does not rank its population, so the new
+  ``subproblemUpdateCriterion`` parameter (``SubproblemUpdateCriterionParameter``) selects how a new
+  solution replaces the solution of a subproblem, with the criteria of jMetal: ``feasibilityRules``
+  (Deb's feasibility rules), ``improvedEpsilon`` (the improved epsilon method of Fan et al., 2019)
+  and ``violationThreshold`` (the adaptive violation threshold). ``MOEADDoubleConstrained.yaml`` is
+  ``MOEADDouble.yaml`` plus that parameter, with the default configuration
+  ``MOEADDoubleConstrainedDefault.txt`` (``feasibilityRules``); the external archives then keep the
+  constrained-domination principle. Without the parameter MOEA/D does not change: with the same
+  seed it gives the same fronts as before, with the Double, Binary and Permutation encodings
+
+- The diagnosis of feasibility of a training on problems with constraints: each evaluated
+  configuration carries its runs without feasible solutions, its runs and their mean scaled
+  violation (``ConstrainedIndicatorValue.FAILED_RUNS``, ``RUNS`` and ``MEAN_SCALED_VIOLATION``), which
+  the training writes to ``FEASIBILITY.csv`` and, with ``writePopulation``,
+  ``POPULATION_FEASIBILITY.csv``, with the rows of the indicator files; and its live plot draws the
+  configurations with failed runs in red (``FeasibilityScatterPlot``, shared with
+  ``ConstrainedFrontPlotObserver``). A training without constraints writes the same files as before
+
+- ``ConstrainedMultiobjectiveIndicator`` (ICMOP), the indicator for constrained multiobjective
+  optimization of Vodopija, Tušar and Filipič (IEEE TEVC 29(1), 2025), usable in ``indicatorNames``:
+  minus the hypervolume of the feasible solutions that dominate the nadir point, or their distance
+  to the region of interest, capped at a threshold, and the least violation plus the threshold when
+  there are no feasible solutions. ``SolveRunnerMain`` gives it the violations of the solutions. It
+  is jMetal's (``org.uma.jmetal.qualityindicator.impl``), released in jMetal 7.10
+- Meta-optimization on problems with constraints: when the training set has a problem with
+  constraints, the indicators of a run are computed on its feasible solutions, capped at a
+  threshold, and the value of a configuration is ``6k + 2v + Q`` (``ConstrainedIndicatorValue``, a
+  scheme of Evolver that takes the threshold of the indicator of Vodopija, Tušar and Filipič, IEEE
+  TEVC 2025, to several runs and problems): ``k`` runs without feasible solutions, their mean scaled
+  violation ``v``, and the mean quality ``Q``, so that fewer failed runs, then less violation, then
+  better quality win. Until now the indicators of a run
+  without feasible solutions were computed on its infeasible solutions. Without constraints the
+  evaluation does not change (same values for a fixed seed)
+- The problems with constraints of jMetal 7.9 are registered with short names, and their reference
+  fronts (those of LIR-CMOP1-14 from jMetal 7.10) are in ``resources/referenceFronts``, named after the problem as Evolver-Studio expects:
+  LIR-CMOP1-14, CF1-16, C-DTLZ (C1_DTLZ1, C1_DTLZ3, C2_DTLZ2, ConvexC2_DTLZ2, C3_DTLZ1, C3_DTLZ4),
+  DAS-CMOP1-9, MW1-14, CRE21-25/31/32/51, RCM01-50 (CEC 2021) and the classical (Binh2, ConstrEx,
+  Golinski, Osyczka2, Srinivas, Tanaka, Viennet4, Water) and engineering (CarSideImpact, GAA,
+  ElectricMotor) problems, with the families ``Classical`` and ``Engineering``. Viennet4 and RCM17
+  have no reference front. ``DescribeMain``'s ``problemCatalogue`` gives the ``numberOfConstraints``
+  of every problem (0 for the problems without constraints)
+- The reference front of RCM09, the only problem of the RCM suite without constraints
+- ``ConstrainedFrontPlotObserver`` (``org.uma.evolver.util``), a live plot of the population of an
+  algorithm with the feasible solutions in black and the infeasible ones in red, and the number of
+  feasible solutions in its title; optionally, the reference front in gray and a pause after each
+  update. The examples of ``example.baselevel.constrained`` use it
+- ``example.training.constrained`` with ``AsyncNSGAIIOptimizingNSGAIIForProblemDASCMOP5``, the
+  asynchronous NSGA-II tuning NSGA-II, constraint-handling technique included, for DASCMOP5 with
+  ICMOP and EP, with the live plot of the meta-optimizer's front and the whole population written
+  (``writePopulation``) to follow the configurations without feasible solutions
+- Tutorial E12, "Problems with constraints" (intermediate level, ``ProblemsWithConstraintsTutorial``):
+  NSGA-II with and without a constraint-handling technique on DASCMOP2 and DASCMOP5, measuring the
+  runs with feasibility and ICMOP, how a configuration is evaluated on problems with constraints,
+  and tuning NSGA-II, technique included, for DASCMOP5 while following the configurations without
+  feasible solutions in the population of the meta-optimizer
+
+Changed
+~~~~~~~
+
+- ``Srinivas.csv`` has no trailing comma in its lines, which made a reader that splits the lines by
+  commas, such as Evolver-Studio, count three objectives instead of two
+- Evolver depends on jMetal 7.9, which brings constraint-handling techniques
+  (``org.uma.jmetal.util.constrainthandling``) and the components that apply them. Its NHV fails
+  when the hypervolume of the reference front is not positive, as with the two-point fronts of the
+  TSP instances, instead of giving the worst value to every configuration: with those fronts, use
+  HV- (tutorial E9)
+- Evolver depends on jMetal 7.10, whose fixes change the results of some configurations, so they
+  are not comparable with those obtained with earlier versions of Evolver: the asynchronous
+  NSGA-II as meta-optimizer (its tournament compared ranks that nobody computed, it evaluated the
+  initial population twice and its ranking was wrong with ties); the ``hypervolumeArchive`` of the
+  external archives and of PAES when configurations are evaluated in parallel threads (the
+  hypervolume kept its state in static fields, so concurrent runs corrupted each other or failed);
+  MOPSO with a linear inertia weight (``linearDecreasingValue``, ``linearIncreasingValue``), which
+  did not follow the iterations; the ``CURRENT_TO_RAND_1_BIN`` and ``CURRENT_TO_RAND_1_EXP``
+  variants of the DE crossover, which had no mutation; the ``boltzmann`` selection, which
+  overflowed with low temperatures; the ``scatterSearch`` initial solutions; the
+  ``selfAdaptivePenalty`` technique on CF9-CF16, which penalized the most violated solutions the
+  least; and the problems LIR-CMOP1-14 and CF10, whose definitions are fixed
+- Configurations evaluated in parallel threads (parallel meta-optimizers, the evaluation server
+  with concurrent requests) no longer contend for jMetal's single random generator: each thread gets
+  its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
+  now 1.3 s. A single thread of evaluations draws from the shared generator as before
+- The unit tests run on Linux, macOS and Windows in the CI
+- The meta-optimization problems build the indicators of each training problem once, with its
+  reference front, and share them among all the evaluations, instead of building them for every
+  run: setting the reference front of the normalized hypervolume computes its hypervolume, which
+  took 3 to 7 s for the fronts of 10^4 points with three objectives (C3_DTLZ4, DASCMOP8) in every
+  run. The evaluation of a configuration with 3 runs on ZDT1 and DTLZ2 (NHV, EP, IGD+, Spread) went
+  from 12.6 s to 0.4 s, with the same values; the cost is now paid once, when the problem is
+  created. An indicator must therefore be computable from several threads at once, as the ones
+  that Evolver offers are
+- The tutorials from E12 on are renumbered by one (E12, "Ablation", is now E13, and so on up to E21,
+  "Language models in Evolver"), to make room for a new intermediate tutorial; their pages keep
+  their names, so the links do not change. The entries of earlier versions in this changelog keep
+  the old numbers
+- A training no longer writes to an output directory that already has the results of another one
+  (``METADATA.txt``, ``INDICATORS.csv``, ``CONFIGURATIONS.csv``, ``VAR_CONF.txt`` or the
+  ``POPULATION_*`` files): it stops at the start with a message that names them. Until now the new
+  results were appended to the old ones in the same files, and ``METADATA.txt`` kept describing the
+  first run. Other files, such as ``status.yaml`` or ``request.yaml``, are allowed
+
+Fixed
+~~~~~
+
+- SMS-EMOA, and SSMOEA with a replacement other than ``singleSolutionReplacement``, applied the
+  differential evolution variation always to the solution at the first position of the population:
+  nothing advanced the sequence that gives its index. The replacement now advances it, as jMetal 7.10
+  does in NSGA-II-DE and SMS-EMOA-DE, so their results with that variation change
+- The reference fronts of LIR-CMOP1-14 are the exact ones of jMetal 7.10: those of jMetal 7.9 do not
+  correspond to the fixed definitions of these problems
+- MOPSO with ``MOPSO.yaml`` can return an external archive: the space named the type of that archive
+  ``archiveType``, while ``BaseMOPSO`` (and ``MOPSOReduced.yaml``) call it ``externalArchiveType``,
+  so ``--algorithmResult externalArchive`` failed with "Parameter not found"
+- The power-law mutation exponent of ``MOPSO.yaml`` and ``SMSEMOADouble.yaml`` starts at 0.1:
+  jMetal's ``PowerLawMutation`` rejects 0
+- ``ConfigurationFileReader`` reads absolute Windows paths, which made it throw
+  ``InvalidPathException``, and finds the bundled configurations (``defaultConfigurations/*.txt``)
+  on the classpath when Evolver runs from a jar outside the project directory
+- A solve run no longer aborts on Windows when another process, such as Evolver-Studio, is reading
+  ``CURRENT_FRONT.csv`` while it is replaced; the current front also marks infeasible solutions as
+  dominated by the feasible ones
+- A training or solve request that fails before its output directory exists, for instance because
+  of a missing parameter, reports its error in ``status.yaml`` again: writing that file failed and
+  the new exception hid the original one
+
 2.5 (2026-10-15)
 ----------------
 

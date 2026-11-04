@@ -1,6 +1,6 @@
 .. _tutorial_tuning_with_smac3:
 
-E16. Tuning with SMAC3
+E17. Tuning with SMAC3
 ======================
 
 :Level: Advanced
@@ -8,13 +8,13 @@ E16. Tuning with SMAC3
 :Time: about 40 minutes, of which SMAC3 takes about 26 minutes (7 with Step 6's option)
 :Timings measured on: Apple M5 Pro (18 cores, 16 of them used by the evaluation server), 64 GB of
    RAM, macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11, SMAC3 2.4.1
-:Prerequisites: :doc:`E15. Tuning with irace <tuning_with_irace>` (its Step 7, the evaluation server)
+:Prerequisites: :doc:`E16. Tuning with irace <tuning_with_irace>` (its Step 7, the evaluation server)
 
 `SMAC3 <https://github.com/automl/SMAC3>`_ is a configurator based on Bayesian optimization: a
 random forest learns how good a configuration is from the ones already evaluated, and proposes the
 next ones where that model expects to find good ones. It is, with irace, one of the configurators
 most used in the literature, and comparing what each one finds is a research question in itself.
-This tutorial tunes the NSGA-II of tutorial E15 with SMAC3, on the same problems and with the same
+This tutorial tunes the NSGA-II of tutorial E16 with SMAC3, on the same problems and with the same
 evaluation of each configuration as a training of Evolver, so that the three tools can be compared
 on equal terms.
 
@@ -23,7 +23,7 @@ Evolver provides the three pieces that SMAC3 needs:
 - ``ConfigSpaceGenerator``, which writes a parameter space of Evolver as a configuration space of
   ConfigSpace, the library that SMAC3 uses to describe what it tunes (as
   ``IraceParameterDescriptionGenerator`` writes the parameter file of irace);
-- the **evaluation server** of tutorial E15, which evaluates each configuration that SMAC3 proposes;
+- the **evaluation server** of tutorial E16, which evaluates each configuration that SMAC3 proposes;
 - ``scripts/smac/evolver_smac.py``, a client that connects them.
 
 Step 1: the environment
@@ -72,7 +72,7 @@ The client of Step 4 runs the generator itself, so this step is only to see what
 Step 3: the evaluation server
 -----------------------------
 
-As in Step 7 of tutorial E15, the server evaluates configurations of NSGA-II on the five ZDT
+As in Step 7 of tutorial E16, the server evaluates configurations of NSGA-II on the five ZDT
 problems, with a population of 100 and 8000 evaluations, as a training of Evolver does
 (``TutorialIraceZdtBaseLevel.yaml``). From the root of the repository:
 
@@ -135,8 +135,8 @@ Step 5: using a configuration
 
 Each printed line is a configuration of NSGA-II, valid in ``NSGAIIDouble.yaml``. Saved to a file,
 one per line, it can be validated as in tutorial :doc:`E8 <validating_a_configuration>`, run with
-``cli.solving`` (tutorial :doc:`E17 <automating_with_the_cli>`), or compared with the configurations
-that irace (tutorial E15) and Evolver's own meta-optimizers find with the same budget. Because the
+``cli.solving`` (tutorial :doc:`E18 <automating_with_the_cli>`), or compared with the configurations
+that irace (tutorial E16) and Evolver's own meta-optimizers find with the same budget. Because the
 server evaluates every configuration as a training does, the values of the three are directly
 comparable.
 
@@ -175,7 +175,7 @@ The time is SMAC3's, not the evaluations': its optimizer is sequential, and ever
 fits its random forest again on the whole history and searches it for the next configurations, so
 each trial costs more than the previous one. With cheap runs, as here, that dominates everything;
 with runs of minutes it would be a small part of the total. For comparison, irace took 663 seconds
-for 10000 experiments of the same kind with the server (tutorial E15), and a training of Evolver of
+for 10000 experiments of the same kind with the server (tutorial E16), and a training of Evolver of
 the same budget runs in a few minutes.
 
 ``--retrain-after`` sets how many trials pass between two fits of the model (8 by default, SMAC3's
@@ -183,7 +183,7 @@ own default). With 50 the same budget took 353 seconds, four times less, because
 six times less often; the configurations it proposes in between come from an older model. In this
 run the front it found was not worse (best mean NHV 0.160 against 0.204), but one run of each is not
 enough to tell how the option affects the quality of the result: that is a question to study with
-replications (tutorial :doc:`E19 <independent_replications>`), not something to take from here.
+replications (tutorial :doc:`E20 <independent_replications>`), not something to take from here.
 
 This is a property of SMAC3, and Evolver does not try to change it. When SMAC3 is compared with other
 configurators, report its wall-clock time with the results, and keep in mind that a comparison by
@@ -201,8 +201,8 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E15 <tuning_with_irace>` tunes the same algorithm with irace, with and without the server.
-- :doc:`E19 <independent_replications>` explains how to run the replications of a study, also on a
+- :doc:`E16 <tuning_with_irace>` tunes the same algorithm with irace, with and without the server.
+- :doc:`E20 <independent_replications>` explains how to run the replications of a study, also on a
   cluster.
 - :doc:`../utilities/cli_tools` describes the server's API, for configurators other than irace and
   SMAC3.

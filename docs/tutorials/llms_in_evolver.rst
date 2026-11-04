@@ -1,6 +1,6 @@
 .. _tutorial_llms_in_evolver:
 
-E20. Language Models in Evolver
+E21. Language Models in Evolver
 ===============================
 
 :Level: Advanced
@@ -127,7 +127,7 @@ front of the meta-optimizer (lower is better):
 The seeded training starts better, as expected from starting at reasonable configurations, and ends
 slightly better. With **one run of each**, that says nothing about whether seeding with a language
 model helps: random and seeded trainings vary from run to run (tutorial
-:doc:`E19 <independent_replications>` shows how much), the budget is small, and the problem is one
+:doc:`E20 <independent_replications>` shows how much), the budget is small, and the problem is one
 that the model may know well. Answering it needs a study.
 
 Step 4: research directions
@@ -146,7 +146,7 @@ several questions studiable:
   time in 4 of 5 seeds; the model made 15 % of the mutations but took half of the time. Five seeds
   are not enough to conclude anything.
 - **Explaining configurations**: a model describing in words what a tuned configuration does, or the
-  result of an ablation (tutorial E12).
+  result of an ablation (tutorial E13).
 - **Designing parameter spaces and components**: proposing new parameter spaces or operators, which
   Evolver then checks and evaluates.
 
@@ -156,7 +156,7 @@ Any such study should take into account:
 - **contamination**: the model may know configurations of NSGA-II for ZDT; control with renamed
   parameters and values, or with spaces and problems the model is unlikely to know;
 - **cost**: report the time of the calls and their share of the total, and compare at equal time;
-- **replications**: as for any training (tutorial E19).
+- **replications**: as for any training (tutorial E20).
 
 What you can try
 ----------------
@@ -164,4 +164,4 @@ What you can try
 - Ask without examples (remove ``--examples``): are the proposals more varied, and how many are
   valid?
 - Use another model, local or external, and compare the validity and the time per call.
-- Seed a training of tutorial E19 with model proposals and run five replications of each variant.
+- Seed a training of tutorial E20 with model proposals and run five replications of each variant.

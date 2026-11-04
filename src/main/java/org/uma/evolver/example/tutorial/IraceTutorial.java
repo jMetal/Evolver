@@ -27,7 +27,7 @@ import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.errorchecking.JMetalException;
 
 /**
- * Code of tutorial E15, "Tuning with irace" (see {@code docs/tutorials/tuning_with_irace.rst}).
+ * Code of tutorial E16, "Tuning with irace" (see {@code docs/tutorials/tuning_with_irace.rst}).
  *
  * <p>It reads the best configuration found by irace from its standard output ({@code
  * irace.stdout.txt}), saves it, and applies it to the ZDT problems it was tuned for, together with

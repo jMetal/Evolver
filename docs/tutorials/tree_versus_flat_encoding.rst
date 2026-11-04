@@ -1,6 +1,6 @@
 .. _tutorial_tree_versus_flat_encoding:
 
-E14. Tree Versus Flat Encoding
+E15. Tree Versus Flat Encoding
 ==============================
 
 :Level: Advanced
@@ -9,7 +9,7 @@ E14. Tree Versus Flat Encoding
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the trainings), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK), Python 3.11
 :Prerequisites: :doc:`E5. Designing your own parameter space <designing_parameter_spaces>`,
-   :doc:`E13. Choosing the meta-optimizer <choosing_the_meta_optimizer>`,
+   :doc:`E14. Choosing the meta-optimizer <choosing_the_meta_optimizer>`,
    :doc:`E11. Budgets: evaluations or time <budgets>`
 
 The meta-optimizer searches configurations of the base-level algorithm, and it needs a way to
@@ -146,7 +146,7 @@ meta-optimizer configuration. The tree version of the meta-optimizer of E11 is
 ``encoding: tree`` selects it. The crossover is always the subtree crossover and the mutation the tree
 mutation, so the file gives only their probabilities and the distribution index, where the flat
 file names the operators (SBX and polynomial mutation) and their parameters. Not every meta-optimizer
-works with trees (tutorial E13): NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO
+works with trees (tutorial E14): NSGA-II, AGE-MOEA, SPEA2, ``AsyncNSGA-II`` and ``RandomSearch`` do, SMPSO
 does not.
 
 The output files are the same: ``INDICATORS.csv``, ``CONFIGURATIONS.csv`` and ``VAR_CONF.txt``, with the
@@ -273,6 +273,6 @@ What's next
 -----------
 
 - :doc:`../concepts/solution_encoding` is the reference on both encodings and their operators.
-- :doc:`E13 <choosing_the_meta_optimizer>` lists the meta-optimizers that support each encoding.
+- :doc:`E14 <choosing_the_meta_optimizer>` lists the meta-optimizers that support each encoding.
 - :doc:`E8 <validating_a_configuration>` explains how to validate the configurations a training
   finds, which is what would tell whether the configurations of each encoding generalize.

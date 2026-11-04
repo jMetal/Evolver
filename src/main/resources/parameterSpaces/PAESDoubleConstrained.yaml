@@ -1,0 +1,128 @@
+# PAESDouble.yaml plus the constraint-handling technique, for problems with constraints, as in
+# NSGAIIDoubleConstrained.yaml: with this space, PAES (BasePAES) compares the mutant with the
+# current solution with the technique it selects, and its archive keeps the constrained-domination
+# principle. stochasticRanking and selfAdaptivePenalty are not offered: they rank a population, and
+# PAES only compares pairs of solutions. The sub-parameters are scale-free, so that they can
+# transfer between problems.
+constraintHandling:
+  type: categorical
+  values:
+    cdp: {}
+    violatedConstraints: {}
+    epsilonConstrained:
+      conditionalParameters:
+        epsilonInitialQuantile:
+          type: double
+          range: [0.05, 0.95]
+        epsilonExponent:
+          type: double
+          range: [1.0, 10.0]
+        epsilonDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+    pushPull:
+      conditionalParameters:
+        pushPullChangeThreshold:
+          type: double
+          range: [0.0001, 0.05]
+        pushPullWindowFraction:
+          type: double
+          range: [0.01, 0.1]
+        pushPullDecayFraction:
+          type: double
+          range: [0.1, 0.95]
+        pushPullExponent:
+          type: double
+          range: [1.0, 10.0]
+        pushPullFeasibilityThreshold:
+          type: double
+          range: [0.5, 1.0]
+        pushPullReductionRate:
+          type: double
+          range: [0.01, 0.5]
+
+# PAESDouble.yaml
+#
+# Parameter space for PAES (Pareto Archived Evolution Strategy) with double encoding.
+#
+# Non-configurable (hardcoded in BasePAES / DoublePAES):
+#   populationSize = 1, offspringPopulationSize = 1
+#   crossover = none (MutationOnlyVariation)
+#   initial solution = a single random solution (RandomSolutionsCreation); other
+#     strategies (Latin hypercube, scatter search) are population-diversity oriented
+#     and meaningless for a single-solution (1+1) ES
+#   PAES archive size (numberOfSolutionsToFind) is fixed and passed via the constructor,
+#   analogous to populationSize in other algorithms (typical value: 100)
+
+paesArchiveType:
+  type: categorical
+  values:
+    crowdingDistanceArchive: {}
+#    hypervolumeArchive: {} — disabled: too slow on 3D problems
+    spatialSpreadDeviationArchive: {}
+    knnDistanceArchive:
+      conditionalParameters:
+        knnDistanceArchiveK:
+          type: integer
+          range: [1, 10]
+    angleArchive: {}
+
+algorithmResult:
+  type: categorical
+  values:
+    paesArchive: {}
+    externalArchive: {}
+
+# Probability of mutating a randomly chosen archive member instead of the current
+# solution, analogous to MOEA/D's neighborhoodSelectionProbability. A value of 0.0
+# corresponds to classic PAES (always mutate the current solution).
+archiveSelectionProbability:
+  type: double
+  range: [0.0, 1.0]
+
+mutation:
+  type: categorical
+  globalSubParameters:
+    mutationProbabilityFactor:
+      type: double
+      range: [0.0, 2.0]
+    mutationRepairStrategy:
+      type: categorical
+      values:
+        random: {}
+        round: {}
+        bounds: {}
+  values:
+    uniform:
+      conditionalParameters:
+        uniformMutationPerturbation:
+          type: double
+          range: [0.0, 1.0]
+    polynomial:
+      conditionalParameters:
+        polynomialMutationDistributionIndex:
+          type: double
+          range: [5.0, 400.0]
+    linkedPolynomial:
+      conditionalParameters:
+        linkedPolynomialMutationDistributionIndex:
+          type: double
+          range: [5.0, 400.0]
+    nonUniform:
+      conditionalParameters:
+        nonUniformMutationPerturbation:
+          type: double
+          range: [0.0, 1.0]
+    levyFlight:
+      conditionalParameters:
+        levyFlightMutationBeta:
+          type: double
+          range: [1.0001, 2.0]
+        levyFlightMutationStepSize:
+          type: double
+          range: [0.01, 1.0]
+    powerLaw:
+      conditionalParameters:
+        powerLawMutationDelta:
+          type: double
+          range: [0.1, 10.0]

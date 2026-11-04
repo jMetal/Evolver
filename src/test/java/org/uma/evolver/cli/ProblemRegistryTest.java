@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
@@ -205,6 +206,8 @@ class ProblemRegistryTest {
         assertEquals(
             descriptor.numberOfObjectives(), problem.numberOfObjectives(), descriptor.name());
         assertEquals(descriptor.numberOfVariables(), problem.numberOfVariables(), descriptor.name());
+        assertEquals(
+            descriptor.numberOfConstraints(), problem.numberOfConstraints(), descriptor.name());
       }
     }
 
@@ -285,6 +288,121 @@ class ProblemRegistryTest {
     @DisplayName("given a problem with no arguments, when described, then it lists none")
     void givenAProblemWithNoArguments_whenDescribed_thenItListsNone() {
       assertTrue(descriptor("RE31").arguments().isEmpty());
+    }
+
+    @ParameterizedTest(name = "{0} is in family {1}")
+    @CsvSource({
+      "CF3, CF",
+      "CF14, CF",
+      "C1_DTLZ1, C-DTLZ",
+      "ConvexC2_DTLZ2, C-DTLZ",
+      "C3_DTLZ4, C-DTLZ",
+      "LIRCMOP1, LIRCMOP",
+      "DASCMOP1, DASCMOP",
+      "DASCMOP9, DASCMOP",
+      "MW1, MW",
+      "MW14, MW",
+      "CRE21, CRE",
+      "CRE51, CRE",
+      "RCM01, RCM",
+      "RCM50, RCM"
+    })
+    @DisplayName("given a constrained problem, when described, then its family is its suite")
+    void givenAConstrainedProblem_whenDescribed_thenItsFamilyIsItsSuite(String name, String family) {
+      assertEquals(family, descriptor(name).family());
+    }
+
+    @ParameterizedTest(name = "{0} is {1}")
+    @CsvSource({
+      "RCM01, RCM01, 2, 4, 2",
+      "RCM29, RCM29, 2, 7, 9",
+      "RCM46, RCM46, 4, 34, 26",
+      "RCM50, RCM50, 2, 6, 1"
+    })
+    @DisplayName(
+        "given the short name of an RCM problem, when resolved and described, then it is the CEC"
+            + " 2021 problem of jMetal with its dimensions")
+    void givenAnRcmShortName_whenResolved_thenItIsTheCec2021Problem(
+        String name, String className, int objectives, int variables, int constraints) {
+      // Act
+      Problem<?> problem = ProblemRegistry.resolve(new ProblemSpec(name));
+      ProblemDescriptor descriptor = descriptor(name);
+
+      // Assert
+      assertEquals(className, problem.getClass().getSimpleName());
+      assertEquals(objectives, (int) descriptor.numberOfObjectives());
+      assertEquals(variables, (int) descriptor.numberOfVariables());
+      assertEquals(constraints, (int) descriptor.numberOfConstraints());
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"CF3", "CF8", "CF9", "CF14"})
+    @DisplayName(
+        "given a CF problem with an Ackley distance function, when described, then by default it"
+            + " has distance variables")
+    void givenACfProblemWithAnAckleyDistance_whenDescribed_thenItHasDistanceVariables(String name) {
+      // Act
+      List<Object> defaults =
+          descriptor(name).arguments().stream()
+              .map(ProblemDescriptor.Argument::defaultValue)
+              .toList();
+
+      // Assert: with as many variables as objectives (the default up to jMetal 7.8) the distance
+      // function is 0/0
+      assertEquals(List.of("numberOfVariables", "numberOfObjectives"), names(descriptor(name)));
+      assertTrue((int) defaults.get(0) > (int) defaults.get(1), name + " " + defaults);
+    }
+
+    @ParameterizedTest(name = "DASCMOP{0}")
+    @CsvSource({"1, 0.0", "3, 0.5", "9, 0.5"})
+    @DisplayName(
+        "given a DAS-CMOP problem, when described, then its arguments are the variables and the"
+            + " difficulty triplet, with PlatEMO's by default")
+    void givenADascmopProblem_whenDescribed_thenItsArgumentsIncludeTheTriplet(
+        int number, double eta) {
+      // Act
+      ProblemDescriptor descriptor = descriptor("DASCMOP" + number);
+
+      // Assert
+      assertEquals(List.of("numberOfVariables", "eta", "zeta", "gamma"), names(descriptor));
+      assertEquals(
+          List.of(30, eta, 0.5, 0.5),
+          descriptor.arguments().stream().map(ProblemDescriptor.Argument::defaultValue).toList());
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource({"MW1, 2, false", "MW4, 3, true", "MW8, 3, true", "MW14, 3, true"})
+    @DisplayName(
+        "given an MW problem, when described, then it has 15 variables, and the scalable ones take"
+            + " their number of objectives")
+    void givenAnMwProblem_whenDescribed_thenItsArgumentsAreItsDimensions(
+        String name, int objectives, boolean scalable) {
+      // Act
+      ProblemDescriptor descriptor = descriptor(name);
+
+      // Assert
+      assertEquals(
+          scalable
+              ? List.of("numberOfVariables", "numberOfObjectives")
+              : List.of("numberOfVariables"),
+          names(descriptor));
+      assertEquals(15, descriptor.numberOfVariables());
+      assertEquals(objectives, descriptor.numberOfObjectives());
+    }
+
+    @Test
+    @DisplayName(
+        "given C3-DTLZ1, when described, then its arguments include one constraint per objective")
+    void givenC3Dtlz1_whenDescribed_thenItsArgumentsIncludeTheConstraints() {
+      // Act
+      ProblemDescriptor descriptor = descriptor("C3_DTLZ1");
+
+      // Assert
+      assertEquals(
+          List.of("numberOfVariables", "numberOfObjectives", "numberOfConstraints"),
+          names(descriptor));
+      assertEquals(
+          descriptor.arguments().get(1).defaultValue(), descriptor.arguments().get(2).defaultValue());
     }
 
     private List<String> names(ProblemDescriptor descriptor) {

@@ -1,4 +1,4 @@
-# Training request of tutorial E19 (docs/tutorials/independent_replications.rst): the short training
+# Training request of tutorial E20 (docs/tutorials/independent_replications.rst): the short training
 # of tutorial E4 (NSGA-II tuned for ZDT4, NSGA-II as meta-optimizer, 500 configurations), run once
 # per replication with TrainingRunnerMain --output-dir results/tutorial-replications/nsgaii/runNN.
 # The outputDirectory below is used only without --output-dir.

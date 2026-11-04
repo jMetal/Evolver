@@ -8,17 +8,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import org.uma.evolver.algorithm.BaseLevelAlgorithm;
 import org.uma.evolver.meta.strategy.EvaluationBudgetStrategy;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.ConstraintHandling;
 import org.uma.jmetal.util.NormalizeUtils;
 import org.uma.jmetal.util.VectorUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator;
 
 /**
  * Base class for meta-optimization problems, independent of the solution encoding used by the
@@ -27,6 +30,18 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * <p>All evaluation logic (running the base algorithm, extracting the non-dominated front,
  * normalizing, computing quality indicators, aggregating across problems and independent runs)
  * lives here and is shared by all encodings.
+ *
+ * <p>If a problem of the training set has constraints, the indicators are computed on the feasible
+ * solutions of each run, and the value of a configuration puts feasibility first (see {@link
+ * ConstrainedIndicatorValue}): runs without feasible solutions count before their violation, and
+ * that before the quality. Without constraints the evaluation is the usual one.
+ *
+ * <p>The indicators of each problem are built once, with its reference front, when the problem is
+ * created, and are shared by every evaluation: setting the reference front of the normalized
+ * hypervolume computes its hypervolume, which takes seconds for a front of 10^4 points with three
+ * objectives. Parallel meta-optimizers and the evaluation server evaluate configurations in several
+ * threads at once, so an indicator must be computable from several threads at the same time, that
+ * is, its {@code compute} must not change its state, as with the indicators that Evolver offers.
  *
  * <p>Subclasses implement three encoding-specific hooks:
  * <ul>
@@ -42,6 +57,9 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
 public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, META extends Solution<?>>
     implements Problem<META> {
 
+  /** The configurations being evaluated at this moment, by any meta-optimization problem. */
+  private static final AtomicInteger EVALUATIONS_IN_PROGRESS = new AtomicInteger();
+
   protected final BaseLevelAlgorithm<S> baseAlgorithm;
   protected final List<Problem<S>> problems;
   protected final List<QualityIndicator> indicators;
@@ -49,7 +67,28 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   protected final int numberOfIndependentRuns;
   protected final List<double[][]> referenceFronts;
   protected final List<double[][]> normalizedReferenceFronts;
+
+  /**
+   * The indicators of each problem, with its normalized reference front (null for {@link
+   * EvaluationsQualityIndicator}, whose value is the number of evaluations).
+   */
+  private final QualityIndicator[][] indicatorsOfProblems;
   private final Queue<META> initialSolutions = new ConcurrentLinkedQueue<>();
+
+  /** The number of random solutions whose violation sets the scale of a problem's violations. */
+  static final int VIOLATION_SAMPLE_SIZE = 100;
+
+  /** Whether some problem has constraints, so that configurations are evaluated as such. */
+  private final boolean constrained;
+
+  /** The scale of the violations of each problem (1 for the problems without constraints). */
+  private final double[] violationScales;
+
+  /** What the runs of a configuration on a problem with constraints give. */
+  private record ProblemSummary(double[] values, int failedRuns, double sumOfScaledViolations) {}
+
+  /** What the evaluation of a configuration gives: its objectives and, with constraints, more. */
+  private record Evaluation(double[] objectives, int failedRuns, double sumOfScaledViolations) {}
 
   protected AbstractMetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
@@ -82,6 +121,57 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     this.normalizedReferenceFronts = this.referenceFronts.stream()
         .map(NormalizeUtils::normalize)
         .toList();
+    this.indicatorsOfProblems = indicatorsOfProblems(this.indicators, normalizedReferenceFronts);
+
+    this.constrained =
+        this.problems.stream().anyMatch(problem -> problem.numberOfConstraints() > 0);
+    this.violationScales = new double[this.problems.size()];
+    Arrays.fill(violationScales, 1.0);
+    if (constrained) {
+      for (QualityIndicator indicator : this.indicators) {
+        if (!(indicator instanceof EvaluationsQualityIndicator)) {
+          ConstrainedIndicatorValue.threshold(indicator);
+        }
+      }
+      for (int id = 0; id < this.problems.size(); id++) {
+        if (this.problems.get(id).numberOfConstraints() > 0) {
+          violationScales[id] = violationScale(this.problems.get(id));
+        }
+      }
+    }
+  }
+
+  private static QualityIndicator[][] indicatorsOfProblems(
+      List<QualityIndicator> indicators, List<double[][]> normalizedReferenceFronts) {
+    QualityIndicator[][] built =
+        new QualityIndicator[normalizedReferenceFronts.size()][indicators.size()];
+    for (int p = 0; p < normalizedReferenceFronts.size(); p++) {
+      for (int i = 0; i < indicators.size(); i++) {
+        if (!(indicators.get(i) instanceof EvaluationsQualityIndicator)) {
+          QualityIndicator indicator = indicators.get(i).newInstance();
+          // A copy of the rows array, so that no indicator can change the shared reference front
+          indicator.referenceFront(normalizedReferenceFronts.get(p).clone());
+          built[p][i] = indicator;
+        }
+      }
+    }
+    return built;
+  }
+
+  /** The scale of a problem's violations, from those of a sample of random solutions. */
+  private static <S extends Solution<?>> double violationScale(Problem<S> problem) {
+    double[] violations = new double[VIOLATION_SAMPLE_SIZE];
+    for (int i = 0; i < VIOLATION_SAMPLE_SIZE; i++) {
+      S solution = problem.createSolution();
+      problem.evaluate(solution);
+      violations[i] = violation(solution);
+    }
+    return ConstrainedIndicatorValue.scale(violations);
+  }
+
+  /** The (non-negative) overall constraint violation of a solution. */
+  private static double violation(Solution<?> solution) {
+    return Math.abs(ConstraintHandling.overallConstraintViolationDegree(solution));
   }
 
   @Override
@@ -110,17 +200,42 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   @Override
   public META evaluate(META solution) {
     Check.notNull(solution);
-    double[] objectives = evaluateConfiguration(toParameterArray(solution));
+    Evaluation evaluation = evaluated(toParameterArray(solution));
+    double[] objectives = evaluation.objectives();
     System.arraycopy(objectives, 0, solution.objectives(), 0, objectives.length);
+    if (constrained) {
+      // The diagnosis of feasibility, for the outputs of a training (see ConstrainedIndicatorValue)
+      int failedRuns = evaluation.failedRuns();
+      solution.attributes().put(ConstrainedIndicatorValue.FAILED_RUNS, failedRuns);
+      solution.attributes().put(
+          ConstrainedIndicatorValue.RUNS, problems.size() * numberOfIndependentRuns);
+      solution.attributes().put(
+          ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION,
+          failedRuns == 0 ? 0.0 : evaluation.sumOfScaledViolations() / failedRuns);
+    }
     return solution;
+  }
+
+  /**
+   * Whether some training problem has constraints, so that configurations are evaluated as {@link
+   * ConstrainedIndicatorValue} describes and carry its attributes ({@link
+   * ConstrainedIndicatorValue#FAILED_RUNS}, {@link ConstrainedIndicatorValue#RUNS} and {@link
+   * ConstrainedIndicatorValue#MEAN_SCALED_VIOLATION}).
+   *
+   * @return {@code true} if some training problem has constraints
+   */
+  public boolean constrained() {
+    return constrained;
   }
 
   /**
    * Evaluates a configuration of the base-level algorithm exactly as the meta-optimizer evaluates
    * its solutions: the algorithm is run with it {@code numberOfIndependentRuns} times on every
    * problem, and the value of each indicator is the mean over the problems of its median over the
-   * runs. Useful to re-evaluate the configurations found by a training run, for instance with more
-   * independent runs than the training used.
+   * runs. If a problem has constraints, the value is {@link ConstrainedIndicatorValue#value}
+   * instead, with the indicators computed on the feasible solutions. Useful to re-evaluate the
+   * configurations found by a training run, for instance with more independent runs than the
+   * training used.
    *
    * @param parameterArray the configuration, as the tokens of a configuration string ({@code
    *     "--param1 value1 --param2 value2 ..."} split by whitespace)
@@ -128,6 +243,28 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
    */
   public double[] evaluateConfiguration(String[] parameterArray) {
     Check.notNull(parameterArray);
+    return evaluated(parameterArray).objectives();
+  }
+
+  private Evaluation evaluated(String[] parameterArray) {
+    // Configurations evaluated by several threads at once (parallel meta-optimizers, the evaluation
+    // server) would contend for jMetal's single random generator, so from then on each thread has
+    // its own. A single thread of evaluations keeps drawing from the generator it shares with the
+    // rest of the program, as before
+    if (EVALUATIONS_IN_PROGRESS.incrementAndGet() > 1) {
+      ThreadLocalRandomGenerator.install();
+    }
+    try {
+      return computeConfigurationValues(parameterArray);
+    } finally {
+      EVALUATIONS_IN_PROGRESS.decrementAndGet();
+    }
+  }
+
+  private Evaluation computeConfigurationValues(String[] parameterArray) {
+    if (constrained) {
+      return evaluateConfigurationWithConstraints(parameterArray);
+    }
     double[][] indicatorValuesPerProblem = computeIndicatorValuesForAllProblems(parameterArray);
     double[] objectives = new double[indicators.size()];
     for (int i = 0; i < indicators.size(); i++) {
@@ -137,7 +274,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       }
       objectives[i] = sum / problems.size();
     }
-    return objectives;
+    return new Evaluation(objectives, 0, 0.0);
   }
 
   /**
@@ -219,6 +356,90 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
     }
   }
 
+  private Evaluation evaluateConfigurationWithConstraints(String[] parameterArray) {
+    ProblemSummary[] summaries = new ProblemSummary[problems.size()];
+    IntStream.range(0, problems.size())
+        .forEach(id -> summaries[id] = computeIndependentRunsWithConstraints(parameterArray, id));
+    int failedRuns = 0;
+    double sumOfScaledViolations = 0.0;
+    for (ProblemSummary summary : summaries) {
+      failedRuns += summary.failedRuns();
+      sumOfScaledViolations += summary.sumOfScaledViolations();
+    }
+    double[] objectives = new double[indicators.size()];
+    for (int i = 0; i < indicators.size(); i++) {
+      double sum = 0.0;
+      for (ProblemSummary summary : summaries) {
+        sum += summary.values()[i];
+      }
+      double mean = sum / problems.size();
+      objectives[i] =
+          indicators.get(i) instanceof EvaluationsQualityIndicator
+              ? mean
+              : ConstrainedIndicatorValue.value(failedRuns, sumOfScaledViolations, mean);
+    }
+    return new Evaluation(objectives, failedRuns, sumOfScaledViolations);
+  }
+
+  /**
+   * Runs a configuration on a problem of a training set with constraints. The indicators are
+   * computed on the feasible solutions of each run and bounded (see {@link
+   * ConstrainedIndicatorValue#bounded}); a run without
+   * feasible solutions counts as failed, with the scaled violation of its least violated solution.
+   * The value of each indicator is its median over the feasible runs, or its threshold if there
+   * are none (the evaluations, their median over all the runs).
+   */
+  private ProblemSummary computeIndependentRunsWithConstraints(
+      String[] parameterArray, int problemId) {
+    List<double[]> feasibleRunValues = new ArrayList<>();
+    double[] evaluationsPerRun = new double[numberOfIndependentRuns];
+    int failedRuns = 0;
+    double sumOfScaledViolations = 0.0;
+    for (int runId = 0; runId < numberOfIndependentRuns; runId++) {
+      int evaluations = evaluationBudgetStrategy.getEvaluations(problemId);
+      evaluationsPerRun[runId] = evaluations;
+      List<S> results = runAlgorithm(parameterArray, problemId, evaluations);
+      List<S> feasible = results.stream().filter(ConstraintHandling::isFeasible).toList();
+      if (feasible.isEmpty()) {
+        failedRuns++;
+        sumOfScaledViolations +=
+            results.isEmpty()
+                ? 1.0
+                : ConstrainedIndicatorValue.scaledViolation(
+                    results.stream()
+                        .mapToDouble(AbstractMetaOptimizationProblem::violation)
+                        .min()
+                        .orElseThrow(),
+                    violationScales[problemId]);
+      } else {
+        double[][] front = extractNonDominatedFront(feasible);
+        double[] runValues =
+            front.length == 0
+                ? worstIndicatorValues(evaluations)
+                : computeIndicatorValuesForRun(normalizeFront(front, problemId), problemId, evaluations);
+        for (int i = 0; i < indicators.size(); i++) {
+          if (!(indicators.get(i) instanceof EvaluationsQualityIndicator)) {
+            runValues[i] = ConstrainedIndicatorValue.bounded(runValues[i], indicators.get(i));
+          }
+        }
+        feasibleRunValues.add(runValues);
+      }
+    }
+
+    double[] values = new double[indicators.size()];
+    for (int i = 0; i < indicators.size(); i++) {
+      if (indicators.get(i) instanceof EvaluationsQualityIndicator) {
+        values[i] = median(evaluationsPerRun);
+      } else if (feasibleRunValues.isEmpty()) {
+        values[i] = ConstrainedIndicatorValue.threshold(indicators.get(i));
+      } else {
+        int indicator = i;
+        values[i] = median(feasibleRunValues.stream().mapToDouble(run -> run[indicator]).toArray());
+      }
+    }
+    return new ProblemSummary(values, failedRuns, sumOfScaledViolations);
+  }
+
   /**
    * The objective values of the non-dominated solutions with finite objectives, or an empty matrix if
    * there are none. A solution with an infinite or NaN objective cannot be normalized (jMetal rejects
@@ -270,15 +491,10 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       double[][] normalizedFront, int problemId, int evaluations) {
     double[] values = new double[indicators.size()];
     for (int i = 0; i < indicators.size(); i++) {
-      QualityIndicator indicator = indicators.get(i).newInstance();
-      if (indicator instanceof EvaluationsQualityIndicator evalIndicator) {
-        evalIndicator.setNumberOfEvaluations(evaluations);
+      QualityIndicator indicator = indicatorsOfProblems[problemId][i];
+      if (indicator == null) {
         values[i] = evaluations;
       } else {
-        // A copy of the rows array: the configurations are evaluated in parallel and share the
-        // normalized reference fronts, so an indicator that sorted the reference front in place
-        // (as jMetal's Spread did up to 7.6) would corrupt it for the other threads mid-sort.
-        indicator.referenceFront(normalizedReferenceFronts.get(problemId).clone());
         double value = indicator.compute(normalizedFront);
         values[i] = Double.isFinite(value) ? value
             : (indicator.isTheLowerTheIndicatorValueTheBetter() ? Double.MAX_VALUE : 0.0);

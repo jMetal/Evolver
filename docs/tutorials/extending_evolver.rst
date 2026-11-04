@@ -1,6 +1,6 @@
 .. _tutorial_extending_evolver:
 
-E18. Extending Evolver: Your Own Problem and Operator
+E19. Extending Evolver: Your Own Problem and Operator
 =====================================================
 
 :Level: Advanced
@@ -96,7 +96,7 @@ registered. This is the solve request of the tutorial, NSGA-II with its default 
 ``BiSphere`` is in the jar of Evolver, so the jar is enough. For a problem of your own, put the jar and
 your classes in the classpath (``java -cp evolver.jar:myclasses ...``), or a jar of yours. If the
 problem has the wrong encoding for the algorithm, the request fails before running with a message that
-says so (tutorial :doc:`E17 <automating_with_the_cli>`). Running it from Java is the same, and prints
+says so (tutorial :doc:`E18 <automating_with_the_cli>`). Running it from Java is the same, and prints
 the median of each indicator:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/ExtendingTutorial.java
@@ -164,7 +164,7 @@ If you contribute the problem to Evolver, it can have a short name (``problem: B
 - an entry in its table of names, ``Map.entry("BiSphere", BiSphere.class)``;
 - if the problem has constructor arguments, an entry of the table of arguments with their names, types
   and defaults (``numberOfVariables``), which is what ``DescribeMain`` shows to the tools that build
-  requests (tutorial E17);
+  requests (tutorial E18);
 - its reference front, as ``resources/referenceFronts/BiSphere.csv``, named after the problem so that
   Evolver-Studio finds it.
 
@@ -270,7 +270,7 @@ builds it from a configuration string:
 
 .. literalinclude:: extending_evolver/GaussianMutationTest.java
    :language: java
-   :start-at: @DisplayName("Unit tests for the Gaussian mutation of tutorial E18")
+   :start-at: @DisplayName("Unit tests for the Gaussian mutation of tutorial E19")
 
 To apply all of it to your copy of Evolver (the class, the test, the changes of the catalogue and the
 parameter space, ``NSGAIIDoubleGaussian.yaml``), from the root of the repository:
@@ -345,7 +345,7 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E17 <automating_with_the_cli>` explains the requests that this tutorial uses, and how to run
+- :doc:`E18 <automating_with_the_cli>` explains the requests that this tutorial uses, and how to run
   many of them.
-- :doc:`E12 <ablation>` studies which components of a tuned configuration matter, which is how to
+- :doc:`E13 <ablation>` studies which components of a tuned configuration matter, which is how to
   know whether an operator that you added helps.

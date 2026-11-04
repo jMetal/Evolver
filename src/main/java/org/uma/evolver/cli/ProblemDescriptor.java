@@ -15,6 +15,8 @@ import java.util.List;
  * @param numberOfObjectives the number of objectives of the problem built with no arguments, or
  *     {@code null} when it cannot be built (a problem that reads files that are not there)
  * @param numberOfVariables the number of variables of that problem, or {@code null}
+ * @param numberOfConstraints the number of constraints of that problem (0 if it has none), or
+ *     {@code null}
  * @param arguments the arguments of its constructor with arguments, in order: a request gives all
  *     of them, or none (empty for a problem with no such constructor)
  */
@@ -24,6 +26,7 @@ public record ProblemDescriptor(
     String encoding,
     Integer numberOfObjectives,
     Integer numberOfVariables,
+    Integer numberOfConstraints,
     List<Argument> arguments) {
 
   public ProblemDescriptor {

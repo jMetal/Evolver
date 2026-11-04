@@ -76,6 +76,9 @@ public final class DescribeMain {
               if (problem.numberOfVariables() != null) {
                 data.put("numberOfVariables", problem.numberOfVariables());
               }
+              if (problem.numberOfConstraints() != null) {
+                data.put("numberOfConstraints", problem.numberOfConstraints());
+              }
               if (!problem.arguments().isEmpty()) {
                 data.put("arguments", problem.arguments().stream().map(DescribeMain::argument).toList());
               }

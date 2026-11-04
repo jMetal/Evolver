@@ -66,4 +66,36 @@ class BundledParameterSpacesTest {
       assertTrue(Set.of("default").containsAll(values), file.getFileName() + ": " + values);
     }
   }
+
+  /** The ranges of the parameters with a given name, wherever they are nested in a space. */
+  private static void collectRanges(Object node, String parameter, List<List<?>> ranges) {
+    if (node instanceof Map<?, ?> map) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
+        if (parameter.equals(entry.getKey()) && entry.getValue() instanceof Map<?, ?> definition) {
+          ranges.add((List<?>) definition.get("range"));
+        }
+        collectRanges(entry.getValue(), parameter, ranges);
+      }
+    } else if (node instanceof List<?> list) {
+      list.forEach(element -> collectRanges(element, parameter, ranges));
+    }
+  }
+
+  @Test
+  @DisplayName(
+      "given every space, when read, then the exponent of the power-law mutation is positive:"
+          + " jMetal's PowerLawMutation rejects 0")
+  void givenEverySpace_whenRead_thenThePowerLawMutationDeltaIsPositive() throws IOException {
+    // Arrange
+    List<List<?>> ranges = new ArrayList<>();
+    for (Path file : spaces("")) {
+      collectRanges(new Yaml().load(Files.newBufferedReader(file)), "powerLawMutationDelta", ranges);
+    }
+
+    // Act & Assert
+    assertTrue(ranges.size() >= 6, "only " + ranges.size() + " ranges found");
+    for (List<?> range : ranges) {
+      assertTrue(((Number) range.get(0)).doubleValue() > 0.0, "range " + range);
+    }
+  }
 }

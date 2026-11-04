@@ -85,6 +85,10 @@ The output directory, ``results/tutorial-training-analysis/training``, holds:
    * - ``POPULATION_INDICATORS.csv``, ``POPULATION_CONFIGURATIONS.csv``
      - The same as ``INDICATORS.csv`` and ``CONFIGURATIONS.csv`` for the **whole population**
        (only with ``writePopulation: true``).
+   * - ``FEASIBILITY.csv``, ``POPULATION_FEASIBILITY.csv``
+     - Only when a training problem has constraints: for the same configurations, the number of
+       runs without feasible solutions, of runs, the fraction of feasible runs and the mean scaled
+       violation of the failed runs (:doc:`E12 <problems_with_constraints>`).
 
 The CSV files have one row per configuration and checkpoint, with the number of evaluations of the
 meta-optimizer in the first column:

@@ -2,6 +2,7 @@ package org.uma.evolver.parameter.catalogue;
 
 import java.util.List;
 import org.uma.evolver.parameter.type.CategoricalParameter;
+import org.uma.evolver.util.constrainthandling.ConstrainedBoundedArchives;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.impl.AngleArchive;
@@ -84,6 +85,30 @@ public class ExternalArchiveParameter<S extends Solution<?>> extends Categorical
       case "angleArchive" -> new AngleArchive<>(size, true);
       case "unboundedArchive" -> new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), size);
       default -> throw new JMetalException("Archive type does not exist: " + name());
+    };
+  }
+
+  /**
+   * Like {@link #getExternalArchive()}, for an algorithm that handles constraints: the bounded
+   * archives compare solutions with Deb's constrained-domination principle, as the unbounded one
+   * already does (see {@link ConstrainedBoundedArchives}), so that an infeasible solution does not
+   * displace a feasible one.
+   *
+   * @return A configured Archive implementation based on the current parameter value
+   * @throws JMetalException if the current value does not match any known archive type
+   */
+  public Archive<S> getConstrainedExternalArchive() {
+    return switch (value()) {
+      case "crowdingDistanceArchive" -> ConstrainedBoundedArchives.crowdingDistance(size);
+      case "hypervolumeArchive" -> ConstrainedBoundedArchives.hypervolume(size);
+      case "spatialSpreadDeviationArchive" ->
+          ConstrainedBoundedArchives.spatialSpreadDeviation(size);
+      case "knnDistanceArchive" -> {
+        int k = (Integer) findConditionalParameter("knnDistanceArchiveK").value();
+        yield ConstrainedBoundedArchives.knnDistance(size, k);
+      }
+      case "angleArchive" -> ConstrainedBoundedArchives.angle(size, true);
+      default -> getExternalArchive();
     };
   }
 

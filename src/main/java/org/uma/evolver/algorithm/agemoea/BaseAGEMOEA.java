@@ -16,16 +16,20 @@ import org.uma.jmetal.component.catalogue.common.termination.Termination;
 import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.component.catalogue.ea.replacement.Replacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.AGEMOEAReplacement;
+import org.uma.jmetal.component.catalogue.ea.replacement.impl.ConstraintHandlingReplacement;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.agemoea.AGEMOEA2EnvironmentalSelection;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.agemoea.AGEMOEAEnvironmentalSelection;
 import org.uma.jmetal.component.catalogue.ea.replacement.impl.agemoea.SurvivalScoreComparator;
 import org.uma.jmetal.component.catalogue.ea.selection.Selection;
 import org.uma.jmetal.component.catalogue.ea.variation.Variation;
+import org.uma.jmetal.component.util.RunProgress;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.constrainthandling.ConstraintHandlingTechnique;
 import org.uma.jmetal.util.errorchecking.Check;
 import org.uma.jmetal.util.errorchecking.JMetalException;
+import org.uma.jmetal.util.ranking.Ranking;
 
 /**
  * Abstract base class for configurable AGE-MOEA (Adaptive GEometry-based Many-Objective
@@ -41,6 +45,15 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * with the Minkowski distance of order {@code p}, or {@code agemoeaII}, which estimates {@code p}
  * with Newton-Raphson from the point closest to the ideal point and approximates geodesic
  * distances on the front. The implementation of both is jMetal's.
+ *
+ * <p>Problems with constraints: if the parameter space has the {@code constraintHandling} parameter
+ * ({@code AGEMOEADoubleConstrained.yaml}), the algorithm uses the constraint-handling technique of
+ * jMetal that it selects (see {@link ConstraintHandlingParameter}): the environmental selection
+ * sorts the population into fronts with the ranking of the technique, the tournament compares those
+ * ranks, the technique is updated once per generation with the progress of the run ({@link
+ * ConstraintHandlingReplacement}, {@link RunProgress}), and the bounded external archives compare
+ * solutions with the constrained-domination principle. Without the parameter (e.g. {@code
+ * AGEMOEADouble.yaml}) none of this happens, and the constraints are ignored.
  *
  * <p>Subclasses must implement {@link #setNonConfigurableParameters()} to set any parameters
  * derived from the problem instance.
@@ -59,6 +72,21 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
   protected int offspringPopulationSize;
   protected int maximumNumberOfEvaluations;
   protected Archive<S> externalArchive;
+
+  /**
+   * The constraint-handling technique, or {@code null} if the parameter space has no {@code
+   * constraintHandling} parameter.
+   */
+  protected ConstraintHandlingTechnique<S> constraintHandlingTechnique;
+
+  /** The progress of the run, which the constraint-handling technique follows (if there is one). */
+  protected RunProgress progress;
+
+  /**
+   * The ranking of the constraint-handling technique, shared by the environmental selection, which
+   * computes the ranks, and the tournament, which compares them ({@code null} without a technique).
+   */
+  protected Ranking<S> ranking;
 
   protected BaseAGEMOEA(int populationSize, ParameterSpace parameterSpace) {
     this.parameterSpace = parameterSpace;
@@ -84,6 +112,7 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
   @Override
   public EvolutionaryAlgorithm<S> build() {
     setNonConfigurableParameters();
+    configureConstraintHandling();
     Archive<S> archive = null;
     if (usingExternalArchive()) {
       archive = createExternalArchive();
@@ -97,16 +126,21 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
     Replacement<S> replacement = createReplacement();
     Termination termination = createTermination();
 
-    return new EvolutionaryAlgorithmBuilder<S>()
-        .build(
-            algorithmName(),
-            initialSolutionsCreation,
-            evaluation,
-            termination,
-            selection,
-            variation,
-            replacement,
-            archive);
+    EvolutionaryAlgorithm<S> algorithm =
+        new EvolutionaryAlgorithmBuilder<S>()
+            .build(
+                algorithmName(),
+                initialSolutionsCreation,
+                evaluation,
+                termination,
+                selection,
+                variation,
+                replacement,
+                archive);
+    if (usingConstraintHandling()) {
+      progress.bind(algorithm::termination, algorithm::attributes);
+    }
+    return algorithm;
   }
 
   protected abstract void setNonConfigurableParameters();
@@ -116,7 +150,9 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
         (ExternalArchiveParameter<S>) parameterSpace.get("archiveType");
 
     externalArchiveParameter.setSize(populationSize);
-    return externalArchiveParameter.getExternalArchive();
+    return usingConstraintHandling()
+        ? externalArchiveParameter.getConstrainedExternalArchive()
+        : externalArchiveParameter.getExternalArchive();
   }
 
   private boolean usingExternalArchive() {
@@ -146,8 +182,12 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
 
   protected Selection<S> createSelection(Variation<S> variation) {
     var selectionParameter = (SelectionParameter<S>) parameterSpace.get("selection");
+    // With a constraint-handling technique, the tournament compares the ranks of its ranking
     return selectionParameter.getSelection(
-        variation.matingPoolSize(), new SurvivalScoreComparator<>());
+        variation.matingPoolSize(),
+        usingConstraintHandling()
+            ? new SurvivalScoreComparator<>(ranking)
+            : new SurvivalScoreComparator<>());
   }
 
   protected Variation<S> createVariation() {
@@ -179,7 +219,9 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
 
   /**
    * Builds the replacement of the configured variant: the environmental selection of AGE-MOEA
-   * ({@code agemoea}) or that of AGE-MOEA-II ({@code agemoeaII}).
+   * ({@code agemoea}) or that of AGE-MOEA-II ({@code agemoeaII}); with a constraint-handling
+   * technique, it sorts the population with the ranking of the technique, updated once per
+   * generation.
    *
    * @return the replacement strategy configured with the requested environmental selection
    */
@@ -187,11 +229,46 @@ public abstract class BaseAGEMOEA<S extends Solution<?>> implements BaseLevelAlg
     int numberOfObjectives = problem.numberOfObjectives();
     AGEMOEAEnvironmentalSelection<S> environmentalSelection =
         switch (replacementVariant()) {
-          case "agemoea" -> new AGEMOEAEnvironmentalSelection<>(numberOfObjectives);
-          case "agemoeaII" -> new AGEMOEA2EnvironmentalSelection<>(numberOfObjectives);
+          case "agemoea" ->
+              usingConstraintHandling()
+                  ? new AGEMOEAEnvironmentalSelection<>(numberOfObjectives, ranking)
+                  : new AGEMOEAEnvironmentalSelection<>(numberOfObjectives);
+          case "agemoeaII" ->
+              usingConstraintHandling()
+                  ? new AGEMOEA2EnvironmentalSelection<>(numberOfObjectives, ranking)
+                  : new AGEMOEA2EnvironmentalSelection<>(numberOfObjectives);
           default ->
               throw new JMetalException("AGE-MOEA replacement unknown: " + replacementVariant());
         };
-    return new AGEMOEAReplacement<>(environmentalSelection);
+    Replacement<S> replacement = new AGEMOEAReplacement<>(environmentalSelection);
+    return usingConstraintHandling()
+        ? new ConstraintHandlingReplacement<>(constraintHandlingTechnique, replacement, progress)
+        : replacement;
+  }
+
+  /**
+   * Sets the constraint-handling technique if the parameter space has the {@code
+   * constraintHandling} parameter. Without the parameter it does nothing.
+   */
+  protected void configureConstraintHandling() {
+    if (!parameterSpace.parameters().containsKey(ConstraintHandlingParameter.DEFAULT_NAME)) {
+      constraintHandlingTechnique = null;
+      progress = null;
+      ranking = null;
+      return;
+    }
+    constraintHandlingTechnique = ConstraintHandlingParameter.technique(parameterSpace);
+    progress = new RunProgress();
+    ranking = constraintHandlingTechnique.ranking();
+  }
+
+  /**
+   * Checks whether the algorithm handles the constraints of the problem, that is, whether its
+   * parameter space has the {@code constraintHandling} parameter.
+   *
+   * @return {@code true} if a constraint-handling technique is used
+   */
+  protected boolean usingConstraintHandling() {
+    return constraintHandlingTechnique != null;
   }
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-## Target runner of irace that evaluates on Evolver's evaluation server (tutorial E15): an experiment
+## Target runner of irace that evaluates on Evolver's evaluation server (tutorial E16): an experiment
 ## (a configuration of NSGA-II on a problem) is sent to the server, which runs it in its own Java
 ## virtual machine, so that no virtual machine is started per experiment. Start the server first
 ## (run.sh does it when EVOLVER_SERVER is set):

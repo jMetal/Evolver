@@ -4,7 +4,7 @@
 
   <groupId>org.uma.jmetal</groupId>
   <artifactId>Evolver</artifactId>
-  <version>2.5</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Evolver</name>
@@ -14,7 +14,7 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmetal.version>7.8</jmetal.version>
+    <jmetal.version>7.10</jmetal.version>
     <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>

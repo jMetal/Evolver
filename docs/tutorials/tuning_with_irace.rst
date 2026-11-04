@@ -1,6 +1,6 @@
 .. _irace_integration:
 
-E15. Tuning with irace
+E16. Tuning with irace
 ======================
 
 :Level: Advanced
@@ -347,7 +347,7 @@ Try it yourself
 What's next
 -----------
 
-- :doc:`E16 <tuning_with_smac3>` tunes the same algorithm with SMAC3, on the evaluation server of
+- :doc:`E17 <tuning_with_smac3>` tunes the same algorithm with SMAC3, on the evaluation server of
   Step 7.
 - :doc:`E8 <validating_a_configuration>` covers the validation of a configuration.
 - :doc:`E3 <meta_optimization_workflow>` and :doc:`E7 <analyzing_training_results>` show Evolver's

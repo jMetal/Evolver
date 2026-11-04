@@ -1,6 +1,6 @@
 .. _tutorial_ablation:
 
-E12. Ablation: Which Components Matter
+E13. Ablation: Which Components Matter
 ======================================
 
 :Level: Advanced
