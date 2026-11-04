@@ -79,8 +79,8 @@ infeasible ones in red.
 Step 3: measuring a run
 -----------------------
 
-The quality indicators of a run (EP, NHV, ...) are computed on its **feasible** solutions only: an
-infeasible solution is not a solution of the problem, and it may lie beyond the true front, where it
+In a training, and in the code of this tutorial, the quality indicators of a run (EP, NHV, ...) are
+computed on its **feasible** solutions only: an infeasible solution is not a solution of the problem, and it may lie beyond the true front, where it
 would make the run look better than it is. A run is therefore described by two things: whether it
 found feasible solutions, and their quality.
 
@@ -144,6 +144,8 @@ where :math:`k` is the number of runs, over all the problems, without feasible s
 :math:`\bar{v}`, in [0, 1), is the mean violation of those runs, scaled by problem; and :math:`Q` is
 the mean over the problems of the median of the indicator on the feasible runs, capped at a
 threshold (1 for ICMOP, EP and NHV), which is also the value of a problem without feasible runs.
+Every indicator of the training becomes this way its version with constraints, :math:`C(I)` in
+:ref:`evaluation`, in which only :math:`Q` depends on the indicator.
 
 Each failed run adds 6, more than the other two terms together, so a configuration with fewer failed
 runs is always better; with the same number of failed runs, the one closer to the feasible region
@@ -152,8 +154,11 @@ aggregation. With one run on one problem, as in this tutorial, a configuration w
 solutions has values of at most 1, and one without them has values of 6 or more.
 
 The meta-objectives used here are ICMOP and EP, as recommended in :ref:`evaluation` (section
-*Choosing the indicators*): ICMOP should not be used alone, since once every run is feasible it is a
-single indicator, the hypervolume.
+*Choosing the indicators*). Both follow the same scheme and differ only in the quality of the
+feasible runs: minus the hypervolume (or the distance to the region of interest) for ICMOP, the
+additive epsilon for EP. While every run fails they have the same value, :math:`6k + 2\bar{v} + 1`;
+ICMOP should not be used alone, since once every run is feasible it is a single indicator, the
+hypervolume.
 
 Step 6: tuning NSGA-II for DASCMOP5
 -----------------------------------
