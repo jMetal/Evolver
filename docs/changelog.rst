@@ -5,6 +5,14 @@ Changelog
 
 All notable changes to Evolver will be documented in this file.
 
+3.0-SNAPSHOT
+------------
+
+Changed
+~~~~~~~
+
+- (nothing yet)
+
 2.6 (2026-11-05)
 ----------------
 
