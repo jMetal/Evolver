@@ -162,6 +162,9 @@ Changed
   overflowed with low temperatures; the ``scatterSearch`` initial solutions; the
   ``selfAdaptivePenalty`` technique on CF9-CF16, which penalized the most violated solutions the
   least; and the problems LIR-CMOP1-14 and CF10, whose definitions are fixed
+- Evolver depends on jMetal 7.11, which only adds ways to start algorithms from given solutions
+  (the initial population of SMS-EMOA and MOEA/D, the initial solution of PAES and the initial
+  solutions of the asynchronous genetic algorithms): results do not change
 - Configurations evaluated in parallel threads (parallel meta-optimizers, the evaluation server
   with concurrent requests) no longer contend for jMetal's single random generator: each thread gets
   its own (jMetal's ``ThreadLocalRandomGenerator``). 40 runs of NSGA-II on 20 threads took 23 s, and
