@@ -48,9 +48,12 @@ separates feasible from infeasible results, to several runs and problems:
    runs, and :math:`Q` the mean over the problems of the median of the indicator over their feasible
    runs (:math:`\tau^*` for a problem without them).
 
-Each failed run adds more than the other two terms can, so configurations are ordered as in the
-competitions on constrained optimization: fewer failed runs first, then less violation, then
-better quality. No failed run is hidden by the aggregation, whatever its problem. Since :math:`k`
+Each failed run adds more than the other two terms can, so a configuration with fewer failed runs is
+always better. With the same number of failed runs, the violation and the quality are added,
+:math:`2\bar{v} + Q`: without failed runs only the quality counts; with them, less violation is better
+when the quality is the same, but a better quality can make up for a higher violation (the order
+between them is not strict, unlike in the competitions on constrained optimization). No failed run is
+hidden by the aggregation, whatever its problem. Since :math:`k`
 and :math:`\bar{v}` are the same for every indicator, a configuration with fewer failed runs is
 better in all the objectives.
 

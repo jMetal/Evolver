@@ -119,7 +119,7 @@ public class ProblemsWithConstraintsTutorial {
 
     // [step-3-start]
     Map<Integer, int[]> feasibleConfigurations =
-        feasibleConfigurations(results.resolve("POPULATION_INDICATORS.csv"));
+        feasibleConfigurations(results.resolve("POPULATION_FEASIBILITY.csv"));
     for (int evaluation : List.of(50, 100, 150, 200, 250, 300, 500, 1000, 2000)) {
       int[] counts = feasibleConfigurations.get(evaluation);
       System.out.printf(
@@ -184,20 +184,19 @@ public class ProblemsWithConstraintsTutorial {
   }
 
   /**
-   * For each checkpoint of {@code POPULATION_INDICATORS.csv}, the number of configurations of the
-   * population that found feasible solutions (ICMOP at most 1: with one run on one problem, a
-   * configuration without them has 6 or more) and the size of the population.
+   * For each checkpoint of {@code POPULATION_FEASIBILITY.csv}, the number of configurations of the
+   * population without failed runs (runs without feasible solutions) and the size of the population.
    */
-  private static Map<Integer, int[]> feasibleConfigurations(Path populationIndicators)
+  private static Map<Integer, int[]> feasibleConfigurations(Path populationFeasibility)
       throws IOException {
     Map<Integer, int[]> counts = new TreeMap<>();
-    List<String> lines = Files.readAllLines(populationIndicators);
+    List<String> lines = Files.readAllLines(populationFeasibility);
     List<String> header = Arrays.asList(lines.get(0).split(","));
-    int icmopColumn = header.indexOf("ICMOP");
+    int failedRunsColumn = header.indexOf("FailedRuns");
     for (String line : lines.subList(1, lines.size())) {
       String[] values = line.split(",");
       int[] count = counts.computeIfAbsent(Integer.parseInt(values[0]), key -> new int[2]);
-      count[0] += Double.parseDouble(values[icmopColumn]) <= 1.0 ? 1 : 0;
+      count[0] += Integer.parseInt(values[failedRunsColumn]) == 0 ? 1 : 0;
       count[1]++;
     }
     return counts;

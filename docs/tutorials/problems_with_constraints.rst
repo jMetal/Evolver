@@ -4,8 +4,8 @@ E12. Problems with Constraints
 ==============================
 
 :Level: Intermediate
-:Version: 1.0 (2026-10-29)
-:Time: about 40 minutes, of which the code of the tutorial runs about 5
+:Version: 1.1 (2026-11-23)
+:Time: about 40 minutes, of which the code of the tutorial runs about 2
 :Timings measured on: Apple M5 Pro (18 cores, 14 of them used by the training), 64 GB of RAM,
    macOS 26.6.2, Java 21.0.12 (Oracle JDK)
 :Prerequisites: :doc:`E3. Meta-optimization workflow <meta_optimization_workflow>`,
@@ -68,6 +68,13 @@ jMetal:
    * - ``selfAdaptivePenalty``
      - The objectives are penalized with the violation, with a penalty that adapts to the fraction
        of feasible solutions of the population.
+
+The other algorithms handle constraints in the same way, each one with its own parameter space,
+whose name ends in ``Constrained.yaml`` (such as ``SMSEMOADoubleConstrained.yaml``), and its default
+configuration. Two things change: MOPSO, PAES and RVEA have only ``cdp``, ``violatedConstraints``,
+``epsilonConstrained`` and ``pushPull``, and MOEA/D, which does not rank its population, has a
+``subproblemUpdateCriterion`` parameter instead (``feasibilityRules``, ``improvedEpsilon`` or
+``violationThreshold``), which selects how a new solution replaces the solution of a subproblem.
 
 Without the parameter, NSGA-II does not change: with the same seed it gives the same fronts as with
 ``NSGAIIDouble.yaml``. The examples of the package
@@ -147,11 +154,12 @@ threshold (1 for ICMOP, EP and NHV), which is also the value of a problem withou
 Every indicator of the training becomes this way its version with constraints, :math:`C(I)` in
 :ref:`evaluation`, in which only :math:`Q` depends on the indicator.
 
-Each failed run adds 6, more than the other two terms together, so a configuration with fewer failed
-runs is always better; with the same number of failed runs, the one closer to the feasible region
-is better; and only when both tie does the quality decide. No failed run is hidden by the
-aggregation. With one run on one problem, as in this tutorial, a configuration with feasible
-solutions has values of at most 1, and one without them has values of 6 or more.
+Each failed run adds 6, more than the other two terms can, so a configuration with fewer failed runs
+is always better, and no failed run is hidden by the aggregation. With the same number of failed runs,
+the violation and the quality are added: without failed runs only the quality counts, and with them
+a better quality can make up for a higher violation. With one run on one problem, as in this
+tutorial, a configuration with feasible solutions has values of at most 1, and one without them has
+values of at least 7 (:math:`6 + 2\bar{v} + 1`), which depend only on its violation.
 
 The meta-objectives used here are ICMOP and EP, as recommended in :ref:`evaluation` (section
 *Choosing the indicators*). Both follow the same scheme and differ only in the quality of the
@@ -177,7 +185,7 @@ smaller training budget makes the training affordable, and the comparison of Ste
 configuration found stays good with the full budget. The request writes a checkpoint every 10
 configurations and, with its last argument (``writePopulation``), the whole population of the
 meta-optimizer as well as its front: the front alone hides the configurations without feasible
-solutions as soon as one configuration has them. The training took 158 s.
+solutions as soon as one configuration has them. The training took 80 s.
 
 .. note::
 
@@ -186,14 +194,17 @@ solutions as soon as one configuration has them. The training took 158 s.
 
 To watch the meta-front during a training, run the example
 `AsyncNSGAIIOptimizingNSGAIIForProblemDASCMOP5 <https://github.com/jMetal/Evolver/blob/develop/src/main/java/org/uma/evolver/example/training/constrained/AsyncNSGAIIOptimizingNSGAIIForProblemDASCMOP5.java>`_,
-the same training with a live plot.
+a similar training with a live plot, in which the configurations with failed runs are drawn in red.
+Its training budget is larger (20000 evaluations), so it takes longer.
 
 Step 7: how the search reaches the feasible configurations
 ----------------------------------------------------------
 
-The third step counts, at some checkpoints of ``POPULATION_INDICATORS.csv``, the configurations of
-the population with feasible solutions (ICMOP at most 1), and chooses the configuration of the final
-front with the lowest ICMOP:
+When a training problem has constraints, the training writes ``FEASIBILITY.csv`` and, with
+``writePopulation``, ``POPULATION_FEASIBILITY.csv``: the failed runs of each configuration
+(``FailedRuns``), its runs and the mean scaled violation of the failed ones (:doc:`/utilities/cli_tools`). The
+third step counts, at some checkpoints of the latter, the configurations of the population without
+failed runs, and chooses the configuration of the final front with the lowest ICMOP:
 
 .. literalinclude:: ../../src/main/java/org/uma/evolver/example/tutorial/ProblemsWithConstraintsTutorial.java
    :language: java
@@ -208,22 +219,18 @@ front with the lowest ICMOP:
    * - Evaluation
      - Configurations with feasible solutions
    * - 50
-     - 4 of 50
+     - 3 of 50
    * - 100
-     - 10 of 50
+     - 11 of 50
    * - 150
-     - 14 of 50
-   * - 200
      - 31 of 50
-   * - 250
-     - 45 of 50
-   * - 300 and later
+   * - 200 and later
      - 50 of 50
 
 The asynchronous NSGA-II adds every configuration to its population until it has 50, so the
-checkpoint at evaluation 50 is the random initial population: 46 of its 50 configurations fail.
+checkpoint at evaluation 50 is the random initial population: 47 of its 50 configurations fail.
 Random configurations are much worse than the default one, which fails in 5 of 15 runs. The failed
-configurations are then replaced, and from evaluation 300 every configuration of the population
+configurations are then replaced, and from evaluation 200 every configuration of the population
 finds feasible solutions; from then on the search improves their quality. Later, a configuration
 that fails is discarded as soon as it is evaluated, so the population does not show every failure,
 only when the search stops producing them often.
@@ -249,19 +256,22 @@ evaluations:
    * - Default (``cdp``)
      - feasible in 10 of 15 runs, median ICMOP −0.001
    * - Tuned
-     - feasible in 15 of 15 runs, median ICMOP −0.622
+     - feasible in 15 of 15 runs, median ICMOP −0.627
 
 The tuned configuration finds feasible solutions in every run, and its median ICMOP is close to the
-value of the reference front. The meta-optimizer is stochastic, and two trainings do not give the
-same configuration: in this one, the chosen configuration uses ``pushPull``, an offspring population
-of 5 and Boltzmann selection; in another training it used ``cdp``, whole arithmetic crossover and
-stochastic universal sampling, and was feasible in 14 of 15 runs with a median ICMOP of −0.615.
-Different configurations of similar quality are usual when the training set is a single problem.
+value of the reference front (−0.641). The meta-optimizer is stochastic, and two trainings do not
+give the same configuration. In this one, the chosen configuration uses ``pushPull``, an offspring
+population of 20 and tournament selection. In two other trainings it also used ``pushPull``, with an
+offspring population of 10 and Boltzmann selection in one, and of 50 and ranking selection in the
+other; both were feasible in 15 of 15 runs, with median ICMOP values of −0.629 and −0.626. Different
+configurations of similar quality are usual when the training set is a single problem.
 
 This comparison is on the problem of the training, with 15 runs: it shows that the training worked,
 not that the configuration generalizes. Choosing a training set of several problems with
 constraints, and validating on problems not seen in the training (:doc:`E8
-<validating_a_configuration>`), is the subject of a planned advanced tutorial.
+<validating_a_configuration>`), is the subject of a planned advanced tutorial. The example
+`AsyncNSGAIIOptimizingNSGAIIForBenchmarkMW <https://github.com/jMetal/Evolver/blob/develop/src/main/java/org/uma/evolver/example/training/constrained/AsyncNSGAIIOptimizingNSGAIIForBenchmarkMW.java>`_
+is a training of that kind, with five problems of the MW suite.
 
 Try it yourself
 ---------------

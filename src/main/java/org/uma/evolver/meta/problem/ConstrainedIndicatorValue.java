@@ -28,12 +28,15 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  *       more than the other two terms together, so a configuration with fewer such runs is always
  *       better;
  *   <li>{@code v} is the mean scaled violation of those runs (see {@link #scaledViolation}), in [0,
- *       1): with the same number of failed runs, the one closer to the feasible region is better;
+ *       1);
  *   <li>{@code Q} is the mean over the problems of the median of the indicator over their feasible
  *       runs, kept in [τ* - 2, τ*] with τ* the {@link #threshold} of the indicator (see {@link
- *       #bounded}), which is also the value of a problem without feasible runs: the quality, which
- *       only decides when the rest tie.
+ *       #bounded}), which is also the value of a problem without feasible runs: the quality.
  * </ul>
+ *
+ * <p>The order is strict only for {@code k}: between configurations with the same number of failed
+ * runs, {@code 2v + Q} adds the violation and the quality, so a better quality can make up for a
+ * higher violation.
  *
  * <p>The indicator of Vodopija et al. itself, {@link ConstrainedMultiobjectiveIndicator} (ICMOP),
  * can be one of the indicators: its value on the feasible solutions of a run is in [-1, τ*], so it

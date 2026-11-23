@@ -17,6 +17,17 @@ Added
   ``NSGAIIDoubleConstrainedFixedSize.yaml``, ``NSGAIIDoubleConstrained.yaml`` with the population
   and the offspring fixed at 100
 
+Changed
+~~~~~~~
+
+- Tutorial E12, "Problems with constraints", version 1.1: the training is measured again with
+  jMetal 7.11, the feasible configurations are counted from ``POPULATION_FEASIBILITY.csv``, and it
+  says how the other algorithms handle constraints
+- The documentation of the evaluation on problems with constraints (``evaluation.rst``, tutorial E12
+  and the Javadoc of ``ConstrainedIndicatorValue``) no longer says that the violation decides before
+  the quality between configurations with the same number of failed runs: they are added. The
+  values do not change
+
 2.6 (2026-11-05)
 ----------------
 
