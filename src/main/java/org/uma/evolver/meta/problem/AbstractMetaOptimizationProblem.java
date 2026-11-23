@@ -33,8 +33,7 @@ import org.uma.jmetal.util.pseudorandom.impl.ThreadLocalRandomGenerator;
  *
  * <p>If a problem of the training set has constraints, the indicators are computed on the feasible
  * solutions of each run, and the value of a configuration puts feasibility first (see {@link
- * ConstrainedIndicatorValue}): runs without feasible solutions count before their violation, and
- * that before the quality. Without constraints the evaluation is the usual one.
+ * ConstrainedIndicatorValue}): fewer runs without feasible solutions are always better. Without constraints the evaluation is the usual one.
  *
  * <p>The indicators of each problem are built once, with its reference front, when the problem is
  * created, and are shared by every evaluation: setting the reference front of the normalized
@@ -88,7 +87,11 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   private record ProblemSummary(double[] values, int failedRuns, double sumOfScaledViolations) {}
 
   /** What the evaluation of a configuration gives: its objectives and, with constraints, more. */
-  private record Evaluation(double[] objectives, int failedRuns, double sumOfScaledViolations) {}
+  private record Evaluation(
+      double[] objectives,
+      int failedRuns,
+      double sumOfScaledViolations,
+      List<ProblemFeasibility> feasibilityByProblem) {}
 
   protected AbstractMetaOptimizationProblem(
       BaseLevelAlgorithm<S> baseAlgorithm,
@@ -212,6 +215,8 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       solution.attributes().put(
           ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION,
           failedRuns == 0 ? 0.0 : evaluation.sumOfScaledViolations() / failedRuns);
+      solution.attributes().put(
+          ConstrainedIndicatorValue.FEASIBILITY_BY_PROBLEM, evaluation.feasibilityByProblem());
     }
     return solution;
   }
@@ -219,8 +224,9 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
   /**
    * Whether some training problem has constraints, so that configurations are evaluated as {@link
    * ConstrainedIndicatorValue} describes and carry its attributes ({@link
-   * ConstrainedIndicatorValue#FAILED_RUNS}, {@link ConstrainedIndicatorValue#RUNS} and {@link
-   * ConstrainedIndicatorValue#MEAN_SCALED_VIOLATION}).
+   * ConstrainedIndicatorValue#FAILED_RUNS}, {@link ConstrainedIndicatorValue#RUNS}, {@link
+   * ConstrainedIndicatorValue#MEAN_SCALED_VIOLATION} and {@link
+   * ConstrainedIndicatorValue#FEASIBILITY_BY_PROBLEM}).
    *
    * @return {@code true} if some training problem has constraints
    */
@@ -274,7 +280,7 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
       }
       objectives[i] = sum / problems.size();
     }
-    return new Evaluation(objectives, 0, 0.0);
+    return new Evaluation(objectives, 0, 0.0, List.of());
   }
 
   /**
@@ -378,7 +384,22 @@ public abstract class AbstractMetaOptimizationProblem<S extends Solution<?>, MET
               ? mean
               : ConstrainedIndicatorValue.value(failedRuns, sumOfScaledViolations, mean);
     }
-    return new Evaluation(objectives, failedRuns, sumOfScaledViolations);
+    return new Evaluation(objectives, failedRuns, sumOfScaledViolations, feasibility(summaries));
+  }
+
+  /** The feasibility of the runs on each problem. */
+  private List<ProblemFeasibility> feasibility(ProblemSummary[] summaries) {
+    List<ProblemFeasibility> feasibility = new ArrayList<>();
+    for (int id = 0; id < summaries.length; id++) {
+      int failed = summaries[id].failedRuns();
+      feasibility.add(
+          new ProblemFeasibility(
+              problems.get(id).name(),
+              failed,
+              numberOfIndependentRuns,
+              failed == 0 ? 0.0 : summaries[id].sumOfScaledViolations() / failed));
+    }
+    return List.copyOf(feasibility);
   }
 
   /**

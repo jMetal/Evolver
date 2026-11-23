@@ -33,7 +33,8 @@ import org.uma.jmetal.util.observer.Observer;
  *       {@link #writePopulation(boolean)}: the same as INDICATORS.csv and CONFIGURATIONS.csv for
  *       the whole population, not only its non-dominated solutions</li>
  *   <li>FEASIBILITY.csv and POPULATION_FEASIBILITY.csv, only when a training problem has
- *       constraints: the diagnosis of feasibility of the same configurations (see {@link
+ *       constraints: the diagnosis of feasibility of the same configurations, also by training
+ *       problem in FEASIBILITY_BY_PROBLEM.csv and POPULATION_FEASIBILITY_BY_PROBLEM.csv (see {@link
  *       FeasibilityOutput})</li>
  * </ul>
  *
@@ -216,17 +217,9 @@ public class TreeOutputResults implements Observer<Map<String, Object>> {
     }
     // The diagnosis of feasibility, only when a training problem has constraints
     if (problem.constrained()) {
-      FeasibilityOutput.write(
-          outputDirectoryName,
-          FeasibilityOutput.FEASIBILITY_FILE,
-          evaluations,
-          nonDominatedSolutions);
+      FeasibilityOutput.writeFront(outputDirectoryName, evaluations, nonDominatedSolutions);
       if (writePopulation) {
-        FeasibilityOutput.write(
-            outputDirectoryName,
-            FeasibilityOutput.POPULATION_FEASIBILITY_FILE,
-            evaluations,
-            solutions);
+        FeasibilityOutput.writePopulation(outputDirectoryName, evaluations, solutions);
       }
     }
     computingTimeMillis = null;

@@ -37,7 +37,8 @@ import org.uma.jmetal.util.errorchecking.JMetalException;
  * {@link #writePopulation(boolean)}, the whole population of each checkpoint is also written, in the
  * same formats, to POPULATION_INDICATORS.csv and POPULATION_CONFIGURATIONS.csv. When a training
  * problem has constraints, FEASIBILITY.csv (and POPULATION_FEASIBILITY.csv) give the diagnosis of
- * feasibility of the same configurations (see {@link FeasibilityOutput}).
+ * feasibility of the same configurations, also by training problem in FEASIBILITY_BY_PROBLEM.csv
+ * and POPULATION_FEASIBILITY_BY_PROBLEM.csv (see {@link FeasibilityOutput}).
  */
 public class ConsolidatedOutputResults implements EvaluationOutputWriter {
 
@@ -248,17 +249,9 @@ public class ConsolidatedOutputResults implements EvaluationOutputWriter {
         }
         // The diagnosis of feasibility, only when a training problem has constraints
         if (configurableAlgorithmProblem.constrained()) {
-            FeasibilityOutput.write(
-                    outputDirectoryName,
-                    FeasibilityOutput.FEASIBILITY_FILE,
-                    evaluations,
-                    nonDominatedSolutions);
+            FeasibilityOutput.writeFront(outputDirectoryName, evaluations, nonDominatedSolutions);
             if (writePopulation) {
-                FeasibilityOutput.write(
-                        outputDirectoryName,
-                        FeasibilityOutput.POPULATION_FEASIBILITY_FILE,
-                        evaluations,
-                        solutions);
+                FeasibilityOutput.writePopulation(outputDirectoryName, evaluations, solutions);
             }
         }
         computingTimeMillis = null;

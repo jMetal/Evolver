@@ -16,6 +16,7 @@ import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
+import org.uma.evolver.util.ConstrainedEpsilon;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.problem.multiobjective.lircmop.LIRCMOP2;
@@ -186,5 +187,67 @@ class MetaOptimizationProblemConstrainedTest {
     // Assert
     assertFalse(meta.constrained());
     assertFalse(configuration.attributes().containsKey(ConstrainedIndicatorValue.FAILED_RUNS));
+  }
+
+  @Test
+  @DisplayName("an evaluated configuration carries its feasibility on each problem")
+  void givenTwoProblems_whenAConfigurationIsEvaluated_thenItCarriesItsFeasibilityByProblem() {
+    // Arrange: without a technique, NSGA-II fails on LIR-CMOP2; ZDT1 has no constraints
+    JMetalRandom.getInstance().setSeed(5);
+    var meta =
+        new MetaOptimizationProblem<>(
+            new DoubleNSGAII(
+                100, new YAMLParameterSpace("NSGAIIDouble.yaml", new DoubleParameterFactory())),
+            List.<Problem<DoubleSolution>>of(new LIRCMOP2(), new ZDT1()),
+            List.of("resources/referenceFronts/LIRCMOP2.csv", "resources/referenceFronts/ZDT1.csv"),
+            List.<QualityIndicator>of(new Epsilon()),
+            new FixedEvaluationsStrategy(List.of(1000, 1000)),
+            2);
+    DoubleSolution configuration = meta.createSolution();
+
+    // Act
+    meta.evaluate(configuration);
+
+    // Assert
+    var byProblem =
+        assertInstanceOf(
+            List.class,
+            configuration.attributes().get(ConstrainedIndicatorValue.FEASIBILITY_BY_PROBLEM));
+    assertEquals(2, byProblem.size());
+    var lircmop2 = assertInstanceOf(ProblemFeasibility.class, byProblem.get(0));
+    assertEquals(2, lircmop2.runs());
+    assertEquals(
+        configuration.attributes().get(ConstrainedIndicatorValue.FAILED_RUNS),
+        lircmop2.failedRuns());
+    assertEquals(
+        configuration.attributes().get(ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION),
+        lircmop2.meanScaledViolation());
+    assertEquals(new ProblemFeasibility(new ZDT1().name(), 0, 2, 0.0), byProblem.get(1));
+  }
+
+  @Test
+  @DisplayName("in a training, ConstrainedEpsilon has the values of Epsilon")
+  void givenConstrainedEpsilon_whenAConfigurationIsEvaluated_thenItsValueIsThatOfEpsilon()
+      throws IOException {
+    // Arrange
+    JMetalRandom.getInstance().setSeed(5);
+    var meta =
+        new MetaOptimizationProblem<>(
+            new DoubleNSGAII(
+                100,
+                new YAMLParameterSpace(
+                    "NSGAIIDoubleConstrained.yaml", new DoubleParameterFactory())),
+            List.<Problem<DoubleSolution>>of(new Srinivas()),
+            List.of("resources/referenceFronts/Srinivas.csv"),
+            List.<QualityIndicator>of(new Epsilon(), new ConstrainedEpsilon()),
+            new FixedEvaluationsStrategy(List.of(2000)),
+            2);
+
+    // Act
+    double[] values =
+        meta.evaluateConfiguration(configuration("NSGAIIDoubleConstrainedDefault.txt"));
+
+    // Assert
+    assertEquals(values[0], values[1], 1e-9);
   }
 }

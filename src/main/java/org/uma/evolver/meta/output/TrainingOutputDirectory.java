@@ -22,7 +22,9 @@ final class TrainingOutputDirectory {
           "POPULATION_INDICATORS.csv",
           "POPULATION_CONFIGURATIONS.csv",
           FeasibilityOutput.FEASIBILITY_FILE,
-          FeasibilityOutput.POPULATION_FEASIBILITY_FILE);
+          FeasibilityOutput.POPULATION_FEASIBILITY_FILE,
+          FeasibilityOutput.FEASIBILITY_BY_PROBLEM_FILE,
+          FeasibilityOutput.POPULATION_FEASIBILITY_BY_PROBLEM_FILE);
 
   private TrainingOutputDirectory() {}
 

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.uma.evolver.algorithm.nsgaii.DoubleNSGAII;
 import org.uma.evolver.meta.problem.ConstrainedIndicatorValue;
 import org.uma.evolver.meta.problem.MetaOptimizationProblem;
+import org.uma.evolver.meta.problem.ProblemFeasibility;
 import org.uma.evolver.meta.strategy.FixedEvaluationsStrategy;
 import org.uma.evolver.parameter.factory.DoubleParameterFactory;
 import org.uma.evolver.parameter.yaml.YAMLParameterSpace;
@@ -94,6 +95,7 @@ class ConsolidatedOutputResultsTest {
       assertFalse(Files.exists(tempDir.resolve("POPULATION_INDICATORS.csv")));
       assertFalse(Files.exists(tempDir.resolve("POPULATION_CONFIGURATIONS.csv")));
       assertFalse(Files.exists(tempDir.resolve("FEASIBILITY.csv")));
+      assertFalse(Files.exists(tempDir.resolve("FEASIBILITY_BY_PROBLEM.csv")));
     }
 
     @Test
@@ -156,6 +158,11 @@ class ConsolidatedOutputResultsTest {
       solution.attributes().put(ConstrainedIndicatorValue.FAILED_RUNS, failedRuns);
       solution.attributes().put(ConstrainedIndicatorValue.RUNS, 2);
       solution.attributes().put(ConstrainedIndicatorValue.MEAN_SCALED_VIOLATION, violation);
+      solution
+          .attributes()
+          .put(
+              ConstrainedIndicatorValue.FEASIBILITY_BY_PROBLEM,
+              List.of(new ProblemFeasibility("Srinivas", failedRuns, 2, violation)));
       return solution;
     }
 
@@ -193,6 +200,15 @@ class ConsolidatedOutputResultsTest {
       List<String> population = Files.readAllLines(tempDir.resolve("POPULATION_FEASIBILITY.csv"));
       assertEquals(4, population.size());
       assertEquals("50,2,1,2,0.5,0.2", population.get(3));
+      assertEquals(
+          List.of(
+              "Evaluation,SolutionId,ProblemId,Problem,FailedRuns,Runs,MeanScaledViolation",
+              "50,0,0,Srinivas,0,2,0.0",
+              "50,1,0,Srinivas,0,2,0.0"),
+          Files.readAllLines(tempDir.resolve("FEASIBILITY_BY_PROBLEM.csv")));
+      assertEquals(
+          "50,2,0,Srinivas,1,2,0.2",
+          Files.readAllLines(tempDir.resolve("POPULATION_FEASIBILITY_BY_PROBLEM.csv")).get(3));
     }
   }
 
