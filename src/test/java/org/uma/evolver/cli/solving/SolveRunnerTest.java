@@ -70,6 +70,7 @@ class SolveRunnerTest {
       assertTrue(Files.exists(outputDirectory.resolve("run-1/VAR.csv")));
       assertTrue(Files.exists(outputDirectory.resolve("run-1/FUN.csv")));
       assertTrue(Files.exists(outputDirectory.resolve("run-2/FUN.csv")));
+      assertFalse(Files.exists(outputDirectory.resolve("run-1/CV.csv")));
       assertTrue(Files.exists(outputDirectory.resolve("METADATA.txt")));
       List<String> indicators = Files.readAllLines(outputDirectory.resolve("INDICATORS.csv"));
       assertEquals("Run,Seed,TimeMs,EP,NHV", indicators.get(0));
@@ -83,8 +84,8 @@ class SolveRunnerTest {
 
     @Test
     @DisplayName(
-        "given ICMOP on a problem with constraints, when the result has no feasible solution, then"
-            + " its value is above the threshold")
+        "given ICMOP and CEP on a problem with constraints, when the result has no feasible"
+            + " solution, then their values are above the threshold and CV.csv is written")
     void givenIcmopOnAConstrainedProblem_whenNoFeasibleSolution_thenTheValueIsAboveTheThreshold()
         throws IOException {
       // Arrange: NSGA-II without a constraint-handling technique does not reach the feasible region
@@ -105,7 +106,7 @@ class SolveRunnerTest {
               1000,
               1,
               1L,
-              List.of("ConstrainedMultiobjectiveIndicator"),
+              List.of("ConstrainedMultiobjectiveIndicator", "ConstrainedEpsilon"),
               null,
               null,
               false,
@@ -116,9 +117,17 @@ class SolveRunnerTest {
 
       // Assert
       List<String> rows = Files.readAllLines(outputDirectory.resolve("INDICATORS.csv"));
-      assertEquals("Run,Seed,TimeMs,ICMOP", rows.get(0));
+      assertEquals("Run,Seed,TimeMs,ICMOP,CEP", rows.get(0));
       double value = Double.parseDouble(rows.get(1).split(",")[3]);
       assertTrue(value > 1.0, "ICMOP " + value);
+      assertTrue(Double.parseDouble(rows.get(1).split(",")[4]) > 1.0, rows.get(1));
+      // The violation of each solution: none is feasible, and the least one is that of CEP
+      List<String> violations = Files.readAllLines(outputDirectory.resolve("run-1/CV.csv"));
+      assertEquals(
+          Files.readAllLines(outputDirectory.resolve("run-1/FUN.csv")).size(), violations.size());
+      double least = violations.stream().mapToDouble(Double::parseDouble).min().orElseThrow();
+      assertTrue(least > 0.0);
+      assertEquals(1.0 + least, Double.parseDouble(rows.get(1).split(",")[4]), 1e-12);
     }
 
     @Test

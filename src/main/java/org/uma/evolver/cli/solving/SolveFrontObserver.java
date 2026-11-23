@@ -28,7 +28,8 @@ import org.uma.jmetal.util.observer.Observer;
  * row), 1 if the solution is non-dominated within the current population and 0 if not, and its
  * objectives. By default only the non-dominated solutions are written (so {@code NonDominated} is
  * always 1); with {@code wholePopulation}, the whole population is, which shows the dominated ones
- * too.
+ * too. If the problem has constraints, a last column, {@code Violation}, has the overall constraint
+ * violation of the solution: 0 if it is feasible and positive if not.
  *
  * <p>It is written whenever at least {@code frequency} evaluations of the run have passed since the
  * last time. With a delay, the run then pauses that long after each write, as the display delay of
@@ -119,12 +120,19 @@ final class SolveFrontObserver implements Observer<Map<String, Object>> {
         for (int objective = 1; objective <= solutions.get(0).objectives().length; objective++) {
           header.append(",F").append(objective);
         }
+        boolean constrained = solutions.get(0).constraints().length > 0;
+        if (constrained) {
+          header.append(",Violation");
+        }
         writer.println(header);
         for (int i = 0; i < solutions.size(); i++) {
           StringBuilder row =
               new StringBuilder(run + "," + evaluations + "," + (nonDominated.get(i) ? 1 : 0));
           for (double value : solutions.get(i).objectives()) {
             row.append(',').append(String.format(Locale.ROOT, "%s", value));
+          }
+          if (constrained) {
+            row.append(',').append(SolveRunner.violation(solutions.get(i)));
           }
           writer.println(row);
         }

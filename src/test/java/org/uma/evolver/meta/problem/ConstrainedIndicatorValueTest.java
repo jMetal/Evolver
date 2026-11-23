@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.uma.evolver.util.ConstrainedEpsilon;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.impl.ConstrainedMultiobjectiveIndicator;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -23,11 +24,12 @@ class ConstrainedIndicatorValueTest {
   class Threshold {
 
     @Test
-    @DisplayName("NHV, EP and IGD+ have 1, and HV- has 0")
+    @DisplayName("NHV, EP, CEP and IGD+ have 1, and HV- has 0")
     void givenTheIndicators_whenAsked_thenTheirThresholdsAreTheWorstValues() {
       // Act and Assert
       assertEquals(1.0, ConstrainedIndicatorValue.threshold(new NormalizedHypervolume()));
       assertEquals(1.0, ConstrainedIndicatorValue.threshold(new Epsilon()));
+      assertEquals(1.0, ConstrainedIndicatorValue.threshold(new ConstrainedEpsilon()));
       assertEquals(1.0, ConstrainedIndicatorValue.threshold(new InvertedGenerationalDistancePlus()));
       assertEquals(0.0, ConstrainedIndicatorValue.threshold(new HypervolumeMinus()));
     }
@@ -106,8 +108,8 @@ class ConstrainedIndicatorValueTest {
     }
 
     @Test
-    @DisplayName("with the same failed runs, less violation is better whatever the quality")
-    void givenTheSameFailedRuns_whenCompared_thenLessViolationIsBetter() {
+    @DisplayName("with the same failed runs, a much lower violation makes up for a worse quality")
+    void givenTheSameFailedRuns_whenCompared_thenMuchLessViolationIsBetter() {
       // Act
       double lessViolation = ConstrainedIndicatorValue.value(2, 0.2, 1.0);
       double moreViolation = ConstrainedIndicatorValue.value(2, 1.8, 0.2);

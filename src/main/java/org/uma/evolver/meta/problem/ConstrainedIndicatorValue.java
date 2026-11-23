@@ -1,6 +1,7 @@
 package org.uma.evolver.meta.problem;
 
 import java.util.Arrays;
+import org.uma.evolver.util.ConstrainedEpsilon;
 import org.uma.evolver.util.HypervolumeMinus;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.ConstrainedMultiobjectiveIndicator;
@@ -66,6 +67,13 @@ public final class ConstrainedIndicatorValue {
    */
   public static final String MEAN_SCALED_VIOLATION = "MeanScaledViolation";
 
+  /**
+   * The attribute of an evaluated configuration with the feasibility of its runs on each training
+   * problem, in the order of the training set (a list of {@link ProblemFeasibility}); set only when
+   * a training problem has constraints.
+   */
+  public static final String FEASIBILITY_BY_PROBLEM = "FeasibilityByProblem";
+
   /** The width of the interval [τ* - 2, τ*] that the quality is kept in. */
   static final double QUALITY_RANGE = 2.0;
 
@@ -87,14 +95,17 @@ public final class ConstrainedIndicatorValue {
    * feasible runs takes.
    *
    * @param indicator the indicator
-   * @return 0 for HV- (no hypervolume), 1 for NHV, EP, IGD+, Spread and GeneralizedSpread, and the
-   *     threshold of ICMOP (1 by default)
+   * @return 0 for HV- (no hypervolume), 1 for NHV, EP, CEP, IGD+, Spread and GeneralizedSpread, and
+   *     the threshold of ICMOP (1 by default)
    * @throws JMetalException for an indicator without a known threshold
    */
   public static double threshold(QualityIndicator indicator) {
     Check.notNull(indicator);
     if (indicator instanceof ConstrainedMultiobjectiveIndicator icmop) {
       return icmop.threshold();
+    }
+    if (indicator instanceof ConstrainedEpsilon) {
+      return ConstrainedEpsilon.THRESHOLD;
     }
     if (indicator instanceof HypervolumeMinus) {
       return 0.0;
@@ -110,7 +121,7 @@ public final class ConstrainedIndicatorValue {
         "The indicator "
             + indicator.name()
             + " has no threshold for problems with constraints; use EP, NHV, IGD+, HV-, Spread,"
-            + " GeneralizedSpread or ConstrainedMultiobjectiveIndicator");
+            + " GeneralizedSpread, ConstrainedEpsilon or ConstrainedMultiobjectiveIndicator");
   }
 
   /**

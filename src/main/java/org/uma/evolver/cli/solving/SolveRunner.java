@@ -18,6 +18,7 @@ import org.uma.evolver.cli.BaseAlgorithmRegistry;
 import org.uma.evolver.cli.IndicatorRegistry;
 import org.uma.evolver.cli.ProblemRegistry;
 import org.uma.evolver.cli.RunStatusWriter;
+import org.uma.evolver.util.ConstrainedEpsilon;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.qualityindicator.QualityIndicator;
 import org.uma.jmetal.qualityindicator.impl.ConstrainedMultiobjectiveIndicator;
@@ -36,7 +37,8 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 /**
  * Runs a {@link SolveRequest}: builds the algorithm with its configuration, runs it {@code
  * numberOfIndependentRuns} times on the problem, one after another, and writes the results of each
- * run ({@code run-<i>/VAR.csv}, {@code run-<i>/FUN.csv}), the indicator values of all of them
+ * run ({@code run-<i>/VAR.csv}, {@code run-<i>/FUN.csv} and, for a problem with constraints, {@code
+ * run-<i>/CV.csv}, the violation of each solution), the indicator values of all of them
  * ({@code INDICATORS.csv}) and the settings used ({@code METADATA.txt}).
  *
  * <p>Run {@code i} uses the seed {@code seed + i - 1}; when the request gives no seed, one is drawn
@@ -110,6 +112,9 @@ public class SolveRunner {
         long computingTime = System.currentTimeMillis() - startTime;
 
         writeFront(result, outputDirectory.resolve("run-" + run));
+        if (problem.numberOfConstraints() > 0) {
+          writeViolations(result, outputDirectory.resolve("run-" + run).resolve("CV.csv"));
+        }
         indicatorRows.add(
             indicatorRow(run, seed, computingTime, result, indicators, referenceFront));
 
@@ -164,6 +169,13 @@ public class SolveRunner {
         .print();
   }
 
+  /** Writes the violation of each solution, a line per solution in the order of FUN.csv. */
+  private static void writeViolations(List<? extends Solution<?>> result, Path violationsFile)
+      throws IOException {
+    Files.write(
+        violationsFile, result.stream().map(s -> Double.toString(violation(s))).toList());
+  }
+
   private static String indicatorRow(
       int run,
       long seed,
@@ -191,11 +203,14 @@ public class SolveRunner {
     for (QualityIndicator indicator : indicators) {
       QualityIndicator instance = indicator.newInstance();
       instance.referenceFront(normalizedReferenceFront);
-      // ICMOP measures the constraints too, so it also takes the violations of the solutions
+      // ICMOP and CEP measure the constraints too, so they also take the violations
       double value =
-          instance instanceof ConstrainedMultiobjectiveIndicator icmop
-              ? icmop.compute(normalizedFront, violations(nonDominated))
-              : instance.compute(normalizedFront);
+          switch (instance) {
+            case ConstrainedMultiobjectiveIndicator icmop ->
+                icmop.compute(normalizedFront, violations(nonDominated));
+            case ConstrainedEpsilon cep -> cep.compute(normalizedFront, violations(nonDominated));
+            default -> instance.compute(normalizedFront);
+          };
       row.append(',').append(value);
     }
     return row.toString();
@@ -209,15 +224,15 @@ public class SolveRunner {
     return archive.solutions();
   }
 
-  /** The overall constraint violation of each solution: 0 if feasible, positive otherwise. */
   private static double[] violations(List<? extends Solution<?>> solutions) {
-    return solutions.stream()
-        .mapToDouble(
-            solution ->
-                ConstraintHandling.isFeasible(solution)
-                    ? 0.0
-                    : Math.abs(ConstraintHandling.overallConstraintViolationDegree(solution)))
-        .toArray();
+    return solutions.stream().mapToDouble(SolveRunner::violation).toArray();
+  }
+
+  /** The overall constraint violation of a solution: 0 if feasible, positive otherwise. */
+  static double violation(Solution<?> solution) {
+    return ConstraintHandling.isFeasible(solution)
+        ? 0.0
+        : Math.abs(ConstraintHandling.overallConstraintViolationDegree(solution));
   }
 
   private static void writeIndicators(

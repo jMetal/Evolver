@@ -13,6 +13,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.uma.jmetal.problem.multiobjective.Srinivas;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.observable.impl.DefaultObservable;
@@ -197,5 +198,35 @@ class SolveFrontObserverTest {
 
     // Assert
     assertTrue(elapsedMillis < 1000, "paused " + elapsedMillis + " ms");
+  }
+
+  @Test
+  @DisplayName(
+      "given a problem with constraints, when reported, then the last column is the violation")
+  void givenAProblemWithConstraints_whenReported_thenTheViolationIsWritten() throws IOException {
+    // Arrange: two constraints per solution, one of them violated in the second solution
+    var problem = new Srinivas();
+    DoubleSolution feasible = problem.createSolution();
+    DoubleSolution infeasible = problem.createSolution();
+    feasible.objectives()[0] = 1.0;
+    feasible.objectives()[1] = 2.0;
+    feasible.constraints()[0] = 0.5;
+    feasible.constraints()[1] = 0.0;
+    infeasible.objectives()[0] = 0.0;
+    infeasible.objectives()[1] = 0.0;
+    infeasible.constraints()[0] = 3.0;
+    infeasible.constraints()[1] = -0.75;
+    var observer = new SolveFrontObserver(frontFile(), 1, 100, true, null);
+
+    // Act
+    report(observer, 100, List.of(feasible, infeasible));
+
+    // Assert
+    assertEquals(
+        List.of(
+            "Run,Evaluations,NonDominated,F1,F2,Violation",
+            "1,100,1,1.0,2.0,0.0",
+            "1,100,0,0.0,0.0,0.75"),
+        Files.readAllLines(frontFile()));
   }
 }
