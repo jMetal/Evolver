@@ -8,10 +8,14 @@ All notable changes to Evolver will be documented in this file.
 3.0-SNAPSHOT
 ------------
 
-Changed
-~~~~~~~
+Added
+~~~~~
 
-- (nothing yet)
+- ``AsyncNSGAIIOptimizingNSGAIIForBenchmarkMW``, in ``example.training.constrained``: the
+  asynchronous NSGA-II tuning NSGA-II, constraint-handling technique included, with five problems
+  of the MW suite as training set. It uses the new parameter space
+  ``NSGAIIDoubleConstrainedFixedSize.yaml``, ``NSGAIIDoubleConstrained.yaml`` with the population
+  and the offspring fixed at 100
 
 2.6 (2026-11-05)
 ----------------
