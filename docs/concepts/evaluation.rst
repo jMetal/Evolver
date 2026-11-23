@@ -31,7 +31,7 @@ separates feasible from infeasible results, to several runs and problems:
 
 1. The indicators of a run are computed on its feasible solutions only, and kept between
    :math:`\tau^* - 2` and a threshold :math:`\tau^*`, their worst sensible value on normalized
-   fronts: 1 for NHV, EP, IGD+, Spread and GeneralizedSpread, 0 for HV-, and the threshold of
+   fronts: 1 for NHV, EP, CEP, IGD+, Spread and GeneralizedSpread, 0 for HV-, and the threshold of
    ``ConstrainedMultiobjectiveIndicator`` (1 by default).
 
 2. A run without feasible solutions is a *failed run*. Its violation is that of its least violated
@@ -134,9 +134,11 @@ An example with one problem and three runs (the medians of two values are their 
      - 0.08
 
 Outside a training (``SolveRunnerMain``, validation studies), ICMOP alone is the indicator of the
-paper and measures both the quality of the front and the feasibility. It is also the only indicator
-that takes the constraints into account there: ``SolveRunnerMain`` computes every indicator on the
-non-dominated solutions of the result under constrained dominance, which are the feasible ones if
-there are any, but for a result without feasible solutions EP, NHV and IGD+ measure its least
-infeasible solutions as if they were feasible, while ICMOP gives them the least violation plus
-:math:`\tau^*`.
+paper and measures both the quality of the front and the feasibility. ``SolveRunnerMain`` computes
+every indicator on the non-dominated solutions of the result under constrained dominance, which are
+the feasible ones if there are any, but for a result without feasible solutions EP, NHV and IGD+
+measure its least infeasible solutions as if they were feasible, while ICMOP gives them the least
+violation plus :math:`\tau^*`. ``ConstrainedEpsilon`` (CEP) does the same with EP: it is the EP of the
+feasible solutions, capped at 1, or 1 plus the least violation if there are none. ICMOP and CEP are
+therefore the indicators to compare algorithms with on problems with constraints. In a training, CEP
+and EP have the same values, since every indicator is there its version with constraints.

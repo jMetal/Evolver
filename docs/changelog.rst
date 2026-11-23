@@ -16,6 +16,17 @@ Added
   of the MW suite as training set. It uses the new parameter space
   ``NSGAIIDoubleConstrainedFixedSize.yaml``, ``NSGAIIDoubleConstrained.yaml`` with the population
   and the offspring fixed at 100
+- ``ConstrainedEpsilon`` (CEP), usable in ``indicatorNames``: the EP of the feasible solutions, capped
+  at 1, or 1 plus the least violation if there are none, so that ``SolveRunnerMain`` has, besides
+  ICMOP, another indicator that takes the constraints into account. In a training it has the values
+  of ``Epsilon``
+- The violations of the solutions in ``cli.solving``, for problems with constraints:
+  ``run-<i>/CV.csv``, aligned with ``FUN.csv``, and a last column, ``Violation``, in
+  ``CURRENT_FRONT.csv``. Without constraints the files do not change
+- ``FEASIBILITY_BY_PROBLEM.csv`` and, with ``writePopulation``,
+  ``POPULATION_FEASIBILITY_BY_PROBLEM.csv``: the failed runs and the mean scaled violation of each
+  configuration by training problem, in a training on problems with constraints
+  (``ConstrainedIndicatorValue.FEASIBILITY_BY_PROBLEM``)
 
 Changed
 ~~~~~~~

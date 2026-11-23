@@ -222,7 +222,11 @@ When a training problem has constraints, ``FEASIBILITY.csv`` (and, with ``writeP
 the same ``Evaluation`` and ``SolutionId`` as the indicator files:
 ``Evaluation,SolutionId,FailedRuns,Runs,FeasibleRunRate,MeanScaledViolation``, the runs without
 feasible solutions, all the runs, the fraction of the runs with feasible solutions, and the mean
-scaled violation of the runs without them (see :ref:`evaluation`). The diagnosis is in a file of its
+scaled violation of the runs without them (see :ref:`evaluation`). ``FEASIBILITY_BY_PROBLEM.csv`` (and,
+with ``writePopulation: true``, ``POPULATION_FEASIBILITY_BY_PROBLEM.csv``) give it by training problem,
+with a row per configuration and problem:
+``Evaluation,SolutionId,ProblemId,Problem,FailedRuns,Runs,MeanScaledViolation``, where ``ProblemId`` is
+the position of the problem in the training set, from 0. The diagnosis is in files of its
 own so that the indicator files keep one column per indicator. These files are optional: a
 training without constraints does not write them. The live plot of ``frontPlotFrequency`` then draws
 the configurations with failed runs in red.
@@ -440,6 +444,9 @@ Output
 In ``outputDirectory``:
 
 - ``run-<i>/VAR.csv`` and ``run-<i>/FUN.csv``: the result of each run (``run-1``, ``run-2``, ...);
+- ``run-<i>/CV.csv``, only for a problem with constraints: the overall constraint violation of each
+  solution, a value per line in the order of ``FUN.csv``: 0 if the solution is feasible and positive
+  if not;
 - ``INDICATORS.csv``: one row per run, with its seed, its computing time and its indicator values:
 
   .. code-block:: none
@@ -452,7 +459,9 @@ In ``outputDirectory``:
 
 The indicators are computed as in a training run, so their values are comparable: on the
 non-dominated solutions of the result, with the front and the reference front normalized to the
-bounds of the reference front.
+bounds of the reference front. For a problem with constraints, ``ConstrainedMultiobjectiveIndicator``
+(``ICMOP``) and ``ConstrainedEpsilon`` (``CEP``) take the violations into account, while the others
+measure a result without feasible solutions as if it were feasible (:ref:`evaluation`).
 
 ``status.yaml`` has the same fields as for ``TrainingRunnerMain``. It is updated after each run,
 counting the evaluations of the runs already finished out of ``numberOfIndependentRuns *
@@ -469,7 +478,8 @@ run in progress, so that a GUI can plot how the front evolves. It is overwritten
 written to a temporary file that is moved over it, so it is never read half-written) and removed
 when the runs end. It is a CSV with a row per solution, ``Run,Evaluations,NonDominated,F1,...,Fm``:
 the run and its evaluations so far (repeated in each row), 1 if the solution is non-dominated
-within the current population and 0 if not, and its objectives. By default only the non-dominated
+within the current population and 0 if not, and its objectives. For a problem with constraints, a last column, ``Violation``, has the
+violation of the solution (0 if it is feasible). By default only the non-dominated
 solutions are written, so ``NonDominated`` is always 1; with ``writePopulation`` the whole
 population is, dominated solutions included. Writing the front costs more than updating the status,
 since the non-dominated solutions have to be found: on NSGA-II with ZDT1, every 1000 evaluations
@@ -589,6 +599,7 @@ Example output
    - DTLZ2
    # ... every problem ProblemRegistry resolves
    indicators:
+   - ConstrainedEpsilon
    - ConstrainedMultiobjectiveIndicator
    - Epsilon
    - GeneralizedSpread

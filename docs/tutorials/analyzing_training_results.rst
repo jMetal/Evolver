@@ -89,6 +89,8 @@ The output directory, ``results/tutorial-training-analysis/training``, holds:
      - Only when a training problem has constraints: for the same configurations, the number of
        runs without feasible solutions, of runs, the fraction of feasible runs and the mean scaled
        violation of the failed runs (:doc:`E12 <problems_with_constraints>`).
+   * - ``FEASIBILITY_BY_PROBLEM.csv``, ``POPULATION_FEASIBILITY_BY_PROBLEM.csv``
+     - The same diagnosis by training problem, with a row per configuration and problem.
 
 The CSV files have one row per configuration and checkpoint, with the number of evaluations of the
 meta-optimizer in the first column:
