@@ -293,9 +293,9 @@ If you use Evolver in your research, please cite:
 @article{AND23,
   title   = {Evolver: Meta-optimizing multi-objective metaheuristics},
   journal = {SoftwareX},
-  volume  = {23},
+  volume  = {24},
   pages   = {101551},
-  year    = {2024},
+  year    = {2023},
   issn    = {2352-7110},
   doi     = {10.1016/j.softx.2023.101551},
 }
