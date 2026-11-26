@@ -91,7 +91,7 @@ Configurable parameters per algorithm and encoding, shown as **total (top-level)
 The figure is the number of configurable parameters (flattened, including conditional
 sub-parameters — i.e. the search-space dimensionality); the value in parentheses is the number of
 top-level parameters. `—` means the encoding is not available. Counts are derived from the YAML
-parameter spaces in [`src/main/resources/parameterSpaces/`](src/main/resources/parameterSpaces/) (as of version 2.4): `python
+parameter spaces in [`src/main/resources/parameterSpaces/`](src/main/resources/parameterSpaces/) (as of version 2.7): `python
 scripts/plot_parameter_space.py <space>.yaml --stats` gives them for any space.
 
 ### Meta-level algorithms
@@ -99,7 +99,7 @@ scripts/plot_parameter_space.py <space>.yaml --stats` gives them for any space.
 - NSGA-II
 - AGE-MOEA
 - Async NSGA-II
-- Async Genetic Algorithm
+- Async Genetic Algorithm (from Java only, not yet from `cli.training`)
 - SMPSO
 - SPEA2
 - Random Search
